@@ -55,6 +55,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
+		[SecuritySafeCritical]
 		protected Pop3CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			StatusText = info.GetString ("StatusText");
@@ -163,12 +164,9 @@ namespace MailKit.Net.Pop3 {
 		[SecurityCritical]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			if (info == null)
-				throw new ArgumentNullException (nameof (info));
+			base.GetObjectData (info, context);
 
 			info.AddValue ("StatusText", StatusText);
-
-			base.GetObjectData (info, context);
 		}
 #endif
 	}

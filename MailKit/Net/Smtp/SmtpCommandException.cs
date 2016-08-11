@@ -95,6 +95,7 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
+		[SecuritySafeCritical]
 		protected SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			MailboxAddress mailbox;
@@ -165,16 +166,13 @@ namespace MailKit.Net.Smtp {
 		[SecurityCritical]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			if (info == null)
-				throw new ArgumentNullException (nameof (info));
+			base.GetObjectData (info, context);
 
 			if (Mailbox != null)
 				info.AddValue ("Mailbox", Mailbox.ToString ());
 
 			info.AddValue ("ErrorCode", (int) ErrorCode);
 			info.AddValue ("StatusCode", (int) StatusCode);
-
-			base.GetObjectData (info, context);
 		}
 #endif
 

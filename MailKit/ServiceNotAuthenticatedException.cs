@@ -26,6 +26,7 @@
 
 using System;
 #if SERIALIZABLE
+using System.Security;
 using System.Runtime.Serialization;
 #endif
 
@@ -54,6 +55,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
+		[SecuritySafeCritical]
 		protected ServiceNotAuthenticatedException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}

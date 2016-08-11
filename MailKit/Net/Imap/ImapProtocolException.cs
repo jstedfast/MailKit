@@ -26,6 +26,7 @@
 
 using System;
 #if SERIALIZABLE
+using System.Security;
 using System.Runtime.Serialization;
 #endif
 
@@ -52,6 +53,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
+		[SecuritySafeCritical]
 		protected ImapProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}

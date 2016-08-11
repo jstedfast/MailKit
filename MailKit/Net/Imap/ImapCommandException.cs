@@ -53,6 +53,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
+		[SecuritySafeCritical]
 		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			var value = info.GetString ("Response");
@@ -163,12 +164,9 @@ namespace MailKit.Net.Imap {
 		[SecurityCritical]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			if (info == null)
-				throw new ArgumentNullException (nameof (info));
+			base.GetObjectData (info, context);
 
 			info.AddValue ("Response", Response);
-
-			base.GetObjectData (info, context);
 		}
 #endif
 	}
