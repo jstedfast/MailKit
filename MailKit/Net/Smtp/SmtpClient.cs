@@ -894,6 +894,8 @@ namespace MailKit.Net.Smtp {
 			}
 
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (0), socket.OutputStream.AsStreamForWrite (0));
+			secure = options == SecureSocketOptions.SslOnConnect;
+			this.host = host;
 #endif
 
 			if (stream.CanTimeout) {

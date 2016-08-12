@@ -833,6 +833,8 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (0), socket.OutputStream.AsStreamForWrite (0));
+			secure = options == SecureSocketOptions.SslOnConnect;
+			engine.Uri = uri;
 #endif
 
 			probed = ProbedCapabilities.None;

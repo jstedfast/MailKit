@@ -1281,6 +1281,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (0), socket.OutputStream.AsStreamForWrite (0));
+			secure = options == SecureSocketOptions.SslOnConnect;
 			engine.Uri = uri;
 #endif
 
