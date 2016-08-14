@@ -1,5 +1,13 @@
 # Release Notes
 
+### MailKit 1.4.2
+
+* Properly initialize the private Uri fields in Connect() for Windows Universal 8.1. (issue #381, #382)
+* Added SecuritySafeCritical attributes to try and match base Exception in case that matters.
+* Added missing GetObjectData() implementation to Pop3CommandException.
+* Strong-name the .NET Core assemblies.
+* Make sure to process Alert resp-codes in ImapClient. (issue #377)
+
 ### MailKit 1.4.1
 
 * Updated the NTLM SASL mechanism to include a Windows OS version in the response if the server
