@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.4.2.1
+
+* Fixed a regression in 1.4.2 where using a bad password in ImapClient.Authenticate() did not properly
+  throw an exception when using a SASL mechanism. (issue #383)
+
 ### MailKit 1.4.2
 
 * Properly initialize the private Uri fields in Connect() for Windows Universal 8.1. (issue #381, #382)

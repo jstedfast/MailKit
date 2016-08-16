@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.8.6">
 		<id>MailKit</id>
-		<version>1.4.2</version>
+		<version>1.4.2.1</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,11 +22,7 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Properly initialize the private Uri fields in Connect() for Windows Universal 8.1. (issue #381, #382)
-* Added SecuritySafeCritical attributes to try and match base Exception in case that matters.
-* Added missing GetObjectData() implementation to Pop3CommandException.
-* Strong-name the .NET Core assemblies.
-* Make sure to process Alert resp-codes in ImapClient. (issue #377)
+		<releaseNotes>* Fixed a regression in 1.4.2 where using a bad password in ImapClient.Authenticate() did not properly throw an exception when using a SASL mechanism. (issue #383)
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
