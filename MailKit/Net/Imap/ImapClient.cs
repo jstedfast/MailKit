@@ -1018,6 +1018,8 @@ namespace MailKit.Net.Imap {
 						OnAlert (new AlertEventArgs (ic.RespCodes[i].Message));
 						throw new ArgumentException (ic.RespCodes[i].Message);
 					}
+
+					continue;
 				}
 
 				engine.State = ImapEngineState.Authenticated;
