@@ -66,8 +66,8 @@ namespace MailKit.Net.Imap {
 	{
 		// Note: GMail's IMAP implementation is broken and does not quote strings with ']' like it should.
 		public const string GMailLabelSpecials = "(){%*\\\"\n";
-		public const string StringSpecials = "()]{%*\\\"\n";
-		public const string AtomSpecials = "()[]{%*\\\"\n";
+		public const string AtomSpecials       = "](){%*\\\"\n";
+		public const string DefaultSpecials    = "[" + AtomSpecials;
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
 		const int PadSize = 4;
@@ -768,7 +768,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken ReadToken (CancellationToken cancellationToken)
 		{
-			return ReadToken (AtomSpecials, cancellationToken);
+			return ReadToken (DefaultSpecials, cancellationToken);
 		}
 
 		/// <summary>

@@ -434,7 +434,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			// parse the folder name
-			token = engine.ReadToken (ImapStream.StringSpecials, ic.CancellationToken);
+			token = engine.ReadToken (ImapStream.AtomSpecials, ic.CancellationToken);
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
@@ -1146,7 +1146,8 @@ namespace MailKit.Net.Imap {
 			token = engine.ReadToken (specials, cancellationToken);
 
 			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag) {
-				string flag = (string) token.Value;
+				var flag = (string) token.Value;
+
 				switch (flag) {
 				case "\\Answered": flags |= MessageFlags.Answered; break;
 				case "\\Deleted":  flags |= MessageFlags.Deleted; break;
