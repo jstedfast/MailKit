@@ -565,8 +565,9 @@ namespace MailKit.Net.Pop3 {
 					cancellationToken.ThrowIfCancellationRequested ();
 
 					pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
-						if (cmd.Status == Pop3CommandStatus.Ok) {
-							authMessage = text;
+						if (sasl.IsAuthenticated) {
+							if (cmd.Status == Pop3CommandStatus.Ok)
+								authMessage = text;
 							return;
 						}
 
