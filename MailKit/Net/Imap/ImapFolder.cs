@@ -2289,7 +2289,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				// get the list of messages marked for deletion
 				var marked = Search (SearchQuery.Deleted, cancellationToken);
-				var unmark = new List<UniqueId> ();
+				var unmark = new UniqueIdSet (SortOrder.Ascending);
 
 				// remove all uids except the ones that will be expunged
 				for (int i = 0; i < marked.Count; i++) {
@@ -8363,8 +8363,8 @@ namespace MailKit.Net.Imap {
 
 		static void SearchMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
+			var uids = new UniqueIdSet (SortOrder.Ascending);
 			var results = new SearchResults ();
-			var uids = new List<UniqueId> ();
 			ImapToken token;
 			ulong modseq;
 			uint uid;
