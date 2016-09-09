@@ -538,7 +538,7 @@ namespace MailKit.Net.Pop3 {
 					md5sum.Append (digest[i].ToString ("x2"));
 
 				try {
-					authMessage = SendCommand (cancellationToken, "APOP {0} {1}", encoding, userName, md5sum);
+					authMessage = SendCommand (cancellationToken, encoding, "APOP {0} {1}", userName, md5sum);
 					engine.State = Pop3EngineState.Transaction;
 				} catch (Pop3CommandException) {
 				}
