@@ -1200,6 +1200,7 @@ namespace MailKit.Net.Smtp {
 
 		void Disconnect ()
 		{
+			capabilities = SmtpCapabilities.None;
 			authenticated = false;
 			connected = false;
 			secure = false;
