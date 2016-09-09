@@ -78,8 +78,7 @@ namespace MailKit.Net.Smtp {
 			// See https://github.com/jstedfast/MailKit/issues/162 for details.
 			//
 			// Don't you love non RFC-compliant mail servers?
-			"smtp.strato.de", "smtp.sina.com", "smtp.dm.aliyun.com",
-			"mail.shaw.ca", "smtp.shaw.ca"
+			"smtp.strato.de", "smtp.sina.com", "smtp.dm.aliyun.com", "mail.shaw.ca"
 		};
 		const int MaxLineLength = 998;
 
