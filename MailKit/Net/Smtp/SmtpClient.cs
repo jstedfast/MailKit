@@ -454,7 +454,7 @@ namespace MailKit.Net.Smtp {
 			response = SendEhlo (true, cancellationToken);
 
 			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
-			if (response.StatusCode == SmtpStatusCode.BadCommandSequence && capabilities != SmtpCapabilities.None)
+			if (authenticated && response.StatusCode == SmtpStatusCode.BadCommandSequence)
 				return;
 
 			if (response.StatusCode != SmtpStatusCode.Ok) {
