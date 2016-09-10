@@ -210,6 +210,17 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the append limit supported by the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// Gets the append limit supported by the IMAP server.
+		/// </remarks>
+		/// <value>The append limit.</value>
+		public uint? AppendLimit {
+			get; private set;
+		}
+
+		/// <summary>
 		/// Gets the I18NLEVEL supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
@@ -554,8 +565,10 @@ namespace MailKit.Net.Imap {
 			CapabilitiesVersion = 0;
 			QResyncEnabled = false;
 			UTF8Enabled = false;
+			AppendLimit = null;
 			Selected = null;
 			Stream = stream;
+			I18NLevel = 0;
 			Tag = 0;
 
 			try {
@@ -834,7 +847,9 @@ namespace MailKit.Net.Imap {
 			ThreadingAlgorithms.Clear ();
 			SupportedContexts.Clear ();
 			CapabilitiesVersion++;
+			AppendLimit = null;
 			Rights.Clear ();
+			I18NLevel = 0;
 
 			var token = Stream.ReadToken (cancellationToken);
 
@@ -843,6 +858,13 @@ namespace MailKit.Net.Imap {
 
 				if (atom.StartsWith ("AUTH=", StringComparison.Ordinal)) {
 					AuthenticationMechanisms.Add (atom.Substring ("AUTH=".Length));
+				} else if (atom.StartsWith ("APPENDLIMIT=", StringComparison.Ordinal)) {
+					uint limit;
+
+					if (uint.TryParse (atom.Substring ("APPENDLIMIT=".Length), out limit))
+					    AppendLimit = limit;
+
+					Capabilities |= ImapCapabilities.AppendLimit;
 				} else if (atom.StartsWith ("COMPRESS=", StringComparison.Ordinal)) {
 					CompressionAlgorithms.Add (atom.Substring ("COMPRESS=".Length));
 					Capabilities |= ImapCapabilities.Compress;
@@ -915,6 +937,7 @@ namespace MailKit.Net.Imap {
 					case "MOVE":               Capabilities |= ImapCapabilities.Move; break;
 					case "UTF8=ACCEPT":        Capabilities |= ImapCapabilities.UTF8Accept; break;
 					case "UTF8=ONLY":          Capabilities |= ImapCapabilities.UTF8Only; break;
+					case "APPENDLIMIT":        Capabilities |= ImapCapabilities.AppendLimit; break;
 					case "XLIST":              Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; break;
 					}
@@ -1368,10 +1391,10 @@ namespace MailKit.Net.Imap {
 		{
 			var token = Stream.ReadToken (cancellationToken);
 			ImapFolder folder;
+			uint uid, limit;
 			ulong modseq;
 			string name;
 			int count;
-			uint uid;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
@@ -1407,48 +1430,81 @@ namespace MailKit.Net.Imap {
 
 				token = Stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom)
-					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+				switch (atom) {
+				case "HIGHESTMODSEQ":
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-				if (folder != null) {
-					switch (atom) {
-					case "HIGHESTMODSEQ":
-						if (!ulong.TryParse ((string) token.Value, out modseq))
-							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					if (!ulong.TryParse ((string)token.Value, out modseq))
+						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
+					if (folder != null)
 						folder.UpdateHighestModSeq (modseq);
-						break;
-					case "MESSAGES":
-						if (!int.TryParse ((string) token.Value, out count))
-							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					break;
+				case "MESSAGES":
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
+					if (!int.TryParse ((string)token.Value, out count))
+						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+
+					if (folder != null)
 						folder.OnExists (count);
-						break;
-					case "RECENT":
-						if (!int.TryParse ((string) token.Value, out count))
-							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					break;
+				case "RECENT":
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
+					if (!int.TryParse ((string)token.Value, out count))
+						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+
+					if (folder != null)
 						folder.OnRecent (count);
-						break;
-					case "UIDNEXT":
-						if (!uint.TryParse ((string) token.Value, out uid))
-							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					break;
+				case "UIDNEXT":
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
+					if (!uint.TryParse ((string)token.Value, out uid))
+						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+
+					if (folder != null)
 						folder.UpdateUidNext (new UniqueId (uid));
-						break;
-					case "UIDVALIDITY":
-						if (!uint.TryParse ((string) token.Value, out uid))
-							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					break;
+				case "UIDVALIDITY":
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
+					if (!uint.TryParse ((string)token.Value, out uid))
+						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+
+					if (folder != null)
 						folder.UpdateUidValidity (uid);
-						break;
-					case "UNSEEN":
-						if (!int.TryParse ((string) token.Value, out count))
+					break;
+				case "UNSEEN":
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+					if (!int.TryParse ((string)token.Value, out count))
+						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+
+					if (folder != null)
+						folder.UpdateUnread (count);
+					break;
+				case "APPENDLIMIT":
+					if (token.Type == ImapTokenType.Atom) {
+						if (!uint.TryParse ((string)token.Value, out limit))
 							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
-						folder.UpdateUnread (count);
-						break;
+						if (folder != null)
+							folder.UpdateAppendLimit (limit);
+					} else if (token.Type == ImapTokenType.Nil) {
+						if (folder != null)
+							folder.UpdateAppendLimit (null);
+					} else {
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 					}
+					break;
 				}
 			} while (true);
 
@@ -1964,6 +2020,11 @@ namespace MailKit.Net.Imap {
 			if ((Capabilities & ImapCapabilities.CondStore) != 0) {
 				if ((items & StatusItems.HighestModSeq) != 0)
 					flags += "HIGHESTMODSEQ ";
+			}
+
+			if ((Capabilities & ImapCapabilities.AppendLimit) != 0) {
+				if ((items & StatusItems.AppendLimit) != 0)
+					flags += "APPENDLIMIT ";
 			}
 
 			return flags.TrimEnd ();

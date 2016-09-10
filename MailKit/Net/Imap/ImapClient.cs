@@ -166,6 +166,18 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the maximum size of a message that can be appended to a folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the maximum size of a message, in bytes, that can be appended to a folder.</para>
+		/// <note type="note">If the value is not set, then the limit is unspecified.</note>
+		/// </remarks>
+		/// <value>The append limit.</value>
+		public uint? AppendLimit {
+			get { return engine.AppendLimit; }
+		}
+
+		/// <summary>
 		/// Gets the internationalization level supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
@@ -226,7 +238,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		protected virtual ImapFolder CreateImapFolder (ImapFolderConstructorArgs args)
 		{
-			return new ImapFolder (args);
+			var folder = new ImapFolder (args);
+
+			folder.UpdateAppendLimit (AppendLimit);
+
+			return folder;
 		}
 
 #if !NETFX_CORE

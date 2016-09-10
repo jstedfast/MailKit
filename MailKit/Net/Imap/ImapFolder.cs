@@ -9716,6 +9716,11 @@ namespace MailKit.Net.Imap {
 			UidNext = uid;
 		}
 
+		internal void UpdateAppendLimit (uint? limit)
+		{
+			AppendLimit = limit;
+		}
+
 		internal void UpdateHighestModSeq (ulong modseq)
 		{
 			if (HighestModSeq == modseq)

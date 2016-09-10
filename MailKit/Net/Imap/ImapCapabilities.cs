@@ -281,17 +281,22 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		UTF8Only         = 1L << 46,
 
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc7889">APPENDLIMIT</a> extension.
+		/// </summary>
+		AppendLimit      = 1L << 47,
+
 		#region GMail Extensions
 
 		/// <summary>
 		/// The server supports the <a href="https://developers.google.com/gmail/imap_extensions">XLIST</a> extension (GMail).
 		/// </summary>
-		XList            = 1L << 47,
+		XList            = 1L << 50,
 
 		/// <summary>
 		/// The server supports the <a href="https://developers.google.com/gmail/imap_extensions">X-GM-EXT1</a> extension (GMail).
 		/// </summary>
-		GMailExt1        = 1L << 48
+		GMailExt1        = 1L << 51
 
 		#endregion
 	}

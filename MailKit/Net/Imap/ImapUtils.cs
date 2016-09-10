@@ -387,7 +387,7 @@ namespace MailKit.Net.Imap {
 			token = engine.ReadToken (ic.CancellationToken);
 
 			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom) {
-				string atom = (string) token.Value;
+				var atom = (string) token.Value;
 
 				switch (atom) {
 				case "\\NoInferiors":   attrs |= FolderAttributes.NoInferiors; break;

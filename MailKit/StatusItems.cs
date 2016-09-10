@@ -69,5 +69,10 @@ namespace MailKit {
 		/// Updates <see cref="IMailFolder.HighestModSeq"/>.
 		/// </summary>
 		HighestModSeq  = 1 << 5,
+
+		/// <summary>
+		/// Updates <see cref="IMailFolder.AppendLimit"/>.
+		/// </summary>
+		AppendLimit    = 1 << 6,
 	}
 }

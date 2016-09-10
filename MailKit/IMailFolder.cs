@@ -202,6 +202,16 @@ namespace MailKit {
 		UniqueId? UidNext { get; }
 
 		/// <summary>
+		/// Get the maximum size of a message that can be appended to the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the maximum size of a message that can be appended to the folder.</para>
+		/// <note type="note">If the value is not set, then the limit is unspecified.</note>
+		/// </remarks>
+		/// <value>The append limit.</value>
+		uint? AppendLimit { get; }
+
+		/// <summary>
 		/// Get the index of the first unread message in the folder.
 		/// </summary>
 		/// <remarks>
