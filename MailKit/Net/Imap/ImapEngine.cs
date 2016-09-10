@@ -2023,7 +2023,9 @@ namespace MailKit.Net.Imap {
 					flags += "HIGHESTMODSEQ ";
 			}
 
-			if ((Capabilities & ImapCapabilities.AppendLimit) != 0) {
+			// Note: If the IMAP server specifies a limit in the CAPABILITY response, then
+			// it seems we cannot expect to be able to query this in a STATUS command...
+			if ((Capabilities & ImapCapabilities.AppendLimit) != 0 && !AppendLimit.HasValue) {
 				if ((items & StatusItems.AppendLimit) != 0)
 					flags += "APPENDLIMIT ";
 			}
