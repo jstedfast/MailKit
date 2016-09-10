@@ -937,6 +937,7 @@ namespace MailKit.Net.Imap {
 					case "MOVE":               Capabilities |= ImapCapabilities.Move; break;
 					case "UTF8=ACCEPT":        Capabilities |= ImapCapabilities.UTF8Accept; break;
 					case "UTF8=ONLY":          Capabilities |= ImapCapabilities.UTF8Only; break;
+					case "LITERAL-":           Capabilities |= ImapCapabilities.LiteralMinus; break;
 					case "APPENDLIMIT":        Capabilities |= ImapCapabilities.AppendLimit; break;
 					case "XLIST":              Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; break;

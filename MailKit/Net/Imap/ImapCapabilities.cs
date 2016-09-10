@@ -282,9 +282,14 @@ namespace MailKit.Net.Imap {
 		UTF8Only         = 1L << 46,
 
 		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc7888">LITERAL-</a> extension.
+		/// </summary>
+		LiteralMinus     = 1L << 47,
+
+		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc7889">APPENDLIMIT</a> extension.
 		/// </summary>
-		AppendLimit      = 1L << 47,
+		AppendLimit      = 1L << 48,
 
 		#region GMail Extensions
 

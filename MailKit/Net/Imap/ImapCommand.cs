@@ -319,9 +319,11 @@ namespace MailKit.Net.Imap {
 	{
 		public readonly byte[] Command;
 		public readonly ImapLiteral Literal;
+		public readonly bool WaitForContinuation;
 
-		public ImapCommandPart (byte[] command, ImapLiteral literal)
+		public ImapCommandPart (byte[] command, ImapLiteral literal, bool wait = true)
 		{
+			WaitForContinuation = wait;
 			Command = command;
 			Literal = literal;
 		}
@@ -377,7 +379,6 @@ namespace MailKit.Net.Imap {
 			Folder = folder;
 
 			using (var builder = new MemoryStream ()) {
-				var plus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0 ? "+" : string.Empty;
 				int argc = 0;
 				byte[] buf;
 				string str;
@@ -410,6 +411,13 @@ namespace MailKit.Net.Imap {
 						case 'L':
 							var literal = new ImapLiteral (options, args[argc++], UpdateProgress);
 							var length = literal.Length;
+							var plus = string.Empty;
+							bool wait = true;
+
+							if (CanUseNonSynchronizedLiteral (literal.Length)) {
+								wait = false;
+								plus = "+";
+							}
 
 							totalSize += length;
 
@@ -421,7 +429,7 @@ namespace MailKit.Net.Imap {
 							buf = Encoding.ASCII.GetBytes (str);
 							builder.Write (buf, 0, buf.Length);
 
-							parts.Add (new ImapCommandPart (builder.ToArray (), literal));
+							parts.Add (new ImapCommandPart (builder.ToArray (), literal, wait));
 							builder.SetLength (0);
 
 							if (options.International)
@@ -505,6 +513,12 @@ namespace MailKit.Net.Imap {
 			return type;
 		}
 
+		bool CanUseNonSynchronizedLiteral (long length)
+		{
+			return (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0 ||
+				(length <= 4096 && (Engine.Capabilities & ImapCapabilities.LiteralMinus) != 0);
+		}
+
 		void AppendString (FormatOptions options, bool allowAtom, MemoryStream builder, string value)
 		{
 			byte[] buf;
@@ -512,18 +526,19 @@ namespace MailKit.Net.Imap {
 			switch (GetStringType (value, allowAtom)) {
 			case ImapStringType.Literal:
 				var literal = Encoding.UTF8.GetBytes (value);
+				var plus = CanUseNonSynchronizedLiteral (literal.Length);
 				var length = literal.Length.ToString ();
 				buf = Encoding.ASCII.GetBytes (length);
 
 				builder.WriteByte ((byte) '{');
 				builder.Write (buf, 0, buf.Length);
-				if (Engine.IsGMail || (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0)
+				if (plus)
 					builder.WriteByte ((byte) '+');
 				builder.WriteByte ((byte) '}');
 				builder.WriteByte ((byte) '\r');
 				builder.WriteByte ((byte) '\n');
 
-				if (Engine.IsGMail || (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0) {
+				if (plus) {
 					builder.Write (literal, 0, literal.Length);
 				} else {
 					parts.Add (new ImapCommandPart (builder.ToArray (), new ImapLiteral (options, literal)));
@@ -604,9 +619,9 @@ namespace MailKit.Net.Imap {
 
 				Engine.Stream.Write (command, 0, command.Length, CancellationToken);
 
-				// if the server doesn't support LITERAL+, we'll need to wait for a "+" response
-				// before writing out the any literals...
-				if (!supportsLiteralPlus || parts[current].Literal == null)
+				// if the server doesn't support LITERAL+ (or LITERAL-), we'll need to wait
+				// for a "+" response before writing out the any literals...
+				if (parts[current].WaitForContinuation)
 					break;
 
 				// otherwise, we can write out any and all literal tokens we have...
