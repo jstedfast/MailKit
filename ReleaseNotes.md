@@ -1,5 +1,17 @@
 # Release Notes
 
+### MailKit 1.6.0
+
+* Added support for the new IMAP LITERAL- extension.
+* Added support for the new IMAP APPENDLIMIT extension.
+* Fixed APOP authentication in the Pop3Client. (issue #395)
+* Reset the SmtpClient's Capabilities after disconnecting.
+* Modified ImapFolder.Search() to return a UniqueIdSet for IMAP servers that do not support
+  the ESEARCH extension (which already returns a UniqueIdSet).
+* Added mail.shaw.ca to the list of SMTP servers that break when sending EHLO after AUTH. (issue #393)
+* Work around broken POP3 servers that reply "+OK" instead of "+" in SASL negotiations. (issue #391)
+* Modified the IMAP parser to properly allow "[" to appear within flag tokens. (issue #390)
+
 ### MailKit 1.4.2.1
 
 * Fixed a regression in 1.4.2 where using a bad password in ImapClient.Authenticate() did not properly
