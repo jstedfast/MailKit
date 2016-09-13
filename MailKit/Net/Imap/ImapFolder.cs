@@ -8364,7 +8364,7 @@ namespace MailKit.Net.Imap {
 		static void SearchMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var uids = new UniqueIdSet (SortOrder.Ascending);
-			var results = new SearchResults ();
+			var results = (SearchResults) ic.UserData;
 			ImapToken token;
 			ulong modseq;
 			uint uid;
@@ -8414,13 +8414,12 @@ namespace MailKit.Net.Imap {
 			}
 
 			results.UniqueIds = uids;
-			ic.UserData = results;
 		}
 
 		static void ESearchMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
-			var results = new SearchResults ();
+			var results = (SearchResults) ic.UserData;
 			UniqueIdSet uids = null;
 			int parenDepth = 0;
 			//bool uid = false;
@@ -8533,7 +8532,6 @@ namespace MailKit.Net.Imap {
 			} while (true);
 
 			results.UniqueIds = uids ?? new UniqueIdSet ();
-			ic.UserData = results;
 		}
 
 		/// <summary>
@@ -8606,6 +8604,7 @@ namespace MailKit.Net.Imap {
 			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
 			// search syntax.
 			ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -8615,12 +8614,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SEARCH", ic);
 
-			var results = (SearchResults) ic.UserData;
-
-			if (results == null)
-				return new UniqueId[0];
-
-			return results.UniqueIds;
+			return ((SearchResults) ic.UserData).UniqueIds;
 		}
 
 		/// <summary>
@@ -8713,6 +8707,7 @@ namespace MailKit.Net.Imap {
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
 			else
 				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
+			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -8722,12 +8717,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SORT", ic);
 
-			var results = (SearchResults) ic.UserData;
-
-			if (results == null)
-				return new UniqueId[0];
-
-			return results.UniqueIds;
+			return ((SearchResults) ic.UserData).UniqueIds;
 		}
 
 		/// <summary>
@@ -8810,6 +8800,7 @@ namespace MailKit.Net.Imap {
 			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
 			// search syntax.
 			ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -8819,12 +8810,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SEARCH", ic);
 
-			var results = (SearchResults) ic.UserData;
-
-			if (results == null)
-				return new UniqueId[0];
-
-			return results.UniqueIds;
+			return ((SearchResults) ic.UserData).UniqueIds;
 		}
 
 		/// <summary>
@@ -8926,6 +8912,7 @@ namespace MailKit.Net.Imap {
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
 			else
 				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
+			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -8935,12 +8922,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SORT", ic);
 
-			var results = (SearchResults) ic.UserData;
-
-			if (results == null)
-				return new UniqueId[0];
-
-			return results.UniqueIds;
+			return ((SearchResults) ic.UserData).UniqueIds;
 		}
 
 		/// <summary>
