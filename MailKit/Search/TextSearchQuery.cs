@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit.Search {
 	/// <summary>
 	/// A text-based search query.
@@ -41,8 +43,20 @@ namespace MailKit.Search {
 		/// </remarks>
 		/// <param name="term">The search term.</param>
 		/// <param name="text">The text to match against.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="text"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="text"/> is empty.
+		/// </exception>
 		public TextSearchQuery (SearchTerm term, string text) : base (term)
 		{
+			if (text == null)
+				throw new ArgumentNullException (nameof (text));
+
+			if (text.Length == 0)
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (text));
+
 			Text = text;
 		}
 

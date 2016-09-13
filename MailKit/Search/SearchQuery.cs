@@ -370,6 +370,11 @@ namespace MailKit.Search {
 		/// </remarks>
 		public static readonly SearchQuery Draft = new SearchQuery (SearchTerm.Draft);
 
+		public static SearchQuery Filter (string name)
+		{
+			return new FilterSearchQuery (name);
+		}
+
 		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Flagged"/> flag set.
 		/// </summary>

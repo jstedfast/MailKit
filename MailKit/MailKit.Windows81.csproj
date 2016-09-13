@@ -173,6 +173,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\BinarySearchQuery.cs" />
     <Compile Include="Search\DateSearchQuery.cs" />
+    <Compile Include="Search\FilterSearchQuery.cs" />
     <Compile Include="Search\HeaderSearchQuery.cs" />
     <Compile Include="Search\ISearchQueryOptimizer.cs" />
     <Compile Include="Search\NumericSearchQuery.cs" />

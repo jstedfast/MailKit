@@ -8101,6 +8101,7 @@ namespace MailKit.Net.Imap {
 		{
 			TextSearchQuery text = null;
 			NumericSearchQuery numeric;
+			FilterSearchQuery filter;
 			HeaderSearchQuery header;
 			BinarySearchQuery binary;
 			UnarySearchQuery unary;
@@ -8157,6 +8158,14 @@ namespace MailKit.Net.Imap {
 				break;
 			case SearchTerm.Draft:
 				builder.Append ("DRAFT");
+				break;
+			case SearchTerm.Filter:
+				if ((Engine.Capabilities & ImapCapabilities.Filters) == 0)
+					throw new NotSupportedException ("The FILTER search term is not supported by the IMAP server.");
+
+				filter = (FilterSearchQuery) query;
+				builder.Append ("FILTER %S");
+				args.Add (filter.Name);
 				break;
 			case SearchTerm.Flagged:
 				builder.Append ("FLAGGED");

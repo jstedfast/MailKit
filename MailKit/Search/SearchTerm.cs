@@ -93,6 +93,11 @@ namespace MailKit.Search {
 		Draft,
 
 		/// <summary>
+		/// A search term that makes use of a predefined filter.
+		/// </summary>
+		Filter,
+
+		/// <summary>
 		/// A search term that matches flagged messages.
 		/// </summary>
 		Flagged,
