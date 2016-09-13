@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -8532,6 +8533,129 @@ namespace MailKit.Net.Imap {
 			} while (true);
 
 			results.UniqueIds = uids ?? new UniqueIdSet ();
+		}
+
+		/// <summary>
+		/// Searches the folder for messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Sends a <c>UID SEARCH</c> command with the specified query passed directly to the IMAP server
+		/// with no interpretation by MailKit. This means that the query may contain any arguments that a
+		/// <c>UID SEARCH</c> command is allowed to have according to the IMAP specifications and any
+		/// extensions that are supported, including <c>RETURN</c> parameters.
+		/// </remarks>
+		/// <returns>An array of matching UIDs.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="query"/> is an empty string.
+		/// </exception>>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public SearchResults Search (string query, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			query = query.Trim ();
+
+			if (query.Length == 0)
+				throw new ArgumentException (nameof (query));
+
+			CheckState (true, false);
+
+			var command = "UID SEARCH " + query + "\r\n";
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+			ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+			ic.UserData = new SearchResults ();
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("SEARCH", ic);
+
+			return (SearchResults) ic.UserData;
+		}
+
+		/// <summary>
+		/// Asynchronously searches the folder for messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Sends a <c>UID SEARCH</c> command with the specified query passed directly to the IMAP server
+		/// with no interpretation by MailKit. This means that the query may contain any arguments that a
+		/// <c>UID SEARCH</c> command is allowed to have according to the IMAP specifications and any
+		/// extensions that are supported, including <c>RETURN</c> parameters.
+		/// </remarks>
+		/// <returns>An array of matching UIDs.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="query"/> is an empty string.
+		/// </exception>>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public Task<SearchResults> SearchAsync (string query, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Search (query, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
