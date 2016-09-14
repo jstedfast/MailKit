@@ -80,8 +80,8 @@ namespace MailKit.Net.Imap {
 			string message, reason = null;
 
 			if (string.IsNullOrEmpty (ic.ResponseText)) {
-				for (int i = 0; i < ic.RespCodes.Count; i++) {
-					if (ic.RespCodes[i].IsError) {
+				for (int i = ic.RespCodes.Count - 1; i >= 0; i--) {
+					if (ic.RespCodes[i].IsError && !string.IsNullOrEmpty (ic.RespCodes[i].Message)) {
 						reason = ic.RespCodes[i].Message;
 						break;
 					}

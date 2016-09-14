@@ -1384,11 +1384,54 @@ namespace MailKit.Net.Imap {
 
 				token = Stream.ReadToken (cancellationToken);
 				break;
+			case ImapResponseCodeType.Metadata:
+				var metadata = (MetadataResponseCode) code;
+
+				if (token.Type != ImapTokenType.Atom) {
+					Debug.WriteLine ("Expected atom argument to 'METADATA' RESP-CODE, but got: {0}", token);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "METADATA", token);
+				}
+
+				switch ((string) token.Value) {
+				case "LONGENTRIES":
+					metadata.SubType = MetadataResponseCodeSubType.LongEntries;
+
+					token = Stream.ReadToken (cancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
+						Debug.WriteLine ("Expected integer argument to 'METADATA LONGENTRIES' RESP-CODE, but got: {0}", token);
+						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "METADATA LONGENTRIES", token);
+					}
+
+					metadata.Value = n32;
+					break;
+				case "MAXSIZE":
+					metadata.SubType = MetadataResponseCodeSubType.MaxSize;
+
+					token = Stream.ReadToken (cancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
+						Debug.WriteLine ("Expected integer argument to 'METADATA MAXSIZE' RESP-CODE, but got: {0}", token);
+						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "METADATA MAXSIZE", token);
+					}
+
+					metadata.Value = n32;
+					break;
+				case "TOOMANY":
+					metadata.SubType = MetadataResponseCodeSubType.TooMany;
+					break;
+				case "NOPRIVATE":
+					metadata.SubType = MetadataResponseCodeSubType.NoPrivate;
+					break;
+				}
+
+				token = Stream.ReadToken (cancellationToken);
+				break;
 			case ImapResponseCodeType.UndefinedFilter:
 				var undefined = (UndefinedFilterResponseCode) code;
 
 				if (token.Type != ImapTokenType.Atom) {
-					Debug.WriteLine ("Expected string argument to 'UNDEFINED-FILTER' RESP-CODE, but got: {0}", token);
+					Debug.WriteLine ("Expected atom argument to 'UNDEFINED-FILTER' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UNDEFINED-FILTER", token);
 				}
 
