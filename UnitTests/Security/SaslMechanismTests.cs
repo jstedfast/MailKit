@@ -229,8 +229,6 @@ namespace UnitTests.Security {
 		[Test]
 		public void TestNtlmAuthNoDomain ()
 		{
-			const NtlmFlags initialFlags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateNtlm |
-				NtlmFlags.NegotiateNtlm2Key | NtlmFlags.RequestTarget;
 			var credentials = new NetworkCredential ("username", "password");
 			var uri = new Uri ("imap://imap.gmail.com");
 			var sasl = new SaslMechanismNtlm (uri, credentials);
@@ -242,7 +240,7 @@ namespace UnitTests.Security {
 
 			var type1 = new Type1Message (decoded, 0, decoded.Length);
 
-			Assert.AreEqual (initialFlags, type1.Flags, "Expected initial NTLM client challenge flags do not match.");
+			Assert.AreEqual (Type1Message.DefaultFlags, type1.Flags, "Expected initial NTLM client challenge flags do not match.");
 			Assert.AreEqual (string.Empty, type1.Domain, "Expected initial NTLM client challenge domain does not match.");
 			Assert.AreEqual (string.Empty, type1.Host, "Expected initial NTLM client challenge host does not match.");
 			Assert.IsFalse (sasl.IsAuthenticated, "NTLM should not be authenticated.");
@@ -251,8 +249,7 @@ namespace UnitTests.Security {
 		[Test]
 		public void TestNtlmAuthWithDomain ()
 		{
-			const NtlmFlags initialFlags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateNtlm |
-				NtlmFlags.NegotiateNtlm2Key | NtlmFlags.RequestTarget | NtlmFlags.NegotiateDomainSupplied;
+			var initialFlags = Type1Message.DefaultFlags | NtlmFlags.NegotiateDomainSupplied;
 			var credentials = new NetworkCredential ("domain\\username", "password");
 			var uri = new Uri ("imap://imap.gmail.com");
 			var sasl = new SaslMechanismNtlm (uri, credentials);

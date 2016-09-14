@@ -44,12 +44,14 @@ using Encoding = Portable.Text.Encoding;
 namespace MailKit.Security.Ntlm {
 	class Type1Message : MessageBase
 	{
+		internal static readonly NtlmFlags DefaultFlags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateUnicode | NtlmFlags.RequestTarget;
+
 		string domain;
 		string host;
 
 		public Type1Message (string hostName, string domainName) : base (1)
 		{
-			Flags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateUnicode | NtlmFlags.RequestTarget;
+			Flags = DefaultFlags;
 			Domain = domainName;
 			Host = hostName;
 		}

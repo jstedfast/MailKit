@@ -35,7 +35,7 @@ namespace MailKit.Security.Ntlm {
 	 */
 	static class NtlmSettings
 	{
-		static NtlmAuthLevel defaultAuthLevel = NtlmAuthLevel.LM_and_NTLM_and_try_NTLMv2_Session;
+		static NtlmAuthLevel defaultAuthLevel = NtlmAuthLevel.NTLMv2_only;
 
 		public static NtlmAuthLevel DefaultAuthLevel {
 			get { return defaultAuthLevel; }

@@ -141,10 +141,7 @@ namespace MailKit.Security {
 
 		static MessageBase GetInitialResponse (string domain)
 		{
-			var type1 = new Type1Message (string.Empty, domain);
-			type1.Flags |= NtlmFlags.NegotiateNtlm2Key;
-
-			return type1;
+			return new Type1Message (string.Empty, domain);
 		}
 
 		static MessageBase GetChallengeResponse (string userName, string password, string domain, byte[] token, int startIndex, int length)
