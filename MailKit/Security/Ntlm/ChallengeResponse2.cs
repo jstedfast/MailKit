@@ -49,11 +49,11 @@ using System.Security.Cryptography;
 namespace MailKit.Security.Ntlm {
 	static class ChallengeResponse2
 	{
-		static byte[] magic = { 0x4B, 0x47, 0x53, 0x21, 0x40, 0x23, 0x24, 0x25 };
+		static readonly byte[] Magic = { 0x4B, 0x47, 0x53, 0x21, 0x40, 0x23, 0x24, 0x25 };
 
 		// This is the pre-encrypted magic value with a null DES key (0xAAD3B435B51404EE)
 		// Ref: http://packetstormsecurity.nl/Crackers/NT/l0phtcrack/l0phtcrack2.5-readme.html
-		static byte[] nullEncMagic = { 0xAA, 0xD3, 0xB4, 0x35, 0xB5, 0x14, 0x04, 0xEE };
+		static readonly byte[] NullEncMagic = { 0xAA, 0xD3, 0xB4, 0x35, 0xB5, 0x14, 0x04, 0xEE };
 
 		static byte[] ComputeLM (string password, byte[] challenge)
 		{
@@ -66,20 +66,20 @@ namespace MailKit.Security.Ntlm {
 				// Note: In .NET DES cannot accept a weak key
 				// this can happen for a null password
 				if (string.IsNullOrEmpty (password)) {
-					Buffer.BlockCopy (nullEncMagic, 0, buffer, 0, 8);
+					Buffer.BlockCopy (NullEncMagic, 0, buffer, 0, 8);
 				} else {
 					des.Key = PasswordToKey (password, 0);
 					using (var ct = des.CreateEncryptor ())
-						ct.TransformBlock (magic, 0, 8, buffer, 0);
+						ct.TransformBlock (Magic, 0, 8, buffer, 0);
 				}
 
 				// and if a password has less than 8 characters
 				if (password == null || password.Length < 8) {
-					Buffer.BlockCopy (nullEncMagic, 0, buffer, 8, 8);
+					Buffer.BlockCopy (NullEncMagic, 0, buffer, 8, 8);
 				} else {
 					des.Key = PasswordToKey (password, 7);
 					using (var ct = des.CreateEncryptor ())
-						ct.TransformBlock (magic, 0, 8, buffer, 8);
+						ct.TransformBlock (Magic, 0, 8, buffer, 8);
 				}
 			}
 
