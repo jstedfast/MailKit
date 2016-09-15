@@ -1933,33 +1933,6 @@ namespace MailKit.Net.Imap {
 			return (FolderQuota) ic.UserData;
 		}
 
-		static void UntaggedMetadata (ImapEngine engine, ImapCommand ic, int index)
-		{
-			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
-			var encodedName = ReadStringToken (engine, format, ic.CancellationToken);
-			var metadata = (MetadataCollection) ic.UserData;
-			ImapFolder folder;
-
-			engine.GetCachedFolder (encodedName, out folder);
-
-			var token = engine.ReadToken (ic.CancellationToken);
-
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
-
-			while (token.Type != ImapTokenType.CloseParen) {
-				var tag = ReadStringToken (engine, format, ic.CancellationToken);
-				var value = ReadStringToken (engine, format, ic.CancellationToken);
-
-				metadata.Add (new Metadata (MetadataTag.Create (tag), value));
-
-				token = engine.PeekToken (ic.CancellationToken);
-			}
-
-			// read the closing paren
-			engine.ReadToken (ic.CancellationToken);
-		}
-
 		/// <summary>
 		/// Gets the specified metadata.
 		/// </summary>
@@ -2001,7 +1974,7 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETMETADATA %F (%S)\r\n", this, tag.Id);
-			ic.RegisterUntaggedHandler ("METADATA", UntaggedMetadata);
+			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadata);
 			var metadata = new MetadataCollection ();
 			ic.UserData = metadata;
 
@@ -2032,6 +2005,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="tags"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="tags"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2067,23 +2043,23 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
-			var command = new StringBuilder ("GETMETADATA %F (");
+			var command = new StringBuilder ("GETMETADATA %F");
 			var args = new List<object> ();
 
 			args.Add (this);
 
 			foreach (var tag in tags) {
-				if (args.Count > 1)
-					command.Append (' ');
-
-				command.Append ("%S");
+				command.Append (" %S");
 				args.Add (tag.Id);
 			}
 
-			command.Append (")\r\n");
+			command.Append ("\r\n");
+
+			if (args.Count == 1)
+				throw new ArgumentException ("No tags specified.", nameof (tags));
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args.ToArray ());
-			ic.RegisterUntaggedHandler ("METADATA", UntaggedMetadata);
+			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadata);
 			ic.UserData = new MetadataCollection ();
 
 			Engine.QueueCommand (ic);

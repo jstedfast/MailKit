@@ -60,6 +60,8 @@ namespace UnitTests.Net.Imap {
 			ImapCapabilities.GMailExt1 | ImapCapabilities.LiteralMinus | ImapCapabilities.AppendLimit;
 		static readonly ImapCapabilities AclInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Acl;
 		static readonly ImapCapabilities AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Acl;
+		static readonly ImapCapabilities MetadataInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Metadata;
+		static readonly ImapCapabilities MetadataAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Metadata;
 
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
 		{
@@ -617,6 +619,93 @@ namespace UnitTests.Net.Imap {
 
 				// DELETEACL INBOX smith
 				await client.Inbox.RemoveAccessAsync ("smith");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
+		public async void TestMetadata ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "metadata.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "metadata.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 GETMETADATA \"\" /private/comment\r\n", "metadata.getmetadata.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 GETMETADATA \"\" /private/comment /shared/comment\r\n", "metadata.getmetadata-multi.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 SETMETADATA \"\" (/private/comment \"this is a comment\")\r\n", "metadata.setmetadata-noprivate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 SETMETADATA \"\" (/private/comment \"this comment is too long!\")\r\n", "metadata.setmetadata-maxsize.txt"));
+			commands.Add (new ImapReplayCommand ("A00000009 SETMETADATA \"\" (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.setmetadata-toomany.txt"));
+
+			using (var client = new ImapClient ()) {
+				MetadataCollection metadata;
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (MetadataInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (MetadataAuthenticatedCapabilities, client.Capabilities);
+
+				var inbox = client.Inbox;
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.Inbox | FolderAttributes.HasNoChildren, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
+
+				foreach (var special in Enum.GetValues (typeof (SpecialFolder)).OfType<SpecialFolder> ()) {
+					var folder = client.GetFolder (special);
+
+					if (special != SpecialFolder.Archive) {
+						var expected = GetSpecialFolderAttribute (special) | FolderAttributes.HasNoChildren;
+
+						Assert.IsNotNull (folder, "Expected non-null {0} folder.", special);
+						Assert.AreEqual (expected, folder.Attributes, "Expected {0} attributes to be \\HasNoChildren.", special);
+					} else {
+						Assert.IsNull (folder, "Expected null {0} folder.", special);
+					}
+				}
+
+				// GETMETADATA
+				Assert.AreEqual ("this is a comment", await client.GetMetadataAsync (MetadataTag.PrivateComment), "The shared comment does not match.");
+				metadata = await client.GetMetadataAsync (new [] { MetadataTag.PrivateComment, MetadataTag.SharedComment });
+				Assert.AreEqual (2, metadata.Count, "Expected 2 metadata values.");
+				Assert.AreEqual (MetadataTag.PrivateComment.Id, metadata[0].Tag.Id, "First metadata tag did not match.");
+				Assert.AreEqual (MetadataTag.SharedComment.Id, metadata[1].Tag.Id, "Second metadata tag did not match.");
+				Assert.AreEqual ("this is a private comment", metadata[0].Value, "First metadata value did not match.");
+				Assert.AreEqual ("this is a shared comment", metadata[1].Value, "Second metadata value did not match.");
+
+				// SETMETADATA
+				Assert.Throws<ImapCommandException> (async () => await client.SetMetadataAsync (new MetadataCollection (new [] {
+					new Metadata (MetadataTag.PrivateComment, "this is a comment")
+				})), "Expected NOPRIVATE RESP-CODE.");
+				Assert.Throws<ImapCommandException> (async () => await client.SetMetadataAsync (new MetadataCollection (new [] {
+					new Metadata (MetadataTag.PrivateComment, "this comment is too long!")
+				})), "Expected MAXSIZE RESP-CODE.");
+				Assert.Throws<ImapCommandException> (async () => await client.SetMetadataAsync (new MetadataCollection (new [] {
+					new Metadata (MetadataTag.PrivateComment, "this is a private comment"),
+					new Metadata (MetadataTag.SharedComment, "this is a shared comment"),
+				})), "Expected TOOMANY RESP-CODE.");
 
 				await client.DisconnectAsync (false);
 			}

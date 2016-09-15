@@ -2180,6 +2180,221 @@ namespace MailKit.Net.Imap {
 			return engine.GetFolder (path, cancellationToken);
 		}
 
+		/// <summary>
+		/// Gets the specified metadata.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified metadata.
+		/// </remarks>
+		/// <returns>The requested metadata value.</returns>
+		/// <param name="tag">The metadata tag.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the METADATA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			if ((engine.Capabilities & ImapCapabilities.Metadata) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
+
+			var ic = new ImapCommand (engine, cancellationToken, null, "GETMETADATA \"\" %S\r\n", tag.Id);
+			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadata);
+			var metadata = new MetadataCollection ();
+			ic.UserData = metadata;
+
+			engine.QueueCommand (ic);
+			engine.Wait (ic);
+
+			ProcessResponseCodes (ic);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("GETMETADATA", ic);
+
+			for (int i = 0; i < metadata.Count; i++) {
+				if (metadata [i].Tag.Id == tag.Id)
+					return metadata [i].Value;
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the specified metadata.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified metadata.
+		/// </remarks>
+		/// <returns>The requested metadata.</returns>
+		/// <param name="tags">The metadata tags.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="tags"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="tags"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the METADATA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override MetadataCollection GetMetadata (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (tags == null)
+				throw new ArgumentNullException (nameof (tags));
+
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			if ((engine.Capabilities & ImapCapabilities.Metadata) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
+
+			var command = new StringBuilder ("GETMETADATA \"\"");
+			var args = new List<object> ();
+
+			foreach (var tag in tags) {
+				command.Append (" %S");
+				args.Add (tag.Id);
+			}
+
+			command.Append ("\r\n");
+
+			if (args.Count == 0)
+				throw new ArgumentException ("No tags specified.", nameof (tags));
+
+			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
+			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadata);
+			ic.UserData = new MetadataCollection ();
+
+			engine.QueueCommand (ic);
+			engine.Wait (ic);
+
+			ProcessResponseCodes (ic);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("GETMETADATA", ic);
+
+			return (MetadataCollection)ic.UserData;
+		}
+
+		/// <summary>
+		/// Sets the specified metadata.
+		/// </summary>
+		/// <remarks>
+		/// Sets the specified metadata.
+		/// </remarks>
+		/// <returns>The metadata.</returns>
+		/// <param name="metadata">The metadata.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="metadata"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the METADATA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (metadata == null)
+				throw new ArgumentNullException (nameof (metadata));
+
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			if ((engine.Capabilities & ImapCapabilities.Metadata) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
+
+			var command = new StringBuilder ("SETMETADATA \"\" (");
+			var args = new object [metadata.Count * 2];
+			int argc = 0;
+
+			for (int i = 0; i < metadata.Count; i++) {
+				if (i > 0)
+					command.Append (' ');
+
+				command.Append ("%S %S");
+				args[argc++] = metadata[i].Tag.Id;
+				args[argc++] = metadata[i].Value;
+			}
+			command.Append (")\r\n");
+
+			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args);
+
+			engine.QueueCommand (ic);
+			engine.Wait (ic);
+
+			ProcessResponseCodes (ic);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("SETMETADATA", ic);
+		}
+
 		#endregion
 
 		void OnEngineAlert (object sender, AlertEventArgs e)

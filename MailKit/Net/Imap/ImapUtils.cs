@@ -462,6 +462,39 @@ namespace MailKit.Net.Imap {
 			list.Add (folder);
 		}
 
+		/// <summary>
+		/// Parses an untagged METADATA response.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="index">The index.</param>
+		public static void ParseMetadata (ImapEngine engine, ImapCommand ic, int index)
+		{
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
+			var encodedName = ReadStringToken (engine, format, ic.CancellationToken);
+			var metadata = (MetadataCollection)ic.UserData;
+			ImapFolder folder;
+
+			engine.GetCachedFolder (encodedName, out folder);
+
+			var token = engine.ReadToken (ic.CancellationToken);
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (format, token);
+
+			while (token.Type != ImapTokenType.CloseParen) {
+				var tag = ReadStringToken (engine, format, ic.CancellationToken);
+				var value = ReadStringToken (engine, format, ic.CancellationToken);
+
+				metadata.Add (new Metadata (MetadataTag.Create (tag), value));
+
+				token = engine.PeekToken (ic.CancellationToken);
+			}
+
+			// read the closing paren
+			engine.ReadToken (ic.CancellationToken);
+		}
+
 		static string ReadStringToken (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
