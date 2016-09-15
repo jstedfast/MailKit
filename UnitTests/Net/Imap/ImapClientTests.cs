@@ -640,6 +640,12 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000008 SETMETADATA \"\" (/private/comment \"this is a comment\")\r\n", "metadata.setmetadata-noprivate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000009 SETMETADATA \"\" (/private/comment \"this comment is too long!\")\r\n", "metadata.setmetadata-maxsize.txt"));
 			commands.Add (new ImapReplayCommand ("A00000010 SETMETADATA \"\" (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.setmetadata-toomany.txt"));
+			commands.Add (new ImapReplayCommand ("A00000011 GETMETADATA INBOX /private/comment\r\n", "metadata.inbox-getmetadata.txt"));
+			commands.Add (new ImapReplayCommand ("A00000012 GETMETADATA INBOX (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.inbox-getmetadata-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000013 GETMETADATA INBOX /private/comment /shared/comment\r\n", "metadata.inbox-getmetadata-multi.txt"));
+			commands.Add (new ImapReplayCommand ("A00000014 SETMETADATA INBOX (/private/comment \"this is a comment\")\r\n", "metadata.inbox-setmetadata-noprivate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000015 SETMETADATA INBOX (/private/comment \"this comment is too long!\")\r\n", "metadata.inbox-setmetadata-maxsize.txt"));
+			commands.Add (new ImapReplayCommand ("A00000016 SETMETADATA INBOX (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.inbox-setmetadata-toomany.txt"));
 
 			using (var client = new ImapClient ()) {
 				MetadataCollection metadata;
@@ -713,6 +719,35 @@ namespace UnitTests.Net.Imap {
 					new Metadata (MetadataTag.PrivateComment, "this comment is too long!")
 				})), "Expected MAXSIZE RESP-CODE.");
 				Assert.Throws<ImapCommandException> (async () => await client.SetMetadataAsync (new MetadataCollection (new [] {
+					new Metadata (MetadataTag.PrivateComment, "this is a private comment"),
+					new Metadata (MetadataTag.SharedComment, "this is a shared comment"),
+				})), "Expected TOOMANY RESP-CODE.");
+
+				// GETMETADATA folder
+				Assert.AreEqual ("this is a comment", await inbox.GetMetadataAsync (MetadataTag.PrivateComment), "The shared comment does not match.");
+
+				options = new MetadataOptions { Depth = int.MaxValue, MaxSize = 1024 };
+				metadata = await inbox.GetMetadataAsync (options, new [] { new MetadataTag ("/private") });
+				Assert.AreEqual (1, metadata.Count, "Expected 1 metadata value.");
+				Assert.AreEqual (MetadataTag.PrivateComment.Id, metadata[0].Tag.Id, "Metadata tag did not match.");
+				Assert.AreEqual ("this is a private comment", metadata[0].Value, "Metadata value did not match.");
+				Assert.AreEqual (2199, options.LongEntries, "LongEntries does not match.");
+
+				metadata = await inbox.GetMetadataAsync (new [] { MetadataTag.PrivateComment, MetadataTag.SharedComment });
+				Assert.AreEqual (2, metadata.Count, "Expected 2 metadata values.");
+				Assert.AreEqual (MetadataTag.PrivateComment.Id, metadata[0].Tag.Id, "First metadata tag did not match.");
+				Assert.AreEqual (MetadataTag.SharedComment.Id, metadata[1].Tag.Id, "Second metadata tag did not match.");
+				Assert.AreEqual ("this is a private comment", metadata[0].Value, "First metadata value did not match.");
+				Assert.AreEqual ("this is a shared comment", metadata[1].Value, "Second metadata value did not match.");
+
+				// SETMETADATA folder
+				Assert.Throws<ImapCommandException> (async () => await inbox.SetMetadataAsync (new MetadataCollection (new [] {
+					new Metadata (MetadataTag.PrivateComment, "this is a comment")
+				})), "Expected NOPRIVATE RESP-CODE.");
+				Assert.Throws<ImapCommandException> (async () => await inbox.SetMetadataAsync (new MetadataCollection (new [] {
+					new Metadata (MetadataTag.PrivateComment, "this comment is too long!")
+				})), "Expected MAXSIZE RESP-CODE.");
+				Assert.Throws<ImapCommandException> (async () => await inbox.SetMetadataAsync (new MetadataCollection (new [] {
 					new Metadata (MetadataTag.PrivateComment, "this is a private comment"),
 					new Metadata (MetadataTag.SharedComment, "this is a shared comment"),
 				})), "Expected TOOMANY RESP-CODE.");

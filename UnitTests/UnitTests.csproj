@@ -229,6 +229,12 @@
     <EmbeddedResource Include="Net\Imap\Resources\metadata\getmetadata.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\getmetadata-multi.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\getmetadata-options.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\metadata\inbox-getmetadata.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\metadata\inbox-getmetadata-multi.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\metadata\inbox-getmetadata-options.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\metadata\inbox-setmetadata-maxsize.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\metadata\inbox-setmetadata-noprivate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\metadata\inbox-setmetadata-toomany.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-maxsize.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-noprivate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-toomany.txt" />

@@ -1,0 +1,2 @@
+* METADATA "" (/private/comment "this is a private comment" /shared/comment "this is a shared comment")
+A00000013 OK GETMETADATA complete
