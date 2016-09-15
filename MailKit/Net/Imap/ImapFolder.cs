@@ -2001,10 +2001,13 @@ namespace MailKit.Net.Imap {
 		/// Gets the specified metadata.
 		/// </remarks>
 		/// <returns>The requested metadata.</returns>
+		/// <param name="options">The metadata options.</param>
 		/// <param name="tags">The metadata tags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="tags"/> is <c>null</c>.
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="tags"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="tags"/> is empty.
@@ -2033,8 +2036,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MetadataCollection GetMetadata (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (options == null)
+				throw new ArgumentNullException (nameof (options));
+
 			if (tags == null)
 				throw new ArgumentNullException (nameof (tags));
 
@@ -2045,12 +2051,30 @@ namespace MailKit.Net.Imap {
 
 			var command = new StringBuilder ("GETMETADATA %F");
 			var args = new List<object> ();
+			bool hasOptions = false;
+
+			if (options.MaxSize.HasValue || options.Depth != 0) {
+				command.Append ('(');
+				if (options.MaxSize.HasValue)
+					command.AppendFormat ("MAXSIZE {0} ", options.MaxSize.Value);
+				if (options.Depth > 0)
+					command.AppendFormat ("DEPTH {0} ", options.Depth == int.MaxValue ? "inifity" : "1");
+				command[command.Length] = ')';
+				command.Append (' ');
+				hasOptions = true;
+			}
 
 			args.Add (this);
 
+			int startIndex = command.Length;
 			foreach (var tag in tags) {
 				command.Append (" %S");
 				args.Add (tag.Id);
+			}
+
+			if (hasOptions) {
+				command[startIndex] = '(';
+				command.Append (')');
 			}
 
 			command.Append ("\r\n");
@@ -2061,6 +2085,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args.ToArray ());
 			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadata);
 			ic.UserData = new MetadataCollection ();
+			options.LongEntries = 0;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -2069,6 +2094,13 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
+
+			if (ic.RespCodes.Count > 0 && ic.RespCodes[ic.RespCodes.Count - 1].Type == ImapResponseCodeType.Metadata) {
+				var metadata = (MetadataResponseCode) ic.RespCodes[ic.RespCodes.Count - 1];
+
+				if (metadata.SubType == MetadataResponseCodeSubType.LongEntries)
+					options.LongEntries = metadata.Value;
+			}
 
 			return (MetadataCollection) ic.UserData;
 		}

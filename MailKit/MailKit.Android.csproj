@@ -191,6 +191,7 @@
     <Compile Include="MessageThreader.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="MetadataCollection.cs" />
+    <Compile Include="MetadataOptions.cs" />
     <Compile Include="MetadataTag.cs" />
     <Compile Include="NullProtocolLogger.cs" />
     <Compile Include="ProgressStream.cs" />
