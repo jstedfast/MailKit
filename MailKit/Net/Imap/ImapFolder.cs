@@ -1973,7 +1973,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, "GETMETADATA %F (%S)\r\n", this, tag.Id);
+			var ic = new ImapCommand (Engine, cancellationToken, null, "GETMETADATA %F %S\r\n", this, tag.Id);
 			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadata);
 			var metadata = new MetadataCollection ();
 			ic.UserData = metadata;
@@ -2054,12 +2054,12 @@ namespace MailKit.Net.Imap {
 			bool hasOptions = false;
 
 			if (options.MaxSize.HasValue || options.Depth != 0) {
-				command.Append ('(');
+				command.Append (" (");
 				if (options.MaxSize.HasValue)
 					command.AppendFormat ("MAXSIZE {0} ", options.MaxSize.Value);
 				if (options.Depth > 0)
-					command.AppendFormat ("DEPTH {0} ", options.Depth == int.MaxValue ? "inifity" : "1");
-				command[command.Length] = ')';
+					command.AppendFormat ("DEPTH {0} ", options.Depth == int.MaxValue ? "infinity" : "1");
+				command[command.Length - 1] = ')';
 				command.Append (' ');
 				hasOptions = true;
 			}

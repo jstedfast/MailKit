@@ -635,13 +635,15 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 GETMETADATA \"\" /private/comment\r\n", "metadata.getmetadata.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 GETMETADATA \"\" /private/comment /shared/comment\r\n", "metadata.getmetadata-multi.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 SETMETADATA \"\" (/private/comment \"this is a comment\")\r\n", "metadata.setmetadata-noprivate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SETMETADATA \"\" (/private/comment \"this comment is too long!\")\r\n", "metadata.setmetadata-maxsize.txt"));
-			commands.Add (new ImapReplayCommand ("A00000009 SETMETADATA \"\" (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.setmetadata-toomany.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 GETMETADATA \"\" (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.getmetadata-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 GETMETADATA \"\" /private/comment /shared/comment\r\n", "metadata.getmetadata-multi.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 SETMETADATA \"\" (/private/comment \"this is a comment\")\r\n", "metadata.setmetadata-noprivate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000009 SETMETADATA \"\" (/private/comment \"this comment is too long!\")\r\n", "metadata.setmetadata-maxsize.txt"));
+			commands.Add (new ImapReplayCommand ("A00000010 SETMETADATA \"\" (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.setmetadata-toomany.txt"));
 
 			using (var client = new ImapClient ()) {
 				MetadataCollection metadata;
+				MetadataOptions options;
 
 				try {
 					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
@@ -688,6 +690,14 @@ namespace UnitTests.Net.Imap {
 
 				// GETMETADATA
 				Assert.AreEqual ("this is a comment", await client.GetMetadataAsync (MetadataTag.PrivateComment), "The shared comment does not match.");
+
+				options = new MetadataOptions { Depth = int.MaxValue, MaxSize = 1024 };
+				metadata = await client.GetMetadataAsync (options, new [] { new MetadataTag ("/private") });
+				Assert.AreEqual (1, metadata.Count, "Expected 1 metadata value.");
+				Assert.AreEqual (MetadataTag.PrivateComment.Id, metadata[0].Tag.Id, "Metadata tag did not match.");
+				Assert.AreEqual ("this is a private comment", metadata[0].Value, "Metadata value did not match.");
+				Assert.AreEqual (2199, options.LongEntries, "LongEntries does not match.");
+
 				metadata = await client.GetMetadataAsync (new [] { MetadataTag.PrivateComment, MetadataTag.SharedComment });
 				Assert.AreEqual (2, metadata.Count, "Expected 2 metadata values.");
 				Assert.AreEqual (MetadataTag.PrivateComment.Id, metadata[0].Tag.Id, "First metadata tag did not match.");

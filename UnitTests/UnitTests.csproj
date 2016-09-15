@@ -228,6 +228,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\metadata\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\getmetadata.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\getmetadata-multi.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\metadata\getmetadata-options.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-maxsize.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-noprivate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-toomany.txt" />

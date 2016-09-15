@@ -1,0 +1,2 @@
+* METADATA "" (/private/comment "this is a private comment")
+A00000006 OK [METADATA LONGENTRIES 2199] GETMETADATA complete
