@@ -86,7 +86,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * [SORT](https://tools.ietf.org/html/rfc5256)
     * [THREAD](https://tools.ietf.org/html/rfc5256)
     * [LIST-EXTENDED](https://tools.ietf.org/html/rfc5258)
-    * [ESORT](https://tools.ietf.org/html/rfc5267) (partial)
+    * [ESORT](https://tools.ietf.org/html/rfc5267)
     * [METADATA](https://tools.ietf.org/html/rfc5464)
     * [FILTERS](https://tools.ietf.org/html/rfc5466)
     * [LIST-STATUS](https://tools.ietf.org/html/rfc5819)
