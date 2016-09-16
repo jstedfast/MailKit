@@ -29,15 +29,34 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports all of the SASL mechanisms listed above.
   * Supports SSL-wrapped connections via the "smtps" protocol.
   * Supports client SSL/TLS certificates.
-  * Supports the following extensions: STARTTLS, SIZE, DSN, 8BITMIME, PIPELINING, BINARYMIME, SMTPUTF8
+  * Supports the following extensions:
+    * [SIZE](https://tools.ietf.org/html/rfc1870)
+    * [DSN](https://tools.ietf.org/html/rfc1891)
+    * [AUTH](https://tools.ietf.org/html/rfc2554)
+    * [8BITMIME](https://tools.ietf.org/html/rfc2821)
+    * [PIPELINING](https://tools.ietf.org/html/rfc2920)
+    * [BINARYMIME](https://tools.ietf.org/html/rfc3030)
+    * [CHUNKING](https://tools.ietf.org/html/rfc3030)
+    * [STARTTLS](https://tools.ietf.org/html/rfc3207)
+    * [SMTPUTF8](https://tools.ietf.org/html/rfc6531)
   * All APIs are cancellable.
   * Async APIs are available.
 * POP3 Client
   * Supports all of the SASL mechanisms listed above.
-  * Also supports authentication via APOP and USER/PASS.
+  * Also supports authentication via [APOP](https://tools.ietf.org/html/rfc1939#page-15) and `USER`/`PASS`.
   * Supports SSL-wrapped connections via the "pops" protocol.
   * Supports client SSL/TLS certificates.
-  * Supports the following extensions: STLS, UIDL, PIPELINING, UTF8, LANG
+  * Supports the following extensions:
+    * [TOP](https://tools.ietf.org/html/rfc1939#page-11)
+    * [UIDL](https://tools.ietf.org/html/rfc1939#page-12)
+    * [EXPIRE](https://tools.ietf.org/html/rfc2449)
+    * [LOGIN-DELAY](https://tools.ietf.org/html/rfc2449)
+    * [PIPELINING](https://tools.ietf.org/html/rfc2449)
+    * [SASL](https://tools.ietf.org/html/rfc2449)
+    * [STLS](https://tools.ietf.org/html/rfc2595)
+    * [UTF8](https://tools.ietf.org/html/rfc6856)
+    * [UTF8=USER](https://tools.ietf.org/html/rfc6856)
+    * [LANG](https://tools.ietf.org/html/rfc6856)
   * All APIs are cancellable.
   * Async APIs are available.
 * IMAP4 Client
