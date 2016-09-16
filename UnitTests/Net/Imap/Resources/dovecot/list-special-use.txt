@@ -1,0 +1,5 @@
+* LIST (\Drafts) "." Drafts
+* LIST (\Junk) "." Junk
+* LIST (\Sent) "." "Sent Messages"
+* LIST (\Trash) "." Trash
+A00000003 OK List completed (0.000 + 0.000 secs).

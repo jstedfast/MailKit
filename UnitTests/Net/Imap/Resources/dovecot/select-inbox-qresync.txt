@@ -1,0 +1,12 @@
+* FLAGS (\Answered \Flagged \Deleted \Seen \Draft CustomFlag)
+* OK [PERMANENTFLAGS (\Answered \Flagged \Deleted \Seen \Draft CustomFlag \*)] Flags permitted.
+* 4 EXISTS
+* 0 RECENT
+* OK [UIDVALIDITY 1436832057] UIDs valid
+* OK [UIDNEXT 5] Predicted next UID
+* OK [HIGHESTMODSEQ 15] Highest
+* 1 FETCH (UID 1 FLAGS (\Seen CustomFlag) MODSEQ (15))
+* 2 FETCH (UID 2 FLAGS (\Seen) MODSEQ (7))
+* 3 FETCH (UID 3 FLAGS (\Seen) MODSEQ (8))
+* 4 FETCH (UID 4 FLAGS (\Seen) MODSEQ (9))
+A00000006 OK [READ-WRITE] Select completed (0.000 + 0.000 secs).

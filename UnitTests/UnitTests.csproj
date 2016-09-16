@@ -130,6 +130,14 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\message.7.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.8.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.9.msg" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-personal.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-special-use.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\namespace.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-inbox-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\add-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.2.txt" />
@@ -298,6 +306,7 @@
     <Folder Include="Security\" />
     <Folder Include="Net\Imap\Resources\acl\" />
     <Folder Include="Net\Imap\Resources\metadata\" />
+    <Folder Include="Net\Imap\Resources\dovecot\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

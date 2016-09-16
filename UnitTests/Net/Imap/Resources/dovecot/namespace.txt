@@ -1,0 +1,2 @@
+* NAMESPACE (("" ".")) NIL NIL
+A00000001 OK Namespace completed.

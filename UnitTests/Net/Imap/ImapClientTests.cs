@@ -48,6 +48,17 @@ namespace UnitTests.Net.Imap {
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		static readonly ImapCapabilities GreetingCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
 			ImapCapabilities.Namespace | ImapCapabilities.Unselect;
+		static readonly ImapCapabilities DovecotInitialCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
+			ImapCapabilities.LiteralPlus | ImapCapabilities.SaslIR | ImapCapabilities.LoginReferrals | ImapCapabilities.Id |
+			ImapCapabilities.Enable | ImapCapabilities.Idle;
+		static readonly ImapCapabilities DovecotAuthenticatedCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
+			ImapCapabilities.LiteralPlus | ImapCapabilities.SaslIR | ImapCapabilities.LoginReferrals | ImapCapabilities.Id |
+			ImapCapabilities.Enable | ImapCapabilities.Idle | ImapCapabilities.Sort | ImapCapabilities.SortDisplay |
+			ImapCapabilities.Thread | ImapCapabilities.MultiAppend | ImapCapabilities.Catenate | ImapCapabilities.Unselect |
+			ImapCapabilities.Children | ImapCapabilities.Namespace | ImapCapabilities.UidPlus | ImapCapabilities.ListExtended |
+			ImapCapabilities.I18NLevel | ImapCapabilities.CondStore | ImapCapabilities.QuickResync | ImapCapabilities.ESearch |
+			ImapCapabilities.ESort | ImapCapabilities.SearchResults | ImapCapabilities.Within | ImapCapabilities.Context |
+			ImapCapabilities.ListStatus | ImapCapabilities.Binary | ImapCapabilities.Move | ImapCapabilities.SpecialUse;
 		static readonly ImapCapabilities GMailInitialCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
 			ImapCapabilities.Quota | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Id |
 			ImapCapabilities.Children | ImapCapabilities.Unselect | ImapCapabilities.SaslIR | ImapCapabilities.XList |
@@ -311,6 +322,117 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 41234, 0, 0, 1143, 2, 0);
 
 				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async void TestImapClientDovecot ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 ENABLE QRESYNC CONDSTORE\r\n", "dovecot.enable-qresync.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ))\r\n", "dovecot.list-personal.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 SELECT INBOX (QRESYNC (1436832057 5 1:5))\r\n", "dovecot.select-inbox-qresync.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (DovecotInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("CRAM-MD5"), "Expected SASL CRAM-MD5 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (DovecotAuthenticatedCapabilities, client.Capabilities);
+
+				Assert.IsTrue (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
+				Assert.IsTrue (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
+
+				// TODO: verify CONTEXT=SEARCH and CONTEXT=SORT
+
+				try {
+					await client.EnableQuickResyncAsync ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception when enabling QRESYNC: {0}", ex);
+				}
+
+				// take advantage of LIST-STATUS to get top-level personal folders...
+				var statusItems = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread;
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+
+				var folders = (await personal.GetSubfoldersAsync (statusItems, false)).ToArray ();
+				Assert.AreEqual (6, folders.Length, "Expected 6 folders");
+
+				var expectedFolderNames = new [] { "Archives", "Drafts", "Junk", "Sent Messages", "Trash", "INBOX" };
+				var expectedUidValidities = new [] { 1436832059, 1436832060, 1436832061, 1436832062, 1436832063, 1436832057 };
+				var expectedHighestModSeq = new [] { 1, 1, 1, 1, 1, 15 };
+				var expectedMessages = new [] { 0, 0, 0, 0, 0, 4 };
+				var expectedUidNext = new [] { 1, 1, 1, 1, 1, 5 };
+				var expectedRecent = new [] { 0, 0, 0, 0, 0, 0 };
+				var expectedUnseen = new [] { 0, 0, 0, 0, 0, 0 };
+
+				for (int i = 0; i < folders.Length; i++) {
+					Assert.AreEqual (expectedFolderNames[i], folders[i].FullName, "FullName did not match");
+					Assert.AreEqual (expectedFolderNames[i], folders[i].Name, "Name did not match");
+					Assert.AreEqual (expectedUidValidities[i], folders[i].UidValidity, "UidValidity did not match");
+					Assert.AreEqual (expectedHighestModSeq[i], folders[i].HighestModSeq, "HighestModSeq did not match");
+					Assert.AreEqual (expectedMessages[i], folders[i].Count, "Count did not match");
+					Assert.AreEqual (expectedRecent[i], folders[i].Recent, "Recent did not match");
+					Assert.AreEqual (expectedUnseen[i], folders[i].Unread, "Unread did not match");
+				}
+
+				var inbox = client.Inbox;
+				int flagsChanged = 0;
+
+				inbox.MessageFlagsChanged += (sender, e) => {
+					Assert.IsTrue (e.UniqueId.HasValue, "Expected the UniqueId property to be set");
+					Assert.AreEqual ((uint) e.Index + 1, e.UniqueId.Value.Id, "UID did not match the Index");
+					Assert.AreEqual (e.Index, flagsChanged, "Expected e.Index and flagsChanged to be equal");
+					flagsChanged++;
+
+					switch (e.Index) {
+					case 0:
+						Assert.AreEqual (MessageFlags.Seen, e.Flags, "Message #1's FLAGS do not match");
+						Assert.AreEqual (1, e.UserFlags.Count, "Expected UserFlags to have only 1");
+						Assert.IsTrue (e.UserFlags.Contains ("CustomFlag"), "Expected UserFlags to contain 'CustomFlag'");
+						break;
+					case 1:
+					case 2:
+					case 3:
+						Assert.AreEqual (MessageFlags.Seen, e.Flags, "Message #{0}'s FLAGS do not match", e.Index + 1);
+						Assert.AreEqual (0, e.UserFlags.Count, "Expected UserFlags to be empty");
+						break;
+					default:
+						Assert.Fail ("Unknwon message index in MessageFlagsChanged event: {0}", e.Index + 1);
+						break;
+					}
+				};
+
+				var access = await inbox.OpenAsync (FolderAccess.ReadWrite, 1436832057, 5, new UniqueIdRange (0, 1, 5));
+				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected INBOX to be opened READ-WRITE");
+				Assert.AreEqual (4, flagsChanged, "Expected the MessageFlagsChanged event to be emitted 4 times");
+
+				await client.DisconnectAsync (false);
 			}
 		}
 
