@@ -1,2 +1,2 @@
 * METADATA "" (/private/comment "this is a comment")
-A00000011 OK GETMETADATA complete
+A00000012 OK GETMETADATA complete

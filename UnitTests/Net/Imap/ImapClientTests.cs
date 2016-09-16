@@ -643,12 +643,14 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000008 SETMETADATA \"\" (/private/comment \"this is a comment\")\r\n", "metadata.setmetadata-noprivate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000009 SETMETADATA \"\" (/private/comment \"this comment is too long!\")\r\n", "metadata.setmetadata-maxsize.txt"));
 			commands.Add (new ImapReplayCommand ("A00000010 SETMETADATA \"\" (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.setmetadata-toomany.txt"));
-			commands.Add (new ImapReplayCommand ("A00000011 GETMETADATA INBOX /private/comment\r\n", "metadata.inbox-getmetadata.txt"));
-			commands.Add (new ImapReplayCommand ("A00000012 GETMETADATA INBOX (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.inbox-getmetadata-options.txt"));
-			commands.Add (new ImapReplayCommand ("A00000013 GETMETADATA INBOX /private/comment /shared/comment\r\n", "metadata.inbox-getmetadata-multi.txt"));
-			commands.Add (new ImapReplayCommand ("A00000014 SETMETADATA INBOX (/private/comment \"this is a comment\")\r\n", "metadata.inbox-setmetadata-noprivate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000015 SETMETADATA INBOX (/private/comment \"this comment is too long!\")\r\n", "metadata.inbox-setmetadata-maxsize.txt"));
-			commands.Add (new ImapReplayCommand ("A00000016 SETMETADATA INBOX (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.inbox-setmetadata-toomany.txt"));
+			commands.Add (new ImapReplayCommand ("A00000011 SETMETADATA \"\" (/private/comment NIL)\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000012 GETMETADATA INBOX /private/comment\r\n", "metadata.inbox-getmetadata.txt"));
+			commands.Add (new ImapReplayCommand ("A00000013 GETMETADATA INBOX (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.inbox-getmetadata-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000014 GETMETADATA INBOX /private/comment /shared/comment\r\n", "metadata.inbox-getmetadata-multi.txt"));
+			commands.Add (new ImapReplayCommand ("A00000015 SETMETADATA INBOX (/private/comment \"this is a comment\")\r\n", "metadata.inbox-setmetadata-noprivate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000016 SETMETADATA INBOX (/private/comment \"this comment is too long!\")\r\n", "metadata.inbox-setmetadata-maxsize.txt"));
+			commands.Add (new ImapReplayCommand ("A00000017 SETMETADATA INBOX (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.inbox-setmetadata-toomany.txt"));
+			commands.Add (new ImapReplayCommand ("A00000018 SETMETADATA INBOX (/private/comment NIL)\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				MetadataCollection metadata;
@@ -725,6 +727,9 @@ namespace UnitTests.Net.Imap {
 					new Metadata (MetadataTag.PrivateComment, "this is a private comment"),
 					new Metadata (MetadataTag.SharedComment, "this is a shared comment"),
 				})), "Expected TOOMANY RESP-CODE.");
+				await client.SetMetadataAsync (new MetadataCollection (new [] {
+					new Metadata (MetadataTag.PrivateComment, null)
+				}));
 
 				// GETMETADATA folder
 				Assert.AreEqual ("this is a comment", await inbox.GetMetadataAsync (MetadataTag.PrivateComment), "The shared comment does not match.");
@@ -754,6 +759,9 @@ namespace UnitTests.Net.Imap {
 					new Metadata (MetadataTag.PrivateComment, "this is a private comment"),
 					new Metadata (MetadataTag.SharedComment, "this is a shared comment"),
 				})), "Expected TOOMANY RESP-CODE.");
+				await inbox.SetMetadataAsync (new MetadataCollection (new [] {
+					new Metadata (MetadataTag.PrivateComment, null)
+				}));
 
 				await client.DisconnectAsync (false);
 			}

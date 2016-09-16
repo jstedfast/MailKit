@@ -2009,9 +2009,6 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para><paramref name="tags"/> is <c>null</c>.</para>
 		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="tags"/> is empty.
-		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -2080,7 +2077,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			if (args.Count == 1)
-				throw new ArgumentException ("No tags specified.", nameof (tags));
+				return new MetadataCollection ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args.ToArray ());
 			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadata);
@@ -2151,23 +2148,30 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
-			var command = new StringBuilder ("SETMETADATA %F (");
-			var args = new object[metadata.Count * 2 + 1];
-			int argc = 0;
+			if (metadata.Count == 0)
+				return;
 
-			args[argc++] = this;
+			var command = new StringBuilder ("SETMETADATA %F (");
+			var args = new List<object> ();
+
+			args.Add (this);
 
 			for (int i = 0; i < metadata.Count; i++) {
 				if (i > 0)
 					command.Append (' ');
 
-				command.Append ("%S %S");
-				args[argc++] = metadata[i].Tag.Id;
-				args[argc++] = metadata[i].Value;
+				if (metadata[i].Value != null) {
+					command.Append ("%S %S");
+					args.Add (metadata[i].Tag.Id);
+					args.Add (metadata[i].Value);
+				} else {
+					command.Append ("%S NIL");
+					args.Add (metadata[i].Tag.Id);
+				}
 			}
 			command.Append (")\r\n");
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args);
+			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args.ToArray ());
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
