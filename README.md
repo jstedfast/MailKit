@@ -204,21 +204,21 @@ directory and select **Git Sync...** in the menu. Once you do that, you'll need 
 
 ## Building
 
-In the top-level MailKit source directory, there are three solution files: MailKit.sln, MailKit.Net40.sln and MailKit.Mobile.sln.
+In the top-level MailKit directory, there are a number of solution files; they are:
 
-* MailKit.sln includes the projects for .NET 4.0, .NET 4.05, .NET Core, Xamarin.Android, and Xamarin.iOS.
-* MailKit.Net45.sln includes the .NET 4.5 project and the unit tests.
-* MailKit.Net40.sln just includes the .NET 4.0 project.
-* MailKit.Mobile.sln just includes the Xamarin.iOS and Xamarin.Android projects.
-* MailKit.Win.sln just includes the Windows 8.1 Universal project (aka wpa81).
+* MailKit.sln - includes the projects for .NET 4.0, .NET 4.5, .NET Core, Xamarin.Android, and Xamarin.iOS.
+* MailKit.Mobile.sln - includes only the Xamarin.iOS and Xamarin.Android projects.
+* MailKit.Net45.sln - includes only the .NET 4.5 project and the unit tests.
+* MailKit.Net40.sln - includes only the .NET 4.0 project.
+* MailKit.Win.sln - includes only the Windows Universal 8.1 project (aka wpa81).
 
 If you don't have the Xamarin products, you'll probably want to open the MailKit.Net45.sln instead of MailKit.sln.
 
 Once you've opened the appropriate MailKit solution file in either [Xamarin Studio](https://www.xamarin.com/download)
-or [Visual Studio 2015](https://beta.visualstudio.com/vs/community/), you can simply choose the Debug or Release build 
-configuration and then build.
+or [Visual Studio 2015](https://beta.visualstudio.com/vs/community/), you can simply choose the **Debug** or **Release**
+build configuration and then build.
 
-Note: The Release build will generate the xml API documentation, but the Debug build will not.
+Note: The **Release** build will generate the xml API documentation, but the **Debug** build will not.
 
 ## Using MailKit
 
