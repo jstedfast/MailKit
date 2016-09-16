@@ -1,4 +1,4 @@
 * LSUB (\HasNoChildren) "/" "INBOX"
 * LSUB (\HasNoChildren) "/" "UnitTests"
 * LSUB (\HasChildren \Noselect) "/" "[Gmail]"
-A00000087 OK Success
+A00000088 OK Success

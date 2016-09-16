@@ -1,2 +1,2 @@
 * BYE LOGOUT Requested
-A00000093 OK 73 good day (Success)
+A00000094 OK 73 good day (Success)
