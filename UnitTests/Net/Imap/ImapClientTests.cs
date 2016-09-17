@@ -422,6 +422,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000024 LIST \"\" UnitTests.Destination\r\n", "dovecot.list-unittests-destination.txt"));
 			commands.Add (new ImapReplayCommand ("A00000025 UID COPY 1:7 UnitTests.Destination\r\n", "dovecot.copy.txt"));
 			commands.Add (new ImapReplayCommand ("A00000026 UID MOVE 1:7 UnitTests.Destination\r\n", "dovecot.move.txt"));
+			commands.Add (new ImapReplayCommand ("A00000027 STATUS UnitTests.Destination (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ)\r\n", "dovecot.status-unittests-destination.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -658,6 +659,11 @@ namespace UnitTests.Net.Imap {
 				var moved = await folder.MoveToAsync (uids, destination);
 				Assert.AreEqual (uids.Count, copied.Source.Count, "Unexpetced Source.Count");
 				Assert.AreEqual (uids.Count, copied.Destination.Count, "Unexpetced Destination.Count");
+				Assert.AreEqual (1, vanished.Count, "Expected VANISHED event");
+				vanished.Clear ();
+
+				await destination.StatusAsync (statusItems);
+				Assert.AreEqual (moved.Destination[0].Validity, destination.UidValidity, "Unexpected UIDVALIDITY");
 
 				await client.DisconnectAsync (false);
 			}
