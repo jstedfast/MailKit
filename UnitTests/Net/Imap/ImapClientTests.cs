@@ -337,6 +337,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000004 ENABLE QRESYNC CONDSTORE\r\n", "dovecot.enable-qresync.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ))\r\n", "dovecot.list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 SELECT INBOX (QRESYNC (1436832057 5 1:5))\r\n", "dovecot.select-inbox-qresync.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 5\r\n", "dovecot.search-changed-since.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -431,6 +432,16 @@ namespace UnitTests.Net.Imap {
 				var access = await inbox.OpenAsync (FolderAccess.ReadWrite, 1436832057, 5, new UniqueIdRange (0, 1, 5));
 				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected INBOX to be opened READ-WRITE");
 				Assert.AreEqual (4, flagsChanged, "Expected the MessageFlagsChanged event to be emitted 4 times");
+
+				// get the same info using a SEARCH
+				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max;
+				var changed = inbox.Search (searchOptions, SearchQuery.ChangedSince (5));
+				Assert.AreEqual (4, changed.UniqueIds.Count, "Unexpected number of UIDs");
+				Assert.IsTrue (changed.ModSeq.HasValue, "Expected the ModSeq property to be set");
+				Assert.AreEqual (15, changed.ModSeq.Value, "Unexpected ModSeq value");
+				Assert.AreEqual (1, changed.Min.Value.Id, "Unexpected Min");
+				Assert.AreEqual (4, changed.Max.Value.Id, "Unexpected Max");
+				Assert.AreEqual (4, changed.Count, "Unexpected Count");
 
 				await client.DisconnectAsync (false);
 			}

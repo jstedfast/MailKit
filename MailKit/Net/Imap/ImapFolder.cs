@@ -9159,15 +9159,19 @@ namespace MailKit.Net.Imap {
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var command = "UID SEARCH RETURN (";
 
-			if ((options & SearchOptions.Relevancy) != 0)
-				command += "RELEVANCY ";
-			if ((options & SearchOptions.Count) != 0)
-				command += "COUNT ";
-			if ((options & SearchOptions.Min) != 0)
-				command += "MIN ";
-			if ((options & SearchOptions.Max) != 0)
-				command += "MAX ";
-			command = command.TrimEnd ();
+			if (options != SearchOptions.All && options != 0) {
+				if ((options & SearchOptions.All) != 0)
+					command += "ALL ";
+				if ((options & SearchOptions.Relevancy) != 0)
+					command += "RELEVANCY ";
+				if ((options & SearchOptions.Count) != 0)
+					command += "COUNT ";
+				if ((options & SearchOptions.Min) != 0)
+					command += "MIN ";
+				if ((options & SearchOptions.Max) != 0)
+					command += "MAX ";
+				command = command.TrimEnd ();
+			}
 			command += ") ";
 
 			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
@@ -9271,15 +9275,19 @@ namespace MailKit.Net.Imap {
 			var order = BuildSortOrder (orderBy);
 
 			var command = "UID SORT RETURN (";
-			if ((options & SearchOptions.Relevancy) != 0)
-				command += "RELEVANCY ";
-			if ((options & SearchOptions.Count) != 0)
-				command += "COUNT ";
-			if ((options & SearchOptions.Min) != 0)
-				command += "MIN ";
-			if ((options & SearchOptions.Max) != 0)
-				command += "MAX ";
-			command = command.TrimEnd ();
+			if (options != SearchOptions.All && options != 0) {
+				if ((options & SearchOptions.All) != 0)
+					command += "ALL ";
+				if ((options & SearchOptions.Relevancy) != 0)
+					command += "RELEVANCY ";
+				if ((options & SearchOptions.Count) != 0)
+					command += "COUNT ";
+				if ((options & SearchOptions.Min) != 0)
+					command += "MIN ";
+				if ((options & SearchOptions.Max) != 0)
+					command += "MAX ";
+				command = command.TrimEnd ();
+			}
 			command += ") ";
 
 			command += order + " " + (charset ?? "US-ASCII") + " " + expr + "\r\n";
@@ -9369,15 +9377,19 @@ namespace MailKit.Net.Imap {
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var command = "UID SEARCH RETURN (";
 
-			if ((options & SearchOptions.Relevancy) != 0)
-				command += "RELEVANCY ";
-			if ((options & SearchOptions.Count) != 0)
-				command += "COUNT ";
-			if ((options & SearchOptions.Min) != 0)
-				command += "MIN ";
-			if ((options & SearchOptions.Max) != 0)
-				command += "MAX ";
-			command = command.TrimEnd ();
+			if (options != SearchOptions.All && options != 0) {
+				if ((options & SearchOptions.All) != 0)
+					command += "ALL ";
+				if ((options & SearchOptions.Relevancy) != 0)
+					command += "RELEVANCY ";
+				if ((options & SearchOptions.Count) != 0)
+					command += "COUNT ";
+				if ((options & SearchOptions.Min) != 0)
+					command += "MIN ";
+				if ((options & SearchOptions.Max) != 0)
+					command += "MAX ";
+				command = command.TrimEnd ();
+			}
 			command += ") ";
 
 			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
@@ -9490,15 +9502,19 @@ namespace MailKit.Net.Imap {
 			var order = BuildSortOrder (orderBy);
 			var command = "UID SORT RETURN (";
 
-			if ((options & SearchOptions.Relevancy) != 0)
-				command += "RELEVANCY ";
-			if ((options & SearchOptions.Count) != 0)
-				command += "COUNT ";
-			if ((options & SearchOptions.Min) != 0)
-				command += "MIN ";
-			if ((options & SearchOptions.Max) != 0)
-				command += "MAX ";
-			command = command.TrimEnd ();
+			if (options != SearchOptions.All && options != 0) {
+				if ((options & SearchOptions.All) != 0)
+					command += "ALL ";
+				if ((options & SearchOptions.Relevancy) != 0)
+					command += "RELEVANCY ";
+				if ((options & SearchOptions.Count) != 0)
+					command += "COUNT ";
+				if ((options & SearchOptions.Min) != 0)
+					command += "MIN ";
+				if ((options & SearchOptions.Max) != 0)
+					command += "MAX ";
+				command = command.TrimEnd ();
+			}
 			command += ") ";
 
 			command += order + " " + (charset ?? "US-ASCII") + " UID " + set + " " + expr + "\r\n";
