@@ -39,6 +39,8 @@ namespace ImapIdle {
 		public static void Main (string[] args)
 		{
 			using (var client = new ImapClient (new ProtocolLogger (Console.OpenStandardError ()))) {
+				client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+
 				client.Connect ("imap.gmail.com", 993, true);
 
 				// Remove the XOAUTH2 authentication mechanism since we don't have an OAuth2 token.
