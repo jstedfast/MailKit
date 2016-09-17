@@ -325,9 +325,31 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static MimeMessage CreateThreadableMessage (string subject, string msgid, string references, DateTimeOffset date)
+		{
+			var message = new MimeMessage ();
+			message.From.Add (new MailboxAddress ("Unit Tests", "unit-tests@mimekit.net"));
+			message.To.Add (new MailboxAddress ("Unit Tests", "unit-tests@mimekit.net"));
+			message.MessageId = msgid;
+			message.Subject = subject;
+			message.Date = date;
+
+			if (references != null) {
+				foreach (var reference in references.Split (' '))
+					message.References.Add (reference);
+			}
+
+			message.Body = new TextPart ("plain") { Text = "This is the message body.\r\n" };
+
+			return message;
+		}
+
 		[Test]
 		public async void TestImapClientDovecot ()
 		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
 			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate.txt"));
@@ -336,10 +358,66 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 ENABLE QRESYNC CONDSTORE\r\n", "dovecot.enable-qresync.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ))\r\n", "dovecot.list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 SELECT INBOX (QRESYNC (1436832057 5 1:5))\r\n", "dovecot.select-inbox-qresync.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 5\r\n", "dovecot.search-changed-since.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
-			commands.Add (new ImapReplayCommand ("A00000009 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 CREATE UnitTests.\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" UnitTests\r\n", "dovecot.list-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 CREATE UnitTests.Messages\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000009 LIST \"\" UnitTests.Messages\r\n", "dovecot.list-unittests-messages.txt"));
+
+			var command = new StringBuilder ("A00000010 APPEND UnitTests.Messages");
+			var internalDates = new List<DateTimeOffset> ();
+			var messages = new List<MimeMessage> ();
+			var flags = new List<MessageFlags> ();
+			var now = DateTimeOffset.Now;
+
+			messages.Add (CreateThreadableMessage ("A", "<a@mimekit.net>", null, now.AddMinutes (-7)));
+			messages.Add (CreateThreadableMessage ("B", "<b@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-6)));
+			messages.Add (CreateThreadableMessage ("C", "<c@mimekit.net>", "<a@mimekit.net> <b@mimekit.net>", now.AddMinutes (-5)));
+			messages.Add (CreateThreadableMessage ("D", "<d@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-4)));
+			messages.Add (CreateThreadableMessage ("E", "<e@mimekit.net>", "<c@mimekit.net> <x@mimekit.net> <y@mimekit.net> <z@mimekit.net>", now.AddMinutes (-3)));
+			messages.Add (CreateThreadableMessage ("F", "<f@mimekit.net>", "<b@mimekit.net>", now.AddMinutes (-2)));
+			messages.Add (CreateThreadableMessage ("G", "<g@mimekit.net>", null, now.AddMinutes (-1)));
+			messages.Add (CreateThreadableMessage ("H", "<h@mimekit.net>", null, now));
+
+			for (int i = 0; i < messages.Count; i++) {
+				var message = messages[i];
+				string latin1;
+				long length;
+
+				internalDates.Add (messages[i].Date);
+				flags.Add (MessageFlags.Draft);
+
+				using (var stream = new MemoryStream ()) {
+					var options = FormatOptions.Default.Clone ();
+					options.NewLineFormat = NewLineFormat.Dos;
+
+					message.WriteTo (options, stream);
+					length = stream.Length;
+					stream.Position = 0;
+
+					using (var reader = new StreamReader (stream, Latin1))
+						latin1 = reader.ReadToEnd ();
+				}
+
+				command.AppendFormat (" (\\Draft) \"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
+				command.Append ('{');
+				command.AppendFormat ("{0}+", length);
+				command.Append ("}\r\n");
+				command.Append (latin1);
+			}
+			command.Append ("\r\n");
+			commands.Add (new ImapReplayCommand (command.ToString (), "dovecot.multiappend.txt"));
+			commands.Add (new ImapReplayCommand ("A00000011 SELECT UnitTests.Messages (CONDSTORE)\r\n", "dovecot.select-unittests-messages.txt"));
+			commands.Add (new ImapReplayCommand ("A00000012 UID STORE 1:8 +FLAGS.SILENT (\\Seen)\r\n", "dovecot.store-seen.txt"));
+			commands.Add (new ImapReplayCommand ("A00000013 UID STORE 1:3 +FLAGS.SILENT (\\Answered)\r\n", "dovecot.store-answered.txt"));
+			commands.Add (new ImapReplayCommand ("A00000014 UID STORE 8 +FLAGS.SILENT (\\Deleted)\r\n", "dovecot.store-deleted.txt"));
+			commands.Add (new ImapReplayCommand ("A00000015 UID EXPUNGE 8\r\n", "dovecot.uid-expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000016 UID THREAD REFERENCES US-ASCII ALL\r\n", "dovecot.thread-references.txt"));
+			commands.Add (new ImapReplayCommand ("A00000017 UNSELECT\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000018 SELECT UnitTests.Messages (QRESYNC (1436832084 2 1:8))\r\n", "dovecot.select-unittests-messages-qresync.txt"));
+			commands.Add (new ImapReplayCommand ("A00000019 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 2\r\n", "dovecot.search-changed-since.txt"));
+			commands.Add (new ImapReplayCommand ("A00000020 UID FETCH 1:7 (UID FLAGS MODSEQ)\r\n", "dovecot.fetch-changed.txt"));
+			commands.Add (new ImapReplayCommand ("A00000021 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
+			commands.Add (new ImapReplayCommand ("A00000022 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -404,68 +482,140 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (expectedUnseen[i], folders[i].Unread, "Unread did not match");
 				}
 
-				var inbox = client.Inbox;
-				int flagsChanged = 0;
-				IList<UniqueId> uids;
+				var unitTests = await personal.CreateAsync ("UnitTests", false);
+				Assert.AreEqual (FolderAttributes.HasNoChildren, unitTests.Attributes, "Expected UnitTests folder attributes");
 
-				inbox.MessageFlagsChanged += (sender, e) => {
-					Assert.IsTrue (e.UniqueId.HasValue, "Expected the UniqueId property to be set");
-					Assert.AreEqual ((uint) e.Index + 1, e.UniqueId.Value.Id, "UID did not match the Index");
-					Assert.AreEqual (e.Index, flagsChanged, "Expected e.Index and flagsChanged to be equal");
-					flagsChanged++;
+				var folder = await unitTests.CreateAsync ("Messages", true);
+				Assert.AreEqual (FolderAttributes.HasNoChildren, folder.Attributes, "Expected UnitTests.Messages folder attributes");
+				//Assert.AreEqual (FolderAttributes.HasChildren, unitTests.Attributes, "Expected UnitTests Attributes to be updated");
 
-					switch (e.Index) {
-					case 0:
-						Assert.AreEqual (MessageFlags.Seen, e.Flags, "Message #1's FLAGS do not match");
-						Assert.AreEqual (1, e.UserFlags.Count, "Expected UserFlags to have only 1");
-						Assert.IsTrue (e.UserFlags.Contains ("CustomFlag"), "Expected UserFlags to contain 'CustomFlag'");
-						break;
-					case 1:
-					case 2:
-					case 3:
-						Assert.AreEqual (MessageFlags.Seen, e.Flags, "Message #{0}'s FLAGS do not match", e.Index + 1);
-						Assert.AreEqual (0, e.UserFlags.Count, "Expected UserFlags to be empty");
-						break;
-					default:
-						Assert.Fail ("Unknwon message index in MessageFlagsChanged event: {0}", e.Index + 1);
-						break;
-					}
+				// Use MULTIAPPEND to append some test messages
+				var appended = await folder.AppendAsync (messages, flags, internalDates);
+				Assert.AreEqual (8, appended.Count, "Unexpected number of messages appended");
+
+				// SELECT the folder so that we can test some stuff
+				var access = await folder.OpenAsync (FolderAccess.ReadWrite);
+				Assert.AreEqual (expectedPermanentFlags, folder.PermanentFlags, "UnitTests.Messages PERMANENTFLAGS");
+				Assert.AreEqual (expectedFlags, folder.AcceptedFlags, "UnitTests.Messages FLAGS");
+				Assert.AreEqual (8, folder.Count, "UnitTests.Messages EXISTS");
+				Assert.AreEqual (8, folder.Recent, "UnitTests.Messages RECENT");
+				Assert.AreEqual (0, folder.FirstUnread, "UnitTests.Messages UNSEEN");
+				Assert.AreEqual (1436832084U, folder.UidValidity, "UnitTests.Messages UIDVALIDITY");
+				Assert.AreEqual (9, folder.UidNext.Value.Id, "UnitTests.Messages UIDNEXT");
+				Assert.AreEqual (2UL, folder.HighestModSeq, "UnitTests.Messages HIGHESTMODSEQ");
+				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected UnitTests.Messages to be opened in READ-WRITE mode");
+
+				// Keep track of various folder events
+				var flagsChanged = new List<MessageFlagsChangedEventArgs> ();
+				var vanished = new List<MessagesVanishedEventArgs> ();
+				bool recentChanged = false;
+
+				folder.MessageFlagsChanged += (sender, e) => {
+					flagsChanged.Add (e);
 				};
 
-				var access = await inbox.OpenAsync (FolderAccess.ReadWrite, 1436832057, 5, new UniqueIdRange (0, 1, 5));
-				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected INBOX to be opened READ-WRITE");
-				Assert.AreEqual (4, flagsChanged, "Expected the MessageFlagsChanged event to be emitted 4 times");
+				folder.MessagesVanished += (sender, e) => {
+					vanished.Add (e);
+				};
 
-				// get the same info using a SEARCH
+				folder.RecentChanged += (sender, e) => {
+					recentChanged = true;
+				};
+
+				// Keep track of UIDVALIDITY and HIGHESTMODSEQ values for our QRESYNC test later
+				var highestModSeq = folder.HighestModSeq;
+				var uidValidity = folder.UidValidity;
+
+				// Make some FLAGS changes to our messages so we can test QRESYNC
+				await folder.AddFlagsAsync (appended, MessageFlags.Seen, true);
+				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events emitted");
+				Assert.IsFalse (recentChanged, "Unexpected RecentChanged event");
+				flagsChanged.Clear ();
+
+				var answered = new UniqueIdSet (SortOrder.Ascending);
+				answered.Add (appended[0]); // A
+				answered.Add (appended[1]); // B
+				answered.Add (appended[2]); // C
+				await folder.AddFlagsAsync (answered, MessageFlags.Answered, true);
+				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events emitted");
+				Assert.IsFalse (recentChanged, "Unexpected RecentChanged event");
+				flagsChanged.Clear ();
+
+				// Delete some messages so we can test that QRESYNC emits some MessageVanished events
+				// both now *and* when we use QRESYNC to re-open the folder
+				var deleted = new UniqueIdSet (SortOrder.Ascending);
+				deleted.Add (appended[7]); // H
+				await folder.AddFlagsAsync (deleted, MessageFlags.Deleted, true);
+				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events emitted");
+				Assert.IsFalse (recentChanged, "Unexpected RecentChanged event");
+				flagsChanged.Clear ();
+
+				await folder.ExpungeAsync (deleted);
+				Assert.AreEqual (1, vanished.Count, "Expected MessagesVanished event");
+				Assert.AreEqual (1, vanished[0].UniqueIds.Count, "Unexpected number of messages vanished");
+				Assert.AreEqual (8, vanished[0].UniqueIds[0].Id, "Unexpected UID for vanished message");
+				Assert.IsFalse (vanished[0].Earlier, "Expected EARLIER to be false");
+				Assert.IsTrue (recentChanged, "Expected RecentChanged event");
+				recentChanged = false;
+				vanished.Clear ();
+
+				// Verify that THREAD works correctly
+				var threaded = await folder.ThreadAsync (ThreadingAlgorithm.References, SearchQuery.All);
+				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");
+
+				// UNSELECT the folder so we can re-open it using QRESYNC
+				await folder.CloseAsync ();
+
+				// Use QRESYNC to get the changes since last time we opened the folder
+				access = await folder.OpenAsync (FolderAccess.ReadWrite, uidValidity, highestModSeq, appended);
+				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected UnitTests.Messages to be opened in READ-WRITE mode");
+				Assert.AreEqual (7, flagsChanged.Count, "Unexpected number of MessageFlagsChanged events");
+				for (int i = 0; i < flagsChanged.Count; i++) {
+					var messageFlags = MessageFlags.Seen | MessageFlags.Draft;
+
+					if (i < 3)
+						messageFlags |= MessageFlags.Answered;
+
+					Assert.AreEqual (i, flagsChanged[i].Index, "Unexpected value for flagsChanged[{0}].Index", i);
+					Assert.AreEqual ((uint) (i + 1), flagsChanged[i].UniqueId.Value.Id, "Unexpected value for flagsChanged[{0}].UniqueId", i);
+					Assert.AreEqual (messageFlags, flagsChanged[i].Flags, "Unexpected value for flagsChanged[{0}].Flags", i);
+				}
+				flagsChanged.Clear ();
+
+				Assert.AreEqual (1, vanished.Count, "Unexpected number of MessagesVanished events");
+				Assert.IsTrue (vanished[0].Earlier, "Expected VANISHED EARLIER");
+				Assert.AreEqual (1, vanished[0].UniqueIds.Count, "Unexpected number of messages vanished");
+				Assert.AreEqual (8, vanished[0].UniqueIds[0].Id, "Unexpected UID for vanished message");
+				vanished.Clear ();
+
+				// Use SEARCH and FETCH to get the same info
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max;
-				var changed = inbox.Search (searchOptions, SearchQuery.ChangedSince (5));
-				Assert.AreEqual (4, changed.UniqueIds.Count, "Unexpected number of UIDs");
+				var changed = await folder.SearchAsync (searchOptions, SearchQuery.ChangedSince (highestModSeq));
+				Assert.AreEqual (7, changed.UniqueIds.Count, "Unexpected number of UIDs");
 				Assert.IsTrue (changed.ModSeq.HasValue, "Expected the ModSeq property to be set");
-				Assert.AreEqual (15, changed.ModSeq.Value, "Unexpected ModSeq value");
+				Assert.AreEqual (4, changed.ModSeq.Value, "Unexpected ModSeq value");
 				Assert.AreEqual (1, changed.Min.Value.Id, "Unexpected Min");
-				Assert.AreEqual (4, changed.Max.Value.Id, "Unexpected Max");
-				Assert.AreEqual (4, changed.Count, "Unexpected Count");
+				Assert.AreEqual (7, changed.Max.Value.Id, "Unexpected Max");
+				Assert.AreEqual (7, changed.Count, "Unexpected Count");
 
-				// SORT the results
+				var fetched = await folder.FetchAsync (changed.UniqueIds, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+
+				// Use SORT to order by reverse arrival order
 				var orderBy = new OrderBy[] { new OrderBy (OrderByType.Arrival, SortOrder.Descending) };
-				var sorted = await inbox.SearchAsync (searchOptions, SearchQuery.All, orderBy);
-				Assert.AreEqual (4, sorted.UniqueIds.Count, "Unexpected number of UIDs");
-				Assert.AreEqual (4, sorted.UniqueIds[0].Id, "Unexpected value for UniqueId[0]");
-				Assert.AreEqual (3, sorted.UniqueIds[1].Id, "Unexpected value for UniqueId[1]");
-				Assert.AreEqual (2, sorted.UniqueIds[2].Id, "Unexpected value for UniqueId[2]");
-				Assert.AreEqual (1, sorted.UniqueIds[3].Id, "Unexpected value for UniqueId[3]");
+				var sorted = await folder.SearchAsync (searchOptions, SearchQuery.All, orderBy);
+				Assert.AreEqual (7, sorted.UniqueIds.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < sorted.UniqueIds.Count; i++)
+					Assert.AreEqual (7 - i, sorted.UniqueIds[i].Id, "Unexpected value for UniqueId[{0}]", i);
 				Assert.IsFalse (sorted.ModSeq.HasValue, "Expected the ModSeq property to be null");
-				Assert.AreEqual (4, sorted.Min.Value.Id, "Unexpected Min");
+				Assert.AreEqual (7, sorted.Min.Value.Id, "Unexpected Min");
 				Assert.AreEqual (1, sorted.Max.Value.Id, "Unexpected Max");
-				Assert.AreEqual (4, sorted.Count, "Unexpected Count");
+				Assert.AreEqual (7, sorted.Count, "Unexpected Count");
 
-				// optimized SEARCH
-				uids = await inbox.SearchAsync (SearchQuery.Not (SearchQuery.Deleted).And (SearchQuery.Not (SearchQuery.NotSeen)));
-				Assert.AreEqual (4, uids.Count, "Unexpected number of UIDs");
-				Assert.AreEqual (1, uids[0].Id, "Unexpected value for uids[0]");
-				Assert.AreEqual (2, uids[1].Id, "Unexpected value for uids[1]");
-				Assert.AreEqual (3, uids[2].Id, "Unexpected value for uids[2]");
-				Assert.AreEqual (4, uids[3].Id, "Unexpected value for uids[3]");
+				// Verify that optimizing NOT queries works correctly
+				var uids = await folder.SearchAsync (SearchQuery.Not (SearchQuery.Deleted).And (SearchQuery.Not (SearchQuery.NotSeen)));
+				Assert.AreEqual (7, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
 
 				await client.DisconnectAsync (false);
 			}

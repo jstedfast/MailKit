@@ -1,0 +1,2 @@
+* THREAD (1 (2 (3 5)(6))(4))(7)
+A00000016 OK Thread completed (0.014 + 0.000 secs).

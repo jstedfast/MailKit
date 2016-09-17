@@ -1,0 +1,3 @@
+* VANISHED 8
+* 7 RECENT
+A00000015 OK [HIGHESTMODSEQ 6] Expunge completed (0.001 + 0.000 secs).

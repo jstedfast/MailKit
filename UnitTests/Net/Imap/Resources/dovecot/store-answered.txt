@@ -1,0 +1,4 @@
+* 1 FETCH (UID 1 MODSEQ (4))
+* 2 FETCH (UID 2 MODSEQ (4))
+* 3 FETCH (UID 3 MODSEQ (4))
+A00000013 OK Store completed (0.001 + 0.000 secs).

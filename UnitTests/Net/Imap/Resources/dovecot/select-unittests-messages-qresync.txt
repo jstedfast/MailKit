@@ -1,0 +1,16 @@
+* FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+* OK [PERMANENTFLAGS (\Answered \Flagged \Deleted \Seen \Draft \*)] Flags permitted.
+* 7 EXISTS
+* 0 RECENT
+* OK [UIDVALIDITY 1436832084] UIDs valid
+* OK [UIDNEXT 9] Predicted next UID
+* OK [HIGHESTMODSEQ 6] Highest
+* VANISHED (EARLIER) 8
+* 1 FETCH (UID 1 FLAGS (\Answered \Seen \Draft) MODSEQ (4))
+* 2 FETCH (UID 2 FLAGS (\Answered \Seen \Draft) MODSEQ (4))
+* 3 FETCH (UID 3 FLAGS (\Answered \Seen \Draft) MODSEQ (4))
+* 4 FETCH (UID 4 FLAGS (\Seen \Draft) MODSEQ (3))
+* 5 FETCH (UID 5 FLAGS (\Seen \Draft) MODSEQ (3))
+* 6 FETCH (UID 6 FLAGS (\Seen \Draft) MODSEQ (3))
+* 7 FETCH (UID 7 FLAGS (\Seen \Draft) MODSEQ (3))
+A00000018 OK [READ-WRITE] Select completed (0.000 + 0.000 secs).

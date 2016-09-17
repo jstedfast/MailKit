@@ -1,0 +1,2 @@
+* LIST (\HasNoChildren) "." UnitTests.Messages
+A00000009 OK List completed (0.000 + 0.000 secs).
