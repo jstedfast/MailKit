@@ -418,6 +418,10 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000020 UID FETCH 1:7 (UID FLAGS MODSEQ)\r\n", "dovecot.fetch-changed.txt"));
 			commands.Add (new ImapReplayCommand ("A00000021 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
 			commands.Add (new ImapReplayCommand ("A00000022 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000023 CREATE UnitTests.Destination\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000024 LIST \"\" UnitTests.Destination\r\n", "dovecot.list-unittests-destination.txt"));
+			commands.Add (new ImapReplayCommand ("A00000025 UID COPY 1:7 UnitTests.Destination\r\n", "dovecot.copy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000026 UID MOVE 1:7 UnitTests.Destination\r\n", "dovecot.move.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -483,10 +487,10 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var unitTests = await personal.CreateAsync ("UnitTests", false);
-				Assert.AreEqual (FolderAttributes.HasNoChildren, unitTests.Attributes, "Expected UnitTests folder attributes");
+				Assert.AreEqual (FolderAttributes.HasNoChildren, unitTests.Attributes, "Unexpected UnitTests folder attributes");
 
 				var folder = await unitTests.CreateAsync ("Messages", true);
-				Assert.AreEqual (FolderAttributes.HasNoChildren, folder.Attributes, "Expected UnitTests.Messages folder attributes");
+				Assert.AreEqual (FolderAttributes.HasNoChildren, folder.Attributes, "Unexpected UnitTests.Messages folder attributes");
 				//Assert.AreEqual (FolderAttributes.HasChildren, unitTests.Attributes, "Expected UnitTests Attributes to be updated");
 
 				// Use MULTIAPPEND to append some test messages
@@ -640,6 +644,20 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (7, uids.Count, "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
 					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				// Create a Destination folder to use for copying/moving messages to
+				var destination = await unitTests.CreateAsync ("Destination", true);
+				Assert.AreEqual (FolderAttributes.HasNoChildren, destination.Attributes, "Unexpected UnitTests.Destination folder attributes");
+
+				// COPY messages to the Destination folder
+				var copied = await folder.CopyToAsync (uids, destination);
+				Assert.AreEqual (uids.Count, copied.Source.Count, "Unexpetced Source.Count");
+				Assert.AreEqual (uids.Count, copied.Destination.Count, "Unexpetced Destination.Count");
+
+				// MOVE messages to the Destination folder
+				var moved = await folder.MoveToAsync (uids, destination);
+				Assert.AreEqual (uids.Count, copied.Source.Count, "Unexpetced Source.Count");
+				Assert.AreEqual (uids.Count, copied.Destination.Count, "Unexpetced Destination.Count");
 
 				await client.DisconnectAsync (false);
 			}

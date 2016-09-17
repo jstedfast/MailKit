@@ -1,0 +1,2 @@
+* LIST (\HasNoChildren) "." UnitTests.Destination
+A00000024 OK List completed (0.000 + 0.000 secs).

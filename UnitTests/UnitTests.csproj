@@ -131,6 +131,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\message.8.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.9.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\copy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\greeting.txt" />
@@ -138,7 +139,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-personal.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-special-use.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-unittests.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-unittests-destination.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-unittests-messages.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\move.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\multiappend.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\optimized-search.txt" />
