@@ -40,7 +40,16 @@ namespace MailKit {
 	/// </remarks>
 	public class UniqueIdRange : IList<UniqueId>
 	{
-		static readonly UniqueIdRange Invalid = new UniqueIdRange (new UniqueId (0), new UniqueId (0));
+		/// <summary>
+		/// A <see cref="UniqueIdRange"/> that encompases all messages in the folder.
+		/// </summary>
+		/// <remarks>
+		/// Represents the range of messages from <see cref="UniqueId.MinValue"/> to
+		/// <see cref="UniqueId.MaxValue"/>.
+		/// </remarks>
+		public static readonly UniqueIdRange All = new UniqueIdRange (UniqueId.MinValue, UniqueId.MaxValue);
+
+		static readonly UniqueIdRange Invalid = new UniqueIdRange (UniqueId.Invalid, UniqueId.Invalid);
 
 		readonly uint validity;
 		internal uint start;

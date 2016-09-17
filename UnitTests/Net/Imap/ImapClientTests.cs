@@ -631,8 +631,7 @@ namespace UnitTests.Net.Imap {
 				var fetched = await folder.FetchAsync (changed.UniqueIds, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
 
 				// or... we could just use a single UID FETCH command like so:
-				var range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MaxValue);
-				fetched = await folder.FetchAsync (range, highestModSeq, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+				fetched = await folder.FetchAsync (UniqueIdRange.All, highestModSeq, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
 				Assert.AreEqual (1, vanished.Count, "Unexpected number of MessagesVanished events");
 				Assert.IsTrue (vanished[0].Earlier, "Expected VANISHED EARLIER");
 				Assert.AreEqual (1, vanished[0].UniqueIds.Count, "Unexpected number of messages vanished");
