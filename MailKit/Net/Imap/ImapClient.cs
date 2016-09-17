@@ -756,8 +756,8 @@ namespace MailKit.Net.Imap {
 		/// one of the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
 		/// methods succeeds and is not set back to <c>false</c> until either the client
 		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
-		/// exception (such as <see cref="ImapProtocolException"/>) is thrown while attempting
-		/// to read or write to the underlying network socket.</para>
+		/// <see cref="ImapProtocolException"/> is thrown while attempting to read or write to
+		/// the underlying network socket.</para>
 		/// <para>When an <see cref="ImapProtocolException"/> is caught, the connection state of the
 		/// <see cref="ImapClient"/> should be checked before continuing.</para>
 		/// </remarks>

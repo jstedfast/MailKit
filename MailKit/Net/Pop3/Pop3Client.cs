@@ -368,9 +368,9 @@ namespace MailKit.Net.Pop3 {
 		/// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
 		/// one of the <a href="Overload_MailKit_Net_Pop3_Pop3Client_Connect.htm">Connect</a>
 		/// methods succeeds and is not set back to <c>false</c> until either the client
-		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
-		/// exception (such as <see cref="Pop3ProtocolException"/>) is thrown while attempting
-		/// to read or write to the underlying network socket.</para>
+		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until a
+		/// <see cref="Pop3ProtocolException"/> is thrown while attempting to read or write to
+		/// the underlying network socket.</para>
 		/// <para>When an <see cref="Pop3ProtocolException"/> is caught, the connection state of the
 		/// <see cref="Pop3Client"/> should be checked before continuing.</para>
 		/// </remarks>
