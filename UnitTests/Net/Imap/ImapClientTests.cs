@@ -364,11 +364,11 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.AreEqual (DovecotAuthenticatedCapabilities, client.Capabilities);
-
+				Assert.AreEqual (1, client.InternationalizationLevel, "Expected I18NLEVEL=1");
 				Assert.IsTrue (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.IsTrue (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
-				// TODO: verify CONTEXT=SEARCH and CONTEXT=SORT
+				// TODO: verify CONTEXT=SEARCH
 
 				try {
 					await client.EnableQuickResyncAsync ();
