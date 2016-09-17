@@ -365,21 +365,27 @@ The results of a Fetch command can also be used to download individual MIME part
 than downloading the entire message. For example:
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId)) {
-	var text = summary.Body as BodyPartText;
-
-	if (text == null) {
-		var multipart = summary.Body as BodyPartMultipart;
-
-		if (multipart != null)
-			text = multipart.BodyParts.OfType<BodyPartText> ().FirstOrDefault ();
-	}
-
-	if (text == null)
-		continue;
-
-	// this will download *just* the text part
-	var part = inbox.GetBodyPart (summary.UniqueId.Value, text);
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure)) {
+    if (summary.TextBody != null) {
+	// this will download *just* the text/plain part
+	var text = inbox.GetBodyPart (summary.UniqueId, summary.TextBody);
+    }
+    
+    if (summary.HtmlBody != null) {
+        // this will download *just* the text/html part
+	var html = inbox.GetBodyPart (summary.UniqueId, summary.HtmlBody);
+    }
+    
+    // if you'd rather grab, say, an image attachment... it might look something like this:
+    if (summary.Body is BodyPartMultipart) {
+        var multipart = (BodyPartMultipart) summary.Body;
+        
+        var attachment = multipart.BodyParts.OfType<BodyPartBasic> ().FirstOrDefault (x => x.FileName == "logo.jpg");
+        if (attachment != null) {
+            // this will download *just* the attachment
+            var part = inbox.GetBodyPart (summary.UniqueId, attachment);
+        }
+    }
 }
 ```
 
