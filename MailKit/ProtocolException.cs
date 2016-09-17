@@ -35,8 +35,11 @@ namespace MailKit {
 	/// The exception that is thrown when there is a protocol error.
 	/// </summary>
 	/// <remarks>
-	/// A <see cref="ProtocolException"/> can be thrown by any of the various client
-	/// methods in MailKit.
+	/// <para>A <see cref="ProtocolException"/> can be thrown by any of the various client
+	/// methods in MailKit.</para>
+	/// <para>Since many protocol exceptions are fatal, it is important to check whether
+	/// or not the client is still connected using the <see cref="IMailService.IsConnected"/>
+	/// property when this exception is thrown.</para>
 	/// </remarks>
 #if SERIALIZABLE
 	[Serializable]
