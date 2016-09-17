@@ -339,6 +339,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000006 SELECT INBOX (QRESYNC (1436832057 5 1:5))\r\n", "dovecot.select-inbox-qresync.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 5\r\n", "dovecot.search-changed-since.txt"));
 			commands.Add (new ImapReplayCommand ("A00000008 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
+			commands.Add (new ImapReplayCommand ("A00000009 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -405,6 +406,7 @@ namespace UnitTests.Net.Imap {
 
 				var inbox = client.Inbox;
 				int flagsChanged = 0;
+				IList<UniqueId> uids;
 
 				inbox.MessageFlagsChanged += (sender, e) => {
 					Assert.IsTrue (e.UniqueId.HasValue, "Expected the UniqueId property to be set");
@@ -456,6 +458,14 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (4, sorted.Min.Value.Id, "Unexpected Min");
 				Assert.AreEqual (1, sorted.Max.Value.Id, "Unexpected Max");
 				Assert.AreEqual (4, sorted.Count, "Unexpected Count");
+
+				// optimized SEARCH
+				uids = await inbox.SearchAsync (SearchQuery.Not (SearchQuery.Deleted).And (SearchQuery.Not (SearchQuery.NotSeen)));
+				Assert.AreEqual (4, uids.Count, "Unexpected number of UIDs");
+				Assert.AreEqual (1, uids[0].Id, "Unexpected value for uids[0]");
+				Assert.AreEqual (2, uids[1].Id, "Unexpected value for uids[1]");
+				Assert.AreEqual (3, uids[2].Id, "Unexpected value for uids[2]");
+				Assert.AreEqual (4, uids[3].Id, "Unexpected value for uids[3]");
 
 				await client.DisconnectAsync (false);
 			}

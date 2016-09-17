@@ -137,6 +137,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-personal.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-special-use.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\namespace.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\optimized-search.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-changed-since.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-inbox-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\sort-reverse-arrival.txt" />

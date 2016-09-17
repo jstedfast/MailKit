@@ -36,29 +36,23 @@ namespace MailKit.Net.Imap {
 			if (expr.Term == SearchTerm.Not) {
 				var unary = (UnarySearchQuery) expr;
 
-				if (unary.Operand == SearchQuery.Answered)
+				switch (unary.Operand.Term) {
+				case SearchTerm.NotAnswered:	
+				case SearchTerm.Answered:
+				case SearchTerm.NotDeleted:
+				case SearchTerm.Deleted:
+				case SearchTerm.NotDraft:
+				case SearchTerm.Draft:
+				case SearchTerm.NotFlagged:
+				case SearchTerm.Flagged:
+				case SearchTerm.NotRecent:
+				case SearchTerm.Recent:
+				case SearchTerm.NotSeen:
+				case SearchTerm.Seen:
+				case SearchTerm.Keyword:
+				case SearchTerm.NotKeyword:
 					return true;
-
-				if (unary.Operand == SearchQuery.Deleted)
-					return true;
-
-				if (unary.Operand == SearchQuery.Draft)
-					return true;
-
-				if (unary.Operand == SearchQuery.Flagged)
-					return true;
-
-				if (unary.Operand == SearchQuery.Recent)
-					return true;
-
-				if (unary.Operand == SearchQuery.Seen)
-					return true;
-
-				if (unary.Operand.Term == SearchTerm.Keyword)
-					return true;
-
-				if (unary.Operand.Term == SearchTerm.NotKeyword)
-					return true;
+				}
 			}
 
 			return false;
@@ -69,23 +63,20 @@ namespace MailKit.Net.Imap {
 			if (expr.Term == SearchTerm.Not) {
 				var unary = (UnarySearchQuery) expr;
 
-				if (unary.Operand == SearchQuery.Answered)
-					return SearchQuery.NotAnswered;
-
-				if (unary.Operand == SearchQuery.Deleted)
-					return SearchQuery.NotDeleted;
-
-				if (unary.Operand == SearchQuery.Draft)
-					return SearchQuery.NotDraft;
-
-				if (unary.Operand == SearchQuery.Flagged)
-					return SearchQuery.NotFlagged;
-
-				if (unary.Operand == SearchQuery.Recent)
-					return SearchQuery.NotRecent;
-
-				if (unary.Operand == SearchQuery.Seen)
-					return SearchQuery.NotSeen;
+				switch (unary.Operand.Term) {
+				case SearchTerm.NotAnswered: return SearchQuery.Answered;
+				case SearchTerm.Answered: return SearchQuery.NotAnswered;
+				case SearchTerm.NotDeleted: return SearchQuery.Deleted;
+				case SearchTerm.Deleted: return SearchQuery.NotDeleted;
+				case SearchTerm.NotDraft: return SearchQuery.Draft;
+				case SearchTerm.Draft: return SearchQuery.NotDraft;
+				case SearchTerm.NotFlagged: return SearchQuery.Flagged;
+				case SearchTerm.Flagged: return SearchQuery.NotFlagged;
+				case SearchTerm.NotRecent: return SearchQuery.Recent;
+				case SearchTerm.Recent: return SearchQuery.NotRecent;
+				case SearchTerm.NotSeen: return SearchQuery.Seen;
+				case SearchTerm.Seen: return SearchQuery.NotSeen;
+				}
 
 				if (unary.Operand.Term == SearchTerm.Keyword)
 					return new TextSearchQuery (SearchTerm.NotKeyword, ((TextSearchQuery) unary.Operand).Text);
