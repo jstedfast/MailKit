@@ -15971,6 +15971,29 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Occurs when the mod-sequence changed on a message.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="ModSeqChanged"/> event is emitted when the mod-sequence for a message is changed.
+		/// </remarks>
+		public event EventHandler<ModSeqChangedEventArgs> ModSeqChanged;
+
+		/// <summary>
+		/// Raise the message mod-sequence changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the message mod-sequence changed event.
+		/// </remarks>
+		/// <param name="args">The mod-sequence changed event args.</param>
+		protected virtual void OnModSeqChanged (ModSeqChangedEventArgs args)
+		{
+			var handler = ModSeqChanged;
+
+			if (handler != null)
+				handler (this, args);
+		}
+
+		/// <summary>
 		/// Occurs when the highest mod-sequence changes.
 		/// </summary>
 		/// <remarks>

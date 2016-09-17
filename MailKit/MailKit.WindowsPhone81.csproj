@@ -250,6 +250,7 @@
     <Compile Include="MetadataCollection.cs" />
     <Compile Include="MetadataOptions.cs" />
     <Compile Include="MetadataTag.cs" />
+    <Compile Include="ModSeqChangedEventArgs.cs" />
     <Compile Include="NullProtocolLogger.cs" />
     <Compile Include="ProgressStream.cs" />
     <Compile Include="ProtocolException.cs" />

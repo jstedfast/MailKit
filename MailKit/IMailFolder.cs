@@ -4428,6 +4428,14 @@ namespace MailKit {
 		event EventHandler<MessageSummaryFetchedEventArgs> MessageSummaryFetched;
 
 		/// <summary>
+		/// Occurs when the mod-sequence changed on a message.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when the mod-sequence changed on a message.
+		/// </remarks>
+		event EventHandler<ModSeqChangedEventArgs> ModSeqChanged;
+
+		/// <summary>
 		/// Occurs when the UID validity changes.
 		/// </summary>
 		/// <remarks>

@@ -9751,9 +9751,11 @@ namespace MailKit.Net.Imap {
 
 		internal void OnFetch (ImapEngine engine, int index, CancellationToken cancellationToken)
 		{
-			var labels = new MessageLabelsChangedEventArgs (index);
-			var flags = new MessageFlagsChangedEventArgs (index);
+			var labelsChangedEventArgs = new MessageLabelsChangedEventArgs (index);
+			var flagsChangedEventArgs = new MessageFlagsChangedEventArgs (index);
+			var modSeqChangedEventArgs = new ModSeqChangedEventArgs (index);
 			var token = engine.ReadToken (cancellationToken);
+			bool modSeqChanged = false;
 			bool labelsChanged = false;
 			bool flagsChanged = false;
 
@@ -9790,8 +9792,10 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					labels.ModSeq = modseq;
-					flags.ModSeq = modseq;
+					modSeqChangedEventArgs.ModSeq = modseq;
+					labelsChangedEventArgs.ModSeq = modseq;
+					flagsChangedEventArgs.ModSeq = modseq;
+					modSeqChanged = true;
 					break;
 				case "UID":
 					token = engine.ReadToken (cancellationToken);
@@ -9799,15 +9803,16 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					labels.UniqueId = new UniqueId (UidValidity, uid);
-					flags.UniqueId = new UniqueId (UidValidity, uid);
+					modSeqChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
+					labelsChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
+					flagsChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
 					break;
 				case "FLAGS":
-					flags.Flags = ImapUtils.ParseFlagsList (engine, atom, flags.UserFlags, cancellationToken);
+					flagsChangedEventArgs.Flags = ImapUtils.ParseFlagsList (engine, atom, flagsChangedEventArgs.UserFlags, cancellationToken);
 					flagsChanged = true;
 					break;
 				case "X-GM-LABELS":
-					labels.Labels = ImapUtils.ParseLabelsList (engine, cancellationToken);
+					labelsChangedEventArgs.Labels = ImapUtils.ParseLabelsList (engine, cancellationToken);
 					labelsChanged = true;
 					break;
 				default:
@@ -9819,10 +9824,13 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			if (flagsChanged)
-				OnMessageFlagsChanged (flags);
+				OnMessageFlagsChanged (flagsChangedEventArgs);
 
 			if (labelsChanged)
-				OnMessageLabelsChanged (labels);
+				OnMessageLabelsChanged (labelsChangedEventArgs);
+
+			if (modSeqChanged)
+				OnModSeqChanged (modSeqChangedEventArgs);
 		}
 
 		internal void OnRecent (int count)

@@ -507,11 +507,16 @@ namespace UnitTests.Net.Imap {
 
 				// Keep track of various folder events
 				var flagsChanged = new List<MessageFlagsChangedEventArgs> ();
+				var modSeqChanged = new List<ModSeqChangedEventArgs> ();
 				var vanished = new List<MessagesVanishedEventArgs> ();
 				bool recentChanged = false;
 
 				folder.MessageFlagsChanged += (sender, e) => {
 					flagsChanged.Add (e);
+				};
+
+				folder.ModSeqChanged += (sender, e) => {
+					modSeqChanged.Add (e);
 				};
 
 				folder.MessagesVanished += (sender, e) => {
@@ -528,8 +533,15 @@ namespace UnitTests.Net.Imap {
 
 				// Make some FLAGS changes to our messages so we can test QRESYNC
 				await folder.AddFlagsAsync (appended, MessageFlags.Seen, true);
-				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events emitted");
+				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events");
+				Assert.AreEqual (8, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
+				for (int i = 0; i < modSeqChanged.Count; i++) {
+					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected modSeqChanged[{0}].Index", i);
+					Assert.AreEqual (i + 1, modSeqChanged[i].UniqueId.Value.Id, "Unexpected modSeqChanged[{0}].UniqueId", i);
+					Assert.AreEqual (3, modSeqChanged[i].ModSeq, "Unexpected modSeqChanged[{0}].ModSeq", i);
+				}
 				Assert.IsFalse (recentChanged, "Unexpected RecentChanged event");
+				modSeqChanged.Clear ();
 				flagsChanged.Clear ();
 
 				var answered = new UniqueIdSet (SortOrder.Ascending);
@@ -537,8 +549,15 @@ namespace UnitTests.Net.Imap {
 				answered.Add (appended[1]); // B
 				answered.Add (appended[2]); // C
 				await folder.AddFlagsAsync (answered, MessageFlags.Answered, true);
-				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events emitted");
+				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events");
+				Assert.AreEqual (3, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
+				for (int i = 0; i < modSeqChanged.Count; i++) {
+					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected modSeqChanged[{0}].Index", i);
+					Assert.AreEqual (i + 1, modSeqChanged[i].UniqueId.Value.Id, "Unexpected modSeqChanged[{0}].UniqueId", i);
+					Assert.AreEqual (4, modSeqChanged[i].ModSeq, "Unexpected modSeqChanged[{0}].ModSeq", i);
+				}
 				Assert.IsFalse (recentChanged, "Unexpected RecentChanged event");
+				modSeqChanged.Clear ();
 				flagsChanged.Clear ();
 
 				// Delete some messages so we can test that QRESYNC emits some MessageVanished events
@@ -546,8 +565,13 @@ namespace UnitTests.Net.Imap {
 				var deleted = new UniqueIdSet (SortOrder.Ascending);
 				deleted.Add (appended[7]); // H
 				await folder.AddFlagsAsync (deleted, MessageFlags.Deleted, true);
-				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events emitted");
+				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events");
+				Assert.AreEqual (1, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
+				Assert.AreEqual (7, modSeqChanged[0].Index, "Unexpected modSeqChanged[{0}].Index", 0);
+				Assert.AreEqual (8, modSeqChanged[0].UniqueId.Value.Id, "Unexpected modSeqChanged[{0}].UniqueId", 0);
+				Assert.AreEqual (5, modSeqChanged[0].ModSeq, "Unexpected modSeqChanged[{0}].ModSeq", 0);
 				Assert.IsFalse (recentChanged, "Unexpected RecentChanged event");
+				modSeqChanged.Clear ();
 				flagsChanged.Clear ();
 
 				await folder.ExpungeAsync (deleted);
