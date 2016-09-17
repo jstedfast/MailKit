@@ -12,6 +12,7 @@
 * POP3 Client
   * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
 * IMAP4 Client
+  * Consolidate MessageFlagsChanged, MessageLabelsChanged, and ModSeqChanged events into a single event?
   * Extensions:
     * BINARY
     * CATENATE
@@ -19,7 +20,6 @@
     * CONVERT (Note: none of the mainstream IMAP servers seem to support this)
     * ANNOTATE
     * NOTIFY (Note: only Dovecot seems to support this)
-    * FILTERS (Note: none of the mainstream IMAP servers seem to support this)
     * MULTISEARCH (Note: none of the mainstream IMAP servers seem to support this)
 * Maildir
 * Thunderbird mbox folder trees
