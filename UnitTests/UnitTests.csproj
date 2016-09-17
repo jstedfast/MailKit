@@ -134,6 +134,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\copy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-personal.txt" />

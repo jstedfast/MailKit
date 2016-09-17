@@ -415,14 +415,15 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000017 UNSELECT\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000018 SELECT UnitTests.Messages (QRESYNC (1436832084 2 1:8))\r\n", "dovecot.select-unittests-messages-qresync.txt"));
 			commands.Add (new ImapReplayCommand ("A00000019 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 2\r\n", "dovecot.search-changed-since.txt"));
-			commands.Add (new ImapReplayCommand ("A00000020 UID FETCH 1:7 (UID FLAGS MODSEQ) (CHANGEDSINCE 2 VANISHED)\r\n", "dovecot.fetch-changed.txt"));
-			commands.Add (new ImapReplayCommand ("A00000021 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
-			commands.Add (new ImapReplayCommand ("A00000022 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
-			commands.Add (new ImapReplayCommand ("A00000023 CREATE UnitTests.Destination\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000024 LIST \"\" UnitTests.Destination\r\n", "dovecot.list-unittests-destination.txt"));
-			commands.Add (new ImapReplayCommand ("A00000025 UID COPY 1:7 UnitTests.Destination\r\n", "dovecot.copy.txt"));
-			commands.Add (new ImapReplayCommand ("A00000026 UID MOVE 1:7 UnitTests.Destination\r\n", "dovecot.move.txt"));
-			commands.Add (new ImapReplayCommand ("A00000027 STATUS UnitTests.Destination (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ)\r\n", "dovecot.status-unittests-destination.txt"));
+			commands.Add (new ImapReplayCommand ("A00000020 UID FETCH 1:7 (UID FLAGS MODSEQ)\r\n", "dovecot.fetch-changed.txt"));
+			commands.Add (new ImapReplayCommand ("A00000021 UID FETCH 1:* (UID FLAGS MODSEQ) (CHANGEDSINCE 2 VANISHED)\r\n", "dovecot.fetch-changed2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000022 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
+			commands.Add (new ImapReplayCommand ("A00000023 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000024 CREATE UnitTests.Destination\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000025 LIST \"\" UnitTests.Destination\r\n", "dovecot.list-unittests-destination.txt"));
+			commands.Add (new ImapReplayCommand ("A00000026 UID COPY 1:7 UnitTests.Destination\r\n", "dovecot.copy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000027 UID MOVE 1:7 UnitTests.Destination\r\n", "dovecot.move.txt"));
+			commands.Add (new ImapReplayCommand ("A00000028 STATUS UnitTests.Destination (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ)\r\n", "dovecot.status-unittests-destination.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -627,7 +628,16 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (7, changed.Max.Value.Id, "Unexpected Max");
 				Assert.AreEqual (7, changed.Count, "Unexpected Count");
 
-				var fetched = await folder.FetchAsync (changed.UniqueIds, highestModSeq, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+				var fetched = await folder.FetchAsync (changed.UniqueIds, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+
+				// or... we could just use a single UID FETCH command like so:
+				var range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MaxValue);
+				fetched = await folder.FetchAsync (range, highestModSeq, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+				Assert.AreEqual (1, vanished.Count, "Unexpected number of MessagesVanished events");
+				Assert.IsTrue (vanished[0].Earlier, "Expected VANISHED EARLIER");
+				Assert.AreEqual (1, vanished[0].UniqueIds.Count, "Unexpected number of messages vanished");
+				Assert.AreEqual (8, vanished[0].UniqueIds[0].Id, "Unexpected UID for vanished message");
+				vanished.Clear ();
 
 				// Use SORT to order by reverse arrival order
 				var orderBy = new OrderBy[] { new OrderBy (OrderByType.Arrival, SortOrder.Descending) };
