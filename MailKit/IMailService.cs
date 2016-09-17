@@ -105,7 +105,14 @@ namespace MailKit {
 		/// Get whether or not the service is currently connected.
 		/// </summary>
 		/// <remarks>
-		/// Gets whether or not the service is currently connected.
+		/// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+		/// one of the <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a>
+		/// methods succeeds and is not set back to <c>false</c> until either the client
+		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
+		/// exception (such as <see cref="ProtocolException"/>) is thrown while attempting
+		/// to read or write to the underlying network socket.</para>
+		/// <para>When an <see cref="ProtocolException"/> is caught, the connection state of the
+		/// <see cref="IMailService"/> should be checked before continuing.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the service connected; otherwise, <c>false</c>.</value>
 		bool IsConnected { get; }

@@ -204,8 +204,14 @@ namespace MailKit {
 		/// Gets whether or not the client is currently connected to an mail server.
 		/// </summary>
 		/// <remarks>
-		/// When a <see cref="ProtocolException"/> is caught, the connection state of the
-		/// connection should be checked before continuing.
+		///<para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+		/// one of the <a href="Overload_MailKit_MailService_Connect.htm">Connect</a>
+		/// methods succeeds and is not set back to <c>false</c> until either the client
+		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
+		/// exception (such as <see cref="ProtocolException"/>) is thrown while attempting
+		/// to read or write to the underlying network socket.</para>
+		/// <para>When an <see cref="ProtocolException"/> is caught, the connection state of the
+		/// <see cref="MailService"/> should be checked before continuing.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public abstract bool IsConnected {

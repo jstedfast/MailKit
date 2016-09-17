@@ -274,8 +274,14 @@ namespace MailKit.Net.Smtp {
 		/// Get whether or not the client is currently connected to an SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// When a <see cref="SmtpProtocolException"/> is caught, the connection state of the
-		/// <see cref="SmtpClient"/> should be checked before continuing.
+		/// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+		/// one of the <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
+		/// methods succeeds and is not set back to <c>false</c> until either the client
+		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
+		/// exception (such as <see cref="SmtpProtocolException"/>) is thrown while attempting
+		/// to read or write to the underlying network socket.</para>
+		/// <para>When an <see cref="SmtpProtocolException"/> is caught, the connection state of the
+		/// <see cref="SmtpClient"/> should be checked before continuing.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
