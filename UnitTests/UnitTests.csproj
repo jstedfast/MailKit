@@ -139,6 +139,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-changed-since.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-inbox-qresync.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\sort-reverse-arrival.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\add-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.2.txt" />

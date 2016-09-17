@@ -338,6 +338,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ))\r\n", "dovecot.list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 SELECT INBOX (QRESYNC (1436832057 5 1:5))\r\n", "dovecot.select-inbox-qresync.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 5\r\n", "dovecot.search-changed-since.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -442,6 +443,19 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (1, changed.Min.Value.Id, "Unexpected Min");
 				Assert.AreEqual (4, changed.Max.Value.Id, "Unexpected Max");
 				Assert.AreEqual (4, changed.Count, "Unexpected Count");
+
+				// SORT the results
+				var orderBy = new OrderBy[] { new OrderBy (OrderByType.Arrival, SortOrder.Descending) };
+				var sorted = await inbox.SearchAsync (searchOptions, SearchQuery.All, orderBy);
+				Assert.AreEqual (4, sorted.UniqueIds.Count, "Unexpected number of UIDs");
+				Assert.AreEqual (4, sorted.UniqueIds[0].Id, "Unexpected value for UniqueId[0]");
+				Assert.AreEqual (3, sorted.UniqueIds[1].Id, "Unexpected value for UniqueId[1]");
+				Assert.AreEqual (2, sorted.UniqueIds[2].Id, "Unexpected value for UniqueId[2]");
+				Assert.AreEqual (1, sorted.UniqueIds[3].Id, "Unexpected value for UniqueId[3]");
+				Assert.IsFalse (sorted.ModSeq.HasValue, "Expected the ModSeq property to be null");
+				Assert.AreEqual (4, sorted.Min.Value.Id, "Unexpected Min");
+				Assert.AreEqual (1, sorted.Max.Value.Id, "Unexpected Max");
+				Assert.AreEqual (4, sorted.Count, "Unexpected Count");
 
 				await client.DisconnectAsync (false);
 			}
