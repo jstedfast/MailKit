@@ -8512,17 +8512,40 @@ namespace MailKit.Net.Imap {
 
 				token = engine.ReadToken (ic.CancellationToken);
 
-				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
-
 				switch (atom) {
+				case "RELEVANCY":
+					if (token.Type != ImapTokenType.OpenParen)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
+					results.Relevancy = new List<byte> ();
+
+					do {
+						int score;
+
+						token = engine.ReadToken (ic.CancellationToken);
+
+						if (token.Type == ImapTokenType.CloseParen)
+							break;
+
+						if (token.Type != ImapTokenType.Atom || !int.TryParse ((string) token.Value, out score) || score < 1 || score > 100)
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
+						results.Relevancy.Add ((byte) score);
+					} while (true);
+					break;
 				case "MODSEQ":
+					if (token.Type != ImapTokenType.Atom)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
 					if (!ulong.TryParse ((string) token.Value, out modseq))
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.ModSeq = modseq;
 					break;
 				case "COUNT":
+					if (token.Type != ImapTokenType.Atom)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
 					if (!int.TryParse ((string) token.Value, out count))
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
@@ -8535,12 +8558,18 @@ namespace MailKit.Net.Imap {
 					results.Min = new UniqueId (ic.Folder.UidValidity, min);
 					break;
 				case "MAX":
+					if (token.Type != ImapTokenType.Atom)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
 					if (!uint.TryParse ((string) token.Value, out max))
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Max = new UniqueId (ic.Folder.UidValidity, max);
 					break;
 				case "ALL":
+					if (token.Type != ImapTokenType.Atom)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
 					if (!UniqueIdSet.TryParse ((string) token.Value, ic.Folder.UidValidity, out uids))
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
@@ -9130,6 +9159,8 @@ namespace MailKit.Net.Imap {
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var command = "UID SEARCH RETURN (";
 
+			if ((options & SearchOptions.Relevancy) != 0)
+				command += "RELEVANCY ";
 			if ((options & SearchOptions.Count) != 0)
 				command += "COUNT ";
 			if ((options & SearchOptions.Min) != 0)
@@ -9240,6 +9271,8 @@ namespace MailKit.Net.Imap {
 			var order = BuildSortOrder (orderBy);
 
 			var command = "UID SORT RETURN (";
+			if ((options & SearchOptions.Relevancy) != 0)
+				command += "RELEVANCY ";
 			if ((options & SearchOptions.Count) != 0)
 				command += "COUNT ";
 			if ((options & SearchOptions.Min) != 0)
@@ -9336,6 +9369,8 @@ namespace MailKit.Net.Imap {
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var command = "UID SEARCH RETURN (";
 
+			if ((options & SearchOptions.Relevancy) != 0)
+				command += "RELEVANCY ";
 			if ((options & SearchOptions.Count) != 0)
 				command += "COUNT ";
 			if ((options & SearchOptions.Min) != 0)
@@ -9455,6 +9490,8 @@ namespace MailKit.Net.Imap {
 			var order = BuildSortOrder (orderBy);
 			var command = "UID SORT RETURN (";
 
+			if ((options & SearchOptions.Relevancy) != 0)
+				command += "RELEVANCY ";
 			if ((options & SearchOptions.Count) != 0)
 				command += "COUNT ";
 			if ((options & SearchOptions.Min) != 0)

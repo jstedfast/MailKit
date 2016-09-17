@@ -26,8 +26,6 @@
 
 using System.Collections.Generic;
 
-using MailKit;
-
 namespace MailKit.Search {
 	/// <summary>
 	/// The results of a search.
@@ -100,6 +98,17 @@ namespace MailKit.Search {
 		/// </remarks>
 		/// <value>The mod-sequence identifier.</value>
 		public ulong? ModSeq {
+			get; set;
+		}
+
+		/// <summary>
+		/// Gets or sets the relevancy scores of the messages that matched the search query.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the relevancy scores of the messages that matched the search query.
+		/// </remarks>
+		/// <value>The relevancy scores.</value>
+		public IList<byte> Relevancy {
 			get; set;
 		}
 	}

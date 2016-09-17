@@ -38,21 +38,27 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Returns all of the matching unique identifiers.
 		/// </summary>
-		All   = 0,
+		All       = 0,
 
 		/// <summary>
 		/// Returns the number of messages that match the search query.
 		/// </summary>
-		Count = 1 << 0,
+		Count     = 1 << 0,
 
 		/// <summary>
 		/// Returns the minimum unique identifier of the messages that match the search query.
 		/// </summary>
-		Min   = 1 << 1,
+		Min       = 1 << 1,
 
 		/// <summary>
 		/// Returns the maximum unique identifier of the messages that match the search query.
 		/// </summary>
-		Max   = 1 << 2
+		Max       = 1 << 2,
+
+		/// <summary>
+		/// Returns the relevancy scores of the messages that match the query. Can only be used
+		/// when using FUZZY search.
+		/// </summary>
+		Relevancy = 1 << 3
 	}
 }
