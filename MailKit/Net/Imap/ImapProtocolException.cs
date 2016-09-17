@@ -104,4 +104,3 @@ namespace MailKit.Net.Imap {
 		}
 	}
 }
-

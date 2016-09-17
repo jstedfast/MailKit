@@ -35,7 +35,7 @@ namespace MailKit.Net.Smtp {
 	/// An SMTP protocol exception.
 	/// </summary>
 	/// <remarks>
-	/// The exception that is thrown when there is an error communicating with an SMTP server. A
+	/// The exception that is thrown when there is an error communicating with an SMTP server. An
 	/// <see cref="SmtpProtocolException"/> is typically fatal and requires the <see cref="SmtpClient"/>
 	/// to be reconnected.
 	/// </remarks>
