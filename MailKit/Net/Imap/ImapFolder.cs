@@ -593,7 +593,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="specialUses">A list of special uses for the folder being created.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="specialUses"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="name"/> is empty.
@@ -632,6 +634,9 @@ namespace MailKit.Net.Imap {
 
 			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
+
+			if (specialUses == null)
+				throw new ArgumentNullException (nameof (specialUses));
 
 			CheckState (false, false);
 
@@ -2294,6 +2299,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
+
 			CheckState (true, true);
 
 			if (uids.Count == 0)

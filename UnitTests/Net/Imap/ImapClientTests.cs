@@ -454,8 +454,39 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (1, client.InternationalizationLevel, "Expected I18NLEVEL=1");
 				Assert.IsTrue (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.IsTrue (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
-
 				// TODO: verify CONTEXT=SEARCH
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+
+				// Assert a bunch of ArgumentExceptions
+				Assert.Throws<ArgumentNullException> (() => new ImapFolder (null));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Inbox.Open ((FolderAccess) 500));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Inbox.Open ((FolderAccess) 500, 0, 0, UniqueIdRange.All));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, SpecialFolder.All));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, SpecialFolder.All));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", SpecialFolder.All));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create ("ValidName", null));
+				Assert.Throws<NotSupportedException> (() => client.Inbox.Create ("ValidName", SpecialFolder.All));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Rename (null, "NewName"));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Rename (personal, null));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Rename (personal, string.Empty));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.GetSubfolder (null));
+				Assert.Throws<ArgumentException> (() => client.Inbox.GetSubfolder (string.Empty));
+
+				// Make sure these all throw NotSupportedException
+				Assert.Throws<NotSupportedException> (() => client.Inbox.GetAccessRights ("smith"));
+				Assert.Throws<NotSupportedException> (() => client.Inbox.GetMyAccessRights ());
+				var rights = new AccessRights ("lrswida");
+				Assert.Throws<NotSupportedException> (() => client.Inbox.AddAccessRights ("smith", rights));
+				Assert.Throws<NotSupportedException> (() => client.Inbox.RemoveAccessRights ("smith", rights));
+				Assert.Throws<NotSupportedException> (() => client.Inbox.SetAccessRights ("smith", rights));
+				Assert.Throws<NotSupportedException> (() => client.Inbox.RemoveAccess ("smith"));
 
 				try {
 					await client.EnableQuickResyncAsync ();
@@ -465,7 +496,6 @@ namespace UnitTests.Net.Imap {
 
 				// take advantage of LIST-STATUS to get top-level personal folders...
 				var statusItems = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread;
-				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 
 				var folders = (await personal.GetSubfoldersAsync (statusItems, false)).ToArray ();
 				Assert.AreEqual (6, folders.Length, "Expected 6 folders");
@@ -968,6 +998,10 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("lrswi", acl[1].Rights.ToString (), "The access rights for the second access control does not match.");
 
 				// LISTRIGHTS INBOX smith
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.GetAccessRights (null));
+				//Assert.Throws<ArgumentException> (() => client.Inbox.GetAccessRights (string.Empty));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.GetAccessRightsAsync (null));
+				//Assert.Throws<ArgumentException> (async () => await client.Inbox.GetAccessRightsAsync (string.Empty));
 				var rights = await client.Inbox.GetAccessRightsAsync ("smith");
 				Assert.AreEqual ("lrswipkxtecda0123456789", rights.ToString (), "The access rights do not match for user smith.");
 
@@ -976,15 +1010,38 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("rwiptsldaex", rights.ToString (), "My access rights do not match.");
 
 				// SETACL INBOX smith +lrswida
-				await client.Inbox.AddAccessRightsAsync ("smith", new AccessRights ("lrswida"));
+				rights = new AccessRights ("lrswida");
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddAccessRights (null, rights));
+				//Assert.Throws<ArgumentException> (() => client.Inbox.AddAccessRights (string.Empty, rights));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddAccessRights ("smith", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddAccessRightsAsync (null, rights));
+				//Assert.Throws<ArgumentException> (async () => await client.Inbox.AddAccessRightsAsync (string.Empty, rights));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddAccessRightsAsync ("smith", null));
+				await client.Inbox.AddAccessRightsAsync ("smith", rights);
 
 				// SETACL INBOX smith -lrswida
-				await client.Inbox.RemoveAccessRightsAsync ("smith", new AccessRights ("lrswida"));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveAccessRights (null, rights));
+				//Assert.Throws<ArgumentException> (() => client.Inbox.RemoveAccessRights (string.Empty, rights));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveAccessRights ("smith", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveAccessRightsAsync (null, rights));
+				//Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveAccessRightsAsync (string.Empty, rights));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveAccessRightsAsync ("smith", null));
+				await client.Inbox.RemoveAccessRightsAsync ("smith", rights);
 
 				// SETACL INBOX smith lrswida
-				await client.Inbox.SetAccessRightsAsync ("smith", new AccessRights ("lrswida"));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetAccessRights (null, rights));
+				//Assert.Throws<ArgumentException> (() => client.Inbox.SetAccessRights (string.Empty, rights));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetAccessRights ("smith", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetAccessRightsAsync (null, rights));
+				//Assert.Throws<ArgumentException> (async () => await client.Inbox.SetAccessRightsAsync (string.Empty, rights));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetAccessRightsAsync ("smith", null));
+				await client.Inbox.SetAccessRightsAsync ("smith", rights);
 
 				// DELETEACL INBOX smith
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveAccess (null));
+				//Assert.Throws<ArgumentException> (() => client.Inbox.RemoveAccess (string.Empty));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveAccessAsync (null));
+				//Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveAccessAsync (string.Empty));
 				await client.Inbox.RemoveAccessAsync ("smith");
 
 				await client.DisconnectAsync (false);
