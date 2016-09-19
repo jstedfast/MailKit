@@ -4088,8 +4088,6 @@ namespace MailKit {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
@@ -4125,9 +4123,6 @@ namespace MailKit {
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
-
-			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
@@ -4270,8 +4265,6 @@ namespace MailKit {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
@@ -4321,8 +4314,6 @@ namespace MailKit {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
@@ -4358,9 +4349,6 @@ namespace MailKit {
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
-
-			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
@@ -4494,8 +4482,6 @@ namespace MailKit {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
@@ -4542,8 +4528,6 @@ namespace MailKit {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
@@ -4709,8 +4693,6 @@ namespace MailKit {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
@@ -4757,8 +4739,6 @@ namespace MailKit {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
