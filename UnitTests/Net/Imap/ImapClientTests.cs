@@ -106,6 +106,13 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestArgumentExceptions ()
 		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
+
 			using (var client = new ImapClient ()) {
 				var credentials = new NetworkCredential ("username", "password");
 
@@ -125,6 +132,12 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect ("host", -1, SecureSocketOptions.None));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
 
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
 				// Authenticate
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null));
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null));
@@ -142,6 +155,222 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, null, "password"));
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate (Encoding.UTF8, "username", null));
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, "username", null));
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var messages = new List<MimeMessage> ();
+				var flags = new List<MessageFlags> ();
+				var now = DateTimeOffset.Now;
+
+				messages.Add (CreateThreadableMessage ("A", "<a@mimekit.net>", null, now.AddMinutes (-7)));
+				messages.Add (CreateThreadableMessage ("B", "<b@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-6)));
+				messages.Add (CreateThreadableMessage ("C", "<c@mimekit.net>", "<a@mimekit.net> <b@mimekit.net>", now.AddMinutes (-5)));
+				messages.Add (CreateThreadableMessage ("D", "<d@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-4)));
+				messages.Add (CreateThreadableMessage ("E", "<e@mimekit.net>", "<c@mimekit.net> <x@mimekit.net> <y@mimekit.net> <z@mimekit.net>", now.AddMinutes (-3)));
+				messages.Add (CreateThreadableMessage ("F", "<f@mimekit.net>", "<b@mimekit.net>", now.AddMinutes (-2)));
+				messages.Add (CreateThreadableMessage ("G", "<g@mimekit.net>", null, now.AddMinutes (-1)));
+				messages.Add (CreateThreadableMessage ("H", "<h@mimekit.net>", null, now));
+
+				for (int i = 0; i < messages.Count; i++)
+					flags.Add (MessageFlags.Seen);
+
+				// ImapFolder .ctor
+				Assert.Throws<ArgumentNullException> (() => new ImapFolder (null));
+
+				// Open
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Inbox.Open ((FolderAccess) 500));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Inbox.Open ((FolderAccess) 500, 0, 0, UniqueIdRange.All));
+
+				// Create
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, SpecialFolder.All));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, SpecialFolder.All));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", SpecialFolder.All));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create ("ValidName", null));
+				Assert.Throws<NotSupportedException> (() => client.Inbox.Create ("ValidName", SpecialFolder.All));
+
+				// Rename
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Rename (null, "NewName"));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Rename (personal, null));
+				Assert.Throws<ArgumentException> (() => client.Inbox.Rename (personal, string.Empty));
+
+				// GetSubfolder
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.GetSubfolder (null));
+				Assert.Throws<ArgumentException> (() => client.Inbox.GetSubfolder (string.Empty));
+
+				// GetMetadata
+				Assert.Throws<ArgumentNullException> (() => client.GetMetadata (null, new MetadataTag[] { MetadataTag.PrivateComment }));
+				Assert.Throws<ArgumentNullException> (() => client.GetMetadata (new MetadataOptions (), null));
+
+				// SetMetadata
+				Assert.Throws<ArgumentNullException> (() => client.SetMetadata (null));
+
+				// Expunge
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Expunge (null));
+
+				// Append
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Append (null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AppendAsync (null));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Append (null, messages[0]));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AppendAsync (null, messages[0]));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.Append (FormatOptions.Default, null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AppendAsync (FormatOptions.Default, null));
+				// TODO: all of the other Append() overrides
+
+				// CopyTo
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.CopyTo ((IList<UniqueId>) null, client.Inbox));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.CopyToAsync ((IList<UniqueId>) null, client.Inbox));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.CopyTo (UniqueIdRange.All, null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.CopyToAsync (UniqueIdRange.All, null));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.CopyTo ((IList<int>) null, client.Inbox));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.CopyToAsync ((IList<int>) null, client.Inbox));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.CopyTo (new int[] { 0 }, null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.CopyToAsync (new int[] { 0 }, null));
+
+				// MoveTo
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.MoveTo ((IList<UniqueId>) null, client.Inbox));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.MoveToAsync ((IList<UniqueId>) null, client.Inbox));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.MoveTo (UniqueIdRange.All, null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.MoveToAsync (UniqueIdRange.All, null));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.MoveTo ((IList<int>) null, client.Inbox));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.MoveToAsync ((IList<int>) null, client.Inbox));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.MoveTo (new int[] { 0 }, null));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.MoveToAsync (new int[] { 0 }, null));
+
+				// AddFlags
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (-1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (-1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (0, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (0, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (UniqueId.MinValue, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (UniqueId.MinValue, MessageFlags.None, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddFlags ((IList<int>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddFlagsAsync ((IList<int>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddFlags ((IList<UniqueId>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddFlagsAsync ((IList<UniqueId>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (new int[] { 0 }, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (new int[] { 0 }, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (UniqueIdRange.All, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (UniqueIdRange.All, MessageFlags.None, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddFlags ((IList<int>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddFlagsAsync ((IList<int>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddFlags ((IList<UniqueId>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddFlagsAsync ((IList<UniqueId>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (new int[] { 0 }, 1, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (new int[] { 0 }, 1, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (UniqueIdRange.All, 1, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (UniqueIdRange.All, 1, MessageFlags.None, true));
+
+
+				// RemoveFlags
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (-1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (-1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (0, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (0, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (UniqueId.MinValue, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (UniqueId.MinValue, MessageFlags.None, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveFlags ((IList<int>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveFlagsAsync ((IList<int>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveFlags ((IList<UniqueId>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveFlagsAsync ((IList<UniqueId>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (new int[] { 0 }, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (new int[] { 0 }, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (UniqueIdRange.All, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (UniqueIdRange.All, MessageFlags.None, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveFlags ((IList<int>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveFlagsAsync ((IList<int>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveFlags ((IList<UniqueId>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveFlagsAsync ((IList<UniqueId>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (new int[] { 0 }, 1, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (new int[] { 0 }, 1, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (UniqueIdRange.All, 1, MessageFlags.None, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (UniqueIdRange.All, 1, MessageFlags.None, true));
+
+				// SetFlags
+				Assert.Throws<ArgumentException> (() => client.Inbox.SetFlags (-1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.SetFlagsAsync (-1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetFlags ((IList<int>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetFlagsAsync ((IList<int>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetFlags ((IList<UniqueId>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetFlagsAsync ((IList<UniqueId>) null, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetFlags ((IList<int>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetFlagsAsync ((IList<int>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetFlags ((IList<UniqueId>) null, 1, MessageFlags.Seen, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetFlagsAsync ((IList<UniqueId>) null, 1, MessageFlags.Seen, true));
+
+				var labels = new string[] { "Label1", "Label2" };
+				var emptyLabels = new string[0];
+
+				// AddLabels
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddLabels (-1, labels, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddLabelsAsync (-1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels (0, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync (0, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels (UniqueId.MinValue, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync (UniqueId.MinValue, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels ((IList<int>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync ((IList<int>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels ((IList<UniqueId>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync ((IList<UniqueId>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels (new int[] { 0 }, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync (new int[] { 0 }, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels (UniqueIdRange.All, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync (UniqueIdRange.All, null, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddLabels (new int[] { 0 }, emptyLabels, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddLabelsAsync (new int[] { 0 }, emptyLabels, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.AddLabels (UniqueIdRange.All, emptyLabels, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddLabelsAsync (UniqueIdRange.All, emptyLabels, true));
+
+				// RemoveLabels
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveLabels (-1, labels, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveLabelsAsync (-1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels (0, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync (0, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels (UniqueId.MinValue, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync (UniqueId.MinValue, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels ((IList<int>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync ((IList<int>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels ((IList<UniqueId>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync ((IList<UniqueId>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels (new int[] { 0 }, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync (new int[] { 0 }, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels (UniqueIdRange.All, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync (UniqueIdRange.All, null, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveLabels (new int[] { 0 }, emptyLabels, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveLabelsAsync (new int[] { 0 }, emptyLabels, true));
+				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveLabels (UniqueIdRange.All, emptyLabels, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveLabelsAsync (UniqueIdRange.All, emptyLabels, true));
+
+				// SetLabels
+				Assert.Throws<ArgumentException> (() => client.Inbox.SetLabels (-1, labels, true));
+				Assert.Throws<ArgumentException> (async () => await client.Inbox.SetLabelsAsync (-1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels (0, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync (0, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels (UniqueId.MinValue, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync (UniqueId.MinValue, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels ((IList<int>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync ((IList<int>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels ((IList<UniqueId>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync ((IList<UniqueId>) null, labels, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels (new int[] { 0 }, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync (new int[] { 0 }, null, true));
+				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels (UniqueIdRange.All, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync (UniqueIdRange.All, null, true));
+
+				client.Disconnect (false);
 			}
 		}
 
@@ -458,140 +687,6 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 
-				// Assert a bunch of ArgumentExceptions
-				Assert.Throws<ArgumentNullException> (() => new ImapFolder (null));
-				Assert.Throws<ArgumentOutOfRangeException> (() => client.Inbox.Open ((FolderAccess) 500));
-				Assert.Throws<ArgumentOutOfRangeException> (() => client.Inbox.Open ((FolderAccess) 500, 0, 0, UniqueIdRange.All));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, SpecialFolder.All));
-				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, SpecialFolder.All));
-				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", SpecialFolder.All));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create (null, new SpecialFolder[] { SpecialFolder.All }));
-				Assert.Throws<ArgumentException> (() => client.Inbox.Create (string.Empty, new SpecialFolder[] { SpecialFolder.All }));
-				Assert.Throws<ArgumentException> (() => client.Inbox.Create ("Folder./Name", new SpecialFolder[] { SpecialFolder.All }));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Create ("ValidName", null));
-				Assert.Throws<NotSupportedException> (() => client.Inbox.Create ("ValidName", SpecialFolder.All));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Rename (null, "NewName"));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Rename (personal, null));
-				Assert.Throws<ArgumentException> (() => client.Inbox.Rename (personal, string.Empty));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.GetSubfolder (null));
-				Assert.Throws<ArgumentException> (() => client.Inbox.GetSubfolder (string.Empty));
-				Assert.Throws<ArgumentNullException> (() => client.GetMetadata (null, new MetadataTag[] { MetadataTag.PrivateComment }));
-				Assert.Throws<ArgumentNullException> (() => client.GetMetadata (new MetadataOptions (), null));
-				Assert.Throws<ArgumentNullException> (() => client.SetMetadata (null));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Expunge (null));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Append (null));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AppendAsync (null));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Append (null, messages[0]));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AppendAsync (null, messages[0]));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.Append (FormatOptions.Default, null));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AppendAsync (FormatOptions.Default, null));
-				// TODO: all of the other Append() overrides
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.CopyTo ((IList<UniqueId>) null, client.Inbox));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.CopyToAsync ((IList<UniqueId>) null, client.Inbox));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.CopyTo (UniqueIdRange.All, null));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.CopyToAsync (UniqueIdRange.All, null));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.CopyTo ((IList<int>) null, client.Inbox));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.CopyToAsync ((IList<int>) null, client.Inbox));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.CopyTo (new int[] { 0 }, null));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.CopyToAsync (new int[] { 0 }, null));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.MoveTo ((IList<UniqueId>) null, client.Inbox));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.MoveToAsync ((IList<UniqueId>) null, client.Inbox));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.MoveTo (UniqueIdRange.All, null));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.MoveToAsync (UniqueIdRange.All, null));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.MoveTo ((IList<int>) null, client.Inbox));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.MoveToAsync ((IList<int>) null, client.Inbox));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.MoveTo (new int[] { 0 }, null));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.MoveToAsync (new int[] { 0 }, null));
-				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (-1, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (-1, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (0, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (0, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (UniqueId.MinValue, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (UniqueId.MinValue, MessageFlags.None, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddFlags ((IList<int>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddFlagsAsync ((IList<int>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddFlags ((IList<UniqueId>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddFlagsAsync ((IList<UniqueId>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (new int[] { 0 }, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (new int[] { 0 }, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.AddFlags (UniqueIdRange.All, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddFlagsAsync (UniqueIdRange.All, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (-1, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (-1, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (0, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (0, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (UniqueId.MinValue, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (UniqueId.MinValue, MessageFlags.None, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveFlags ((IList<int>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveFlagsAsync ((IList<int>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveFlags ((IList<UniqueId>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveFlagsAsync ((IList<UniqueId>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (new int[] { 0 }, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (new int[] { 0 }, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveFlags (UniqueIdRange.All, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveFlagsAsync (UniqueIdRange.All, MessageFlags.None, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.SetFlags (-1, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.SetFlagsAsync (-1, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetFlags ((IList<int>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetFlagsAsync ((IList<int>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetFlags ((IList<UniqueId>) null, MessageFlags.Seen, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetFlagsAsync ((IList<UniqueId>) null, MessageFlags.Seen, true));
-				var labels = new string[] { "Label1", "Label2" };
-				var emptyLabels = new string[0];
-				Assert.Throws<ArgumentException> (() => client.Inbox.AddLabels (-1, labels, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddLabelsAsync (-1, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels (0, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync (0, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels (UniqueId.MinValue, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync (UniqueId.MinValue, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels ((IList<int>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync ((IList<int>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels ((IList<UniqueId>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync ((IList<UniqueId>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels (new int[] { 0 }, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync (new int[] { 0 }, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.AddLabels (UniqueIdRange.All, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.AddLabelsAsync (UniqueIdRange.All, null, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.AddLabels (new int[] { 0 }, emptyLabels, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddLabelsAsync (new int[] { 0 }, emptyLabels, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.AddLabels (UniqueIdRange.All, emptyLabels, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.AddLabelsAsync (UniqueIdRange.All, emptyLabels, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveLabels (-1, labels, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveLabelsAsync (-1, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels (0, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync (0, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels (UniqueId.MinValue, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync (UniqueId.MinValue, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels ((IList<int>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync ((IList<int>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels ((IList<UniqueId>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync ((IList<UniqueId>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels (new int[] { 0 }, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync (new int[] { 0 }, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.RemoveLabels (UniqueIdRange.All, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.RemoveLabelsAsync (UniqueIdRange.All, null, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveLabels (new int[] { 0 }, emptyLabels, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveLabelsAsync (new int[] { 0 }, emptyLabels, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.RemoveLabels (UniqueIdRange.All, emptyLabels, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.RemoveLabelsAsync (UniqueIdRange.All, emptyLabels, true));
-				Assert.Throws<ArgumentException> (() => client.Inbox.SetLabels (-1, labels, true));
-				Assert.Throws<ArgumentException> (async () => await client.Inbox.SetLabelsAsync (-1, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels (0, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync (0, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels (UniqueId.MinValue, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync (UniqueId.MinValue, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels ((IList<int>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync ((IList<int>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels ((IList<UniqueId>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync ((IList<UniqueId>) null, labels, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels (new int[] { 0 }, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync (new int[] { 0 }, null, true));
-				Assert.Throws<ArgumentNullException> (() => client.Inbox.SetLabels (UniqueIdRange.All, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await client.Inbox.SetLabelsAsync (UniqueIdRange.All, null, true));
-
 				// Make sure these all throw NotSupportedException
 				Assert.Throws<NotSupportedException> (() => client.EnableUTF8 ());
 				Assert.Throws<NotSupportedException> (() => client.Inbox.GetAccessRights ("smith"));
@@ -606,6 +701,7 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<NotSupportedException> (() => client.GetMetadata (MetadataTag.PrivateComment));
 				Assert.Throws<NotSupportedException> (() => client.GetMetadata (new MetadataTag[] { MetadataTag.PrivateComment }));
 				Assert.Throws<NotSupportedException> (() => client.SetMetadata (new MetadataCollection ()));
+				var labels = new string[] { "Label1", "Label2" };
 				Assert.Throws<NotSupportedException> (() => client.Inbox.AddLabels (UniqueId.MinValue, labels, true));
 				Assert.Throws<NotSupportedException> (() => client.Inbox.AddLabels (UniqueIdRange.All, labels, true));
 				Assert.Throws<NotSupportedException> (() => client.Inbox.AddLabels (UniqueIdRange.All, 1, labels, true));
