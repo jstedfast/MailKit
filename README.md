@@ -526,6 +526,9 @@ If MailKit does not work with your mail server, please include a [protocol
 log](https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog) in your bug report, otherwise
 there is nothing I can do to fix the problem.
 
+If you are getting an exception from somewhere within MailKit, don't just provide the `Exception.Message`
+string. Please include the `Exception.StackTrace` as well. The `Message`, by itself, is useless.
+
 ## Documentation
 
 API documentation can be found at [http://mimekit.net/docs](http://mimekit.net/docs).
