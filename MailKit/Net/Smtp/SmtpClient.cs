@@ -71,15 +71,6 @@ namespace MailKit.Net.Smtp {
 	public class SmtpClient : MailTransport
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
-		static readonly string [] BrokenSmtpServersThatResetStateAfterAuthEhlo = {
-			// Note: Some broken SMTP servers reset their state if they receive an EHLO
-			// command after authenticating even though the specifications explicitly
-			// state that clients SHOULD send EHLO again after authenticating.
-			// See https://github.com/jstedfast/MailKit/issues/162 for details.
-			//
-			// Don't you love non RFC-compliant mail servers?
-			"smtp.strato.de", "smtp.sina.com", "smtp.dm.aliyun.com", "mail.shaw.ca"
-		};
 		const int MaxLineLength = 998;
 
 		enum SmtpCommand {
@@ -112,6 +103,7 @@ namespace MailKit.Net.Smtp {
 		/// </example>
 		public SmtpClient () : this (new NullProtocolLogger ())
 		{
+			CanQueryCapabilitiesAfterAuthenticating = true;
 		}
 
 		/// <summary>
@@ -133,6 +125,22 @@ namespace MailKit.Net.Smtp {
 		/// </example>
 		public SmtpClient (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
+			CanQueryCapabilitiesAfterAuthenticating = true;
+		}
+
+		/// <summary>
+		/// Get or set whether or not the capabilities can be re-queried after authenticating.
+		/// </summary>
+		/// <remarks>
+		/// <para>Certain servers do not properly follow the specification and break if an <c>EHLO</c>
+		/// command is sent after authenticating, causing the sending of mail to fail with various
+		/// errors, typically suggesting an invalid state.</para>
+		/// <para>Since the SMTP SASL specifications specifically state that clients should requery
+		/// the capabilities after successfully authenticating, the default is <c>true</c>.</para>
+		/// </remarks>
+		/// <value><c>true</c> if query capabilities after authenticating is allowed; otherwise, <c>false</c>.</value>
+		public bool CanQueryCapabilitiesAfterAuthenticating {
+			get; set;
 		}
 
 		/// <summary>
@@ -522,16 +530,6 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		static bool IsBrokenSmtpServerThatResetsStateAfterAuthEhlo (string host)
-		{
-			for (int i = 0; i < BrokenSmtpServersThatResetStateAfterAuthEhlo.Length; i++) {
-				if (host.Equals (BrokenSmtpServersThatResetStateAfterAuthEhlo [i], StringComparison.OrdinalIgnoreCase))
-					return true;
-			}
-
-			return false;
-		}
-
 		/// <summary>
 		/// Authenticates using the supplied credentials.
 		/// </summary>
@@ -651,7 +649,7 @@ namespace MailKit.Net.Smtp {
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
-					if (!IsBrokenSmtpServerThatResetsStateAfterAuthEhlo (host))
+					if (CanQueryCapabilitiesAfterAuthenticating)
 						Ehlo (cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);
