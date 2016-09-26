@@ -189,7 +189,7 @@ namespace MailKit.Security.Ntlm
 		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
 		{
 			if (inputCount < 0)
-				throw new ArgumentOutOfRangeException (nameof (inputCount);
+				throw new ArgumentOutOfRangeException (nameof (inputCount));
 
 			var outputBuffer = new byte[inputCount];
 
