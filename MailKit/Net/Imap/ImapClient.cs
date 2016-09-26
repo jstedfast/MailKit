@@ -1277,11 +1277,18 @@ namespace MailKit.Net.Imap {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+
+				try {
 #if COREFX
-				ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
 #else
-				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 #endif
+				} catch {
+					ssl.Dispose ();
+					throw;
+				}
+
 				secure = true;
 				stream = ssl;
 			} else {
@@ -1460,11 +1467,18 @@ namespace MailKit.Net.Imap {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+
+				try {
 #if COREFX
-				ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
 #else
-				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 #endif
+				} catch {
+					ssl.Dispose ();
+					throw;
+				}
+
 				secure = true;
 				stream = ssl;
 			} else {
