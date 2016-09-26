@@ -103,7 +103,7 @@ namespace MailKit.Net.Smtp {
 		/// </example>
 		public SmtpClient () : this (new NullProtocolLogger ())
 		{
-			CanQueryCapabilitiesAfterAuthenticating = true;
+			QueryCapabilitiesAfterAuthenticating = true;
 		}
 
 		/// <summary>
@@ -125,21 +125,21 @@ namespace MailKit.Net.Smtp {
 		/// </example>
 		public SmtpClient (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
-			CanQueryCapabilitiesAfterAuthenticating = true;
+			QueryCapabilitiesAfterAuthenticating = true;
 		}
 
 		/// <summary>
-		/// Get or set whether or not the capabilities can be re-queried after authenticating.
+		/// Get or set whether or not the capabilities should be re-queried after authenticating.
 		/// </summary>
 		/// <remarks>
 		/// <para>Certain servers do not properly follow the specification and break if an <c>EHLO</c>
 		/// command is sent after authenticating, causing the sending of mail to fail with various
 		/// errors, typically suggesting an invalid state.</para>
-		/// <para>Since the SMTP SASL specifications specifically state that clients should requery
+		/// <para>Since the SMTP SASL specifications specifically state that clients should re-query
 		/// the capabilities after successfully authenticating, the default is <c>true</c>.</para>
 		/// </remarks>
-		/// <value><c>true</c> if query capabilities after authenticating is allowed; otherwise, <c>false</c>.</value>
-		public bool CanQueryCapabilitiesAfterAuthenticating {
+		/// <value><c>true</c> if the capabilities should be re-queried after authenticating; otherwise, <c>false</c>.</value>
+		public bool QueryCapabilitiesAfterAuthenticating {
 			get; set;
 		}
 
@@ -649,7 +649,7 @@ namespace MailKit.Net.Smtp {
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
-					if (CanQueryCapabilitiesAfterAuthenticating)
+					if (QueryCapabilitiesAfterAuthenticating)
 						Ehlo (cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);

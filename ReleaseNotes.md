@@ -1,5 +1,12 @@
 # Release Notes
 
+
+### MailKit 1.8.1
+
+* Fixed the NuGet packages to reference MimeKit 1.8.0.
+* Added an SmtpClient.QueryCapabilitiesAfterAuthenticating property to work around broken SMTP servers
+  where sending EHLO after a successful AUTH command incorrectly resets their authenticated state.
+
 ### MailKit 1.8.0
 
 * Added a new Search()/SearchAsync() to ImapFolder that take a raw query string.
