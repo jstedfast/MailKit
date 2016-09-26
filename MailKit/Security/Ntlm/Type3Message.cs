@@ -196,14 +196,17 @@ namespace MailKit.Security.Ntlm {
 
 		public override byte[] Encode ()
 		{
-			var reqVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0;
-			var payloadOffset = 64 + (reqVersion ? 8 : 0);
 			var target = EncodeString (domain);
 			var user = EncodeString (Username);
 			var hostName = EncodeString (host);
+			var payloadOffset = 64;
+			bool reqVersion;
 			byte[] lm, ntlm;
 
 			if (type2 == null) {
+				if ((reqVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0))
+					payloadOffset += 8;
+
 				if (Level != NtlmAuthLevel.LM_and_NTLM)
 					throw new InvalidOperationException ("Refusing to use legacy-mode LM/NTLM authentication unless explicitly enabled using NtlmSettings.DefaultAuthLevel.");
 				
@@ -213,6 +216,7 @@ namespace MailKit.Security.Ntlm {
 				}
 			} else {
 				ChallengeResponse2.Compute (type2, Level, Username, Password, domain, out lm, out ntlm);
+				reqVersion = false;
 			}
 
 			var lmResponseLength = lm != null ? lm.Length : 0;
