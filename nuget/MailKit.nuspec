@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.8.6">
 		<id>MailKit</id>
-		<version>1.6.0</version>
+		<version>1.8.0</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,14 +22,12 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Added support for the new IMAP LITERAL- extension.
-* Added support for the new IMAP APPENDLIMIT extension.
-* Fixed APOP authentication in the Pop3Client. (issue #395)
-* Reset the SmtpClient's Capabilities after disconnecting.
-* Modified ImapFolder.Search() to return a UniqueIdSet for IMAP servers that do not support the ESEARCH extension (which already returns a UniqueIdSet).
-* Added mail.shaw.ca to the list of SMTP servers that break when sending EHLO after AUTH. (issue #393)
-* Work around broken POP3 servers that reply "+OK" instead of "+" in SASL negotiations. (issue #391)
-* Modified the IMAP parser to properly allow "[" to appear within flag tokens. (issue #390)
+		<releaseNotes>* Added a new Search()/SearchAsync() to ImapFolder that take a raw query string.
+* Implemented support for the IMAP FILTERS extension and improved support for the MEATDATA extension.
+* Fixed NTLM authentication support to use NTLMv2. (issue #397)
+* Added support for IMAP's SEARCH=FUZZY relevancy scores.
+* Added an IMailFolder.ModSeqChanged event.
+* Added UniqueIdRange.All for convenience.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>

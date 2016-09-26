@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0",
+  "version": "1.8.0",
   "title": "MailKit",
   "description": "An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.",
   "authors": [ "Jeffrey Stedfast" ],
@@ -58,6 +58,6 @@
     "xmlDoc": true
   },
   "dependencies": {
-    "MimeKit": "1.6.0"
+    "MimeKit": "1.8.0"
   }
 }

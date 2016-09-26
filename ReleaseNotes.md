@@ -1,5 +1,14 @@
 # Release Notes
 
+### MailKit 1.8.0
+
+* Added a new Search()/SearchAsync() to ImapFolder that take a raw query string.
+* Implemented support for the IMAP FILTERS extension and improved support for the MEATDATA extension.
+* Fixed NTLM authentication support to use NTLMv2. (issue #397)
+* Added support for IMAP's SEARCH=FUZZY relevancy scores.
+* Added an IMailFolder.ModSeqChanged event.
+* Added UniqueIdRange.All for convenience.
+
 ### MailKit 1.6.0
 
 * Added support for the new IMAP LITERAL- extension.
