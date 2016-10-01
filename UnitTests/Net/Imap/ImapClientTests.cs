@@ -286,6 +286,139 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (() => inbox.MoveTo (new int[] { 0 }, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.MoveToAsync (new int[] { 0 }, null));
 
+				// Fetch
+				var headers = new HashSet<HeaderId> (new HeaderId[] { HeaderId.Subject });
+				var fields = new HashSet<string> (new string[] { "SUBJECT" });
+				var uids = new UniqueId[] { UniqueId.MinValue };
+				var indexes = new int[] { 0 };
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (-1, -1, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (-1, -1, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (5, 1, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (5, 1, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (0, 5, MessageSummaryItems.None));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (0, 5, MessageSummaryItems.None));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<UniqueId>) null, MessageSummaryItems.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<UniqueId>) null, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (uids, MessageSummaryItems.None));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (uids, MessageSummaryItems.None));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<int>) null, MessageSummaryItems.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<int>) null, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (indexes, MessageSummaryItems.None));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (indexes, MessageSummaryItems.None));
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (-1, -1, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (-1, -1, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (5, 1, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (5, 1, MessageSummaryItems.All, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (0, 5, MessageSummaryItems.None, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (0, 5, MessageSummaryItems.None, headers));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (0, 5, MessageSummaryItems.All, (HashSet<HeaderId>)  null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (0, 5, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<UniqueId>) null, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<UniqueId>) null, MessageSummaryItems.All, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (uids, MessageSummaryItems.None, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (uids, MessageSummaryItems.None, headers));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (uids, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (uids, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<int>) null, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<int>) null, MessageSummaryItems.All, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (indexes, MessageSummaryItems.None, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (indexes, MessageSummaryItems.None, headers));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (indexes, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (indexes, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (-1, -1, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (-1, -1, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (5, 1, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (5, 1, MessageSummaryItems.All, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (0, 5, MessageSummaryItems.None, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (0, 5, MessageSummaryItems.None, fields));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (0, 5, MessageSummaryItems.All, (HashSet<string>)  null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (0, 5, MessageSummaryItems.All, (HashSet<string>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<UniqueId>) null, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<UniqueId>) null, MessageSummaryItems.All, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (uids, MessageSummaryItems.None, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (uids, MessageSummaryItems.None, fields));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (uids, MessageSummaryItems.All, (HashSet<string>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (uids, MessageSummaryItems.All, (HashSet<string>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<int>) null, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<int>) null, MessageSummaryItems.All, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (indexes, MessageSummaryItems.None, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (indexes, MessageSummaryItems.None, fields));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (indexes, MessageSummaryItems.All, (HashSet<string>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (indexes, MessageSummaryItems.All, (HashSet<string>) null));
+
+				// Fetch + modseq
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (-1, -1, 31337, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (-1, -1, 31337, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (5, 1, 31337, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (5, 1, 31337, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (0, 5, 31337, MessageSummaryItems.None));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (0, 5, 31337, MessageSummaryItems.None));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<UniqueId>) null, 31337, MessageSummaryItems.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<UniqueId>) null, 31337, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (uids, 31337, MessageSummaryItems.None));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (uids, 31337, MessageSummaryItems.None));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<int>) null, 31337, MessageSummaryItems.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<int>) null, 31337, MessageSummaryItems.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (indexes, 31337, MessageSummaryItems.None));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (indexes, 31337, MessageSummaryItems.None));
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (-1, -1, 31337, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (-1, -1, 31337, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (5, 1, 31337, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (5, 1, MessageSummaryItems.All, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (0, 5, 31337, MessageSummaryItems.None, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (0, 5, 31337, MessageSummaryItems.None, headers));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (0, 5, 31337, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (0, 5, 31337, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<UniqueId>) null, 31337, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<UniqueId>) null, 31337, MessageSummaryItems.All, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (uids, 31337, MessageSummaryItems.None, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (uids, 31337, MessageSummaryItems.None, headers));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (uids, 31337, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (uids, 31337, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<int>) null, 31337, MessageSummaryItems.All, headers));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<int>) null, 31337, MessageSummaryItems.All, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (indexes, 31337, MessageSummaryItems.None, headers));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (indexes, 31337, MessageSummaryItems.None, headers));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (indexes, 31337, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (indexes, 31337, MessageSummaryItems.All, (HashSet<HeaderId>) null));
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (-1, -1, 31337, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (-1, -1, 31337, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (5, 1, 31337, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (5, 1, 31337, MessageSummaryItems.All, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (0, 5, 31337, MessageSummaryItems.None, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (0, 5, 31337, MessageSummaryItems.None, fields));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (0, 5, 31337, MessageSummaryItems.All, (HashSet<string>)  null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (0, 5, 31337, MessageSummaryItems.All, (HashSet<string>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<UniqueId>) null, 31337, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<UniqueId>) null, 31337, MessageSummaryItems.All, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (uids, 31337, MessageSummaryItems.None, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (uids, 31337, MessageSummaryItems.None, fields));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (uids, 31337, MessageSummaryItems.All, (HashSet<string>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (uids, 31337, MessageSummaryItems.All, (HashSet<string>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<int>) null, 31337, MessageSummaryItems.All, fields));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<int>) null, 31337, MessageSummaryItems.All, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (indexes, 31337, MessageSummaryItems.None, fields));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (indexes, 31337, MessageSummaryItems.None, fields));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (indexes, 31337, MessageSummaryItems.All, (HashSet<string>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.FetchAsync (indexes, 31337, MessageSummaryItems.All, (HashSet<string>) null));
+
 				// AddFlags
 				Assert.Throws<ArgumentException> (() => inbox.AddFlags (-1, MessageFlags.Seen, true));
 				Assert.Throws<ArgumentException> (async () => await inbox.AddFlagsAsync (-1, MessageFlags.Seen, true));
