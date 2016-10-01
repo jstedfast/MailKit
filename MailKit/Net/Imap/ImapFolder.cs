@@ -4544,7 +4544,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min < 0 || min > Count)
+			if (min < 0)
 				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
@@ -4692,7 +4692,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min < 0 || min > Count)
+			if (min < 0)
 				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
@@ -4785,7 +4785,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min < 0 || min >= Count)
+			if (min < 0)
 				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
@@ -4945,7 +4945,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min < 0 || min >= Count)
+			if (min < 0)
 				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
