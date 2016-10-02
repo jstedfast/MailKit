@@ -1,0 +1,6 @@
+* 1 FETCH (UID 1 BODY[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)] {62}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+)
+A00000033 OK Fetch completed (0.002 + 0.000 secs).

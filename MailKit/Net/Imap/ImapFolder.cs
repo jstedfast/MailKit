@@ -5152,7 +5152,6 @@ namespace MailKit.Net.Imap {
 								switch (token.Type) {
 								case ImapTokenType.Literal:
 									section.Append (engine.ReadLiteral (ic.CancellationToken));
-									section.Append (' ');
 									break;
 								case ImapTokenType.QString:
 								case ImapTokenType.Atom:
@@ -5161,6 +5160,8 @@ namespace MailKit.Net.Imap {
 								default:
 									throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 								}
+
+								section.Append (' ');
 							} while (true);
 
 							if (section[section.Length - 1] == ' ')
