@@ -135,8 +135,10 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\expunge.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-deleted-custom.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed2.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed3.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getbodypart.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-personal.txt" />
@@ -157,6 +159,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\status-unittests-destination.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-answered.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-deleted.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-deleted-custom.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-seen.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\thread-references.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\uid-expunge.txt" />
