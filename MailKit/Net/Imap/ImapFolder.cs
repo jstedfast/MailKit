@@ -5095,8 +5095,10 @@ namespace MailKit.Net.Imap {
 			var token = engine.ReadToken (ic.CancellationToken);
 			var labels = new MessageLabelsChangedEventArgs (index);
 			var flags = new MessageFlagsChangedEventArgs (index);
+			var modSeq = new ModSeqChangedEventArgs (index);
 			var ctx = (FetchStreamContext) ic.UserData;
 			var section = new StringBuilder ();
+			bool modSeqChanged = false;
 			bool labelsChanged = false;
 			bool flagsChanged = false;
 			var buf = new byte[4096];
@@ -5271,6 +5273,10 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
+					if (modseq > HighestModSeq)
+						UpdateHighestModSeq (modseq);
+
+					modSeq.ModSeq = modseq;
 					labels.ModSeq = modseq;
 					flags.ModSeq = modseq;
 					break;
@@ -5295,10 +5301,13 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			if (flagsChanged)
-				ic.Folder.OnMessageFlagsChanged (flags);
+				OnMessageFlagsChanged (flags);
 
 			if (labelsChanged)
-				ic.Folder.OnMessageLabelsChanged (labels);
+				OnMessageLabelsChanged (labels);
+
+			if (modSeqChanged)
+				OnModSeqChanged (modSeq);
 		}
 
 		/// <summary>
@@ -9743,6 +9752,9 @@ namespace MailKit.Net.Imap {
 
 					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					if (modseq > HighestModSeq)
+						UpdateHighestModSeq (modseq);
 
 					modSeqChangedEventArgs.ModSeq = modseq;
 					labelsChangedEventArgs.ModSeq = modseq;
