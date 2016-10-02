@@ -1006,26 +1006,27 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000014 UID STORE 8 +FLAGS.SILENT (\\Deleted)\r\n", "dovecot.store-deleted.txt"));
 			commands.Add (new ImapReplayCommand ("A00000015 UID EXPUNGE 8\r\n", "dovecot.uid-expunge.txt"));
 			commands.Add (new ImapReplayCommand ("A00000016 UID THREAD REFERENCES US-ASCII ALL\r\n", "dovecot.thread-references.txt"));
-			commands.Add (new ImapReplayCommand ("A00000017 UNSELECT\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000018 SELECT UnitTests.Messages (QRESYNC (1436832084 2 1:8))\r\n", "dovecot.select-unittests-messages-qresync.txt"));
-			commands.Add (new ImapReplayCommand ("A00000019 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 2\r\n", "dovecot.search-changed-since.txt"));
-			commands.Add (new ImapReplayCommand ("A00000020 UID FETCH 1:7 (UID FLAGS MODSEQ)\r\n", "dovecot.fetch-changed.txt"));
-			commands.Add (new ImapReplayCommand ("A00000021 UID FETCH 1:* (UID FLAGS MODSEQ) (CHANGEDSINCE 2 VANISHED)\r\n", "dovecot.fetch-changed2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000022 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
-			commands.Add (new ImapReplayCommand ("A00000023 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
-			commands.Add (new ImapReplayCommand ("A00000024 CREATE UnitTests.Destination\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000025 LIST \"\" UnitTests.Destination\r\n", "dovecot.list-unittests-destination.txt"));
-			commands.Add (new ImapReplayCommand ("A00000026 UID COPY 1:7 UnitTests.Destination\r\n", "dovecot.copy.txt"));
-			commands.Add (new ImapReplayCommand ("A00000027 UID MOVE 1:7 UnitTests.Destination\r\n", "dovecot.move.txt"));
-			commands.Add (new ImapReplayCommand ("A00000028 STATUS UnitTests.Destination (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ)\r\n", "dovecot.status-unittests-destination.txt"));
-			commands.Add (new ImapReplayCommand ("A00000029 SELECT UnitTests.Destination (CONDSTORE)\r\n", "dovecot.select-unittests-destination.txt"));
-			commands.Add (new ImapReplayCommand ("A00000030 FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (REFERENCES X-MAILER)]) (CHANGEDSINCE 1)\r\n", "dovecot.fetch-changed3.txt"));
-			commands.Add (new ImapReplayCommand ("A00000031 UID FETCH 1 (BODY.PEEK[HEADER] BODY.PEEK[TEXT])\r\n", "dovecot.getbodypart.txt"));
-			commands.Add (new ImapReplayCommand ("A00000032 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream.txt"));
-			commands.Add (new ImapReplayCommand ("A00000033 UID FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section.txt"));
-			commands.Add (new ImapReplayCommand ("A00000034 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
-			commands.Add (new ImapReplayCommand ("A00000035 EXPUNGE\r\n", "dovecot.expunge.txt"));
-			commands.Add (new ImapReplayCommand ("A00000036 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000017 UID THREAD ORDEREDSUBJECT US-ASCII UID 1:* ALL\r\n", "dovecot.thread-orderedsubject.txt"));
+			commands.Add (new ImapReplayCommand ("A00000018 UNSELECT\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000019 SELECT UnitTests.Messages (QRESYNC (1436832084 2 1:8))\r\n", "dovecot.select-unittests-messages-qresync.txt"));
+			commands.Add (new ImapReplayCommand ("A00000020 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 2\r\n", "dovecot.search-changed-since.txt"));
+			commands.Add (new ImapReplayCommand ("A00000021 UID FETCH 1:7 (UID FLAGS MODSEQ)\r\n", "dovecot.fetch-changed.txt"));
+			commands.Add (new ImapReplayCommand ("A00000022 UID FETCH 1:* (UID FLAGS MODSEQ) (CHANGEDSINCE 2 VANISHED)\r\n", "dovecot.fetch-changed2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000023 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
+			commands.Add (new ImapReplayCommand ("A00000024 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000025 CREATE UnitTests.Destination\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000026 LIST \"\" UnitTests.Destination\r\n", "dovecot.list-unittests-destination.txt"));
+			commands.Add (new ImapReplayCommand ("A00000027 UID COPY 1:7 UnitTests.Destination\r\n", "dovecot.copy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000028 UID MOVE 1:7 UnitTests.Destination\r\n", "dovecot.move.txt"));
+			commands.Add (new ImapReplayCommand ("A00000029 STATUS UnitTests.Destination (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ)\r\n", "dovecot.status-unittests-destination.txt"));
+			commands.Add (new ImapReplayCommand ("A00000030 SELECT UnitTests.Destination (CONDSTORE)\r\n", "dovecot.select-unittests-destination.txt"));
+			commands.Add (new ImapReplayCommand ("A00000031 FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (REFERENCES X-MAILER)]) (CHANGEDSINCE 1)\r\n", "dovecot.fetch-changed3.txt"));
+			commands.Add (new ImapReplayCommand ("A00000032 UID FETCH 1 (BODY.PEEK[HEADER] BODY.PEEK[TEXT])\r\n", "dovecot.getbodypart.txt"));
+			commands.Add (new ImapReplayCommand ("A00000033 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream.txt"));
+			commands.Add (new ImapReplayCommand ("A00000034 UID FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section.txt"));
+			commands.Add (new ImapReplayCommand ("A00000035 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
+			commands.Add (new ImapReplayCommand ("A00000036 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000037 CLOSE\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1228,6 +1229,9 @@ namespace UnitTests.Net.Imap {
 				// Verify that THREAD works correctly
 				var threaded = await folder.ThreadAsync (ThreadingAlgorithm.References, SearchQuery.All);
 				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");
+
+				threaded = await folder.ThreadAsync (UniqueIdRange.All, ThreadingAlgorithm.OrderedSubject, SearchQuery.All);
+				Assert.AreEqual (7, threaded.Count, "Unexpected number of root nodes in threaded results");
 
 				// UNSELECT the folder so we can re-open it using QRESYNC
 				await folder.CloseAsync ();

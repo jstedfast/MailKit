@@ -162,6 +162,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-deleted.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-deleted-custom.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-seen.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\thread-orderedsubject.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\thread-references.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\uid-expunge.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\add-flags.txt" />
