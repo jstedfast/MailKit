@@ -1,0 +1,17 @@
+* FLAGS (\Answered \Flagged \Deleted \Seen \Draft $MailKit)
+* OK [PERMANENTFLAGS (\Answered \Flagged \Deleted \Seen \Draft $MailKit \*)] Flags permitted.
+* 1 FETCH (UID 1 MODSEQ (5))
+* 2 FETCH (UID 2 MODSEQ (5))
+* 3 FETCH (UID 3 MODSEQ (5))
+* 4 FETCH (UID 4 MODSEQ (5))
+* 5 FETCH (UID 5 MODSEQ (5))
+* 6 FETCH (UID 6 MODSEQ (5))
+* 7 FETCH (UID 7 MODSEQ (5))
+* 8 FETCH (UID 8 MODSEQ (5))
+* 9 FETCH (UID 9 MODSEQ (5))
+* 10 FETCH (UID 10 MODSEQ (5))
+* 11 FETCH (UID 11 MODSEQ (5))
+* 12 FETCH (UID 12 MODSEQ (5))
+* 13 FETCH (UID 13 MODSEQ (5))
+* 14 FETCH (UID 14 MODSEQ (5))
+A00000031 OK Store completed (0.001 + 0.000 secs).

@@ -195,6 +195,8 @@ namespace UnitTests.Net.Imap {
 				// Open
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Open ((FolderAccess) 500));
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Open ((FolderAccess) 500, 0, 0, UniqueIdRange.All));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.OpenAsync ((FolderAccess) 500));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.OpenAsync ((FolderAccess) 500, 0, 0, UniqueIdRange.All));
 
 				// Create
 				Assert.Throws<ArgumentNullException> (() => inbox.Create (null, true));
@@ -208,25 +210,51 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (() => inbox.Create ("Folder./Name", new SpecialFolder[] { SpecialFolder.All }));
 				Assert.Throws<ArgumentNullException> (() => inbox.Create ("ValidName", null));
 				Assert.Throws<NotSupportedException> (() => inbox.Create ("ValidName", SpecialFolder.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.CreateAsync (null, true));
+				Assert.Throws<ArgumentException> (async () => await inbox.CreateAsync (string.Empty, true));
+				Assert.Throws<ArgumentException> (async () => await inbox.CreateAsync ("Folder./Name", true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.CreateAsync (null, SpecialFolder.All));
+				Assert.Throws<ArgumentException> (async () => await inbox.CreateAsync (string.Empty, SpecialFolder.All));
+				Assert.Throws<ArgumentException> (async () => await inbox.CreateAsync ("Folder./Name", SpecialFolder.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.CreateAsync (null, new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentException> (async () => await inbox.CreateAsync (string.Empty, new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentException> (async () => await inbox.CreateAsync ("Folder./Name", new SpecialFolder[] { SpecialFolder.All }));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.CreateAsync ("ValidName", null));
+				Assert.Throws<NotSupportedException> (async () => await inbox.CreateAsync ("ValidName", SpecialFolder.All));
 
 				// Rename
 				Assert.Throws<ArgumentNullException> (() => inbox.Rename (null, "NewName"));
 				Assert.Throws<ArgumentNullException> (() => inbox.Rename (personal, null));
 				Assert.Throws<ArgumentException> (() => inbox.Rename (personal, string.Empty));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.RenameAsync (null, "NewName"));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.RenameAsync (personal, null));
+				Assert.Throws<ArgumentException> (async () => await inbox.RenameAsync (personal, string.Empty));
 
 				// GetSubfolder
 				Assert.Throws<ArgumentNullException> (() => inbox.GetSubfolder (null));
 				Assert.Throws<ArgumentException> (() => inbox.GetSubfolder (string.Empty));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetSubfolderAsync (null));
+				Assert.Throws<ArgumentException> (async () => await inbox.GetSubfolderAsync (string.Empty));
 
 				// GetMetadata
 				Assert.Throws<ArgumentNullException> (() => client.GetMetadata (null, new MetadataTag[] { MetadataTag.PrivateComment }));
 				Assert.Throws<ArgumentNullException> (() => client.GetMetadata (new MetadataOptions (), null));
+				Assert.Throws<ArgumentNullException> (async () => await client.GetMetadataAsync (null, new MetadataTag[] { MetadataTag.PrivateComment }));
+				Assert.Throws<ArgumentNullException> (async () => await client.GetMetadataAsync (new MetadataOptions (), null));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetMetadata (null, new MetadataTag[] { MetadataTag.PrivateComment }));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetMetadata (new MetadataOptions (), null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetMetadataAsync (null, new MetadataTag[] { MetadataTag.PrivateComment }));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetMetadataAsync (new MetadataOptions (), null));
 
 				// SetMetadata
 				Assert.Throws<ArgumentNullException> (() => client.SetMetadata (null));
+				Assert.Throws<ArgumentNullException> (async () => await client.SetMetadataAsync (null));
+				Assert.Throws<ArgumentNullException> (() => inbox.SetMetadata (null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SetMetadataAsync (null));
 
 				// Expunge
 				Assert.Throws<ArgumentNullException> (() => inbox.Expunge (null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.ExpungeAsync (null));
 
 				// Append
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (null));
@@ -872,6 +900,11 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000026 UID COPY 1:7 UnitTests.Destination\r\n", "dovecot.copy.txt"));
 			commands.Add (new ImapReplayCommand ("A00000027 UID MOVE 1:7 UnitTests.Destination\r\n", "dovecot.move.txt"));
 			commands.Add (new ImapReplayCommand ("A00000028 STATUS UnitTests.Destination (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ)\r\n", "dovecot.status-unittests-destination.txt"));
+			commands.Add (new ImapReplayCommand ("A00000029 SELECT UnitTests.Destination (CONDSTORE)\r\n", "dovecot.select-unittests-destination.txt"));
+			commands.Add (new ImapReplayCommand ("A00000030 UID SEARCH RETURN () UID 1:* ALL\r\n", "dovecot.search-all.txt"));
+			commands.Add (new ImapReplayCommand ("A00000031 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
+			commands.Add (new ImapReplayCommand ("A00000032 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000033 CLOSE\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1082,6 +1115,7 @@ namespace UnitTests.Net.Imap {
 				access = await folder.OpenAsync (FolderAccess.ReadWrite, uidValidity, highestModSeq, appended);
 				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected UnitTests.Messages to be opened in READ-WRITE mode");
 				Assert.AreEqual (7, flagsChanged.Count, "Unexpected number of MessageFlagsChanged events");
+				Assert.AreEqual (7, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
 				for (int i = 0; i < flagsChanged.Count; i++) {
 					var messageFlags = MessageFlags.Seen | MessageFlags.Draft;
 
@@ -1091,7 +1125,14 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (i, flagsChanged[i].Index, "Unexpected value for flagsChanged[{0}].Index", i);
 					Assert.AreEqual ((uint) (i + 1), flagsChanged[i].UniqueId.Value.Id, "Unexpected value for flagsChanged[{0}].UniqueId", i);
 					Assert.AreEqual (messageFlags, flagsChanged[i].Flags, "Unexpected value for flagsChanged[{0}].Flags", i);
+
+					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected value for modSeqChanged[{0}].Index", i);
+					if (i < 3)
+						Assert.AreEqual (4, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
+					else
+						Assert.AreEqual (3, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
 				}
+				modSeqChanged.Clear ();
 				flagsChanged.Clear ();
 
 				Assert.AreEqual (1, vanished.Count, "Unexpected number of MessagesVanished events");
@@ -1155,6 +1196,49 @@ namespace UnitTests.Net.Imap {
 
 				await destination.StatusAsync (statusItems);
 				Assert.AreEqual (moved.Destination[0].Validity, destination.UidValidity, "Unexpected UIDVALIDITY");
+
+				destination.MessageFlagsChanged += (sender, e) => {
+					flagsChanged.Add (e);
+				};
+
+				destination.ModSeqChanged += (sender, e) => {
+					modSeqChanged.Add (e);
+				};
+
+				destination.MessagesVanished += (sender, e) => {
+					vanished.Add (e);
+				};
+
+				destination.RecentChanged += (sender, e) => {
+					recentChanged = true;
+				};
+
+				await destination.OpenAsync (FolderAccess.ReadWrite);
+				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected UnitTests.Destination to be opened in READ-WRITE mode");
+
+				uids = await destination.SearchAsync (UniqueIdRange.All, SearchQuery.All);
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs returned by Search");
+
+				var custom = new HashSet<string> ();
+				custom.Add ("$MailKit");
+
+				await destination.AddFlagsAsync (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
+				Assert.AreEqual (14, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
+				for (int i = 0; i < modSeqChanged.Count; i++) {
+					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected value for modSeqChanged[{0}].Index", i);
+					Assert.AreEqual (5, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
+				}
+				modSeqChanged.Clear ();
+
+				await destination.ExpungeAsync ();
+				Assert.AreEqual (1, vanished.Count, "Unexpected number of Vanished events");
+				Assert.AreEqual (14, vanished[0].UniqueIds.Count, "Unexpected number of UIDs in Vanished event");
+				for (int i = 0; i < vanished[0].UniqueIds.Count; i++)
+					Assert.AreEqual (i + 1, vanished[0].UniqueIds[i].Id);
+				Assert.IsFalse (vanished[0].Earlier, "Unexpected value for Earlier");
+				vanished.Clear ();
+
+				await destination.CloseAsync (true);
 
 				await client.DisconnectAsync (false);
 			}

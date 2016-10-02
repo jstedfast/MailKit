@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -62,14 +61,14 @@
     <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
     <Compile Include="Net\Smtp\SmtpClientTests.cs" />
     <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
-    <Compile Include="MessageSortingTests.cs" />
-    <Compile Include="MessageThreadingTests.cs" />
-    <Compile Include="UriExtensionTests.cs" />
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="BodyPartTests.cs" />
+    <Compile Include="MessageSortingTests.cs" />
+    <Compile Include="MessageThreadingTests.cs" />
+    <Compile Include="UniqueIdRangeTests.cs" />
     <Compile Include="UniqueIdSetTests.cs" />
     <Compile Include="UniqueIdTests.cs" />
-    <Compile Include="UniqueIdRangeTests.cs" />
+    <Compile Include="UriExtensionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Net\Imap\Resources\acl\authenticate.txt" />
@@ -134,7 +133,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\copy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\expunge.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-deleted-custom.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\list-inbox.txt" />
@@ -147,7 +148,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\multiappend.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\optimized-search.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-changed-since.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-unittests-destination.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-unittests-messages.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-unittests-messages-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\sort-reverse-arrival.txt" />
