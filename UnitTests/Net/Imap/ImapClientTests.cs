@@ -617,6 +617,67 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (() => inbox.SetLabels (UniqueIdRange.All, null, true));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.SetLabelsAsync (UniqueIdRange.All, null, true));
 
+				// Search
+				var searchOptions = SearchOptions.All | SearchOptions.Min | SearchOptions.Max | SearchOptions.Count;
+				var orderBy = new OrderBy[] { OrderBy.Arrival };
+				var emptyOrderBy = new OrderBy[0];
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Search ((SearchQuery) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync ((SearchQuery) null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search ((SearchQuery) null, orderBy));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync ((SearchQuery) null, orderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (SearchQuery.All, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (SearchQuery.All, null));
+				Assert.Throws<ArgumentException> (() => inbox.Search (SearchQuery.All, emptyOrderBy));
+				Assert.Throws<ArgumentException> (async () => await inbox.SearchAsync (SearchQuery.All, emptyOrderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search ((IList<UniqueId>) null, SearchQuery.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync ((IList<UniqueId>) null, SearchQuery.All));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (UniqueIdRange.All, (SearchQuery) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (UniqueIdRange.All, (SearchQuery) null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search ((IList<UniqueId>) null, SearchQuery.All, orderBy));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync ((IList<UniqueId>) null, SearchQuery.All, orderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (UniqueIdRange.All, (SearchQuery) null, orderBy));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (UniqueIdRange.All, (SearchQuery) null, orderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (UniqueIdRange.All, SearchQuery.All, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (UniqueIdRange.All, SearchQuery.All, null));
+				Assert.Throws<ArgumentException> (() => inbox.Search (UniqueIdRange.All, SearchQuery.All, emptyOrderBy));
+				Assert.Throws<ArgumentException> (async () => await inbox.SearchAsync (UniqueIdRange.All, SearchQuery.All, emptyOrderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (searchOptions, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (searchOptions, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (searchOptions, (SearchQuery) null, orderBy));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (searchOptions, (SearchQuery) null, orderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (searchOptions, SearchQuery.All, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (searchOptions, SearchQuery.All, null));
+				Assert.Throws<ArgumentException> (() => inbox.Search (searchOptions, SearchQuery.All, emptyOrderBy));
+				Assert.Throws<ArgumentException> (async () => await inbox.SearchAsync (searchOptions, SearchQuery.All, emptyOrderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (searchOptions, (IList<UniqueId>) null, SearchQuery.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (searchOptions, (IList<UniqueId>) null, SearchQuery.All));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (searchOptions, UniqueIdRange.All, (SearchQuery) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (searchOptions, UniqueIdRange.All, (SearchQuery) null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (searchOptions, (IList<UniqueId>) null, SearchQuery.All, orderBy));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (searchOptions, (IList<UniqueId>) null, SearchQuery.All, orderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (searchOptions, UniqueIdRange.All, (SearchQuery) null, orderBy));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (searchOptions, UniqueIdRange.All, (SearchQuery) null, orderBy));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (searchOptions, UniqueIdRange.All, SearchQuery.All, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync (searchOptions, UniqueIdRange.All, SearchQuery.All, null));
+				Assert.Throws<ArgumentException> (() => inbox.Search (searchOptions, UniqueIdRange.All, SearchQuery.All, emptyOrderBy));
+				Assert.Throws<ArgumentException> (async () => await inbox.SearchAsync (searchOptions, UniqueIdRange.All, SearchQuery.All, emptyOrderBy));
+
+				Assert.Throws<ArgumentNullException> (() => ((ImapFolder) inbox).Search ((string) null));
+				Assert.Throws<ArgumentNullException> (async () => await ((ImapFolder) inbox).SearchAsync ((string) null));
+
+				// Thread
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Thread ((ThreadingAlgorithm) 500, SearchQuery.All));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.ThreadAsync ((ThreadingAlgorithm) 500, SearchQuery.All));
+				Assert.Throws<ArgumentNullException> (() => inbox.Thread (ThreadingAlgorithm.References, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.ThreadAsync (ThreadingAlgorithm.References, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Thread ((IList<UniqueId>) null, ThreadingAlgorithm.References, SearchQuery.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.ThreadAsync ((IList<UniqueId>) null, ThreadingAlgorithm.References, SearchQuery.All));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Thread (UniqueIdRange.All, (ThreadingAlgorithm) 500, SearchQuery.All));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.ThreadAsync (UniqueIdRange.All, (ThreadingAlgorithm) 500, SearchQuery.All));
+				Assert.Throws<ArgumentNullException> (() => inbox.Thread (UniqueIdRange.All, ThreadingAlgorithm.References, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.ThreadAsync (UniqueIdRange.All, ThreadingAlgorithm.References, null));
+
 				client.Disconnect (false);
 			}
 		}
