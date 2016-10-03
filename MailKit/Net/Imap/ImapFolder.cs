@@ -5353,7 +5353,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (uid.Id == 0)
+			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			CheckState (true, false);
@@ -5588,7 +5588,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (uid.Id == 0)
+			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (part == null)
@@ -5693,7 +5693,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (uid.Id == 0)
+			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (partSpecifier == null)
@@ -6070,7 +6070,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (uid.Id == 0)
+			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (offset < 0)
@@ -6253,7 +6253,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (uid.Id == 0)
+			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (section == null)
@@ -6348,7 +6348,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (uid.Id == 0)
+			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (section == null)
