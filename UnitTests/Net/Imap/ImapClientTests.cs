@@ -1041,12 +1041,15 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000029 STATUS UnitTests.Destination (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ)\r\n", "dovecot.status-unittests-destination.txt"));
 			commands.Add (new ImapReplayCommand ("A00000030 SELECT UnitTests.Destination (CONDSTORE)\r\n", "dovecot.select-unittests-destination.txt"));
 			commands.Add (new ImapReplayCommand ("A00000031 FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (REFERENCES X-MAILER)]) (CHANGEDSINCE 1)\r\n", "dovecot.fetch-changed3.txt"));
-			commands.Add (new ImapReplayCommand ("A00000032 UID FETCH 1 (BODY.PEEK[HEADER] BODY.PEEK[TEXT])\r\n", "dovecot.getbodypart.txt"));
-			commands.Add (new ImapReplayCommand ("A00000033 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream.txt"));
-			commands.Add (new ImapReplayCommand ("A00000034 UID FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section.txt"));
-			commands.Add (new ImapReplayCommand ("A00000035 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
-			commands.Add (new ImapReplayCommand ("A00000036 EXPUNGE\r\n", "dovecot.expunge.txt"));
-			commands.Add (new ImapReplayCommand ("A00000037 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000032 FETCH 1:14 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (REFERENCES X-MAILER)]) (CHANGEDSINCE 1)\r\n", "dovecot.fetch-changed4.txt"));
+			commands.Add (new ImapReplayCommand ("A00000033 FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (REFERENCES)]) (CHANGEDSINCE 1)\r\n", "dovecot.fetch-changed5.txt"));
+			commands.Add (new ImapReplayCommand ("A00000034 FETCH 1:14 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (REFERENCES)]) (CHANGEDSINCE 1)\r\n", "dovecot.fetch-changed6.txt"));
+			commands.Add (new ImapReplayCommand ("A00000035 UID FETCH 1 (BODY.PEEK[HEADER] BODY.PEEK[TEXT])\r\n", "dovecot.getbodypart.txt"));
+			commands.Add (new ImapReplayCommand ("A00000036 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream.txt"));
+			commands.Add (new ImapReplayCommand ("A00000037 UID FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section.txt"));
+			commands.Add (new ImapReplayCommand ("A00000038 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
+			commands.Add (new ImapReplayCommand ("A00000039 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000040 CLOSE\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1378,6 +1381,22 @@ namespace UnitTests.Net.Imap {
 				fetched = await destination.FetchAsync (0, -1, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References, fetchHeaders);
+				Assert.AreEqual (14, fetched.Count, "Unexpected number of messages fetched");
+
+				var indexes = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+				fetched = await destination.FetchAsync (indexes, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
+				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
+				                                        MessageSummaryItems.References, fetchHeaders);
+				Assert.AreEqual (14, fetched.Count, "Unexpected number of messages fetched");
+
+				fetched = await destination.FetchAsync (0, -1, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
+				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
+				                                        MessageSummaryItems.References);
+				Assert.AreEqual (14, fetched.Count, "Unexpected number of messages fetched");
+
+				fetched = await destination.FetchAsync (indexes, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
+				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
+				                                        MessageSummaryItems.References);
 				Assert.AreEqual (14, fetched.Count, "Unexpected number of messages fetched");
 
 				uids = new UniqueIdSet (SortOrder.Ascending);

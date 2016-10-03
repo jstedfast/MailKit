@@ -137,6 +137,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed3.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed4.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed5.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch-changed6.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getbodypart.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream-section.txt" />
