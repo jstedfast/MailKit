@@ -186,7 +186,7 @@ namespace UnitTests.Net.Imap {
 					flags.Add (MessageFlags.Seen);
 				}
 
-				var inbox = client.Inbox;
+				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
 				// ImapFolder .ctor
@@ -486,23 +486,43 @@ namespace UnitTests.Net.Imap {
 
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetBodyPart (-1, bodyPart));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetBodyPartAsync (-1, bodyPart));
-				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (0, null));
-				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (0, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (0, (BodyPart) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (0, (BodyPart) null));
 
 				Assert.Throws<ArgumentException> (() => inbox.GetBodyPart (UniqueId.Invalid, bodyPart));
 				Assert.Throws<ArgumentException> (async () => await inbox.GetBodyPartAsync (UniqueId.Invalid, bodyPart));
 				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (UniqueId.MinValue, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (UniqueId.MinValue, null));
 
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetBodyPart (-1, "1.2"));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetBodyPartAsync (-1, "1.2"));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (0, (string) null));
+				//Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (0, (string) null));
+
+				Assert.Throws<ArgumentException> (() => inbox.GetBodyPart (UniqueId.Invalid, "1.2"));
+				//Assert.Throws<ArgumentException> (async () => await inbox.GetBodyPartAsync (UniqueId.Invalid, "1.2"));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (UniqueId.MinValue, (string) null));
+				//Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (UniqueId.MinValue, (string) null));
+
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetBodyPart (-1, bodyPart, true));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetBodyPartAsync (-1, bodyPart, true));
-				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (0, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (0, null, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (0, (BodyPart) null, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (0, (BodyPart) null, true));
 
 				Assert.Throws<ArgumentException> (() => inbox.GetBodyPart (UniqueId.Invalid, bodyPart, true));
 				Assert.Throws<ArgumentException> (async () => await inbox.GetBodyPartAsync (UniqueId.Invalid, bodyPart, true));
-				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (UniqueId.MinValue, null, true));
-				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (UniqueId.MinValue, null, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (UniqueId.MinValue, (BodyPart) null, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (UniqueId.MinValue, (BodyPart) null, true));
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetBodyPart (-1, "1.2", true));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetBodyPartAsync (-1, "1.2", true));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (0, (string) null, true));
+				//Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (0, (string) null, true));
+
+				Assert.Throws<ArgumentException> (() => inbox.GetBodyPart (UniqueId.Invalid, "1.2", true));
+				//Assert.Throws<ArgumentException> (async () => await inbox.GetBodyPartAsync (UniqueId.Invalid, "1.2", true));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (UniqueId.MinValue, (string) null, true));
+				//Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (UniqueId.MinValue, (string) null, true));
 
 				// GetStream
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStream (-1, "1.2"));
@@ -658,6 +678,19 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (() => inbox.AddLabels (UniqueIdRange.All, emptyLabels, true));
 				Assert.Throws<ArgumentException> (async () => await inbox.AddLabelsAsync (UniqueIdRange.All, emptyLabels, true));
 
+				Assert.Throws<ArgumentNullException> (() => inbox.AddLabels ((IList<int>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.AddLabelsAsync ((IList<int>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.AddLabels ((IList<UniqueId>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.AddLabelsAsync ((IList<UniqueId>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.AddLabels (new int[] { 0 }, 1, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.AddLabelsAsync (new int[] { 0 }, 1, null, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.AddLabels (UniqueIdRange.All, 1, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.AddLabelsAsync (UniqueIdRange.All, 1, null, true));
+				Assert.Throws<ArgumentException> (() => inbox.AddLabels (new int[] { 0 }, 1, emptyLabels, true));
+				Assert.Throws<ArgumentException> (async () => await inbox.AddLabelsAsync (new int[] { 0 }, 1, emptyLabels, true));
+				Assert.Throws<ArgumentException> (() => inbox.AddLabels (UniqueIdRange.All, 1, emptyLabels, true));
+				Assert.Throws<ArgumentException> (async () => await inbox.AddLabelsAsync (UniqueIdRange.All, 1, emptyLabels, true));
+
 				// RemoveLabels
 				Assert.Throws<ArgumentException> (() => inbox.RemoveLabels (-1, labels, true));
 				Assert.Throws<ArgumentException> (async () => await inbox.RemoveLabelsAsync (-1, labels, true));
@@ -678,6 +711,19 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (() => inbox.RemoveLabels (UniqueIdRange.All, emptyLabels, true));
 				Assert.Throws<ArgumentException> (async () => await inbox.RemoveLabelsAsync (UniqueIdRange.All, emptyLabels, true));
 
+				Assert.Throws<ArgumentNullException> (() => inbox.RemoveLabels ((IList<int>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.RemoveLabelsAsync ((IList<int>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.RemoveLabels ((IList<UniqueId>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.RemoveLabelsAsync ((IList<UniqueId>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.RemoveLabels (new int[] { 0 }, 1, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.RemoveLabelsAsync (new int[] { 0 }, 1, null, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.RemoveLabels (UniqueIdRange.All, 1, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.RemoveLabelsAsync (UniqueIdRange.All, 1, null, true));
+				Assert.Throws<ArgumentException> (() => inbox.RemoveLabels (new int[] { 0 }, 1, emptyLabels, true));
+				Assert.Throws<ArgumentException> (async () => await inbox.RemoveLabelsAsync (new int[] { 0 }, 1, emptyLabels, true));
+				Assert.Throws<ArgumentException> (() => inbox.RemoveLabels (UniqueIdRange.All, 1, emptyLabels, true));
+				Assert.Throws<ArgumentException> (async () => await inbox.RemoveLabelsAsync (UniqueIdRange.All, 1, emptyLabels, true));
+
 				// SetLabels
 				Assert.Throws<ArgumentException> (() => inbox.SetLabels (-1, labels, true));
 				Assert.Throws<ArgumentException> (async () => await inbox.SetLabelsAsync (-1, labels, true));
@@ -693,6 +739,15 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (async () => await inbox.SetLabelsAsync (new int[] { 0 }, null, true));
 				Assert.Throws<ArgumentNullException> (() => inbox.SetLabels (UniqueIdRange.All, null, true));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.SetLabelsAsync (UniqueIdRange.All, null, true));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.SetLabels ((IList<int>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SetLabelsAsync ((IList<int>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.SetLabels ((IList<UniqueId>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SetLabelsAsync ((IList<UniqueId>) null, 1, labels, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.SetLabels (new int[] { 0 }, 1, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SetLabelsAsync (new int[] { 0 }, 1, null, true));
+				Assert.Throws<ArgumentNullException> (() => inbox.SetLabels (UniqueIdRange.All, 1, null, true));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SetLabelsAsync (UniqueIdRange.All, 1, null, true));
 
 				// Search
 				var searchOptions = SearchOptions.All | SearchOptions.Min | SearchOptions.Max | SearchOptions.Count;
@@ -740,8 +795,8 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (() => inbox.Search (searchOptions, UniqueIdRange.All, SearchQuery.All, emptyOrderBy));
 				Assert.Throws<ArgumentException> (async () => await inbox.SearchAsync (searchOptions, UniqueIdRange.All, SearchQuery.All, emptyOrderBy));
 
-				Assert.Throws<ArgumentNullException> (() => ((ImapFolder) inbox).Search ((string) null));
-				Assert.Throws<ArgumentNullException> (async () => await ((ImapFolder) inbox).SearchAsync ((string) null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Search ((string) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync ((string) null));
 
 				// Thread
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Thread ((ThreadingAlgorithm) 500, SearchQuery.All));
