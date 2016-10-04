@@ -1,0 +1,53 @@
+* 1 FETCH (UID 1 FLAGS (\Answered \Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:28:25 -0400" RFC822.SIZE 253 MODSEQ (2) ENVELOPE ("Sun, 02 Oct 2016 17:28:25 -0400" "A" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<a@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {2}
+
+)
+* 2 FETCH (UID 2 FLAGS (\Answered \Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:29:25 -0400" RFC822.SIZE 282 MODSEQ (2) ENVELOPE ("Sun, 02 Oct 2016 17:29:25 -0400" "B" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<b@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {31}
+References: <a@mimekit.net>
+
+)
+* 3 FETCH (UID 3 FLAGS (\Answered \Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:30:25 -0400" RFC822.SIZE 298 MODSEQ (2) ENVELOPE ("Sun, 02 Oct 2016 17:30:25 -0400" "C" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<c@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {47}
+References: <a@mimekit.net> <b@mimekit.net>
+
+)
+* 4 FETCH (UID 4 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:31:25 -0400" RFC822.SIZE 282 MODSEQ (2) ENVELOPE ("Sun, 02 Oct 2016 17:31:25 -0400" "D" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<d@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {31}
+References: <a@mimekit.net>
+
+)
+* 5 FETCH (UID 5 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:32:25 -0400" RFC822.SIZE 330 MODSEQ (2) ENVELOPE ("Sun, 02 Oct 2016 17:32:25 -0400" "E" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<e@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {79}
+References: <c@mimekit.net> <x@mimekit.net> <y@mimekit.net> <z@mimekit.net>
+
+)
+* 6 FETCH (UID 6 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:33:25 -0400" RFC822.SIZE 282 MODSEQ (2) ENVELOPE ("Sun, 02 Oct 2016 17:33:25 -0400" "F" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<f@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {31}
+References: <b@mimekit.net>
+
+)
+* 7 FETCH (UID 7 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:34:25 -0400" RFC822.SIZE 253 MODSEQ (2) ENVELOPE ("Sun, 02 Oct 2016 17:34:25 -0400" "G" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<g@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {2}
+
+)
+* 8 FETCH (UID 8 FLAGS (\Answered \Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:28:25 -0400" RFC822.SIZE 253 MODSEQ (3) ENVELOPE ("Sun, 02 Oct 2016 17:28:25 -0400" "A" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<a@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {2}
+
+)
+* 9 FETCH (UID 9 FLAGS (\Answered \Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:29:25 -0400" RFC822.SIZE 282 MODSEQ (3) ENVELOPE ("Sun, 02 Oct 2016 17:29:25 -0400" "B" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<b@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {31}
+References: <a@mimekit.net>
+
+)
+* 10 FETCH (UID 10 FLAGS (\Answered \Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:30:25 -0400" RFC822.SIZE 298 MODSEQ (3) ENVELOPE ("Sun, 02 Oct 2016 17:30:25 -0400" "C" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<c@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {47}
+References: <a@mimekit.net> <b@mimekit.net>
+
+)
+* 11 FETCH (UID 11 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:31:25 -0400" RFC822.SIZE 282 MODSEQ (3) ENVELOPE ("Sun, 02 Oct 2016 17:31:25 -0400" "D" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<d@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {31}
+References: <a@mimekit.net>
+
+)
+* 12 FETCH (UID 12 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:32:25 -0400" RFC822.SIZE 330 MODSEQ (3) ENVELOPE ("Sun, 02 Oct 2016 17:32:25 -0400" "E" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<e@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {79}
+References: <c@mimekit.net> <x@mimekit.net> <y@mimekit.net> <z@mimekit.net>
+
+)
+* 13 FETCH (UID 13 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:33:25 -0400" RFC822.SIZE 282 MODSEQ (3) ENVELOPE ("Sun, 02 Oct 2016 17:33:25 -0400" "F" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<f@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {31}
+References: <b@mimekit.net>
+
+)
+* 14 FETCH (UID 14 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:34:25 -0400" RFC822.SIZE 253 MODSEQ (3) ENVELOPE ("Sun, 02 Oct 2016 17:34:25 -0400" "G" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<g@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {2}
+
+)
+A00000036 OK Fetch completed (0.019 + 0.000 secs).
