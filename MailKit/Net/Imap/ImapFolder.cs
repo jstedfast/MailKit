@@ -148,10 +148,10 @@ namespace MailKit.Net.Imap {
 			EncodedName = Engine.EncodeMailboxName (FullName);
 			Engine.FolderCache.Remove (oldEncodedName);
 			Engine.FolderCache[EncodedName] = this;
+			Access = FolderAccess.None;
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
-				Access = FolderAccess.None;
 				Engine.Selected = null;
 				OnClosed ();
 			}
@@ -335,6 +335,9 @@ namespace MailKit.Net.Imap {
 				folder.OnClosed ();
 			}
 
+			if (ic.Bye)
+				return FolderAccess.None;
+
 			Engine.State = ImapEngineState.Selected;
 			Engine.Selected = this;
 
@@ -424,6 +427,9 @@ namespace MailKit.Net.Imap {
 				folder.OnClosed ();
 			}
 
+			if (ic.Bye)
+				return FolderAccess.None;
+
 			Engine.State = ImapEngineState.Selected;
 			Engine.Selected = this;
 
@@ -487,10 +493,13 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create (expunge ? "CLOSE" : "UNSELECT", ic);
 			}
 
-			Engine.State = ImapEngineState.Authenticated;
 			Access = FolderAccess.None;
-			Engine.Selected = null;
-			OnClosed ();
+
+			if (Engine.Selected == this) {
+				Engine.State = ImapEngineState.Authenticated;
+				Engine.Selected = null;
+				OnClosed ();
+			}
 		}
 
 		/// <summary>
@@ -795,12 +804,12 @@ namespace MailKit.Net.Imap {
 			ParentFolder = parent;
 
 			FullName = Engine.DecodeMailboxName (encodedName);
+			Access = FolderAccess.None;
 			EncodedName = encodedName;
 			Name = name;
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
-				Access = FolderAccess.None;
 				Engine.Selected = null;
 				OnClosed ();
 			}
@@ -856,9 +865,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("DELETE", ic);
 
+			Access = FolderAccess.None;
+
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
-				Access = FolderAccess.None;
 				Engine.Selected = null;
 				OnClosed ();
 			}
