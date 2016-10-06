@@ -172,7 +172,7 @@ simply enter the following command:
 
 ## Getting the Source Code
 
-First, you'll need to clone MailKit from my GitHub repository. To do this using the command-line version fo Git,
+First, you'll need to clone MailKit from my GitHub repository. To do this using the command-line version of Git,
 you'll need to issue the following commands in your terminal:
 
     git clone https://github.com/jstedfast/MailKit.git
