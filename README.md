@@ -490,16 +490,15 @@ How you handle this is up to you.
 
 ## Contributing
 
-The first thing you'll need to do is fork MailKit to your own GitHub repository. Once you do that,
-
-    git clone git@github.com/<your-account>/MailKit.git
+The first thing you'll need to do is fork MailKit to your own GitHub repository. For instructions on how to
+do that, see the section titled **Getting the Source Code**.
 
 If you use [Xamarin Studio](http://xamarin.com/studio) or [MonoDevelop](http://monodevelop.com), all of the
 solution files are configured with the coding style used by MailKit. If you use Visual Studio or some
 other editor, please try to maintain the existing coding style as best as you can.
 
 Once you've got some changes that you'd like to submit upstream to the official MailKit repository,
-simply send me a Pull Request and I will try to review your changes in a timely manner.
+simply send me a **Pull Request** and I will try to review your changes in a timely manner.
 
 If you'd like to contribute but don't have any particular features in mind to work on, check out the issue
 tracker and look for something that might pique your interest!
