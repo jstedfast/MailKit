@@ -20,6 +20,7 @@
 * [Why do I get InvalidOperationException: "The folder is not currently open."?](#FolderNotOpenException)
 * [ImapFolder.MoveTo() does not move the message out of the source folder. Why not?](#MoveDoesNotMove)
 * [How can I mark messages as read using IMAP?](#MarkAsRead)
+* [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
 
 ### <a name="CompletelyFree">Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</a>
 
@@ -1148,4 +1149,34 @@ To mark messages as unread, you would *remove* the `\Seen` flag, like so:
 
 ```csharp
 folder.RemoveFlags (uids, MessageFlags.Seen, true);
+```
+
+### <a name="SpecifiedPickupDirectory">How can I send email to a SpecifiedPickupDirectory?</a>
+
+Based on Microsoft's [referencesource](https://github.com/Microsoft/referencesource/blob/master/System/net/System/Net/mail/SmtpClient.cs#L401),
+when `SmtpDeliveryMethod.SpecifiedPickupDirectory` is used, the `SmtpClient` saves the message to the
+specified pickup directory location using a randomly generated filename based on
+`Guid.NewGuid ().ToString () + ".eml"`, so to achieve the same results with MailKit, you could do something
+like this:
+
+```csharp
+void SendToPickupDirectory (MimeMessage message, string pickupDirectory)
+{
+    do {
+        var path = Path.Combine (pickupDirectory, Guid.NewGuid ().ToString () + ".eml");
+
+        if (File.Exists (path))
+            continue;
+
+        try {
+            using (var stream = new FileStream (path, FileMode.CreateNew)) {
+                message.WriteTo (stream);
+                return;
+            }
+        } catch (IOException) {
+            // The file may have been created between our File.Exists() check and
+            // our attempt to create the stream.
+        }
+    } while (true);
+}
 ```
