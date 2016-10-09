@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2014 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2016 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,6 +56,13 @@ namespace UnitTests.Net.Pop3 {
 		readonly Pop3Capabilities GMailCapa2 = Pop3Capabilities.User | Pop3Capabilities.ResponseCodes |
 			Pop3Capabilities.Pipelining | Pop3Capabilities.Expire | Pop3Capabilities.LoginDelay |
 			Pop3Capabilities.Top | Pop3Capabilities.UIDL;
+		readonly Pop3Capabilities LangCapa1 = Pop3Capabilities.User | Pop3Capabilities.ResponseCodes |
+		    Pop3Capabilities.Expire | Pop3Capabilities.LoginDelay | Pop3Capabilities.Top |
+		    Pop3Capabilities.UIDL | Pop3Capabilities.Sasl | Pop3Capabilities.UTF8 |
+		    Pop3Capabilities.UTF8User | Pop3Capabilities.Lang | Pop3Capabilities.Apop;
+		readonly Pop3Capabilities LangCapa2 = Pop3Capabilities.User | Pop3Capabilities.ResponseCodes |
+		    Pop3Capabilities.Pipelining | Pop3Capabilities.Expire | Pop3Capabilities.LoginDelay |
+		    Pop3Capabilities.Top | Pop3Capabilities.UIDL | Pop3Capabilities.Lang | Pop3Capabilities.Apop;
 
 		static string HexEncode (byte[] digest)
 		{
@@ -482,6 +489,81 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
 				}
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async void TestLangExtension ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "lang.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "lang.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("UTF8\r\n", "lang.utf8.txt"));
+			commands.Add (new Pop3ReplayCommand ("APOP username d99894e8445daf54c4ce781ef21331b7\r\n", "lang.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "lang.capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "lang.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("LANG\r\n", "lang.getlang.txt"));
+			commands.Add (new Pop3ReplayCommand ("LANG en\r\n", "lang.setlang.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (LangCapa1, client.Capabilities);
+				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				try {
+					await client.EnableUTF8Async ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in EnableUTF8: {0}", ex);
+				}
+
+				// Note: remove the XOAUTH2 auth mechanism to force PLAIN auth
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (LangCapa2, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+
+				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+
+				var languages = await client.GetLanguagesAsync ();
+				Assert.AreEqual (6, languages.Count);
+				Assert.AreEqual ("en", languages[0].Language);
+				Assert.AreEqual ("English", languages[0].Description);
+				Assert.AreEqual ("en-boont", languages[1].Language);
+				Assert.AreEqual ("English Boontling dialect", languages[1].Description);
+				Assert.AreEqual ("de", languages[2].Language);
+				Assert.AreEqual ("Deutsch", languages[2].Description);
+				Assert.AreEqual ("it", languages[3].Language);
+				Assert.AreEqual ("Italiano", languages[3].Description);
+				Assert.AreEqual ("es", languages[4].Language);
+				Assert.AreEqual ("Espanol", languages[4].Description);
+				Assert.AreEqual ("sv", languages[5].Language);
+				Assert.AreEqual ("Svenska", languages[5].Description);
+
+				await client.SetLanguageAsync ("en");
 
 				try {
 					await client.DisconnectAsync (true);

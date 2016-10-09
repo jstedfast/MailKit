@@ -1,0 +1,8 @@
++OK Language listing follows:
+en English
+en-boont English Boontling dialect
+de Deutsch
+it Italiano
+es Espanol
+sv Svenska
+.

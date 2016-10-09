@@ -313,6 +313,15 @@
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr123.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\stat.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\auth.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\capa1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\capa2.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\getlang.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\greeting.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\quit.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\setlang.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\stat.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\lang\utf8.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-required.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-successful.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-plain.txt" />
@@ -349,6 +358,7 @@
     <Folder Include="Net\Imap\Resources\acl\" />
     <Folder Include="Net\Imap\Resources\metadata\" />
     <Folder Include="Net\Imap\Resources\dovecot\" />
+    <Folder Include="Net\Pop3\Resources\lang\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
