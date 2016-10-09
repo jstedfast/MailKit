@@ -319,6 +319,7 @@
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\quit.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr123.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\rset.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\stat.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\top.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\top123.txt" />

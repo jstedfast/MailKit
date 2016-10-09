@@ -437,7 +437,13 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\nTOP 2 0\r\nTOP 3 0\r\n", "gmail.top123.txt"));
 			commands.Add (new Pop3ReplayCommand ("NOOP\r\n", "gmail.noop.txt"));
 			commands.Add (new Pop3ReplayCommand ("DELE 1\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
 			commands.Add (new Pop3ReplayCommand ("DELE 1\r\nDELE 2\r\nDELE 3\r\n", "gmail.dele123.txt"));
+			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 1\r\nDELE 2\r\nDELE 3\r\n", "gmail.dele123.txt"));
+			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 1\r\nDELE 2\r\nDELE 3\r\n", "gmail.dele123.txt"));
+			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -563,9 +569,45 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
+					await client.ResetAsync ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+				}
+
+				try {
 					await client.DeleteMessagesAsync (new [] { 0, 1, 2 });
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in DeleteMessages: {0}", ex);
+				}
+
+				try {
+					await client.ResetAsync ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+				}
+
+				try {
+					await client.DeleteMessagesAsync (0, 3);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in DeleteMessages: {0}", ex);
+				}
+
+				try {
+					await client.ResetAsync ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+				}
+
+				try {
+					await client.DeleteAllMessagesAsync ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in DeleteAllMessages: {0}", ex);
+				}
+
+				try {
+					await client.ResetAsync ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
 				}
 
 				try {
