@@ -117,6 +117,11 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, null, "password"));
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate (Encoding.UTF8, "username", null));
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, "username", null));
+
+				Assert.Throws<ArgumentNullException> (() => client.SetLanguage (null));
+				Assert.Throws<ArgumentNullException> (async () => await client.SetLanguageAsync (null));
+				Assert.Throws<ArgumentException> (() => client.SetLanguage (string.Empty));
+				Assert.Throws<ArgumentException> (async () => await client.SetLanguageAsync (string.Empty));
 			}
 		}
 
@@ -418,8 +423,13 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.auth.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa2.txt"));
 			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "gmail.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL\r\n", "gmail.uidl.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL 1\r\n", "gmail.uidl1.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL 2\r\n", "gmail.uidl2.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL 3\r\n", "gmail.uidl3.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
+			commands.Add (new Pop3ReplayCommand ("NOOP\r\n", "gmail.noop.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -449,6 +459,18 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+
+				var uids = await client.GetMessageUidsAsync ();
+				Assert.AreEqual (3, uids.Count);
+				Assert.AreEqual ("101", uids[0]);
+				Assert.AreEqual ("102", uids[1]);
+				Assert.AreEqual ("103", uids[2]);
+
+				for (int i = 0; i < 3; i++) {
+					var uid = await client.GetMessageUidAsync (i);
+
+					Assert.AreEqual (uids[i], uid);
+				}
 
 				try {
 					var message = await client.GetMessageAsync (0);
@@ -488,6 +510,12 @@ namespace UnitTests.Net.Pop3 {
 					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
+				}
+
+				try {
+					await client.NoOpAsync ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
 				}
 
 				try {
