@@ -427,6 +427,10 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("UIDL 1\r\n", "gmail.uidl1.txt"));
 			commands.Add (new Pop3ReplayCommand ("UIDL 2\r\n", "gmail.uidl2.txt"));
 			commands.Add (new Pop3ReplayCommand ("UIDL 3\r\n", "gmail.uidl3.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST\r\n", "gmail.list.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 1\r\n", "gmail.list1.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 2\r\n", "gmail.list2.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 3\r\n", "gmail.list3.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
 			commands.Add (new Pop3ReplayCommand ("NOOP\r\n", "gmail.noop.txt"));
@@ -470,6 +474,18 @@ namespace UnitTests.Net.Pop3 {
 					var uid = await client.GetMessageUidAsync (i);
 
 					Assert.AreEqual (uids[i], uid);
+				}
+
+				var sizes = await client.GetMessageSizesAsync ();
+				Assert.AreEqual (3, sizes.Count);
+				Assert.AreEqual (1024, sizes[0]);
+				Assert.AreEqual (1025, sizes[1]);
+				Assert.AreEqual (1026, sizes[2]);
+
+				for (int i = 0; i < 3; i++) {
+					var size = await client.GetMessageSizeAsync (i);
+
+					Assert.AreEqual (sizes[i], size);
 				}
 
 				try {

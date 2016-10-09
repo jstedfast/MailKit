@@ -308,6 +308,10 @@
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\capa1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\capa2.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\greeting.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\list.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\list1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\list2.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\list3.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\noop.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\plus.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\quit.txt" />
