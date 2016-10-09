@@ -1926,10 +1926,11 @@ namespace MailKit.Net.Imap {
 
 			var command = new StringBuilder ("SETQUOTA %F (");
 			if (messageLimit.HasValue)
-				command.AppendFormat ("MESSAGE {0}", messageLimit.Value);
+				command.AppendFormat ("MESSAGE {0} ", messageLimit.Value);
 			if (storageLimit.HasValue)
-				command.AppendFormat ("STORAGE {0}", storageLimit.Value);
-			command.Append (")\r\n");
+				command.AppendFormat ("STORAGE {0} ", storageLimit.Value);
+			command[command.Length - 1] = ')';
+			command.Append ("\r\n");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), this);
 			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);

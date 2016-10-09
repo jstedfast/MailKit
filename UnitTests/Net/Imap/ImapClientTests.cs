@@ -847,6 +847,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -906,6 +907,13 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (15728640, quota.StorageLimit.Value);
 				Assert.IsFalse (quota.CurrentMessageCount.HasValue);
 				Assert.IsFalse (quota.MessageLimit.HasValue);
+
+				quota = await personal.SetQuotaAsync (1000000, 5242880);
+				Assert.IsNotNull (quota, "Expected non-null SETQUOTA response.");
+				Assert.AreEqual (1107, quota.CurrentMessageCount.Value);
+				Assert.AreEqual (3783, quota.CurrentStorageSize.Value);
+				Assert.AreEqual (1000000, quota.MessageLimit.Value);
+				Assert.AreEqual (5242880, quota.StorageLimit.Value);
 
 				await client.DisconnectAsync (false);
 			}

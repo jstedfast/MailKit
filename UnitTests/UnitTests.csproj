@@ -130,6 +130,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\message.8.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.9.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\setquota.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\copy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />
