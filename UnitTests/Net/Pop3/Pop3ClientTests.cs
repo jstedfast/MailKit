@@ -433,7 +433,11 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("LIST 3\r\n", "gmail.list3.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\n", "gmail.top.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\nTOP 2 0\r\nTOP 3 0\r\n", "gmail.top123.txt"));
 			commands.Add (new Pop3ReplayCommand ("NOOP\r\n", "gmail.noop.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 1\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 1\r\nDELE 2\r\nDELE 3\r\n", "gmail.dele123.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -529,9 +533,39 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
+					var header = await client.GetMessageHeadersAsync (0);
+
+					Assert.AreEqual ("Test inline image", header[HeaderId.Subject]);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+				}
+
+				try {
+					var headers = await client.GetMessageHeadersAsync (new [] { 0, 1, 2 });
+
+					Assert.AreEqual (3, headers.Count);
+					for (int i = 0; i < headers.Count; i++)
+						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+				}
+
+				try {
 					await client.NoOpAsync ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
+				}
+
+				try {
+					await client.DeleteMessageAsync (0);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in DeleteMessage: {0}", ex);
+				}
+
+				try {
+					await client.DeleteMessagesAsync (new [] { 0, 1, 2 });
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in DeleteMessages: {0}", ex);
 				}
 
 				try {

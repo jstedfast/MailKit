@@ -307,6 +307,8 @@
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\auth.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\capa1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\capa2.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\dele.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\dele123.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\greeting.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\list.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\list1.txt" />
@@ -318,6 +320,8 @@
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr123.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\stat.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\top.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\top123.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\uidl.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\uidl1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\uidl2.txt" />

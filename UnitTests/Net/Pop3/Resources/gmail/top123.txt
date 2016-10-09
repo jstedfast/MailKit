@@ -1,0 +1,96 @@
++OK message follows
+Delivered-To: xxx@gmail.com
+Received: by 10.224.135.8 with SMTP id l8csp316922qat;
+        Thu, 19 Jun 2014 03:12:05 -0700 (PDT)
+X-Received: by 10.180.37.230 with SMTP id b6mr5037071wik.47.1403172724974;
+        Thu, 19 Jun 2014 03:12:04 -0700 (PDT)
+Return-Path: <zzz@hotmail.co.uk>
+Received: from DUB004-OMC2S17.hotmail.com (dub004-omc2s17.hotmail.com. [157.55.1.156])
+        by mx.google.com with ESMTPS id ck8si6631066wjc.8.2014.06.19.03.12.04
+        for <xxx@gmail.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 19 Jun 2014 03:12:04 -0700 (PDT)
+Received-SPF: pass (google.com: domain of zzz@hotmail.co.uk designates 157.55.1.156 as permitted sender) client-ip=157.55.1.156;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of zzz@hotmail.co.uk designates 157.55.1.156 as permitted sender) smtp.mail=zzz@hotmail.co.uk
+Received: from DUB130-W49 ([157.55.1.138]) by DUB004-OMC2S17.hotmail.com with Microsoft SMTPSVC(7.5.7601.22712);
+	 Thu, 19 Jun 2014 03:12:04 -0700
+X-TMN: [eIqtHBBo3vPb6o8FX4BW2v0KD9eifBv7]
+X-Originating-Email: [zzz@hotmail.co.uk]
+Message-ID: <DUB130-W498FF8C5FA398C47A98E5CDD130@phx.gbl>
+Return-Path: zzz@hotmail.co.uk
+Content-Type: multipart/related;
+	boundary="_c5dd68bd-e45d-4c27-8251-24cac1df3fa9_"
+From: Joe Blogs <zzz@hotmail.co.uk>
+To: "xxx@gmail.com" <xxx@gmail.com>
+Subject: Test inline image
+Date: Thu, 19 Jun 2014 10:12:04 +0000
+Importance: Normal
+MIME-Version: 1.0
+X-OriginalArrivalTime: 19 Jun 2014 10:12:04.0278 (UTC) FILETIME=[EB229D60:01CF8BA6]
+
+.
++OK message follows
+Delivered-To: xxx@gmail.com
+Received: by 10.224.135.8 with SMTP id l8csp316922qat;
+        Thu, 19 Jun 2014 03:12:05 -0700 (PDT)
+X-Received: by 10.180.37.230 with SMTP id b6mr5037071wik.47.1403172724974;
+        Thu, 19 Jun 2014 03:12:04 -0700 (PDT)
+Return-Path: <zzz@hotmail.co.uk>
+Received: from DUB004-OMC2S17.hotmail.com (dub004-omc2s17.hotmail.com. [157.55.1.156])
+        by mx.google.com with ESMTPS id ck8si6631066wjc.8.2014.06.19.03.12.04
+        for <xxx@gmail.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 19 Jun 2014 03:12:04 -0700 (PDT)
+Received-SPF: pass (google.com: domain of zzz@hotmail.co.uk designates 157.55.1.156 as permitted sender) client-ip=157.55.1.156;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of zzz@hotmail.co.uk designates 157.55.1.156 as permitted sender) smtp.mail=zzz@hotmail.co.uk
+Received: from DUB130-W49 ([157.55.1.138]) by DUB004-OMC2S17.hotmail.com with Microsoft SMTPSVC(7.5.7601.22712);
+	 Thu, 19 Jun 2014 03:12:04 -0700
+X-TMN: [eIqtHBBo3vPb6o8FX4BW2v0KD9eifBv7]
+X-Originating-Email: [zzz@hotmail.co.uk]
+Message-ID: <DUB130-W498FF8C5FA398C47A98E5CDD130@phx.gbl>
+Return-Path: zzz@hotmail.co.uk
+Content-Type: multipart/related;
+	boundary="_c5dd68bd-e45d-4c27-8251-24cac1df3fa9_"
+From: Joe Blogs <zzz@hotmail.co.uk>
+To: "xxx@gmail.com" <xxx@gmail.com>
+Subject: Test inline image
+Date: Thu, 19 Jun 2014 10:12:04 +0000
+Importance: Normal
+MIME-Version: 1.0
+X-OriginalArrivalTime: 19 Jun 2014 10:12:04.0278 (UTC) FILETIME=[EB229D60:01CF8BA6]
+
+.
++OK message follows
+Delivered-To: xxx@gmail.com
+Received: by 10.224.135.8 with SMTP id l8csp316922qat;
+        Thu, 19 Jun 2014 03:12:05 -0700 (PDT)
+X-Received: by 10.180.37.230 with SMTP id b6mr5037071wik.47.1403172724974;
+        Thu, 19 Jun 2014 03:12:04 -0700 (PDT)
+Return-Path: <zzz@hotmail.co.uk>
+Received: from DUB004-OMC2S17.hotmail.com (dub004-omc2s17.hotmail.com. [157.55.1.156])
+        by mx.google.com with ESMTPS id ck8si6631066wjc.8.2014.06.19.03.12.04
+        for <xxx@gmail.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 19 Jun 2014 03:12:04 -0700 (PDT)
+Received-SPF: pass (google.com: domain of zzz@hotmail.co.uk designates 157.55.1.156 as permitted sender) client-ip=157.55.1.156;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of zzz@hotmail.co.uk designates 157.55.1.156 as permitted sender) smtp.mail=zzz@hotmail.co.uk
+Received: from DUB130-W49 ([157.55.1.138]) by DUB004-OMC2S17.hotmail.com with Microsoft SMTPSVC(7.5.7601.22712);
+	 Thu, 19 Jun 2014 03:12:04 -0700
+X-TMN: [eIqtHBBo3vPb6o8FX4BW2v0KD9eifBv7]
+X-Originating-Email: [zzz@hotmail.co.uk]
+Message-ID: <DUB130-W498FF8C5FA398C47A98E5CDD130@phx.gbl>
+Return-Path: zzz@hotmail.co.uk
+Content-Type: multipart/related;
+	boundary="_c5dd68bd-e45d-4c27-8251-24cac1df3fa9_"
+From: Joe Blogs <zzz@hotmail.co.uk>
+To: "xxx@gmail.com" <xxx@gmail.com>
+Subject: Test inline image
+Date: Thu, 19 Jun 2014 10:12:04 +0000
+Importance: Normal
+MIME-Version: 1.0
+X-OriginalArrivalTime: 19 Jun 2014 10:12:04.0278 (UTC) FILETIME=[EB229D60:01CF8BA6]
+
+.
