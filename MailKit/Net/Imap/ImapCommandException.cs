@@ -61,6 +61,7 @@ namespace MailKit.Net.Imap {
 
 			Enum.TryParse (value, out response);
 
+			ResponseText = info.GetString ("ResponseText");
 			Response = response;
 		}
 #endif
@@ -95,7 +96,7 @@ namespace MailKit.Net.Imap {
 			else
 				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response.", command, result);
 
-			return ic.Exception != null ? new ImapCommandException (ic.Response, message, ic.Exception) : new ImapCommandException (ic.Response, message);
+			return ic.Exception != null ? new ImapCommandException (ic.Response, reason, message, ic.Exception) : new ImapCommandException (ic.Response, reason, message);
 		}
 
 		/// <summary>
@@ -106,9 +107,11 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="response">The IMAP command response.</param>
 		/// <param name="message">The error message.</param>
+		/// <param name="responseText">The human-readable response text.</param>
 		/// <param name="innerException">The inner exception.</param>
-		public ImapCommandException (ImapCommandResponse response, string message, Exception innerException) : base (message, innerException)
+		public ImapCommandException (ImapCommandResponse response, string responseText, string message, Exception innerException) : base (message, innerException)
 		{
+			ResponseText = responseText;
 			Response = response;
 		}
 
@@ -119,9 +122,11 @@ namespace MailKit.Net.Imap {
 		/// Creates a new <see cref="ImapCommandException"/>.
 		/// </remarks>
 		/// <param name="response">The IMAP command response.</param>
+		/// <param name="responseText">The human-readable response text.</param>
 		/// <param name="message">The error message.</param>
-		public ImapCommandException (ImapCommandResponse response, string message) : base (message)
+		public ImapCommandException (ImapCommandResponse response, string responseText, string message) : base (message)
 		{
+			ResponseText = responseText;
 			Response = response;
 		}
 
@@ -132,8 +137,10 @@ namespace MailKit.Net.Imap {
 		/// Creates a new <see cref="ImapCommandException"/>.
 		/// </remarks>
 		/// <param name="response">The IMAP command response.</param>
-		public ImapCommandException (ImapCommandResponse response)
+		/// <param name="responseText">The human-readable response text.</param>
+		public ImapCommandException (ImapCommandResponse response, string responseText)
 		{
+			ResponseText = responseText;
 			Response = response;
 		}
 
@@ -145,6 +152,17 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value>The IMAP command response.</value>
 		public ImapCommandResponse Response {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the human-readable IMAP command response text.
+		/// </summary>
+		/// <remarks>
+		/// Gets the human-readable IMAP command response text.
+		/// </remarks>
+		/// <value>The response text.</value>
+		public string ResponseText {
 			get; private set;
 		}
 
@@ -167,6 +185,7 @@ namespace MailKit.Net.Imap {
 			base.GetObjectData (info, context);
 
 			info.AddValue ("Response", Response);
+			info.AddValue ("ResponseText", ResponseText);
 		}
 #endif
 	}
