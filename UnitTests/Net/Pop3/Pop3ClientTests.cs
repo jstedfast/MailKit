@@ -433,8 +433,13 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("LIST 3\r\n", "gmail.list3.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
 			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\n", "gmail.top.txt"));
 			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\nTOP 2 0\r\nTOP 3 0\r\n", "gmail.top123.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\nTOP 2 0\r\nTOP 3 0\r\n", "gmail.top123.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
 			commands.Add (new Pop3ReplayCommand ("NOOP\r\n", "gmail.noop.txt"));
 			commands.Add (new Pop3ReplayCommand ("DELE 1\r\n", "gmail.dele.txt"));
 			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
@@ -518,6 +523,27 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
+					var messages = await client.GetMessagesAsync (0, 3);
+
+					foreach (var message in messages) {
+						using (var jpeg = new MemoryStream ()) {
+							var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
+
+							attachment.ContentObject.DecodeTo (jpeg);
+							jpeg.Position = 0;
+
+							using (var md5 = new MD5CryptoServiceProvider ()) {
+								var md5sum = HexEncode (md5.ComputeHash (jpeg));
+
+								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+							}
+						}
+					}
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
+				}
+
+				try {
 					var messages = await client.GetMessagesAsync (new [] { 0, 1, 2 });
 
 					foreach (var message in messages) {
@@ -547,6 +573,16 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
+					var headers = await client.GetMessageHeadersAsync (0, 3);
+
+					Assert.AreEqual (3, headers.Count);
+					for (int i = 0; i < headers.Count; i++)
+						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+				}
+
+				try {
 					var headers = await client.GetMessageHeadersAsync (new [] { 0, 1, 2 });
 
 					Assert.AreEqual (3, headers.Count);
@@ -554,6 +590,35 @@ namespace UnitTests.Net.Pop3 {
 						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+				}
+
+				try {
+					using (var stream = await client.GetStreamAsync (0)) {
+					}
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetStream: {0}", ex);
+				}
+
+				try {
+					var streams = await client.GetStreamsAsync (0, 3);
+
+					Assert.AreEqual (3, streams.Count);
+					for (int i = 0; i < 3; i++) {
+						streams[i].Dispose ();
+					}
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetStreams: {0}", ex);
+				}
+
+				try {
+					var streams = await client.GetStreamsAsync (new int[] { 0, 1, 2 });
+
+					Assert.AreEqual (3, streams.Count);
+					for (int i = 0; i < 3; i++) {
+						streams[i].Dispose ();
+					}
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetStreams: {0}", ex);
 				}
 
 				try {
