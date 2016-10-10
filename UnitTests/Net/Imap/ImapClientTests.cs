@@ -1122,8 +1122,9 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000047 UID FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section.txt"));
 			commands.Add (new ImapReplayCommand ("A00000048 FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section2.txt"));
 			commands.Add (new ImapReplayCommand ("A00000049 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
-			commands.Add (new ImapReplayCommand ("A00000050 EXPUNGE\r\n", "dovecot.expunge.txt"));
-			commands.Add (new ImapReplayCommand ("A00000051 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000050 STORE 1:7 (UNCHANGEDSINCE 5) FLAGS.SILENT (\\Deleted \\Seen $MailKit)\r\n", "dovecot.setflags-unchangedsince.txt"));
+			commands.Add (new ImapReplayCommand ("A00000051 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000052 CLOSE\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1586,13 +1587,24 @@ namespace UnitTests.Net.Imap {
 
 				await destination.AddFlagsAsync (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
 				Assert.AreEqual (14, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
+				Assert.AreEqual (5, destination.HighestModSeq);
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected value for modSeqChanged[{0}].Index", i);
 					Assert.AreEqual (5, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
 				}
 				modSeqChanged.Clear ();
 
+				await destination.SetFlagsAsync (new int[] { 0, 1, 2, 3, 4, 5, 6 }, destination.HighestModSeq, MessageFlags.Seen | MessageFlags.Deleted, custom, true);
+				Assert.AreEqual (7, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
+				Assert.AreEqual (6, destination.HighestModSeq);
+				for (int i = 0; i < modSeqChanged.Count; i++) {
+					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected value for modSeqChanged[{0}].Index", i);
+					Assert.AreEqual (6, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
+				}
+				modSeqChanged.Clear ();
+
 				await destination.ExpungeAsync ();
+				Assert.AreEqual (7, destination.HighestModSeq);
 				Assert.AreEqual (1, vanished.Count, "Unexpected number of Vanished events");
 				Assert.AreEqual (14, vanished[0].UniqueIds.Count, "Unexpected number of UIDs in Vanished event");
 				for (int i = 0; i < vanished[0].UniqueIds.Count; i++)
