@@ -1664,10 +1664,10 @@ namespace MailKit.Net.Imap {
 						if (current != null)
 							current.RespCodes.Add (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
-						var text = ReadLine (cancellationToken);
+						var text = ((string) token.Value) + ReadLine (cancellationToken);
 
 						if (current != null)
-							current.ResponseText = text.Trim ();
+							current.ResponseText = text.TrimEnd ();
 					}
 					break;
 				default:

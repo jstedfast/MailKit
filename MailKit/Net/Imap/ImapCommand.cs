@@ -700,7 +700,7 @@ namespace MailKit.Net.Imap {
 
 						if (token.Type != ImapTokenType.Eoln) {
 							// consume the rest of the line...
-							Engine.ReadLine (CancellationToken);
+							ResponseText = ((string) (token.Value) + Engine.ReadLine (CancellationToken)).TrimEnd ();
 							break;
 						}
 					} else {
