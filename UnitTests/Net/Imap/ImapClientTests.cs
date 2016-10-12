@@ -1125,8 +1125,9 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000050 STORE 1:7 (UNCHANGEDSINCE 5) FLAGS.SILENT (\\Deleted \\Seen $MailKit)\r\n", "dovecot.setflags-unchangedsince.txt"));
 			commands.Add (new ImapReplayCommand ("A00000051 UID SEARCH RETURN () UID 1:14 OR ANSWERED OR DELETED OR DRAFT OR FLAGGED OR RECENT OR UNANSWERED OR UNDELETED OR UNDRAFT OR UNFLAGGED OR UNSEEN OR KEYWORD $MailKit UNKEYWORD $MailKit\r\n", "dovecot.search-uids.txt"));
 			commands.Add (new ImapReplayCommand ("A00000052 UID SORT RETURN () (REVERSE DATE SUBJECT DISPLAYFROM SIZE) US-ASCII OR OR (SENTBEFORE 12-Oct-2016 SENTSINCE 10-Oct-2016) NOT SENTON 11-Oct-2016 OR (BEFORE 12-Oct-2016 SINCE 10-Oct-2016) NOT ON 11-Oct-2016\r\n", "dovecot.sort-by-date.txt"));
-			commands.Add (new ImapReplayCommand ("A00000053 EXPUNGE\r\n", "dovecot.expunge.txt"));
-			commands.Add (new ImapReplayCommand ("A00000054 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000053 UID SORT RETURN () (FROM TO CC) US-ASCII UID 1:14 OR BCC xyz OR CC xyz OR FROM xyz OR TO xyz OR SUBJECT xyz OR HEADER Message-Id mimekit.net OR BODY \"This is the message body.\" TEXT message\r\n", "dovecot.sort-by-strings.txt"));
+			commands.Add (new ImapReplayCommand ("A00000054 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000055 CLOSE\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1616,6 +1617,13 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (14, results.Count, "Unexpected number of UIDs");
 				for (int i = 0; i < results.Count; i++)
 					Assert.AreEqual (expectedSortByDateResults[i], results[i].Id);
+
+				var stringQuery = SearchQuery.BccContains ("xyz").Or (SearchQuery.CcContains ("xyz").Or (SearchQuery.FromContains ("xyz").Or (SearchQuery.ToContains ("xyz").Or (SearchQuery.SubjectContains ("xyz").Or (SearchQuery.HeaderContains ("Message-Id", "mimekit.net").Or (SearchQuery.BodyContains ("This is the message body.").Or (SearchQuery.MessageContains ("message"))))))));
+				orderBy = new OrderBy[] { OrderBy.From, OrderBy.To, OrderBy.Cc };
+				results = await destination.SearchAsync (uids, stringQuery, orderBy);
+				Assert.AreEqual (14, results.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < results.Count; i++)
+					Assert.AreEqual (i + 1, results[i].Id);
 
 				await destination.ExpungeAsync ();
 				Assert.AreEqual (7, destination.HighestModSeq);
