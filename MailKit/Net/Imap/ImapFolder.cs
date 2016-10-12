@@ -8092,9 +8092,6 @@ namespace MailKit.Net.Imap {
 			UnarySearchQuery unary;
 			DateSearchQuery date;
 
-			if (builder.Length > 0)
-				builder.Append (' ');
-
 			switch (query.Term) {
 			case SearchTerm.All:
 				builder.Append ("ALL");
@@ -8104,6 +8101,7 @@ namespace MailKit.Net.Imap {
 				if (parens)
 					builder.Append ('(');
 				BuildQuery (builder, binary.Left, args, false, ref ascii);
+				builder.Append (' ');
 				BuildQuery (builder, binary.Right, args, false, ref ascii);
 				if (parens)
 					builder.Append (')');
@@ -8164,7 +8162,7 @@ namespace MailKit.Net.Imap {
 				if ((Engine.Capabilities & ImapCapabilities.FuzzySearch) == 0)
 					throw new NotSupportedException ("The FUZZY search term is not supported by the IMAP server.");
 
-				builder.Append ("FUZZY");
+				builder.Append ("FUZZY ");
 				unary = (UnarySearchQuery) query;
 				BuildQuery (builder, unary.Operand, args, true, ref ascii);
 				break;
@@ -8195,7 +8193,7 @@ namespace MailKit.Net.Imap {
 				builder.Append ("NEW");
 				break;
 			case SearchTerm.Not:
-				builder.Append ("NOT");
+				builder.Append ("NOT ");
 				unary = (UnarySearchQuery) query;
 				BuildQuery (builder, unary.Operand, args, true, ref ascii);
 				break;
@@ -8230,9 +8228,10 @@ namespace MailKit.Net.Imap {
 				builder.AppendFormat ("OLDER {0}", numeric.Value);
 				break;
 			case SearchTerm.Or:
-				builder.Append ("OR");
+				builder.Append ("OR ");
 				binary = (BinarySearchQuery) query;
 				BuildQuery (builder, binary.Left, args, true, ref ascii);
+				builder.Append (' ');
 				BuildQuery (builder, binary.Right, args, true, ref ascii);
 				break;
 			case SearchTerm.Recent:

@@ -173,6 +173,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-unittests-messages.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-unittests-messages-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\setflags-unchangedsince.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\sort-by-date.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\sort-reverse-arrival.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\status-unittests-destination.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\store-answered.txt" />
