@@ -168,6 +168,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\optimized-search.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-changed-since.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-uids.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-unittests-destination.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-unittests-messages.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\select-unittests-messages-qresync.txt" />
