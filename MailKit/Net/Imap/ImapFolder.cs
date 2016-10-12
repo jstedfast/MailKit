@@ -8091,6 +8091,7 @@ namespace MailKit.Net.Imap {
 			BinarySearchQuery binary;
 			UnarySearchQuery unary;
 			DateSearchQuery date;
+			UidSearchQuery uid;
 
 			switch (query.Term) {
 			case SearchTerm.All:
@@ -8267,6 +8268,8 @@ namespace MailKit.Net.Imap {
 				args.Add (text.Text);
 				break;
 			case SearchTerm.Uid:
+				uid = (UidSearchQuery) query;
+				builder.AppendFormat ("UID {0}", ImapUtils.FormatUidSet (uid.Uids));
 				break;
 			case SearchTerm.Younger:
 				if ((Engine.Capabilities & ImapCapabilities.Within) == 0)
@@ -8337,7 +8340,7 @@ namespace MailKit.Net.Imap {
 				if (orderBy[i].Order == SortOrder.Descending)
 					builder.Append ("REVERSE ");
 
-				switch (orderBy [i].Type) {
+				switch (orderBy[i].Type) {
 				case OrderByType.Arrival:     builder.Append ("ARRIVAL"); break;
 				case OrderByType.Cc:          builder.Append ("CC"); break;
 				case OrderByType.Date:        builder.Append ("DATE"); break;
@@ -8883,7 +8886,9 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="query"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> is invalid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
@@ -8914,49 +8919,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			var set = ImapUtils.FormatUidSet (uids);
-			var args = new List<string> ();
-			string charset;
+			var uidSet = new UidSearchQuery (uids);
 
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
 
-			CheckState (true, false);
-
-			if (uids.Count == 0)
-				return new UniqueId[0];
-
-			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args, out charset);
-			var command = "UID SEARCH ";
-
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
-				command += "RETURN () ";
-
-			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
-				command += "CHARSET " + charset + " ";
-
-			command += "UID " + set + " " + expr + "\r\n";
-
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
-				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
-
-			// Note: always register the untagged SEARCH handler because some servers will brokenly
-			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
-			// search syntax.
-			ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
-			ic.UserData = new SearchResults ();
-
-			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("SEARCH", ic);
-
-			return ((SearchResults) ic.UserData).UniqueIds;
+			return Search (uidSet.And (query), cancellationToken);
 		}
 
 		/// <summary>
@@ -8980,6 +8948,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is empty.</para>
@@ -9015,60 +8985,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			var set = ImapUtils.FormatUidSet (uids);
-			var args = new List<string> ();
-			string charset;
+			var uidSet = new UidSearchQuery (uids);
 
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
 
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			CheckState (true, false);
-
-			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
-
-			if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0) {
-				for (int i = 0; i < orderBy.Count; i++) {
-					if (orderBy[i].Type == OrderByType.DisplayFrom || orderBy[i].Type == OrderByType.DisplayTo)
-						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
-				}
-			}
-
-			if (uids.Count == 0)
-				return new UniqueId[0];
-
-			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args, out charset);
-			var order = BuildSortOrder (orderBy);
-			var command = "UID SORT ";
-
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
-				command += "RETURN () ";
-
-			command += order + " " + (charset ?? "US-ASCII") + " UID " + set + " " + expr + "\r\n";
-
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
-				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
-			else
-				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
-			ic.UserData = new SearchResults ();
-
-			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("SORT", ic);
-
-			return ((SearchResults) ic.UserData).UniqueIds;
+			return Search (uidSet.And (query), orderBy, cancellationToken);
 		}
 
 		/// <summary>
@@ -9297,7 +9219,9 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="query"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> is invalid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
@@ -9330,58 +9254,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			var set = ImapUtils.FormatUidSet (uids);
-			var args = new List<string> ();
-			string charset;
+			var uidSet = new UidSearchQuery (uids);
 
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
 
-			CheckState (true, false);
-
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the ESEARCH extension.");
-
-			if (uids.Count == 0)
-				return new SearchResults ();
-
-			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args, out charset);
-			var command = "UID SEARCH RETURN (";
-
-			if (options != SearchOptions.All && options != 0) {
-				if ((options & SearchOptions.All) != 0)
-					command += "ALL ";
-				if ((options & SearchOptions.Relevancy) != 0)
-					command += "RELEVANCY ";
-				if ((options & SearchOptions.Count) != 0)
-					command += "COUNT ";
-				if ((options & SearchOptions.Min) != 0)
-					command += "MIN ";
-				if ((options & SearchOptions.Max) != 0)
-					command += "MAX ";
-				command = command.TrimEnd ();
-			}
-			command += ") ";
-
-			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
-				command += "CHARSET " + charset + " ";
-
-			command += "UID " + set + " " + expr + "\r\n";
-
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
-			ic.UserData = new SearchResults ();
-
-			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("SEARCH", ic);
-
-			return (SearchResults) ic.UserData;
+			return Search (options, uidSet.And (query), cancellationToken);
 		}
 
 		/// <summary>
@@ -9406,6 +9284,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is empty.</para>
@@ -9441,69 +9321,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			var set = ImapUtils.FormatUidSet (uids);
-			var args = new List<string> ();
-			string charset;
+			var uidSet = new UidSearchQuery (uids);
 
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
 
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			CheckState (true, false);
-
-			if ((Engine.Capabilities & ImapCapabilities.ESort) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the ESORT extension.");
-
-			if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0) {
-				for (int i = 0; i < orderBy.Count; i++) {
-					if (orderBy[i].Type == OrderByType.DisplayFrom || orderBy[i].Type == OrderByType.DisplayTo)
-						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
-				}
-			}
-
-			if (uids.Count == 0)
-				return new SearchResults ();
-
-			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args, out charset);
-			var order = BuildSortOrder (orderBy);
-			var command = "UID SORT RETURN (";
-
-			if (options != SearchOptions.All && options != 0) {
-				if ((options & SearchOptions.All) != 0)
-					command += "ALL ";
-				if ((options & SearchOptions.Relevancy) != 0)
-					command += "RELEVANCY ";
-				if ((options & SearchOptions.Count) != 0)
-					command += "COUNT ";
-				if ((options & SearchOptions.Min) != 0)
-					command += "MIN ";
-				if ((options & SearchOptions.Max) != 0)
-					command += "MAX ";
-				command = command.TrimEnd ();
-			}
-			command += ") ";
-
-			command += order + " " + (charset ?? "US-ASCII") + " UID " + set + " " + expr + "\r\n";
-
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
-			ic.UserData = new SearchResults ();
-
-			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("SORT", ic);
-
-			return (SearchResults) ic.UserData;
+			return Search (options, uidSet.And (query), orderBy, cancellationToken);
 		}
 
 		static void ThreadMatches (ImapEngine engine, ImapCommand ic, int index)

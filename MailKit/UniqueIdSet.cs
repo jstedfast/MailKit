@@ -446,8 +446,14 @@ namespace MailKit {
 		/// Adds the unique identifier to the set.
 		/// </remarks>
 		/// <param name="uid">The unique identifier to add.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
 		public void Add (UniqueId uid)
 		{
+			if (!uid.IsValid)
+				throw new ArgumentException ("Invalid unique identifier.", nameof (uid));
+
 			if (ranges.Count == 0) {
 				ranges.Add (new Range (uid.Id, uid.Id));
 				count++;
@@ -800,7 +806,7 @@ namespace MailKit {
 			int index = 0;
 
 			while (index < uids.Count) {
-				if (uids[index].Id == 0)
+				if (!uids[index].IsValid)
 					throw new ArgumentException ("One or more of the uids is invalid.", nameof (uids));
 
 				uint start = uids[index].Id;
