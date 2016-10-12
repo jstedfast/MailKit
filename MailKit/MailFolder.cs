@@ -14395,9 +14395,9 @@ namespace MailKit {
 		/// <paramref name="orderBy"/> is empty.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the SORT extension.</para>
+		/// <para>The server does not support sorting search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14423,7 +14423,11 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Search (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		[Obsolete ("Use Sort(SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public IList<UniqueId> Search (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Sort (query, orderBy, cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query,
@@ -14446,9 +14450,9 @@ namespace MailKit {
 		/// <paramref name="orderBy"/> is empty.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the SORT extension.</para>
+		/// <para>The server does not support sorting search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14474,22 +14478,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
+		[Obsolete ("Use SortAsync(SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public virtual Task<IList<UniqueId>> SearchAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
-
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SortAsync (query, orderBy, cancellationToken);
 		}
 
 		/// <summary>
@@ -14540,7 +14532,15 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var uidSet = new UidSearchQuery (uids);
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			return Search (uidSet.And (query), cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query.
@@ -14564,7 +14564,7 @@ namespace MailKit {
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// One or more search terms in the <paramref name="query"/> are not supported by the mail store.
+		/// One or more search terms in the <paramref name="query"/> are not supported.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14633,9 +14633,9 @@ namespace MailKit {
 		/// <para><paramref name="orderBy"/> is empty.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the SORT extension.</para>
+		/// <para>The server does not support sorting search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14661,7 +14661,11 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		[Obsolete ("Use Sort(IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Sort (uids, query, orderBy, cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query,
@@ -14691,9 +14695,9 @@ namespace MailKit {
 		/// <para><paramref name="orderBy"/> is empty.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the SORT extension.</para>
+		/// <para>The server does not support sorting search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14719,25 +14723,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		[Obsolete ("Use SortAsync(IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
-
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (uids, query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SortAsync (uids, query, orderBy, cancellationToken);
 		}
 
 		/// <summary>
@@ -14755,9 +14744,9 @@ namespace MailKit {
 		/// <paramref name="query"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The IMAP server does not support the ESEARCH extension.</para>
+		/// <para>The server does not support the specified search options.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14800,9 +14789,9 @@ namespace MailKit {
 		/// <paramref name="query"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The IMAP server does not support the ESEARCH extension.</para>
+		/// <para>The server does not support the specified search options.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14841,12 +14830,11 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Searches the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
+		/// Sort messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// Searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
+		/// Searches the folder for messages matching the specified query,
+		/// returning the search results in the specified sort order.
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
@@ -14862,9 +14850,11 @@ namespace MailKit {
 		/// <paramref name="orderBy"/> is empty.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the ESORT extension.</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14890,15 +14880,19 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract SearchResults Search (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		[Obsolete ("Use Sort(SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public SearchResults Search (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Sort (options, query, orderBy, cancellationToken);
+		}
 
 		/// <summary>
-		/// Asynchronously searches the folder for messages matching the specified query,
+		/// Asynchronously sort messages matching the specified query,
 		/// returning them in the preferred sort order.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
+		/// Asynchronously searches the folder for messages matching the specified query,
+		/// returning the search results in the specified sort order.
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
@@ -14914,9 +14908,11 @@ namespace MailKit {
 		/// <paramref name="orderBy"/> is empty.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the ESORT extension.</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -14942,22 +14938,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		[Obsolete ("Use SortAsync(SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
-
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (options, query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SortAsync (options, query, orderBy, cancellationToken);
 		}
 
 		/// <summary>
@@ -14983,9 +14967,9 @@ namespace MailKit {
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The IMAP server does not support the ESEARCH extension.</para>
+		/// <para>The server does not support the specified search options.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -15011,7 +14995,15 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var uidSet = new UidSearchQuery (uids);
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			return Search (options, uidSet.And (query), cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously searches the subset of UIDs in the folder for messages matching the specified query.
@@ -15036,9 +15028,9 @@ namespace MailKit {
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The IMAP server does not support the ESEARCH extension.</para>
+		/// <para>The server does not support the specified search options.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -15080,12 +15072,11 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Searches the subset of UIDs in the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
+		/// Sort messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// Searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
+		/// Searches the folder for messages matching the specified query,
+		/// returning the search results in the specified sort order.
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
@@ -15108,9 +15099,11 @@ namespace MailKit {
 		/// <para><paramref name="orderBy"/> is empty.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the ESORT extension.</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -15136,15 +15129,18 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		[Obsolete ("Use Sort(SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Sort (options, uids, query, orderBy, cancellationToken);
+		}
 
 		/// <summary>
-		/// Asynchronously searches the subset of UIDs in the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
+		/// Asynchronously sort messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
+		/// Asynchronously searches the folder for messages matching the specified query,
+		/// returning the search results in the specified sort order.
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
@@ -15167,9 +15163,11 @@ namespace MailKit {
 		/// <para><paramref name="orderBy"/> is empty.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the ESORT extension.</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -15195,7 +15193,249 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		[Obsolete ("Use SortAsync(SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return SortAsync (options, uids, query, orderBy, cancellationToken);
+		}
+
+		/// <summary>
+		/// Sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+		/// </remarks>
+		/// /// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="orderBy"/> is empty.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="orderBy"/> is empty.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			if (orderBy == null)
+				throw new ArgumentNullException (nameof (orderBy));
+
+			if (orderBy.Count == 0)
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Sort (query, orderBy, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual IList<UniqueId> Sort (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var uidSet = new UidSearchQuery (uids);
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			return Sort (uidSet.And (query), orderBy, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<IList<UniqueId>> SortAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
@@ -15211,7 +15451,273 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Search (options, uids, query, orderBy, cancellationToken);
+					return Sort (uids, query, orderBy, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Searches the folder for messages matching the specified query, returning the search results in the specified sort order.
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="orderBy"/> is empty.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="MailFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously searches the folder for messages matching the specified query, returning the search results in the specified sort order.
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="orderBy"/> is empty.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="MailFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			if (orderBy == null)
+				throw new ArgumentNullException (nameof (orderBy));
+
+			if (orderBy.Count == 0)
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Sort (options, query, orderBy, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Searches the folder for messages matching the specified query, returning the search results in the specified sort order.
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual SearchResults Sort (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var uidSet = new UidSearchQuery (uids);
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			return Sort (options, uidSet.And (query), orderBy, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query, returning the search results in the specified sort order.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously searches the folder for messages matching the specified query,
+		/// returning the search results in the specified sort order.
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support sorting search results.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<SearchResults> SortAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			if (orderBy == null)
+				throw new ArgumentNullException (nameof (orderBy));
+
+			if (orderBy.Count == 0)
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Sort (options, uids, query, orderBy, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -15234,9 +15740,9 @@ namespace MailKit {
 		/// <paramref name="query"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the THREAD extension.</para>
+		/// <para>The server does not support threading search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -15282,9 +15788,9 @@ namespace MailKit {
 		/// <paramref name="query"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the THREAD extension.</para>
+		/// <para>The server does not support threading search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -15348,9 +15854,9 @@ namespace MailKit {
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the THREAD extension.</para>
+		/// <para>The server does not support threading search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -15404,9 +15910,9 @@ namespace MailKit {
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the THREAD extension.</para>
+		/// <para>The server does not support threading search results.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.

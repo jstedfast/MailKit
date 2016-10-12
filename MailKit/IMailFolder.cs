@@ -4066,8 +4066,7 @@ namespace MailKit {
 		Task<IList<UniqueId>> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Search the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
+		/// Search the folder for messages matching the specified query, returning them in the preferred sort order.
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
@@ -4077,6 +4076,7 @@ namespace MailKit {
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		[Obsolete ("Use Sort(SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		IList<UniqueId> Search (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -4091,6 +4091,7 @@ namespace MailKit {
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		[Obsolete ("Use SortAsync(SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		Task<IList<UniqueId>> SearchAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -4132,6 +4133,7 @@ namespace MailKit {
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		[Obsolete ("Use Sort(IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -4147,6 +4149,7 @@ namespace MailKit {
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		[Obsolete ("Use SortAsync(IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -4181,13 +4184,14 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
+		/// returning the search results in the specified sort order.
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		[Obsolete ("Use Sort(SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		SearchResults Search (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -4196,13 +4200,14 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
+		/// returning the search results in the specified sort order.
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		[Obsolete ("Use SortAsync(SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -4239,7 +4244,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
+		/// returning the search results in the specified sort order.
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
@@ -4247,6 +4252,7 @@ namespace MailKit {
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		[Obsolete ("Use Sort(SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -4255,7 +4261,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
+		/// returning the search results in the specified sort order.
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
@@ -4263,7 +4269,117 @@ namespace MailKit {
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		[Obsolete ("Use SortAsync(SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<UniqueId> Sort (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<UniqueId>> SortAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Searches the folder for messages matching the specified query, returning the search results in the specified sort order.
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously searches the folder for messages matching the specified query, returning the search results in the specified sort order.
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Searches the folder for messages matching the specified query, returning the search results in the specified sort order.
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		SearchResults Sort (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously searches the folder for messages matching the specified query,
+		/// returning the search results in the specified sort order.
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<SearchResults> SortAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Thread the messages in the folder that match the search query using the specified threading algorithm.
