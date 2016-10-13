@@ -92,7 +92,12 @@ namespace MailKit.Security.Ntlm {
 		}
 
 		public byte[] EncodedTargetInfo {
-			get { return (byte[]) targetInfo.Clone (); }
+			get {
+				if (targetInfo != null)
+					return (byte[]) targetInfo.Clone ();
+
+				return new byte[0];
+			}
 		}
 
 		void Decode (byte[] message, int startIndex, int length)
