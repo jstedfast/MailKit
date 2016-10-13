@@ -8923,7 +8923,7 @@ namespace MailKit.Net.Imap {
 
 			var command = "UID SORT " + query + "\r\n";
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
 			ic.RegisterUntaggedHandler ("SORT", SearchMatches);
 			ic.UserData = new SearchResults ();
