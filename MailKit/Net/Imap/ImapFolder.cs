@@ -8610,7 +8610,7 @@ namespace MailKit.Net.Imap {
 			query = query.Trim ();
 
 			if (query.Length == 0)
-				throw new ArgumentException (nameof (query));
+				throw new ArgumentException ("Cannot search using an empty query.", nameof (query));
 
 			CheckState (true, false);
 
@@ -8914,7 +8914,7 @@ namespace MailKit.Net.Imap {
 			query = query.Trim ();
 
 			if (query.Length == 0)
-				throw new ArgumentException (nameof (query));
+				throw new ArgumentException ("Cannot sort using an empty query.", nameof (query));
 
 			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
