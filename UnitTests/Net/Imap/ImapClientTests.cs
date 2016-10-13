@@ -1160,10 +1160,14 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000049 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
 			commands.Add (new ImapReplayCommand ("A00000050 STORE 1:7 (UNCHANGEDSINCE 5) FLAGS.SILENT (\\Deleted \\Seen $MailKit)\r\n", "dovecot.setflags-unchangedsince.txt"));
 			commands.Add (new ImapReplayCommand ("A00000051 UID SEARCH RETURN () UID 1:14 OR ANSWERED OR DELETED OR DRAFT OR FLAGGED OR RECENT OR UNANSWERED OR UNDELETED OR UNDRAFT OR UNFLAGGED OR UNSEEN OR KEYWORD $MailKit UNKEYWORD $MailKit\r\n", "dovecot.search-uids.txt"));
-			commands.Add (new ImapReplayCommand ("A00000052 UID SORT RETURN () (REVERSE DATE SUBJECT DISPLAYFROM SIZE) US-ASCII OR OR (SENTBEFORE 12-Oct-2016 SENTSINCE 10-Oct-2016) NOT SENTON 11-Oct-2016 OR (BEFORE 12-Oct-2016 SINCE 10-Oct-2016) NOT ON 11-Oct-2016\r\n", "dovecot.sort-by-date.txt"));
-			commands.Add (new ImapReplayCommand ("A00000053 UID SORT RETURN () (FROM TO CC) US-ASCII UID 1:14 OR BCC xyz OR CC xyz OR FROM xyz OR TO xyz OR SUBJECT xyz OR HEADER Message-Id mimekit.net OR BODY \"This is the message body.\" TEXT message\r\n", "dovecot.sort-by-strings.txt"));
-			commands.Add (new ImapReplayCommand ("A00000054 EXPUNGE\r\n", "dovecot.expunge.txt"));
-			commands.Add (new ImapReplayCommand ("A00000055 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000052 UID SEARCH RETURN (ALL COUNT MIN MAX) UID 1:14 LARGER 256 SMALLER 512\r\n", "dovecot.search-uids-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000053 UID SORT RETURN () (REVERSE DATE SUBJECT DISPLAYFROM SIZE) US-ASCII OR OR (SENTBEFORE 12-Oct-2016 SENTSINCE 10-Oct-2016) NOT SENTON 11-Oct-2016 OR (BEFORE 12-Oct-2016 SINCE 10-Oct-2016) NOT ON 11-Oct-2016\r\n", "dovecot.sort-by-date.txt"));
+			commands.Add (new ImapReplayCommand ("A00000054 UID SORT RETURN () (FROM TO CC) US-ASCII UID 1:14 OR BCC xyz OR CC xyz OR FROM xyz OR TO xyz OR SUBJECT xyz OR HEADER Message-Id mimekit.net OR BODY \"This is the message body.\" TEXT message\r\n", "dovecot.sort-by-strings.txt"));
+			commands.Add (new ImapReplayCommand ("A00000055 UID SORT RETURN (ALL COUNT MIN MAX) (DISPLAYTO) US-ASCII UID 1:14 OLDER 1 YOUNGER 3600\r\n", "dovecot.sort-uids-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000056 UID SEARCH ALL\r\n", "dovecot.search-raw.txt"));
+			commands.Add (new ImapReplayCommand ("A00000057 UID SORT (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-raw.txt"));
+			commands.Add (new ImapReplayCommand ("A00000058 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000059 CLOSE\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1645,6 +1649,15 @@ namespace UnitTests.Net.Imap {
 				var results = await destination.SearchAsync (uids, SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasCustomFlag ("$MailKit").Or (SearchQuery.DoesNotHaveCustomFlag ("$MailKit")))))))))))));
 				Assert.AreEqual (14, results.Count, "Unexpected number of UIDs");
 
+				var matches = await destination.SearchAsync (searchOptions, uids, SearchQuery.LargerThan (256).And (SearchQuery.SmallerThan (512)));
+				var expectedMatchedUids = new uint[] { 2, 3, 4, 5, 6, 9, 10, 11, 12, 13 };
+				Assert.AreEqual (10, matches.Count, "Unexpected COUNT");
+				Assert.AreEqual (13, matches.Max.Value.Id, "Unexpected MAX");
+				Assert.AreEqual (2, matches.Min.Value.Id, "Unexpected MIN");
+				Assert.AreEqual (10, matches.UniqueIds.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < matches.UniqueIds.Count; i++)
+					Assert.AreEqual (expectedMatchedUids[i], matches.UniqueIds[i].Id);
+
 				orderBy = new OrderBy[] { OrderBy.ReverseDate, OrderBy.Subject, OrderBy.DisplayFrom, OrderBy.Size };
 				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
 				var deliveredDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.DeliveredBefore (new DateTime (2016, 10, 12)), SearchQuery.DeliveredAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.DeliveredOn (new DateTime (2016, 10, 11))));
@@ -1660,6 +1673,33 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (14, results.Count, "Unexpected number of UIDs");
 				for (int i = 0; i < results.Count; i++)
 					Assert.AreEqual (i + 1, results[i].Id);
+
+				orderBy = new OrderBy[] { OrderBy.DisplayTo };
+				matches = await destination.SearchAsync (searchOptions, uids, SearchQuery.OlderThan (1).And (SearchQuery.YoungerThan (3600)), orderBy);
+				Assert.AreEqual (14, matches.Count, "Unexpected COUNT");
+				Assert.AreEqual (14, matches.Max.Value.Id, "Unexpected MAX");
+				Assert.AreEqual (1, matches.Min.Value.Id, "Unexpected MIN");
+				Assert.AreEqual (14, matches.UniqueIds.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < matches.UniqueIds.Count; i++)
+					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+
+				client.Capabilities &= ~ImapCapabilities.ESearch;
+				matches = await ((ImapFolder) destination).SearchAsync ("ALL");
+				Assert.IsFalse (matches.Max.HasValue, "MAX should not be set");
+				Assert.IsFalse (matches.Min.HasValue, "MIN should not be set");
+				Assert.AreEqual (0, matches.Count, "COUNT should not be set");
+				Assert.AreEqual (14, matches.UniqueIds.Count);
+				for (int i = 0; i < matches.UniqueIds.Count; i++)
+					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+
+				client.Capabilities &= ~ImapCapabilities.ESort;
+				matches = await ((ImapFolder) destination).SortAsync ("(REVERSE ARRIVAL) US-ASCII ALL");
+				Assert.IsFalse (matches.Max.HasValue, "MAX should not be set");
+				Assert.IsFalse (matches.Min.HasValue, "MIN should not be set");
+				Assert.AreEqual (0, matches.Count, "COUNT should not be set");
+				Assert.AreEqual (14, matches.UniqueIds.Count);
+				for (int i = 0; i < matches.UniqueIds.Count; i++)
+					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
 
 				await destination.ExpungeAsync ();
 				Assert.AreEqual (7, destination.HighestModSeq);
