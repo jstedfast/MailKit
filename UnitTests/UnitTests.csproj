@@ -61,6 +61,7 @@
     <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
     <Compile Include="Net\Smtp\SmtpClientTests.cs" />
     <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
+    <Compile Include="Search\SearchQueryTests.cs" />
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="BodyPartTests.cs" />
     <Compile Include="MessageSortingTests.cs" />
@@ -381,6 +382,7 @@
     <Folder Include="Net\Imap\Resources\metadata\" />
     <Folder Include="Net\Imap\Resources\dovecot\" />
     <Folder Include="Net\Pop3\Resources\lang\" />
+    <Folder Include="Search\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

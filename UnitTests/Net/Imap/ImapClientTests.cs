@@ -42,7 +42,7 @@ using MailKit.Search;
 using MailKit;
 
 namespace UnitTests.Net.Imap {
-
+	[TestFixture]
 	public class ImapClientTests
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);

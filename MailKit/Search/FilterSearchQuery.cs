@@ -46,10 +46,16 @@ namespace MailKit.Search
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="name"/> is <c>null</c>.
 		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="name"/> is empty.
+		/// </exception>
 		public FilterSearchQuery (string name) : base (SearchTerm.Filter)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
+
+			if (name.Length == 0)
+				throw new ArgumentException ("The filter name cannot be empty.", nameof (name));
 
 			Name = name;
 		}
