@@ -38,6 +38,58 @@ namespace UnitTests.Security {
 	public class SaslMechanismTests
 	{
 		[Test]
+		public void TestArgumentExceptions ()
+		{
+			var credentials = new NetworkCredential ("username", "password");
+			var uri = new Uri ("smtp://localhost");
+			SaslMechanism sasl;
+
+			Assert.Throws<ArgumentNullException> (() => new SaslException (null, SaslErrorCode.MissingChallenge, "message"));
+
+			sasl = new SaslMechanismCramMd5 (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, null));
+			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
+
+			sasl = new SaslMechanismDigestMd5 (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, null));
+			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
+
+			sasl = new SaslMechanismLogin (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, null));
+			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
+
+			sasl = new SaslMechanismNtlm (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (uri, null));
+			Assert.DoesNotThrow (() => sasl.Challenge (null));
+
+			sasl = new SaslMechanismOAuth2 (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (uri, null));
+			Assert.DoesNotThrow (() => sasl.Challenge (null));
+
+			sasl = new SaslMechanismPlain (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null));
+			Assert.DoesNotThrow (() => sasl.Challenge (null));
+
+			sasl = new SaslMechanismScramSha1 (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (uri, null));
+			Assert.DoesNotThrow (() => sasl.Challenge (null));
+
+			sasl = new SaslMechanismScramSha256 (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (uri, null));
+			Assert.DoesNotThrow (() => sasl.Challenge (null));
+		}
+
+		[Test]
 		public void TestCramMd5ExampleFromRfc2195 ()
 		{
 			const string serverToken = "<1896.697170952@postoffice.example.net>";

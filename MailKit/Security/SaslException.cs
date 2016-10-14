@@ -98,8 +98,14 @@ namespace MailKit.Security {
 		/// <param name="mechanism">The SASL mechanism.</param>
 		/// <param name="code">The error code.</param>
 		/// <param name="message">The error message.</param>
-		internal SaslException (string mechanism, SaslErrorCode code, string message) : base (message)
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// </exception>
+		public SaslException (string mechanism, SaslErrorCode code, string message) : base (message)
 		{
+			if (mechanism == null)
+				throw new ArgumentNullException (nameof (mechanism));
+
 			Mechanism = mechanism;
 			ErrorCode = code;
 		}
