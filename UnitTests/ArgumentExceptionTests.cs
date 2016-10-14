@@ -110,6 +110,17 @@ namespace UnitTests
 
 			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((string) null));
 			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((Stream) null));
+			using (var logger = new ProtocolLogger (new MemoryStream ())) {
+				var buffer = new byte[1024];
+
+				Assert.Throws<ArgumentNullException> (() => logger.LogConnect (null));
+				Assert.Throws<ArgumentNullException> (() => logger.LogClient (null, 0, 0));
+				Assert.Throws<ArgumentNullException> (() => logger.LogServer (null, 0, 0));
+				Assert.Throws<ArgumentOutOfRangeException> (() => logger.LogClient (buffer, -1, 0));
+				Assert.Throws<ArgumentOutOfRangeException> (() => logger.LogServer (buffer, -1, 0));
+				Assert.Throws<ArgumentOutOfRangeException> (() => logger.LogClient (buffer, 0, -1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => logger.LogServer (buffer, 0, -1));
+			}
 
 			Assert.Throws<ArgumentNullException> (() => new UniqueIdMap (null, new [] { UniqueId.MinValue }));
 			Assert.Throws<ArgumentNullException> (() => new UniqueIdMap (new [] { UniqueId.MinValue }, null));
