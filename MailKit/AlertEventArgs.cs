@@ -44,8 +44,14 @@ namespace MailKit {
 		/// Creates a new <see cref="AlertEventArgs"/>.
 		/// </remarks>
 		/// <param name="message">The alert message.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="message"/> is <c>null</c>.
+		/// </exception>
 		public AlertEventArgs (string message)
 		{
+			if (message == null)
+				throw new ArgumentNullException (nameof (message));
+
 			Message = message;
 		}
 

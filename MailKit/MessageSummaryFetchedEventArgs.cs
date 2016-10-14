@@ -42,8 +42,14 @@ namespace MailKit {
 		/// Creates a new <see cref="MessageSummaryFetchedEventArgs"/>
 		/// </remarks>
 		/// <param name="message">The message summary.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="message"/> is <c>null</c>.
+		/// </exception>
 		public MessageSummaryFetchedEventArgs (IMessageSummary message)
 		{
+			if (message == null)
+				throw new ArgumentNullException (nameof (message));
+
 			Message = message;
 		}
 

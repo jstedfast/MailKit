@@ -806,7 +806,7 @@ namespace MailKit.Net.Imap {
 		{
 			for (int i = 0; i < ic.RespCodes.Count; i++) {
 				if (ic.RespCodes[i].Type == ImapResponseCodeType.Alert) {
-					OnAlert (new AlertEventArgs (ic.RespCodes[i].Message));
+					OnAlert (ic.RespCodes[i].Message);
 					break;
 				}
 			}
@@ -1037,8 +1037,9 @@ namespace MailKit.Net.Imap {
 						if (ic.RespCodes[i].Type != ImapResponseCodeType.Alert)
 							continue;
 
-						OnAlert (new AlertEventArgs (ic.RespCodes[i].Message));
-						throw new ArgumentException (ic.RespCodes[i].Message);
+						OnAlert (ic.RespCodes[i].Message);
+
+						throw new AuthenticationException (ic.ResponseText ?? ic.RespCodes[i].Message);
 					}
 
 					continue;
@@ -2455,7 +2456,7 @@ namespace MailKit.Net.Imap {
 
 		void OnEngineAlert (object sender, AlertEventArgs e)
 		{
-			OnAlert (e);
+			OnAlert (e.Message);
 		}
 
 		void OnEngineDisconnected (object sender, EventArgs e)

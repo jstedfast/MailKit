@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit {
 	/// <summary>
 	/// A folder quota.
@@ -43,8 +45,14 @@ namespace MailKit {
 		/// Creates a new <see cref="FolderQuota"/> with the specified root.
 		/// </remarks>
 		/// <param name="quotaRoot">The quota root.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="quotaRoot"/> is <c>null</c>.
+		/// </exception>
 		public FolderQuota (IMailFolder quotaRoot)
 		{
+			if (quotaRoot == null)
+				throw new ArgumentNullException (nameof (quotaRoot));
+
 			QuotaRoot = quotaRoot;
 		}
 

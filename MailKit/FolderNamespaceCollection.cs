@@ -25,8 +25,11 @@
 //
 
 using System;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+
+using MimeKit.Utils;
 
 namespace MailKit {
 	/// <summary>
@@ -37,7 +40,7 @@ namespace MailKit {
 	/// </remarks>
 	public class FolderNamespaceCollection : IEnumerable<FolderNamespace>
 	{
-		readonly List<FolderNamespace> collection;
+		readonly List<FolderNamespace> namespaces;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNamespaceCollection"/> class.
@@ -45,9 +48,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="FolderNamespaceCollection"/>.
 		/// </remarks>
-		internal FolderNamespaceCollection ()
+		public FolderNamespaceCollection ()
 		{
-			collection = new List<FolderNamespace> ();
+			namespaces = new List<FolderNamespace> ();
 		}
 
 		#region ICollection implementation
@@ -60,7 +63,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The count.</value>
 		public int Count {
-			get { return collection.Count; }
+			get { return namespaces.Count; }
 		}
 
 		/// <summary>
@@ -73,12 +76,12 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="namespace"/> is <c>null</c>.
 		/// </exception>
-		internal void Add (FolderNamespace @namespace)
+		public void Add (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException (nameof (@namespace));
 
-			collection.Add (@namespace);
+			namespaces.Add (@namespace);
 		}
 
 		/// <summary>
@@ -87,9 +90,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Removes all namespaces from the collection.
 		/// </remarks>
-		internal void Clear ()
+		public void Clear ()
 		{
-			collection.Clear ();
+			namespaces.Clear ();
 		}
 
 		/// <summary>
@@ -109,7 +112,7 @@ namespace MailKit {
 			if (@namespace == null)
 				throw new ArgumentNullException (nameof (@namespace));
 
-			return collection.Contains (@namespace);
+			return namespaces.Contains (@namespace);
 		}
 
 		/// <summary>
@@ -124,12 +127,12 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="namespace"/> is <c>null</c>.
 		/// </exception>
-		internal bool Remove (FolderNamespace @namespace)
+		public bool Remove (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException (nameof (@namespace));
 
-			return collection.Remove (@namespace);
+			return namespaces.Remove (@namespace);
 		}
 
 		/// <summary>
@@ -140,12 +143,27 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The folder namespace at the specified index.</value>
 		/// <param name="index">The index.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="value"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
 		public FolderNamespace this [int index] {
 			get {
-				if (index < 0 || index > collection.Count)
+				if (index < 0 || index >= namespaces.Count)
 					throw new ArgumentOutOfRangeException (nameof (index));
 
-				return collection[index];
+				return namespaces[index];
+			}
+			set {
+				if (index < 0 || index >= namespaces.Count)
+					throw new ArgumentOutOfRangeException (nameof (index));
+
+				if (value == null)
+					throw new ArgumentNullException (nameof (value));
+
+				namespaces[index] = value;
 			}
 		}
 
@@ -162,7 +180,7 @@ namespace MailKit {
 		/// <returns>The enumerator.</returns>
 		public IEnumerator<FolderNamespace> GetEnumerator ()
 		{
-			return collection.GetEnumerator ();
+			return namespaces.GetEnumerator ();
 		}
 
 		#endregion
@@ -178,9 +196,40 @@ namespace MailKit {
 		/// <returns>The enumerator.</returns>
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return collection.GetEnumerator ();
+			return namespaces.GetEnumerator ();
 		}
 
 		#endregion
+
+		static bool Escape (char directorySeparator)
+		{
+			return directorySeparator == '\\' || directorySeparator == '"';
+		}
+
+		/// <summary>
+		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:MailKit.FolderNamespaceCollection"/>.
+		/// </summary>
+		/// <remarks>
+		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:MailKit.FolderNamespaceCollection"/>.
+		/// </remarks>
+		/// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:MailKit.FolderNamespaceCollection"/>.</returns>
+		public override string ToString ()
+		{
+			var builder = new StringBuilder ();
+
+			builder.Append ('(');
+			for (int i = 0; i < namespaces.Count; i++) {
+				builder.Append ("(\"");
+				if (Escape (namespaces[i].DirectorySeparator))
+					builder.Append ('\\');
+				builder.Append (namespaces[i].DirectorySeparator);
+				builder.Append ("\" ");
+				builder.Append (MimeUtils.Quote (namespaces[i].Path));
+				builder.Append (")");
+			}
+			builder.Append (')');
+
+			return builder.ToString ();
+		}
 	}
 }

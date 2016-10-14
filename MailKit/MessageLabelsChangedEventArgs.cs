@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -43,6 +44,9 @@ namespace MailKit {
 		/// Creates a new <see cref="MessageLabelsChangedEventArgs"/>.
 		/// </remarks>
 		/// <param name="index">The message index.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
 		internal MessageLabelsChangedEventArgs (int index) : base (index)
 		{
 		}
@@ -55,8 +59,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The message index.</param>
 		/// <param name="labels">The message labels.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
 		public MessageLabelsChangedEventArgs (int index, IList<string> labels) : base (index)
 		{
+			if (labels == null)
+				throw new ArgumentNullException (nameof (labels));
+
 			Labels = new ReadOnlyCollection<string> (labels);
 		}
 
@@ -69,8 +82,17 @@ namespace MailKit {
 		/// <param name="index">The message index.</param>
 		/// <param name="labels">The message labels.</param>
 		/// <param name="modseq">The modification sequence value.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
 		public MessageLabelsChangedEventArgs (int index, IList<string> labels, ulong modseq) : base (index)
 		{
+			if (labels == null)
+				throw new ArgumentNullException (nameof (labels));
+
 			Labels = new ReadOnlyCollection<string> (labels);
 			ModSeq = modseq;
 		}
@@ -84,10 +106,19 @@ namespace MailKit {
 		/// <param name="index">The message index.</param>
 		/// <param name="uid">The unique id of the message.</param>
 		/// <param name="labels">The message labels.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
 		public MessageLabelsChangedEventArgs (int index, UniqueId uid, IList<string> labels) : base (index)
 		{
-			UniqueId = uid;
+			if (labels == null)
+				throw new ArgumentNullException (nameof (labels));
+
 			Labels = new ReadOnlyCollection<string> (labels);
+			UniqueId = uid;
 		}
 
 		/// <summary>
@@ -100,10 +131,19 @@ namespace MailKit {
 		/// <param name="uid">The unique id of the message.</param>
 		/// <param name="labels">The message labels.</param>
 		/// <param name="modseq">The modification sequence value.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
 		public MessageLabelsChangedEventArgs (int index, UniqueId uid, IList<string> labels, ulong modseq) : base (index)
 		{
-			UniqueId = uid;
+			if (labels == null)
+				throw new ArgumentNullException (nameof (labels));
+
 			Labels = new ReadOnlyCollection<string> (labels);
+			UniqueId = uid;
 			ModSeq = modseq;
 		}
 

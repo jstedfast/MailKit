@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit {
 	/// <summary>
 	/// A folder namespace.
@@ -49,9 +51,23 @@ namespace MailKit {
 		/// </remarks>
 		public readonly string Path;
 
-		internal FolderNamespace (char dirSeparator, string path)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.FolderNamespace"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new folder namespace.
+		/// </remarks>
+		/// <param name="directorySeparator">The directory separator.</param>
+		/// <param name="path">The folder path.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="path"/> is <c>null</c>.
+		/// </exception>
+		public FolderNamespace (char directorySeparator, string path)
 		{
-			DirectorySeparator = dirSeparator;
+			if (path == null)
+				throw new ArgumentNullException (nameof (path));
+
+			DirectorySeparator = directorySeparator;
 			Path = path;
 		}
 	}

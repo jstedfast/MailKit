@@ -35,8 +35,21 @@ namespace MailKit {
 	/// </remarks>
 	public class MessageEventArgs : EventArgs
 	{
-		internal MessageEventArgs (int index)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.MessageEventArgs"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MessageEventArgs"/>.
+		/// </remarks>
+		/// <param name="index">The message index.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		public MessageEventArgs (int index)
 		{
+			if (index < 0)
+				throw new ArgumentOutOfRangeException (nameof (index));
+
 			Index = index;
 		}
 

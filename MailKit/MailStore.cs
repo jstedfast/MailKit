@@ -855,12 +855,15 @@ namespace MailKit {
 		/// Raises the alert event.
 		/// </remarks>
 		/// <param name="e">The alert event args.</param>
-		protected virtual void OnAlert (AlertEventArgs e)
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="message"/> is <c>null</c>.
+		/// </exception>
+		protected virtual void OnAlert (string message)
 		{
 			var handler = Alert;
 
 			if (handler != null)
-				handler (this, e);
+				handler (this, new AlertEventArgs (message));
 		}
 	}
 }
