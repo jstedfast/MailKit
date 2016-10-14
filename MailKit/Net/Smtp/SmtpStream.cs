@@ -380,6 +380,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
+#if false // Note: this code will never get called as we always use ReadResponse() instead.
 			CheckDisposed ();
 
 			ValidateArguments (buffer, offset, count);
@@ -397,6 +398,9 @@ namespace MailKit.Net.Smtp {
 			inputIndex += n;
 
 			return n;
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		/// <summary>
