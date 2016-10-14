@@ -37,6 +37,16 @@ namespace UnitTests {
 	public class UniqueIdSetTests
 	{
 		[Test]
+		public void TestArgumentExceptions ()
+		{
+			var uids = new UniqueIdSet (SortOrder.Ascending);
+			uids.Add (UniqueId.MinValue);
+
+			Assert.Throws<ArgumentNullException> (() => uids.CopyTo (null, 0));
+			Assert.Throws<ArgumentOutOfRangeException> (() => uids.CopyTo (new UniqueId[1], -1));
+		}
+
+		[Test]
 		public void TestAscendingUniqueIdSet ()
 		{
 			UniqueId[] uids = {

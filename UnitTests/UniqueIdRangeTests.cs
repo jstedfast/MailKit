@@ -35,6 +35,15 @@ namespace UnitTests {
 	public class UniqueIdRangeTests
 	{
 		[Test]
+		public void TestArgumentExceptions ()
+		{
+			var uids = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
+
+			Assert.Throws<ArgumentNullException> (() => uids.CopyTo (null, 0));
+			Assert.Throws<ArgumentOutOfRangeException> (() => uids.CopyTo (new UniqueId[1], -1));
+		}
+
+		[Test]
 		public void TestAscending ()
 		{
 			const string example = "1:20";

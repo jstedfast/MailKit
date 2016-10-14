@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -42,6 +43,7 @@ namespace UnitTests
 		{
 			var enumeratedRights = new [] { AccessRight.OpenFolder, AccessRight.CreateFolder };
 
+			Assert.Throws<ArgumentNullException> (() => new AccessControl (null));
 			Assert.Throws<ArgumentNullException> (() => new AccessControl (null, "rk"));
 			Assert.Throws<ArgumentNullException> (() => new AccessControl (null, enumeratedRights));
 			Assert.Throws<ArgumentNullException> (() => new AccessControl ("name", (string) null));
@@ -103,6 +105,14 @@ namespace UnitTests
 			Assert.Throws<ArgumentNullException> (() => new MessageSummaryFetchedEventArgs (null));
 
 			Assert.Throws<ArgumentNullException> (() => new MessagesVanishedEventArgs (null, false));
+
+			Assert.Throws<ArgumentNullException> (() => new MetadataCollection (null));
+
+			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((string) null));
+			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((Stream) null));
+
+			Assert.Throws<ArgumentNullException> (() => new UniqueIdMap (null, new [] { UniqueId.MinValue }));
+			Assert.Throws<ArgumentNullException> (() => new UniqueIdMap (new [] { UniqueId.MinValue }, null));
 		}
 	}
 }
