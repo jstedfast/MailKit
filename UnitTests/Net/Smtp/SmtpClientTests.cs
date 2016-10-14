@@ -148,6 +148,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<InvalidOperationException> (() => client.Send (message, sender, empty));
 
 				Assert.Throws<ArgumentNullException> (() => client.Send (null, message, sender, recipients));
+				Assert.Throws<ArgumentNullException> (() => client.Send (options, null, sender, recipients));
 				Assert.Throws<ArgumentNullException> (() => client.Send (options, message, null, recipients));
 				Assert.Throws<ArgumentNullException> (() => client.Send (options, message, sender, null));
 				Assert.Throws<InvalidOperationException> (() => client.Send (options, message, sender, empty));
@@ -162,6 +163,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<InvalidOperationException> (async () => await client.SendAsync (message, sender, empty));
 
 				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (null, message, sender, recipients));
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, null, sender, recipients));
 				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, message, null, recipients));
 				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, message, sender, null));
 				Assert.Throws<InvalidOperationException> (async () => await client.SendAsync (options, message, sender, empty));

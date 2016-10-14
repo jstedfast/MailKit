@@ -64,6 +64,7 @@
     <Compile Include="Search\SearchQueryTests.cs" />
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="BodyPartTests.cs" />
+    <Compile Include="EnvelopeTests.cs" />
     <Compile Include="MessageSortingTests.cs" />
     <Compile Include="MessageThreadingTests.cs" />
     <Compile Include="UniqueIdRangeTests.cs" />

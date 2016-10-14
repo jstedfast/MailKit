@@ -275,14 +275,20 @@ namespace MailKit {
 				builder.Append ("NIL ");
 			}
 
-			if (InReplyTo != null)
-				builder.AppendFormat ("{0} ", MimeUtils.Quote (InReplyTo));
-			else
+			if (InReplyTo != null) {
+				if (InReplyTo.Length > 1 && InReplyTo[0] != '<' && InReplyTo[InReplyTo.Length - 1] != '>')
+					builder.AppendFormat ("{0} ", MimeUtils.Quote ('<' + InReplyTo + '>'));
+				else
+					builder.AppendFormat ("{0} ", MimeUtils.Quote (InReplyTo));
+			} else
 				builder.Append ("NIL ");
 
-			if (MessageId != null)
-				builder.AppendFormat ("{0}", MimeUtils.Quote (MessageId));
-			else
+			if (MessageId != null) {
+				if (MessageId.Length > 1 && MessageId[0] != '<' && MessageId[MessageId.Length - 1] != '>')
+					builder.AppendFormat ("{0}", MimeUtils.Quote ('<' + MessageId + '>'));
+				else
+					builder.AppendFormat ("{0}", MimeUtils.Quote (MessageId));
+			} else
 				builder.Append ("NIL");
 
 			builder.Append (')');
@@ -357,6 +363,7 @@ namespace MailKit {
 		static bool TryParse (string text, ref int index, out MailboxAddress mailbox)
 		{
 			string name, route, user, domain, address;
+			DomainList domains;
 
 			mailbox = null;
 
@@ -387,8 +394,8 @@ namespace MailKit {
 
 			address = domain != null ? user + "@" + domain : user;
 
-			if (route != null)
-				mailbox = new MailboxAddress (name, route.Split (','), address);
+			if (route != null && DomainList.TryParse (route, out domains))
+				mailbox = new MailboxAddress (name, domains, address);
 			else
 				mailbox = new MailboxAddress (name, address);
 
@@ -520,8 +527,8 @@ namespace MailKit {
 				To = to,
 				Cc = cc,
 				Bcc = bcc,
-				InReplyTo = inreplyto != null ? MimeUtils.EnumerateReferences (inreplyto).FirstOrDefault () : null,
-				MessageId = messageid != null ? MimeUtils.EnumerateReferences (messageid).FirstOrDefault () : null
+				InReplyTo = inreplyto != null ? MimeUtils.EnumerateReferences (inreplyto).FirstOrDefault () ?? inreplyto : null,
+				MessageId = messageid != null ? MimeUtils.EnumerateReferences (messageid).FirstOrDefault () ?? messageid : null
 			};
 
 			return true;
