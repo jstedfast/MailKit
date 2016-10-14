@@ -39,6 +39,22 @@ namespace UnitTests {
 	public class MessageSortingTests
 	{
 		[Test]
+		public void TestArgumentExceptions ()
+		{
+			var messages = new MessageSummary[] { new MessageSummary (0) };
+			var orderBy = new OrderBy[] { OrderBy.Arrival };
+			var emptyOrderBy = new OrderBy[0];
+
+			Assert.Throws<ArgumentNullException> (() => MessageSorter.Sort ((IList<MessageSummary>) null, orderBy));
+			Assert.Throws<ArgumentNullException> (() => MessageSorter.Sort ((IList<MessageSummary>) messages, null));
+			Assert.Throws<ArgumentException> (() => MessageSorter.Sort ((IList<MessageSummary>) messages, emptyOrderBy));
+
+			Assert.Throws<ArgumentNullException> (() => MessageSorter.Sort ((IEnumerable<MessageSummary>) null, orderBy));
+			Assert.Throws<ArgumentNullException> (() => MessageSorter.Sort ((IEnumerable<MessageSummary>) messages, null));
+			Assert.Throws<ArgumentException> (() => MessageSorter.Sort ((IEnumerable<MessageSummary>) messages, emptyOrderBy));
+		}
+
+		[Test]
 		public void TestSorting ()
 		{
 			var messages = new List<MessageSummary> ();

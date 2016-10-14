@@ -32,6 +32,7 @@ using NUnit.Framework;
 
 using MimeKit;
 using MailKit;
+using MailKit.Search;
 
 namespace UnitTests
 {
@@ -107,6 +108,15 @@ namespace UnitTests
 			Assert.Throws<ArgumentNullException> (() => new MessagesVanishedEventArgs (null, false));
 
 			Assert.Throws<ArgumentNullException> (() => new MetadataCollection (null));
+
+			var metadataOptions = new MetadataOptions ();
+			Assert.Throws<ArgumentOutOfRangeException> (() => metadataOptions.Depth = 500);
+
+			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1, 1));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1, UniqueId.MinValue, 1));
+
+			Assert.Throws<ArgumentOutOfRangeException> (() => new OrderBy (OrderByType.To, SortOrder.None));
 
 			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((string) null));
 			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((Stream) null));

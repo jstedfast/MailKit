@@ -31,10 +31,11 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-using MimeKit.Utils;
 using MimeKit;
+using MimeKit.Utils;
 
 using MailKit;
+using MailKit.Search;
 
 namespace UnitTests {
 	[TestFixture]
@@ -42,6 +43,33 @@ namespace UnitTests {
 	{
 		readonly List<MessageSummary> summaries = new List<MessageSummary> ();
 		int msgIndex = 0;
+
+		[Test]
+		public void TestArgumentExceptions ()
+		{
+			var orderBy = new OrderBy[] { OrderBy.Arrival };
+			var messagesMissingInfo = new [] { new MessageSummary (0) };
+			var emptyOrderBy = new OrderBy[0];
+			int depth;
+
+			var summary = new MessageSummary (0);
+			summary.UniqueId = UniqueId.MinValue;
+			summary.Envelope = new Envelope ();
+			summary.References = new MessageIdList ();
+			summary.Envelope.MessageId = "xyz@mimekit.org";
+			summary.Envelope.Subject = "This is the subject";
+			summary.Envelope.Date = DateTimeOffset.Now;
+			summary.Size = 0;
+
+			var messages = new MessageSummary[] { summary };
+
+			Assert.Throws<ArgumentNullException> (() => MessageThreader.GetThreadableSubject (null, out depth));
+			Assert.Throws<ArgumentNullException> (() => MessageThreader.Thread ((IEnumerable<MessageSummary>) null, ThreadingAlgorithm.References));
+			Assert.Throws<ArgumentNullException> (() => MessageThreader.Thread ((IEnumerable<MessageSummary>) null, ThreadingAlgorithm.References, orderBy));
+			Assert.Throws<ArgumentException> (() => MessageThreader.Thread (messagesMissingInfo, ThreadingAlgorithm.References));
+			Assert.Throws<ArgumentNullException> (() => MessageThreader.Thread (messages, ThreadingAlgorithm.References, null));
+			Assert.Throws<ArgumentException> (() => MessageThreader.Thread (messages, ThreadingAlgorithm.References, emptyOrderBy));
+		}
 
 		[Test]
 		public void TestThreadableSubject ()
