@@ -2138,7 +2138,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException (nameof (@namespace));
@@ -2147,10 +2147,13 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			foreach (var folder in engine.GetFolders (@namespace, items, subscribedOnly, cancellationToken))
-				yield return folder;
+			var folders = engine.GetFolders (@namespace, items, subscribedOnly, cancellationToken);
+			var list = new IMailFolder[folders.Count];
 
-			yield break;
+			for (int i = 0; i < list.Length; i++)
+				list[i] = (IMailFolder) folders[i];
+
+			return list;
 		}
 
 		/// <summary>

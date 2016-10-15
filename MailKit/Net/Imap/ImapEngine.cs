@@ -2118,12 +2118,12 @@ namespace MailKit.Net.Imap {
 		/// <param name="items">The status items to pre-populate.</param>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public IEnumerable<ImapFolder> GetFolders (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
+		public IList<ImapFolder> GetFolders (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
 		{
 			var encodedName = EncodeMailboxName (@namespace.Path);
 			var pattern = encodedName.Length > 0 ? encodedName + @namespace.DirectorySeparator : string.Empty;
 			var status = items != StatusItems.None;
-			var list = new List<ImapFolder> ();
+			var list = new List<IMailFolder> ();
 			var command = new StringBuilder ();
 			var lsub = subscribedOnly;
 			ImapFolder folder;
