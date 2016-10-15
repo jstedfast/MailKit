@@ -38,9 +38,12 @@ namespace UnitTests {
 		public void TestArgumentExceptions ()
 		{
 			var uids = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
+			UniqueId uid;
 
 			Assert.Throws<ArgumentNullException> (() => uids.CopyTo (null, 0));
 			Assert.Throws<ArgumentOutOfRangeException> (() => uids.CopyTo (new UniqueId[1], -1));
+			Assert.Throws<ArgumentOutOfRangeException> (() => uid = uids[-1]);
+			Assert.Throws<ArgumentNullException> (() => UniqueIdRange.TryParse (null, 0, out uids));
 		}
 
 		[Test]
@@ -59,6 +62,9 @@ namespace UnitTests {
 			Assert.AreEqual (20, uids.Max.Id, "Max");
 			Assert.AreEqual (example, uids.ToString (), "ToString");
 			Assert.AreEqual (20, uids.Count);
+
+			Assert.False (uids.Contains (new UniqueId (500)));
+			Assert.AreEqual (-1, uids.IndexOf (new UniqueId (500)));
 
 			for (int i = 0; i < uids.Count; i++) {
 				Assert.AreEqual (i, uids.IndexOf (uids[i]));
@@ -100,6 +106,9 @@ namespace UnitTests {
 			Assert.AreEqual (example, uids.ToString (), "ToString");
 			Assert.AreEqual (20, uids.Count);
 
+			Assert.False (uids.Contains (new UniqueId (500)));
+			Assert.AreEqual (-1, uids.IndexOf (new UniqueId (500)));
+
 			for (int i = 0; i < uids.Count; i++) {
 				Assert.AreEqual (i, uids.IndexOf (uids[i]));
 				Assert.AreEqual (20160117, uids[i].Validity);
@@ -134,6 +143,21 @@ namespace UnitTests {
 			Assert.Throws<NotSupportedException> (() => range.RemoveAt (1), "RemoveAt");
 			Assert.Throws<NotSupportedException> (() => range.Add (new UniqueId (5)), "Add");
 			Assert.Throws<NotSupportedException> (() => range.Clear (), "Clear");
+		}
+
+		[Test]
+		public void TestParser ()
+		{
+			UniqueIdRange range;
+
+			Assert.IsFalse (UniqueIdRange.TryParse ("xyz", out range));
+			Assert.IsFalse (UniqueIdRange.TryParse ("1:xyz", out range));
+			Assert.IsFalse (UniqueIdRange.TryParse ("1:*1", out range));
+			Assert.IsFalse (UniqueIdRange.TryParse ("1:1x", out range));
+
+			Assert.IsTrue (UniqueIdRange.TryParse ("1:*", out range));
+			Assert.AreEqual (UniqueId.MinValue, range.Min);
+			Assert.AreEqual (UniqueId.MaxValue, range.Max);
 		}
 	}
 }
