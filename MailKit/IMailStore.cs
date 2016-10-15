@@ -239,7 +239,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
+		IList<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get all of the folders within the specified namespace.
@@ -278,7 +278,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IEnumerable<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get all of the folders within the specified namespace.
@@ -318,7 +318,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get all of the folders within the specified namespace.
@@ -358,7 +358,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IEnumerable<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the folder for the specified path.

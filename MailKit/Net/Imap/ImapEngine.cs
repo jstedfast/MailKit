@@ -2123,7 +2123,7 @@ namespace MailKit.Net.Imap {
 			var encodedName = EncodeMailboxName (@namespace.Path);
 			var pattern = encodedName.Length > 0 ? encodedName + @namespace.DirectorySeparator : string.Empty;
 			var status = items != StatusItems.None;
-			var list = new List<IMailFolder> ();
+			var list = new List<ImapFolder> ();
 			var command = new StringBuilder ();
 			var lsub = subscribedOnly;
 			ImapFolder folder;
