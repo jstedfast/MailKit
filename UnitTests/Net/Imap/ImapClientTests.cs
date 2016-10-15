@@ -166,6 +166,13 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((string) null));
+				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((FolderNamespace) null));
+				Assert.Throws<ArgumentNullException> (() => client.GetFolders (null));
+				Assert.Throws<ArgumentNullException> (() => client.GetFolders (null, false));
+				Assert.Throws<ArgumentNullException> (async () => await client.GetFoldersAsync (null));
+				Assert.Throws<ArgumentNullException> (async () => await client.GetFoldersAsync (null, false));
+
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var dates = new List<DateTimeOffset> ();
 				var messages = new List<MimeMessage> ();
@@ -916,6 +923,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
+				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
 				var implementation = new ImapImplementation {
 					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc."

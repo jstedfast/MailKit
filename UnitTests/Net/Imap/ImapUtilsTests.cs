@@ -44,6 +44,13 @@ namespace UnitTests.Net.Imap {
 	public class ImapUtilsTests
 	{
 		[Test]
+		public void TestResponseCodeCreation ()
+		{
+			foreach (ImapResponseCodeType type in Enum.GetValues (typeof (ImapResponseCodeType)))
+				Assert.DoesNotThrow (() => ImapResponseCode.Create (type));
+		}
+
+		[Test]
 		public void TestFormattingSimpleUidRange ()
 		{
 			UniqueId[] uids = {
