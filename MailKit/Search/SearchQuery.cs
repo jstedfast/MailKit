@@ -69,7 +69,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches all messages in the folder.
+		/// Match all messages in the folder.
 		/// </summary>
 		/// <remarks>
 		/// Matches all messages in the folder.
@@ -77,7 +77,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery All = new SearchQuery (SearchTerm.All);
 
 		/// <summary>
-		/// Creates a conditional AND operation.
+		/// Create a conditional AND operation.
 		/// </summary>
 		/// <remarks>
 		/// A conditional AND operation only evaluates the second operand if the first operand evaluates to true.
@@ -102,7 +102,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Creates a conditional AND operation.
+		/// Create a conditional AND operation.
 		/// </summary>
 		/// <remarks>
 		/// A conditional AND operation only evaluates the second operand if the first operand evaluates to true.
@@ -121,7 +121,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages with the <see cref="MessageFlags.Answered"/> flag set.
+		/// Match messages with the <see cref="MessageFlags.Answered"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages with the <see cref="MessageFlags.Answered"/> flag set.
@@ -129,7 +129,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery Answered = new SearchQuery (SearchTerm.Answered);
 
 		/// <summary>
-		/// Matches messages where the Bcc header contains the specified text.
+		/// Match messages where the Bcc header contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the Bcc header contains the specified text.
@@ -148,7 +148,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages where the message body contains the specified text.
+		/// Match messages where the message body contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the message body contains the specified text.
@@ -167,7 +167,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages where the Cc header contains the specified text.
+		/// Match messages where the Cc header contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the Cc header contains the specified text.
@@ -186,7 +186,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
+		/// Match messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
 		/// </summary>
 		/// <remarks>
 		///  Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
@@ -199,7 +199,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages with the <see cref="MessageFlags.Deleted"/> flag set.
+		/// Match messages with the <see cref="MessageFlags.Deleted"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages with the <see cref="MessageFlags.Deleted"/> flag set.
@@ -207,7 +207,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery Deleted = new SearchQuery (SearchTerm.Deleted);
 
 		/// <summary>
-		/// Matches messages that were delivered after the specified date.
+		/// Match messages that were delivered after the specified date.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that were delivered after the specified date.
@@ -220,7 +220,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that were delivered before the specified date.
+		/// Match messages that were delivered before the specified date.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that were delivered before the specified date.
@@ -233,7 +233,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that were delivered on the specified date.
+		/// Match messages that were delivered on the specified date.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that were delivered on the specified date.
@@ -246,7 +246,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that do not have the specified custom flag set.
+		/// Match messages that do not have the specified custom flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the specified custom flag set.
@@ -271,7 +271,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that do not have the specified custom flags set.
+		/// Match messages that do not have the specified custom flags set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the specified custom flags set.
@@ -307,7 +307,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that do not have the specified flags set.
+		/// Match messages that do not have the specified flags set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the specified flags set.
@@ -345,20 +345,27 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages with the <see cref="MessageFlags.Draft"/> flag set.
+		/// Match messages with the <see cref="MessageFlags.Draft"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages with the <see cref="MessageFlags.Draft"/> flag set.
 		/// </remarks>
 		public static readonly SearchQuery Draft = new SearchQuery (SearchTerm.Draft);
 
+		/// <summary>
+		/// Match messages using a saved search filter.
+		/// </summary>
+		/// <remarks>
+		/// Matches messages using a saved search filter.
+		/// </remarks>
+		/// <param name="name">The name of the saved search.</param>
 		public static SearchQuery Filter (string name)
 		{
 			return new FilterSearchQuery (name);
 		}
 
 		/// <summary>
-		/// Matches messages with the <see cref="MessageFlags.Flagged"/> flag set.
+		/// Match messages with the <see cref="MessageFlags.Flagged"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages with the <see cref="MessageFlags.Flagged"/> flag set.
@@ -366,7 +373,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery Flagged = new SearchQuery (SearchTerm.Flagged);
 
 		/// <summary>
-		/// Matches messages where the From header contains the specified text.
+		/// Match messages where the From header contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the From header contains the specified text.
@@ -385,7 +392,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Applies a fuzzy matching algorithm to the specified expression.
+		/// Apply a fuzzy matching algorithm to the specified expression.
 		/// </summary>
 		/// <remarks>
 		/// <para>Applies a fuzzy matching algorithm to the specified expression.</para>
@@ -405,7 +412,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that have the specified custom flag set.
+		/// Match messages that have the specified custom flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that have the specified custom flag set.
@@ -430,7 +437,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that have the specified custom flags set.
+		/// Match messages that have the specified custom flags set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that have the specified custom flags set.
@@ -466,7 +473,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that have the specified flags set.
+		/// Match messages that have the specified flags set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that have the specified flags set.
@@ -504,7 +511,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages where the specified header contains the specified text.
+		/// Match messages where the specified header contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the specified header contains the specified text.
@@ -529,7 +536,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages where the specified header contains the specified text.
+		/// Match messages where the specified header contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the specified header contains the specified text.
@@ -565,7 +572,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that are larger than the specified number of octets.
+		/// Match messages that are larger than the specified number of octets.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that are larger than the specified number of octets.
@@ -584,7 +591,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages where the raw message contains the specified text.
+		/// Match messages where the raw message contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the raw message contains the specified text.
@@ -603,7 +610,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set but not the <see cref="MessageFlags.Seen"/>.
+		/// Match messages with the <see cref="MessageFlags.Recent"/> flag set but not the <see cref="MessageFlags.Seen"/>.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set but not the <see cref="MessageFlags.Seen"/>.
@@ -611,7 +618,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery New = new SearchQuery (SearchTerm.New);
 
 		/// <summary>
-		/// Creates a logical negation of the specified expression.
+		/// Create a logical negation of the specified expression.
 		/// </summary>
 		/// <remarks>
 		/// Creates a logical negation of the specified expression.
@@ -630,7 +637,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that do not have the <see cref="MessageFlags.Answered"/> flag set.
+		/// Match messages that do not have the <see cref="MessageFlags.Answered"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the <see cref="MessageFlags.Answered"/> flag set.
@@ -638,7 +645,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery NotAnswered = new SearchQuery (SearchTerm.NotAnswered);
 
 		/// <summary>
-		/// Matches messages that do not have the <see cref="MessageFlags.Deleted"/> flag set.
+		/// Match messages that do not have the <see cref="MessageFlags.Deleted"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the <see cref="MessageFlags.Deleted"/> flag set.
@@ -646,7 +653,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery NotDeleted = new SearchQuery (SearchTerm.NotDeleted);
 
 		/// <summary>
-		/// Matches messages that do not have the <see cref="MessageFlags.Draft"/> flag set.
+		/// Match messages that do not have the <see cref="MessageFlags.Draft"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the <see cref="MessageFlags.Draft"/> flag set.
@@ -654,7 +661,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery NotDraft = new SearchQuery (SearchTerm.NotDraft);
 
 		/// <summary>
-		/// Matches messages that do not have the <see cref="MessageFlags.Flagged"/> flag set.
+		/// Match messages that do not have the <see cref="MessageFlags.Flagged"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the <see cref="MessageFlags.Flagged"/> flag set.
@@ -662,7 +669,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery NotFlagged = new SearchQuery (SearchTerm.NotFlagged);
 
 		/// <summary>
-		/// Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
+		/// Match messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
@@ -670,7 +677,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery NotRecent = new SearchQuery (SearchTerm.NotRecent);
 
 		/// <summary>
-		/// Matches messages that do not have the <see cref="MessageFlags.Seen"/> flag set.
+		/// Match messages that do not have the <see cref="MessageFlags.Seen"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that do not have the <see cref="MessageFlags.Seen"/> flag set.
@@ -678,7 +685,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery NotSeen = new SearchQuery (SearchTerm.NotSeen);
 
 		/// <summary>
-		/// Matches messages older than the specified number of seconds.
+		/// Match messages older than the specified number of seconds.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages older than the specified number of seconds.
@@ -697,7 +704,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Creates a conditional OR operation.
+		/// Create a conditional OR operation.
 		/// </summary>
 		/// <remarks>
 		/// A conditional OR operation only evaluates the second operand if the first operand evaluates to false.
@@ -722,7 +729,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Creates a conditional OR operation.
+		/// Create a conditional OR operation.
 		/// </summary>
 		/// <remarks>
 		/// A conditional OR operation only evaluates the second operand if the first operand evaluates to true.
@@ -741,7 +748,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set.
+		/// Match messages with the <see cref="MessageFlags.Recent"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set.
@@ -749,7 +756,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery Recent = new SearchQuery (SearchTerm.Recent);
 
 		/// <summary>
-		/// Matches messages with the <see cref="MessageFlags.Seen"/> flag set.
+		/// Match messages with the <see cref="MessageFlags.Seen"/> flag set.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages with the <see cref="MessageFlags.Seen"/> flag set.
@@ -757,7 +764,7 @@ namespace MailKit.Search {
 		public static readonly SearchQuery Seen = new SearchQuery (SearchTerm.Seen);
 
 		/// <summary>
-		/// Matches messages that were sent after the specified date.
+		/// Match messages that were sent after the specified date.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that were sent after the specified date.
@@ -770,7 +777,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that were sent before the specified date.
+		/// Match messages that were sent before the specified date.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that were sent before the specified date.
@@ -783,7 +790,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that were sent on the specified date.
+		/// Match messages that were sent on the specified date.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that were sent on the specified date.
@@ -796,7 +803,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that are smaller than the specified number of octets.
+		/// Match messages that are smaller than the specified number of octets.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages that are smaller than the specified number of octets.
@@ -815,7 +822,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages where the Subject header contains the specified text.
+		/// Match messages where the Subject header contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the Subject header contains the specified text.
@@ -834,7 +841,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages where the To header contains the specified text.
+		/// Match messages where the To header contains the specified text.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages where the To header contains the specified text.
@@ -853,7 +860,25 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages younger than the specified number of seconds.
+		/// Limit the search query to messages with the specified unique identifiers.
+		/// </summary>
+		/// <remarks>
+		/// Limits the search query to messages with the specified unique identifiers.
+		/// </remarks>
+		/// <param name="uids">The unique identifiers.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> is empty.
+		/// </exception>
+		public static UidSearchQuery Uids (IList<UniqueId> uids)
+		{
+			return new UidSearchQuery (uids);
+		}
+
+		/// <summary>
+		/// Match messages younger than the specified number of seconds.
 		/// </summary>
 		/// <remarks>
 		/// Matches messages younger than the specified number of seconds.
@@ -874,7 +899,7 @@ namespace MailKit.Search {
 		#region GMail extensions
 
 		/// <summary>
-		/// Matches messages that have the specified GMail message identifier.
+		/// Match messages that have the specified GMail message identifier.
 		/// </summary>
 		/// <remarks>
 		/// This search term can only be used with GMail.
@@ -887,7 +912,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages belonging to the specified GMail thread.
+		/// Match messages belonging to the specified GMail thread.
 		/// </summary>
 		/// <remarks>
 		/// This search term can only be used with GMail.
@@ -900,7 +925,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages that have the specified GMail label.
+		/// Match messages that have the specified GMail label.
 		/// </summary>
 		/// <remarks>
 		/// This search term can only be used with GMail.
@@ -925,7 +950,7 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Matches messages using the GMail search expression.
+		/// Match messages using the GMail search expression.
 		/// </summary>
 		/// <remarks>
 		/// This search term can only be used with GMail.
