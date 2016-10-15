@@ -298,7 +298,7 @@ namespace MailKit {
 					continue;
 
 				// remove the second message with the same subject
-				root.Children.RemoveAt (i);
+				root.Children.RemoveAt (i--);
 
 				// group these messages together...
 				if (match.Message == null && current.Message == null) {

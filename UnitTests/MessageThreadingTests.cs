@@ -135,7 +135,39 @@ namespace UnitTests {
 		}
 
 		[Test]
-		public void TestThreading ()
+		public void TestThreadBySubject ()
+		{
+			const string defaultDate = "01 Jan 1997 12:00:00 -0400";
+			var messages = new List<MessageSummary> ();
+			int index = 0;
+
+			// this test case was borrowed from Jamie Zawinski's TestThreader.java
+			messages.Add (MakeThreadable (ref index, "Subject", "<1>", defaultDate, null));
+			messages.Add (MakeThreadable (ref index, "Re[2]: Subject", "<2>", defaultDate, "<1>"));
+			messages.Add (MakeThreadable (ref index, "Re: Subject", "<3>", defaultDate, "<1> <2>"));
+			messages.Add (MakeThreadable (ref index, "Re: Re: Subject", "<4>", defaultDate, "<1>"));
+			messages.Add (MakeThreadable (ref index, "Re:RE:rE[3]: Subject", "<5>", defaultDate, "<3> <x1> <x2> <x3>"));
+
+			string expected = @"Subject
+   Re[2]: Subject
+   Re: Subject
+   Re: Re: Subject
+   Re:RE:rE[3]: Subject
+".Replace ("\r\n", "\n");
+
+			var threads = messages.Thread (ThreadingAlgorithm.OrderedSubject);
+			var builder = new StringBuilder ();
+
+			foreach (var thread in threads)
+				WriteMessageThread (builder, messages, thread, 0);
+
+			//Console.WriteLine (builder);
+
+			Assert.AreEqual (expected, builder.ToString (), "Threading did not produce the expected results");
+		}
+
+		[Test]
+		public void TestThreadByReferences ()
 		{
 			const string defaultDate = "01 Jan 1997 12:00:00 -0400";
 			var messages = new List<MessageSummary> ();
