@@ -2317,15 +2317,8 @@ namespace MailKit.Net.Imap {
 				return;
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				// get the list of messages marked for deletion
-				var marked = Search (SearchQuery.Deleted, cancellationToken);
-				var unmark = new UniqueIdSet (SortOrder.Ascending);
-
-				// remove all uids except the ones that will be expunged
-				for (int i = 0; i < marked.Count; i++) {
-					if (!uids.Contains (marked[i]))
-						unmark.Add (marked[i]);
-				}
+				// get the list of messages marked for deletion that should not be expunged
+				var unmark = Search (SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids))), cancellationToken);
 
 				if (unmark.Count > 0) {
 					// clear the \Deleted flag on all messages except the ones that are to be expunged

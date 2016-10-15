@@ -43,7 +43,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server does not support any additional extensions.
 		/// </summary>
-		None           = 0,
+		None             = 0,
 
 		/// <summary>
 		/// The server implements the core IMAP4 commands.
