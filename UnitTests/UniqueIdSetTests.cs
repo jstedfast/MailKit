@@ -40,10 +40,24 @@ namespace UnitTests {
 		public void TestArgumentExceptions ()
 		{
 			var uids = new UniqueIdSet (SortOrder.Ascending);
+			UniqueId uid;
+
 			uids.Add (UniqueId.MinValue);
 
+			Assert.Throws<ArgumentException> (() => uids.Add (UniqueId.Invalid));
+			Assert.Throws<ArgumentNullException> (() => uids.AddRange (null));
 			Assert.Throws<ArgumentNullException> (() => uids.CopyTo (null, 0));
 			Assert.Throws<ArgumentOutOfRangeException> (() => uids.CopyTo (new UniqueId[1], -1));
+			Assert.Throws<ArgumentOutOfRangeException> (() => uids.RemoveAt (-1));
+			Assert.Throws<ArgumentOutOfRangeException> (() => uid = uids[-1]);
+			Assert.Throws<NotSupportedException> (() => uids[0] = UniqueId.MinValue);
+			Assert.Throws<NotSupportedException> (() => uids.Insert (0, UniqueId.MinValue));
+
+			var list = new List<UniqueId> { UniqueId.Invalid };
+			Assert.Throws<ArgumentNullException> (() => UniqueIdSet.ToString (null));
+			Assert.Throws<ArgumentException> (() => UniqueIdSet.ToString (list));
+
+			Assert.Throws<ArgumentNullException> (() => UniqueIdSet.TryParse (null, out uids));
 		}
 
 		[Test]
@@ -59,6 +73,9 @@ namespace UnitTests {
 
 			Assert.AreEqual ("1:9", actual, "Incorrect initial value.");
 			Assert.AreEqual (9, list.Count, "Incorrect initial count.");
+			Assert.AreEqual (-1, list.IndexOf (new UniqueId (500)));
+			Assert.IsFalse (list.Contains (new UniqueId (500)));
+			Assert.IsFalse (list.Remove (new UniqueId (500)));
 
 			// Test Remove()
 
@@ -407,6 +424,16 @@ namespace UnitTests {
 
 			for (int i = 0; i < uids.Count; i++)
 				Assert.AreEqual (ids[i], uids[i].Id);
+		}
+
+		[Test]
+		public void TestParsingInvalidInputs ()
+		{
+			UniqueIdSet uids;
+
+			Assert.IsFalse (UniqueIdSet.TryParse ("xyz", out uids));
+			Assert.IsFalse (UniqueIdSet.TryParse ("1:x", out uids));
+			Assert.IsFalse (UniqueIdSet.TryParse ("1:1x", out uids));
 		}
 
 		[Test]
