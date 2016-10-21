@@ -21,6 +21,8 @@
 * [ImapFolder.MoveTo() does not move the message out of the source folder. Why not?](#MoveDoesNotMove)
 * [How can I mark messages as read using IMAP?](#MarkAsRead)
 * [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
+* [How can I request a notification when the message is read by the user?](#RequestReadReceipt)
+* [How can I process a read receipt notification?](#ProcessReadReceipt)
 
 ### <a name="CompletelyFree">Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</a>
 
@@ -1180,3 +1182,49 @@ void SendToPickupDirectory (MimeMessage message, string pickupDirectory)
     } while (true);
 }
 ```
+### <a name="RequestReadReceipt">How can I request a notification when the message is read by the user?</a>
+
+The first thing I need to make clear is that requesting a notification does not guarantee that you'll actually
+get one. In order for you to receive a notification that the message was read by its recipient, the recipient's
+mail client needs to know how to send such a notification *and* that the user has enabled it to do so.
+
+That said, here's how you can request a notification when the recipient reads the message that has been sent:
+
+```csharp
+// Add the following header to tell the recipient's client that you want to receive a
+// notification when the message has been read by the user.
+message.Headers[HeaderId.DispositionNotificationTo] = new MailboxAddress ("My Name", "me@example.com").ToString (true);
+```
+
+For more information on this topic, read [rfc3798](https://tools.ietf.org/html/rfc3798).
+
+### <a name="ProcessReadReceipt">How can I process a read receipt notification?</a>
+
+A read receipt notification comes in the form of a MIME message with a top-level MIME part with a MIME-type
+of `multipart/report` that has a `report-type` parameter with a value of `disposition-notification`.
+
+You could check for this in code like this:
+
+```csharp
+var report = message.Body as MultipartReport;
+if (report != null && report.ReportType.Equals ("disposition-notification", StringComparison.OrdinalIgnoreCase)) {
+    // This is a read receipt notification.
+}
+```
+
+The first part of the `multipart/report` will be a human-readable explanation of the notification.
+
+The second part will have a MIME-type of `message/disposition-notification` and be represented by
+a [MessageDispositionNotification](http://www.mimekit.net/docs/html/T_MimeKit_MessageDispositionNotification.htm).
+
+This notification part will contain a list of header-like fields containing information about the
+message that this notification is for such as the `Original-Message-Id`, `Original-Recipient`, etc.
+
+```csharp
+var notification = report[1] as MessageDispositionNotification;
+if (notification != null) {
+    // Get the Message-Id of the message this notification is for...
+    var messageId = notification.Fields["Original-Message-Id"];
+}
+```
+For more information on this topic, read [rfc3798](https://tools.ietf.org/html/rfc3798).
