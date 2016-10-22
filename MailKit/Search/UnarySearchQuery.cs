@@ -59,17 +59,15 @@ namespace MailKit.Search {
 
 		internal override SearchQuery Optimize (ISearchQueryOptimizer optimizer)
 		{
-			SearchQuery unary = null;
+			var operand = Operand.Optimize (optimizer);
+			SearchQuery unary;
 
-			if (optimizer.CanReduce (Operand))
-				unary = new UnarySearchQuery (Term, optimizer.Reduce (Operand));
+			if (operand != Operand)
+				unary = new UnarySearchQuery (Term, operand);
 			else
 				unary = this;
 
-			if (optimizer.CanReduce (unary))
-				return optimizer.Reduce (unary);
-
-			return unary;
+			return optimizer.Reduce (unary);
 		}
 	}
 }

@@ -978,7 +978,7 @@ namespace MailKit.Search {
 
 		internal virtual SearchQuery Optimize (ISearchQueryOptimizer optimizer)
 		{
-			return optimizer.CanReduce (this) ? optimizer.Reduce (this) : this;
+			return optimizer.Reduce (this);
 		}
 	}
 }

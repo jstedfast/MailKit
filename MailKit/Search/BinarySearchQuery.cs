@@ -72,25 +72,16 @@ namespace MailKit.Search {
 
 		internal override SearchQuery Optimize (ISearchQueryOptimizer optimizer)
 		{
-			SearchQuery binary = null;
-			SearchQuery right = null;
-			SearchQuery left = null;
+			var right = Right.Optimize (optimizer);
+			var left = Left.Optimize (optimizer);
+			SearchQuery binary;
 
-			if (optimizer.CanReduce (Left))
-				left = optimizer.Reduce (Left);
-
-			if (optimizer.CanReduce (Right))
-				right = optimizer.Reduce (Right);
-
-			if (left != null || right != null)
-				binary = new BinarySearchQuery (Term, left ?? Left, right ?? Right);
+			if (left != Left || right != Right)
+				binary = new BinarySearchQuery (Term, left, right);
 			else
 				binary = this;
 
-			if (optimizer.CanReduce (binary))
-				return optimizer.Reduce (binary);
-
-			return binary;
+			return optimizer.Reduce (binary);
 		}
 	}
 }

@@ -31,36 +31,25 @@ namespace MailKit.Net.Imap {
 	{
 		#region ISearchQueryOptimizer implementation
 
-		public bool CanReduce (SearchQuery expr)
-		{
-			if (expr.Term == SearchTerm.Not) {
-				var unary = (UnarySearchQuery) expr;
-
-				switch (unary.Operand.Term) {
-				case SearchTerm.NotAnswered:	
-				case SearchTerm.Answered:
-				case SearchTerm.NotDeleted:
-				case SearchTerm.Deleted:
-				case SearchTerm.NotDraft:
-				case SearchTerm.Draft:
-				case SearchTerm.NotFlagged:
-				case SearchTerm.Flagged:
-				case SearchTerm.NotRecent:
-				case SearchTerm.Recent:
-				case SearchTerm.NotSeen:
-				case SearchTerm.Seen:
-				case SearchTerm.Keyword:
-				case SearchTerm.NotKeyword:
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		public SearchQuery Reduce (SearchQuery expr)
 		{
-			if (expr.Term == SearchTerm.Not) {
+			if (expr.Term == SearchTerm.And) {
+				var and = (BinarySearchQuery) expr;
+
+				if (and.Left.Term == SearchTerm.All)
+					return and.Right;
+
+				if (and.Right.Term == SearchTerm.All)
+					return and.Left;
+			} else if (expr.Term == SearchTerm.Or) {
+				var or = (BinarySearchQuery) expr;
+
+				if (or.Left.Term == SearchTerm.All)
+					return SearchQuery.All;
+
+				if (or.Right.Term == SearchTerm.All)
+					return SearchQuery.All;
+			} else if (expr.Term == SearchTerm.Not) {
 				var unary = (UnarySearchQuery) expr;
 
 				switch (unary.Operand.Term) {

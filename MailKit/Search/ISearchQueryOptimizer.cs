@@ -27,8 +27,6 @@
 namespace MailKit.Search {
 	interface ISearchQueryOptimizer
 	{
-		bool CanReduce (SearchQuery expr);
-
 		SearchQuery Reduce (SearchQuery expr);
 	}
 }
