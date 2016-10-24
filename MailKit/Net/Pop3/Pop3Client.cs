@@ -104,7 +104,6 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public Pop3Client (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
-			// FIXME: should this take a ParserOptions argument?
 			engine = new Pop3Engine ();
 		}
 
