@@ -36,6 +36,11 @@ namespace MailKit.Search {
 	[Flags]
 	public enum SearchOptions {
 		/// <summary>
+		/// No options specified.
+		/// </summary>
+		None      = 0,
+
+		/// <summary>
 		/// Returns all of the matching unique identifiers.
 		/// </summary>
 		All       = 1 << 0,
