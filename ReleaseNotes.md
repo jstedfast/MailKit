@@ -1,5 +1,19 @@
 # Release Notes
 
+### MailKit 1.10.0
+
+* Added SearchQuery.Uids() to allow more powerful search expressions involving sets of uids.
+* Changed ImapClient.GetFolders() to return IList instead of IEnumerable.
+* Fixed a bug in MessageThreader.
+* Fixed bugs in Envelope.ToString() and Envelope.TryParse().
+* Fixed NTLM's Type2Message.Encode() logic to properly handle a null TargetInfo field.
+* Obsoleted some ImapFolder.Search() methods and replaced them with an equivalent ImapFolder.Sort()
+  method.
+* Added a ResponseText property to ImapCommandException.
+* Fixed ImapFolder to emit a HighestModSeqChanged event when we get untagged FETCH responses with
+  a higher MODSEQ value.
+* Improved SearchQuery optimization for IMAP.
+* Added SearchOptions.None.
 
 ### MailKit 1.8.1
 

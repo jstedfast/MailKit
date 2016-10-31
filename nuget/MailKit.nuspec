@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.8.6">
 		<id>MailKit</id>
-		<version>1.8.1</version>
+		<version>1.10.0</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,8 +22,16 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Fixed NuGet packages to reference the correct MimeKit package.
-* Added an SmtpClient.QueryCapabilitiesAfterAuthenticating property to work around broken SMTP servers where sending EHLO after a successful AUTH command incorrectly resets their authenticated state.
+		<releaseNotes>* Added SearchQuery.Uids() to allow more powerful search expressions involving sets of uids.
+* Changed ImapClient.GetFolders() to return IList instead of IEnumerable.
+* Fixed a bug in MessageThreader.
+* Fixed bugs in Envelope.ToString() and Envelope.TryParse().
+* Fixed NTLM's Type2Message.Encode() logic to properly handle a null TargetInfo field.
+* Obsoleted some ImapFolder.Search() methods and replaced them with an equivalent ImapFolder.Sort() method.
+* Added a ResponseText property to ImapCommandException.
+* Fixed ImapFolder to emit a HighestModSeqChanged event when we get untagged FETCH responses with a higher MODSEQ value.
+* Improved SearchQuery optimization for IMAP.
+* Added SearchOptions.None.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
@@ -45,21 +53,21 @@ Features include:
 	<dependencies>
 		<group targetFramework="net40">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.8.0" />
+			<dependency id="MimeKit" version="1.10.0" />
 		</group>
 		<group targetFramework="net45">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.8.0" />
+			<dependency id="MimeKit" version="1.10.0" />
 		</group>
 		<group targetFramework="net451">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.8.0" />
+			<dependency id="MimeKit" version="1.10.0" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.8.0" />
+			<dependency id="MimeKit" version="1.10.0" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.8.0" />
+			<dependency id="MimeKit" version="1.10.0" />
 		</group>
 		<group targetFramework=".NETStandard1.3">
 			<dependency id="System.Security.Cryptography.Algorithms" version="4.2.0" />
@@ -84,11 +92,11 @@ Features include:
 			<dependency id="System.Linq" version="4.1.0" />
 			<dependency id="Microsoft.CSharp" version="4.0.1" />
 			<dependency id="Portable.BouncyCastle" version="1.8.1.1" />
-			<dependency id="MimeKit" version="1.8.0" />
+			<dependency id="MimeKit" version="1.10.0" />
 		</group>
 		<group targetFramework="wpa81">
 			<dependency id="Portable.BouncyCastle" version="1.8.1.1" />
-			<dependency id="MimeKit" version="1.8.0" />
+			<dependency id="MimeKit" version="1.10.0" />
 		</group>
 	</dependencies>
 	</metadata>
