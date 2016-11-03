@@ -603,7 +603,7 @@ namespace MailKit.Net.Smtp {
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
 
 			var uri = new Uri ("smtp://" + host);
-			SaslException authException = null;
+			Exception authException = null;
 			SmtpResponse response;
 			SaslMechanism sasl;
 			bool tried = false;
@@ -654,6 +654,9 @@ namespace MailKit.Net.Smtp {
 					authenticated = true;
 					OnAuthenticated (response.Response);
 					return;
+				}
+				else {
+					authException = new AuthenticationException(response.StatusCode + ": " + response.Response);
 				}
 			}
 
