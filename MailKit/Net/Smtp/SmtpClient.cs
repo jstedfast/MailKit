@@ -603,7 +603,7 @@ namespace MailKit.Net.Smtp {
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
 
 			var uri = new Uri ("smtp://" + host);
-			SaslException authException = null;
+			AuthenticationException authException = null;
 			SmtpResponse response;
 			SaslMechanism sasl;
 			bool tried = false;
@@ -634,6 +634,8 @@ namespace MailKit.Net.Smtp {
 				if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
 					continue;
 
+				SaslException saslException = null;
+
 				try {
 					while (!sasl.IsAuthenticated) {
 						if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
@@ -642,10 +644,12 @@ namespace MailKit.Net.Smtp {
 						challenge = sasl.Challenge (response.Response);
 						response = SendCommand (challenge, cancellationToken);
 					}
+
+					saslException = null;
 				} catch (SaslException ex) {
 					// reset the authentication state
 					response = SendCommand (string.Empty, cancellationToken);
-					authException = ex;
+					saslException = ex;
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
@@ -655,6 +659,13 @@ namespace MailKit.Net.Smtp {
 					OnAuthenticated (response.Response);
 					return;
 				}
+
+				var message = string.Format ("{0}: {1}", response.StatusCode, response.Response);
+
+				if (saslException != null)
+					authException = new AuthenticationException (message, saslException);
+				else
+					authException = new AuthenticationException (message);
 			}
 
 			if (tried)
