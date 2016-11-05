@@ -42,7 +42,7 @@ namespace UnitTests {
 		public void TestArgumentExceptions ()
 		{
 			var messages = new List<MessageSummary> { new MessageSummary (0) };
-			var orderBy = new OrderBy[] { OrderBy.Arrival };
+			var orderBy = new OrderBy[] { OrderBy.Subject };
 			var emptyOrderBy = new OrderBy[0];
 
 			Assert.Throws<ArgumentNullException> (() => MessageSorter.Sort ((List<MessageSummary>) null, orderBy));
@@ -63,6 +63,7 @@ namespace UnitTests {
 			MessageSummary summary;
 
 			summary = new MessageSummary (0);
+			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.MessageSize;
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now.AddSeconds (-2);
 			summary.Envelope.Subject = "aaaa";
@@ -73,6 +74,7 @@ namespace UnitTests {
 			messages.Add (summary);
 
 			summary = new MessageSummary (1);
+			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.MessageSize;
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now.AddSeconds (-1);
 			summary.Envelope.Subject = "bbbb";
@@ -83,6 +85,7 @@ namespace UnitTests {
 			messages.Add (summary);
 
 			summary = new MessageSummary (2);
+			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.MessageSize;
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "cccc";

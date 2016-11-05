@@ -152,6 +152,35 @@ namespace MailKit {
 			#endregion
 		}
 
+		static MessageSummaryItems GetMessageSummaryItems (IList<OrderBy> orderBy)
+		{
+			var items = MessageSummaryItems.None;
+
+			for (int i = 0; i < orderBy.Count; i++) {
+				switch (orderBy[i].Type) {
+				case OrderByType.Arrival:
+					break;
+				case OrderByType.Cc:
+				case OrderByType.Date:
+				case OrderByType.DisplayFrom:
+				case OrderByType.DisplayTo:
+				case OrderByType.From:
+				case OrderByType.Subject:
+				case OrderByType.To:
+					items |= MessageSummaryItems.Envelope;
+					break;
+				case OrderByType.ModSeq:
+					items |= MessageSummaryItems.ModSeq;
+					break;
+				case OrderByType.Size:
+					items |= MessageSummaryItems.MessageSize;
+					break;
+				}
+			}
+
+			return items;
+		}
+
 		/// <summary>
 		/// Sorts the messages by the specified ordering.
 		/// </summary>
@@ -183,9 +212,11 @@ namespace MailKit {
 			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
+			var requiredFields = GetMessageSummaryItems (orderBy);
 			var list = new List<T> ();
+
 			foreach (var message in messages) {
-				if (message.Envelope == null)
+				if ((message.Fields & requiredFields) != requiredFields)
 					throw new ArgumentException ("One or more messages is missing information needed for sorting.", nameof (messages));
 
 				list.Add (message);
@@ -232,8 +263,10 @@ namespace MailKit {
 			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
+			var requiredFields = GetMessageSummaryItems (orderBy);
+
 			for (int i = 0; i < messages.Count; i++) {
-				if (messages[i].Envelope == null)
+				if ((messages[i].Fields & requiredFields) != requiredFields)
 					throw new ArgumentException ("One or more messages is missing information needed for sorting.", nameof (messages));
 			}
 
