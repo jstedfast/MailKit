@@ -1698,8 +1698,10 @@ namespace MailKit.Net.Imap {
 								folder.OnExpunge ((int) number - 1);
 								break;
 							case "FETCH":
-								if (number == 0)
-									throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
+								// Apparently Courier-IMAP (2004) will reply with "* 0 FETCH ..." sometimes.
+								// See https://github.com/jstedfast/MailKit/issues/428 for details.
+								//if (number == 0)
+								//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
 								folder.OnFetch (this, (int) number - 1, cancellationToken);
 								break;
