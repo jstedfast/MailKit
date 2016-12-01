@@ -1046,6 +1046,65 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		[Test]
+		public async void TestGetQuotaNonexistantQuotaRoot ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 GETQUOTAROOT INBOX\r\n", "common.getquota-no-root.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" storage=0\r\n", ImapReplayCommandResponse.OK));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
+
+				var inbox = client.Inbox;
+
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.Inbox | FolderAttributes.HasNoChildren, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
+
+				var quota = await inbox.GetQuotaAsync ();
+				Assert.IsNotNull (quota, "Expected a non-null GETQUOTAROOT response.");
+				Assert.IsFalse (quota.QuotaRoot.Exists);
+				Assert.AreEqual ("storage=0", quota.QuotaRoot.FullName);
+				Assert.AreEqual (28257, quota.CurrentStorageSize.Value);
+				Assert.AreEqual (256000, quota.StorageLimit.Value);
+				Assert.IsFalse (quota.CurrentMessageCount.HasValue);
+				Assert.IsFalse (quota.MessageLimit.HasValue);
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static MimeMessage CreateThreadableMessage (string subject, string msgid, string references, DateTimeOffset date)
 		{
 			var message = new MimeMessage ();

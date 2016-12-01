@@ -2070,7 +2070,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("LIST", ic);
 
 			if (list.Count == 0) {
-				folder = CreateImapFolder (quotaRoot, FolderAttributes.None, '.');
+				folder = CreateImapFolder (quotaRoot, FolderAttributes.NonExistent, '.');
 				CacheFolder (folder);
 				return folder;
 			}

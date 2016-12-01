@@ -81,6 +81,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\acl\myrights.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\getquota.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\getquota-no-root.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\id.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.0.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.1.msg" />
