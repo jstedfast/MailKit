@@ -2006,23 +2006,22 @@ namespace MailKit.Net.Imap {
 
 			var list = new List<ImapFolder> ();
 			ImapFolder folder;
+			ImapCommand ic;
 
-			if (!GetCachedFolder ("INBOX", out folder)) {
-				var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
-				ic.UserData = list;
+			ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.UserData = list;
 
-				QueueCommand (ic);
-				Wait (ic);
+			QueueCommand (ic);
+			Wait (ic);
 
-				Inbox = list.Count > 0 ? list[0] : null;
-				list.Clear ();
-			} else {
-				Inbox = folder;
-			}
+			GetCachedFolder ("INBOX", out folder);
+			Inbox = folder;
+
+			list.Clear ();
 
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
-				var ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
+				ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
 				ic.UserData = list;
 
@@ -2032,7 +2031,7 @@ namespace MailKit.Net.Imap {
 				LookupParentFolders (list, cancellationToken);
 				AssignSpecialFolders (list);
 			} else if ((Capabilities & ImapCapabilities.XList) != 0) {
-				var ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
+				ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
 				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderList);
 				ic.UserData = list;
 
