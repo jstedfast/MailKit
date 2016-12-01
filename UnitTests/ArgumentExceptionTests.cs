@@ -83,8 +83,6 @@ namespace UnitTests
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message"));
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message", new Exception ("message")));
 
-			Assert.Throws<ArgumentNullException> (() => new FolderQuota (null));
-
 			Assert.Throws<ArgumentNullException> (() => new FolderRenamedEventArgs (null, "name"));
 			Assert.Throws<ArgumentNullException> (() => new FolderRenamedEventArgs ("name", null));
 

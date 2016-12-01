@@ -2045,6 +2045,43 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the folder representing the specified quota root.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="quotaRoot">The name of the quota root.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public ImapFolder GetQuotaRootFolder (string quotaRoot, CancellationToken cancellationToken)
+		{
+			var list = new List<ImapFolder> ();
+			ImapFolder folder;
+
+			if (GetCachedFolder (quotaRoot, out folder))
+				return folder;
+
+			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", quotaRoot);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.UserData = list;
+
+			QueueCommand (ic);
+			Wait (ic);
+
+			ProcessResponseCodes (ic);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("LIST", ic);
+
+			if (list.Count == 0) {
+				folder = CreateImapFolder (quotaRoot, FolderAttributes.None, '.');
+				CacheFolder (folder);
+				return folder;
+			}
+
+			LookupParentFolders (list, cancellationToken);
+
+			return list[0];
+		}
+
+		/// <summary>
 		/// Gets the folder for the specified path.
 		/// </summary>
 		/// <returns>The folder.</returns>

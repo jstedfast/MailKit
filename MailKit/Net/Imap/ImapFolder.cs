@@ -1746,9 +1746,35 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		public class Quota
+		{
+			public uint? MessageLimit;
+			public uint? StorageLimit;
+			public uint? CurrentMessageCount;
+			public uint? CurrentStorageSize;
+		}
+
+		class QuotaContext
+		{
+			public QuotaContext ()
+			{
+				Quotas = new Dictionary<string, Quota> ();
+				QuotaRoots = new List<string> ();
+			}
+
+			public IList<string> QuotaRoots {
+				get; private set;
+			}
+
+			public IDictionary<string, Quota> Quotas {
+				get; private set;
+			}
+		}
+
 		static void UntaggedQuotaRoot (ImapEngine engine, ImapCommand ic, int index)
 		{
-			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTAROOT", "{0}");
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTAROOT", "{0}");
+			var ctx = (QuotaContext) ic.UserData;
 
 			// The first token should be the mailbox name
 			ReadStringToken (engine, format, ic.CancellationToken);
@@ -1757,7 +1783,8 @@ namespace MailKit.Net.Imap {
 			var token = engine.PeekToken (ic.CancellationToken);
 
 			while (token.Type != ImapTokenType.Eoln) {
-				ReadStringToken (engine, format, ic.CancellationToken);
+				var root = ReadStringToken (engine, format, ic.CancellationToken);
+				ctx.QuotaRoots.Add (root);
 
 				token = engine.PeekToken (ic.CancellationToken);
 			}
@@ -1765,18 +1792,10 @@ namespace MailKit.Net.Imap {
 
 		static void UntaggedQuota (ImapEngine engine, ImapCommand ic, int index)
 		{
-			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
-			var encodedName = ReadStringToken (engine, format, ic.CancellationToken);
-			ImapFolder quotaRoot;
-			FolderQuota quota;
-
-			if (!engine.GetCachedFolder (encodedName, out quotaRoot)) {
-				// Note: this shouldn't happen because the quota root should
-				// be one of the parent folders which will all have been added
-				// to the folder cache by this point.
-			}
-
-			ic.UserData = quota = new FolderQuota (quotaRoot);
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
+			var quotaRoot = ReadStringToken (engine, format, ic.CancellationToken);
+			var ctx = (QuotaContext) ic.UserData;
+			var quota = new Quota ();
 
 			var token = engine.ReadToken (ic.CancellationToken);
 
@@ -1820,6 +1839,8 @@ namespace MailKit.Net.Imap {
 
 			// read the closing paren
 			engine.ReadToken (ic.CancellationToken);
+
+			ctx.Quotas[quotaRoot] = quota;
 		}
 
 		/// <summary>
@@ -1864,8 +1885,11 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the QUOTA extension.");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETQUOTAROOT %F\r\n", this);
+			var ctx = new QuotaContext ();
+
 			ic.RegisterUntaggedHandler ("QUOTAROOT", UntaggedQuotaRoot);
 			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -1875,10 +1899,25 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETQUOTAROOT", ic);
 
-			if (ic.UserData == null)
-				return new FolderQuota (null);
+			for (int i = 0; i < ctx.QuotaRoots.Count; i++) {
+				var encodedName = ctx.QuotaRoots[i];
+				ImapFolder quotaRoot;
+				Quota quota;
 
-			return (FolderQuota) ic.UserData;
+				if (!ctx.Quotas.TryGetValue (encodedName, out quota))
+					continue;
+
+				quotaRoot = Engine.GetQuotaRootFolder (encodedName, cancellationToken);
+
+				return new FolderQuota (quotaRoot) {
+					CurrentMessageCount = quota.CurrentMessageCount,
+					CurrentStorageSize = quota.CurrentStorageSize,
+					MessageLimit = quota.MessageLimit,
+					StorageLimit = quota.StorageLimit
+				};
+			}
+
+			return new FolderQuota (null);
 		}
 
 		/// <summary>
@@ -1933,7 +1972,11 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), this);
+			var ctx = new QuotaContext ();
+			Quota quota;
+
 			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -1943,10 +1986,16 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SETQUOTA", ic);
 
-			if (ic.UserData == null)
-				return new FolderQuota (null);
+			if (ctx.Quotas.TryGetValue (EncodedName, out quota)) {
+				return new FolderQuota (this) {
+					CurrentMessageCount = quota.CurrentMessageCount,
+					CurrentStorageSize = quota.CurrentStorageSize,
+					MessageLimit = quota.MessageLimit,
+					StorageLimit = quota.StorageLimit
+				};
+			}
 
-			return (FolderQuota) ic.UserData;
+			return new FolderQuota (null);
 		}
 
 		/// <summary>
