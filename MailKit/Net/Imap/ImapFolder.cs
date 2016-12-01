@@ -874,7 +874,6 @@ namespace MailKit.Net.Imap {
 			}
 
 			Attributes |= FolderAttributes.NonExistent;
-			Exists = false;
 			OnDeleted ();
 		}
 

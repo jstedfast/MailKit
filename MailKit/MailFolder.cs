@@ -221,7 +221,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value><c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
 		public bool Exists {
-			get; protected set;
+			get { return (Attributes & FolderAttributes.NonExistent) == 0; }
 		}
 
 		/// <summary>
