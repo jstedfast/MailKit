@@ -1,0 +1,3 @@
+* QUOTAROOT INBOX storage=0
+* QUOTA storage=0 (STORAGE 28257 256000)
+A00000005 OK Getquotaroot completed (0.000 + 0.000 secs).

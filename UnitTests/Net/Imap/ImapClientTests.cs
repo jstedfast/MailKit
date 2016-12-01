@@ -1997,6 +1997,7 @@ namespace UnitTests.Net.Imap {
 
 				await created.DeleteAsync ();
 				Assert.IsTrue (deleted, "Expected the Deleted event to be emitted for the UnitTests folder.");
+				Assert.IsFalse (created.Exists, "Expected Exists to be false after deleting the folder.");
 
 				await client.DisconnectAsync (true);
 			}
