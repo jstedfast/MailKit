@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.8.6">
 		<id>MailKit</id>
-		<version>1.10.0</version>
+		<version>1.10.1</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,16 +22,11 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Added SearchQuery.Uids() to allow more powerful search expressions involving sets of uids.
-* Changed ImapClient.GetFolders() to return IList instead of IEnumerable.
-* Fixed a bug in MessageThreader.
-* Fixed bugs in Envelope.ToString() and Envelope.TryParse().
-* Fixed NTLM's Type2Message.Encode() logic to properly handle a null TargetInfo field.
-* Obsoleted some ImapFolder.Search() methods and replaced them with an equivalent ImapFolder.Sort() method.
-* Added a ResponseText property to ImapCommandException.
-* Fixed ImapFolder to emit a HighestModSeqChanged event when we get untagged FETCH responses with a higher MODSEQ value.
-* Improved SearchQuery optimization for IMAP.
-* Added SearchOptions.None.
+		<releaseNotes>* Modified the ImapClient to always LIST the INBOX even if it is a namespace in order to get any flags set on it.
+* Fixed ImapFolder to handle Quota Roots that do not match an existing folder. (issue #433)
+* Added work-around for Courier-IMAP sending "* 0 FETCH ..." on flag changes. (issue #428)
+* Updated MessageSorter to be smarter about validating arguments such that it will only check for IMessageSummary fields that it will *actually* need in order to perform the specified sort.
+* Fixed SmtpClient.Authenticate() to throw an AuthenticationException with a message from the SMTP server if available.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>

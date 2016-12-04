@@ -1,5 +1,5 @@
 {
-  "version": "1.10.0",
+  "version": "1.10.1",
   "title": "MailKit",
   "description": "An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.",
   "authors": [ "Jeffrey Stedfast" ],

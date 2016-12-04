@@ -1,5 +1,17 @@
 # Release Notes
 
+### MailKit 1.10.1
+
+* Modified the ImapClient to always LIST the INBOX even if it is a namespace in order to get any
+  flags set on it.
+* Fixed ImapFolder to handle Quota Roots that do not match an existing folder. (issue #433)
+* Added work-around for Courier-IMAP sending "* 0 FETCH ..." on flag changes. (issue #428)
+* Updated MessageSorter to be smarter about validating arguments such that it will only
+  check for IMessageSummary fields that it will *actually* need in order to perform
+  the specified sort.
+* Fixed SmtpClient.Authenticate() to throw an AuthenticationException with a message
+  from the SMTP server if available.
+
 ### MailKit 1.10.0
 
 * Added SearchQuery.Uids() to allow more powerful search expressions involving sets of uids.
