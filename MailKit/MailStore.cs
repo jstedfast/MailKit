@@ -854,7 +854,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the alert event.
 		/// </remarks>
-		/// <param name="e">The alert event args.</param>
+		/// <param name="message">The alert message.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>

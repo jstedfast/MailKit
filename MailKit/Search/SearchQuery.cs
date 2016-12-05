@@ -52,6 +52,7 @@ namespace MailKit.Search {
 		/// <remarks>
 		/// Creates a new <see cref="SearchQuery"/> with the specified search term.
 		/// </remarks>
+		/// <param name="term">The search term.</param>
 		protected SearchQuery (SearchTerm term)
 		{
 			Term = term;
@@ -358,6 +359,7 @@ namespace MailKit.Search {
 		/// <remarks>
 		/// Matches messages using a saved search filter.
 		/// </remarks>
+		/// <returns>A <see cref="FilterSearchQuery"/>.</returns>
 		/// <param name="name">The name of the saved search.</param>
 		public static SearchQuery Filter (string name)
 		{
@@ -865,6 +867,7 @@ namespace MailKit.Search {
 		/// <remarks>
 		/// Limits the search query to messages with the specified unique identifiers.
 		/// </remarks>
+		/// <returns>A <see cref="UidSearchQuery"/>.</returns>
 		/// <param name="uids">The unique identifiers.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
