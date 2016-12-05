@@ -1745,7 +1745,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		public class Quota
+		class Quota
 		{
 			public uint? MessageLimit;
 			public uint? StorageLimit;
