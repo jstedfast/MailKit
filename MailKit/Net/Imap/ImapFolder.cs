@@ -7539,7 +7539,7 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <One or more of the <paramref name="uids"/> is invalid.
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
