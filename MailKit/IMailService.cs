@@ -102,6 +102,18 @@ namespace MailKit {
 		HashSet<string> AuthenticationMechanisms { get; }
 
 		/// <summary>
+		/// Get whether or not the client is currently authenticated with the mail server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the client is currently authenticated with the mail server.</para>
+		/// <para>To authenticate with the mail server, use one of the
+		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a> methods
+		/// or any of the Async alternatives.</para>
+		/// </remarks>
+		/// <value><c>true</c> if the client is authenticated; otherwise, <c>false</c>.</value>
+		bool IsAuthenticated { get; }
+
+		/// <summary>
 		/// Get whether or not the service is currently connected.
 		/// </summary>
 		/// <remarks>

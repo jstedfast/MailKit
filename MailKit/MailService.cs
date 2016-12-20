@@ -238,7 +238,7 @@ namespace MailKit {
 		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a> methods
 		/// or any of the Async alternatives.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		/// <value><c>true</c> if the client is authenticated; otherwise, <c>false</c>.</value>
 		public abstract bool IsAuthenticated {
 			get;
 		}
