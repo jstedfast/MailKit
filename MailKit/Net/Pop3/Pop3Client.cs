@@ -3251,7 +3251,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		[Obsolete ("Use GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		[Obsolete ("Use DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public override void DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
