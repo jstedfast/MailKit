@@ -855,7 +855,10 @@ namespace MailKit.Net.Smtp {
 			Socket socket = null;
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
-				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp) {
+					ReceiveTimeout = timeout,
+					SendTimeout = timeout
+				};
 
 				try {
 					cancellationToken.ThrowIfCancellationRequested ();
