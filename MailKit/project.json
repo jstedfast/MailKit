@@ -58,6 +58,6 @@
     "xmlDoc": true
   },
   "dependencies": {
-    "MimeKit": "1.10.0"
+    "MimeKit": "1.10.1"
   }
 }
