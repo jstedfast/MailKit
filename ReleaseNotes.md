@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.10.2
+
+* Added an IsAuthenticated property to IMailService.
+* Fixed the ImapFolder.Quota class to not be public.
+
 ### MailKit 1.10.1
 
 * Modified the ImapClient to always LIST the INBOX even if it is a namespace in order to get any
