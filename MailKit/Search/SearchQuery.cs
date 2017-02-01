@@ -552,9 +552,7 @@ namespace MailKit.Search {
 		/// <para><paramref name="text"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="field"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="text"/> is empty.</para>
+		/// <paramref name="field"/> is empty.
 		/// </exception>
 		public static HeaderSearchQuery HeaderContains (string field, string text)
 		{
@@ -566,9 +564,6 @@ namespace MailKit.Search {
 
 			if (text == null)
 				throw new ArgumentNullException (nameof (text));
-
-			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty header value.", nameof (text));
 
 			return new HeaderSearchQuery (field, text);
 		}
