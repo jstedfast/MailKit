@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit.Search {
 	/// <summary>
 	/// A binary search query such as an AND or OR expression.
@@ -42,8 +44,19 @@ namespace MailKit.Search {
 		/// <param name="term">THe search term.</param>
 		/// <param name="left">The left expression.</param>
 		/// <param name="right">The right expression.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="left"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="right"/> is <c>null</c>.</para>
+		/// </exception>
 		public BinarySearchQuery (SearchTerm term, SearchQuery left, SearchQuery right) : base (term)
 		{
+			if (left == null)
+				throw new ArgumentNullException (nameof (left));
+
+			if (right == null)
+				throw new ArgumentNullException (nameof (right));
+
 			Right = right;
 			Left = left;
 		}

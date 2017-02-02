@@ -80,9 +80,21 @@ namespace UnitTests.Search
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.ToContains (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.ToContains (string.Empty));
 			Assert.Throws<ArgumentOutOfRangeException> (() => SearchQuery.YoungerThan (-1));
-
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.All.And (null));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.All.Or (null));
+
+			Assert.Throws<ArgumentNullException> (() => new BinarySearchQuery (SearchTerm.And, null, SearchQuery.All));
+			Assert.Throws<ArgumentNullException> (() => new BinarySearchQuery (SearchTerm.And, SearchQuery.All, null));
+			Assert.Throws<ArgumentNullException> (() => new FilterSearchQuery (null));
+			Assert.Throws<ArgumentException> (() => new FilterSearchQuery (string.Empty));
+			Assert.Throws<ArgumentNullException> (() => new HeaderSearchQuery (null, "text"));
+			Assert.Throws<ArgumentException> (() => new HeaderSearchQuery (string.Empty, "text"));
+			Assert.Throws<ArgumentNullException> (() => new HeaderSearchQuery ("name", null));
+			Assert.Throws<ArgumentNullException> (() => new TextSearchQuery (SearchTerm.BodyContains, null));
+			Assert.Throws<ArgumentNullException> (() => new UidSearchQuery (null));
+			Assert.Throws<ArgumentException> (() => new UidSearchQuery (new UniqueIdSet ()));
+			Assert.Throws<ArgumentException> (() => new UidSearchQuery (UniqueId.Invalid));
+			Assert.Throws<ArgumentNullException> (() => new UnarySearchQuery (SearchTerm.Not, null));
 		}
 	}
 }

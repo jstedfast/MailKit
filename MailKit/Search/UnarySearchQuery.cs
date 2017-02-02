@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit.Search {
 	/// <summary>
 	/// A unary search query such as a NOT expression.
@@ -41,8 +43,14 @@ namespace MailKit.Search {
 		/// </remarks>
 		/// <param name="term">The search term.</param>
 		/// <param name="operand">The operand.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="operand"/> is <c>null</c>.
+		/// </exception>
 		public UnarySearchQuery (SearchTerm term, SearchQuery operand) : base (term)
 		{
+			if (operand == null)
+				throw new ArgumentNullException (nameof (operand));
+
 			Operand = operand;
 		}
 

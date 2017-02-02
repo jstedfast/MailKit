@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit.Search {
 	/// <summary>
 	/// A header-based search query.
@@ -41,8 +43,25 @@ namespace MailKit.Search {
 		/// </remarks>
 		/// <param name="field">The header field name.</param>
 		/// <param name="value">The value to match against.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="field"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="value"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="field"/> is empty.
+		/// </exception>
 		public HeaderSearchQuery (string field, string value) : base (SearchTerm.HeaderContains)
 		{
+			if (field == null)
+				throw new ArgumentNullException (nameof (field));
+
+			if (field.Length == 0)
+				throw new ArgumentException ("Cannot search an empty header field name.", nameof (field));
+
+			if (value == null)
+				throw new ArgumentNullException (nameof (value));
+
 			Field = field;
 			Value = value;
 		}
