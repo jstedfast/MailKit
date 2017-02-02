@@ -67,7 +67,6 @@ namespace UnitTests.Search
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HeaderContains (null, "text"));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HeaderContains (string.Empty, "text"));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HeaderContains ("name", null));
-			Assert.Throws<ArgumentException> (() => SearchQuery.HeaderContains ("name", string.Empty));
 			Assert.Throws<ArgumentOutOfRangeException> (() => SearchQuery.LargerThan (-1));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.MessageContains (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.MessageContains (string.Empty));
