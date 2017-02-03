@@ -387,12 +387,12 @@ namespace MailKit.Security {
 				return true;
 
 			// Non-character code points: http://tools.ietf.org/html/rfc3454#appendix-C.4
-			if ((u >= 0xFDD0 && u <= 0xFDEF) || (u >= 0xFFFE && u <= 0xFFFF) || (u >= 0x1FFFE & u <= 0x1FFFF) ||
-				(u >= 0x2FFFE & u <= 0x2FFFF) || (u >= 0x3FFFE & u <= 0x3FFFF) || (u >= 0x4FFFE & u <= 0x4FFFF) ||
-				(u >= 0x5FFFE & u <= 0x5FFFF) || (u >= 0x6FFFE & u <= 0x6FFFF) || (u >= 0x7FFFE & u <= 0x7FFFF) ||
-				(u >= 0x8FFFE & u <= 0x8FFFF) || (u >= 0x9FFFE & u <= 0x9FFFF) || (u >= 0xAFFFE & u <= 0xAFFFF) ||
-				(u >= 0xBFFFE & u <= 0xBFFFF) || (u >= 0xCFFFE & u <= 0xCFFFF) || (u >= 0xDFFFE & u <= 0xDFFFF) ||
-				(u >= 0xEFFFE & u <= 0xEFFFF) || (u >= 0xFFFFE & u <= 0xFFFFF) || (u >= 0x10FFFE & u <= 0x10FFFF))
+			if ((u >= 0xFDD0 && u <= 0xFDEF) || (u >= 0xFFFE && u <= 0xFFFF) || (u >= 0x1FFFE && u <= 0x1FFFF) ||
+				(u >= 0x2FFFE && u <= 0x2FFFF) || (u >= 0x3FFFE && u <= 0x3FFFF) || (u >= 0x4FFFE && u <= 0x4FFFF) ||
+				(u >= 0x5FFFE && u <= 0x5FFFF) || (u >= 0x6FFFE && u <= 0x6FFFF) || (u >= 0x7FFFE && u <= 0x7FFFF) ||
+				(u >= 0x8FFFE && u <= 0x8FFFF) || (u >= 0x9FFFE && u <= 0x9FFFF) || (u >= 0xAFFFE && u <= 0xAFFFF) ||
+				(u >= 0xBFFFE && u <= 0xBFFFF) || (u >= 0xCFFFE && u <= 0xCFFFF) || (u >= 0xDFFFE && u <= 0xDFFFF) ||
+				(u >= 0xEFFFE && u <= 0xEFFFF) || (u >= 0xFFFFE && u <= 0xFFFFF) || (u >= 0x10FFFE && u <= 0x10FFFF))
 				return true;
 
 			// Surrogate code points: http://tools.ietf.org/html/rfc3454#appendix-C.5
@@ -434,7 +434,7 @@ namespace MailKit.Security {
 			}
 
 			// Tagging characters: http://tools.ietf.org/html/rfc3454#appendix-C.9
-			if (u == 0xE0001 || (u >= 0xE0020 & u <= 0xE007F))
+			if (u == 0xE0001 || (u >= 0xE0020 && u <= 0xE007F))
 				return true;
 
 			return false;
