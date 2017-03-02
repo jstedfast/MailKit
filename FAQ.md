@@ -19,7 +19,8 @@
 * [How do I get the email addresses in the From, To, and Cc headers?](#AddressHeaders)
 * [Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?](#UntitledAttachments)
 * [How do I decrypt PGP messages that are embedded in the main message text?](#DecryptInlinePGP)
-* [How do I reply to a message using MimeKit and MailKit?](#Reply)
+* [How do I reply to a message?](#Reply)
+* [How do I forward a message?](#Forward)
 
 ### ImapClient
 * [How can I search for messages delivered between two dates?](#ImapSearchBetween2Dates)
@@ -798,7 +799,7 @@ static Stream DecryptEmbeddedPgp (TextPart text)
 What you do with that decrypted stream is up to you. It's up to you to figure out what the decrypted content is
 (is it text? a jpeg image? a video?) and how to display it to the user.
 
-### <a name="Reply">Q: How do I reply to a message using MimeKit?</a>
+### <a name="Reply">Q: How do I reply to a message?</a>
 
 Replying to a message is fairly simple. For the most part, you'd just create the reply message
 the same way you'd create any other message. There are only a few slight differences:
@@ -1125,6 +1126,82 @@ public static MimeMessage Reply (MimeMessage message, MailboxAddress from, bool 
 	return visitor.Reply;
 }
 ```
+
+### <a name="Forward">Q: How do I forward a message?</a>
+
+There are 2 common ways of forwarding a message: attaching the original message as an attachment and inlining
+the message body much like replying typically does. Which method you choose is up to you.
+
+To forward a message by attaching it as an attachment, you would do do something like this:
+
+```csharp
+public static MimeMessage Forward (MimeMessage original, MailboxAddress from, IEnumerable<InternetAddress> to)
+{
+	var message = new MimeMessage ();
+	message.From.Add (from);
+	message.To.AddRange (to);
+
+	// set the forwarded subject
+	if (!original.Subject.StartsWith ("FWD:", StringComparison.OrdinalIgnoreCase))
+		message.Subject = "FWD: " + original.Subject;
+	else
+		message.Subject = original.Subject;
+
+	// create the main textual body of the message
+	var text = new TextPart ("plain") { Text = "Here's the forwarded message:" };
+
+	// create the message/rfc822 attachment for the original message
+	var rfc822 = new MessagePart { Message = original };
+    
+	// create a multipart/mixed container for the text body and the forwarded message
+	var multipart = new Multipart ("mixed");
+	multipart.Add (text);
+	multipart.Add (rfc822);
+
+	// set the multipart as the body of the message
+	message.Body = multipart;
+
+	return message;
+}
+```
+
+To forward a message by simply inlining the original message's text content, you can do something like this:
+
+```csharp
+public static MimeMessage Forward (MimeMessage original, MailboxAddress from, IEnumerable<InternetAddress> to)
+{
+	var message = new MimeMessage ();
+	message.From.Add (from);
+	message.To.AddRange (to);
+
+	// set the forwarded subject
+	if (!original.Subject.StartsWith ("FWD:", StringComparison.OrdinalIgnoreCase))
+		message.Subject = "FWD: " + original.Subject;
+	else
+		message.Subject = original.Subject;
+
+	// quote the original message text
+	using (var text = new StringWriter ()) {
+		text.WriteLine ();
+		text.WriteLine ("-------- Original Message --------");
+		text.WriteLine ("Subject: {0}", original.Subject);
+		text.WriteLine ("Date: {0}", DateUtils.FormatDate (original.Date));
+		text.WriteLine ("From: {0}", original.From);
+		text.WriteLine ("To: {0}", original.To);
+		text.WriteLine ();
+		
+		text.Write (original.TextBody);
+
+		message.Body = new TextPart ("plain") {
+			Text = text.ToString ()
+		};
+	}
+
+	return message;
+}
+```
+
+Keep in mind that not all messages will have a `TextBody` available, so you'll have to find a way to handle those cases.
 
 ## ImapClient
 
