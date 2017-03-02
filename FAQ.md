@@ -2,34 +2,153 @@
 
 ## Question Index
 
+### General
 * [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#CompletelyFree)
+* [Why do I get `The remote certificate is invalid according to the validation procedure` when I try to Connect?](#InvalidSslCertificate)
+* [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
+* [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
+* [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
+
+### Messages
 * [How do I create a message with attachments?](#CreateAttachments)
 * [How do I get the main body of a message?](#MessageBody)
 * [How do I tell if a message has attachments?](#HasAttachments)
+* [How do I save messages?](#SaveMessages)
 * [How do I save attachments?](#SaveAttachments)
 * [How do I get the email addresses in the From, To, and Cc headers?](#AddressHeaders)
 * [Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?](#Serialize)
 * [Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?](#UntitledAttachments)
 * [How do I decrypt PGP messages that are embedded in the main message text?](#DecryptInlinePGP)
 * [How do I reply to a message using MimeKit and MailKit?](#Reply)
-* [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
-* [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
-* [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
-* [How can I search for messages delivered between two dates?](#SearchBetween2Dates)
+
+### ImapClient
+* [How can I search for messages delivered between two dates?](#ImapSearchBetween2Dates)
 * [What does "The ImapClient is currently busy processing a command." mean?](#ImapClientBusy)
 * [Why do I get InvalidOperationException: "The folder is not currently open."?](#FolderNotOpenException)
-* [ImapFolder.MoveTo() does not move the message out of the source folder. Why not?](#MoveDoesNotMove)
-* [How can I mark messages as read using IMAP?](#MarkAsRead)
-* [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
-* [How can I request a notification when the message is read by the user?](#RequestReadReceipt)
-* [How can I process a read receipt notification?](#ProcessReadReceipt)
+* [Why doesn't ImapFolder.MoveTo() move the message out of the source folder?](#ImapMoveDoesNotMove)
+* [How can I mark messages as read using IMAP?](#ImapMarkAsRead)
 
-### <a name="CompletelyFree">Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</a>
+### SmtpClient
+* [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
+* [How can I request a notification when the message is read by the user?](#SmtpRequestReadReceipt)
+* [How can I process a read receipt notification?](#SmtpProcessReadReceipt)
+
+
+## General
+
+### <a name="CompletelyFree">Q: Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</a>
 
 Yes. MimeKit and MailKit are both completely free and open source. They are both covered under the
 [MIT](https://opensource.org/licenses/MIT) license.
 
-### <a name="CreateAttachments">How do I create a message with attachments?</a>
+### <a name="InvalidSslCertificate">Q: Why do I get `The remote certificate is invalid according to the validation procedure` when I try to Connect?</a>
+
+When you get an exception with that error message, it means that the IMAP, POP3 or SMTP
+server that you are connecting to is using an SSL certificate that is either expired
+or untrusted by your system.
+
+Often times, mail servers will use self-signed certificates instead of using a certificate
+that has been signed by a trusted Certificate Authority. When your system is unable to
+validate the mail server's certificate because it is not signed by a known and trusted
+Certificate Authority, the above error will occur.
+
+You can work around this problem by supplying a custom [RemoteServerCertificateValidationCallback](https://msdn.microsoft.com/en-us/library/ms145054)
+and setting it on the client's [ServerCertificateValidationCallback](http://mimekit.net/docs/html/P_MailKit_MailService_ServerCertificateValidationCallback.htm)
+property.
+
+In the most simplest example, you could do something like this (although I would strongly recommend against it in production use):
+
+```csharp
+using (var client = new SmtpClient ()) {
+    client.ServerCertificateValidationCallback = (s,c,h,e) => true;
+
+    client.Connect (hostName, port, SecureSocketOptions.Auto);
+
+    // ...
+}
+```
+
+Most likely you'll want to instead compare the certificate's [Thumbprint](https://msdn.microsoft.com/en-us/library/system.security.cryptography.x509certificates.x509certificate2.thumbprint(v=vs.110).aspx)
+property to a known value that you have verified at a prior date.
+
+You could also use this callback to prompt the user (much like you have probably seen web browsers do)
+as to whether or not certificate should be trusted.
+
+### <a name="ProtocolLog">Q: How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
+
+All of MailKit's client implementations have a constructor that takes a nifty
+[IProtocolLogger](http://www.mimekit.net/docs/html/T_MailKit_IProtocolLogger.htm)
+interface for logging client/server communications. Out of the box, you can use the
+handy [ProtocolLogger](http://www.mimekit.net/docs/html/T_MailKit_ProtocolLogger.htm) class.
+Here are some examples of how to use it:
+
+```csharp
+// log to a file called 'imap.log'
+var client = new ImapClient (new ProtocolLogger ("imap.log"));
+```
+
+```csharp
+// log to standard output (i.e. the console)
+var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
+```
+
+**Note:** When submitting a protocol log as part of a bug report, make sure to scrub any sensitive
+information including your authentication credentials. This information will generally be the base64
+encoded blob immediately following an `AUTHENTICATE` or `AUTH` command (depending on the type of server).
+The only exception to this case is if you are authenticating with `NTLM` in which case I *may* need this
+information, but *only if* the bug/error is in the authentication step.
+
+### <a name="GMailHiddenMessages">Q: Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</a>
+
+By default, GMail's POP3 and IMAP server does not behave like standard POP3 or IMAP servers
+and hides messages from clients using those protocols (as well as having other non-standard
+behavior).
+
+If you want to configure your GMail POP3 or IMAP settings to behave the way POP3 and IMAP are
+intended to behave according to their protocol specifications, you'll need to log in to your
+GMail account via your web browser and navigate to the `Forwarding and POP/IMAP` tab of your
+GMail Settings page and set your options to look like this:
+
+![GMail POP3 and IMAP Settings](http://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
+
+### <a name="GMailOAuth2">Q: How can I log in to a GMail account using OAuth 2.0?</a>
+
+The first thing you need to do is follow
+[Google's instructions](https://developers.google.com/accounts/docs/OAuth2) 
+for obtaining OAuth 2.0 credentials for your application.
+
+Once you've done that, the easiest way to obtain an access token is to use Google's 
+[Google.Apis.Auth](https://www.nuget.org/packages/Google.Apis.Auth/) library:
+
+```csharp
+var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
+var credential = new ServiceAccountCredential (new ServiceAccountCredential
+    .Initializer ("your-developer-id@developer.gserviceaccount.com") {
+    // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
+    Scopes = new[] { "https://mail.google.com/" },
+    User = "username@gmail.com"
+}.FromCertificate (certificate));
+
+bool result = await credential.RequestAccessTokenAsync (CancellationToken.None);
+
+// Note: result will be true if the access token was received successfully
+```
+
+Now that you have an access token (`credential.Token.AccessToken`), you can use it with MailKit as if it were
+the password:
+
+```csharp
+using (var client = new ImapClient ()) {
+    client.Connect ("imap.gmail.com", 993, true);
+    
+    // use the access token as the password string
+    client.Authenticate ("username@gmail.com", credential.Token.AccessToken);
+}
+```
+
+## Messages
+
+### <a name="CreateAttachments">Q: How do I create a message with attachments?</a>
 
 To construct a message with attachments, the first thing you'll need to do is create a `multipart/mixed`
 container which you'll then want to add the message body to first. Once you've added the body, you can
@@ -109,7 +228,7 @@ message.Body = builder.ToMessageBody ();
 
 For more information, see [Creating Messages](http://www.mimekit.net/docs/html/CreatingMessages.htm).
 
-### <a name="MessageBody">How do I get the main body of a message?</a>
+### <a name="MessageBody">Q: How do I get the main body of a message?</a>
 
 (Note: for the TL;DR version, skip to [the end](#MessageBodyTLDR))
 
@@ -186,7 +305,7 @@ Likewise, the `TextBody` property can be used to get the `text/plain` version of
 
 For more information, see [Working with Messages](http://www.mimekit.net/docs/html/WorkingWithMessages.htm).
 
-### <a name="HasAttachments">How do I tell if a message has attachments?</a>
+### <a name="HasAttachments">Q: How do I tell if a message has attachments?</a>
 
 In most cases, a message with a body that has a MIME-type of `multipart/mixed` containing more than a
 single part probably has attachments. As illustrated above, the first part of a `multipart/mixed` is
@@ -429,7 +548,33 @@ Once you've rendered the message using the above technique, you'll have a list o
 were not used, even if they did not match the simplistic criteria used by the `MimeMessage.Attachments`
 property.
 
-### <a name="SaveAttachments">How do I save attachments?</a>
+### <a name="SaveMessages">Q: How do I save messages?</a>
+
+One you've got a [MimeMessage](http://www.mimekit.net/docs/html/T_MimeKit_MimeMessage.htm), you can save
+it to a file using the [WriteTo](http://mimekit.net/docs/html/Overload_MimeKit_MimeMessage_WriteTo.htm) method:
+
+```csharp
+message.WriteTo ("message.eml");
+```
+
+The `WriteTo` method also has overloads that allow you to write the message to a `Stream` instead.
+
+By default, the `WriteTo` method will save the message using DOS line-endings on Windows and Unix
+line-endings on Unix-based systems such as macOS and Linux. You can override this behavior by
+passing a [FormatOptions](http://mimekit.net/docs/html/T_MimeKit_FormatOptions.htm) argument to
+the method:
+
+```csharp
+// clone the default formatting options
+var format = FormatOptions.Default.Clone ();
+
+// override the line-endings to be DOS no matter what platform we are on
+format.NewLineFormat = NewLineFormat.Dos;
+
+message.WriteTo (format, "message.eml");
+```
+
+### <a name="SaveAttachments">Q: How do I save attachments?</a>
 
 If you've already got a [MimePart](http://www.mimekit.net/docs/html/T_MimeKit_MimePart.htm) that represents
 the attachment that you'd like to save, here's how you might save it:
@@ -470,7 +615,7 @@ foreach (var attachment in message.Attachments) {
 }
 ```
 
-### <a name="AddressHeaders">How do I get the email addresses in the From, To, and Cc headers?</a>
+### <a name="AddressHeaders">Q: How do I get the email addresses in the From, To, and Cc headers?</a>
 
 The [From](http://www.mimekit.net/docs/html/P_MimeKit_MimeMessage_From.htm), 
 [To](http://www.mimekit.net/docs/html/P_MimeKit_MimeMessage_To.htm), and 
@@ -528,7 +673,7 @@ foreach (var mailbox in message.To.Mailboxes)
     Console.WriteLine ("{0}'s email address is {1}", mailbox.Name, mailbox.Address);
 ```
 
-### <a name="Serialize">Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?</a>
+### <a name="Serialize">Q: Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?</a>
 
 The MimeKit API was designed to use the existing MIME format for serialization. In light of this, the ability
 to use the .NET serialization API and format did not make much sense to support.
@@ -536,7 +681,7 @@ to use the .NET serialization API and format did not make much sense to support.
 You can easily serialize a MimeMessage to a stream using the
 [WriteTo](http://www.mimekit.net/docs/html/Overload_MimeKit_MimeMessage_WriteTo.htm) methods.
 
-### <a name="UntitledAttachments">Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</a>
+### <a name="UntitledAttachments">Q: Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</a>
 
 An attachment filename is stored as a MIME parameter on the `Content-Disposition` header. Unfortunately,
 the original MIME specifications did not specify a method for encoding non-ASCII filenames. In 1997,
@@ -573,7 +718,7 @@ options.ParameterEncodingMethod = ParameterEncodingMethod.Rfc2047;
 message.WriteTo (options, stream);
 ```
 
-### <a name="DecryptInlinePGP">How do I decrypt PGP messages that are embedded in the main message text?</a>
+### <a name="DecryptInlinePGP">Q: How do I decrypt PGP messages that are embedded in the main message text?</a>
 
 Some PGP-enabled mail clients, such as Thunderbird, embed encrypted PGP blurbs within the text/plain body
 of the message rather than using the PGP/MIME format that MimeKit prefers.
@@ -651,7 +796,7 @@ static Stream DecryptEmbeddedPgp (TextPart text)
 What you do with that decrypted stream is up to you. It's up to you to figure out what the decrypted content is
 (is it text? a jpeg image? a video?) and how to display it to the user.
 
-### <a name="Reply">How do I reply to a message using MimeKit?</a>
+### <a name="Reply">Q: How do I reply to a message using MimeKit?</a>
 
 Replying to a message is fairly simple. For the most part, you'd just create the reply message
 the same way you'd create any other message. There are only a few slight differences:
@@ -979,79 +1124,9 @@ public static MimeMessage Reply (MimeMessage message, MailboxAddress from, bool 
 }
 ```
 
-### <a name="ProtocolLog">How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
+## ImapClient
 
-All of MailKit's client implementations have a constructor that takes a nifty
-[IProtocolLogger](http://www.mimekit.net/docs/html/T_MailKit_IProtocolLogger.htm)
-interface for logging client/server communications. Out of the box, you can use the
-handy [ProtocolLogger](http://www.mimekit.net/docs/html/T_MailKit_ProtocolLogger.htm) class.
-Here are some examples of how to use it:
-
-```csharp
-// log to a file called 'imap.log'
-var client = new ImapClient (new ProtocolLogger ("imap.log"));
-```
-
-```csharp
-// log to standard output (i.e. the console)
-var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
-```
-
-**Note:** When submitting a protocol log as part of a bug report, make sure to scrub any sensitive
-information including your authentication credentials. This information will generally be the base64
-encoded blob immediately following an `AUTHENTICATE` or `AUTH` command (depending on the type of server).
-The only exception to this case is if you are authenticating with `NTLM` in which case I *may* need this
-information, but *only if* the bug/error is in the authentication step.
-
-### <a name="GMailHiddenMessages">Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</a>
-
-By default, GMail's POP3 and IMAP server does not behave like standard POP3 or IMAP servers
-and hides messages from clients using those protocols (as well as having other non-standard
-behavior).
-
-If you want to configure your GMail POP3 or IMAP settings to behave the way POP3 and IMAP are
-intended to behave according to their protocol specifications, you'll need to log in to your
-GMail account via your web browser and navigate to the `Forwarding and POP/IMAP` tab of your
-GMail Settings page and set your options to look like this:
-
-![GMail POP3 and IMAP Settings](http://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
-
-### <a name="GMailOAuth2">How can I log in to a GMail account using OAuth 2.0?</a>
-
-The first thing you need to do is follow
-[Google's instructions](https://developers.google.com/accounts/docs/OAuth2) 
-for obtaining OAuth 2.0 credentials for your application.
-
-Once you've done that, the easiest way to obtain an access token is to use Google's 
-[Google.Apis.Auth](https://www.nuget.org/packages/Google.Apis.Auth/) library:
-
-```csharp
-var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
-var credential = new ServiceAccountCredential (new ServiceAccountCredential
-    .Initializer ("your-developer-id@developer.gserviceaccount.com") {
-    // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
-    Scopes = new[] { "https://mail.google.com/" },
-    User = "username@gmail.com"
-}.FromCertificate (certificate));
-
-bool result = await credential.RequestAccessTokenAsync (CancellationToken.None);
-
-// Note: result will be true if the access token was received successfully
-```
-
-Now that you have an access token (`credential.Token.AccessToken`), you can use it with MailKit as if it were
-the password:
-
-```csharp
-using (var client = new ImapClient ()) {
-    client.Connect ("imap.gmail.com", 993, true);
-    
-    // use the access token as the password string
-    client.Authenticate ("username@gmail.com", credential.Token.AccessToken);
-}
-```
-
-### <a name="SearchBetween2Dates">How can I search for messages delivered between two dates?</a>
+### <a name="ImapSearchBetween2Dates">Q: How can I search for messages delivered between two dates?</a>
 
 The obvious solution is:
 
@@ -1072,7 +1147,7 @@ var query = SearchQuery.Not (SearchQuery.DeliveredBefore (dateRange.BeginDate)
 var results = folder.Search (query);
 ```
 
-### <a name="ImapClientBusy">What does "The ImapClient is currently busy processing a command." mean?</a>
+### <a name="ImapClientBusy">Q: What does "The ImapClient is currently busy processing a command." mean?</a>
 
 If you get an InvalidOperationException with the message, "The ImapClient is currently busy processing a
 command.", it means that you are trying to use the
@@ -1094,7 +1169,7 @@ lock (client.SyncRoot) {
 Note: Locking the `SyncRoot` is only necessary when using the synchronous API's. All `Async()` method variants
 already do this locking for you.
 
-### <a name="FolderNotOpenException">Why do I get InvalidOperationException: "The folder is not currently open."?</a>
+### <a name="FolderNotOpenException">Q: Why do I get InvalidOperationException: "The folder is not currently open."?</a>
 
 If you get this exception, it's probably because you thought you had to open the destination folder that you
 passed as an argument to one of the
@@ -1108,7 +1183,7 @@ close the previously opened folder.
 
 When copying or moving messages from one folder to another, you only need to have the source folder open.
 
-### <a name="MoveDoesNotMove">ImapFolder.MoveTo() does not move the message out of the source folder. Why not?</a>
+### <a name="ImapMoveDoesNotMove">Q: Why doesn't ImapFolder.MoveTo() move the message out of the source folder?</a>
 
 If you look at the source code for the `ImapFolder.MoveTo()` method, what you'll notice is that
 there are several code paths depending on the features that the IMAP server supports.
@@ -1133,7 +1208,7 @@ deleted messages with a strikeout (which you probably have disabled).
 So to answer your question more succinctly: After calling `folder.MoveTo (...);`, if you are confident
 that the messages marked for deletion should be expunged, call `folder.Expunge ();`
 
-### <a name="MarkAsRead">How can I mark messages as read for IMAP?</a>
+### <a name="ImapMarkAsRead">Q: How can I mark messages as read for IMAP?</a>
 
 The way to mark messages as read using the IMAP protocol is to set the `\Seen` flag on the message(s).
 
@@ -1153,7 +1228,9 @@ To mark messages as unread, you would *remove* the `\Seen` flag, like so:
 folder.RemoveFlags (uids, MessageFlags.Seen, true);
 ```
 
-### <a name="SpecifiedPickupDirectory">How can I send email to a SpecifiedPickupDirectory?</a>
+## SmtpClient
+
+### <a name="SpecifiedPickupDirectory">Q: How can I send email to a SpecifiedPickupDirectory?</a>
 
 Based on Microsoft's [referencesource](https://github.com/Microsoft/referencesource/blob/master/System/net/System/Net/mail/SmtpClient.cs#L401),
 when `SmtpDeliveryMethod.SpecifiedPickupDirectory` is used, the `SmtpClient` saves the message to the
@@ -1182,7 +1259,7 @@ void SendToPickupDirectory (MimeMessage message, string pickupDirectory)
     } while (true);
 }
 ```
-### <a name="RequestReadReceipt">How can I request a notification when the message is read by the user?</a>
+### <a name="SmtpRequestReadReceipt">Q: How can I request a notification when the message is read by the user?</a>
 
 The first thing I need to make clear is that requesting a notification does not guarantee that you'll actually
 get one. In order for you to receive a notification that the message was read by its recipient, the recipient's
@@ -1198,7 +1275,7 @@ message.Headers[HeaderId.DispositionNotificationTo] = new MailboxAddress ("My Na
 
 For more information on this topic, read [rfc3798](https://tools.ietf.org/html/rfc3798).
 
-### <a name="ProcessReadReceipt">How can I process a read receipt notification?</a>
+### <a name="SmtpProcessReadReceipt">Q: How can I process a read receipt notification?</a>
 
 A read receipt notification comes in the form of a MIME message with a top-level MIME part with a MIME-type
 of `multipart/report` that has a `report-type` parameter with a value of `disposition-notification`.
