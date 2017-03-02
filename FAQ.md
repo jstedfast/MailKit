@@ -548,6 +548,16 @@ Once you've rendered the message using the above technique, you'll have a list o
 were not used, even if they did not match the simplistic criteria used by the `MimeMessage.Attachments`
 property.
 
+### <a name="Serialize">Q: Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?</a>
+
+The MimeKit API was designed to use the existing MIME format for serialization. In light of this, the ability
+to use the .NET serialization API and format did not make much sense to support.
+
+You can easily serialize a MimeMessage to a stream using the
+[WriteTo](http://www.mimekit.net/docs/html/Overload_MimeKit_MimeMessage_WriteTo.htm) methods.
+
+For more information on this topic, see <a href="#SaveMessages">How do I save messages?</a>
+
 ### <a name="SaveMessages">Q: How do I save messages?</a>
 
 One you've got a [MimeMessage](http://www.mimekit.net/docs/html/T_MimeKit_MimeMessage.htm), you can save
@@ -673,14 +683,6 @@ foreach (var mailbox in message.To.Mailboxes)
     Console.WriteLine ("{0}'s email address is {1}", mailbox.Name, mailbox.Address);
 ```
 
-### <a name="Serialize">Q: Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?</a>
-
-The MimeKit API was designed to use the existing MIME format for serialization. In light of this, the ability
-to use the .NET serialization API and format did not make much sense to support.
-
-You can easily serialize a MimeMessage to a stream using the
-[WriteTo](http://www.mimekit.net/docs/html/Overload_MimeKit_MimeMessage_WriteTo.htm) methods.
-
 ### <a name="UntitledAttachments">Q: Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</a>
 
 An attachment filename is stored as a MIME parameter on the `Content-Disposition` header. Unfortunately,
@@ -720,7 +722,7 @@ message.WriteTo (options, stream);
 
 ### <a name="DecryptInlinePGP">Q: How do I decrypt PGP messages that are embedded in the main message text?</a>
 
-Some PGP-enabled mail clients, such as Thunderbird, embed encrypted PGP blurbs within the text/plain body
+Some PGP-enabled mail clients, such as Thunderbird, embed encrypted PGP blurbs within the `text/plain` body
 of the message rather than using the PGP/MIME format that MimeKit prefers.
 
 These messages often look something like this:
@@ -760,7 +762,7 @@ These messages often look something like this:
 To deal with these kinds of messages, I've added a method to OpenPgpContext called `GetDecryptedStream` which
 can be used to get the raw decrypted stream.
 
-There are actually 2 variants of this methods:
+There are actually 2 variants of this method:
 
 ```csharp
 public Stream GetDecryptedStream (Stream encryptedData, out DigitalSignatureCollection signatures)
