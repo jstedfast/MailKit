@@ -13,7 +13,7 @@
 * [How do I create a message with attachments?](#CreateAttachments)
 * [How do I get the main body of a message?](#MessageBody)
 * [How do I tell if a message has attachments?](#HasAttachments)
-* [Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?](#Serialize)
+* [Why doesn't the `MimeMessage` class implement `ISerializable` so that I can serialize a message to disk and read it back later?](#Serialize)
 * [How do I save messages?](#SaveMessages)
 * [How do I save attachments?](#SaveAttachments)
 * [How do I get the email addresses in the From, To, and Cc headers?](#AddressHeaders)
@@ -548,15 +548,15 @@ Once you've rendered the message using the above technique, you'll have a list o
 were not used, even if they did not match the simplistic criteria used by the `MimeMessage.Attachments`
 property.
 
-### <a name="Serialize">Q: Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?</a>
+### <a name="Serialize">Q: Why doesn't the `MimeMessage` class implement `ISerializable` so that I can serialize a message to disk and read it back later?</a>
 
 The MimeKit API was designed to use the existing MIME format for serialization. In light of this, the ability
 to use the .NET serialization API and format did not make much sense to support.
 
-You can easily serialize a MimeMessage to a stream using the
+You can easily serialize a [MimeMessage](http://www.mimekit.net/docs/html/T_MimeKit_MimeMessage.htm) to a stream using the
 [WriteTo](http://www.mimekit.net/docs/html/Overload_MimeKit_MimeMessage_WriteTo.htm) methods.
 
-For more information on this topic, see <a href="#SaveMessages">How do I save messages?</a>
+For more information on this topic, see: <a href="#SaveMessages">How do I save messages?</a>
 
 ### <a name="SaveMessages">Q: How do I save messages?</a>
 
