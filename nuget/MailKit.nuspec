@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.8.6">
 		<id>MailKit</id>
-		<version>1.10.2</version>
+		<version>1.12.0</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,8 +22,8 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Added an IsAuthenticated property to IMailService.
-* Fixed the ImapFolder.Quota class to not be public.
+		<releaseNotes>* Allow an empty string text argument for SearchQuery.ContainsHeader(). (issue #451)
+* Fixed SaslMechanism.IsProhibited() logic to properly use logical ands. Thanks to Stefan Seering for this fix.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
@@ -45,21 +45,21 @@ Features include:
 	<dependencies>
 		<group targetFramework="net40">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.10.1" />
+			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 		<group targetFramework="net45">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.10.1" />
+			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 		<group targetFramework="net451">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.10.1" />
+			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.10.1" />
+			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.10.1" />
+			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 		<group targetFramework=".NETStandard1.3">
 			<dependency id="System.Security.Cryptography.Algorithms" version="4.2.0" />
@@ -84,11 +84,11 @@ Features include:
 			<dependency id="System.Linq" version="4.1.0" />
 			<dependency id="Microsoft.CSharp" version="4.0.1" />
 			<dependency id="Portable.BouncyCastle" version="1.8.1.1" />
-			<dependency id="MimeKit" version="1.10.1" />
+			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 		<group targetFramework="wpa81">
 			<dependency id="Portable.BouncyCastle" version="1.8.1.1" />
-			<dependency id="MimeKit" version="1.10.1" />
+			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 	</dependencies>
 	</metadata>

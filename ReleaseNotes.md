@@ -1,5 +1,11 @@
 # Release Notes
 
+### MailKit 1.12.0
+
+* Allow an empty string text argument for SearchQuery.ContainsHeader(). (issue #451)
+* Fixed SaslMechanism.IsProhibited() logic to properly use logical ands. Thanks to
+  Stefan Seering for this fix.
+
 ### MailKit 1.10.2
 
 * Added an IsAuthenticated property to IMailService.
