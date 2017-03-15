@@ -7,6 +7,7 @@
 * [Why do I get `The remote certificate is invalid according to the validation procedure` when I try to Connect?](#InvalidSslCertificate)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
 * [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
+* [How can I access GMail using MailKit?](#GMailAccess)
 * [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
 
 ### Messages
@@ -111,6 +112,34 @@ GMail account via your web browser and navigate to the `Forwarding and POP/IMAP`
 GMail Settings page and set your options to look like this:
 
 ![GMail POP3 and IMAP Settings](http://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
+
+### <a name="GMailAccess">Q: How can I access GMail using MailKit?</a>
+
+The first thing that you will need to do is to configure your GMail account to
+[enable less secure apps](https://www.google.com/settings/security/lesssecureapps),
+or you'll need to use [OAuth 2.0 authentication](#GMailOAuth2) (which is a bit more complex).
+
+Then, assuming that your GMail account is `user@gmail.com`, you would use the following
+code snippet to connect to GMail via IMAP:
+
+```csharp
+using (var client = new ImapClient ()) {
+    client.ServerCertificateValidationCallback = (s,c,ch,e) => true;
+    client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+    
+    // disable OAuth2 authentication unless you are actually using an access_token
+    client.AuthenticationMechanisms.Remove ("XOAUTH2");
+    
+    client.Authenticate ("user@gmail.com", "password");
+    
+    // do stuff...
+    
+    client.Disconnect (true);
+}
+```
+
+Connecting via POP3 or SMTP is identical except for the host names and ports (and, of course, you'd
+use a `Pop3Client` or `SmtpClient` as appropriate).
 
 ### <a name="GMailOAuth2">Q: How can I log in to a GMail account using OAuth 2.0?</a>
 
