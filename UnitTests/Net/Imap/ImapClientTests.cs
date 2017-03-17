@@ -493,12 +493,12 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetHeaders (-1, bodyPart));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetHeadersAsync (-1, bodyPart));
 				Assert.Throws<ArgumentNullException> (() => inbox.GetHeaders (0, (BodyPart) null));
-				Assert.Throws<ArgumentNullException> (async () => await inbox.GetHeadersAsync (0, (BodyPart)null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetHeadersAsync (0, (BodyPart) null));
 
 				Assert.Throws<ArgumentException> (() => inbox.GetHeaders (UniqueId.Invalid, bodyPart));
 				Assert.Throws<ArgumentException> (async () => await inbox.GetHeadersAsync (UniqueId.Invalid, bodyPart));
-				Assert.Throws<ArgumentNullException> (() => inbox.GetHeaders (UniqueId.MinValue, null));
-				Assert.Throws<ArgumentNullException> (async () => await inbox.GetHeadersAsync (UniqueId.MinValue, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetHeaders (UniqueId.MinValue, (BodyPart) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetHeadersAsync (UniqueId.MinValue, (BodyPart) null));
 
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetHeaders (-1, "1.2"));
 				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetHeadersAsync (-1, "1.2"));
@@ -524,8 +524,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.Throws<ArgumentException> (() => inbox.GetBodyPart (UniqueId.Invalid, bodyPart));
 				Assert.Throws<ArgumentException> (async () => await inbox.GetBodyPartAsync (UniqueId.Invalid, bodyPart));
-				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (UniqueId.MinValue, null));
-				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (UniqueId.MinValue, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (UniqueId.MinValue, (BodyPart) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (UniqueId.MinValue, (BodyPart) null));
 
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetBodyPart (-1, "1.2"));
 				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetBodyPartAsync (-1, "1.2"));
