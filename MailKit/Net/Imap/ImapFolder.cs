@@ -5091,6 +5091,15 @@ namespace MailKit.Net.Imap {
 			return stream;
 		}
 
+		HeaderList ParseHeaders (Stream stream, CancellationToken cancellationToken)
+		{
+			try {
+				return Engine.ParseHeaders (stream, cancellationToken);
+			} finally {
+				stream.Dispose ();
+			}
+		}
+
 		MimeMessage ParseMessage (Stream stream, CancellationToken cancellationToken)
 		{
 			bool dispose = !(stream is MemoryStream || stream is MemoryBlockStream);
@@ -5364,6 +5373,458 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the specified message headers.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified message headers.
+		/// </remarks>
+		/// <returns>The message headers.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message headers.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			if (!uid.IsValid)
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
+
+			CheckState (true, false);
+
+			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[HEADER])\r\n", uid.Id);
+			var ctx = new FetchStreamContext (progress);
+			Stream stream;
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
+
+			Engine.QueueCommand (ic);
+
+			try {
+				Engine.Wait (ic);
+
+				ProcessResponseCodes (ic, null);
+
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+
+				if (!ctx.Sections.TryGetValue ("HEADER", out stream))
+					throw new MessageNotFoundException ("The IMAP server did not return the requested message headers.");
+
+				ctx.Sections.Remove ("HEADER");
+			} finally {
+				ctx.Dispose ();
+			}
+
+			return ParseHeaders (stream, cancellationToken);
+		}
+
+		/// <summary>
+		/// Gets the specified body part headers.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part headers.
+		/// </remarks>
+		/// <returns>The body part headers.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="partSpecifier">The body part specifier.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested body part headers.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public HeaderList GetHeaders (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			if (!uid.IsValid)
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
+
+			if (partSpecifier == null)
+				throw new ArgumentNullException (nameof (partSpecifier));
+
+			CheckState (true, false);
+
+			string[] tags;
+
+			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid.Id, GetBodyPartQuery (partSpecifier, true, out tags));
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamContext (progress);
+			Stream stream;
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
+
+			Engine.QueueCommand (ic);
+
+			try {
+				Engine.Wait (ic);
+
+				ProcessResponseCodes (ic, null);
+
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+
+				if (!ctx.Sections.TryGetValue (tags[0], out stream))
+					throw new MessageNotFoundException ("The IMAP server did not return the requested body part headers.");
+
+				ctx.Sections.Remove (tags[0]);
+			} finally {
+				ctx.Dispose ();
+			}
+
+			var headers = ParseHeaders (stream, cancellationToken);
+
+			if (partSpecifier.Length == 0) {
+				for (int i = headers.Count; i > 0; i--) {
+					var header = headers [i - 1];
+
+					if (!header.Field.StartsWith ("Content-", StringComparison.OrdinalIgnoreCase))
+						headers.RemoveAt (i - 1);
+				}
+			}
+
+			return headers;
+		}
+
+		/// <summary>
+		/// Gets the specified body part headers.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part headers.
+		/// </remarks>
+		/// <returns>The body part headers.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="part">The body part.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="part"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested body part headers.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			if (!uid.IsValid)
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
+
+			if (part == null)
+				throw new ArgumentNullException (nameof (part));
+
+			return GetHeaders (uid, part.PartSpecifier, cancellationToken, progress);
+		}
+
+		/// <summary>
+		/// Gets the specified message headers.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified message headers.
+		/// </remarks>
+		/// <returns>The message headers.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message headers.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override HeaderList GetHeaders (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException (nameof (index));
+
+			CheckState (true, false);
+
+			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[HEADER])\r\n", index + 1);
+			var ctx = new FetchStreamContext (progress);
+			Stream stream;
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
+
+			Engine.QueueCommand (ic);
+
+			try {
+				Engine.Wait (ic);
+
+				ProcessResponseCodes (ic, null);
+
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+
+				if (!ctx.Sections.TryGetValue ("HEADER", out stream))
+					throw new MessageNotFoundException ("The IMAP server did not return the requested message.");
+
+				ctx.Sections.Remove ("HEADER");
+			} finally {
+				ctx.Dispose ();
+			}
+
+			return ParseHeaders (stream, cancellationToken);
+		}
+
+		/// <summary>
+		/// Gets the specified body part headers.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part headers.
+		/// </remarks>
+		/// <returns>The body part headers.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="partSpecifier">The body part specifier.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested body part headers.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public HeaderList GetHeaders (int index, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException (nameof (index));
+
+			if (partSpecifier == null)
+				throw new ArgumentNullException (nameof (partSpecifier));
+
+			CheckState (true, false);
+
+			string[] tags;
+
+			var command = string.Format ("FETCH {0} ({1})\r\n", index + 1, GetBodyPartQuery (partSpecifier, true, out tags));
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamContext (progress);
+			Stream stream;
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
+
+			Engine.QueueCommand (ic);
+
+			try {
+				Engine.Wait (ic);
+
+				ProcessResponseCodes (ic, null);
+
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+
+				if (!ctx.Sections.TryGetValue (tags[0], out stream))
+					throw new MessageNotFoundException ("The IMAP server did not return the requested body part headers.");
+
+				ctx.Sections.Remove (tags[0]);
+			} finally {
+				ctx.Dispose ();
+			}
+
+			var headers = ParseHeaders (stream, cancellationToken);
+
+			if (partSpecifier.Length == 0) {
+				for (int i = headers.Count; i > 0; i--) {
+					var header = headers [i - 1];
+
+					if (!header.Field.StartsWith ("Content-", StringComparison.OrdinalIgnoreCase))
+						headers.RemoveAt (i - 1);
+				}
+			}
+
+			return headers;
+		}
+
+		/// <summary>
+		/// Gets the specified body part headers.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part headers.
+		/// </remarks>
+		/// <returns>The body part headers.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The body part.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="part"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested body part headers.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException (nameof (index));
+
+			if (part == null)
+				throw new ArgumentNullException (nameof (part));
+
+			return GetHeaders (index, part.PartSpecifier, cancellationToken, progress);
+		}
+
+		/// <summary>
 		/// Gets the specified message.
 		/// </summary>
 		/// <remarks>
@@ -5590,7 +6051,13 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetBodyPart (uid, part, false, cancellationToken, progress);
+			if (!uid.IsValid)
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
+
+			if (part == null)
+				throw new ArgumentNullException (nameof (part));
+
+			return GetBodyPart (uid, part.PartSpecifier, false, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -5638,6 +6105,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
+		[Obsolete ("Use GetBodyPart(UniqueId, BodyPart, CancellationToken, ITransferProgress) or GetHeaders(UniqueId, BodyPart, CancellationToken, ITransferProgress)")]
 		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (!uid.IsValid)
@@ -5853,7 +6321,13 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetBodyPart (index, part, false, cancellationToken, progress);
+			if (index< 0 || index >= Count)
+				throw new ArgumentOutOfRangeException (nameof (index));
+
+			if (part == null)
+				throw new ArgumentNullException (nameof (part));
+
+			return GetBodyPart (index, part.PartSpecifier, false, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -5901,6 +6375,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
+		[Obsolete ("Use GetBodyPart(int, BodyPart, CancellationToken, ITransferProgress) or GetHeaders(int, BodyPart, CancellationToken, ITransferProgress)")]
 		public override MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)

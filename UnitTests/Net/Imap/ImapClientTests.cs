@@ -482,6 +482,34 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (() => inbox.Fetch (indexes, 31337, MessageSummaryItems.All, emptyFields));
 				Assert.Throws<ArgumentException> (async () => await inbox.FetchAsync (indexes, 31337, MessageSummaryItems.All, emptyFields));
 
+				// GetHeaders
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetHeaders (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetHeadersAsync (-1));
+				Assert.Throws<ArgumentException> (() => inbox.GetHeaders (UniqueId.Invalid));
+				Assert.Throws<ArgumentException> (async () => await inbox.GetHeadersAsync (UniqueId.Invalid));
+
+				var bodyPart = new BodyPartText ();
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetHeaders (-1, bodyPart));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetHeadersAsync (-1, bodyPart));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetHeaders (0, (BodyPart) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetHeadersAsync (0, (BodyPart)null));
+
+				Assert.Throws<ArgumentException> (() => inbox.GetHeaders (UniqueId.Invalid, bodyPart));
+				Assert.Throws<ArgumentException> (async () => await inbox.GetHeadersAsync (UniqueId.Invalid, bodyPart));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetHeaders (UniqueId.MinValue, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetHeadersAsync (UniqueId.MinValue, null));
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetHeaders (-1, "1.2"));
+				//Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetHeadersAsync (-1, "1.2"));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetHeaders (0, (string) null));
+				//Assert.Throws<ArgumentNullException> (async () => await inbox.GetHeadersAsync (0, (string) null));
+
+				Assert.Throws<ArgumentException> (() => inbox.GetHeaders (UniqueId.Invalid, "1.2"));
+				//Assert.Throws<ArgumentException> (async () => await inbox.GetHeadersAsync (UniqueId.Invalid, "1.2"));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetHeaders (UniqueId.MinValue, (string) null));
+				//Assert.Throws<ArgumentNullException> (async () => await inbox.GetHeadersAsync (UniqueId.MinValue, (string) null));
+
 				// GetMessage
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetMessage (-1));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetMessageAsync (-1));
@@ -489,8 +517,6 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (async () => await inbox.GetMessageAsync (UniqueId.Invalid));
 
 				// GetBodyPart
-				var bodyPart = new BodyPartText ();
-
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetBodyPart (-1, bodyPart));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetBodyPartAsync (-1, bodyPart));
 				Assert.Throws<ArgumentNullException> (() => inbox.GetBodyPart (0, (BodyPart) null));
