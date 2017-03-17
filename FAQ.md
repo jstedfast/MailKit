@@ -1171,8 +1171,8 @@ public static MimeMessage Forward (MimeMessage original, MailboxAddress from, IE
 	message.To.AddRange (to);
 
 	// set the forwarded subject
-	if (!original.Subject.StartsWith ("FWD:", StringComparison.OrdinalIgnoreCase))
-		message.Subject = "FWD: " + original.Subject;
+	if (!original.Subject.StartsWith ("FW:", StringComparison.OrdinalIgnoreCase))
+		message.Subject = "FW: " + original.Subject;
 	else
 		message.Subject = original.Subject;
 
@@ -1204,8 +1204,8 @@ public static MimeMessage Forward (MimeMessage original, MailboxAddress from, IE
 	message.To.AddRange (to);
 
 	// set the forwarded subject
-	if (!original.Subject.StartsWith ("FWD:", StringComparison.OrdinalIgnoreCase))
-		message.Subject = "FWD: " + original.Subject;
+	if (!original.Subject.StartsWith ("FW:", StringComparison.OrdinalIgnoreCase))
+		message.Subject = "FW: " + original.Subject;
 	else
 		message.Subject = original.Subject;
 
