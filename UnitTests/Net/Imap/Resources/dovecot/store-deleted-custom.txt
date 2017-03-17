@@ -14,4 +14,4 @@
 * 12 FETCH (UID 12 MODSEQ (5))
 * 13 FETCH (UID 13 MODSEQ (5))
 * 14 FETCH (UID 14 MODSEQ (5))
-A00000049 OK Store completed (0.001 + 0.000 secs).
+A00000053 OK Store completed (0.001 + 0.000 secs).

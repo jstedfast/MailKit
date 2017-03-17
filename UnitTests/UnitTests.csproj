@@ -153,6 +153,10 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\fetch9.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getbodypart.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getbodypart2.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getbodypartheaders.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getbodypartheaders2.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getmessageheaders.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getmessageheaders2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream3.txt" />

@@ -1,0 +1,11 @@
+* 1 FETCH (UID 1 BODY[HEADER] {226}
+From: Unit Tests <unit-tests@mimekit.net>
+Date: Sun, 02 Oct 2016 17:56:45 -0400
+Subject: A
+Message-Id: <a@mimekit.net>
+To: Unit Tests <unit-tests@mimekit.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+ )
+A00000043 OK Fetch completed (0.002 + 0.000 secs).
