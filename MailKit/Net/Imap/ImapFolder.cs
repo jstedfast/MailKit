@@ -5529,18 +5529,7 @@ namespace MailKit.Net.Imap {
 				ctx.Dispose ();
 			}
 
-			var headers = ParseHeaders (stream, cancellationToken);
-
-			if (partSpecifier.Length == 0) {
-				for (int i = headers.Count; i > 0; i--) {
-					var header = headers [i - 1];
-
-					if (!header.Field.StartsWith ("Content-", StringComparison.OrdinalIgnoreCase))
-						headers.RemoveAt (i - 1);
-				}
-			}
-
-			return headers;
+			return ParseHeaders (stream, cancellationToken);
 		}
 
 		/// <summary>
@@ -5755,18 +5744,7 @@ namespace MailKit.Net.Imap {
 				ctx.Dispose ();
 			}
 
-			var headers = ParseHeaders (stream, cancellationToken);
-
-			if (partSpecifier.Length == 0) {
-				for (int i = headers.Count; i > 0; i--) {
-					var header = headers [i - 1];
-
-					if (!header.Field.StartsWith ("Content-", StringComparison.OrdinalIgnoreCase))
-						headers.RemoveAt (i - 1);
-				}
-			}
-
-			return headers;
+			return ParseHeaders (stream, cancellationToken);
 		}
 
 		/// <summary>
