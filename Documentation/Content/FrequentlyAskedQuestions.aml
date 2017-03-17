@@ -28,6 +28,161 @@
         </para>
       </content>
     </section>
+    
+    <section address="InvalidSslCertificate">
+      <title>Why do I get 'The remote certificate is invalid according to the validation procedure' when I try to Connect?</title>
+      <content>
+        <para>
+          When you get an exception with that error message, it means that the IMAP, POP3 or SMTP
+          server that you are connecting to is using an SSL certificate that is either expired
+          or untrusted by your system.
+        </para>
+        <para>
+          Often times, mail servers will use self-signed certificates instead of using a certificate
+          that has been signed by a trusted Certificate Authority. When your system is unable to
+          validate the mail server's certificate because it is not signed by a known and trusted
+          Certificate Authority, the above error will occur.
+        </para>
+        <para>
+          You can work around this problem by supplying a custom <externalLink>
+            <linkText>RemoteServerCertificateValidationCallback</linkText>
+            <linkUri>https://msdn.microsoft.com/en-us/library/ms145054</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+          and setting it on the client's <codeEntityReference>P:MailKit.MailService.ServerCertificateValidationCallback</codeEntityReference> property.
+        </para>
+        <para>
+          In the most simplest example, you could do something like this (although I would strongly recommend against it in production use):
+        </para>
+        <code language="c#" source="Examples\InvalidSslCertificate.cs" region="Simple"/>
+        <para>
+          Most likely you'll want to instead compare the certificate's <externalLink>
+            <linkText>Thumbprint</linkText>
+            <linkUri>https://msdn.microsoft.com/en-us/library/system.security.cryptography.x509certificates.x509certificate2.thumbprint(v=vs.110).aspx</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+          property to a known value that you have verified at a prior date.
+        </para>
+      </content>
+    </section>
+
+    <section address="ProtocolLog">
+      <title>How do I debug SMTP, POP3 and/or IMAP errors?</title>
+      <content>
+        <para>
+          All of MailKit's client implementations have a constructor that takes a nifty
+          <codeEntityReference>T:MailKit.IProtocolLogger</codeEntityReference> interface for logging client/server communications.
+          Out of the box, you can use the handy <codeEntityReference>T:MailKit.ProtocolLogger</codeEntityReference> class. Here are
+          some examples of how to use it:
+        </para>
+        <code language="c#">
+          // log to a file called 'imap.log'
+          var client = new ImapClient (new ProtocolLogger ("imap.log"));
+
+          // log to standard output (i.e. the console)
+          var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
+        </code>
+        <para>
+          Note: When submitting a protocol log as part of a bug report, make sure to scrub any sensitive
+          information including your authentication credentials. This information will generally be the base64
+          encoded blob immediately following an <literal>AUTHENTICATE</literal> or <literal>AUTH</literal> command
+          (depending on the type of server) or the cleartext username and password strings in a <literal>LOGIN</literal> command.
+          The only exception to this case is if you are authenticating with <literal>NTLM</literal> in which case I may need this
+          information, but only if the bug/error is in the authentication step.
+        </para>
+      </content>
+    </section>
+    
+    <section address="GMailHiddenMessages">
+      <title>Why don't I see some of my messages when accessing GMail with POP3?</title>
+      <content>
+        <para>
+          By default, GMail's POP3 server does not behave like a standard POP3 server and hides messages
+          from clients (as well as having other non-standard behavior) that have already been viewed.
+        </para>
+        <para>
+          If you want to configure your GMail POP3 settings to behave the way POP3 is intended to behave,
+          you'll need to log in to your GMail account via your web browser and navigate to the
+          <application>Forwarding and POP/IMAP</application> tab of your
+          <application>GMail Settings</application> page and make the following changes in the
+          <application>POP3 Download</application> section:
+        </para>
+        <list>
+          <listItem>
+            <para>
+              <application>Enable POP for all mail (even if it has already been downloaded)</application>.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              When messages are accessed with POP, <application>keep GMail's copy in the Inbox</application>.
+            </para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+    
+    <section address="GMailAccess">
+      <title>How do I access GMail using MailKit?</title>
+      <content>
+        <para>
+          The first thing that you will need to do is to configure your GMail account to
+          <externalLink>
+            <linkText>enable less secure apps</linkText>
+            <linkUri>https://www.google.com/settings/security/lesssecureapps</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>, or you'll need to use OAuth 2.0 authentication (which is a bit more complex).
+        </para>
+        <para>
+          Then, assuming that your GMail account is <literal>user@gmail.com</literal>, you would use the following
+          code snippet to connect to GMail via IMAP:
+        </para>
+        <code language="c#">
+using (var client = new ImapClient ()) {
+    client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+    
+    // disable OAuth2 authentication unless you are actually using an access_token
+    client.AuthenticationMechanisms.Remove ("XOAUTH2");
+    
+    client.Authenticate ("user@gmail.com", "password");
+    
+    // do stuff...
+    
+    client.Disconnect (true);
+}
+        </code>
+        <para>
+          Connecting via POP3 or SMTP is identical except for the host names and ports (and, of course, you'd
+          use a Pop3Client or SmtpClient as appropriate).
+        </para>
+        <para>
+          If you decide to authenticate via OAuth 2.0 instead of enabling less secure apps, you'll need to read
+          <externalLink>
+            <linkText>Google's OAuth 2.0 documentation</linkText>
+            <linkUri>https://developers.google.com/identity/protocols/OAuth2</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> to learn how to do this.
+        </para>
+        <para>
+          Once you've got the access_token, you simply use it as if it were the password when
+          calling the <application>Authenticate</application> method.
+        </para>
+        <code language="c#">
+var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
+var credential = new ServiceAccountCredential (new ServiceAccountCredential.Initializer ("your-developer-id@developer.gserviceaccount.com") {
+    // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
+    Scopes = new[] { "https://mail.google.com/" },
+    User = "user@gmail.com"
+}.FromCertificate (certificate));
+
+// Note: result will be true if the access token was received successfully
+bool result = await credential.RequestAccessTokenAsync (cancel.Token);
+
+// use the access token as the password string
+client.Authenticate ("user@gmail.com", credential.Token.AccessToken);
+        </code>
+      </content>
+    </section>
 
     <section address="CreateAttachments">
       <title>How do I create a message with attachments?</title>
@@ -187,8 +342,79 @@ var attachments = message.BodyParts.OfType&lt;MimePart&gt; ().Where (part => !st
         </para>
       </content>
     </section>
+    
+    <section address="Serialize">
+      <title>Why doesn't the MimeMessage class implement ISerializable so that I can serialize a
+      message to disk and read it back later?</title>
+      <content>
+        <para>
+          The MimeKit API was designed to use the existing MIME format for serialization. In light
+          of this, the ability to use the .NET serialization API and format did not make much sense
+          to support.
+        </para>
+        <para>
+          You can easily serialize a MimeMessage to a stream using the
+          <codeEntityReference autoUpgrade="true">Overload:MimeKit.MimeMessage.WriteTo</codeEntityReference>
+          methods.
+        </para>
+      </content>
+    </section>
+    
+    <section address="SaveMessages">
+      <title>How do I save messages?</title>
+      <content>
+        <para>
+          One you've got a <codeEntityReference>T:MimeKit.MimeMessage</codeEntityReference>, you can save it to a
+          file using the <codeEntityReference>Overload:MimeKit.MimeMessage.WriteTo</codeEntityReference> method:
+        </para>
+        <code language="c#">message.WriteTo ("message.eml");</code>
+        <para>
+          The <literal>WriteTo</literal> method also has overloads that allow you to write the message to a
+          <literal>Stream</literal> instead.
+        </para>
+        <para>
+          By default, the <literal>WriteTo</literal> method will save the message using DOS line-endings on Windows
+          and Unix line-endings on Unix-based systems such as macOS and Linux. You can override this behavior by
+          passing a <codeEntityReference>T:MimeKit.FormatOptions</codeEntityReference> argument to the method:
+        </para>
+        <code language="c#">
+// clone the default formatting options
+var format = FormatOptions.Default.Clone ();
 
-    <section address="EmailAddresses">
+// override the line-endings to be DOS no matter what platform we are on
+format.NewLineFormat = NewLineFormat.Dos;
+
+message.WriteTo (format, "message.eml");
+        </code>
+      </content>
+    </section>
+    
+    <section address="SaveAttachments">
+      <title>How do I save attachments?</title>
+      <content>
+        <para>
+          If you've already got a <codeEntityReference>T:MimeKit.MimePart</codeEntityReference> that represents
+          the attachment that you'd like to save, here's how you might save it:
+        </para>
+        <code language="c#" source="Examples\AttachmentExamples.cs" region="SaveMimePart" />
+        <para>
+          Pretty simple, right?
+        </para>
+        <para>
+          But what if your attachment is actually a <codeEntityReference>T:MimeKit.MessagePart</codeEntityReference>?
+        </para>
+        <para>
+          To save the content of a <literal>message/rfc822</literal> part, you'd use the following code snippet:
+        </para>
+        <code language="c#" source="Examples\AttachmentExamples.cs" region="SaveMessagePart" />
+        <para>
+          If you are iterating over all of the attachments in a message, you might do something like this:
+        </para>
+        <code language="c#" source="Examples\AttachmentExamples.cs" region="SaveAttachments" />
+      </content>
+    </section>
+
+    <section address="AddressHeaders">
       <title>How do I get the email addresses in the From, To, and Cc headers?</title>
       <content>
         <para>
@@ -276,39 +502,7 @@ foreach (var mailbox in message.To.Mailboxes)
         </code>
       </content>
     </section>
-
-    <section address="UnreadMessages">
-      <title>How do I get all of the unread messages in a folder?</title>
-      <content>
-        <para>
-          The easiest way is to search for all of the messages that do not have the
-          <literal>\Seen</literal> flag on them, like so:
-        </para>
-        <code language="c#">
-foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
-    var message = folder.GetMessage (uid);
-}
-        </code>
-      </content>
-    </section>
-
-    <section address="Serialize">
-      <title>Why doesn't the MimeMessage class implement ISerializable so that I can serialize a
-      message to disk and read it back later?</title>
-      <content>
-        <para>
-          The MimeKit API was designed to use the existing MIME format for serialization. In light
-          of this, the ability to use the .NET serialization API and format did not make much sense
-          to support.
-        </para>
-        <para>
-          You can easily serialize a MimeMessage to a stream using the
-          <codeEntityReference autoUpgrade="true">Overload:MimeKit.MimeMessage.WriteTo</codeEntityReference>
-          methods.
-        </para>
-      </content>
-    </section>
-
+    
     <section address="UntitledAttachments">
       <title>Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</title>
       <content>
@@ -369,7 +563,7 @@ message.WriteTo (options, stream);
         </code>
       </content>
     </section>
-
+    
     <section address="DecryptInlinePGP">
       <title>How do I decrypt PGP messages that are embedded in the main message text?</title>
       <content>
@@ -460,6 +654,39 @@ message.WriteTo (options, stream);
         <code language="c#" source="Examples\MimeVisitorExamples.cs" region="Reply"/>
       </content>
     </section>
+    
+    <section address="Forward">
+      <title>How do I forward a message?</title>
+      <content>
+        <para>
+          There are 2 common ways of forwarding a message: attaching the original message as an attachment and
+          inlining the message body much like replying typically does. Which method you choose is up to you.
+        </para>
+        <para>
+          To forward a message by attaching it as an attachment, you would do do something like this:
+        </para>
+        <code language="c#" source="Examples\ForwardExamples.cs" region="ForwardAttached"/>
+        <para>
+          To forward a message by simply inlining the original message's text content, you can do something like this:
+        </para>
+        <code language="c#" source="Examples\ForwardExamples.cs" region="ForwardInline"/>
+      </content>
+    </section>
+
+    <section address="UnreadMessages">
+      <title>How do I get all of the unread messages in a folder?</title>
+      <content>
+        <para>
+          The easiest way is to search for all of the messages that do not have the
+          <literal>\Seen</literal> flag on them, like so:
+        </para>
+        <code language="c#">
+foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
+    var message = folder.GetMessage (uid);
+}
+        </code>
+      </content>
+    </section>
 
     <section address="ParseWebRequestFormData">
       <title>How would I parse multipart/form-data from an HTTP web request?</title>
@@ -487,130 +714,6 @@ message.WriteTo (options, stream);
           approach:
         </para>
         <code language="c#" source="Examples\MultipartFormDataExamples.cs" region="ParseMultipartFormDataComplex"/>
-      </content>
-    </section>
-
-    <section address="ProtocolLog">
-      <title>How do I debug SMTP, POP3 and/or IMAP errors?</title>
-      <content>
-        <para>
-          All of MailKit's client implementations have a constructor that takes a nifty
-          <codeEntityReference>T:MailKit.IProtocolLogger</codeEntityReference> interface for logging client/server communications.
-          Out of the box, you can use the handy <codeEntityReference>T:MailKit.ProtocolLogger</codeEntityReference> class. Here are
-          some examples of how to use it:
-        </para>
-        <code language="c#">
-// log to a file called 'imap.log'
-var client = new ImapClient (new ProtocolLogger ("imap.log"));
-
-// log to standard output (i.e. the console)
-var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
-        </code>
-      </content>
-    </section>
-
-    <section address="GMail">
-      <title>How do I access GMail using MailKit?</title>
-      <content>
-        <para>
-          The first thing that you will need to do is to configure your GMail account to
-          <externalLink>
-            <linkText>enable less secure apps</linkText>
-            <linkUri>https://www.google.com/settings/security/lesssecureapps</linkUri>
-            <linkTarget>_blank</linkTarget>
-          </externalLink>, or you'll need to use OAuth 2.0 authentication (which is a bit more complex).
-        </para>
-        <para>
-          Then, assuming that your GMail account is <literal>user@gmail.com</literal>, you would use the following
-          code snippet to connect to GMail via IMAP:
-        </para>
-        <code language="c#">
-using (var client = new ImapClient ()) {
-    client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-    
-    // disable OAuth2 authentication unless you are actually using an access_token
-    client.AuthenticationMechanisms.Remove ("XOAUTH2");
-    
-    client.Authenticate ("user@gmail.com", "password");
-    
-    // do stuff...
-    
-    client.Disconnect (true);
-}
-        </code>
-        <para>
-          Connecting via POP3 or SMTP is identical except for the host names and ports (and, of course, you'd
-          use a Pop3Client or SmtpClient as appropriate).
-        </para>
-        <para>
-          If you decide to authenticate via OAuth 2.0 instead of enabling less secure apps, you'll need to read
-          <externalLink>
-            <linkText>Google's OAuth 2.0 documentation</linkText>
-            <linkUri>https://developers.google.com/identity/protocols/OAuth2</linkUri>
-            <linkTarget>_blank</linkTarget>
-          </externalLink> to learn how to do this.
-        </para>
-        <para>
-          Once you've got the access_token, you simply use it as if it were the password when
-          calling the <application>Authenticate</application> method.
-        </para>
-        <code language="c#">
-var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
-var credential = new ServiceAccountCredential (new ServiceAccountCredential.Initializer ("your-developer-id@developer.gserviceaccount.com") {
-    // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
-    Scopes = new[] { "https://mail.google.com/" },
-    User = "user@gmail.com"
-}.FromCertificate (certificate));
-
-// Note: result will be true if the access token was received successfully
-bool result = await credential.RequestAccessTokenAsync (cancel.Token);
-
-// use the access token as the password string
-client.Authenticate ("user@gmail.com", credential.Token.AccessToken);
-        </code>
-      </content>
-    </section>
-
-    <section address="GMailAuthenticationFailed">
-      <title>Why do I get an exception when I try to authenticate with GMail?</title>
-      <content>
-        <para>
-          You probably forgot to
-          <externalLink>
-          <linkText>enable less secure apps</linkText>
-          <linkUri>https://www.google.com/settings/security/lesssecureapps</linkUri>
-          <linkTarget>_blank</linkTarget>
-        </externalLink>.
-        </para>
-      </content>
-    </section>
-
-    <section address="GMailHiddenMessages">
-      <title>Why don't I see some of my messages when accessing GMail with POP3?</title>
-      <content>
-        <para>
-          By default, GMail's POP3 server does not behave like a standard POP3 server and hides messages
-          from clients (as well as having other non-standard behavior) that have already been viewed.
-        </para>
-        <para>
-          If you want to configure your GMail POP3 settings to behave the way POP3 is intended to behave,
-          you'll need to log in to your GMail account via your web browser and navigate to the
-          <application>Forwarding and POP/IMAP</application> tab of your
-          <application>GMail Settings</application> page and make the following changes in the
-          <application>POP3 Download</application> section:
-        </para>
-        <list>
-          <listItem>
-            <para>
-              <application>Enable POP for all mail (even if it has already been downloaded)</application>.
-            </para>
-          </listItem>
-          <listItem>
-            <para>
-              When messages are accessed with POP, <application>keep GMail's copy in the Inbox</application>.
-            </para>
-          </listItem>
-        </list>
       </content>
     </section>
 

@@ -99,9 +99,10 @@
     <None Include="Examples\CreateMultipartMixed.cs" />
     <None Include="Examples\CreateSimpleMessage.cs" />
     <None Include="Examples\DecodingContent.cs" />
-    <None Include="Examples\EnumeratingAttachments.cs" />
+    <None Include="Examples\ForwardExamples.cs" />
     <None Include="Examples\ImapExamples.cs" />
     <None Include="Examples\ImapIdleExample.cs" />
+    <None Include="Examples\InvalidSslCertificate.cs" />
     <None Include="Examples\MimeIterator.cs" />
     <None Include="Examples\MimeMessageLoad.cs" />
     <None Include="Examples\MimeParserMbox.cs" />
@@ -112,6 +113,7 @@
     <None Include="Examples\OpenPGPExamples.cs" />
     <None Include="Examples\Pop3Examples.cs" />
     <None Include="Examples\RecursivelyTraverse.cs" />
+    <None Include="Examples\AttachmentExamples.cs" />
     <None Include="Examples\SMimeExamples.cs" />
     <None Include="Examples\SmtpExamples.cs" />
     <None Include="Examples\VerifySignature.cs" />

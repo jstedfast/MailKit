@@ -186,7 +186,7 @@ multipart/alternative
           properties which flatten out the hierarchy and allow you to iterate over all
           of the body parts (or attachments) in depth-first order.
         </para>
-        <code language="c#" source="Examples\EnumeratingAttachments.cs" />
+        <code language="c#" source="Examples\AttachmentExamples.cs" region="SaveAttachments"/>
       </content>
     </section>
 
