@@ -614,6 +614,12 @@ format.NewLineFormat = NewLineFormat.Dos;
 message.WriteTo (format, "message.eml");
 ```
 
+Note: While it may seem like you can safely use the `ToString` method to serialize a message,
+***DON'T DO IT!*** This is ***not*** safe! MIME messages cannot be accurately represented as
+strings due to the fact that each MIME part of the message *may* be encoded in a different
+character set, thus making it impossible to convert the message into a unicode string using a
+single charset to do the conversion (which is *exactly* what `ToString` does).
+
 ### <a name="SaveAttachments">Q: How do I save attachments?</a>
 
 If you've already got a [MimePart](http://www.mimekit.net/docs/html/T_MimeKit_MimePart.htm) that represents
