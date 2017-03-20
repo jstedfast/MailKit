@@ -15,6 +15,7 @@
 * [How do I get the main body of a message?](#MessageBody)
 * [How do I tell if a message has attachments?](#HasAttachments)
 * [Why doesn't the `MimeMessage` class implement `ISerializable` so that I can serialize a message to disk and read it back later?](#Serialize)
+* [How do I parse messages?](#LoadMessages)
 * [How do I save messages?](#SaveMessages)
 * [How do I save attachments?](#SaveAttachments)
 * [How do I get the email addresses in the From, To, and Cc headers?](#AddressHeaders)
@@ -586,7 +587,52 @@ to use the .NET serialization API and format did not make much sense to support.
 You can easily serialize a [MimeMessage](http://www.mimekit.net/docs/html/T_MimeKit_MimeMessage.htm) to a stream using the
 [WriteTo](http://www.mimekit.net/docs/html/Overload_MimeKit_MimeMessage_WriteTo.htm) methods.
 
-For more information on this topic, see: <a href="#SaveMessages">How do I save messages?</a>
+For more information on this topic, see the following other two topics:
+
+* <a href="#LoadMessages">How do I parse messages?</a>
+* <a href="#SaveMessages">How do I save messages?</a>
+
+### <a name="LoadMessages">Q: How do I parse messages?</a>
+
+One of the more common operations that MimeKit is meant for is parsing email messages from arbitrary streams.
+There are two ways of accomplishing this task.
+
+The first way is to use one of the [Load](http://www.mimekit.net/docs/html/Overload_MimeKit_MimeMessage_Load.htm) methods
+on `MimeMessage`:
+
+```csharp
+// Load a MimeMessage from a stream
+var message = MimeMessage.Load (stream);
+```
+
+Or you can load a message from a file path:
+
+```csharp
+// Load a MimeMessage from a file path
+var message = MimeMessage.Load ("message.eml");
+```
+
+The second way is to use the [MimeParser](http://www.mimekit.net/docs/html/T_MimeKit_MimeParser.htm) class. For the most
+part, using the `MimeParser` directly is not necessary unless you wish to parse a Unix mbox file stream. However, this is
+how you would do it:
+
+```csharp
+// Load a MimeMessage from a stream
+var parser = new MimeParser (stream, MimeFormat.Entity);
+var message = parser.ParseMessage ();
+```
+
+For Unix mbox file streams, you would use the parser like this:
+
+```csharp
+// Load every message from a Unix mbox
+var parser = new MimeParser (stream, MimeFormat.Mbox);
+while (!parser.IsEndOfStream) {
+    var message = parser.ParseMessage ();
+
+    // do something with the message
+}
+```
 
 ### <a name="SaveMessages">Q: How do I save messages?</a>
 
