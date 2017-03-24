@@ -1,5 +1,4 @@
 ## Getting Started
-
 ### Sending Messages
 
 One of the more common operations that MailKit is meant for is sending email messages.
@@ -30,6 +29,9 @@ I just wanted to let you know that Monica and I were going to go play some paint
 			};
 
 			using (var client = new SmtpClient ()) {
+				// For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
+				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
+
 				client.Connect ("smtp.friends.com", 587, false);
 
 				// Note: since we don't have an OAuth2 token, disable
@@ -64,6 +66,9 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new Pop3Client ()) {
+				// For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
+				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
+
 				client.Connect ("pop.friends.com", 110, false);
 
 				// Note: since we don't have an OAuth2 token, disable
@@ -102,6 +107,9 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new ImapClient ()) {
+				// For demo-purposes, accept all SSL certificates
+				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
+
 				client.Connect ("imap.friends.com", 993, true);
 
 				// Note: since we don't have an OAuth2 token, disable
@@ -143,21 +151,27 @@ The results of a Fetch command can also be used to download individual MIME part
 than downloading the entire message. For example:
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId)) {
-	var text = summary.Body as BodyPartText;
-
-	if (text == null) {
-		var multipart = summary.Body as BodyPartMultipart;
-
-		if (multipart != null)
-			text = multipart.BodyParts.OfType<BodyPartText> ().FirstOrDefault ();
-	}
-
-	if (text == null)
-		continue;
-
-	// this will download *just* the text part
-	var part = inbox.GetBodyPart (summary.UniqueId.Value, text);
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure)) {
+    if (summary.TextBody != null) {
+	// this will download *just* the text/plain part
+	var text = inbox.GetBodyPart (summary.UniqueId, summary.TextBody);
+    }
+    
+    if (summary.HtmlBody != null) {
+        // this will download *just* the text/html part
+	var html = inbox.GetBodyPart (summary.UniqueId, summary.HtmlBody);
+    }
+    
+    // if you'd rather grab, say, an image attachment... it might look something like this:
+    if (summary.Body is BodyPartMultipart) {
+        var multipart = (BodyPartMultipart) summary.Body;
+        
+        var attachment = multipart.BodyParts.OfType<BodyPartBasic> ().FirstOrDefault (x => x.FileName == "logo.jpg");
+        if (attachment != null) {
+            // this will download *just* the attachment
+            var part = inbox.GetBodyPart (summary.UniqueId, attachment);
+        }
+    }
 }
 ```
 
