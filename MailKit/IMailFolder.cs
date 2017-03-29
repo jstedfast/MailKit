@@ -1397,6 +1397,9 @@ namespace MailKit {
 		/// messages that were requested as well as summaries for messages that were
 		/// not requested at all.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// </example>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
@@ -2319,6 +2322,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the specified body part.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// </example>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>

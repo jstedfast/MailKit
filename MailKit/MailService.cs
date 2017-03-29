@@ -171,6 +171,9 @@ namespace MailKit {
 		/// <para>This property should be set before calling any of the
 		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\InvalidSslCertificate.cs" region="Simple"/>
+		/// </example>
 		/// <value>The server certificate validation callback function.</value>
 		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
 			get; set;

@@ -60,6 +60,9 @@ namespace MailKit.Net.Imap {
 	/// <example>
 	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
 	/// </example>
+	/// <example>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+	/// </example>
 	public class ImapClient : MailStore
 	{
 		static readonly char[] ReservedUriCharacters = new [] { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',' };

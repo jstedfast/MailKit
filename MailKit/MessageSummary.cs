@@ -233,6 +233,9 @@ namespace MailKit {
 		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
 		/// summary information from a <see cref="IMailFolder"/>.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// </example>
 		/// <value>The text body if it exists; otherwise, <c>null</c>.</value>
 		public BodyPartText TextBody {
 			get {
@@ -343,6 +346,9 @@ namespace MailKit {
 		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
 		/// summary information from a <see cref="IMailFolder"/>.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// </example>
 		/// <value>The attachments.</value>
 		public IEnumerable<BodyPartBasic> Attachments {
 			get { return EnumerateBodyParts (Body).Where (part => part.IsAttachment); }

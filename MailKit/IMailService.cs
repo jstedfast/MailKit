@@ -78,6 +78,9 @@ namespace MailKit {
 		/// <para>Gets or sets a callback function to validate the server certificate.</para>
 		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\InvalidSslCertificate.cs" region="Simple"/>
+		/// </example>
 		/// <value>The server certificate validation callback function.</value>
 		RemoteCertificateValidationCallback ServerCertificateValidationCallback { get; set; }
 

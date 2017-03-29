@@ -34,6 +34,9 @@ namespace MailKit {
 	/// <remarks>
 	/// Represents any body part with a media type of "text".
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+	/// </example>
 	public class BodyPartText : BodyPartBasic
 	{
 		/// <summary>
