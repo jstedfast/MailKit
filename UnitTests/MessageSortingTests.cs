@@ -63,7 +63,7 @@ namespace UnitTests {
 			MessageSummary summary;
 
 			summary = new MessageSummary (0);
-			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.MessageSize;
+			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.Size;
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now.AddSeconds (-2);
 			summary.Envelope.Subject = "aaaa";
@@ -74,7 +74,7 @@ namespace UnitTests {
 			messages.Add (summary);
 
 			summary = new MessageSummary (1);
-			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.MessageSize;
+			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.Size;
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now.AddSeconds (-1);
 			summary.Envelope.Subject = "bbbb";
@@ -85,7 +85,7 @@ namespace UnitTests {
 			messages.Add (summary);
 
 			summary = new MessageSummary (2);
-			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.MessageSize;
+			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.Size;
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "cccc";

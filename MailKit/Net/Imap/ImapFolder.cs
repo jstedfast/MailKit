@@ -3304,7 +3304,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value))
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					summary.Fields |= MessageSummaryItems.MessageSize;
+					summary.Fields |= MessageSummaryItems.Size;
 					summary.Size = value;
 					break;
 				case "BODYSTRUCTURE":
@@ -3525,7 +3525,7 @@ namespace MailKit.Net.Imap {
 				tokens.Add ("FLAGS");
 			if ((items & MessageSummaryItems.InternalDate) != 0)
 				tokens.Add ("INTERNALDATE");
-			if ((items & MessageSummaryItems.MessageSize) != 0)
+			if ((items & MessageSummaryItems.Size) != 0)
 				tokens.Add ("RFC822.SIZE");
 			if ((items & MessageSummaryItems.Envelope) != 0)
 				tokens.Add ("ENVELOPE");

@@ -228,7 +228,7 @@ namespace MailKit {
 		/// Gets the text body part of the message if it exists.
 		/// </summary>
 		/// <remarks>
-		/// <para>Gets the text/plain body part of the message.</para>
+		/// <para>Gets the <c>text/plain</c> body part of the message.</para>
 		/// <para>In order for this to work properly, it is necessary to include
 		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
 		/// summary information from a <see cref="IMailFolder"/>.</para>
@@ -258,7 +258,7 @@ namespace MailKit {
 		/// Gets the html body part of the message if it exists.
 		/// </summary>
 		/// <remarks>
-		/// <para>Gets the text/html body part of the message.</para>
+		/// <para>Gets the <c>text/html</c> body part of the message.</para>
 		/// <para>In order for this to work properly, it is necessary to include
 		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
 		/// summary information from a <see cref="IMailFolder"/>.</para>
@@ -337,7 +337,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
-		/// <see cref="BodyPartBasic"/> objects that have a Content-Disposition
+		/// <see cref="BodyPartBasic"/> objects that have a <c>Content-Disposition</c>
 		/// header set to <c>"attachment"</c>.</para>
 		/// <para>In order for this to work properly, it is necessary to include
 		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
@@ -471,7 +471,7 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Gets the size of the message, in bytes, if available.</para>
 		/// <para>This property will only be set if the
-		/// <see cref="MessageSummaryItems.MessageSize"/> flag is passed to
+		/// <see cref="MessageSummaryItems.Size"/> flag is passed to
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The size of the message.</value>

@@ -173,7 +173,7 @@ namespace MailKit {
 					items |= MessageSummaryItems.ModSeq;
 					break;
 				case OrderByType.Size:
-					items |= MessageSummaryItems.MessageSize;
+					items |= MessageSummaryItems.Size;
 					break;
 				}
 			}

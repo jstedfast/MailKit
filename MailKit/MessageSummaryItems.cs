@@ -45,12 +45,24 @@ namespace MailKit {
 		None           = 0,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.Body"/>.
+		/// <para>Fetch the <see cref="MessageSummary.Body"/>.</para>
+		/// <note type="note">Unlike <see cref="BodyStructure"/>, <c>Body</c> will not populate the
+		/// <see cref="BodyPart.ContentType"/> parameters nor will it populate the
+		/// <see cref="BodyPartBasic.ContentDisposition"/>, <see cref="BodyPartBasic.ContentLanguage"/>
+		/// or <see cref="BodyPartBasic.ContentLocation"/> properties of each <see cref="BodyPartBasic"/>
+		/// body part. This makes <c>Body</c> far less useful than <c>BodyStructure</c> especially when
+		/// it is desirable to determine whether or not a body part is an attachment.</note>
 		/// </summary>
 		Body           = 1 << 0,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.Body"/> (but with more details than <see cref="Body"/>).
+		/// <para>Fetch the <see cref="MessageSummary.Body"/> (but with more details than <see cref="Body"/>).</para>
+		/// <note type="note">Unlike <see cref="Body"/>, <c>BodyStructure</c> will also populate the
+		/// <see cref="BodyPart.ContentType"/> parameters as well as the
+		/// <see cref="BodyPartBasic.ContentDisposition"/>, <see cref="BodyPartBasic.ContentLanguage"/>
+		/// and <see cref="BodyPartBasic.ContentLocation"/> properties of each <see cref="BodyPartBasic"/>
+		/// body part. The <c>Content-Disposition</c> information is especially important when trying to
+		/// determine whether or not a body part is an attachment, for example.</note>
 		/// </summary>
 		BodyStructure  = 1 << 2,
 
@@ -72,7 +84,13 @@ namespace MailKit {
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.Size"/>.
 		/// </summary>
-		MessageSize    = 1 << 6,
+		Size           = 1 << 6,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.Size"/>.
+		/// </summary>
+		[Obsolete ("Use MessageSummaryItems.Size instead.")]
+		MessageSize    = Size,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.ModSeq"/>.
@@ -112,20 +130,20 @@ namespace MailKit {
 
 		/// <summary>
 		/// A macro for <see cref="Envelope"/>, <see cref="Flags"/>, <see cref="InternalDate"/>,
-		/// and <see cref="MessageSize"/>.
+		/// and <see cref="Size"/>.
 		/// </summary>
-		All           = Envelope | Flags | InternalDate | MessageSize,
+		All           = Envelope | Flags | InternalDate | Size,
 
 		/// <summary>
-		/// A macro for <see cref="Flags"/>, <see cref="InternalDate"/>, and <see cref="MessageSize"/>.
+		/// A macro for <see cref="Flags"/>, <see cref="InternalDate"/>, and <see cref="Size"/>.
 		/// </summary>
-		Fast          = Flags | InternalDate | MessageSize,
+		Fast          = Flags | InternalDate | Size,
 
 		/// <summary>
 		/// A macro for <see cref="Body"/>, <see cref="Envelope"/>, <see cref="Flags"/>,
-		/// <see cref="InternalDate"/>, and <see cref="MessageSize"/>.
+		/// <see cref="InternalDate"/>, and <see cref="Size"/>.
 		/// </summary>
-		Full          = Body | Envelope | Flags| InternalDate | MessageSize,
+		Full          = Body | Envelope | Flags| InternalDate | Size,
 
 		#endregion
 	}
