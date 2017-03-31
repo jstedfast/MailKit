@@ -445,10 +445,7 @@ namespace MailKit.Net.Imap {
 				encodedName = (string) token.Value;
 				break;
 			case ImapTokenType.Nil:
-				// Note: the spec doesn't allow an `nstring` token as the folder name, but the use
-				// of `NIL` as an `astring`, while dubious, is at least arguably acceptable.
-				//
-				// See https://github.com/jstedfast/MailKit/issues/482
+				// Note: according to rfc3501, section 4.5, NIL is acceptable as a mailbox name.
 				encodedName = "NIL";
 				break;
 			default:
