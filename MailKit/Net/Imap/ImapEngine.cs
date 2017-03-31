@@ -1479,6 +1479,10 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Atom:
 				name = (string) token.Value;
 				break;
+			case ImapTokenType.Nil:
+				// Note: according to rfc3501, section 4.5, NIL is acceptable as a mailbox name.
+				name = "NIL";
+				break;
 			default:
 				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 			}

@@ -1343,15 +1343,15 @@ namespace UnitTests.Net.Imap {
 				var statusItems = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread;
 
 				var folders = (await personal.GetSubfoldersAsync (statusItems, false)).ToArray ();
-				Assert.AreEqual (6, folders.Length, "Expected 6 folders");
+				Assert.AreEqual (7, folders.Length, "Expected 7 folders");
 
-				var expectedFolderNames = new [] { "Archives", "Drafts", "Junk", "Sent Messages", "Trash", "INBOX" };
-				var expectedUidValidities = new [] { 1436832059, 1436832060, 1436832061, 1436832062, 1436832063, 1436832057 };
-				var expectedHighestModSeq = new [] { 1, 1, 1, 1, 1, 15 };
-				var expectedMessages = new [] { 0, 0, 0, 0, 0, 4 };
-				var expectedUidNext = new [] { 1, 1, 1, 1, 1, 5 };
-				var expectedRecent = new [] { 0, 0, 0, 0, 0, 0 };
-				var expectedUnseen = new [] { 0, 0, 0, 0, 0, 0 };
+				var expectedFolderNames = new [] { "Archives", "Drafts", "Junk", "Sent Messages", "Trash", "INBOX", "NIL" };
+				var expectedUidValidities = new [] { 1436832059, 1436832060, 1436832061, 1436832062, 1436832063, 1436832057, 1436832057 };
+				var expectedHighestModSeq = new [] { 1, 1, 1, 1, 1, 15, 1 };
+				var expectedMessages = new [] { 0, 0, 0, 0, 0, 4, 0 };
+				var expectedUidNext = new [] { 1, 1, 1, 1, 1, 5, 1 };
+				var expectedRecent = new [] { 0, 0, 0, 0, 0, 0, 0 };
+				var expectedUnseen = new [] { 0, 0, 0, 0, 0, 0, 0 };
 
 				for (int i = 0; i < folders.Length; i++) {
 					Assert.AreEqual (expectedFolderNames[i], folders[i].FullName, "FullName did not match");
