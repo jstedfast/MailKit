@@ -1229,8 +1229,12 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.UidValidity:
 				var uidvalidity = (UidValidityResponseCode) code;
 
-				// Note: we allow '0' here because some servers have been known to send "* OK [UIDVALIDITY 0]" when the folder
-				// has no messages. See https://github.com/jstedfast/MailKit/issues/150 for details.
+				// Note: we allow '0' here because some servers have been known to send "* OK [UIDVALIDITY 0]".
+				// The *probable* explanation here is that the folder has never been opened and/or no messages
+				// have ever been delivered (yet) to that mailbox and so the UNIDVALIDITY has not (yet) been
+				// initialized.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/150 for an example.
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number argument to 'UIDVALIDITY' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
@@ -1243,8 +1247,10 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.Unseen:
 				var unseen = (UnseenResponseCode) code;
 
-				// Note: we allow '0' here because some servers have been known to send "* OK [UNSEEN 0]" when the folder
-				// has no messages. See https://github.com/jstedfast/MailKit/issues/34 for details.
+				// Note: we allow '0' here because some servers have been known to send "* OK [UNSEEN 0]" when the
+				// mailbox contains no messages.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/34 for details.
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number argument to 'UNSEEN' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UNSEEN", token);
