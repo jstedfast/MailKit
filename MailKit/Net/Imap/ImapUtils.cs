@@ -406,7 +406,7 @@ namespace MailKit.Net.Imap {
 				case "\\Junk":          attrs |= FolderAttributes.Junk; break;
 				case "\\Sent":          attrs |= FolderAttributes.Sent; break;
 				case "\\Trash":         attrs |= FolderAttributes.Trash; break;
-					// XLIST flags:
+				// XLIST flags:
 				case "\\AllMail":       attrs |= FolderAttributes.All; break;
 				case "\\Important":     attrs |= FolderAttributes.Flagged; break;
 				case "\\Inbox":         attrs |= FolderAttributes.Inbox; break;
@@ -443,6 +443,13 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
 				encodedName = (string) token.Value;
+				break;
+			case ImapTokenType.Nil:
+				// Note: the spec doesn't allow an `nstring` token as the folder name, but the use
+				// of `NIL` as an `astring`, while dubious, is at least arguably acceptable.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/482
+				encodedName = "NIL";
 				break;
 			default:
 				throw ImapEngine.UnexpectedToken (format, token);
