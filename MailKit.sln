@@ -27,9 +27,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle.iOS", "submodu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.NetStandard", "submodules\MimeKit\MimeKit\MimeKit.NetStandard.csproj", "{E8667DCE-A5BB-4D30-9815-FC8959E447F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MimeKit.NetStandard", "submodules\MimeKit\MimeKit\MimeKit.NetStandard.csproj", "{E8667DCE-A5BB-4D30-9815-FC8959E447F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.NetStandard", "MailKit\MailKit.NetStandard.csproj", "{507D2CF2-55FF-463F-8513-778442EBD251}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKit.NetStandard", "MailKit\MailKit.NetStandard.csproj", "{507D2CF2-55FF-463F-8513-778442EBD251}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portable.Text.Encoding.WindowsUniversal81", "submodules\MimeKit\submodules\Portable.Text.Encoding\Portable.Text.Encoding\Portable.Text.Encoding.WindowsUniversal81.csproj", "{B76A64F9-B00E-4243-AE89-5D024CA3B436}"
 EndProject
