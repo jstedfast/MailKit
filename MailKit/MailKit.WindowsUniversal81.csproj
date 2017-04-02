@@ -20,8 +20,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\lib\wpa81\</OutputPath>
-    <IntermediateOutputPath>obj\Debug\lib\wpa81\</IntermediateOutputPath>
+    <OutputPath>bin\Debug\wpa81\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\wpa81\</IntermediateOutputPath>
     <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_APP;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,9 +30,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\lib\wpa81\</OutputPath>
-    <IntermediateOutputPath>obj\Release\lib\wpa81\</IntermediateOutputPath>
-    <DocumentationFile>bin\Release\lib\wpa81\MailKit.xml</DocumentationFile>
+    <OutputPath>bin\Release\wpa81\</OutputPath>
+    <IntermediateOutputPath>obj\Release\wpa81\</IntermediateOutputPath>
+    <DocumentationFile>bin\Release\wpa81\MailKit.xml</DocumentationFile>
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_APP;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

@@ -19,8 +19,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\lib\MonoAndroid</OutputPath>
-    <IntermediateOutputPath>obj\Debug\lib\MonoAndroid</IntermediateOutputPath>
+    <OutputPath>bin\Debug\MonoAndroid</OutputPath>
+    <IntermediateOutputPath>obj\Debug\MonoAndroid</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE;SERIALIZABLE;__MOBILE__;__ANDROID__;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,15 +30,15 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\lib\MonoAndroid</OutputPath>
-    <IntermediateOutputPath>obj\Release\lib\MonoAndroid</IntermediateOutputPath>
+    <OutputPath>bin\Release\MonoAndroid</OutputPath>
+    <IntermediateOutputPath>obj\Release\MonoAndroid</IntermediateOutputPath>
     <DefineConstants>SERIALIZABLE;__MOBILE__;__ANDROID__;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\lib\MonoAndroid\MailKit.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\MonoAndroid\MailKit.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

@@ -15,8 +15,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\lib\Xamarin.iOS</OutputPath>
-    <IntermediateOutputPath>obj\Debug\lib\Xamarin.iOS</IntermediateOutputPath>
+    <OutputPath>bin\Debug\Xamarin.iOS</OutputPath>
+    <IntermediateOutputPath>obj\Debug\Xamarin.iOS</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE;SERIALIZABLE;__MOBILE__;__IOS__;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,14 +25,14 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\lib\Xamarin.iOS</OutputPath>
-    <IntermediateOutputPath>obj\Release\lib\Xamarin.iOS</IntermediateOutputPath>
+    <OutputPath>bin\Release\Xamarin.iOS</OutputPath>
+    <IntermediateOutputPath>obj\Release\Xamarin.iOS</IntermediateOutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <DefineConstants>SERIALIZABLE;__MOBILE__;__IOS__;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\lib\Xamarin.iOS\MailKit.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Xamarin.iOS\MailKit.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

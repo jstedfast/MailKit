@@ -21,8 +21,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\lib\wp81\</OutputPath>
-    <IntermediateOutputPath>obj\Debug\lib\wp81\</IntermediateOutputPath>
+    <OutputPath>bin\Debug\wp81\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\wp81\</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,9 +31,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\lib\wp81\</OutputPath>
-    <IntermediateOutputPath>obj\Release\lib\wp81\</IntermediateOutputPath>
-    <DocumentationFile>bin\Release\lib\wp81\MailKit.xml</DocumentationFile>
+    <OutputPath>bin\Release\wp81\</OutputPath>
+    <IntermediateOutputPath>obj\Release\wp81\</IntermediateOutputPath>
+    <DocumentationFile>bin\Release\wp81\MailKit.xml</DocumentationFile>
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -41,8 +41,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\lib\wp81\arm\</OutputPath>
-    <IntermediateOutputPath>obj\Debug\lib\wp81\arm\</IntermediateOutputPath>
+    <OutputPath>bin\Debug\wp81\arm\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\wp81\arm\</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
@@ -52,9 +52,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
-    <OutputPath>bin\Release\lib\wp81\arm\</OutputPath>
-    <IntermediateOutputPath>obj\Release\lib\wp81\arm</IntermediateOutputPath>
-    <DocumentationFile>bin\Release\lib\wp81\arm\MailKit.xml</DocumentationFile>
+    <OutputPath>bin\Release\wp81\arm\</OutputPath>
+    <IntermediateOutputPath>obj\Release\wp81\arm</IntermediateOutputPath>
+    <DocumentationFile>bin\Release\wp81\arm\MailKit.xml</DocumentationFile>
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
@@ -66,8 +66,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\lib\wp81\x86\</OutputPath>
-    <IntermediateOutputPath>obj\Debug\lib\wp81\x86\</IntermediateOutputPath>
+    <OutputPath>bin\Debug\wp81\x86\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\wp81\x86\</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
@@ -77,9 +77,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\Release\lib\wp81\x86\</OutputPath>
-    <IntermediateOutputPath>obj\Release\lib\wp81\x86\</IntermediateOutputPath>
-    <DocumentationFile>bin\Release\lib\wp81\x86\MailKit.xml</DocumentationFile>
+    <OutputPath>bin\Release\wp81\x86\</OutputPath>
+    <IntermediateOutputPath>obj\Release\wp81\x86\</IntermediateOutputPath>
+    <DocumentationFile>bin\Release\wp81\x86\MailKit.xml</DocumentationFile>
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>

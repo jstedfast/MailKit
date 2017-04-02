@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-	<metadata minClientVersion="2.8.6">
+	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
 		<version>1.12.0</version>
 		<title>MailKit</title>
@@ -62,32 +62,20 @@ Features include:
 			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 		<group targetFramework=".NETStandard1.3">
-			<dependency id="System.Security.Cryptography.Algorithms" version="4.2.0" />
-			<dependency id="System.Security.Cryptography.Primitives" version="4.0.0" />
-			<dependency id="System.Runtime.Serialization.Primitives" version="4.1.1" />
-			<dependency id="System.Runtime.InteropServices" version="4.1.0" />
-			<dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
-			<dependency id="System.Text.Encoding.Extensions" version="4.0.11" />
-			<dependency id="System.Text.Encoding.CodePages" version="4.0.1" />
-			<dependency id="System.Text.Encoding" version="4.0.11" />
-			<dependency id="System.Net.NameResolution" version="4.0.0" />
-			<dependency id="System.Net.NetworkInformation" version="4.1.0" />
-			<dependency id="System.Net.Primitives" version="4.0.11" />
-			<dependency id="System.Net.Security" version="4.0.0" />
-			<dependency id="System.Net.Sockets" version="4.1.0" />
-			<dependency id="System.IO.Compression" version="4.1.0" />
-			<dependency id="System.Collections" version="4.0.11" />
-			<dependency id="System.Data.Common" version="4.1.0" />
-			<dependency id="System.Reflection" version="4.1.0" />
-			<dependency id="System.Threading" version="4.0.11" />
-			<dependency id="System.Runtime" version="4.1.0" />
-			<dependency id="System.Linq" version="4.1.0" />
+			<dependency id="NETStandard.Library" version="1.6.1" />
+			<dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+			<dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
+			<dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
+			<dependency id="System.Net.NameResolution" version="4.030" />
+			<dependency id="System.Net.NetworkInformation" version="4.3.0" />
+			<dependency id="System.Net.Security" version="4.3.0" />
+			<dependency id="System.Data.Common" version="4.3.0" />
 			<dependency id="Microsoft.CSharp" version="4.0.1" />
-			<dependency id="Portable.BouncyCastle" version="1.8.1.1" />
+			<dependency id="Portable.BouncyCastle" version="1.8.1.2" />
 			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 		<group targetFramework="wpa81">
-			<dependency id="Portable.BouncyCastle" version="1.8.1.1" />
+			<dependency id="Portable.BouncyCastle" version="1.8.1.2" />
 			<dependency id="MimeKit" version="1.12.0" />
 		</group>
 	</dependencies>
@@ -95,19 +83,19 @@ Features include:
 	<files>
 		<file src="..\MailKit\bin\Release\netstandard1.3\MailKit.dll" target="lib\netstandard1.3\MailKit.dll" />
 		<file src="..\MailKit\bin\Release\netstandard1.3\MailKit.xml" target="lib\netstandard1.3\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.dll" target="lib\MonoAndroid10\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.xml" target="lib\MonoAndroid10\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.dll" target="lib\Xamarin.iOS10\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.xml" target="lib\Xamarin.iOS10\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\lib\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\lib\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\lib\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\lib\net45\MailKit.dll" target="lib\net451\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\lib\net45\MailKit.xml" target="lib\net451\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\win81\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\win81\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\wpa81\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\wpa81\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\MonoAndroid\MailKit.dll" target="lib\MonoAndroid10\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\MonoAndroid\MailKit.xml" target="lib\MonoAndroid10\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.dll" target="lib\Xamarin.iOS10\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.xml" target="lib\Xamarin.iOS10\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net451\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net451\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\wpa81\MailKit.dll" target="lib\win81\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\wpa81\MailKit.xml" target="lib\win81\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\wpa81\MailKit.dll" target="lib\wpa81\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\wpa81\MailKit.xml" target="lib\wpa81\MailKit.xml" />
 	</files>
 </package>
