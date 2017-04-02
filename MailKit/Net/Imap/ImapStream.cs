@@ -526,7 +526,7 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-#if !NETFX_CORE && !COREFX
+#if !NETFX_CORE && !NETSTANDARD
 				var buffer = memory.GetBuffer ();
 #else
 				var buffer = memory.ToArray ();

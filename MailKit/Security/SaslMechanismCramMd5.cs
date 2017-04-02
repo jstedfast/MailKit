@@ -28,7 +28,7 @@ using System;
 using System.Net;
 using System.Text;
 
-#if NETFX_CORE || COREFX
+#if NETFX_CORE || NETSTANDARD
 using MD5 = MimeKit.Cryptography.MD5;
 #else
 using System.Security.Cryptography;

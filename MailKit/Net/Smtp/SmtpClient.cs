@@ -330,7 +330,7 @@ namespace MailKit.Net.Smtp {
 			if (ServerCertificateValidationCallback != null)
 				return ServerCertificateValidationCallback (host, certificate, chain, sslPolicyErrors);
 
-#if !COREFX
+#if !NETSTANDARD
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (host, certificate, chain, sslPolicyErrors);
 #endif
@@ -847,7 +847,7 @@ namespace MailKit.Net.Smtp {
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 #if !NETFX_CORE
-#if COREFX
+#if NETSTANDARD
 			var ipAddresses = Dns.GetHostAddressesAsync (uri.DnsSafeHost).GetAwaiter ().GetResult ();
 #else
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
@@ -887,7 +887,7 @@ namespace MailKit.Net.Smtp {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 
 				try {
-#if COREFX
+#if NETSTANDARD
 					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
 #else
 					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
@@ -952,7 +952,7 @@ namespace MailKit.Net.Smtp {
 
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-#if COREFX
+#if NETSTANDARD
 					tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
 #else
 					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
@@ -1089,7 +1089,7 @@ namespace MailKit.Net.Smtp {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 
 				try {
-#if COREFX
+#if NETSTANDARD
 					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
 #else
 					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
@@ -1134,7 +1134,7 @@ namespace MailKit.Net.Smtp {
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-#if COREFX
+#if NETSTANDARD
 					tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
 #else
 					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);

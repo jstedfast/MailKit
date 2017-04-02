@@ -480,7 +480,7 @@ namespace MailKit.Security {
 				}
 			}
 
-#if !NETFX_CORE && !COREFX
+#if !NETFX_CORE && !NETSTANDARD
 			return builder.ToString ().Normalize (NormalizationForm.FormKC);
 #else
 			return builder.ToString ();
