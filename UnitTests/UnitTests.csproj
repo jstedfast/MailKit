@@ -43,11 +43,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.csproj">
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.Net45.csproj">
       <Project>{D5F54A4F-D84B-430F-9271-F7861E285B3E}</Project>
       <Name>MimeKit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MailKit\MailKit.csproj">
+    <ProjectReference Include="..\MailKit\MailKit.Net45.csproj">
       <Project>{7264D469-A390-4C10-9C87-DAA37EDD3C1D}</Project>
       <Name>MailKit</Name>
     </ProjectReference>
