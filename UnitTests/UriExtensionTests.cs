@@ -1,7 +1,7 @@
-﻿//
+//
 // UriExtensionTests.cs
 //
-// Author: Jeffrey Stedfast <jeff@xamarin.com>
+// Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
 // Copyright (c) 2013-2014 Xamarin Inc. (www.xamarin.com)
 //

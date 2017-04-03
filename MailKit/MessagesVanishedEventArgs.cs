@@ -1,7 +1,7 @@
-﻿//
+//
 // MessagesVanishedEventArgs.cs
 //
-// Author: Jeffrey Stedfast <jeff@xamarin.com>
+// Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
 // Copyright (c) 2014 Jeffrey Stedfast
 //
