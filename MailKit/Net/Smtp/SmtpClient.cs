@@ -30,6 +30,7 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Globalization;
 using System.Collections.Generic;
 
 using MimeKit;
@@ -71,6 +72,7 @@ namespace MailKit.Net.Smtp {
 	public class SmtpClient : MailTransport
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
+		static readonly IdnMapping idn = new IdnMapping ();
 		const int MaxLineLength = 998;
 
 		enum SmtpCommand {
@@ -1403,10 +1405,20 @@ namespace MailKit.Net.Smtp {
 			return null;
 		}
 
-		void MailFrom (MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
+		static string GetAddrspec (FormatOptions options, MailboxAddress mailbox)
+		{
+			if (options.International)
+				return MailboxAddress.DecodeAddrspec (mailbox.Address);
+
+			return MailboxAddress.EncodeAddrspec (mailbox.Address);
+		}
+
+		void MailFrom (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
 		{
 			var utf8 = (extensions & SmtpExtension.UTF8) != 0 ? " SMTPUTF8" : string.Empty;
-			var command = string.Format ("MAIL FROM:<{0}>{1}", mailbox.Address, utf8);
+			var addrspec = GetAddrspec (options, mailbox);
+
+			var command = string.Format ("MAIL FROM:<{0}>{1}", addrspec, utf8);
 
 			if ((extensions & SmtpExtension.BinaryMime) != 0)
 				command += " BODY=BINARYMIME";
@@ -1515,9 +1527,9 @@ namespace MailKit.Net.Smtp {
 			return value.TrimEnd (',');
 		}
 
-		void RcptTo (MimeMessage message, MailboxAddress mailbox, CancellationToken cancellationToken)
+		void RcptTo (FormatOptions options, MimeMessage message, MailboxAddress mailbox, CancellationToken cancellationToken)
 		{
-			var command = string.Format ("RCPT TO:<{0}>", mailbox.Address);
+			var command = string.Format ("RCPT TO:<{0}>", GetAddrspec (options, mailbox));
 
 			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
 				var notify = GetDeliveryStatusNotifications (message, mailbox);
@@ -1661,14 +1673,13 @@ namespace MailKit.Net.Smtp {
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
 			var format = options.Clone ();
-			format.International = format.International || sender.IsInternational || recipients.Any (x => x.IsInternational);
 			format.HiddenHeaders.Add (HeaderId.ContentLength);
 			format.HiddenHeaders.Add (HeaderId.ResentBcc);
 			format.HiddenHeaders.Add (HeaderId.Bcc);
 			format.NewLineFormat = NewLineFormat.Dos;
 
 			if (format.International && (Capabilities & SmtpCapabilities.UTF8) == 0)
-				throw new NotSupportedException ("The SMTP server does not support the SMTPUTF8 extension.");
+				format.International = false;
 
 			if (format.International && (Capabilities & SmtpCapabilities.EightBitMime) == 0)
 				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
@@ -1693,10 +1704,10 @@ namespace MailKit.Net.Smtp {
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
 				// queue their commands instead of sending them immediately.
-				MailFrom (message, sender, extensions, cancellationToken);
+				MailFrom (format, message, sender, extensions, cancellationToken);
 
 				for (int i = 0; i < recipients.Count; i++)
-					RcptTo (message, recipients[i], cancellationToken);
+					RcptTo (format, message, recipients[i], cancellationToken);
 
 				// Note: if PIPELINING is supported, this will flush all outstanding
 				// MAIL FROM and RCPT TO commands to the server and then process all
