@@ -65,9 +65,10 @@ Features include:
 			<dependency id="NETStandard.Library" version="1.6.1" />
 			<dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
 			<dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
+			<dependency id="System.Globalization.Extensions" version="4.3.0" />
 			<dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
-			<dependency id="System.Net.NameResolution" version="4.030" />
 			<dependency id="System.Net.NetworkInformation" version="4.3.0" />
+			<dependency id="System.Net.NameResolution" version="4.3.0" />
 			<dependency id="System.Net.Security" version="4.3.0" />
 			<dependency id="System.Data.Common" version="4.3.0" />
 			<dependency id="Microsoft.CSharp" version="4.0.1" />
