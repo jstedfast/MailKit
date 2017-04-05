@@ -492,7 +492,7 @@ namespace MailKit.Net.Imap {
 			byte* inend = inbuf + inputEnd;
 			bool escaped = false;
 
-			// skip over the leading '"'
+			// skip over the opening '"'
 			inptr++;
 
 			using (var memory = new MemoryStream ()) {
@@ -512,8 +512,23 @@ namespace MailKit.Net.Imap {
 					}
 
 					if (inptr < inend) {
+						// skip over closing '"'
 						inptr++;
-						break;
+
+						// Note: Some IMAP servers do not properly escape double-quotes inside
+						// of a qstring token and so, as an attempt at working around this
+						// problem, check that the closing '"' character is not immediately
+						// followed by any character that we would expect immediately following
+						// a qstring token.
+						//
+						// See https://github.com/jstedfast/MailKit/issues/485 for details.
+						if (inptr < inend && "]) \r\n".IndexOf ((char) *inptr) != -1)
+							break;
+
+						memory.WriteByte ((byte) '"');
+
+						if (inptr < inend)
+							continue;
 					}
 
 					inputIndex = (int) (inptr - inbuf);
