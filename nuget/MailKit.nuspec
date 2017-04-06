@@ -71,7 +71,6 @@ Features include:
 			<dependency id="System.Net.NameResolution" version="4.3.0" />
 			<dependency id="System.Net.Security" version="4.3.0" />
 			<dependency id="System.Data.Common" version="4.3.0" />
-			<dependency id="Microsoft.CSharp" version="4.0.1" />
 			<dependency id="Portable.BouncyCastle" version="1.8.1.2" />
 			<dependency id="MimeKit" version="1.12.0" />
 		</group>
