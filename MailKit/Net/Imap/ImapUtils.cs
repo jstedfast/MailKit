@@ -674,8 +674,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (format, token);
 
-			if (!ContentDisposition.TryParse (builder.ToString (), out disposition))
-				disposition = new ContentDisposition (dsp);
+			ContentDisposition.TryParse (builder.ToString (), out disposition);
 
 			return disposition;
 		}
