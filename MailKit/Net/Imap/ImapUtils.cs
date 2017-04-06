@@ -649,6 +649,16 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 
 			var dsp = ReadStringToken (engine, format, cancellationToken);
+
+			// Note: These are work-arounds for some bugs in some mail clients that
+			// either leave out the disposition value or quote it.
+			//
+			// See https://github.com/jstedfast/MailKit/issues/486 for details.
+			if (string.IsNullOrEmpty (dsp))
+				dsp = ContentDisposition.Attachment;
+			else
+				dsp = dsp.Trim ('"');
+
 			var builder = new StringBuilder (dsp);
 			ContentDisposition disposition;
 
