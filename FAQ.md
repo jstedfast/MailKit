@@ -692,7 +692,7 @@ If you are iterating over all of the attachments in a message, you might do some
 
 ```csharp
 foreach (var attachment in message.Attachments) {
-    var fileName = attachment.FileName;
+    var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
     
     using (var stream = File.Create (fileName)) {
         if (attachment is MessagePart) {
