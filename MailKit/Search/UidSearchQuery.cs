@@ -87,7 +87,7 @@ namespace MailKit.Search
 		/// Gets the unique identifiers to match against.
 		/// </remarks>
 		/// <value>The unique identifiers.</value>
-		public IList<UniqueId> Uids {
+		public new IList<UniqueId> Uids {
 			get; private set;
 		}
 	}

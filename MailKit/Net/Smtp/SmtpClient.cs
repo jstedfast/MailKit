@@ -72,7 +72,6 @@ namespace MailKit.Net.Smtp {
 	public class SmtpClient : MailTransport
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
-		static readonly IdnMapping idn = new IdnMapping ();
 		const int MaxLineLength = 998;
 
 		enum SmtpCommand {
