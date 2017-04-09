@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <!-- The configuration and platform will be used to determine which assemblies to include from solution and
@@ -42,7 +42,7 @@
     <PresentationStyle>VS2013</PresentationStyle>
     <Preliminary>False</Preliminary>
     <NamingMethod>MemberName</NamingMethod>
-    <HelpTitle>MimeKit Documentation</HelpTitle>
+    <HelpTitle>MailKit Documentation</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <RootNamespaceTitle>API Reference</RootNamespaceTitle>
     <DocumentationSources>
@@ -67,10 +67,14 @@
       <NamespaceSummaryItem name="MailKit.Search" isDocumented="True">The &lt;b&gt;MailKit.Search&lt;/b&gt; namespace provides classes that are necessary for searching folders for messages matching a set of criteria.</NamespaceSummaryItem>
       <NamespaceSummaryItem name="MailKit.Security" isDocumented="True">The &lt;b&gt;MailKit.Security&lt;/b&gt; namespace provides implementations of various SASL authentication mechanisms used by the IMAP, POP3 and SMTP clients.</NamespaceSummaryItem>
     </NamespaceSummaries>
-    <CopyrightText>
-    </CopyrightText>
+    <CopyrightText>Copyright &amp;#169%3b 2013-2017 Jeffrey Stedfast</CopyrightText>
     <WorkingPath>obj\</WorkingPath>
     <FooterText>&amp;lt%3bscript&amp;gt%3b%28function%28i,s,o,g,r,a,m%29{{i[&amp;#39%3bGoogleAnalyticsObject&amp;#39%3b]=r%3bi[r]=i[r]||function%28%29{{ %28i[r].q=i[r].q||[]%29.push%28arguments%29}},i[r].l=1%2anew Date%28%29%3ba=s.createElement%28o%29, m=s.getElementsByTagName%28o%29[0]%3ba.async=1%3ba.src=g%3bm.parentNode.insertBefore%28a,m%29 }}%29%28window,document,&amp;#39%3bscript&amp;#39%3b,&amp;#39%3b//www.google-analytics.com/analytics.js&amp;#39%3b,&amp;#39%3bga&amp;#39%3b%29%3b ga%28&amp;#39%3bcreate&amp;#39%3b, &amp;#39%3bUA-63841238-1&amp;#39%3b, &amp;#39%3bauto&amp;#39%3b%29%3b ga%28&amp;#39%3bsend&amp;#39%3b, &amp;#39%3bpageview&amp;#39%3b%29%3b&amp;lt%3b/script&amp;gt%3b</FooterText>
+    <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
+    <HelpFileVersion>1.0.0.0</HelpFileVersion>
+    <FeedbackEMailLinkText>Jeffrey Stedfast</FeedbackEMailLinkText>
+    <FeedbackEMailAddress>jestedfa%40microsoft.com</FeedbackEMailAddress>
+    <CopyrightHref>https://github.com/jstedfast</CopyrightHref>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->
@@ -85,15 +89,15 @@
     <Folder Include="Examples" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\CreatingMessages.aml" />
-    <None Include="Content\FrequentlyAskedQuestions.aml" />
-    <None Include="Content\GettingStarted.aml" />
+    <None Include="Content\Creating-Messages.aml" />
+    <None Include="Content\Frequently-Asked-Questions.aml" />
+    <None Include="Content\Getting-Started.aml" />
     <None Include="Content\Introduction.aml" />
     <None Include="Content\License.aml" />
-    <None Include="Content\ParsingMessages.aml" />
-    <None Include="Content\WorkingWithMessages.aml" />
-    <None Include="Content\WorkingWithPGP.aml" />
-    <None Include="Content\WorkingWithSMime.aml" />
+    <None Include="Content\Parsing-Messages.aml" />
+    <None Include="Content\Working-With-Messages.aml" />
+    <None Include="Content\Working-With-OpenPGP.aml" />
+    <None Include="Content\Working-With-SMime.aml" />
     <None Include="Examples\BodyBuilder.cs" />
     <None Include="Examples\CreateMultipartAlternative.cs" />
     <None Include="Examples\CreateMultipartMixed.cs" />

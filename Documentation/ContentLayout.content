@@ -1,12 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
   <Topic id="Introduction" visible="True" isDefault="true" />
-  <Topic id="License" visible="True" title="License Agreement"/>
-  <Topic id="GettingStarted" visible="True" title="Getting Started"/>
-  <Topic id="CreatingMessages" visible="True" title="Creating Messages"/>
-  <Topic id="ParsingMessages" visible="True" title="Parsing Messages"/>
-  <Topic id="WorkingWithMessages" visible="True" title="Working with Messages"/>
-  <Topic id="WorkingWithPGP" visible="True" title="Working with OpenPGP"/>
-  <Topic id="WorkingWithSMime" visible="True" title="Working with S/MIME"/>
-  <Topic id="FrequentlyAskedQuestions" visible="True" title="Frequently Asked Questions"/>
+  <Topic id="License" visible="True" title="License Agreement" />
+  <Topic id="Getting-Started" visible="True" isExpanded="true" title="Getting Started">
+    <Topic id="Creating-Messages" visible="True" title="Creating messages" />
+    <Topic id="Parsing-Messages" visible="True" title="Parsing messages" />
+    <Topic id="Working-With-Messages" visible="True" title="Working with messages" />
+    <Topic id="Working-With-OpenPGP" visible="True" title="Working with OpenPGP" />
+    <Topic id="Working-With-SMime" visible="True" isSelected="true" title="Working with S/MIME" />
+  </Topic>
+  <Topic id="Frequently-Asked-Questions" visible="True" title="Frequently Asked Questions" />
 </Topics>

@@ -2,7 +2,7 @@
 <topic id="Introduction" revisionNumber="1">
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
     <introduction>
-      <para>MimeKit and MailKit are a popular fully-featured email framework for .NET</para>
+      <para>MimeKit and MailKit are popular fully-featured email frameworks for .NET</para>
     </introduction>
 
     <section>
@@ -94,7 +94,7 @@
             <para>Client-side sorting and threading of messages.</para>
           </listItem>
           <listItem>
-            <para>Supports .NET 4.0, .NET 4.5, Xamarin.Android, Xamarin.iOS, Windows Phone 8.1, and more.</para>
+            <para>Supports .NET 4.0, .NET 4.5, .NETStandard 1.3, Xamarin.Android, Xamarin.iOS, Windows Phone 8.1, and more.</para>
           </listItem>
         </list>
       </content>
@@ -190,7 +190,7 @@
     </section>
 
     <relatedTopics>
-      <link xlink:href="GettingStarted"/>
+      <link xlink:href="Getting-Started"/>
     </relatedTopics>
   </developerConceptualDocument>
 </topic>
