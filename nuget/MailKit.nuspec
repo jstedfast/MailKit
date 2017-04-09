@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
-		<version>1.12.0</version>
+		<version>1.14.0</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,12 +22,17 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Allow an empty string text argument for SearchQuery.ContainsHeader(). (issue #451)
-* Fixed SaslMechanism.IsProhibited() logic to properly use logical ands. Thanks to Stefan Seering for this fix.
+		<releaseNotes>
+* Improved IMAP's BODYSTRUCTURE parser to sanitize the Content-Disposition values. (issue #486)
+* Improved robustness of IMAP's BODYSTRUCTURE parser in cases where qstring tokens have unescaped quotes. (issue #485)
+* Fixed IMAP to properly handle NIL as a folder name in LIST, LSUB and STATUS responses. (issue #482)
+* Added ImapFolder.GetHeaders() to allow developers to download the entire set of message headers.
+* Added SMTP support for International Domain Names in email addresses used in the MAIL FROM and RCPT TO commands.
+* Modified SmtpClient to no longer throw a NotSupportedException when trying to send messages to a recipient with a unicode local-part in the email address when the SMTP server does not support the SMTPUTF8 extension. Instead, the local-part is passed through as UTF-8, leaving it up to the server to reject either the command or the message. This seems to provide the best interoperability.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
-		<tags>smtp pop3 imap mime security dkim smime s/mime openpgp pgp mbox mail email parser tnef xamarin android ios monodroid monotouch dnx dnxcore50 netcore netstandard net40 net45 wpa81</tags>
+		<tags>smtp pop3 imap mime security dkim smime s/mime openpgp pgp mbox mail email parser tnef xamarin android ios monodroid monotouch netstandard net40 net45 wpa81</tags>
 		<frameworkAssemblies>
 			<frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
 			<frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
@@ -45,21 +50,21 @@ Features include:
 	<dependencies>
 		<group targetFramework="net40">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.12.0" />
+			<dependency id="MimeKit" version="1.14.0" />
 		</group>
 		<group targetFramework="net45">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.12.0" />
+			<dependency id="MimeKit" version="1.14.0" />
 		</group>
 		<group targetFramework="net451">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.12.0" />
+			<dependency id="MimeKit" version="1.14.0" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.12.0" />
+			<dependency id="MimeKit" version="1.14.0" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.12.0" />
+			<dependency id="MimeKit" version="1.14.0" />
 		</group>
 		<group targetFramework=".NETStandard1.3">
 			<dependency id="NETStandard.Library" version="1.6.1" />
@@ -72,11 +77,11 @@ Features include:
 			<dependency id="System.Net.Security" version="4.3.0" />
 			<dependency id="System.Data.Common" version="4.3.0" />
 			<dependency id="Portable.BouncyCastle" version="1.8.1.2" />
-			<dependency id="MimeKit" version="1.12.0" />
+			<dependency id="MimeKit" version="1.14.0" />
 		</group>
 		<group targetFramework="wpa81">
 			<dependency id="Portable.BouncyCastle" version="1.8.1.2" />
-			<dependency id="MimeKit" version="1.12.0" />
+			<dependency id="MimeKit" version="1.14.0" />
 		</group>
 	</dependencies>
 	</metadata>
