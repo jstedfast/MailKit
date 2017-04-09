@@ -173,11 +173,9 @@ simply enter the following command:
 ## Getting the Source Code
 
 First, you'll need to clone MailKit from my GitHub repository. To do this using the command-line version of Git,
-you'll need to issue the following commands in your terminal:
+you'll need to issue the following command in your terminal:
 
-    git clone https://github.com/jstedfast/MailKit.git
-    cd MailKit
-    git submodule update --init --recursive
+    git clone --recursive https://github.com/jstedfast/MailKit.git
 
 If you are using [TortoiseGit](https://tortoisegit.org) on Windows, you'll need to right-click in the directory
 where you'd like to clone MailKit and select **Git Clone...** in the menu. Once you do that, you'll get the
