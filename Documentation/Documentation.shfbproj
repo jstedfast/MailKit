@@ -113,6 +113,7 @@
     <None Include="Examples\OpeningContent.cs" />
     <None Include="Examples\OpenPGPExamples.cs" />
     <None Include="Examples\Pop3Examples.cs" />
+    <None Include="Examples\DkimVerifierExample.cs" />
     <None Include="Examples\RecursivelyTraverse.cs" />
     <None Include="Examples\AttachmentExamples.cs" />
     <None Include="Examples\SMimeExamples.cs" />
