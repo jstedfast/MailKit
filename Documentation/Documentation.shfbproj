@@ -99,6 +99,7 @@
     <None Include="Examples\CreateMultipartMixed.cs" />
     <None Include="Examples\CreateSimpleMessage.cs" />
     <None Include="Examples\DecodingContent.cs" />
+    <None Include="Examples\DkimExamples.cs" />
     <None Include="Examples\ForwardExamples.cs" />
     <None Include="Examples\ImapExamples.cs" />
     <None Include="Examples\ImapIdleExample.cs" />
