@@ -104,7 +104,6 @@ namespace MailKit.Net.Smtp {
 		/// </example>
 		public SmtpClient () : this (new NullProtocolLogger ())
 		{
-			QueryCapabilitiesAfterAuthenticating = true;
 		}
 
 		/// <summary>
@@ -126,7 +125,6 @@ namespace MailKit.Net.Smtp {
 		/// </example>
 		public SmtpClient (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
-			QueryCapabilitiesAfterAuthenticating = true;
 		}
 
 		/// <summary>
@@ -140,6 +138,7 @@ namespace MailKit.Net.Smtp {
 		/// the capabilities after successfully authenticating, the default is <c>true</c>.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the capabilities should be re-queried after authenticating; otherwise, <c>false</c>.</value>
+		[Obsolete ("This property is no longer needed.")]
 		public bool QueryCapabilitiesAfterAuthenticating {
 			get; set;
 		}
@@ -654,7 +653,7 @@ namespace MailKit.Net.Smtp {
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
-					if (QueryCapabilitiesAfterAuthenticating)
+					if (sasl.NegotiatedSecurityLayer)
 						Ehlo (cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);

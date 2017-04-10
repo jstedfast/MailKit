@@ -126,6 +126,19 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
+		/// Gets whether or not a security layer was negotiated.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not a security layer has been negotiated by the SASL mechanism.</para>
+		/// <note type="note">Some SASL mechanisms, such as GSSAPI, are able to negotiate security layers
+		/// such as integrity and confidentiality protection.</note>
+		/// </remarks>
+		/// <value><c>true</c> if a security layer was negotiated; otherwise, <c>false</c>.</value>
+		public virtual bool NegotiatedSecurityLayer {
+			get { return false; }
+		}
+
+		/// <summary>
 		/// Gets or sets the URI of the service.
 		/// </summary>
 		/// <remarks>
