@@ -511,24 +511,22 @@ namespace MailKit.Net.Imap {
 						inptr++;
 					}
 
-					if (inptr < inend) {
+					if (inptr + 1 < inend) {
 						// skip over closing '"'
 						inptr++;
 
-						if (inptr < inend) {
-							// Note: Some IMAP servers do not properly escape double-quotes inside
-							// of a qstring token and so, as an attempt at working around this
-							// problem, check that the closing '"' character is not immediately
-							// followed by any character that we would expect immediately following
-							// a qstring token.
-							//
-							// See https://github.com/jstedfast/MailKit/issues/485 for details.
-							if ("]) \r\n".IndexOf ((char) *inptr) != -1)
-								break;
+						// Note: Some IMAP servers do not properly escape double-quotes inside
+						// of a qstring token and so, as an attempt at working around this
+						// problem, check that the closing '"' character is not immediately
+						// followed by any character that we would expect immediately following
+						// a qstring token.
+						//
+						// See https://github.com/jstedfast/MailKit/issues/485 for details.
+						if ("]) \r\n".IndexOf ((char) *inptr) != -1)
+							break;
 
-							memory.WriteByte ((byte) '"');
-							continue;
-						}
+						memory.WriteByte ((byte) '"');
+						continue;
 					}
 
 					inputIndex = (int) (inptr - inbuf);
