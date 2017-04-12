@@ -1245,7 +1245,7 @@ namespace MailKit.Net.Imap {
 
 					labels.Add (label);
 				} else {
-					labels.Add (null);
+					labels.Add ("NIL");
 				}
 
 				token = engine.ReadToken (ImapStream.GMailLabelSpecials, cancellationToken);
