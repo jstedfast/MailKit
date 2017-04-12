@@ -531,7 +531,7 @@ namespace MailKit.Net.Imap {
 
 					inputIndex = (int) (inptr - inbuf);
 
-					ReadAhead (1, cancellationToken);
+					ReadAhead (2, cancellationToken);
 
 					inptr = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
