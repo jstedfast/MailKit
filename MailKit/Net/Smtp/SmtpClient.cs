@@ -363,13 +363,10 @@ namespace MailKit.Net.Smtp {
 
 		void FlushCommandQueue (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
 		{
-			if (queued.Count == 0)
-				return;
-
 			try {
 				var responses = new List<SmtpResponse> ();
 				Exception rex = null;
-				int count = 0;
+				int accepted = 0;
 				int rcpt = 0;
 
 				// Note: queued commands are buffered by the stream
@@ -393,12 +390,12 @@ namespace MailKit.Net.Smtp {
 						break;
 					case SmtpCommand.RcptTo:
 						if (ProcessRcptToResponse (message, recipients[rcpt++], responses[i]))
-							count++;
+							accepted++;
 						break;
 					}
 				}
 
-				if (count == 0)
+				if (accepted == 0)
 					OnNoRecipientsAccepted (message);
 
 				if (rex != null)
@@ -1525,7 +1522,7 @@ namespace MailKit.Net.Smtp {
 			return value.TrimEnd (',');
 		}
 
-		void RcptTo (FormatOptions options, MimeMessage message, MailboxAddress mailbox, CancellationToken cancellationToken)
+		bool RcptTo (FormatOptions options, MimeMessage message, MailboxAddress mailbox, CancellationToken cancellationToken)
 		{
 			var command = string.Format ("RCPT TO:<{0}>", GetAddrspec (options, mailbox));
 
@@ -1538,12 +1535,12 @@ namespace MailKit.Net.Smtp {
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
 				QueueCommand (SmtpCommand.RcptTo, command, cancellationToken);
-				return;
+				return false;
 			}
 
 			var response = SendCommand (command, cancellationToken);
 
-			ProcessRcptToResponse (message, mailbox, response);
+			return ProcessRcptToResponse (message, mailbox, response);
 		}
 
 		class SendContext
@@ -1704,13 +1701,20 @@ namespace MailKit.Net.Smtp {
 				// queue their commands instead of sending them immediately.
 				MailFrom (format, message, sender, extensions, cancellationToken);
 
-				for (int i = 0; i < recipients.Count; i++)
-					RcptTo (format, message, recipients[i], cancellationToken);
+				int accepted = 0;
+				for (int i = 0; i < recipients.Count; i++) {
+					if (RcptTo (format, message, recipients[i], cancellationToken))
+						accepted++;
+				}
 
-				// Note: if PIPELINING is supported, this will flush all outstanding
-				// MAIL FROM and RCPT TO commands to the server and then process all
-				// of their responses.
-				FlushCommandQueue (message, sender, recipients, cancellationToken);
+				if (queued.Count > 0) {
+					// Note: if PIPELINING is supported, this will flush all outstanding
+					// MAIL FROM and RCPT TO commands to the server and then process all
+					// of their responses.
+					FlushCommandQueue (message, sender, recipients, cancellationToken);
+				} else if (accepted == 0) {
+					OnNoRecipientsAccepted (message);
+				}
 
 				if ((extensions & SmtpExtension.BinaryMime) != 0)
 					Bdat (format, message, cancellationToken, progress);
