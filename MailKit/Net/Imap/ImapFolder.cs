@@ -5350,6 +5350,7 @@ namespace MailKit.Net.Imap {
 					modSeq.ModSeq = modseq;
 					labels.ModSeq = modseq;
 					flags.ModSeq = modseq;
+					modSeqChanged = true;
 					break;
 				case "FLAGS":
 					// even though we didn't request this piece of information, the IMAP server
