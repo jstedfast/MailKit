@@ -1520,7 +1520,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom)
 						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!ulong.TryParse ((string)token.Value, out modseq))
+					if (!ulong.TryParse ((string) token.Value, out modseq))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
@@ -1530,7 +1530,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom)
 						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string)token.Value, out count))
+					if (!int.TryParse ((string) token.Value, out count))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
@@ -1540,7 +1540,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom)
 						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string)token.Value, out count))
+					if (!int.TryParse ((string) token.Value, out count))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
@@ -1550,17 +1550,17 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom)
 						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!uint.TryParse ((string)token.Value, out uid))
+					if (!uint.TryParse ((string) token.Value, out uid))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
-						folder.UpdateUidNext (new UniqueId (uid));
+						folder.UpdateUidNext (uid > 0 ? new UniqueId (uid) : UniqueId.Invalid);
 					break;
 				case "UIDVALIDITY":
 					if (token.Type != ImapTokenType.Atom)
 						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!uint.TryParse ((string)token.Value, out uid))
+					if (!uint.TryParse ((string) token.Value, out uid))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
@@ -1570,7 +1570,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom)
 						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string)token.Value, out count))
+					if (!int.TryParse ((string) token.Value, out count))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
@@ -1578,7 +1578,7 @@ namespace MailKit.Net.Imap {
 					break;
 				case "APPENDLIMIT":
 					if (token.Type == ImapTokenType.Atom) {
-						if (!uint.TryParse ((string)token.Value, out limit))
+						if (!uint.TryParse ((string) token.Value, out limit))
 							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 						if (folder != null)
