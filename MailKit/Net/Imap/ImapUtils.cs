@@ -1263,7 +1263,7 @@ namespace MailKit.Net.Imap {
 			MessageThread thread, node, child;
 			uint uid;
 
-			if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid))
+			if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
 
 			node = thread = new MessageThread (new UniqueId (uidValidity, uid));
@@ -1278,7 +1278,7 @@ namespace MailKit.Net.Imap {
 					child = ParseThread (engine, uidValidity, cancellationToken);
 					node.Children.Add (child);
 				} else {
-					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid))
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
 
 					child = new MessageThread (new UniqueId (uidValidity, uid));

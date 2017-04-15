@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 using NUnit.Framework;
 
 using MailKit;
@@ -32,6 +34,13 @@ namespace UnitTests {
 	[TestFixture]
 	public class UniqueIdTests
 	{
+		[Test]
+		public void TestArgumentExceptions ()
+		{
+			Assert.Throws<ArgumentOutOfRangeException> (() => new UniqueId (0, 0));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new UniqueId (0));
+		}
+
 		[Test]
 		public void TestEquality ()
 		{

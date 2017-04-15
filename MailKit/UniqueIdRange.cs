@@ -49,11 +49,21 @@ namespace MailKit {
 		/// </remarks>
 		public static readonly UniqueIdRange All = new UniqueIdRange (UniqueId.MinValue, UniqueId.MaxValue);
 
-		static readonly UniqueIdRange Invalid = new UniqueIdRange (UniqueId.Invalid, UniqueId.Invalid);
+		static readonly UniqueIdRange Invalid = new UniqueIdRange ();
 
 		readonly uint validity;
 		internal uint start;
 		internal uint end;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.UniqueIdRange"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new (invalid) range of unique identifiers.
+		/// </remarks>
+		UniqueIdRange ()
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueIdRange"/> class.
@@ -66,6 +76,12 @@ namespace MailKit {
 		/// <param name="end">The last unique identifier in the range.</param>
 		public UniqueIdRange (uint validity, uint start, uint end)
 		{
+			if (start == 0)
+				throw new ArgumentOutOfRangeException (nameof (start));
+
+			if (end == 0)
+				throw new ArgumentOutOfRangeException (nameof (end));
+
 			this.validity = validity;
 			this.start = start;
 			this.end = end;
@@ -79,8 +95,19 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="start">The first <see cref="UniqueId"/> in the range.</param>
 		/// <param name="end">The last <see cref="UniqueId"/> in the range.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="start"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="end"/> is invalid.</para>
+		/// </exception>
 		public UniqueIdRange (UniqueId start, UniqueId end)
 		{
+			if (!start.IsValid)
+				throw new ArgumentOutOfRangeException (nameof (start));
+
+			if (!end.IsValid)
+				throw new ArgumentOutOfRangeException (nameof (end));
+
 			this.validity = start.Validity;
 			this.start = start.Id;
 			this.end = end.Id;

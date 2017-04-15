@@ -9034,7 +9034,7 @@ namespace MailKit.Net.Imap {
 					results.Count = count;
 					break;
 				case "MIN":
-					if (!uint.TryParse ((string) token.Value, out min))
+					if (!uint.TryParse ((string) token.Value, out min) || min == 0)
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Min = new UniqueId (ic.Folder.UidValidity, min);
@@ -9043,7 +9043,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom)
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
-					if (!uint.TryParse ((string) token.Value, out max))
+					if (!uint.TryParse ((string) token.Value, out max) || max == 0)
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Max = new UniqueId (ic.Folder.UidValidity, max);

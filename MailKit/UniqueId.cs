@@ -42,7 +42,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The invalid <see cref="UniqueId"/> value.
 		/// </remarks>
-		public static readonly UniqueId Invalid = new UniqueId (0);
+		public static readonly UniqueId Invalid;
 
 		/// <summary>
 		/// The minimum <see cref="UniqueId"/> value.
@@ -71,8 +71,14 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="validity">The uid validity.</param>
 		/// <param name="id">The unique identifier.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="id"/> is <c>0</c>.
+		/// </exception>
 		public UniqueId (uint validity, uint id)
 		{
+			if (id == 0)
+				throw new ArgumentOutOfRangeException (nameof (id));
+
 			this.validity = validity;
 			this.id = id;
 		}
@@ -84,8 +90,14 @@ namespace MailKit {
 		/// Creates a new <see cref="UniqueId"/> with the specified value.
 		/// </remarks>
 		/// <param name="id">The unique identifier.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="id"/> is <c>0</c>.
+		/// </exception>
 		public UniqueId (uint id)
 		{
+			if (id == 0)
+				throw new ArgumentOutOfRangeException (nameof (id));
+
 			this.validity = 0;
 			this.id = id;
 		}
@@ -341,7 +353,7 @@ namespace MailKit {
 
 			uint id;
 
-			if (!uint.TryParse (token, NumberStyles.None, CultureInfo.InvariantCulture, out id)) {
+			if (!uint.TryParse (token, NumberStyles.None, CultureInfo.InvariantCulture, out id) || id == 0) {
 				uid = Invalid;
 				return false;
 			}

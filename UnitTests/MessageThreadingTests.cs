@@ -101,7 +101,7 @@ namespace UnitTests {
 
 			DateUtils.TryParse (date, out value);
 
-			var summary = new MessageSummary (index++);
+			var summary = new MessageSummary (++index);
 			summary.UniqueId = new UniqueId ((uint) summary.Index);
 			summary.Envelope = new Envelope ();
 			summary.References = new MessageIdList ();
@@ -122,7 +122,7 @@ namespace UnitTests {
 			builder.Append (new string (' ', depth * 3));
 
 			if (thread.UniqueId.HasValue) {
-				var summary = messages[(int) thread.UniqueId.Value.Id];
+				var summary = messages[(int) thread.UniqueId.Value.Id - 1];
 				builder.Append (summary.Envelope.Subject);
 			} else {
 				builder.Append ("dummy");
