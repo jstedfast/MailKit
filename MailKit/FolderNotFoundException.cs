@@ -109,12 +109,8 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="folderName"/> is <c>null</c>.
 		/// </exception>
-		public FolderNotFoundException (string folderName) : base ("The requested folder could not be found.")
+		public FolderNotFoundException (string folderName) : this ("The requested folder could not be found.", folderName)
 		{
-			if (folderName == null)
-				throw new ArgumentNullException (nameof (folderName));
-
-			FolderName = folderName;
 		}
 
 		/// <summary>

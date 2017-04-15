@@ -25,6 +25,10 @@
 //
 
 using System;
+#if SERIALIZABLE
+using System.Security;
+using System.Runtime.Serialization;
+#endif
 
 namespace MailKit {
 	/// <summary>
@@ -37,8 +41,29 @@ namespace MailKit {
 	/// <a href="Overload_MailKit_IMailFolder_GetStream.htm">IMailFolder.GetStream</a>
 	/// when the server's response does not contain the message, body part, or stream data requested.
 	/// </remarks>
+#if SERIALIZABLE
+	[Serializable]
+#endif
 	public class MessageNotFoundException : Exception
 	{
+#if SERIALIZABLE
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MessageNotFoundException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Deserializes a <see cref="MessageNotFoundException"/>.
+		/// </remarks>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
+		[SecuritySafeCritical]
+		protected MessageNotFoundException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+		}
+#endif
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MessageNotFoundException"/> class.
 		/// </summary>

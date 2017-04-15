@@ -54,6 +54,9 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
 		[SecuritySafeCritical]
 		protected CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{

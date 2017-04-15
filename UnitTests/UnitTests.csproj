@@ -66,6 +66,7 @@
     <Compile Include="ArgumentExceptionTests.cs" />
     <Compile Include="BodyPartTests.cs" />
     <Compile Include="EnvelopeTests.cs" />
+    <Compile Include="ExceptionTests.cs" />
     <Compile Include="MessageSortingTests.cs" />
     <Compile Include="MessageThreadingTests.cs" />
     <Compile Include="UniqueIdRangeTests.cs" />
@@ -396,7 +397,7 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
       </Properties>
     </MonoDevelop>

@@ -53,6 +53,9 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
 		[SecuritySafeCritical]
 		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{

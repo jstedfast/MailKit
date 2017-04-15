@@ -55,6 +55,9 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
 		[SecuritySafeCritical]
 		protected Pop3CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
@@ -120,6 +123,9 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public Pop3CommandException (string message, string statusText) : base (message)
 		{
+			if (statusText == null)
+				throw new ArgumentNullException (nameof (statusText));
+
 			StatusText = statusText;
 		}
 
