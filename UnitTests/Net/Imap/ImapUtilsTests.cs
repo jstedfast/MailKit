@@ -227,6 +227,52 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseMalformedMailboxAddressInEnvelope ()
+		{
+			const string text = "(\"Mon, 10 Apr 2017 06:04:00 -0700\" \"Session 2: Building the meditation habit\" ((\"Headspace\" NIL \"members\" \"headspace.com\")) ((NIL NIL \"<members=headspace.com\" \"members.headspace.com>\")) ((\"Headspace\" NIL \"members\" \"headspace.com\")) ((NIL NIL \"user\" \"gmail.com\")) NIL NIL NIL \"<bvqyalstpemxt9y3afoqh4an62b2arcd.rcd.1491829440@members.headspace.com>\")";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						Envelope envelope;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							envelope = ImapUtils.ParseEnvelope (engine, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							return;
+						}
+
+						Assert.IsTrue (envelope.Date.HasValue, "Parsed ENVELOPE date is null.");
+						Assert.AreEqual ("Mon, 10 Apr 2017 06:04:00 -0700", DateUtils.FormatDate (envelope.Date.Value), "Date does not match.");
+						Assert.AreEqual ("Session 2: Building the meditation habit", envelope.Subject, "Subject does not match.");
+
+						Assert.AreEqual (1, envelope.From.Count, "From counts do not match.");
+						Assert.AreEqual ("\"Headspace\" <members@headspace.com>", envelope.From.ToString (), "From does not match.");
+
+						Assert.AreEqual (1, envelope.Sender.Count, "Sender counts do not match.");
+						Assert.AreEqual ("members=headspace.com@members.headspace.com", envelope.Sender.ToString (), "Sender does not match.");
+
+						Assert.AreEqual (1, envelope.ReplyTo.Count, "Reply-To counts do not match.");
+						Assert.AreEqual ("\"Headspace\" <members@headspace.com>", envelope.ReplyTo.ToString (), "Reply-To does not match.");
+
+						Assert.AreEqual (1, envelope.To.Count, "To counts do not match.");
+						Assert.AreEqual ("user@gmail.com", envelope.To.ToString (), "To does not match.");
+
+						Assert.AreEqual (0, envelope.Cc.Count, "Cc counts do not match.");
+						Assert.AreEqual (0, envelope.Bcc.Count, "Bcc counts do not match.");
+
+						Assert.IsNull (envelope.InReplyTo, "In-Reply-To is not null.");
+
+						Assert.AreEqual ("bvqyalstpemxt9y3afoqh4an62b2arcd.rcd.1491829440@members.headspace.com", envelope.MessageId, "Message-Id does not match.");
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestParseDovcotEnvelopeWithGroupAddresses ()
 		{
 			const string text = "(\"Mon, 13 Jul 2015 21:15:32 -0400\" \"Test message\" ((\"Example From\" NIL \"from\" \"example.com\")) ((\"Example Sender\" NIL \"sender\" \"example.com\")) ((\"Example Reply-To\" NIL \"reply-to\" \"example.com\")) ((NIL NIL \"boys\" NIL)(NIL NIL \"aaron\" \"MISSING_DOMAIN\")(NIL NIL \"jeff\" \"MISSING_DOMAIN\")(NIL NIL \"zach\" \"MISSING_DOMAIN\")(NIL NIL NIL NIL)(NIL NIL \"girls\" NIL)(NIL NIL \"alice\" \"MISSING_DOMAIN\")(NIL NIL \"hailey\" \"MISSING_DOMAIN\")(NIL NIL \"jenny\" \"MISSING_DOMAIN\")(NIL NIL NIL NIL)) NIL NIL NIL \"<MV4F9T0FLVT4.2CZLZPO4HZ8B3@Jeffreys-MacBook-Air.local>\")";

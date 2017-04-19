@@ -963,6 +963,7 @@ namespace MailKit.Net.Imap {
 
 			public MailboxAddress ToMailboxAddress ()
 			{
+				var mailbox = Mailbox;
 				var domain = Domain;
 				string name = null;
 
@@ -977,8 +978,13 @@ namespace MailKit.Net.Imap {
 				// appearing as a group address in the IMAP ENVELOPE response.
 				if (domain == "MISSING_DOMAIN")
 					domain = null;
+				else if (domain != null)
+					domain = domain.TrimEnd ('>');
 
-				string address = domain != null ? Mailbox + "@" + domain : Mailbox;
+				if (mailbox != null)
+					mailbox = mailbox.TrimStart ('<');
+
+				string address = domain != null ? mailbox + "@" + domain : Mailbox;
 				DomainList route;
 
 				if (Route != null && DomainList.TryParse (Route, out route))
