@@ -1069,10 +1069,23 @@ namespace MailKit.Net.Imap {
 					list.Add (group);
 				} else if (item.IsGroupEnd) {
 					group = null;
-				} else if (group != null) {
-					group.Members.Add (item.ToMailboxAddress ());
 				} else {
-					list.Add (item.ToMailboxAddress ());
+					MailboxAddress mailbox;
+
+					try {
+						// Note: We need to do a try/catch around ToMailboxAddress() because some addresses
+						// returned by the IMAP server might be completely horked. For an example, see the
+						// second error report in https://github.com/jstedfast/MailKit/issues/494 where one
+						// of the addresses in the ENVELOPE has the name and address tokens flipped.
+						mailbox = item.ToMailboxAddress ();
+					} catch {
+						continue;
+					}
+
+					if (group != null)
+						group.Members.Add (mailbox);
+					else
+						list.Add (mailbox);
 				}
 			} while (true);
 		}
