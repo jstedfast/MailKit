@@ -1,5 +1,12 @@
 # Release Notes
 
+### MailKit 1.16.0
+
+* Improved IMAP ENVELOPE parser to prevent exceptions when parsing invalid mailbox addresses. (issue #494)
+* Fixed UniqueId and UniqueIdRange to prevent developers from creating invalid UIDs and ranges.
+* Fixed ImapFolder.FetchStream() to properly emit MODSEQ changes if the server sends them.
+* Fixed SmtpClient to call OnNoRecipientsAccepted even in the non-PIPELINE case. (issue #491)
+
 ### MailKit 1.14.0
 
 * Improved IMAP's BODYSTRUCTURE parser to sanitize the Content-Disposition values. (issue #486)
