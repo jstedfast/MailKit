@@ -6,7 +6,7 @@ publisher-url: http://github.com/jstedfast/MailKit
 getting-started: GettingStarted.md
 details: Details.md
 license: ../License.md
-summary: A cross-platform .NET library for IMAP, POP3, and SMTP.
+summary: Send and receive emails via SMTP, IMAP, and POP3. Encrypt or sign emails via OpenPGP, S/MIME and DKIM.
 icons:
   - mailkit_512x512.png
   - mailkit_128x128.png
