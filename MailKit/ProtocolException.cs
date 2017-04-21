@@ -71,6 +71,7 @@ namespace MailKit {
 		/// <param name="innerException">An inner exception.</param>
 		protected ProtocolException (string message, Exception innerException) : base (message, innerException)
 		{
+			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
 		}
 
 		/// <summary>
@@ -82,6 +83,7 @@ namespace MailKit {
 		/// <param name="message">The error message.</param>
 		protected ProtocolException (string message) : base (message)
 		{
+			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
 		}
 
 		/// <summary>
@@ -92,6 +94,7 @@ namespace MailKit {
 		/// </remarks>
 		protected ProtocolException ()
 		{
+			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
 		}
 	}
 }
