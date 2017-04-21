@@ -1,8 +1,8 @@
-When submitting a bug report, please also include a protocol log (scrubbed of any authentication parameters).
-
-If your bug report is about hitting a [CommandException](http://www.mimekit.net/docs/html/T_MailKit_CommandException.htm) or
-[ProtocolException](http://www.mimekit.net/docs/html/T_MailKit_ProtocolException.htm) such as
-`Syntax error in XYZ. Unexpected token: [atom: 0]`, not including a protocol log will make me very unhappy.
+To help me debug your issue, please explain:
+- What were you trying to do?
+- What happened? Please include the exception Message *and* StackTrace. If you hit a [CommandException](http://www.mimekit.net/docs/html/T_MailKit_CommandException.htm) or [ProtocolException](http://www.mimekit.net/docs/html/T_MailKit_ProtocolException.htm) such as `Syntax error in XYZ. Unexpected token: [atom: 0]`, please also include the protocol log. (Note: not including a protocol log will make me very unhappy)
+- What did you expect to happen?
+- Step-by-step reproduction instructions and/or a simple test case.
 
 To get a protocol log, follow one of the following code snippets:
 
