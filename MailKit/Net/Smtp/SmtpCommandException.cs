@@ -102,22 +102,14 @@ namespace MailKit.Net.Smtp {
 		protected SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			MailboxAddress mailbox;
-			SmtpErrorCode code;
 			string value;
 
 			value = info.GetString ("Mailbox");
 			if (!string.IsNullOrEmpty (value) && MailboxAddress.TryParse (value, out mailbox))
 				Mailbox = mailbox;
 
-			value = info.GetString ("ErrorCode");
-			if (!Enum.TryParse (value, out code))
-				ErrorCode = SmtpErrorCode.MessageNotAccepted;
-			else
-				ErrorCode = code;
-
-			ErrorCode = (SmtpErrorCode) info.GetInt32 ("ErrorCode");
-
-			StatusCode = (SmtpStatusCode) info.GetInt32 ("StatusCode");
+			ErrorCode = (SmtpErrorCode) info.GetValue ("ErrorCode", typeof (SmtpErrorCode));
+			StatusCode = (SmtpStatusCode) info.GetValue ("StatusCode", typeof (SmtpStatusCode));
 		}
 #endif
 
@@ -176,8 +168,8 @@ namespace MailKit.Net.Smtp {
 			else
 				info.AddValue ("Mailbox", string.Empty);
 
-			info.AddValue ("ErrorCode", (int) ErrorCode);
-			info.AddValue ("StatusCode", (int) StatusCode);
+			info.AddValue ("ErrorCode", ErrorCode, typeof (SmtpErrorCode));
+			info.AddValue ("StatusCode", StatusCode, typeof (SmtpStatusCode));
 		}
 #endif
 

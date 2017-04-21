@@ -59,13 +59,8 @@ namespace MailKit.Net.Imap {
 		[SecuritySafeCritical]
 		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
-			var value = info.GetString ("Response");
-			ImapCommandResponse response;
-
-			Enum.TryParse (value, out response);
-
+			Response = (ImapCommandResponse) info.GetValue ("Response", typeof (ImapCommandResponse));
 			ResponseText = info.GetString ("ResponseText");
-			Response = response;
 		}
 #endif
 
@@ -187,7 +182,7 @@ namespace MailKit.Net.Imap {
 		{
 			base.GetObjectData (info, context);
 
-			info.AddValue ("Response", Response);
+			info.AddValue ("Response", Response, typeof (ImapCommandResponse));
 			info.AddValue ("ResponseText", ResponseText);
 		}
 #endif

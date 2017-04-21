@@ -76,7 +76,19 @@ namespace UnitTests
 		[Test]
 		public void TestImapCommandException ()
 		{
-			var expected = new ImapCommandException (ImapCommandResponse.Bad, "Bad boys, bad boys. Whatcha gonna do?", "Message");
+			var expected = new ImapCommandException (ImapCommandResponse.Bad, "Bad boys, bad boys. Whatcha gonna do?", "Message", new Exception ("InnerException"));
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (ImapCommandException)formatter.Deserialize (stream);
+				Assert.AreEqual (expected.Response, ex.Response, "Unexpected Response.");
+				Assert.AreEqual (expected.ResponseText, ex.ResponseText, "Unexpected ResponseText.");
+			}
+
+			expected = new ImapCommandException (ImapCommandResponse.Bad, "Bad boys, bad boys. Whatcha gonna do?", "Message");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -86,6 +98,43 @@ namespace UnitTests
 				var ex = (ImapCommandException) formatter.Deserialize (stream);
 				Assert.AreEqual (expected.Response, ex.Response, "Unexpected Response.");
 				Assert.AreEqual (expected.ResponseText, ex.ResponseText, "Unexpected ResponseText.");
+			}
+		}
+
+		[Test]
+		public void TestImapProtocolException ()
+		{
+			var expected = new ImapProtocolException ("Bad boys, bad boys. Whatcha gonna do?", new Exception ("InnerException"));
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (ImapProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+			}
+
+			expected = new ImapProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (ImapProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+			}
+
+			expected = new ImapProtocolException ();
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (ImapProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 		}
 
@@ -104,6 +153,43 @@ namespace UnitTests
 
 				var ex = (Pop3CommandException) formatter.Deserialize (stream);
 				Assert.AreEqual (expected.StatusText, ex.StatusText, "Unexpected StatusText.");
+			}
+		}
+
+		[Test]
+		public void TestPop3ProtocolException ()
+		{
+			var expected = new Pop3ProtocolException ("Bad boys, bad boys. Whatcha gonna do?", new Exception ("InnerException"));
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (Pop3ProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+			}
+
+			expected = new Pop3ProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (Pop3ProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+			}
+
+			expected = new Pop3ProtocolException ();
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (Pop3ProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 		}
 
@@ -132,6 +218,43 @@ namespace UnitTests
 			                                                    new MailboxAddress ("Unit Tests", "example@mimekit.net"), "Message"));
 			TestSmtpCommandException (new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.InsufficientStorage,
 			                                                    "Message"));
+		}
+
+		[Test]
+		public void TestSmtpProtocolException ()
+		{
+			var expected = new SmtpProtocolException ("Bad boys, bad boys. Whatcha gonna do?", new Exception ("InnerException"));
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+			}
+
+			expected = new SmtpProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+			}
+
+			expected = new SmtpProtocolException ();
+
+			using (var stream = new MemoryStream ()) {
+				var formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, expected);
+				stream.Position = 0;
+
+				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
+				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+			}
 		}
 	}
 }
