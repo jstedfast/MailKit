@@ -1,8 +1,14 @@
 To help me debug your issue, please explain:
 - What were you trying to do?
-- What happened? If you got an exception, please include the exception Message *and* StackTrace. If you hit a `CommandException` or `ProtocolException` such as `Syntax error in XYZ. Unexpected token: [atom: 0]`, INCLUDE THE PROTOCOL LOG (scrubbed of any authentication data). If you do not include the protocol log, you will make me VERY UNHAPPY.
+- What happened?
 - What did you expect to happen?
 - Step-by-step reproduction instructions and/or a simple test case.
+
+If you got an exception, please include the exception Message *and* StackTrace.
+
+If you got an exception such as `Syntax error in XYZ. Unexpected token: ...`,
+INCLUDE THE PROTOCOL LOG (scrubbed of any authentication data). If you do not include
+the protocol log, you will make me VERY UNHAPPY.
 
 To get a protocol log, follow one of the following code snippets:
 
