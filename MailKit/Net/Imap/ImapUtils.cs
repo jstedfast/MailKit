@@ -790,14 +790,16 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen) {
 				token = engine.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.OpenParen)
+				if (token.Type != ImapTokenType.OpenParen && token.Type != ImapTokenType.Nil)
 					throw ImapEngine.UnexpectedToken (format, token);
 
 				var builder = new StringBuilder ();
 				ContentType contentType;
 
 				builder.AppendFormat ("{0}/{1}", body.ContentType.MediaType, body.ContentType.MediaSubtype);
-				ParseParameterList (builder, engine, format, cancellationToken);
+
+				if (token.Type == ImapTokenType.OpenParen)
+					ParseParameterList (builder, engine, format, cancellationToken);
 
 				if (ContentType.TryParse (builder.ToString (), out contentType))
 					body.ContentType = contentType;

@@ -384,6 +384,49 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseMultipartBodyStructureWithNilBodyFldParam ()
+		{
+			const string text = "(((\"text\" \"plain\" (\"charset\" \"UTF-8\") NIL NIL \"7bit\" 148 12 NIL NIL NIL NIL)(\"text\" \"html\" (\"charset\" \"UTF-8\") NIL NIL \"quoted-printable\" 337 6 NIL NIL NIL NIL) \"alternative\" (\"boundary\" \"6c7f221bed92d80548353834d8e2\") NIL NIL NIL)((\"text\" \"plain\" (\"charset\" \"us-ascii\") NIL NIL \"7bit\" 0 0) \"x-zip\" NIL (\"attachment\" (\"filename\" \"YSOZ 265230.ZIP\")) NIL NIL) \"mixed\" (\"boundary\" \"c52bbfc0dd5365efa39b9f80eac3\") NIL NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart, alternative, xzip;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBody (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (body.ContentType.IsMimeType ("multipart", "mixed"), "Content-Type did not match.");
+						Assert.AreEqual ("c52bbfc0dd5365efa39b9f80eac3", body.ContentType.Parameters["boundary"], "boundary param did not match");
+						Assert.AreEqual (2, multipart.BodyParts.Count, "BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
+						alternative = (BodyPartMultipart) multipart.BodyParts[0];
+						Assert.AreEqual ("alternative", alternative.ContentType.MediaSubtype, "Content-Type did not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[1], "The type of the second child does not match.");
+						xzip = (BodyPartMultipart) multipart.BodyParts[1];
+						Assert.AreEqual ("x-zip", xzip.ContentType.MediaSubtype, "Content-Type did not match.");
+						Assert.AreEqual (0, xzip.ContentType.Parameters.Count, "Content-Type should not have params.");
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestParseExampleThreads ()
 		{
 			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
