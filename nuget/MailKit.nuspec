@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
-		<version>1.16.0</version>
+		<version>1.16.1</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -23,10 +23,7 @@ Features include:
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
 		<releaseNotes>
-* Improved IMAP ENVELOPE parser to prevent exceptions when parsing invalid mailbox addresses. (issue #494)
-* Fixed UniqueId and UniqueIdRange to prevent developers from creating invalid UIDs and ranges.
-* Fixed ImapFolder.FetchStream() to properly emit MODSEQ changes if the server sends them.
-* Fixed SmtpClient to call OnNoRecipientsAccepted even in the non-PIPELINE case. (issue #491)
+* Properly handle a NIL body-fld-params token for body-part-mpart. (issue #503)
 		</releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
@@ -48,21 +45,21 @@ Features include:
 		<dependencies>
 			<group targetFramework="net40">
 				<dependency id="BouncyCastle" version="1.8.1" />
-				<dependency id="MimeKit" version="1.16.0" />
+				<dependency id="MimeKit" version="1.16.1" />
 			</group>
 			<group targetFramework="net45">
 				<dependency id="BouncyCastle" version="1.8.1" />
-				<dependency id="MimeKit" version="1.16.0" />
+				<dependency id="MimeKit" version="1.16.1" />
 			</group>
 			<group targetFramework="net451">
 				<dependency id="BouncyCastle" version="1.8.1" />
-				<dependency id="MimeKit" version="1.16.0" />
+				<dependency id="MimeKit" version="1.16.1" />
 			</group>
 			<group targetFramework="MonoAndroid10">
-				<dependency id="MimeKit" version="1.16.0" />
+				<dependency id="MimeKit" version="1.16.1" />
 			</group>
 			<group targetFramework="Xamarin.iOS10">
-				<dependency id="MimeKit" version="1.16.0" />
+				<dependency id="MimeKit" version="1.16.1" />
 			</group>
 			<group targetFramework=".NETStandard1.3">
 				<dependency id="NETStandard.Library" version="1.6.1" />
@@ -75,11 +72,11 @@ Features include:
 				<dependency id="System.Net.Security" version="4.3.0" />
 				<dependency id="System.Data.Common" version="4.3.0" />
 				<dependency id="Portable.BouncyCastle" version="1.8.1.2" />
-				<dependency id="MimeKit" version="1.16.0" />
+				<dependency id="MimeKit" version="1.16.1" />
 			</group>
 			<group targetFramework="wpa81">
 				<dependency id="Portable.BouncyCastle" version="1.8.1.2" />
-				<dependency id="MimeKit" version="1.16.0" />
+				<dependency id="MimeKit" version="1.16.1" />
 			</group>
 		</dependencies>
 	</metadata>

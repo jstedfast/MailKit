@@ -1,5 +1,9 @@
 # Release Notes
 
+### MailKit 1.16.1
+
+* Properly handle a NIL body-fld-params token for body-part-mpart. (issue #503)
+
 ### MailKit 1.16.0
 
 * Improved IMAP ENVELOPE parser to prevent exceptions when parsing invalid mailbox addresses. (issue #494)
