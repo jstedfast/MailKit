@@ -2,7 +2,7 @@ id: mailkit
 name: MailKit
 version: 1.16.1
 publisher: Jeffrey Stedfast
-publisher-url: http://github.com/jstedfast/MailKit
+publisher-url: https://github.com/jstedfast/MailKit
 getting-started: GettingStarted.md
 details: Details.md
 license: ../License.md
@@ -21,3 +21,4 @@ samples:
   - name: "iOS Sample"
     path: ../samples/ImapClientDemo.iOS/ImapClientDemo.iOS.sln
 no_build: true
+is_shell: true
