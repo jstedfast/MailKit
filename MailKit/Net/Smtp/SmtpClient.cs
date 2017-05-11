@@ -202,6 +202,19 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+        /// <summary>
+        /// Set the local IP address to bind.
+        /// </summary>
+        /// <remarks>
+        /// Set the IP address the socket will use to bind a specific local IP address configured on the computer.
+        /// </remarks>
+        /// <value>The local IP address to use. Null for any.</value>
+        public string LocalIpBinding
+        {
+            set;
+            private get;
+        }
+
 		/// <summary>
 		/// Gets or sets the local domain.
 		/// </summary>
@@ -854,6 +867,26 @@ namespace MailKit.Net.Smtp {
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
+                if (LocalIpBinding != null) {
+
+                    IPAddress bindIP;
+                    if (IPAddress.TryParse(LocalIpBinding, out bindIP))
+                    {
+                        //Create an endpoint for the specified IP on any port
+                        IPEndPoint bindEndPoint = new IPEndPoint(bindIP, 0);
+
+                        //Bind the socket to the endpoint
+                        try
+                        {
+                            socket.Bind(bindEndPoint);
+                        }catch(SocketException ex){
+                            throw new Exception("Can't bind to IP " + bindEndPoint.Address, ex);
+                        }
+                    }
+                    else
+                        throw new Exception("Can't bind to IP " + LocalIpBinding);
+                }
+                
 				try {
 					cancellationToken.ThrowIfCancellationRequested ();
 
