@@ -467,7 +467,10 @@ namespace MailKit.Net.Smtp {
 			if (authenticated && response.StatusCode == SmtpStatusCode.BadCommandSequence)
 				return;
 
-			if (response.StatusCode != SmtpStatusCode.Ok) {
+            if (response.Response == "You already said EHLO")
+                return;
+
+            if (response.StatusCode != SmtpStatusCode.Ok) {
 				// Try sending HELO instead...
 				response = SendEhlo (false, cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
