@@ -3612,5 +3612,10 @@ namespace MailKit.Net.Pop3 {
 
 			base.Dispose (disposing);
 		}
+
+        public IProtocolLogger Logger()
+        {
+            return logger;
+        }
 	}
 }

@@ -2500,5 +2500,10 @@ namespace MailKit.Net.Imap {
 
 			base.Dispose (disposing);
 		}
+
+        public IProtocolLogger Logger()
+        {
+            return logger;
+        }
 	}
 }

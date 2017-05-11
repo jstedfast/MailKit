@@ -2141,5 +2141,10 @@ namespace MailKit.Net.Smtp {
 
 			base.Dispose (disposed);
 		}
+
+        public IProtocolLogger Logger()
+        {
+            return logger;
+        }
 	}
 }
