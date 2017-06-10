@@ -72,6 +72,15 @@ namespace MailKit {
 		X509CertificateCollection ClientCertificates { get; set; }
 
 		/// <summary>
+		/// Get or set whether connecting via SSL/TLS should check certificate revocation.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets whether connecting via SSL/TLS should check certificate revocation.
+		/// </remarks>
+		/// <value><c>true</c> certificate revocation should be checked; otherwise, <c>false</c>.</value>
+		bool CheckCertificateRevocation { get; set; }
+
+		/// <summary>
 		/// Get or sets a callback function to validate the server certificate.
 		/// </summary>
 		/// <remarks>

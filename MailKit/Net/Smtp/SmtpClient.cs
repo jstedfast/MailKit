@@ -885,9 +885,9 @@ namespace MailKit.Net.Smtp {
 
 				try {
 #if NETSTANDARD
-					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
-					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 				} catch {
 					ssl.Dispose ();
@@ -950,9 +950,9 @@ namespace MailKit.Net.Smtp {
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 #if NETSTANDARD
-					tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+					tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
-					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 					Stream.Stream = tls;
 #else
@@ -1087,9 +1087,9 @@ namespace MailKit.Net.Smtp {
 
 				try {
 #if NETSTANDARD
-					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
-					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 				} catch {
 					ssl.Dispose ();
@@ -1132,9 +1132,9 @@ namespace MailKit.Net.Smtp {
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 #if NETSTANDARD
-					tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+					tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
-					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 					Stream.Stream = tls;
 

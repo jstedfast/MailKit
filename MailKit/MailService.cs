@@ -73,6 +73,7 @@ namespace MailKit {
 
 #if !NETFX_CORE
 			SslProtocols = DefaultSslProtocols;
+			CheckCertificateRevocation = true;
 #endif
 			ProtocolLogger = protocolLogger;
 		}
@@ -85,6 +86,7 @@ namespace MailKit {
 		/// </remarks>
 		protected MailService () : this (new NullProtocolLogger ())
 		{
+			CheckCertificateRevocation = true;
 		}
 
 		/// <summary>
@@ -160,6 +162,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		public X509CertificateCollection ClientCertificates {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set whether connecting via SSL/TLS should check certificate revocation.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets whether connecting via SSL/TLS should check certificate revocation.
+		/// </remarks>
+		/// <value><c>true</c> certificate revocation should be checked; otherwise, <c>false</c>.</value>
+		public bool CheckCertificateRevocation {
 			get; set;
 		}
 
