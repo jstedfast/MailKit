@@ -10054,6 +10054,12 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
 
 			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));
+
+			if (!earlier) {
+				Count -= vanished.Count;
+
+				OnCountChanged ();
+			}
 		}
 
 		internal void UpdateAttributes (FolderAttributes attrs)
