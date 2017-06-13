@@ -1674,7 +1674,7 @@ namespace MailKit.Net.Imap {
 						if (current != null)
 							current.RespCodes.Add (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
-						var text = (token.Value.ToString()) + ReadLine (cancellationToken);
+						var text = token.Value.ToString () + ReadLine (cancellationToken);
 
 						if (current != null)
 							current.ResponseText = text.TrimEnd ();
