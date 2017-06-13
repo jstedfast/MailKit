@@ -636,7 +636,7 @@ namespace MailKit.Net.Smtp {
 				try {
 					while (!sasl.IsAuthenticated) {
 						if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
-							throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+							break;
 
 						challenge = sasl.Challenge (response.Response);
 						response = SendCommand (challenge, cancellationToken);
