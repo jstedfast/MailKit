@@ -6,9 +6,11 @@ To help me debug your issue, please explain:
 
 If you got an exception, please include the exception Message *and* StackTrace.
 
-If you got an exception such as `Syntax error in XYZ. Unexpected token: ...`,
-INCLUDE THE PROTOCOL LOG (scrubbed of any authentication data). If you do not include
-the protocol log, you will make me VERY UNHAPPY.
+Please also INCLUDE A PROTOCOL LOG (scrubbed of any authentication data), especially
+if you got an exception such as `Syntax error in XYZ. Unexpected token: ...`.
+If you do not include the protocol log, you will make me VERY UNHAPPY.
+
+Without a protocol log, I CANNOT fix the issue. I will simply close the bug report.
 
 To get a protocol log, follow one of the following code snippets:
 
