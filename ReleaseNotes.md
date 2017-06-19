@@ -1,5 +1,15 @@
 # Release Notes
 
+### MailKit 1.16.2
+
+* Added a leaveOpen param to the ProtocolLogger .ctor. (issue #506)
+* Added a CheckCertificateRevocation property on MailService. (issue #520)
+* Fixed ImapFolder to update the Count property and emit CountChanged when the IMAP server sends
+  an untagged VANISHED response. (issue #521)
+* Fixed ImapEngine to properly handle converting character tokens into strings. (issue #522)
+* Fixed SmtpClient to properly handle DIGEST-MD5 auth errors in order to fall back to the next
+  authentication mechanism.
+
 ### MailKit 1.16.1
 
 * Properly handle a NIL body-fld-params token for body-part-mpart. (issue #503)
