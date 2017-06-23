@@ -252,10 +252,14 @@ namespace MailKit.Net.Pop3 {
 				throw new Pop3ProtocolException (string.Format ("Unexpected greeting from server: {0}", greeting));
 			}
 
-			index = text.IndexOf ('>');
-			if (text.Length > 0 && text[0] == '<' && index != -1) {
-				ApopToken = text.Substring (0, index + 1);
-				Capabilities |= Pop3Capabilities.Apop;
+			index = text.IndexOf ('<');
+			if (index != -1 && index + 1 < text.Length) {
+				int endIndex = text.IndexOf ('>', index + 1);
+
+				if (endIndex++ != -1) {
+					ApopToken = text.Substring (index, endIndex - index);
+					Capabilities |= Pop3Capabilities.Apop;
+				}
 			}
 
 			State = Pop3EngineState.Connected;

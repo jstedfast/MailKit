@@ -1,1 +1,1 @@
-+OK <apop-token@example.com>
++OK POP3 server ready <apop-token@example.com>
