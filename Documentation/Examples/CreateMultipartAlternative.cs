@@ -5,7 +5,7 @@ var html = CreateTextHtmlPart ();
 // Note: it is important that the text/html part is added second, because it is the
 // most expressive version and (probably) the most faithful to the sender's WYSIWYG 
 // editor.
-var alternative = new Multipart ("alternative");
+var alternative = new MultipartAlternative ();
 alternative.Add (plain);
 alternative.Add (html);
 
