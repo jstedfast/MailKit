@@ -62,9 +62,9 @@ namespace MailKit.Security.Ntlm {
 			Level = NtlmSettings.DefaultAuthLevel;
 
 			challenge = (byte[]) type2.Nonce.Clone ();
-			domain = type2.TargetName;
+			Domain = type2.TargetName;
 			Username = userName;
-			host = hostName;
+			Host = hostName;
 
 			Flags = (NtlmFlags) 0x8200;
 			if ((type2.Flags & NtlmFlags.NegotiateUnicode) != 0)

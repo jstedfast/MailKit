@@ -149,7 +149,9 @@ namespace MailKit.Security {
 			var type2 = new Type2Message (token, startIndex, length);
 			var type3 = new Type3Message (type2, userName, string.Empty);
 			type3.Password = password;
-			type3.Domain = domain;
+
+			if (!string.IsNullOrEmpty (domain))
+				type3.Domain = domain;
 
 			return type3;
 		}
