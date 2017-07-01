@@ -9,6 +9,8 @@
 * Fixed ImapEngine to properly handle converting character tokens into strings. (issue #522)
 * Fixed SmtpClient to properly handle DIGEST-MD5 auth errors in order to fall back to the next
   authentication mechanism.
+* Fixed Pop3Client to properly detect APOP tokens after arbitrary text. (issue #529)
+* Disabled NTLM authentication since it often doesn't work properly. (issue #532)
 
 ### MailKit 1.16.1
 
