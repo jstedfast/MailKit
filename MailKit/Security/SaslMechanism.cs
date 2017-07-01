@@ -52,7 +52,7 @@ namespace MailKit.Security {
 		/// which order the SASL mechanisms supported by the server should be tried.
 		/// </remarks>
 		public static readonly string[] AuthMechanismRank = {
-			"XOAUTH2", "SCRAM-SHA-256", "SCRAM-SHA-1", "NTLM", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN"
+			"XOAUTH2", "SCRAM-SHA-256", "SCRAM-SHA-1", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN"
 		};
 
 		/// <summary>
