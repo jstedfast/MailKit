@@ -86,7 +86,9 @@ namespace MailKit {
 		/// </remarks>
 		protected MailService () : this (new NullProtocolLogger ())
 		{
-			CheckCertificateRevocation = true;
+#if !NETFX_CORE
+            CheckCertificateRevocation = true;
+#endif
 		}
 
 		/// <summary>
