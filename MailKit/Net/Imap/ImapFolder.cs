@@ -1057,6 +1057,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), pattern + "%");
 			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderList);
 			ic.UserData = list;
+			ic.Lsub = lsub;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);

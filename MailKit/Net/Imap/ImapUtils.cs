@@ -46,6 +46,8 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	static class ImapUtils
 	{
+		const FolderAttributes SpecialUseAttributes = FolderAttributes.All | FolderAttributes.Archive | FolderAttributes.Drafts |
+		    FolderAttributes.Flagged | FolderAttributes.Inbox | FolderAttributes.Junk | FolderAttributes.Sent | FolderAttributes.Trash;
 		const string QuotedSpecials = " \t()<>@,;:\\\"/[]?=";
 		static int InboxLength = "INBOX".Length;
 
@@ -456,6 +458,13 @@ namespace MailKit.Net.Imap {
 				attrs |= FolderAttributes.Inbox;
 
 			if (engine.GetCachedFolder (encodedName, out folder)) {
+				if (ic.Lsub) {
+					// Note: merge all pre-existing attributes since the LSUB response will not contain them
+					attrs |= folder.Attributes;
+				} else {
+					// Note: only merge the SPECIAL-USE and \Subscribed attributes for a LIST command
+					attrs |= (folder.Attributes & (SpecialUseAttributes | FolderAttributes.Subscribed));
+				}
 				folder.UpdateAttributes (attrs);
 			} else {
 				folder = engine.CreateImapFolder (encodedName, attrs, delim);

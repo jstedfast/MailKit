@@ -347,6 +347,7 @@ namespace MailKit.Net.Imap {
 		public string ResponseText { get; internal set; }
 		public ImapFolder Folder { get; private set; }
 		public object UserData { get; internal set; }
+		public bool Lsub { get; internal set; }
 		public string Tag { get; private set; }
 		public bool Bye { get; internal set; }
 		public int Id { get; internal set; }
