@@ -458,6 +458,15 @@ namespace MailKit.Net.Imap {
 				attrs |= FolderAttributes.Inbox;
 
 			if (engine.GetCachedFolder (encodedName, out folder)) {
+				if ((attrs & FolderAttributes.NonExistent) != 0) {
+					folder.UpdatePermanentFlags (MessageFlags.None);
+					folder.UpdateAcceptedFlags (MessageFlags.None);
+					folder.UpdateUidNext (UniqueId.Invalid);
+					folder.UpdateHighestModSeq (0);
+					folder.UpdateUidValidity (0);
+					folder.UpdateUnread (0);
+				}
+
 				if (ic.Lsub) {
 					// Note: merge all pre-existing attributes since the LSUB response will not contain them
 					attrs |= folder.Attributes;
@@ -465,6 +474,7 @@ namespace MailKit.Net.Imap {
 					// Note: only merge the SPECIAL-USE and \Subscribed attributes for a LIST command
 					attrs |= (folder.Attributes & (SpecialUseAttributes | FolderAttributes.Subscribed));
 				}
+
 				folder.UpdateAttributes (attrs);
 			} else {
 				folder = engine.CreateImapFolder (encodedName, attrs, delim);
