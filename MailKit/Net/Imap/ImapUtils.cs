@@ -456,7 +456,6 @@ namespace MailKit.Net.Imap {
 				attrs |= FolderAttributes.Inbox;
 
 			if (engine.GetCachedFolder (encodedName, out folder)) {
-				attrs |= (folder.Attributes & ~(FolderAttributes.Marked | FolderAttributes.Unmarked));
 				folder.UpdateAttributes (attrs);
 			} else {
 				folder = engine.CreateImapFolder (encodedName, attrs, delim);
