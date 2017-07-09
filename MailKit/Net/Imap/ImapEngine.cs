@@ -1611,135 +1611,147 @@ namespace MailKit.Net.Imap {
 			ImapUntaggedHandler handler;
 			ImapFolder folder;
 			uint number;
+			string atom;
 
 			if (current != null && current.Folder != null)
 				folder = current.Folder;
 			else
 				folder = Selected;
 
-			if (token.Type == ImapTokenType.Atom) {
-				var atom = (string) token.Value;
+			// Note: work around broken IMAP servers such as home.pl which sends "* [COPYUID ...]" resp-codes
+			// See https://github.com/jstedfast/MailKit/issues/115#issuecomment-313684616 for details.
+			if (token.Type == ImapTokenType.OpenBracket) {
+				// unget the '[' token and then pretend that we got an "OK"
+				Stream.UngetToken (token);
+				atom = "OK";
+			} else if (token.Type != ImapTokenType.Atom) {
+				// if we get anything else here, just ignore it?
+				Stream.UngetToken (token);
+				SkipLine (cancellationToken);
+				return result;
+			} else {
+				atom = (string) token.Value;
+			}
 
-				switch (atom) {
-				case "BYE":
-					token = Stream.ReadToken (cancellationToken);
+			switch (atom) {
+			case "BYE":
+				token = Stream.ReadToken (cancellationToken);
 
-					if (token.Type == ImapTokenType.OpenBracket) {
-						var code = ParseResponseCode (cancellationToken);
-						if (current != null)
-							current.RespCodes.Add (code);
-					}
-
-					ReadLine (cancellationToken);
-
-					if (current != null) {
-						current.Bye = true;
-					} else {
-						Disconnect ();
-					}
-					break;
-				case "CAPABILITY":
-					UpdateCapabilities (ImapTokenType.Eoln, cancellationToken);
-
-					// read the eoln token
-					Stream.ReadToken (cancellationToken);
-					break;
-				case "FLAGS":
-					folder.UpdateAcceptedFlags (ImapUtils.ParseFlagsList (this, atom, null, cancellationToken));
-					token = Stream.ReadToken (cancellationToken);
-
-					if (token.Type != ImapTokenType.Eoln) {
-						Debug.WriteLine ("Expected eoln after untagged FLAGS list, but got: {0}", token);
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, atom, token);
-					}
-					break;
-				case "NAMESPACE":
-					UpdateNamespaces (cancellationToken);
-					break;
-				case "STATUS":
-					UpdateStatus (cancellationToken);
-					break;
-				case "OK": case "NO": case "BAD":
-					if (atom == "OK")
-						result = ImapUntaggedResult.Ok;
-					else if (atom == "NO")
-						result = ImapUntaggedResult.No;
-					else
-						result = ImapUntaggedResult.Bad;
-
-					token = Stream.ReadToken (cancellationToken);
-
-					if (token.Type == ImapTokenType.OpenBracket) {
-						var code = ParseResponseCode (cancellationToken);
-						if (current != null)
-							current.RespCodes.Add (code);
-					} else if (token.Type != ImapTokenType.Eoln) {
-						var text = token.Value.ToString () + ReadLine (cancellationToken);
-
-						if (current != null)
-							current.ResponseText = text.TrimEnd ();
-					}
-					break;
-				default:
-					if (uint.TryParse (atom, out number)) {
-						// we probably have something like "* 1 EXISTS"
-						token = Stream.ReadToken (cancellationToken);
-
-						if (token.Type != ImapTokenType.Atom) {
-							// protocol error
-							Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
-							throw UnexpectedToken ("Syntax error in untagged response. Unexpected token: {0}", token);
-						}
-
-						atom = (string) token.Value;
-
-						if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
-							// the command registered an untagged handler for this atom...
-							handler (this, current, (int) number - 1);
-						} else if (folder != null) {
-							switch (atom) {
-							case "EXISTS":
-								folder.OnExists ((int) number);
-								break;
-							case "EXPUNGE":
-								if (number == 0)
-									throw UnexpectedToken ("Syntax error in untagged EXPUNGE response. Unexpected message index: 0");
-
-								folder.OnExpunge ((int) number - 1);
-								break;
-							case "FETCH":
-								// Apparently Courier-IMAP (2004) will reply with "* 0 FETCH ..." sometimes.
-								// See https://github.com/jstedfast/MailKit/issues/428 for details.
-								//if (number == 0)
-								//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
-
-								folder.OnFetch (this, (int) number - 1, cancellationToken);
-								break;
-							case "RECENT":
-								folder.OnRecent ((int) number);
-								break;
-							default:
-								Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
-								break;
-							}
-						} else {
-							Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
-						}
-
-						SkipLine (cancellationToken);
-					} else if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
-						// the command registered an untagged handler for this atom...
-						handler (this, current, -1);
-						SkipLine (cancellationToken);
-					} else if (atom == "VANISHED" && folder != null) {
-						folder.OnVanished (this, cancellationToken);
-						SkipLine (cancellationToken);
-					} else {
-						// don't know how to handle this... eat it?
-						SkipLine (cancellationToken);
-					}
-					break;
+				if (token.Type == ImapTokenType.OpenBracket) {
+					var code = ParseResponseCode (cancellationToken);
+					if (current != null)
+						current.RespCodes.Add (code);
 				}
+
+				ReadLine (cancellationToken);
+
+				if (current != null) {
+					current.Bye = true;
+				} else {
+					Disconnect ();
+				}
+				break;
+			case "CAPABILITY":
+				UpdateCapabilities (ImapTokenType.Eoln, cancellationToken);
+
+				// read the eoln token
+				Stream.ReadToken (cancellationToken);
+				break;
+			case "FLAGS":
+				folder.UpdateAcceptedFlags (ImapUtils.ParseFlagsList (this, atom, null, cancellationToken));
+				token = Stream.ReadToken (cancellationToken);
+
+				if (token.Type != ImapTokenType.Eoln) {
+					Debug.WriteLine ("Expected eoln after untagged FLAGS list, but got: {0}", token);
+					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, atom, token);
+				}
+				break;
+			case "NAMESPACE":
+				UpdateNamespaces (cancellationToken);
+				break;
+			case "STATUS":
+				UpdateStatus (cancellationToken);
+				break;
+			case "OK": case "NO": case "BAD":
+				if (atom == "OK")
+					result = ImapUntaggedResult.Ok;
+				else if (atom == "NO")
+					result = ImapUntaggedResult.No;
+				else
+					result = ImapUntaggedResult.Bad;
+
+				token = Stream.ReadToken (cancellationToken);
+
+				if (token.Type == ImapTokenType.OpenBracket) {
+					var code = ParseResponseCode (cancellationToken);
+					if (current != null)
+						current.RespCodes.Add (code);
+				} else if (token.Type != ImapTokenType.Eoln) {
+					var text = token.Value.ToString () + ReadLine (cancellationToken);
+
+					if (current != null)
+						current.ResponseText = text.TrimEnd ();
+				}
+				break;
+			default:
+				if (uint.TryParse (atom, out number)) {
+					// we probably have something like "* 1 EXISTS"
+					token = Stream.ReadToken (cancellationToken);
+
+					if (token.Type != ImapTokenType.Atom) {
+						// protocol error
+						Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
+						throw UnexpectedToken ("Syntax error in untagged response. Unexpected token: {0}", token);
+					}
+
+					atom = (string) token.Value;
+
+					if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+						// the command registered an untagged handler for this atom...
+						handler (this, current, (int) number - 1);
+					} else if (folder != null) {
+						switch (atom) {
+						case "EXISTS":
+							folder.OnExists ((int) number);
+							break;
+						case "EXPUNGE":
+							if (number == 0)
+								throw UnexpectedToken ("Syntax error in untagged EXPUNGE response. Unexpected message index: 0");
+
+							folder.OnExpunge ((int) number - 1);
+							break;
+						case "FETCH":
+							// Apparently Courier-IMAP (2004) will reply with "* 0 FETCH ..." sometimes.
+							// See https://github.com/jstedfast/MailKit/issues/428 for details.
+							//if (number == 0)
+							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
+
+							folder.OnFetch (this, (int) number - 1, cancellationToken);
+							break;
+						case "RECENT":
+							folder.OnRecent ((int) number);
+							break;
+						default:
+							Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
+							break;
+						}
+					} else {
+						Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
+					}
+
+					SkipLine (cancellationToken);
+				} else if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+					// the command registered an untagged handler for this atom...
+					handler (this, current, -1);
+					SkipLine (cancellationToken);
+				} else if (atom == "VANISHED" && folder != null) {
+					folder.OnVanished (this, cancellationToken);
+					SkipLine (cancellationToken);
+				} else {
+					// don't know how to handle this... eat it?
+					SkipLine (cancellationToken);
+				}
+				break;
 			}
 
 			return result;
