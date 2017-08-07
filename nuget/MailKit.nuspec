@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
-		<version>1.16.2</version>
+		<version>1.18.0</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -23,13 +23,9 @@ Features include:
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
 		<releaseNotes>
-* Added a leaveOpen param to the ProtocolLogger .ctor. (issue #506)
-* Added a CheckCertificateRevocation property on MailService. (issue #520)
-* Fixed ImapFolder to update the Count property and emit CountChanged when the IMAP server sends an untagged VANISHED response. (issue #521)
-* Fixed ImapEngine to properly handle converting character tokens into strings. (issue #522)
-* Fixed SmtpClient to properly handle DIGEST-MD5 auth errors in order to fall back to the next authentication mechanism.
-* Fixed Pop3Client to properly detect APOP tokens after arbitrary text. (issue #529)
-* Disabled NTLM authentication since it often doesn't work properly. (issue #532)
+* Improved logic for cached FolderAttributes on ImapFolder objects.
+* If/when the \NonExistent flag is present, reset ImapFolder state as it probably means another client has deleted the folder.
+* Added work-around for home.pl which sends an untagged `* [COPYUID ...]` response without an `OK` (technically, the COPYUID resp-code should only appear in the tagged response, but accept it anyway).
 		</releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>

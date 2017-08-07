@@ -1,5 +1,14 @@
 # Release Notes
 
+### MailKit 1.18.0
+
+* Improved logic for cached FolderAttributes on ImapFolder objects.
+* If/when the \NonExistent flag is present, reset ImapFolder state as it probably means
+  another client has deleted the folder.
+* Added work-around for home.pl which sends an untagged `* [COPYUID ...]` response
+  without an `OK` (technically, the COPYUID resp-code should only appear in the tagged
+  response, but accept it anyway).
+
 ### MailKit 1.16.2
 
 * Added a leaveOpen param to the ProtocolLogger .ctor. (issue #506)
