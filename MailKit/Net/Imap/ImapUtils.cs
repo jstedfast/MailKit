@@ -435,8 +435,8 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			// parse the folder name
-			token = engine.ReadToken (ImapStream.AtomSpecials, ic.CancellationToken);
+			// parse the folder name (Note: this *should* use AtomSpecials, but some IMAP servers are broken... *sigh*
+			token = engine.ReadToken (ImapStream.GMailLabelSpecials, ic.CancellationToken);
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
