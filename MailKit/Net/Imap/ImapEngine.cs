@@ -1319,16 +1319,30 @@ namespace MailKit.Net.Imap {
 
 				token = Stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, validity, out copy.SrcUidSet)) {
-					Debug.WriteLine ("Expected uid-set as second argument to 'COPYUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+				// Note: Outlook.com will apparently sometimes issue a [COPYUID nz_number SPACE SPACE] resp-code
+				// in response to a UID COPY or UID MOVE command. Likely this happens only when the source message
+				// didn't exist or something? See https://github.com/jstedfast/MailKit/issues/555 for details.
+
+				if (token.Type != ImapTokenType.CloseBracket) {
+					if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, validity, out copy.SrcUidSet)) {
+						Debug.WriteLine ("Expected uid-set as second argument to 'COPYUID' RESP-CODE, but got: {0}", token);
+						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+					}
+				} else {
+					copy.SrcUidSet = new UniqueIdSet ();
+					Stream.UngetToken (token);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, n32, out copy.DestUidSet)) {
-					Debug.WriteLine ("Expected uid-set as third argument to 'COPYUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+				if (token.Type != ImapTokenType.CloseBracket) {
+					if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, n32, out copy.DestUidSet)) {
+						Debug.WriteLine ("Expected uid-set as third argument to 'COPYUID' RESP-CODE, but got: {0}", token);
+						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+					}
+				} else {
+					copy.DestUidSet = new UniqueIdSet ();
+					Stream.UngetToken (token);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
