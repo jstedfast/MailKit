@@ -188,7 +188,7 @@ Fill in the areas outlined in red and then click **OK**. This will recursively c
 ## Updating the Source Code
 
 Occasionally you might want to update your local copy of the source code if I have made changes to MailKit since you
-downloaded the source code in the step above. To do this using the command-line version fo Git, you'll need to issue
+downloaded the source code in the step above. To do this using the command-line version of Git, you'll need to issue
 the following commands in your terminal within the MailKit directory:
 
     git pull
