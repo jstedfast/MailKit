@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.18.1
+
+* Gracefully handle IMAP COPYUID resp-codes without src or dest uid-set tokens. (issue #555)
+* Be more lenient with unquoted IMAP folder names containing ']'. (issue #557)
+
 ### MailKit 1.18.0
 
 * Improved logic for cached FolderAttributes on ImapFolder objects.
