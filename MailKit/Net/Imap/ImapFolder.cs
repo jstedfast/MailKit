@@ -1741,7 +1741,7 @@ namespace MailKit.Net.Imap {
 
 		static string ReadStringToken (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
-			var token = engine.ReadToken (cancellationToken);
+			var token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 
 			switch (token.Type) {
 			case ImapTokenType.Literal: return engine.ReadLiteral (cancellationToken);

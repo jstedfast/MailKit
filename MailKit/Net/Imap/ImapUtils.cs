@@ -435,8 +435,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			// parse the folder name (Note: this *should* use AtomSpecials, but some IMAP servers are broken... *sigh*
-			token = engine.ReadToken (ImapStream.GMailLabelSpecials, ic.CancellationToken);
+			token = engine.ReadToken (ImapStream.AtomSpecials, ic.CancellationToken);
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
@@ -1219,7 +1218,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static MessageFlags ParseFlagsList (ImapEngine engine, string name, HashSet<string> userFlags, CancellationToken cancellationToken)
 		{
-			var specials = engine.IsGMail ? ImapStream.GMailLabelSpecials : ImapStream.AtomSpecials;
 			var token = engine.ReadToken (cancellationToken);
 			var flags = MessageFlags.None;
 
@@ -1228,7 +1226,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, name, token);
 			}
 
-			token = engine.ReadToken (specials, cancellationToken);
+			token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 
 			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag) {
 				var flag = (string) token.Value;
@@ -1247,7 +1245,7 @@ namespace MailKit.Net.Imap {
 					break;
 				}
 
-				token = engine.ReadToken (specials, cancellationToken);
+				token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 			}
 
 			if (token.Type != ImapTokenType.CloseParen) {
@@ -1272,8 +1270,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);
 
-			// Note: GMail's IMAP implementation is broken and does not quote strings with ']' like it should.
-			token = engine.ReadToken (ImapStream.GMailLabelSpecials, cancellationToken);
+			token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 
 			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString || token.Type == ImapTokenType.Nil) {
 				// Apparently it's possible to set a NIL label in GMail...
@@ -1287,7 +1284,7 @@ namespace MailKit.Net.Imap {
 					labels.Add ("NIL");
 				}
 
-				token = engine.ReadToken (ImapStream.GMailLabelSpecials, cancellationToken);
+				token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 			}
 
 			if (token.Type != ImapTokenType.CloseParen)

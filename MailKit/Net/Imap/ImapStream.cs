@@ -64,10 +64,8 @@ namespace MailKit.Net.Imap {
 
 	class ImapStream : Stream, ICancellableStream
 	{
-		// Note: GMail's IMAP implementation is broken and does not quote strings with ']' like it should.
-		public const string GMailLabelSpecials = "(){%*\\\"\n";
-		public const string AtomSpecials       = "](){%*\\\"\n";
-		public const string DefaultSpecials    = "[" + AtomSpecials;
+		public const string AtomSpecials    = "(){%*\\\"\n";
+		public const string DefaultSpecials = "[]" + AtomSpecials;
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
 		const int PadSize = 4;

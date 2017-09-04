@@ -1484,7 +1484,7 @@ namespace MailKit.Net.Imap {
 
 		void UpdateStatus (CancellationToken cancellationToken)
 		{
-			var token = Stream.ReadToken (cancellationToken);
+			var token = Stream.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 			ImapFolder folder;
 			uint uid, limit;
 			ulong modseq;
