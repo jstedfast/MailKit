@@ -73,7 +73,9 @@ namespace MailKit {
 		/// Get the permanent flags.
 		/// </summary>
 		/// <remarks>
-		/// The permanent flags are the message flags that will persist between sessions.
+		/// <para>The permanent flags are the message flags that will persist between sessions.</para>
+		/// <para>If the <see cref="MessageFlags.UserDefined"/> flag is set, then the folder allows
+		/// storing of user-defined (custom) message flags.</para>
 		/// </remarks>
 		/// <value>The permanent flags.</value>
 		MessageFlags PermanentFlags { get; }
