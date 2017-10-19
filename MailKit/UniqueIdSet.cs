@@ -834,7 +834,7 @@ namespace MailKit {
 				if (builder.Length > 0)
 					builder.Append (',');
 
-				if (start != end)
+				if (start != end || uids.Count == 1)
 					builder.AppendFormat ("{0}:{1}", start, end);
 				else
 					builder.Append (start.ToString ());
