@@ -31,11 +31,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using MimeKit;
 using MimeKit.IO;
-using System.Threading.Tasks;
 
 #if NETFX_CORE
 using Windows.Networking;
