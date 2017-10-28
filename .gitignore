@@ -1,3 +1,4 @@
+*.csproj.nuget.cache
 *project.lock.json
 *.userprefs
 *.user
