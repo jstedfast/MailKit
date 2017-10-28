@@ -425,10 +425,7 @@ namespace MailKit {
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="UniqueIdRange"/>.</returns>
 		public override string ToString ()
 		{
-			if (start == end)
-				return start.ToString (CultureInfo.InvariantCulture);
-
-			if (start <= end && end == uint.MaxValue)
+			if (end == uint.MaxValue)
 				return string.Format (CultureInfo.InvariantCulture, "{0}:*", start);
 
 			return string.Format (CultureInfo.InvariantCulture, "{0}:{1}", start, end);
