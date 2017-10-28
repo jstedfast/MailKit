@@ -282,6 +282,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.InvalidOperationException">
 		/// Compression must be enabled before a folder has been selected.
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the <see cref="ImapCapabilities.Compress"/> extension.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -377,7 +380,7 @@ namespace MailKit.Net.Imap {
 		/// Enable the QRESYNC feature.
 		/// </summary>
 		/// <remarks>
-		/// <para>Enables the QRESYNC feature.</para>
+		/// <para>Enables the <a href="https://tools.ietf.org/html/rfc5162">QRESYNC</a> feature.</para>
 		/// <para>The QRESYNC extension improves resynchronization performance of folders by
 		/// querying the IMAP server for a list of changes when the folder is opened using the
 		/// <see cref="ImapFolder.Open(FolderAccess,uint,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
@@ -447,7 +450,7 @@ namespace MailKit.Net.Imap {
 		/// Enable the UTF8=ACCEPT extension.
 		/// </summary>
 		/// <remarks>
-		/// Enables the UTF8=ACCEPT extension.
+		/// Enables the <a href="https://tools.ietf.org/html/rfc6855">UTF8=ACCEPT</a> extension.
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -505,10 +508,10 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Enable the UTF8=ACCEPT extension.
+		/// Asynchronously enable the UTF8=ACCEPT extension.
 		/// </summary>
 		/// <remarks>
-		/// Enables the UTF8=ACCEPT extension.
+		/// Enables the <a href="https://tools.ietf.org/html/rfc6855">UTF8=ACCEPT</a> extension.
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
