@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
-		<version>1.18.1.1</version>
+		<version>1.20.0</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -23,8 +23,7 @@ Features include:
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
 		<releaseNotes>
-* Gracefully handle IMAP COPYUID resp-codes without src or dest uid-set tokens. (issue #555)
-* Be more lenient with unquoted IMAP folder names containing ']'. (issue #557)
+* Fixed UniqueIdRange.ToString() to always output a string in the form ${start}:${end} even if start == end. (issue #572)
 		</releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>

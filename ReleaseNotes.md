@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.20.0
+
+* Fixed UniqueIdRange.ToString() to always output a string in the form ${start}:${end} even if
+  start == end. (issue #572)
+
 ### MailKit 1.18.1
 
 * Gracefully handle IMAP COPYUID resp-codes without src or dest uid-set tokens. (issue #555)
