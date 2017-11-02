@@ -3374,10 +3374,11 @@ namespace MailKit.Net.Imap {
 						try {
 							summary.Headers = engine.ParseHeaders (engine.Stream, ic.CancellationToken);
 						} catch (FormatException) {
-							// consume any remaining literal data...
-							ReadLiteralData (engine, ic.CancellationToken);
 							summary.Headers = new HeaderList ();
 						}
+
+						// consume any remaining literal data... (typically extra blank lines)
+						ReadLiteralData (engine, ic.CancellationToken);
 
 						if ((idx = summary.Headers.IndexOf (HeaderId.References)) != -1) {
 							var references = summary.Headers[idx];
