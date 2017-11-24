@@ -1,5 +1,11 @@
 # Release Notes
 
+### MailKit 1.22.0
+
+* Enable TLSv1.1 and 1.2 for .NETStandard.
+* Read any remaining literal data after parsing headers. Fixes an issue when requesting
+  specific headers in an ImapFolder.Fetch() request if the server sends an extra newline.
+
 ### MailKit 1.20.0
 
 * Fixed UniqueIdRange.ToString() to always output a string in the form ${start}:${end} even if

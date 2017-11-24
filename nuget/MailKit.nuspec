@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
-		<version>1.20.0</version>
+		<version>1.22.0</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -23,7 +23,8 @@ Features include:
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
 		<releaseNotes>
-* Fixed UniqueIdRange.ToString() to always output a string in the form ${start}:${end} even if start == end. (issue #572)
+* Enable TLSv1.1 and 1.2 for .NETStandard.
+* Read any remaining literal data after parsing headers. Fixes an issue when requesting specific headers in an ImapFolder.Fetch() request if the server sends an extra newline.
 		</releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
