@@ -27,6 +27,8 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -60,14 +62,17 @@ namespace UnitTests.Net.Pop3 {
 		int timeout = 100000;
 		Stream stream;
 		bool disposed;
+		bool asyncIO;
+		bool isAsync;
 		int index;
 
-		public Pop3ReplayStream (IList<Pop3ReplayCommand> commands, bool testUnixFormat)
+		public Pop3ReplayStream (IList<Pop3ReplayCommand> commands, bool asyncIO, bool testUnixFormat)
 		{
 			stream = GetResourceStream (commands[0].Resource);
 			state = Pop3ReplayState.SendResponse;
 			this.testUnixFormat = testUnixFormat;
 			this.commands = commands;
+			this.asyncIO = asyncIO;
 		}
 
 		void CheckDisposed ()
@@ -117,6 +122,12 @@ namespace UnitTests.Net.Pop3 {
 		{
 			CheckDisposed ();
 
+			if (asyncIO) {
+				Assert.IsTrue (isAsync, "Trying to Read in an async unit test.");
+			} else {
+				Assert.IsFalse (isAsync, "Trying to ReadAsync in a non-async unit test.");
+			}
+
 			Assert.AreEqual (Pop3ReplayState.SendResponse, state, "Trying to read when no command given.");
 			Assert.IsNotNull (stream, "Trying to read when no data available.");
 
@@ -128,6 +139,17 @@ namespace UnitTests.Net.Pop3 {
 			}
 
 			return nread;
+		}
+
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			isAsync = true;
+
+			try {
+				return Task.FromResult (Read (buffer, offset, count));
+			} finally {
+				isAsync = false;
+			}
 		}
 
 		Stream GetResourceStream (string name)
@@ -152,6 +174,12 @@ namespace UnitTests.Net.Pop3 {
 		{
 			CheckDisposed ();
 
+			if (asyncIO) {
+				Assert.IsTrue (isAsync, "Trying to Write in an async unit test.");
+			} else {
+				Assert.IsFalse (isAsync, "Trying to WriteAsync in a non-async unit test.");
+			}
+
 			Assert.AreEqual (Pop3ReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
 
 			var command = Encoding.UTF8.GetString (buffer, offset, count);
@@ -165,9 +193,32 @@ namespace UnitTests.Net.Pop3 {
 			state = Pop3ReplayState.SendResponse;
 		}
 
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			isAsync = true;
+
+			try {
+				Write (buffer, offset, count);
+				return Task.FromResult (true);
+			} finally {
+				isAsync = false;
+			}
+		}
+
 		public override void Flush ()
 		{
 			CheckDisposed ();
+
+			Assert.IsFalse (asyncIO, "Trying to Flush in an async unit test.");
+		}
+
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			Assert.IsTrue (asyncIO, "Trying to FlushAsync in a non-async unit test.");
+
+			return Task.FromResult (true);
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)

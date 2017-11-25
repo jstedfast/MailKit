@@ -29,6 +29,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using MimeKit;
@@ -49,7 +50,7 @@ namespace MailKit.Net.Imap {
 	/// force-disconnect the connection. If a non-fatal error occurs, set
 	/// it on the <see cref="ImapCommand.Exception"/> property.
 	/// </remarks>
-	delegate void ImapContinuationHandler (ImapEngine engine, ImapCommand ic, string text);
+	delegate Task ImapContinuationHandler (ImapEngine engine, ImapCommand ic, string text, bool doAsync);
 
 	/// <summary>
 	/// An IMAP untagged response handler.
@@ -57,7 +58,7 @@ namespace MailKit.Net.Imap {
 	/// <remarks>
 	/// <para>Most IMAP commands return their results in untagged responses.</para>
 	/// </remarks>
-	delegate void ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, int index);
+	delegate Task ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync);
 
 	delegate void ImapCommandResetHandler (ImapCommand ic);
 
@@ -276,13 +277,20 @@ namespace MailKit.Net.Imap {
 		/// Writes the literal to the specified stream.
 		/// </remarks>
 		/// <param name="stream">The stream.</param>
+		/// <param name="doAsync">Whether the literal should be written asynchronously or not.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public void WriteTo (ImapStream stream, CancellationToken cancellationToken)
+		public async Task WriteToAsync (ImapStream stream, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (Type == ImapLiteralType.String) {
 				var bytes = (byte[]) Literal;
-				stream.Write (bytes, 0, bytes.Length, cancellationToken);
-				stream.Flush (cancellationToken);
+
+				if (doAsync) {
+					await stream.WriteAsync (bytes, 0, bytes.Length, cancellationToken).ConfigureAwait (false);
+					await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+				} else {
+					stream.Write (bytes, 0, bytes.Length, cancellationToken);
+					stream.Flush (cancellationToken);
+				}
 				return;
 			}
 
@@ -290,8 +298,13 @@ namespace MailKit.Net.Imap {
 				var message = (MimeMessage) Literal;
 
 				using (var s = new ProgressStream (stream, update)) {
-					message.WriteTo (format, s, cancellationToken);
-					s.Flush (cancellationToken);
+					if (doAsync) {
+						await message.WriteToAsync (format, s, cancellationToken).ConfigureAwait (false);
+						await s.FlushAsync (cancellationToken).ConfigureAwait (false);
+					} else {
+						message.WriteTo (format, s, cancellationToken);
+						s.Flush (cancellationToken);
+					}
 					return;
 				}
 			}
@@ -300,10 +313,17 @@ namespace MailKit.Net.Imap {
 			var buf = new byte[4096];
 			int nread;
 
-			while ((nread = literal.Read (buf, 0, buf.Length)) > 0)
-				stream.Write (buf, 0, nread, cancellationToken);
+			if (doAsync) {
+				while ((nread = await literal.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false)) > 0)
+					await stream.WriteAsync (buf, 0, nread, cancellationToken).ConfigureAwait (false);
 
-			stream.Flush (cancellationToken);
+				await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+			} else {
+				while ((nread = literal.Read (buf, 0, buf.Length)) > 0)
+					stream.Write (buf, 0, nread, cancellationToken);
+
+				stream.Flush (cancellationToken);
+			}
 		}
 	}
 
@@ -599,7 +619,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public bool Step ()
+		public async Task<bool> StepAsync (bool doAsync)
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
 			int timeout = Engine.Stream.CanTimeout ? Engine.Stream.ReadTimeout : -1;
@@ -612,13 +632,20 @@ namespace MailKit.Net.Imap {
 				Tag = string.Format ("{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
 
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
-				Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
+
+				if (doAsync)
+					await Engine.Stream.WriteAsync (buf, 0, buf.Length, CancellationToken).ConfigureAwait (false);
+				else
+					Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
 			}
 
 			do {
 				var command = parts[current].Command;
 
-				Engine.Stream.Write (command, 0, command.Length, CancellationToken);
+				if (doAsync)
+					await Engine.Stream.WriteAsync (command, 0, command.Length, CancellationToken).ConfigureAwait (false);
+				else
+					Engine.Stream.Write (command, 0, command.Length, CancellationToken);
 
 				// if the server doesn't support LITERAL+ (or LITERAL-), we'll need to wait
 				// for a "+" response before writing out the any literals...
@@ -626,7 +653,7 @@ namespace MailKit.Net.Imap {
 					break;
 
 				// otherwise, we can write out any and all literal tokens we have...
-				parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+				await parts[current].Literal.WriteToAsync (Engine.Stream, doAsync, CancellationToken).ConfigureAwait (false);
 
 				if (current + 1 >= parts.Count)
 					break;
@@ -634,7 +661,10 @@ namespace MailKit.Net.Imap {
 				current++;
 			} while (true);
 
-			Engine.Stream.Flush (CancellationToken);
+			if (doAsync)
+				await Engine.Stream.FlushAsync (CancellationToken).ConfigureAwait (false);
+			else
+				Engine.Stream.Flush (CancellationToken);
 
 			// now we need to read the response...
 			do {
@@ -643,7 +673,7 @@ namespace MailKit.Net.Imap {
 						if (Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = -1;
 
-						token = Engine.ReadToken (idle.LinkedToken);
+						token = await Engine.ReadTokenAsync (doAsync, idle.LinkedToken).ConfigureAwait (false);
 
 						if (Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = timeout;
@@ -656,31 +686,31 @@ namespace MailKit.Net.Imap {
 
 						Engine.Stream.IsConnected = true;
 
-						token = Engine.ReadToken (CancellationToken);
+						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 					}
 				} else {
-					token = Engine.ReadToken (CancellationToken);
+					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 				}
 
 				if (token.Type == ImapTokenType.Atom && token.Value.ToString () == "+") {
 					// we've gotten a continuation response from the server
-					var text = Engine.ReadLine (CancellationToken).Trim ();
+					var text = (await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false)).Trim ();
 
 					// if we've got a Literal pending, the '+' means we can send it now...
 					if (!supportsLiteralPlus && parts[current].Literal != null) {
-						parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+						await parts[current].Literal.WriteToAsync (Engine.Stream, doAsync, CancellationToken).ConfigureAwait (false);
 						break;
 					}
 
 					Debug.Assert (ContinuationHandler != null, "The ImapCommand's ContinuationHandler is null");
 
-					ContinuationHandler (Engine, this, text);
+					await ContinuationHandler (Engine, this, text, doAsync).ConfigureAwait (false);
 				} else if (token.Type == ImapTokenType.Asterisk) {
 					// we got an untagged response, let the engine handle this...
-					Engine.ProcessUntaggedResponse (CancellationToken);
+					await Engine.ProcessUntaggedResponseAsync (doAsync, CancellationToken).ConfigureAwait (false);
 				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
 					// the next token should be "OK", "NO", or "BAD"
-					token = Engine.ReadToken (CancellationToken);
+					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 
 					if (token.Type == ImapTokenType.Atom) {
 						string atom = (string) token.Value;
@@ -692,16 +722,17 @@ namespace MailKit.Net.Imap {
 						default: throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. Unexpected token: {0}", token);
 						}
 
-						token = Engine.ReadToken (CancellationToken);
+						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 						if (token.Type == ImapTokenType.OpenBracket) {
-							var code = Engine.ParseResponseCode (CancellationToken);
+							var code = await Engine.ParseResponseCodeAsync (doAsync, CancellationToken).ConfigureAwait (false);
 							RespCodes.Add (code);
 							break;
 						}
 
 						if (token.Type != ImapTokenType.Eoln) {
 							// consume the rest of the line...
-							ResponseText = ((string) (token.Value) + Engine.ReadLine (CancellationToken)).TrimEnd ();
+							var line = await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false);
+							ResponseText = ((string) (token.Value) + line).TrimEnd ();
 							break;
 						}
 					} else {
@@ -712,7 +743,7 @@ namespace MailKit.Net.Imap {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
 					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
-					var code = Engine.ParseResponseCode (CancellationToken);
+					var code = await Engine.ParseResponseCodeAsync (doAsync, CancellationToken).ConfigureAwait (false);
 					RespCodes.Add (code);
 				} else {
 					// no clue what we got...

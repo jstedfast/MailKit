@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 using MimeKit.IO;
 
@@ -113,6 +114,16 @@ namespace MailKit {
 			return n;
 		}
 
+		public override async Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			int n;
+
+			if ((n = await Source.ReadAsync (buffer, offset, count, cancellationToken).ConfigureAwait (false)) > 0)
+				Update (n);
+
+			return n;
+		}
+
 		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			if (cancellable != null)
@@ -127,6 +138,14 @@ namespace MailKit {
 		public override void Write (byte[] buffer, int offset, int count)
 		{
 			Source.Write (buffer, offset, count);
+
+			if (count > 0)
+				Update (count);
+		}
+
+		public override async Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			await Source.WriteAsync (buffer, offset, count, cancellationToken).ConfigureAwait (false);
 
 			if (count > 0)
 				Update (count);
@@ -148,6 +167,11 @@ namespace MailKit {
 		public override void Flush ()
 		{
 			Source.Flush ();
+		}
+
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			return Source.FlushAsync (cancellationToken);
 		}
 
 		public override void SetLength (long value)

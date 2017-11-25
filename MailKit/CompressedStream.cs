@@ -26,6 +26,8 @@
 
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Org.BouncyCastle.Utilities.Zlib;
 
@@ -154,6 +156,44 @@ namespace MailKit {
 				throw new ObjectDisposedException (nameof (CompressedStream));
 		}
 
+		async Task<int> ReadAsync (byte[] buffer, int offset, int count, bool doAsync, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			ValidateArguments (buffer, offset, count);
+
+			if (count == 0)
+				return 0;
+
+			zIn.next_out = buffer;
+			zIn.next_out_index = offset;
+			zIn.avail_out = count;
+
+			do {
+				if (zIn.avail_in == 0 && !eos) {
+					if (doAsync)
+						zIn.avail_in = await BaseStream.ReadAsync (zIn.next_in, 0, zIn.next_in.Length, cancellationToken).ConfigureAwait (false);
+					else
+						zIn.avail_in = BaseStream.Read (zIn.next_in, 0, zIn.next_in.Length);
+					eos = zIn.avail_in == 0;
+					zIn.next_in_index = 0;
+				}
+
+				int retval = zIn.inflate (JZlib.Z_FULL_FLUSH);
+
+				if (retval == JZlib.Z_STREAM_END)
+					break;
+
+				if (eos && retval == JZlib.Z_BUF_ERROR)
+					return 0;
+
+				if (retval != JZlib.Z_OK)
+					throw new IOException ("Error inflating: " + zIn.msg);
+			} while (zIn.avail_out == count);
+
+			return count - zIn.avail_out;
+		}
+
 		/// <summary>
 		/// Reads a sequence of bytes from the stream and advances the position
 		/// within the stream by the number of bytes read.
@@ -180,46 +220,73 @@ namespace MailKit {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 		{
+			return ReadAsync (buffer, offset, count, false, CancellationToken.None).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Reads a sequence of bytes from the stream and advances the position
+		/// within the stream by the number of bytes read.
+		/// </summary>
+		/// <returns>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many
+		/// bytes are not currently available, or zero (0) if the end of the stream has been reached.</returns>
+		/// <param name="buffer">The buffer.</param>
+		/// <param name="offset">The buffer offset.</param>
+		/// <param name="count">The number of bytes to read.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// at the specified <paramref name="offset"/>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return ReadAsync (buffer, offset, count, true, cancellationToken);
+		}
+
+		async Task WriteAsync (byte[] buffer, int offset, int count, bool doAsync, CancellationToken cancellationToken)
+		{
 			CheckDisposed ();
 
 			ValidateArguments (buffer, offset, count);
 
 			if (count == 0)
-				return 0;
+				return;
 
-			zIn.next_out = buffer;
-			zIn.next_out_index = offset;
-			zIn.avail_out = count;
+			zOut.next_in = buffer;
+			zOut.next_in_index = offset;
+			zOut.avail_in = count;
 
 			do {
-				if (zIn.avail_in == 0 && !eos) {
-					zIn.avail_in = BaseStream.Read (zIn.next_in, 0, zIn.next_in.Length);
-					eos = zIn.avail_in == 0;
-					zIn.next_in_index = 0;
-				}
+				zOut.avail_out = zOut.next_out.Length;
+				zOut.next_out_index = 0;
 
-				int retval = zIn.inflate (JZlib.Z_FULL_FLUSH);
+				if (zOut.deflate (JZlib.Z_FULL_FLUSH) != JZlib.Z_OK)
+					throw new IOException ("Error deflating: " + zOut.msg);
 
-				if (retval == JZlib.Z_STREAM_END)
-					break;
-
-				if (eos && retval == JZlib.Z_BUF_ERROR)
-					return 0;
-
-				if (retval != JZlib.Z_OK)
-					throw new IOException ("Error inflating: " + zIn.msg);
-			} while (zIn.avail_out == count);
-
-			return count - zIn.avail_out;
+				if (doAsync)
+					await BaseStream.WriteAsync (zOut.next_out, 0, zOut.next_out.Length - zOut.avail_out, cancellationToken).ConfigureAwait (false);
+				else
+					BaseStream.Write (zOut.next_out, 0, zOut.next_out.Length - zOut.avail_out);
+			} while (zOut.avail_in > 0 || zOut.avail_out == 0);
 		}
 
 		/// <summary>
 		/// Writes a sequence of bytes to the stream and advances the current
 		/// position within this stream by the number of bytes written.
 		/// </summary>
-		/// <param name='buffer'>The buffer to write.</param>
-		/// <param name='offset'>The offset of the first byte to write.</param>
-		/// <param name='count'>The number of bytes to write.</param>
+		/// <param name="buffer">The buffer to write.</param>
+		/// <param name="offset">The offset of the first byte to write.</param>
+		/// <param name="count">The number of bytes to write.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="buffer"/> is <c>null</c>.
 		/// </exception>
@@ -240,26 +307,39 @@ namespace MailKit {
 		/// </exception>
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			CheckDisposed ();
+			WriteAsync (buffer, offset, count, false, CancellationToken.None).GetAwaiter ().GetResult ();
+		}
 
-			ValidateArguments (buffer, offset, count);
-
-			if (count == 0)
-				return;
-
-			zOut.next_in = buffer;
-			zOut.next_in_index = offset;
-			zOut.avail_in = count;
-
-			do {
-				zOut.avail_out = zOut.next_out.Length;
-				zOut.next_out_index = 0;
-
-				if (zOut.deflate (JZlib.Z_FULL_FLUSH) != JZlib.Z_OK)
-					throw new IOException ("Error deflating: " + zOut.msg);
-
-				BaseStream.Write (zOut.next_out, 0, zOut.next_out.Length - zOut.avail_out);
-			} while (zOut.avail_in > 0 || zOut.avail_out == 0);
+		/// <summary>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </summary>
+		/// <returns>A task that represents the asynchronous write operation.</returns>
+		/// <param name="buffer">The buffer to write.</param>
+		/// <param name="offset">The offset of the first byte to write.</param>
+		/// <param name="count">The number of bytes to write.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// at the specified <paramref name="offset"/>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The stream does not support writing.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return WriteAsync (buffer, offset, count, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -280,6 +360,27 @@ namespace MailKit {
 			CheckDisposed ();
 
 			BaseStream.Flush ();
+		}
+
+		/// <summary>
+		/// Clears all output buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </summary>
+		/// <returns>A task that represents the asynchronous flush operation.</returns>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The stream does not support writing.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			return BaseStream.FlushAsync (cancellationToken);
 		}
 
 		/// <summary>

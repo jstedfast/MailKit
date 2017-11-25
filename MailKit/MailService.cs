@@ -403,22 +403,38 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public abstract Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+
+		SecureSocketOptions GetSecureSocketOptions (Uri uri)
 		{
-			if (host == null)
-				throw new ArgumentNullException (nameof (host));
+			var protocol = uri.Scheme.ToLowerInvariant ();
+			var query = uri.ParsedQuery ();
+			string value;
 
-			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
+			// Note: early versions of MailKit used "pop3" and "pop3s"
+			if (protocol == "pop3s")
+				protocol = "pops";
+			else if (protocol == "pop3")
+				protocol = "pop";
 
-			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException (nameof (port));
+			if (protocol == Protocol + "s")
+				return SecureSocketOptions.SslOnConnect;
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Connect (host, port, options, cancellationToken);
+			if (protocol != Protocol)
+				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
+
+			if (query.TryGetValue ("starttls", out value)) {
+				switch (value.ToLowerInvariant ()) {
+				default:
+					return SecureSocketOptions.StartTlsWhenAvailable;
+				case "always": case "true": case "yes":
+					return SecureSocketOptions.StartTls;
+				case "never": case "false": case "no":
+					return SecureSocketOptions.None;
 				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			}
+
+			return SecureSocketOptions.StartTlsWhenAvailable;
 		}
 
 		/// <summary>
@@ -464,36 +480,7 @@ namespace MailKit {
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", nameof (uri));
 
-			var protocol = uri.Scheme.ToLowerInvariant ();
-			var query = uri.ParsedQuery ();
-			SecureSocketOptions options;
-			string value;
-
-			// Note: early versions of MailKit used "pop3" and "pop3s"
-			if (protocol == "pop3s")
-				protocol = "pops";
-			else if (protocol == "pop3")
-				protocol = "pop";
-
-			if (protocol == Protocol + "s") {
-				options = SecureSocketOptions.SslOnConnect;
-			} else if (protocol != Protocol) {
-				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
-			} else if (query.TryGetValue ("starttls", out value)) {
-				switch (value.ToLowerInvariant ()) {
-				default:
-					options = SecureSocketOptions.StartTlsWhenAvailable;
-					break;
-				case "always": case "true": case "yes":
-					options = SecureSocketOptions.StartTls;
-					break;
-				case "never": case "false": case "no":
-					options = SecureSocketOptions.None;
-					break;
-				}
-			} else {
-				options = SecureSocketOptions.StartTlsWhenAvailable;
-			}
+			var options = GetSecureSocketOptions (uri);
 
 			Connect (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
 		}
@@ -539,11 +526,9 @@ namespace MailKit {
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", nameof (uri));
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Connect (uri, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			var options = GetSecureSocketOptions (uri);
+
+			return ConnectAsync (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
 		}
 
 		/// <summary>
@@ -672,7 +657,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Authenticates using the supplied credentials.
+		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms,
@@ -718,7 +703,7 @@ namespace MailKit {
 		public abstract void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously authenticates using the supplied credentials.
+		/// Asynchronously authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms,
@@ -762,23 +747,10 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (encoding == null)
-				throw new ArgumentNullException (nameof (encoding));
-
-			if (credentials == null)
-				throw new ArgumentNullException (nameof (credentials));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Authenticate (encoding, credentials, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Authenticates using the supplied credentials.
+		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms,
@@ -824,7 +796,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Asynchronously authenticates using the supplied credentials.
+		/// Asynchronously authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms,
@@ -867,14 +839,11 @@ namespace MailKit {
 		/// </exception>
 		public Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (credentials == null)
-				throw new ArgumentNullException (nameof (credentials));
-
 			return AuthenticateAsync (Encoding.UTF8, credentials, cancellationToken);
 		}
 
 		/// <summary>
-		/// Authenticates using the specified user name and password.
+		/// Authenticate using the specified user name and password.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms,
@@ -937,7 +906,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Asynchronously authenticates using the specified user name and password.
+		/// Asynchronously authenticate using the specified user name and password.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms,
@@ -1001,7 +970,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Authenticates using the specified user name and password.
+		/// Authenticate using the specified user name and password.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms,
@@ -1061,7 +1030,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Asynchronously authenticates using the specified user name and password.
+		/// Asynchronously authenticate using the specified user name and password.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms,
@@ -1119,7 +1088,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Disconnects the service.
+		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
@@ -1135,7 +1104,7 @@ namespace MailKit {
 		public abstract void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously disconnects the service.
+		/// Asynchronously disconnect the service.
 		/// </summary>
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
@@ -1146,17 +1115,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
-		public virtual Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Disconnect (quit, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Pings the mail server to keep the connection alive.
+		/// Ping the mail server to keep the connection alive.
 		/// </summary>
 		/// <remarks>
 		/// Mail servers, if left idle for too long, will automatically drop the connection.
@@ -1185,7 +1147,7 @@ namespace MailKit {
 		public abstract void NoOp (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously pings the mail server to keep the connection alive.
+		/// Asynchronously ping the mail server to keep the connection alive.
 		/// </summary>
 		/// <remarks>
 		/// Mail servers, if left idle for too long, will automatically drop the connection.
@@ -1212,14 +1174,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public virtual Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					NoOp (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Occurs when the client has been successfully connected.

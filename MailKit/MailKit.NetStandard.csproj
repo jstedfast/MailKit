@@ -53,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Net\Imap\AsyncImapClient.cs" />
     <Compile Include="Net\Imap\ImapCapabilities.cs" />
     <Compile Include="Net\Imap\ImapClient.cs" />
     <Compile Include="Net\Imap\ImapCommand.cs" />
@@ -62,6 +63,9 @@
     <Compile Include="Net\Imap\ImapEngine.cs" />
     <Compile Include="Net\Imap\ImapFolder.cs" />
     <Compile Include="Net\Imap\ImapFolderConstructorArgs.cs" />
+    <Compile Include="Net\Imap\ImapFolderFetch.cs" />
+    <Compile Include="Net\Imap\ImapFolderFlags.cs" />
+    <Compile Include="Net\Imap\ImapFolderSearch.cs" />
     <Compile Include="Net\Imap\ImapImplementation.cs" />
     <Compile Include="Net\Imap\ImapProtocolException.cs" />
     <Compile Include="Net\Imap\ImapResponseCode.cs" />
@@ -69,6 +73,7 @@
     <Compile Include="Net\Imap\ImapStream.cs" />
     <Compile Include="Net\Imap\ImapToken.cs" />
     <Compile Include="Net\Imap\ImapUtils.cs" />
+    <Compile Include="Net\Pop3\AsyncPop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
     <Compile Include="Net\Pop3\Pop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3Command.cs" />
@@ -77,6 +82,7 @@
     <Compile Include="Net\Pop3\Pop3Language.cs" />
     <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
     <Compile Include="Net\Pop3\Pop3Stream.cs" />
+    <Compile Include="Net\Smtp\AsyncSmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpCommandException.cs" />

@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 #if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
@@ -41,7 +42,7 @@ namespace MailKit.Net.Pop3 {
 	/// force-disconnect the connection. If a non-fatal error occurs, set
 	/// it on the <see cref="Pop3Command.Exception"/> property.
 	/// </remarks>
-	delegate void Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text);
+	delegate Task Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text, bool doAsync);
 
 	enum Pop3CommandStatus {
 		Queued         = -5,

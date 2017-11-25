@@ -29,6 +29,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 #if NETFX_CORE
@@ -545,7 +546,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public void Connect (ImapStream stream, CancellationToken cancellationToken)
+		public async Task ConnectAsync (ImapStream stream, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (Stream != null)
 				Stream.Dispose ();
@@ -572,12 +573,12 @@ namespace MailKit.Net.Imap {
 			Tag = 0;
 
 			try {
-				var token = stream.ReadToken (cancellationToken);
+				var token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type != ImapTokenType.Asterisk)
 					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
 
-				token = stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type != ImapTokenType.Atom)
 					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
@@ -597,15 +598,15 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
 				}
 
-				token = stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = ParseResponseCode (cancellationToken);
+					var code = await ParseResponseCodeAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					if (code.Type == ImapResponseCodeType.Alert)
 						OnAlert (code.Message);
 				} else if (token.Type != ImapTokenType.Eoln) {
 					// throw away any remaining text up until the end of the line
-					ReadLine (cancellationToken);
+					await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				}
 			} catch {
 				Disconnect ();
@@ -639,6 +640,38 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		internal async Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
+		{
+			if (Stream == null)
+				throw new InvalidOperationException ();
+
+			using (var memory = new MemoryStream ()) {
+				bool complete;
+				byte[] buf;
+				int count;
+
+				do {
+					if (doAsync)
+						complete = await Stream.ReadLineAsync (memory, cancellationToken).ConfigureAwait (false);
+					else
+						complete = Stream.ReadLine (memory, cancellationToken);
+				} while (!complete);
+
+				count = (int) memory.Length;
+#if !NETFX_CORE && !NETSTANDARD
+				buf = memory.GetBuffer ();
+#else
+				buf = memory.ToArray ();
+#endif
+
+				try {
+					return UTF8.GetString (buf, 0, count);
+				} catch (DecoderFallbackException) {
+					return Latin1.GetString (buf, 0, count);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Reads a single line from the <see cref="ImapStream"/>.
 		/// </summary>
@@ -658,31 +691,53 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public string ReadLine (CancellationToken cancellationToken)
 		{
-			if (Stream == null)
-				throw new InvalidOperationException ();
+			return ReadLineAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+		}
 
-			using (var memory = new MemoryStream ()) {
-				int offset, count;
-				byte[] buf;
+		/// <summary>
+		/// Asynchronously reads a single line from the <see cref="ImapStream"/>.
+		/// </summary>
+		/// <returns>The line.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public Task<string> ReadLineAsync (CancellationToken cancellationToken)
+		{
+			return ReadLineAsync (true, cancellationToken);
+		}
 
-				while (!Stream.ReadLine (out buf, out offset, out count, cancellationToken))
-					memory.Write (buf, offset, count);
+		internal Task<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
+		{
+			return Stream.ReadTokenAsync (specials, doAsync, cancellationToken);
+		}
 
-				memory.Write (buf, offset, count);
+		internal Task<ImapToken> ReadTokenAsync (bool doAsync, CancellationToken cancellationToken)
+		{
+			return Stream.ReadTokenAsync (ImapStream.DefaultSpecials, doAsync, cancellationToken);
+		}
 
-				count = (int) memory.Length;
-#if !NETFX_CORE && !NETSTANDARD
-				buf = memory.GetBuffer ();
-#else
-				buf = memory.ToArray ();
-#endif
+		internal async Task<ImapToken> PeekTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
+		{
+			var token = await ReadTokenAsync (specials, doAsync, cancellationToken).ConfigureAwait (false);
 
-				try {
-					return UTF8.GetString (buf, 0, count);
-				} catch (DecoderFallbackException) {
-					return Latin1.GetString (buf, 0, count);
-				}
-			}
+			Stream.UngetToken (token);
+
+			return token;
+		}
+
+		internal Task<ImapToken> PeekTokenAsync (bool doAsync, CancellationToken cancellationToken)
+		{
+			return PeekTokenAsync (ImapStream.DefaultSpecials, doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -709,6 +764,29 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Asynchronously reads the next token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public Task<ImapToken> ReadTokenAsync (string specials, CancellationToken cancellationToken)
+		{
+			return Stream.ReadTokenAsync (specials, cancellationToken);
+		}
+
+		/// <summary>
 		/// Reads the next token.
 		/// </summary>
 		/// <returns>The token.</returns>
@@ -731,6 +809,28 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Asynchronously reads the next token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public Task<ImapToken> ReadTokenAsync (CancellationToken cancellationToken)
+		{
+			return Stream.ReadTokenAsync (cancellationToken);
+		}
+
+		/// <summary>
 		/// Peeks at the next token.
 		/// </summary>
 		/// <returns>The next token.</returns>
@@ -750,11 +850,30 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken PeekToken (string specials, CancellationToken cancellationToken)
 		{
-			var token = Stream.ReadToken (specials, cancellationToken);
+			return PeekTokenAsync (specials, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
 
-			Stream.UngetToken (token);
-
-			return token;
+		/// <summary>
+		/// Asynchronously peeks at the next token.
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public Task<ImapToken> PeekTokenAsync (string specials, CancellationToken cancellationToken)
+		{
+			return PeekTokenAsync (specials, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -776,11 +895,57 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken PeekToken (CancellationToken cancellationToken)
 		{
-			var token = Stream.ReadToken (cancellationToken);
+			return PeekTokenAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+		}
 
-			Stream.UngetToken (token);
+		/// <summary>
+		/// Asynchronously peeks at the next token.
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public Task<ImapToken> PeekTokenAsync (CancellationToken cancellationToken)
+		{
+			return PeekTokenAsync (true, cancellationToken);
+		}
 
-			return token;
+		internal async Task<string> ReadLiteralAsync (bool doAsync, CancellationToken cancellationToken)
+		{
+			if (Stream.Mode != ImapStreamMode.Literal)
+				throw new InvalidOperationException ();
+
+			using (var memory = new MemoryStream (Stream.LiteralLength)) {
+				var buf = new byte[4096];
+				int nread;
+
+				if (doAsync) {
+					while ((nread = await Stream.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false)) > 0)
+						memory.Write (buf, 0, nread);
+				} else {
+					while ((nread = Stream.Read (buf, 0, buf.Length, cancellationToken)) > 0)
+						memory.Write (buf, 0, nread);
+				}
+
+				nread = (int) memory.Length;
+#if !NETFX_CORE && !NETSTANDARD
+				buf = memory.GetBuffer ();
+#else
+				buf = memory.ToArray ();
+#endif
+
+				return Latin1.GetString (buf, 0, nread);
+			}
 		}
 
 		/// <summary>
@@ -799,46 +964,50 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public string ReadLiteral (CancellationToken cancellationToken)
 		{
-			if (Stream.Mode != ImapStreamMode.Literal)
-				throw new InvalidOperationException ();
-
-			using (var memory = new MemoryStream (Stream.LiteralLength)) {
-				var buf = new byte[4096];
-				int nread;
-
-				while ((nread = Stream.Read (buf, 0, buf.Length, cancellationToken)) > 0)
-					memory.Write (buf, 0, nread);
-
-				nread = (int) memory.Length;
-#if !NETFX_CORE && !NETSTANDARD
-				buf = memory.GetBuffer ();
-#else
-				buf = memory.ToArray ();
-#endif
-
-				return Latin1.GetString (buf, 0, nread);
-			}
+			return ReadLiteralAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		internal void SkipLine (CancellationToken cancellationToken)
+		/// <summary>
+		/// Asynchronously reads the literal as a string.
+		/// </summary>
+		/// <returns>The literal.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Stream"/> is not in literal mode.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public Task<string> ReadLiteralAsync (CancellationToken cancellationToken)
+		{
+			return ReadLiteralAsync (true, cancellationToken);
+		}
+
+		async Task SkipLineAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			ImapToken token;
 
 			do {
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.Literal) {
 					var buf = new byte[4096];
 					int nread;
 
 					do {
-						nread = Stream.Read (buf, 0, buf.Length, cancellationToken);
+						if (doAsync)
+							nread = await Stream.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
+						else
+							nread = Stream.Read (buf, 0, buf.Length, cancellationToken);
 					} while (nread > 0);
 				}
 			} while (token.Type != ImapTokenType.Eoln);
 		}
 
-		void UpdateCapabilities (ImapTokenType sentinel, CancellationToken cancellationToken)
+		async Task UpdateCapabilitiesAsync (ImapTokenType sentinel, bool doAsync, CancellationToken cancellationToken)
 		{
 			ProtocolVersion = ImapProtocolVersion.Unknown;
 			Capabilities = ImapCapabilities.None;
@@ -851,7 +1020,7 @@ namespace MailKit.Net.Imap {
 			Rights.Clear ();
 			I18NLevel = 0;
 
-			var token = Stream.ReadToken (cancellationToken);
+			var token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			while (token.Type == ImapTokenType.Atom) {
 				var atom = (string) token.Value;
@@ -944,7 +1113,7 @@ namespace MailKit.Net.Imap {
 					}
 				}
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
 			if (token.Type != sentinel) {
@@ -969,7 +1138,7 @@ namespace MailKit.Net.Imap {
 				Capabilities |= ImapCapabilities.UTF8Accept;
 		}
 
-		void UpdateNamespaces (CancellationToken cancellationToken)
+		async Task UpdateNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var namespaces = new List<FolderNamespaceCollection> {
 				PersonalNamespaces, SharedNamespaces, OtherNamespaces
@@ -984,16 +1153,16 @@ namespace MailKit.Net.Imap {
 			SharedNamespaces.Clear ();
 			OtherNamespaces.Clear ();
 
-			token = Stream.ReadToken (cancellationToken);
+			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			do {
 				if (token.Type == ImapTokenType.OpenParen) {
 					// parse the list of namespace pairs...
-					token = Stream.ReadToken (cancellationToken);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					while (token.Type == ImapTokenType.OpenParen) {
 						// parse the namespace pair - first token is the path
-						token = Stream.ReadToken (cancellationToken);
+						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 						if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom) {
 							Debug.WriteLine ("Expected string token as first element in namespace pair, but got: {0}", token);
@@ -1003,7 +1172,7 @@ namespace MailKit.Net.Imap {
 						path = (string) token.Value;
 
 						// second token is the directory separator
-						token = Stream.ReadToken (cancellationToken);
+						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 						if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Nil) {
 							Debug.WriteLine ("Expected string or nil token as second element in namespace pair, but got: {0}", token);
@@ -1031,7 +1200,7 @@ namespace MailKit.Net.Imap {
 						folder.UpdateIsNamespace (true);
 
 						do {
-							token = Stream.ReadToken (cancellationToken);
+							token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 							if (token.Type == ImapTokenType.CloseParen)
 								break;
@@ -1041,13 +1210,13 @@ namespace MailKit.Net.Imap {
 							if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom)
 								throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
-							token = Stream.ReadToken (cancellationToken);
+							token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 							if (token.Type != ImapTokenType.OpenParen)
 								throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 							do {
-								token = Stream.ReadToken (cancellationToken);
+								token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 								if (token.Type == ImapTokenType.CloseParen)
 									break;
@@ -1058,7 +1227,7 @@ namespace MailKit.Net.Imap {
 						} while (true);
 
 						// read the next token - it should either be '(' or ')'
-						token = Stream.ReadToken (cancellationToken);
+						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					}
 
 					if (token.Type != ImapTokenType.CloseParen) {
@@ -1070,12 +1239,12 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 				}
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				n++;
 			} while (n < 3);
 
 			while (token.Type != ImapTokenType.Eoln)
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		void ProcessResponseCodes (ImapCommand ic)
@@ -1155,7 +1324,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The response code.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public ImapResponseCode ParseResponseCode (CancellationToken cancellationToken)
+		public async Task<ImapResponseCode> ParseResponseCodeAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			uint validity = Selected != null ? Selected.UidValidity : 0;
 			ImapResponseCode code;
@@ -1164,14 +1333,14 @@ namespace MailKit.Net.Imap {
 			ulong n64;
 			uint n32;
 
-//			token = Stream.ReadToken (cancellationToken);
+//			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 //
 //			if (token.Type != ImapTokenType.LeftBracket) {
 //				Debug.WriteLine ("Expected a '[' followed by a RESP-CODE, but got: {0}", token);
 //				throw UnexpectedToken (token, false);
 //			}
 
-			token = Stream.ReadToken (cancellationToken);
+			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (token.Type != ImapTokenType.Atom) {
 				Debug.WriteLine ("Expected an atom token containing a RESP-CODE, but got: {0}", token);
@@ -1179,19 +1348,19 @@ namespace MailKit.Net.Imap {
 			}
 
 			atom = (string) token.Value;
-			token = Stream.ReadToken (cancellationToken);
+			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			code = ImapResponseCode.Create (GetResponseCodeType (atom));
 
 			switch (code.Type) {
 			case ImapResponseCodeType.BadCharset:
 				if (token.Type == ImapTokenType.OpenParen) {
-					token = Stream.ReadToken (cancellationToken);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					SupportedCharsets.Clear ();
 					while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
 						SupportedCharsets.Add ((string) token.Value);
-						token = Stream.ReadToken (cancellationToken);
+						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					}
 
 					if (token.Type != ImapTokenType.CloseParen) {
@@ -1199,20 +1368,20 @@ namespace MailKit.Net.Imap {
 						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "BADCHARSET", token);
 					}
 
-					token = Stream.ReadToken (cancellationToken);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				}
 				break;
 			case ImapResponseCodeType.Capability:
 				Stream.UngetToken (token);
-				UpdateCapabilities (ImapTokenType.CloseBracket, cancellationToken);
-				token = ReadToken (cancellationToken);
+				await UpdateCapabilitiesAsync (ImapTokenType.CloseBracket, doAsync, cancellationToken).ConfigureAwait (false);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.PermanentFlags:
 				var perm = (PermanentFlagsResponseCode) code;
 
 				Stream.UngetToken (token);
-				perm.Flags = ImapUtils.ParseFlagsList (this, "PERMANENTFLAGS", null, cancellationToken);
-				token = Stream.ReadToken (cancellationToken);
+				perm.Flags = await ImapUtils.ParseFlagsListAsync (this, "PERMANENTFLAGS", null, doAsync, cancellationToken).ConfigureAwait (false);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.UidNext:
 				var next = (UidNextResponseCode) code;
@@ -1224,7 +1393,7 @@ namespace MailKit.Net.Imap {
 
 				next.Uid = new UniqueId (n32);
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.UidValidity:
 				var uidvalidity = (UidValidityResponseCode) code;
@@ -1242,7 +1411,7 @@ namespace MailKit.Net.Imap {
 
 				uidvalidity.UidValidity = n32;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.Unseen:
 				var unseen = (UnseenResponseCode) code;
@@ -1258,7 +1427,7 @@ namespace MailKit.Net.Imap {
 
 				unseen.Index = n32 > 0 ? (int) (n32 - 1) : 0;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.NewName:
 				var rename = (NewNameResponseCode) code;
@@ -1276,7 +1445,7 @@ namespace MailKit.Net.Imap {
 				rename.OldName = (string) token.Value;
 
 				// the next token should be another atom or qstring token representing the new name of the folder
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
 					Debug.WriteLine ("Expected atom or qstring as second argument to 'NEWNAME' RESP-CODE, but got: {0}", token);
@@ -1285,7 +1454,7 @@ namespace MailKit.Net.Imap {
 
 				rename.NewName = (string) token.Value;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.AppendUid:
 				var append = (AppendUidResponseCode) code;
@@ -1297,7 +1466,7 @@ namespace MailKit.Net.Imap {
 
 				append.UidValidity = n32;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
 				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, n32, out append.UidSet)) {
@@ -1305,7 +1474,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 				}
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.CopyUid:
 				var copy = (CopyUidResponseCode) code;
@@ -1317,7 +1486,7 @@ namespace MailKit.Net.Imap {
 
 				copy.UidValidity = n32;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				// Note: Outlook.com will apparently sometimes issue a [COPYUID nz_number SPACE SPACE] resp-code
 				// in response to a UID COPY or UID MOVE command. Likely this happens only when the source message
@@ -1333,7 +1502,7 @@ namespace MailKit.Net.Imap {
 					Stream.UngetToken (token);
 				}
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type != ImapTokenType.CloseBracket) {
 					if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, n32, out copy.DestUidSet)) {
@@ -1345,7 +1514,7 @@ namespace MailKit.Net.Imap {
 					Stream.UngetToken (token);
 				}
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.BadUrl:
 				var badurl = (BadUrlResponseCode) code;
@@ -1357,7 +1526,7 @@ namespace MailKit.Net.Imap {
 
 				badurl.BadUrl = (string) token.Value;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.HighestModSeq:
 				var highest = (HighestModSeqResponseCode) code;
@@ -1369,7 +1538,7 @@ namespace MailKit.Net.Imap {
 
 				highest.HighestModSeq = n64;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.Modified:
 				var modified = (ModifiedResponseCode) code;
@@ -1379,7 +1548,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MODIFIED", token);
 				}
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.MaxConvertMessages:
 			case ImapResponseCodeType.MaxConvertParts:
@@ -1390,7 +1559,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, code.Type.ToString ().ToUpperInvariant (), token);
 				}
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.NoUpdate:
 				var noUpdate = (NoUpdateResponseCode) code;
@@ -1402,7 +1571,7 @@ namespace MailKit.Net.Imap {
 
 				noUpdate.Tag = (string) token.Value;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.Metadata:
 				var metadata = (MetadataResponseCode) code;
@@ -1416,7 +1585,7 @@ namespace MailKit.Net.Imap {
 				case "LONGENTRIES":
 					metadata.SubType = MetadataResponseCodeSubType.LongEntries;
 
-					token = Stream.ReadToken (cancellationToken);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 						Debug.WriteLine ("Expected integer argument to 'METADATA LONGENTRIES' RESP-CODE, but got: {0}", token);
@@ -1428,7 +1597,7 @@ namespace MailKit.Net.Imap {
 				case "MAXSIZE":
 					metadata.SubType = MetadataResponseCodeSubType.MaxSize;
 
-					token = Stream.ReadToken (cancellationToken);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 						Debug.WriteLine ("Expected integer argument to 'METADATA MAXSIZE' RESP-CODE, but got: {0}", token);
@@ -1445,7 +1614,7 @@ namespace MailKit.Net.Imap {
 					break;
 				}
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.UndefinedFilter:
 				var undefined = (UndefinedFilterResponseCode) code;
@@ -1457,7 +1626,7 @@ namespace MailKit.Net.Imap {
 
 				undefined.Name = (string) token.Value;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			default:
 				if (code.Type == ImapResponseCodeType.Unknown)
@@ -1467,7 +1636,7 @@ namespace MailKit.Net.Imap {
 
 				// skip over tokens until we get to a ']'
 				while (token.Type != ImapTokenType.CloseBracket && token.Type != ImapTokenType.Eoln)
-					token = Stream.ReadToken (cancellationToken);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				break;
 			}
@@ -1477,14 +1646,14 @@ namespace MailKit.Net.Imap {
 				throw UnexpectedToken ("Syntax error in response code. Unexpected token: {0}", token);
 			}
 
-			code.Message = ReadLine (cancellationToken).Trim ();
+			code.Message = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).Trim ();
 
 			return code;
 		}
 
-		void UpdateStatus (CancellationToken cancellationToken)
+		async Task UpdateStatusAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			var token = Stream.ReadToken (ImapStream.AtomSpecials, cancellationToken);
+			var token = await ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 			ImapFolder folder;
 			uint uid, limit;
 			ulong modseq;
@@ -1493,7 +1662,7 @@ namespace MailKit.Net.Imap {
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
-				name = ReadLiteral (cancellationToken);
+				name = await ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
@@ -1511,13 +1680,13 @@ namespace MailKit.Net.Imap {
 			// and hasn't yet requested the folder. That's ok.
 			GetCachedFolder (name, out folder);
 
-			token = Stream.ReadToken (cancellationToken);
+			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 			do {
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
@@ -1527,7 +1696,7 @@ namespace MailKit.Net.Imap {
 
 				var atom = (string) token.Value;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				switch (atom) {
 				case "HIGHESTMODSEQ":
@@ -1607,7 +1776,7 @@ namespace MailKit.Net.Imap {
 				}
 			} while (true);
 
-			token = Stream.ReadToken (cancellationToken);
+			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (token.Type != ImapTokenType.Eoln)
 				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
@@ -1618,10 +1787,10 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The untagged response.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		internal ImapUntaggedResult ProcessUntaggedResponse (CancellationToken cancellationToken)
+		internal async Task<ImapUntaggedResult> ProcessUntaggedResponseAsync (bool doAsync, CancellationToken cancellationToken)
 		{
+			var token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			var result = ImapUntaggedResult.Handled;
-			var token = Stream.ReadToken (cancellationToken);
 			ImapUntaggedHandler handler;
 			ImapFolder folder;
 			uint number;
@@ -1641,7 +1810,7 @@ namespace MailKit.Net.Imap {
 			} else if (token.Type != ImapTokenType.Atom) {
 				// if we get anything else here, just ignore it?
 				Stream.UngetToken (token);
-				SkipLine (cancellationToken);
+				await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				return result;
 			} else {
 				atom = (string) token.Value;
@@ -1649,15 +1818,15 @@ namespace MailKit.Net.Imap {
 
 			switch (atom) {
 			case "BYE":
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = ParseResponseCode (cancellationToken);
+					var code = await ParseResponseCodeAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					if (current != null)
 						current.RespCodes.Add (code);
 				}
 
-				ReadLine (cancellationToken);
+				await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (current != null) {
 					current.Bye = true;
@@ -1666,14 +1835,14 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			case "CAPABILITY":
-				UpdateCapabilities (ImapTokenType.Eoln, cancellationToken);
+				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync, cancellationToken);
 
 				// read the eoln token
-				Stream.ReadToken (cancellationToken);
+				await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case "FLAGS":
-				folder.UpdateAcceptedFlags (ImapUtils.ParseFlagsList (this, atom, null, cancellationToken));
-				token = Stream.ReadToken (cancellationToken);
+				folder.UpdateAcceptedFlags (await ImapUtils.ParseFlagsListAsync (this, atom, null, doAsync, cancellationToken).ConfigureAwait (false));
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type != ImapTokenType.Eoln) {
 					Debug.WriteLine ("Expected eoln after untagged FLAGS list, but got: {0}", token);
@@ -1681,10 +1850,10 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			case "NAMESPACE":
-				UpdateNamespaces (cancellationToken);
+				await UpdateNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case "STATUS":
-				UpdateStatus (cancellationToken);
+				await UpdateStatusAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case "OK": case "NO": case "BAD":
 				if (atom == "OK")
@@ -1694,14 +1863,14 @@ namespace MailKit.Net.Imap {
 				else
 					result = ImapUntaggedResult.Bad;
 
-				token = Stream.ReadToken (cancellationToken);
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = ParseResponseCode (cancellationToken);
+					var code = await ParseResponseCodeAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					if (current != null)
 						current.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
-					var text = token.Value.ToString () + ReadLine (cancellationToken);
+					var text = token.Value.ToString () + await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					if (current != null)
 						current.ResponseText = text.TrimEnd ();
@@ -1710,7 +1879,7 @@ namespace MailKit.Net.Imap {
 			default:
 				if (uint.TryParse (atom, out number)) {
 					// we probably have something like "* 1 EXISTS"
-					token = Stream.ReadToken (cancellationToken);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					if (token.Type != ImapTokenType.Atom) {
 						// protocol error
@@ -1722,7 +1891,7 @@ namespace MailKit.Net.Imap {
 
 					if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 						// the command registered an untagged handler for this atom...
-						handler (this, current, (int) number - 1);
+						await handler (this, current, (int) number - 1, doAsync).ConfigureAwait (false);
 					} else if (folder != null) {
 						switch (atom) {
 						case "EXISTS":
@@ -1740,7 +1909,7 @@ namespace MailKit.Net.Imap {
 							//if (number == 0)
 							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
-							folder.OnFetch (this, (int) number - 1, cancellationToken);
+							await folder.OnFetchAsync (this, (int) number - 1, doAsync, cancellationToken).ConfigureAwait (false);
 							break;
 						case "RECENT":
 							folder.OnRecent ((int) number);
@@ -1753,17 +1922,17 @@ namespace MailKit.Net.Imap {
 						Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
 					}
 
-					SkipLine (cancellationToken);
+					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				} else if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 					// the command registered an untagged handler for this atom...
-					handler (this, current, -1);
-					SkipLine (cancellationToken);
+					await handler (this, current, -1, doAsync).ConfigureAwait (false);
+					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				} else if (atom == "VANISHED" && folder != null) {
-					folder.OnVanished (this, cancellationToken);
-					SkipLine (cancellationToken);
+					await folder.OnVanishedAsync (this, doAsync, cancellationToken).ConfigureAwait (false);
+					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				} else {
 					// don't know how to handle this... eat it?
-					SkipLine (cancellationToken);
+					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				}
 				break;
 			}
@@ -1774,7 +1943,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Iterate the command pipeline.
 		/// </summary>
-		public int Iterate ()
+		async Task<int> IterateAsync (bool doAsync)
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
@@ -1798,7 +1967,7 @@ namespace MailKit.Net.Imap {
 			int id = current.Id;
 
 			try {
-				while (current.Step ()) {
+				while (await current.StepAsync (doAsync).ConfigureAwait (false)) {
 					// more literal data to send...
 				}
 
@@ -1821,12 +1990,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="ic"/> is <c>null</c>.
 		/// </exception>
-		public void Wait (ImapCommand ic)
+		public async Task RunAsync (ImapCommand ic, bool doAsync)
 		{
 			if (ic == null)
 				throw new ArgumentNullException (nameof (ic));
 
-			while (Iterate () < ic.Id) {
+			while (await IterateAsync (doAsync).ConfigureAwait (false) < ic.Id) {
 				// continue processing commands...
 			}
 		}
@@ -1879,13 +2048,14 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The command result.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public ImapCommandResponse QueryCapabilities (CancellationToken cancellationToken)
+		public async Task<ImapCommandResponse> QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
 
 			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
-			Wait (ic);
+
+			await RunAsync (ic, doAsync).ConfigureAwait (false);
 
 			return ic.Response;
 		}
@@ -1918,7 +2088,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="folders">The IMAP folders.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void LookupParentFolders (IEnumerable<ImapFolder> folders, CancellationToken cancellationToken)
+		async Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, bool doAsync, CancellationToken cancellationToken)
 		{
 			var list = new List<ImapFolder> (folders);
 			string encodedName;
@@ -1948,11 +2118,12 @@ namespace MailKit.Net.Imap {
 				}
 
 				var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 				ic.UserData = new List<ImapFolder> ();
 
 				QueueCommand (ic);
-				Wait (ic);
+
+				await RunAsync (ic, doAsync).ConfigureAwait (false);
 
 				if (!GetCachedFolder (encodedName, out parent)) {
 					parent = CreateImapFolder (encodedName, FolderAttributes.NonExistent, folder.DirectorySeparator);
@@ -1970,7 +2141,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The command result.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public ImapCommandResponse QueryNamespaces (CancellationToken cancellationToken)
+		public async Task<ImapCommandResponse> QueryNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
@@ -1979,16 +2150,16 @@ namespace MailKit.Net.Imap {
 
 			if ((Capabilities & ImapCapabilities.Namespace) != 0) {
 				ic = QueueCommand (cancellationToken, null, "NAMESPACE\r\n");
-				Wait (ic);
+				await RunAsync (ic, doAsync).ConfigureAwait (false);
 			} else {
 				var list = new List<ImapFolder> ();
 
 				ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"\"\r\n");
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 				ic.UserData = list;
 
 				QueueCommand (ic);
-				Wait (ic);
+				await RunAsync (ic, doAsync).ConfigureAwait (false);
 
 				PersonalNamespaces.Clear ();
 				SharedNamespaces.Clear ();
@@ -1999,7 +2170,7 @@ namespace MailKit.Net.Imap {
 					list[0].UpdateIsNamespace (true);
 				}
 
-				LookupParentFolders (list, cancellationToken);
+				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
 			return ic.Response;
@@ -2035,7 +2206,7 @@ namespace MailKit.Net.Imap {
 		/// Queries the special folders.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public void QuerySpecialFolders (CancellationToken cancellationToken)
+		public async Task QuerySpecialFoldersAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
@@ -2045,11 +2216,12 @@ namespace MailKit.Net.Imap {
 			ImapCommand ic;
 
 			ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 			ic.UserData = list;
 
 			QueueCommand (ic);
-			Wait (ic);
+
+			await RunAsync (ic, doAsync).ConfigureAwait (false);
 
 			GetCachedFolder ("INBOX", out folder);
 			Inbox = folder;
@@ -2058,23 +2230,25 @@ namespace MailKit.Net.Imap {
 
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
 				ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 				ic.UserData = list;
 
 				QueueCommand (ic);
-				Wait (ic);
 
-				LookupParentFolders (list, cancellationToken);
+				await RunAsync (ic, doAsync).ConfigureAwait (false);
+				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
+
 				AssignSpecialFolders (list);
 			} else if ((Capabilities & ImapCapabilities.XList) != 0) {
 				ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
-				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderListAsync);
 				ic.UserData = list;
 
 				QueueCommand (ic);
-				Wait (ic);
 
-				LookupParentFolders (list, cancellationToken);
+				await RunAsync (ic, doAsync).ConfigureAwait (false);
+				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
+
 				AssignSpecialFolders (list);
 			}
 		}
@@ -2085,7 +2259,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The folder.</returns>
 		/// <param name="quotaRoot">The name of the quota root.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public ImapFolder GetQuotaRootFolder (string quotaRoot, CancellationToken cancellationToken)
+		public async Task<ImapFolder> GetQuotaRootFolderAsync (string quotaRoot, bool doAsync, CancellationToken cancellationToken)
 		{
 			var list = new List<ImapFolder> ();
 			ImapFolder folder;
@@ -2094,11 +2268,12 @@ namespace MailKit.Net.Imap {
 				return folder;
 
 			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", quotaRoot);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 			ic.UserData = list;
 
 			QueueCommand (ic);
-			Wait (ic);
+
+			await RunAsync (ic, doAsync).ConfigureAwait (false);
 
 			ProcessResponseCodes (ic);
 
@@ -2111,7 +2286,7 @@ namespace MailKit.Net.Imap {
 				return folder;
 			}
 
-			LookupParentFolders (list, cancellationToken);
+			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return list[0];
 		}
@@ -2122,7 +2297,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The folder.</returns>
 		/// <param name="path">The folder path.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public ImapFolder GetFolder (string path, CancellationToken cancellationToken)
+		public async Task<ImapFolder> GetFolderAsync (string path, bool doAsync, CancellationToken cancellationToken)
 		{
 			var encodedName = EncodeMailboxName (path);
 			var list = new List<ImapFolder> ();
@@ -2132,11 +2307,12 @@ namespace MailKit.Net.Imap {
 				return folder;
 
 			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 			ic.UserData = list;
 
 			QueueCommand (ic);
-			Wait (ic);
+
+			await RunAsync (ic, doAsync).ConfigureAwait (false);
 
 			ProcessResponseCodes (ic);
 
@@ -2146,7 +2322,7 @@ namespace MailKit.Net.Imap {
 			if (list.Count == 0)
 				throw new FolderNotFoundException (path);
 
-			LookupParentFolders (list, cancellationToken);
+			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return list[0];
 		}
@@ -2192,7 +2368,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="items">The status items to pre-populate.</param>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public IList<ImapFolder> GetFolders (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
+		public async Task<IList<ImapFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, bool doAsync, CancellationToken cancellationToken)
 		{
 			var encodedName = EncodeMailboxName (@namespace.Path);
 			var pattern = encodedName.Length > 0 ? encodedName + @namespace.DirectorySeparator : string.Empty;
@@ -2243,11 +2419,12 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern + "*");
-			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderListAsync);
 			ic.UserData = list;
 
 			QueueCommand (ic);
-			Wait (ic);
+
+			await RunAsync (ic, doAsync).ConfigureAwait (false);
 
 			if (lsub) {
 				// the LSUB command does not send \Subscribed flags so we need to add them ourselves
@@ -2260,7 +2437,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create (lsub ? "LSUB" : "LIST", ic);
 
-			LookupParentFolders (list, cancellationToken);
+			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (status) {
 				for (int i = 0; i < list.Count; i++)
@@ -2314,32 +2491,41 @@ namespace MailKit.Net.Imap {
 			return mailboxName.Length > 0;
 		}
 
-		public HeaderList ParseHeaders (Stream stream, CancellationToken cancellationToken)
+		public async Task<HeaderList> ParseHeadersAsync (Stream stream, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (parser == null)
 				parser = new MimeParser (ParserOptions.Default, stream);
 			else
 				parser.SetStream (ParserOptions.Default, stream);
 
+			if (doAsync)
+				return await parser.ParseHeadersAsync (cancellationToken).ConfigureAwait (false);
+
 			return parser.ParseHeaders (cancellationToken);
 		}
 
-		public MimeMessage ParseMessage (Stream stream, bool persistent, CancellationToken cancellationToken)
+		public async Task<MimeMessage> ParseMessageAsync (Stream stream, bool persistent, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (parser == null)
 				parser = new MimeParser (ParserOptions.Default, stream, persistent);
 			else
 				parser.SetStream (ParserOptions.Default, stream, persistent);
+
+			if (doAsync)
+				return await parser.ParseMessageAsync (cancellationToken).ConfigureAwait (false);
 
 			return parser.ParseMessage (cancellationToken);
 		}
 
-		public MimeEntity ParseEntity (Stream stream, bool persistent, CancellationToken cancellationToken)
+		public async Task<MimeEntity> ParseEntityAsync (Stream stream, bool persistent, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (parser == null)
 				parser = new MimeParser (ParserOptions.Default, stream, persistent);
 			else
 				parser.SetStream (ParserOptions.Default, stream, persistent);
+
+			if (doAsync)
+				return await parser.ParseEntityAsync (cancellationToken).ConfigureAwait (false);
 
 			return parser.ParseEntity (cancellationToken);
 		}

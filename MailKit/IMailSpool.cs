@@ -24,7 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace MailKit {
 	/// <remarks>
 	/// An interface for retreiving messages from a spool.
 	/// </remarks>
-	public interface IMailSpool : IMailService, IEnumerable<MimeMessage>
+	public interface IMailSpool : IMailService
 	{
 		/// <summary>
 		/// Get the number of messages available in the message spool.
@@ -65,28 +64,6 @@ namespace MailKit {
 		/// </remarks>
 		/// <value><c>true</c> if supports uids; otherwise, <c>false</c>.</value>
 		bool SupportsUids { get; }
-
-		/// <summary>
-		/// Get the number of messages available in the message spool.
-		/// </summary>
-		/// <remarks>
-		/// Gets the number of messages available in the message spool.
-		/// </remarks>
-		/// <returns>The number of available messages.</returns>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use the Count property instead.")]
-		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously get the number of messages available in the message spool.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the number of messages available in the message spool.
-		/// </remarks>
-		/// <returns>The number of available messages.</returns>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use the Count property instead.")]
-		Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the UID of the message at the specified index.
@@ -141,30 +118,6 @@ namespace MailKit {
 		/// Gets the size of the specified message, in bytes.
 		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken) instead.")]
-		int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously get the size of the specified message, in bytes.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the size of the specified message, in bytes.
-		/// </remarks>
-		/// <returns>The message size, in bytes.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessageSizeAsync (int index, CancellationToken cancellationToken) instead.")]
-		Task<int> GetMessageSizeAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Get the size of the specified message, in bytes.
-		/// </summary>
-		/// <remarks>
-		/// Gets the size of the specified message, in bytes.
-		/// </remarks>
-		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
@@ -207,30 +160,6 @@ namespace MailKit {
 		/// Gets the headers for the specified message.
 		/// </remarks>
 		/// <returns>The message headers.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessageHeaders (int index, CancellationToken cancellationToken) instead.")]
-		HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously get the headers for the specified message.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the headers for the specified message.
-		/// </remarks>
-		/// <returns>The message headers.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessageHeadersAsync (int index, CancellationToken cancellationToken) instead.")]
-		Task<HeaderList> GetMessageHeadersAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Get the headers for the specified message.
-		/// </summary>
-		/// <remarks>
-		/// Gets the headers for the specified message.
-		/// </remarks>
-		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken));
@@ -245,30 +174,6 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Get the headers for the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Gets the headers for the specified messages.
-		/// </remarks>
-		/// <returns>The headers for the specified messages.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken) instead.")]
-		IList<HeaderList> GetMessageHeaders (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously get the headers for the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the headers for the specified messages.
-		/// </remarks>
-		/// <returns>The headers for the specified messages.</returns>
-		/// <param name="uids">The UIDs of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken) instead.")]
-		Task<IList<HeaderList>> GetMessageHeadersAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the headers for the specified messages.
@@ -317,30 +222,6 @@ namespace MailKit {
 		Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Get the message with the specified UID.
-		/// </summary>
-		/// <remarks>
-		/// Gets the message with the specified UID.
-		/// </remarks>
-		/// <returns>The message.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessage (int index, CancellationToken cancellationToken) instead.")]
-		MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously get the message with the specified UID.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the message with the specified UID.
-		/// </remarks>
-		/// <returns>The message.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessageAsync (int index, CancellationToken cancellationToken) instead.")]
-		Task<MimeMessage> GetMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
 		/// Get the message at the specified index.
 		/// </summary>
 		/// <remarks>
@@ -363,30 +244,6 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Get the messages with the specified UIDs.
-		/// </summary>
-		/// <remarks>
-		/// Gets the messages with the specified UIDs.
-		/// </remarks>
-		/// <returns>The messages.</returns>
-		/// <param name="uids">The UID of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessages (IList<int> indexes, CancellationToken cancellationToken) instead.")]
-		IList<MimeMessage> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously get the messages with the specified UIDs.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the messages with the specified UIDs.
-		/// </remarks>
-		/// <returns>The messages.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken) instead.")]
-		Task<IList<MimeMessage>> GetMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the messages at the specified indexes.
@@ -526,33 +383,6 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use DeleteMessage (int index, CancellationToken cancellationToken) instead.")]
-		void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously mark the specified message for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use DeleteMessageAsync (int index, CancellationToken cancellationToken) instead.")]
-		Task DeleteMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Mark the specified message for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
@@ -569,33 +399,6 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Mark the specified messages for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use DeleteMessages (IList<int> index, CancellationToken cancellationToken) instead.")]
-		void DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously mark the specified messages for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		[Obsolete ("Use DeleteMessagesAsync (IList<int> index, CancellationToken cancellationToken) instead.")]
-		Task DeleteMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Mark the specified messages for deletion.

@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 #if NETFX_CORE
@@ -109,7 +110,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the
-		/// <see cref="Connect"/> method.
+		/// <see cref="ConnectAsync"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
@@ -121,7 +122,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection
-		/// has been made via the <see cref="Connect"/> method.
+		/// has been made via the <see cref="ConnectAsync"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public Pop3Capabilities Capabilities {
@@ -205,15 +206,7 @@ namespace MailKit.Net.Pop3 {
 			get; private set;
 		}
 
-		/// <summary>
-		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
-		/// </summary>
-		/// <remarks>
-		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
-		/// </remarks>
-		/// <param name="pop3">The pop3 stream.</param>
-		/// <param name="cancellationToken">The cancellation token</param>
-		public void Connect (Pop3Stream pop3, CancellationToken cancellationToken)
+		async Task ConnectAsync (Pop3Stream pop3, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (stream != null)
 				stream.Dispose ();
@@ -225,7 +218,7 @@ namespace MailKit.Net.Pop3 {
 			stream = pop3;
 
 			// read the pop3 server greeting
-			var greeting = ReadLine (cancellationToken).TrimEnd ();
+			var greeting = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).TrimEnd ();
 
 			int index = greeting.IndexOf (' ');
 			string token, text;
@@ -265,6 +258,32 @@ namespace MailKit.Net.Pop3 {
 			State = Pop3EngineState.Connected;
 		}
 
+		/// <summary>
+		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// </summary>
+		/// <remarks>
+		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// </remarks>
+		/// <param name="pop3">The pop3 stream.</param>
+		/// <param name="cancellationToken">The cancellation token</param>
+		public void Connect (Pop3Stream pop3, CancellationToken cancellationToken)
+		{
+			ConnectAsync (pop3, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// </summary>
+		/// <remarks>
+		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// </remarks>
+		/// <param name="pop3">The pop3 stream.</param>
+		/// <param name="cancellationToken">The cancellation token</param>
+		public Task ConnectAsync (Pop3Stream pop3, CancellationToken cancellationToken)
+		{
+			return ConnectAsync (pop3, true, cancellationToken);
+		}
+
 		public event EventHandler<EventArgs> Disconnected;
 
 		void OnDisconnected ()
@@ -296,33 +315,22 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		/// <summary>
-		/// Reads a single line from the <see cref="Pop3Stream"/>.
-		/// </summary>
-		/// <returns>The line.</returns>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.InvalidOperationException">
-		/// The engine is not connected.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		public string ReadLine (CancellationToken cancellationToken)
+		async Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
 
 			using (var memory = new MemoryStream ()) {
-				int offset, count;
+				bool complete;
 				byte[] buf;
+				int count;
 
-				while (!stream.ReadLine (out buf, out offset, out count, cancellationToken))
-					memory.Write (buf, offset, count);
-
-				memory.Write (buf, offset, count);
+				do {
+					if (doAsync)
+						complete = await stream.ReadLineAsync (memory, cancellationToken).ConfigureAwait (false);
+					else
+						complete = stream.ReadLine (memory, cancellationToken);
+				} while (!complete);
 
 				count = (int) memory.Length;
 #if !NETFX_CORE && !NETSTANDARD
@@ -345,6 +353,44 @@ namespace MailKit.Net.Pop3 {
 					return Latin1.GetString (buf, 0, count);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Reads a single line from the <see cref="Pop3Stream"/>.
+		/// </summary>
+		/// <returns>The line.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public string ReadLine (CancellationToken cancellationToken)
+		{
+			return ReadLineAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Reads a single line from the <see cref="Pop3Stream"/>.
+		/// </summary>
+		/// <returns>The line.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public Task<string> ReadLineAsync (CancellationToken cancellationToken)
+		{
+			return ReadLineAsync (true, cancellationToken);
 		}
 
 		public static Pop3CommandStatus GetCommandStatus (string response, out string text)
@@ -379,19 +425,22 @@ namespace MailKit.Net.Pop3 {
 			return Pop3CommandStatus.ProtocolError;
 		}
 
-		void SendCommand (Pop3Command pc)
+		async Task SendCommandAsync (Pop3Command pc, bool doAsync, CancellationToken cancellationToken)
 		{
 			var buf = pc.Encoding.GetBytes (pc.Command + "\r\n");
 
-			stream.Write (buf, 0, buf.Length);
+			if (doAsync)
+				await stream.WriteAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
+			else
+				stream.Write (buf, 0, buf.Length, cancellationToken);
 		}
 
-		void ReadResponse (Pop3Command pc)
+		async Task ReadResponseAsync (Pop3Command pc, bool doAsync)
 		{
 			string response, text;
 
 			try {
-				response = ReadLine (pc.CancellationToken).TrimEnd ();
+				response = (await ReadLineAsync (doAsync, pc.CancellationToken).ConfigureAwait (false)).TrimEnd ();
 			} catch {
 				pc.Status = Pop3CommandStatus.ProtocolError;
 				Disconnect ();
@@ -409,7 +458,7 @@ namespace MailKit.Net.Pop3 {
 			case Pop3CommandStatus.Ok:
 				if (pc.Handler != null) {
 					try {
-						pc.Handler (this, pc, text);
+						await pc.Handler (this, pc, text, doAsync).ConfigureAwait (false);
 					} catch {
 						pc.Status = Pop3CommandStatus.ProtocolError;
 						Disconnect ();
@@ -420,7 +469,7 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		public int Iterate ()
+		async Task<int> IterateAsync (bool doAsync)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
@@ -448,15 +497,36 @@ namespace MailKit.Net.Pop3 {
 				pc.Status = Pop3CommandStatus.Active;
 				active.Add (pc);
 
-				SendCommand (pc);
+				await SendCommandAsync (pc, doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			stream.Flush (cancellationToken);
+			if (doAsync)
+				await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+			else
+				stream.Flush (cancellationToken);
 
 			for (int i = 0; i < active.Count; i++)
-				ReadResponse (active[i]);
+				await ReadResponseAsync (active[i], doAsync).ConfigureAwait (false);
 
 			return active[active.Count - 1].Id;
+		}
+
+		/// <summary>
+		/// Iterate the command pipeline.
+		/// </summary>
+		/// <returns>The ID of the command that just completed.</returns>
+		public int Iterate ()
+		{
+			return IterateAsync (false).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Iterate the command pipeline.
+		/// </summary>
+		/// <returns>The ID of the command that just completed.</returns>
+		public Task<int> IterateAsync ()
+		{
+			return IterateAsync (true);
 		}
 
 		public Pop3Command QueueCommand (CancellationToken cancellationToken, Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
@@ -472,7 +542,7 @@ namespace MailKit.Net.Pop3 {
 			return QueueCommand (cancellationToken, handler, Encoding.ASCII, format, args);
 		}
 
-		static void CapaHandler (Pop3Engine engine, Pop3Command pc, string text)
+		static async Task CapaHandler (Pop3Engine engine, Pop3Command pc, string text, bool doAsync)
 		{
 			if (pc.Status != Pop3CommandStatus.Ok)
 				return;
@@ -480,7 +550,7 @@ namespace MailKit.Net.Pop3 {
 			string response;
 
 			do {
-				if ((response = engine.ReadLine (pc.CancellationToken)) == ".")
+				if ((response = await engine.ReadLineAsync (doAsync, pc.CancellationToken).ConfigureAwait (false)) == ".")
 					break;
 
 				int index = response.IndexOf (' ');
@@ -559,7 +629,7 @@ namespace MailKit.Net.Pop3 {
 			} while (true);
 		}
 
-		public Pop3CommandStatus QueryCapabilities (CancellationToken cancellationToken)
+		async Task<Pop3CommandStatus> QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
@@ -573,11 +643,21 @@ namespace MailKit.Net.Pop3 {
 
 			var pc = QueueCommand (cancellationToken, CapaHandler, "CAPA");
 
-			while (Iterate () < pc.Id) {
+			while (await IterateAsync (doAsync).ConfigureAwait (false) < pc.Id) {
 				// continue processing commands...
 			}
 
 			return pc.Status;
+		}
+
+		public Pop3CommandStatus QueryCapabilities (CancellationToken cancellationToken)
+		{
+			return QueryCapabilitiesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
+		public Task<Pop3CommandStatus> QueryCapabilitiesAsync (CancellationToken cancellationToken)
+		{
+			return QueryCapabilitiesAsync (true, cancellationToken);
 		}
 	}
 }

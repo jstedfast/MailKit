@@ -56,7 +56,7 @@ namespace MailKit {
 		IMailFolder parent;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
+		/// Initialize a new instance of the <see cref="MailKit.MailFolder"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
@@ -66,7 +66,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets an object that can be used to synchronize access to the folder.
+		/// Get an object that can be used to synchronize access to the folder.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets an object that can be used to synchronize access to the folder.</para>
@@ -441,23 +441,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException (nameof (access));
-
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", nameof (uids));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Open (access, uidValidity, highestModSeq, uids, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Open the folder using the requested folder access.
@@ -533,17 +517,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException (nameof (access));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Open (access, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Close the folder, optionally expunging the messages marked for deletion.
@@ -612,14 +586,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Close (expunge, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -703,20 +670,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
-				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Create (name, isMessageFolder, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -810,23 +764,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
-				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
-
-			if (specialUses == null)
-				throw new ArgumentNullException (nameof (specialUses));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Create (name, specialUses, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -921,17 +859,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IMailFolder> CreateAsync (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
-				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Create (name, specialUse, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return CreateAsync (name, new [] { specialUse }, cancellationToken);
 		}
 
 		/// <summary>
@@ -1029,26 +957,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (parent == null)
-				throw new ArgumentNullException (nameof (parent));
-
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			if (name.Length == 0 || name.IndexOf (parent.DirectorySeparator) != -1)
-				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
-
-			if (IsNamespace)
-				throw new InvalidOperationException ("Cannot rename this folder.");
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Rename (parent, name, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Delete the folder.
@@ -1121,17 +1030,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task DeleteAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (IsNamespace)
-				throw new InvalidOperationException ("Cannot delete this folder.");
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Delete (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task DeleteAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Subscribe to the folder.
@@ -1192,14 +1091,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SubscribeAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Subscribe (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task SubscribeAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Unsubscribe from the folder.
@@ -1260,14 +1152,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task UnsubscribeAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Unsubscribe (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task UnsubscribeAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the subfolders.
@@ -1339,14 +1224,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IEnumerable<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetSubfolders (items, subscribedOnly, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IEnumerable<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the subfolders.
@@ -1415,11 +1293,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IEnumerable<IMailFolder>> GetSubfoldersAsync (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetSubfolders (subscribedOnly, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return GetSubfoldersAsync (StatusItems.None, subscribedOnly, cancellationToken);
 		}
 
 		/// <summary>
@@ -1502,20 +1376,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
-				throw new ArgumentException ("The name of the subfolder is invalid.", nameof (name));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetSubfolder (name, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Force the server to flush its state for the folder.
@@ -1582,14 +1443,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task CheckAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Check (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task CheckAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Update the values of the specified items.
@@ -1675,14 +1529,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Status (items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the complete access control list for the folder.
@@ -1750,14 +1597,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetAccessControlList (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the access rights for a particular identifier.
@@ -1833,17 +1673,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetAccessRights (name, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the access rights for the current authenticated user.
@@ -1911,14 +1741,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMyAccessRights (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add access rights for the specified identity.
@@ -1999,20 +1822,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddAccessRights (name, rights, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove access rights for the specified identity.
@@ -2093,20 +1903,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveAccessRights (name, rights, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the access rights for the specified identity.
@@ -2187,20 +1984,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetAccessRights (name, rights, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove all access rights for the given identity.
@@ -2275,17 +2059,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveAccess (name, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the quota information for the folder.
@@ -2357,14 +2131,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetQuota (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the quota limits for the folder.
@@ -2440,17 +2207,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetQuota (messageLimit, storageLimit, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the specified metadata.
+		/// Get the specified metadata.
 		/// </summary>
 		/// <remarks>
 		/// Gets the specified metadata.
@@ -2517,17 +2277,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMetadata (tag, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the specified metadata.
+		/// Get the specified metadata.
 		/// </summary>
 		/// <remarks>
 		/// Gets the specified metadata.
@@ -2605,15 +2358,11 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<MetadataCollection> GetMetadataAsync (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMetadata (tags, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return GetMetadataAsync (new MetadataOptions (), tags, cancellationToken);
 		}
 
 		/// <summary>
-		/// Gets the specified metadata.
+		/// Get the specified metadata.
 		/// </summary>
 		/// <remarks>
 		/// Gets the specified metadata.
@@ -2692,14 +2441,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMetadata (options, tags, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Sets the specified metadata.
@@ -2774,14 +2516,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetMetadata (metadata, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Expunge the folder, permanently removing all messages marked for deletion.
@@ -2860,14 +2595,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task ExpungeAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Expunge (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task ExpungeAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Expunge the specified uids, permanently removing them from the folder.
@@ -2960,17 +2688,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Expunge (uids, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Append the specified message to the folder.
@@ -3055,14 +2773,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (message == null)
-				throw new ArgumentNullException (nameof (message));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (message, flags, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AppendAsync (FormatOptions.Default, message, flags, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -3150,14 +2861,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (message == null)
-				throw new ArgumentNullException (nameof (message));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (message, flags, date, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AppendAsync (FormatOptions.Default, message, flags, date, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -3256,20 +2960,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (options == null)
-				throw new ArgumentNullException (nameof (options));
-
-			if (message == null)
-				throw new ArgumentNullException (nameof (message));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (options, message, flags, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified message to the folder.
@@ -3369,20 +3060,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (options == null)
-				throw new ArgumentNullException (nameof (options));
-
-			if (message == null)
-				throw new ArgumentNullException (nameof (message));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (options, message, flags, date, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified messages to the folder.
@@ -3481,25 +3159,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (messages == null)
-				throw new ArgumentNullException (nameof (messages));
-
-			for (int i = 0; i < messages.Count; i++) {
-				if (messages[i] == null)
-					throw new ArgumentException ("One or more of the messages is null.");
-			}
-
-			if (flags == null)
-				throw new ArgumentNullException (nameof (flags));
-
-			if (messages.Count != flags.Count)
-				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (messages, flags, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AppendAsync (FormatOptions.Default, messages, flags, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -3605,28 +3265,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (messages == null)
-				throw new ArgumentNullException (nameof (messages));
-
-			for (int i = 0; i < messages.Count; i++) {
-				if (messages[i] == null)
-					throw new ArgumentException ("One or more of the messages is null.");
-			}
-
-			if (flags == null)
-				throw new ArgumentNullException (nameof (flags));
-
-			if (dates == null)
-				throw new ArgumentNullException (nameof (dates));
-
-			if (messages.Count != flags.Count || messages.Count != dates.Count)
-				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (messages, flags, dates, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AppendAsync (FormatOptions.Default, messages, flags, dates, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -3739,31 +3378,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (options == null)
-				throw new ArgumentNullException (nameof (options));
-
-			if (messages == null)
-				throw new ArgumentNullException (nameof (messages));
-
-			for (int i = 0; i < messages.Count; i++) {
-				if (messages[i] == null)
-					throw new ArgumentException ("One or more of the messages is null.");
-			}
-
-			if (flags == null)
-				throw new ArgumentNullException (nameof (flags));
-
-			if (messages.Count != flags.Count)
-				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (options, messages, flags, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified messages to the folder.
@@ -3881,34 +3496,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (options == null)
-				throw new ArgumentNullException (nameof (options));
-
-			if (messages == null)
-				throw new ArgumentNullException (nameof (messages));
-
-			for (int i = 0; i < messages.Count; i++) {
-				if (messages[i] == null)
-					throw new ArgumentException ("One or more of the messages is null.");
-			}
-
-			if (flags == null)
-				throw new ArgumentNullException (nameof (flags));
-
-			if (dates == null)
-				throw new ArgumentNullException (nameof (dates));
-
-			if (messages.Count != flags.Count || messages.Count != dates.Count)
-				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (options, messages, flags, dates, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Copy the specified message to the destination folder.
@@ -4013,16 +3601,17 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return CopyTo (uid, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			var uids = await CopyToAsync (new [] { uid }, destination, cancellationToken).ConfigureAwait (false);
+
+			if (uids != null && uids.Destination.Count > 0)
+				return uids.Destination[0];
+
+			return null;
 		}
 
 		/// <summary>
@@ -4121,20 +3710,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return CopyTo (uids, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Move the specified message to the destination folder.
@@ -4239,16 +3815,17 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> MoveToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<UniqueId?> MoveToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return MoveTo (uid, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			var uids = await MoveToAsync (new [] { uid }, destination, cancellationToken).ConfigureAwait (false);
+
+			if (uids != null && uids.Destination.Count > 0)
+				return uids.Destination[0];
+
+			return null;
 		}
 
 		/// <summary>
@@ -4347,20 +3924,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return MoveTo (uids, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Copy the specified message to the destination folder.
@@ -4558,20 +4122,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					CopyTo (indexes, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Move the specified message to the destination folder.
@@ -4769,20 +4320,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					MoveTo (indexes, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs.
@@ -4888,20 +4426,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException (nameof (items));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs.
@@ -5008,23 +4533,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs.
@@ -5131,23 +4640,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs that have a
@@ -5269,20 +4762,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException (nameof (items));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, modseq, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs that have a
@@ -5408,23 +4888,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs that have a
@@ -5550,23 +5014,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes.
@@ -5669,20 +5117,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException (nameof (items));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (indexes, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes.
@@ -5789,23 +5224,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (indexes, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes.
@@ -5912,23 +5331,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (indexes, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes that have a
@@ -6042,20 +5445,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException (nameof (items));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (indexes, modseq, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes that
@@ -6167,23 +5557,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (indexes, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes that
@@ -6295,23 +5669,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (indexes, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes, inclusive.
@@ -6413,23 +5771,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (min < 0 || min > Count)
-				throw new ArgumentOutOfRangeException (nameof (min));
-
-			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException (nameof (max));
-
-			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException (nameof (items));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (min, max, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes, inclusive.
@@ -6541,26 +5883,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (min < 0 || min > Count)
-				throw new ArgumentOutOfRangeException (nameof (min));
-
-			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException (nameof (max));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (min, max, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes, inclusive.
@@ -6672,26 +5995,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (min < 0 || min > Count)
-				throw new ArgumentOutOfRangeException (nameof (min));
-
-			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException (nameof (max));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (min, max, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes (inclusive)
@@ -6805,23 +6109,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (min < 0)
-				throw new ArgumentOutOfRangeException (nameof (min));
-
-			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException (nameof (max));
-
-			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException (nameof (items));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (min, max, modseq, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes (inclusive)
@@ -6945,26 +6233,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (min < 0)
-				throw new ArgumentOutOfRangeException (nameof (min));
-
-			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException (nameof (max));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (min, max, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes (inclusive)
@@ -7088,26 +6357,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (min < 0)
-				throw new ArgumentOutOfRangeException (nameof (min));
-
-			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException (nameof (max));
-
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (min, max, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the specified message headers.
@@ -7191,14 +6441,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetHeaders (uid, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part headers.
@@ -7290,17 +6533,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (part == null)
-				throw new ArgumentNullException (nameof (part));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetHeaders (uid, part, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified message headers.
@@ -7384,17 +6617,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetHeaders (index, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part headers.
@@ -7486,20 +6709,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			if (part == null)
-				throw new ArgumentNullException (nameof (part));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetHeaders (index, part, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -7583,14 +6793,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessage (uid, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -7674,17 +6877,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessage (index, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -7779,123 +6972,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (part == null)
-				throw new ArgumentNullException (nameof (part));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetBodyPart (uid, part, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
-
-		/// <summary>
-		/// Get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message body.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use GetBodyPart(UniqueId, BodyPart, CancellationToken, ITransferProgress) or GetHeaders(UniqueId, BodyPart, CancellationToken, ITransferProgress)")]
-		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Asynchronously get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message body.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use GetBodyPartAsync(UniqueId, BodyPart, CancellationToken, ITransferProgress) or GetHeadersAsync(UniqueId, BodyPart, CancellationToken, ITransferProgress)")]
-		public virtual Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (part == null)
-				throw new ArgumentNullException (nameof (part));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetBodyPart (uid, part, headersOnly, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -7987,129 +7064,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			if (part == null)
-				throw new ArgumentNullException (nameof (part));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetBodyPart (index, part, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
-
-		/// <summary>
-		/// Get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message body.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use GetBodyPart(int, BodyPart, CancellationToken, ITransferProgress) or GetHeaders(int, BodyPart, CancellationToken, ITransferProgress)")]
-		public abstract MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Asynchronously get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message body.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use GetBodyPartAsync(int, BodyPart, CancellationToken, ITransferProgress) or GetHeadersAsync(int, BodyPart, CancellationToken, ITransferProgress)")]
-		public virtual Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			if (part == null)
-				throw new ArgumentNullException (nameof (part));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetBodyPart (index, part, headersOnly, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -8213,20 +7168,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException (nameof (offset));
-
-			if (count < 0)
-				throw new ArgumentOutOfRangeException (nameof (count));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (uid, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -8328,23 +7270,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException (nameof (offset));
-
-			if (count < 0)
-				throw new ArgumentOutOfRangeException (nameof (count));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (index, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified body part.
@@ -8481,12 +7407,8 @@ namespace MailKit {
 
 			if (count < 0)
 				throw new ArgumentOutOfRangeException (nameof (count));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (uid, part, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			
+			return GetStreamAsync (uid, part.PartSpecifier, offset, count, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -8625,12 +7547,8 @@ namespace MailKit {
 
 			if (count < 0)
 				throw new ArgumentOutOfRangeException (nameof (count));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (index, part, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			
+			return GetStreamAsync (index, part.PartSpecifier, offset, count, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -8727,17 +7645,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (section == null)
-				throw new ArgumentNullException (nameof (section));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (uid, section, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -8853,23 +7761,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (section == null)
-				throw new ArgumentNullException (nameof (section));
-
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException (nameof (offset));
-
-			if (count < 0)
-				throw new ArgumentOutOfRangeException (nameof (count));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (uid, section, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -8965,20 +7857,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			if (section == null)
-				throw new ArgumentNullException (nameof (section));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (index, section, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -9092,26 +7971,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			if (section == null)
-				throw new ArgumentNullException (nameof (section));
-
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException (nameof (offset));
-
-			if (count < 0)
-				throw new ArgumentOutOfRangeException (nameof (count));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (index, section, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Add a set of flags to the specified message.
@@ -9152,7 +8012,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void AddFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void AddFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			AddFlags (new [] { uid }, flags, silent, cancellationToken);
 		}
@@ -9200,7 +8060,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task AddFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task AddFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return AddFlagsAsync (new [] { uid }, flags, silent, cancellationToken);
 		}
@@ -9248,7 +8108,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void AddFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void AddFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			AddFlags (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
@@ -9297,7 +8157,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task AddFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task AddFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return AddFlagsAsync (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
@@ -9400,17 +8260,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddFlags (uids, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AddFlagsAsync (uids, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -9508,20 +8358,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddFlags (uids, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified message.
@@ -9565,7 +8402,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void RemoveFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void RemoveFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			RemoveFlags (new [] { uid }, flags, silent, cancellationToken);
 		}
@@ -9613,7 +8450,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task RemoveFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task RemoveFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return RemoveFlagsAsync (new [] { uid }, flags, silent, cancellationToken);
 		}
@@ -9661,7 +8498,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void RemoveFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void RemoveFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			RemoveFlags (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
@@ -9710,7 +8547,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task RemoveFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task RemoveFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return RemoveFlagsAsync (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
@@ -9813,17 +8650,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveFlags (uids, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return RemoveFlagsAsync (uids, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -9921,20 +8748,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveFlags (uids, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified message.
@@ -9976,7 +8790,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void SetFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void SetFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			SetFlags (new [] { uid }, flags, silent, cancellationToken);
 		}
@@ -10022,7 +8836,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task SetFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SetFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return SetFlagsAsync (new [] { uid }, flags, silent, cancellationToken);
 		}
@@ -10065,7 +8879,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void SetFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void SetFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			SetFlags (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
@@ -10109,7 +8923,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task SetFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SetFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return SetFlagsAsync (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
@@ -10202,14 +9016,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetFlags (uids, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SetFlagsAsync (uids, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -10297,17 +9104,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetFlags (uids, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -10410,17 +9207,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddFlags (uids, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AddFlagsAsync (uids, modseq, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -10521,20 +9308,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -10637,17 +9411,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveFlags (uids, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return RemoveFlagsAsync (uids, modseq, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -10748,20 +9512,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -10860,14 +9611,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetFlags (uids, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SetFlagsAsync (uids, modseq, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -10964,17 +9708,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of flags to the specified message.
@@ -11015,7 +9749,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void AddFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void AddFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			AddFlags (new [] { index }, flags, silent, cancellationToken);
 		}
@@ -11060,7 +9794,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task AddFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task AddFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return AddFlagsAsync (new [] { index }, flags, silent, cancellationToken);
 		}
@@ -11105,7 +9839,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void AddFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void AddFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			AddFlags (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
@@ -11151,7 +9885,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task AddFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task AddFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return AddFlagsAsync (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
@@ -11248,17 +9982,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddFlags (indexes, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AddFlagsAsync (indexes, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -11350,20 +10074,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddFlags (indexes, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified message.
@@ -11404,7 +10115,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void RemoveFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void RemoveFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			RemoveFlags (new [] { index }, flags, silent, cancellationToken);
 		}
@@ -11449,7 +10160,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task RemoveFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task RemoveFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return RemoveFlagsAsync (new [] { index }, flags, silent, cancellationToken);
 		}
@@ -11494,7 +10205,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void RemoveFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void RemoveFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			RemoveFlags (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
@@ -11540,7 +10251,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task RemoveFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task RemoveFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return RemoveFlagsAsync (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
@@ -11637,17 +10348,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveFlags (indexes, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return RemoveFlagsAsync (indexes, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -11739,20 +10440,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveFlags (indexes, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified message.
@@ -11791,7 +10479,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void SetFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void SetFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			SetFlags (new [] { index }, flags, silent, cancellationToken);
 		}
@@ -11834,7 +10522,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task SetFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SetFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return SetFlagsAsync (new [] { index }, flags, silent, cancellationToken);
 		}
@@ -11877,7 +10565,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void SetFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void SetFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			SetFlags (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
@@ -11921,7 +10609,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task SetFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SetFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return SetFlagsAsync (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
@@ -12014,14 +10702,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetFlags (indexes, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SetFlagsAsync (indexes, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -12109,17 +10790,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetFlags (indexes, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -12222,17 +10893,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddFlags (indexes, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AddFlagsAsync (indexes, modseq, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -12333,20 +10994,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -12449,17 +11097,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveFlags (indexes, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return RemoveFlagsAsync (indexes, modseq, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -12560,20 +11198,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -12672,14 +11297,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetFlags (indexes, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SetFlagsAsync (indexes, modseq, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -12776,17 +11394,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of labels to the specified message.
@@ -12830,7 +11438,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void AddLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void AddLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			AddLabels (new [] { uid }, labels, silent, cancellationToken);
 		}
@@ -12878,7 +11486,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task AddLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task AddLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return AddLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
 		}
@@ -12974,23 +11582,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task AddLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddLabels (uids, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task AddLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of labels from the specified message.
@@ -13034,7 +11626,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void RemoveLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void RemoveLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			RemoveLabels (new [] { uid }, labels, silent, cancellationToken);
 		}
@@ -13082,7 +11674,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task RemoveLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task RemoveLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return RemoveLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
 		}
@@ -13178,23 +11770,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RemoveLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveLabels (uids, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task RemoveLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the labels of the specified message.
@@ -13236,7 +11812,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void SetLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void SetLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			SetLabels (new [] { uid }, labels, silent, cancellationToken);
 		}
@@ -13282,7 +11858,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task SetLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SetLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return SetLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
 		}
@@ -13374,20 +11950,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetLabels (uids, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task SetLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
@@ -13489,23 +12052,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AddLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddLabels (uids, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> AddLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
@@ -13607,23 +12154,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> RemoveLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveLabels (uids, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> RemoveLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
@@ -13721,20 +12252,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> SetLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetLabels (uids, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> SetLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of labels to the specified message.
@@ -13778,7 +12296,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void AddLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void AddLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			AddLabels (new [] { index }, labels, silent, cancellationToken);
 		}
@@ -13826,7 +12344,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task AddLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task AddLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return AddLabelsAsync (new [] { index }, labels, silent, cancellationToken);
 		}
@@ -13922,23 +12440,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task AddLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddLabels (indexes, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task AddLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of labels from the specified message.
@@ -13982,7 +12484,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void RemoveLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void RemoveLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			RemoveLabels (new [] { index }, labels, silent, cancellationToken);
 		}
@@ -14030,7 +12532,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task RemoveLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task RemoveLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return RemoveLabelsAsync (new [] { index }, labels, silent, cancellationToken);
 		}
@@ -14126,23 +12628,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RemoveLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveLabels (indexes, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task RemoveLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the labels of the specified message.
@@ -14184,7 +12670,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public void SetLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void SetLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			SetLabels (new [] { index }, labels, silent, cancellationToken);
 		}
@@ -14230,7 +12716,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public Task SetLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SetLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return SetLabelsAsync (new [] { index }, labels, silent, cancellationToken);
 		}
@@ -14322,20 +12808,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetLabels (indexes, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task SetLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
@@ -14437,23 +12910,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<int>> AddLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddLabels (indexes, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<int>> AddLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
@@ -14555,23 +13012,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<int>> RemoveLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveLabels (indexes, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<int>> RemoveLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
@@ -14669,20 +13110,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<int>> SetLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			if (labels == null)
-				throw new ArgumentNullException (nameof (labels));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetLabels (indexes, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<int>> SetLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Search the folder for messages matching the specified query.
@@ -14776,116 +13204,6 @@ namespace MailKit {
 					return Search (query, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
-
-		/// <summary>
-		/// Search the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs in the specified sort order.</returns>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="orderBy"/> is empty.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support sorting search results.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use Sort(SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public IList<UniqueId> Search (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Sort (query, orderBy, cancellationToken);
-		}
-
-		/// <summary>
-		/// Asynchronously search the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs in the specified sort order.</returns>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="orderBy"/> is empty.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support sorting search results.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use SortAsync(SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public virtual Task<IList<UniqueId>> SearchAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return SortAsync (query, orderBy, cancellationToken);
 		}
 
 		/// <summary>
@@ -14996,141 +13314,12 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
+			var uidSet = new UidSearchQuery (uids);
 
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (uids, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
-
-		/// <summary>
-		/// Search the subset of UIDs in the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs.</returns>
-		/// <param name="uids">The subset of UIDs</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support sorting search results.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use Sort(IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Sort (uids, query, orderBy, cancellationToken);
-		}
-
-		/// <summary>
-		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs.</returns>
-		/// <param name="uids">The subset of UIDs</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support sorting search results.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use SortAsync(IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return SortAsync (uids, query, orderBy, cancellationToken);
+			return SearchAsync (uidSet.And (query), cancellationToken);
 		}
 
 		/// <summary>
@@ -15221,135 +13410,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (options, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Sort messages matching the specified query.
-		/// </summary>
-		/// <remarks>
-		/// Searches the folder for messages matching the specified query,
-		/// returning the search results in the specified sort order.
-		/// </remarks>
-		/// <returns>The search results.</returns>
-		/// <param name="options">The search options.</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="orderBy"/> is empty.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support the specified search options.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support sorting search results.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use Sort(SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public SearchResults Search (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Sort (options, query, orderBy, cancellationToken);
-		}
-
-		/// <summary>
-		/// Asynchronously sort messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously searches the folder for messages matching the specified query,
-		/// returning the search results in the specified sort order.
-		/// </remarks>
-		/// <returns>The search results.</returns>
-		/// <param name="options">The search options.</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="orderBy"/> is empty.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support the specified search options.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support sorting search results.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use SortAsync(SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return SortAsync (options, query, orderBy, cancellationToken);
-		}
-
-		/// <summary>
-		/// Searches the subset of UIDs in the folder for messages matching the specified query.
+		/// Search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
 		/// Searches the fsubset of UIDs in the folder for messages matching the specified query,
@@ -15410,7 +13474,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Asynchronously searches the subset of UIDs in the folder for messages matching the specified query.
+		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously searches the fsubset of UIDs in the folder for messages matching the specified query,
@@ -15462,145 +13526,12 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
+			var uidSet = new UidSearchQuery (uids);
 
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (options, uids, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
-
-		/// <summary>
-		/// Sort messages matching the specified query.
-		/// </summary>
-		/// <remarks>
-		/// Searches the folder for messages matching the specified query,
-		/// returning the search results in the specified sort order.
-		/// </remarks>
-		/// <returns>The search results.</returns>
-		/// <param name="options">The search options.</param>
-		/// <param name="uids">The subset of UIDs</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support the specified search options.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support sorting search results.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use Sort(SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Sort (options, uids, query, orderBy, cancellationToken);
-		}
-
-		/// <summary>
-		/// Asynchronously sort messages matching the specified query.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously searches the folder for messages matching the specified query,
-		/// returning the search results in the specified sort order.
-		/// </remarks>
-		/// <returns>The search results.</returns>
-		/// <param name="options">The search options.</param>
-		/// <param name="uids">The subset of UIDs</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support the specified search options.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support sorting search results.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		[Obsolete ("Use SortAsync(SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return SortAsync (options, uids, query, orderBy, cancellationToken);
+			return SearchAsync (options, uidSet.And (query), cancellationToken);
 		}
 
 		/// <summary>
@@ -15701,23 +13632,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
-
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Sort (query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Sort messages matching the specified query.
@@ -15841,23 +13756,12 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<UniqueId>> SortAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
+			var uidSet = new UidSearchQuery (uids);
 
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
 
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Sort (uids, query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SortAsync (uidSet.And (query), orderBy, cancellationToken);
 		}
 
 		/// <summary>
@@ -15962,23 +13866,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
-
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Sort (options, query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Sort messages matching the specified query.
@@ -16107,23 +13995,12 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<SearchResults> SortAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
+			var uidSet = new UidSearchQuery (uids);
 
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
 
-			if (orderBy == null)
-				throw new ArgumentNullException (nameof (orderBy));
-
-			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Sort (options, uids, query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SortAsync (options, uidSet.And (query), orderBy, cancellationToken);
 		}
 
 		/// <summary>
@@ -16220,17 +14097,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Thread (algorithm, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -16342,23 +14209,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", nameof (uids));
-
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Thread (uids, algorithm, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Occurs when the folder is opened.
@@ -16785,55 +14636,6 @@ namespace MailKit {
 			if (handler != null)
 				handler (this, EventArgs.Empty);
 		}
-
-		#region IEnumerable<MimeMessage> implementation
-
-		/// <summary>
-		/// Get an enumerator for the messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets an enumerator for the messages in the folder.
-		/// </remarks>
-		/// <returns>The enumerator.</returns>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		public abstract IEnumerator<MimeMessage> GetEnumerator ();
-
-		/// <summary>
-		/// Get an enumerator for the messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets an enumerator for the messages in the folder.
-		/// </remarks>
-		/// <returns>The enumerator.</returns>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.MailFolder"/>.

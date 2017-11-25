@@ -193,14 +193,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					EnableQuickResync (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the specified special folder.
@@ -325,14 +318,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (@namespace == null)
-				throw new ArgumentNullException (nameof (@namespace));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetFolders (@namespace, subscribedOnly, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return GetFoldersAsync (@namespace, StatusItems.None, subscribedOnly, cancellationToken);
 		}
 
 		/// <summary>
@@ -407,17 +393,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (@namespace == null)
-				throw new ArgumentNullException (nameof (@namespace));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetFolders (@namespace, items, subscribedOnly, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the folder for the specified path.
@@ -493,17 +469,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (path == null)
-				throw new ArgumentNullException (nameof (path));
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetFolder (path, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified metadata.
@@ -573,14 +539,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMetadata (tag, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified metadata.
@@ -661,11 +620,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<MetadataCollection> GetMetadataAsync (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMetadata (tags, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return GetMetadataAsync (new MetadataOptions (), tags, cancellationToken);
 		}
 
 		/// <summary>
@@ -748,14 +703,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMetadata (options, tags, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Sets the specified metadata.
@@ -830,14 +778,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetMetadata (metadata, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		public abstract Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Occurs when a remote message store receives an alert message from the server.
