@@ -4398,7 +4398,7 @@ namespace MailKit.Net.Imap
 			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid.Id, GetBodyPartQuery (partSpecifier, false, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
-			ChainedStream chained;
+			ChainedStream chained = null;
 			bool dispose = false;
 			Stream stream;
 
@@ -4429,6 +4429,11 @@ namespace MailKit.Net.Imap
 
 				foreach (var tag in tags)
 					ctx.Sections.Remove (tag);
+			} catch {
+				if (chained != null)
+					chained.Dispose ();
+
+				throw;
 			} finally {
 				ctx.Dispose ();
 			}
@@ -4676,7 +4681,7 @@ namespace MailKit.Net.Imap
 			var command = string.Format ("FETCH {0} ({1})\r\n", index + 1, GetBodyPartQuery (partSpecifier, false, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
-			ChainedStream chained;
+			ChainedStream chained = null;
 			bool dispose = false;
 			Stream stream;
 
@@ -4707,6 +4712,11 @@ namespace MailKit.Net.Imap
 
 				foreach (var tag in tags)
 					ctx.Sections.Remove (tag);
+			} catch {
+				if (chained != null)
+					chained.Dispose ();
+
+				throw;
 			} finally {
 				ctx.Dispose ();
 			}
