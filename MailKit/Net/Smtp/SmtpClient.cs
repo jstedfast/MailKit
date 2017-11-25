@@ -914,11 +914,11 @@ namespace MailKit.Net.Smtp {
 				stream.ReadTimeout = timeout;
 			}
 
-			ProtocolLogger.LogConnect (uri);
-
 			Stream = new SmtpStream (stream, socket, ProtocolLogger);
 
 			try {
+				ProtocolLogger.LogConnect (uri);
+
 				// read the greeting
 				if (doAsync)
 					response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
@@ -1109,11 +1109,11 @@ namespace MailKit.Net.Smtp {
 				stream.ReadTimeout = timeout;
 			}
 
-			ProtocolLogger.LogConnect (uri);
-
 			Stream = new SmtpStream (stream, socket, ProtocolLogger);
 
 			try {
+				ProtocolLogger.LogConnect (uri);
+
 				// read the greeting
 				if (doAsync)
 					response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);

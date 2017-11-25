@@ -863,7 +863,16 @@ namespace MailKit.Net.Pop3 {
 				stream.ReadTimeout = timeout;
 			}
 
-			ProtocolLogger.LogConnect (uri);
+			try {
+				ProtocolLogger.LogConnect (uri);
+			} catch {
+				stream.Dispose ();
+				secure = false;
+#if NETFX_CORE
+				socket = null;
+#endif
+				throw;
+			}
 
 			var pop3 = new Pop3Stream (stream, socket, ProtocolLogger);
 
@@ -1044,7 +1053,13 @@ namespace MailKit.Net.Pop3 {
 				stream.ReadTimeout = timeout;
 			}
 
-			ProtocolLogger.LogConnect (uri);
+			try {
+				ProtocolLogger.LogConnect (uri);
+			} catch {
+				stream.Dispose ();
+				secure = false;
+				throw;
+			}
 
 			var pop3 = new Pop3Stream (stream, socket, ProtocolLogger);
 

@@ -1142,7 +1142,7 @@ namespace MailKit.Net.Imap {
 
 			if (socket == null)
 				throw new IOException (string.Format ("Failed to resolve host: {0}", host));
-			
+
 			engine.Uri = uri;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
@@ -1195,7 +1195,16 @@ namespace MailKit.Net.Imap {
 				stream.ReadTimeout = timeout;
 			}
 
-			ProtocolLogger.LogConnect (uri);
+			try {
+				ProtocolLogger.LogConnect (uri);
+			} catch {
+				stream.Dispose ();
+				secure = false;
+#if NETFX_CORE
+				socket = null;
+#endif
+				throw;
+			}
 
 			await engine.ConnectAsync (new ImapStream (stream, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1379,7 +1388,13 @@ namespace MailKit.Net.Imap {
 				stream.ReadTimeout = timeout;
 			}
 
-			ProtocolLogger.LogConnect (uri);
+			try {
+				ProtocolLogger.LogConnect (uri);
+			} catch {
+				stream.Dispose ();
+				secure = false;
+				throw;
+			}
 
 			await engine.ConnectAsync (new ImapStream (stream, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
 
