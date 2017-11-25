@@ -87,12 +87,6 @@ namespace MailKit {
 		Size           = 1 << 6,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.Size"/>.
-		/// </summary>
-		[Obsolete ("Use MessageSummaryItems.Size instead.")]
-		MessageSize    = Size,
-
-		/// <summary>
 		/// Fetch the <see cref="MessageSummary.ModSeq"/>.
 		/// </summary>
 		ModSeq         = 1 << 7,

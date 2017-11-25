@@ -158,18 +158,6 @@ namespace MailKit {
 		/// Initializes a new instance of the <see cref="MailKit.UniqueIdSet"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new unique identifier set.
-		/// </remarks>
-		/// <param name="sort"><c>true</c> if unique identifiers should be sorted; otherwise, <c>false</c>.</param>
-		[Obsolete ("Use UniqueIdSet (SortOrder) instead.")]
-		public UniqueIdSet (bool sort) : this (sort ? SortOrder.Ascending : SortOrder.None)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.UniqueIdSet"/> class.
-		/// </summary>
-		/// <remarks>
 		/// Creates a new set of unique identifier set containing the specified uids.
 		/// </remarks>
 		/// <param name="uids">An initial set of unique ids.</param>
@@ -178,21 +166,6 @@ namespace MailKit {
 		/// <paramref name="order"/> is invalid.
 		/// </exception>
 		public UniqueIdSet (IEnumerable<UniqueId> uids, SortOrder order = SortOrder.None) : this (order)
-		{
-			foreach (var uid in uids)
-				Add (uid);
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.UniqueIdSet"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new set of unique identifier set containing the specified uids.
-		/// </remarks>
-		/// <param name="uids">An initial set of unique ids.</param>
-		/// <param name="sort"><c>true</c> if unique identifiers should be sorted; otherwise, <c>false</c>.</param>
-		[Obsolete ("Use UniqueIdSet (IEnumerable<UniqueId>, SortOrder) instead.")]
-		public UniqueIdSet (IEnumerable<UniqueId> uids, bool sort) : this (sort)
 		{
 			foreach (var uid in uids)
 				Add (uid);

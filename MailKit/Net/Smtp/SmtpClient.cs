@@ -128,22 +128,6 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Get or set whether or not the capabilities should be re-queried after authenticating.
-		/// </summary>
-		/// <remarks>
-		/// <para>Certain servers do not properly follow the specification and break if an <c>EHLO</c>
-		/// command is sent after authenticating, causing the sending of mail to fail with various
-		/// errors, typically suggesting an invalid state.</para>
-		/// <para>Since the SMTP SASL specifications specifically state that clients should re-query
-		/// the capabilities after successfully authenticating, the default is <c>true</c>.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the capabilities should be re-queried after authenticating; otherwise, <c>false</c>.</value>
-		[Obsolete ("This property is no longer needed.")]
-		public bool QueryCapabilitiesAfterAuthenticating {
-			get; set;
-		}
-
-		/// <summary>
 		/// Get the underlying SMTP stream.
 		/// </summary>
 		/// <remarks>
