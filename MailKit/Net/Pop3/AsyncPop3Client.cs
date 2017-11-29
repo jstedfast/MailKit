@@ -42,6 +42,52 @@ namespace MailKit.Net.Pop3
 	public partial class Pop3Client
 	{
 		/// <summary>
+		/// Asynchronously authenticate using the specified SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Authenticates using the specified SASL mechanism.</para>
+		/// <para>For a list of available SASL authentication mechanisms supported by the server,
+		/// check the <see cref="AuthenticationMechanisms"/> property after the service has been
+		/// connected.</para>
+		/// </remarks>
+		/// <param name="mechanism">The SASL mechanism.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// A POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// An POP3 protocol error occurred.
+		/// </exception>
+		public override Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return AuthenticateAsync (mechanism, true, cancellationToken);
+		}
+
+		/// <summary>
 		/// Asynchronously authenticates using the supplied credentials.
 		/// </summary>
 		/// <remarks>

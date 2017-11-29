@@ -49,43 +49,79 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismCramMd5 (uri, credentials);
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, "username", null));
 			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
 
 			sasl = new SaslMechanismDigestMd5 (uri, credentials);
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, (string) null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, "username", null));
 			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
 
 			sasl = new SaslMechanismLogin (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (null, Encoding.UTF8, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, Encoding.UTF8, null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (null, Encoding.UTF8, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, Encoding.UTF8, null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, Encoding.UTF8, "username", null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, "username", null));
 			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
 
 			sasl = new SaslMechanismNtlm (uri, credentials);
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (uri, null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (uri, (string) null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (uri, "username", null));
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
 			sasl = new SaslMechanismOAuth2 (uri, credentials);
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (uri, null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (uri, (string) null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (uri, "username", null));
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
 			sasl = new SaslMechanismPlain (uri, credentials);
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, Encoding.UTF8, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, Encoding.UTF8, null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, Encoding.UTF8, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, Encoding.UTF8, null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, Encoding.UTF8, "username", null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, "username", null));
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
 			sasl = new SaslMechanismScramSha1 (uri, credentials);
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (uri, null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (uri, (string) null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (uri, "username", null));
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
 			sasl = new SaslMechanismScramSha256 (uri, credentials);
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (uri, null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (uri, (string) null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (uri, "username", null));
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 		}
 

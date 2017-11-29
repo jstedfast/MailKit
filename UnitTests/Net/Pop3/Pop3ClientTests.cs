@@ -101,8 +101,10 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 110, SecureSocketOptions.None));
 
 				// Authenticate
-				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null));
-				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate ((SaslMechanism) null));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync ((SaslMechanism) null));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate ((ICredentials) null));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync ((ICredentials) null));
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null, "password"));
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null, "password"));
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate ("username", null));
@@ -516,6 +518,114 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public void TestSaslAuthentication ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "exchange.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "exchange.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "exchange.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (ExchangeCapa, client.Capabilities);
+				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				try {
+					var credentials = new NetworkCredential ("username", "password");
+					var sasl = new SaslMechanismPlain (new Uri ("pop://localhost"), credentials);
+
+					client.Authenticate (sasl);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (ExchangeCapa, client.Capabilities);
+				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async void TestSaslAuthenticationAsync ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "exchange.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "exchange.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "exchange.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (ExchangeCapa, client.Capabilities);
+				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				try {
+					var credentials = new NetworkCredential ("username", "password");
+					var sasl = new SaslMechanismPlain (new Uri ("pop://localhost"), credentials);
+
+					await client.AuthenticateAsync (sasl);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (ExchangeCapa, client.Capabilities);
+				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
 
 				try {
 					await client.DisconnectAsync (true);

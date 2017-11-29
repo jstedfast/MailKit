@@ -52,7 +52,7 @@ namespace MailKit.Security {
 		/// which order the SASL mechanisms supported by the server should be tried.
 		/// </remarks>
 		public static readonly string[] AuthMechanismRank = {
-			"XOAUTH2", "SCRAM-SHA-256", "SCRAM-SHA-1", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN"
+			"SCRAM-SHA-256", "SCRAM-SHA-1", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN"
 		};
 
 		/// <summary>
@@ -77,6 +77,37 @@ namespace MailKit.Security {
 				throw new ArgumentNullException (nameof (credentials));
 
 			Credentials = credentials;
+			Uri = uri;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanism"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new SASL context.
+		/// </remarks>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		protected SaslMechanism (Uri uri, string userName, string password)
+		{
+			if (uri == null)
+				throw new ArgumentNullException (nameof (uri));
+
+			if (userName == null)
+				throw new ArgumentNullException (nameof (userName));
+
+			if (password == null)
+				throw new ArgumentNullException (nameof (password));
+
+			Credentials = new NetworkCredential (userName, password);
 			Uri = uri;
 		}
 

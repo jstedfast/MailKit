@@ -812,6 +812,133 @@ namespace MailKit.Net.Imap {
 			return string.Format ("{0}://{1}@{2}:{3}", uri.Scheme, EscapeUserName (userName), uri.Host, uri.Port);
 		}
 
+		async Task AuthenticateAsync (SaslMechanism mechanism, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (mechanism == null)
+				throw new ArgumentNullException (nameof (mechanism));
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State >= ImapEngineState.Authenticated)
+				throw new InvalidOperationException ("The ImapClient is already authenticated.");
+
+			int capabilitiesVersion = engine.CapabilitiesVersion;
+			NetworkCredential cred;
+			ImapCommand ic = null;
+			string id;
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var command = string.Format ("AUTHENTICATE {0}", mechanism.MechanismName);
+
+			if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && mechanism.SupportsInitialResponse) {
+				var ir = mechanism.Challenge (null);
+				command += " " + ir + "\r\n";
+			} else {
+				command += "\r\n";
+			}
+
+			ic = engine.QueueCommand (cancellationToken, null, command);
+			ic.ContinuationHandler = async (imap, cmd, text, xdoAsync) => {
+				string challenge;
+
+				if (mechanism.IsAuthenticated) {
+					// The server claims we aren't done authenticating, but our SASL mechanism thinks we are...
+					// Send an empty string to abort the AUTHENTICATE command.
+					challenge = string.Empty;
+				} else {
+					challenge = mechanism.Challenge (text);
+				}
+
+				var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
+
+				if (xdoAsync) {
+					await imap.Stream.WriteAsync (buf, 0, buf.Length, cmd.CancellationToken).ConfigureAwait (false);
+					await imap.Stream.FlushAsync (cmd.CancellationToken).ConfigureAwait (false);
+				} else {
+					imap.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
+					imap.Stream.Flush (cmd.CancellationToken);
+				}
+			};
+
+			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+			if (ic.Response != ImapCommandResponse.Ok) {
+				for (int i = 0; i < ic.RespCodes.Count; i++) {
+					if (ic.RespCodes[i].Type != ImapResponseCodeType.Alert)
+						continue;
+
+					OnAlert (ic.RespCodes[i].Message);
+
+					throw new AuthenticationException (ic.ResponseText ?? ic.RespCodes[i].Message);
+				}
+
+				throw new AuthenticationException ();
+			}
+
+			engine.State = ImapEngineState.Authenticated;
+
+			cred = mechanism.Credentials.GetCredential (mechanism.Uri, mechanism.MechanismName);
+			id = GetSessionIdentifier (cred.UserName);
+			if (id != identifier) {
+				engine.FolderCache.Clear ();
+				identifier = id;
+			}
+
+			// Query the CAPABILITIES again if the server did not include an
+			// untagged CAPABILITIES response to the AUTHENTICATE command.
+			if (engine.CapabilitiesVersion == capabilitiesVersion)
+				await engine.QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+			await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			OnAuthenticated (ic.ResponseText);
+		}
+
+		/// <summary>
+		/// Authenticate using the specified SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Authenticates using the specified SASL mechanism.</para>
+		/// <para>For a list of available SASL authentication mechanisms supported by the server,
+		/// check the <see cref="AuthenticationMechanisms"/> property after the service has been
+		/// connected.</para>
+		/// </remarks>
+		/// <param name="mechanism">The SASL mechanism.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public override void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			AuthenticateAsync (mechanism, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
 		async Task AuthenticateAsync (Encoding encoding, ICredentials credentials, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (encoding == null)

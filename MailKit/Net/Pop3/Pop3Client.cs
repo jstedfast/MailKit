@@ -464,6 +464,130 @@ namespace MailKit.Net.Pop3 {
 				engine.QueryCapabilities (cancellationToken);
 		}
 
+		async Task AuthenticateAsync (SaslMechanism mechanism, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (mechanism == null)
+				throw new ArgumentNullException (nameof (mechanism));
+
+			if (!IsConnected)
+				throw new ServiceNotConnectedException ("The Pop3Client must be connected before you can authenticate.");
+
+			if (IsAuthenticated)
+				throw new InvalidOperationException ("The Pop3Client is already authenticated.");
+
+			CheckDisposed ();
+
+			var uri = new Uri ("pop://" + engine.Uri.Host);
+			string authMessage = string.Empty;
+			string challenge;
+			Pop3Command pc;
+			int id;
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text, xdoAsync) => {
+				if (mechanism.IsAuthenticated) {
+					if (cmd.Status == Pop3CommandStatus.Ok)
+						authMessage = text;
+					return;
+				}
+
+				while (!mechanism.IsAuthenticated) {
+					challenge = mechanism.Challenge (text);
+
+					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
+					string response;
+
+					if (xdoAsync) {
+						await pop3.Stream.WriteAsync (buf, 0, buf.Length, cmd.CancellationToken).ConfigureAwait (false);
+						await pop3.Stream.FlushAsync (cmd.CancellationToken).ConfigureAwait (false);
+
+						response = (await pop3.ReadLineAsync (cmd.CancellationToken).ConfigureAwait (false)).TrimEnd ();
+					} else {
+						pop3.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
+						pop3.Stream.Flush (cancellationToken);
+
+						response = pop3.ReadLine (cmd.CancellationToken).TrimEnd ();
+					}
+
+					cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
+					cmd.StatusText = text;
+
+					if (cmd.Status == Pop3CommandStatus.ProtocolError)
+						throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+				}
+			}, "AUTH {0}", mechanism.MechanismName);
+
+			do {
+				if (doAsync)
+					id = await engine.IterateAsync ().ConfigureAwait (false);
+				else
+					id = engine.Iterate ();
+			} while (id < pc.Id);
+
+			if (pc.Status == Pop3CommandStatus.Error)
+				throw new AuthenticationException ();
+
+			if (pc.Status != Pop3CommandStatus.Ok)
+				throw CreatePop3Exception (pc);
+
+			if (pc.Exception != null)
+				throw pc.Exception;
+
+			engine.State = Pop3EngineState.Transaction;
+
+			await QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			await UpdateMessageCountAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			await ProbeCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			OnAuthenticated (authMessage);
+		}
+
+		/// <summary>
+		/// Authenticate using the specified SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Authenticates using the specified SASL mechanism.</para>
+		/// <para>For a list of available SASL authentication mechanisms supported by the server,
+		/// check the <see cref="AuthenticationMechanisms"/> property after the service has been
+		/// connected.</para>
+		/// </remarks>
+		/// <param name="mechanism">The SASL mechanism.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// A POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// An POP3 protocol error occurred.
+		/// </exception>
+		public override void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			AuthenticateAsync (mechanism, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
 		async Task AuthenticateAsync (Encoding encoding, ICredentials credentials, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (encoding == null)
@@ -609,7 +733,7 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Authenticates using the supplied credentials.
+		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the POP3 server supports the APOP authentication mechanism,

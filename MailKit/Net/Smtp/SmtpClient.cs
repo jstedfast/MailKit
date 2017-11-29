@@ -532,6 +532,121 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		async Task AuthenticateAsync (SaslMechanism mechanism, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (mechanism == null)
+				throw new ArgumentNullException (nameof (mechanism));
+
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new ServiceNotConnectedException ("The SmtpClient must be connected before you can authenticate.");
+
+			if (IsAuthenticated)
+				throw new InvalidOperationException ("The SmtpClient is already authenticated.");
+
+			if ((capabilities & SmtpCapabilities.Authentication) == 0)
+				throw new NotSupportedException ("The SMTP server does not support authentication.");
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			SmtpResponse response;
+			string challenge;
+			string command;
+
+			// send an initial challenge if the mechanism supports it
+			if (mechanism.SupportsInitialResponse) {
+				challenge = mechanism.Challenge (null);
+				command = string.Format ("AUTH {0} {1}", mechanism.MechanismName, challenge);
+			} else {
+				command = string.Format ("AUTH {0}", mechanism.MechanismName);
+			}
+
+			response = await SendCommandAsync (command, doAsync, cancellationToken).ConfigureAwait (false);
+
+			if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
+				throw new AuthenticationException (response.Response);
+
+			SaslException saslException = null;
+
+			try {
+				while (!mechanism.IsAuthenticated) {
+					if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
+						break;
+
+					challenge = mechanism.Challenge (response.Response);
+					response = await SendCommandAsync (challenge, doAsync, cancellationToken).ConfigureAwait (false);
+				}
+
+				saslException = null;
+			} catch (SaslException ex) {
+				// reset the authentication state
+				response = await SendCommandAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
+				saslException = ex;
+			}
+
+			if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
+				if (mechanism.NegotiatedSecurityLayer)
+					await EhloAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				authenticated = true;
+				OnAuthenticated (response.Response);
+				return;
+			}
+
+			var message = string.Format ("{0}: {1}", response.StatusCode, response.Response);
+
+			if (saslException != null)
+				throw new AuthenticationException (message, saslException);
+
+			throw new AuthenticationException (message);
+		}
+
+		/// <summary>
+		/// Authenticate using the specified SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Authenticates using the specified SASL mechanism.</para>
+		/// <para>For a list of available SASL authentication mechanisms supported by the server,
+		/// check the <see cref="AuthenticationMechanisms"/> property after the service has been
+		/// connected.</para>
+		/// </remarks>
+		/// <param name="mechanism">The SASL mechanism.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="SmtpClient"/> is already authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The SMTP server does not support authentication.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol error occurred.
+		/// </exception>
+		public override void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			AuthenticateAsync (mechanism, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
 		async Task AuthenticateAsync (Encoding encoding, ICredentials credentials, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (encoding == null)

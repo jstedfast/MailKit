@@ -83,6 +83,33 @@ namespace MailKit.Security {
 		/// Creates a new LOGIN SASL context.
 		/// </remarks>
 		/// <param name="uri">The URI of the service.</param>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismLogin (Uri uri, Encoding encoding, string userName, string password) : base (uri, userName, password)
+		{
+			if (encoding == null)
+				throw new ArgumentNullException (nameof (encoding));
+
+			this.encoding = encoding;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismLogin"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new LOGIN SASL context.
+		/// </remarks>
+		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uri"/> is <c>null</c>.</para>
@@ -90,6 +117,27 @@ namespace MailKit.Security {
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
 		public SaslMechanismLogin (Uri uri, ICredentials credentials) : base (uri, credentials)
+		{
+			encoding = Encoding.UTF8;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismLogin"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new LOGIN SASL context.
+		/// </remarks>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismLogin (Uri uri, string userName, string password) : base (uri, userName, password)
 		{
 			encoding = Encoding.UTF8;
 		}

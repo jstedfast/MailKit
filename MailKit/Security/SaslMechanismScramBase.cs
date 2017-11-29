@@ -92,6 +92,26 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismScramBase"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new SCRAM-based SASL context.
+		/// </remarks>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		protected SaslMechanismScramBase (Uri uri, string userName, string password) : base (uri, userName, password)
+		{
+		}
+
+		/// <summary>
 		/// Gets whether or not the mechanism supports an initial response (SASL-IR).
 		/// </summary>
 		/// <remarks>
