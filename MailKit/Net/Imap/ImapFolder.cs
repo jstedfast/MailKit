@@ -5054,12 +5054,7 @@ namespace MailKit.Net.Imap {
 			if (Count == count)
 				return;
 
-			int arrived = count - Count;
-
 			Count = count;
-
-			if (arrived > 0)
-				OnMessagesArrived (new MessagesArrivedEventArgs (arrived));
 
 			OnCountChanged ();
 		}
