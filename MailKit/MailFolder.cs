@@ -14394,29 +14394,6 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Occurs when new messages arrive in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Emitted when new messages arrive in the folder.
-		/// </remarks>
-		public event EventHandler<MessagesArrivedEventArgs> MessagesArrived;
-
-		/// <summary>
-		/// Raise the messages arrived event.
-		/// </summary>
-		/// <remarks>
-		/// Raises the messages arrived event.
-		/// </remarks>
-		/// <param name="args">The messages arrived event args.</param>
-		protected virtual void OnMessagesArrived (MessagesArrivedEventArgs args)
-		{
-			var handler = MessagesArrived;
-
-			if (handler != null)
-				handler (this, args);
-		}
-
-		/// <summary>
 		/// Occurs when a message vanishes from the folder.
 		/// </summary>
 		/// <remarks>
