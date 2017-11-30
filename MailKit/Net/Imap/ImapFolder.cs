@@ -5047,6 +5047,39 @@ namespace MailKit.Net.Imap {
 			return MoveToAsync (indexes, destination, true, cancellationToken);
 		}
 
+		#region IEnumerable<MimeMessage> implementation
+
+		/// <summary>
+		/// Get an enumerator for the messages in the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets an enumerator for the messages in the folder.
+		/// </remarks>
+		/// <returns>The enumerator.</returns>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		public override IEnumerator<MimeMessage> GetEnumerator ()
+		{
+			CheckState (true, false);
+
+			for (int i = 0; i < Count; i++)
+				yield return GetMessage (i, CancellationToken.None);
+
+			yield break;
+		}
+
+		#endregion
+
 		#region Untagged response handlers called by ImapEngine
 
 		internal void OnExists (int count)

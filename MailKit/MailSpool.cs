@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Collections;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -1458,5 +1459,68 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		public abstract Task ResetAsync (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get an enumerator for the messages in the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets an enumerator for the messages in the folder.
+		/// </remarks>
+		/// <returns>The enumerator.</returns>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// A command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract IEnumerator<MimeMessage> GetEnumerator ();
+
+		/// <summary>
+		/// Get an enumerator for the messages in the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets an enumerator for the messages in the folder.
+		/// </remarks>
+		/// <returns>The enumerator.</returns>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// A command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
+		}
 	}
 }

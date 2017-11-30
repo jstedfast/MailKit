@@ -40,7 +40,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by message stores such as <see cref="MailKit.Net.Imap.ImapClient"/>
 	/// </remarks>
-	public interface IMailFolder
+	public interface IMailFolder : IEnumerable<MimeMessage>
 	{
 		/// <summary>
 		/// Gets an object that can be used to synchronize access to the folder.
