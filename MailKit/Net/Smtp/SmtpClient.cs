@@ -993,9 +993,10 @@ namespace MailKit.Net.Smtp {
 						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 					}
-				} catch {
+				} catch (Exception ex) {
 					ssl.Dispose ();
-					throw;
+
+					throw SslHandshakeException.Create (ex, false);
 				}
 
 				secure = true;
@@ -1014,8 +1015,12 @@ namespace MailKit.Net.Smtp {
 					await socket.ConnectAsync (new HostName (host), port.ToString (), protection).AsTask (cancellationToken).ConfigureAwait (false);
 				else
 					socket.ConnectAsync (new HostName (host), port.ToString (), protection).AsTask (cancellationToken).GetAwaiter ().GetResult ();
-			} catch {
+			} catch (Exception ex) {
 				socket.Dispose ();
+
+				if (protection != SocketProtectionLevel.PlainSocket)
+					throw SslHandshakeException.Create (ex);
+
 				throw;
 			}
 
@@ -1054,19 +1059,24 @@ namespace MailKit.Net.Smtp {
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
+					try {
 #if !NETFX_CORE
-					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					if (doAsync)
-						await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-					else
-						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-					Stream.Stream = tls;
+						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+						Stream.Stream = tls;
+
+						if (doAsync)
+							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
+						else
+							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #else
-					if (doAsync)
-						await socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).ConfigureAwait (false);
-					else
-						socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).GetAwaiter ().GetResult ();
+						if (doAsync)
+							await socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).ConfigureAwait (false);
+						else
+							socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).GetAwaiter ().GetResult ();
 #endif
+					} catch (Exception ex) {
+						throw SslHandshakeException.Create (ex, true);
+					}
 
 					secure = true;
 
@@ -1144,6 +1154,9 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.Net.Sockets.SocketException">
 		/// A socket error occurred trying to connect to the remote host.
 		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -1207,9 +1220,10 @@ namespace MailKit.Net.Smtp {
 						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 					}
-				} catch {
+				} catch (Exception ex) {
 					ssl.Dispose ();
-					throw;
+
+					throw SslHandshakeException.Create (ex, false);
 				}
 
 				secure = true;
@@ -1250,16 +1264,21 @@ namespace MailKit.Net.Smtp {
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					if (doAsync) {
-						await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-					} else {
-#if NETSTANDARD
-						tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
-#else
-						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
-					}
 					Stream.Stream = tls;
+
+					try {
+						if (doAsync) {
+							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
+						} else {
+#if NETSTANDARD
+							tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
+#else
+							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
+#endif
+						}
+					} catch (Exception ex) {
+						throw SslHandshakeException.Create (ex, true);
+					}
 
 					secure = true;
 
@@ -1335,6 +1354,9 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.

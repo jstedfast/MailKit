@@ -202,6 +202,9 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="System.Net.Sockets.SocketException">
 		/// A socket error occurred trying to connect to the remote host.
 		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -269,6 +272,9 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.

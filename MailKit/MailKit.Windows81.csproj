@@ -222,6 +222,7 @@
     <Compile Include="Security\SaslMechanismScramSha1.cs" />
     <Compile Include="Security\SaslMechanismScramSha256.cs" />
     <Compile Include="Security\SecureSocketOptions.cs" />
+    <Compile Include="Security\SslHandshakeException.cs" />
     <Compile Include="AccessControl.cs" />
     <Compile Include="AccessControlList.cs" />
     <Compile Include="AccessRight.cs" />

@@ -931,6 +931,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
+		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
@@ -1117,6 +1120,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
+		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
@@ -1285,9 +1291,10 @@ namespace MailKit.Net.Imap {
 						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 					}
-				} catch {
+				} catch (Exception ex) {
 					ssl.Dispose ();
-					throw;
+
+					throw SslHandshakeException.Create (ex, false);
 				}
 
 				secure = true;
@@ -1302,13 +1309,17 @@ namespace MailKit.Net.Imap {
 
 			try {
 				cancellationToken.ThrowIfCancellationRequested ();
-			if (doAsync)
+				if (doAsync)
 					await socket.ConnectAsync (new HostName (host), port.ToString (), protection).AsTask (cancellationToken).ConfigureAwait (false);
 				else
 					socket.ConnectAsync (new HostName (host), port.ToString (), protection).AsTask (cancellationToken).GetAwaiter ().GetResult ();
-			} catch {
+			} catch (Exception ex) {
 				socket.Dispose ();
 				socket = null;
+
+				if (protection != SocketProtectionLevel.PlainSocket)
+					throw SslHandshakeException.Create (ex);
+
 				throw;
 			}
 
@@ -1351,25 +1362,29 @@ namespace MailKit.Net.Imap {
 					ProcessResponseCodes (ic);
 
 					if (ic.Response == ImapCommandResponse.Ok) {
+						try {
 #if !NETFX_CORE
-						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+							var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+							engine.Stream.Stream = tls;
 
-						if (doAsync) {
-							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-						} else {
+							if (doAsync) {
+								await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
+							} else {
 #if NETSTANDARD
 							tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
-							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
+								tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
-						}
-						engine.Stream.Stream = tls;
+							}
 #else
-						if (doAsync)
-							await socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).ConfigureAwait (false);
-						else
-							socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).GetAwaiter ().GetResult ();
+							if (doAsync)
+								await socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).ConfigureAwait (false);
+							else
+								socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).GetAwaiter ().GetResult ();
 #endif
+						} catch (Exception ex) {
+							throw SslHandshakeException.Create (ex, true);
+						}
 
 						secure = true;
 
@@ -1446,6 +1461,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
+		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
@@ -1498,9 +1516,10 @@ namespace MailKit.Net.Imap {
 						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 					}
-				} catch {
+				} catch (Exception ex) {
 					ssl.Dispose ();
-					throw;
+
+					throw SslHandshakeException.Create (ex, false);
 				}
 
 				secure = true;
@@ -1542,17 +1561,21 @@ namespace MailKit.Net.Imap {
 
 					if (ic.Response == ImapCommandResponse.Ok) {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-
-						if (doAsync) {
-							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-						} else {
-#if NETSTANDARD
-							tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
-#else
-							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
-						}
 						engine.Stream.Stream = tls;
+
+						try {
+							if (doAsync) {
+								await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
+							} else {
+#if NETSTANDARD
+								tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
+#else
+								tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
+#endif
+							}
+						} catch (Exception ex) {
+							throw SslHandshakeException.Create (ex, true);
+						}
 
 						secure = true;
 
@@ -1628,6 +1651,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.

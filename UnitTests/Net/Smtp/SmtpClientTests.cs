@@ -188,6 +188,43 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static Socket Connect (string host, int port)
+		{
+			var ipAddresses = Dns.GetHostAddresses (host);
+			Socket socket = null;
+
+			for (int i = 0; i < ipAddresses.Length; i++) {
+				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+				try {
+					socket.Connect (ipAddresses[i], port);
+					break;
+				} catch {
+					socket.Dispose ();
+					socket = null;
+				}
+			}
+
+			return socket;
+		}
+
+		[Test]
+		public void TestSslHandshakeExceptions ()
+		{
+			using (var client = new SmtpClient ()) {
+				Socket socket;
+
+				Assert.Throws<SslHandshakeException> (() => client.Connect ("www.gmail.com", 80, true));
+				Assert.Throws<SslHandshakeException> (async () => await client.ConnectAsync ("www.gmail.com", 80, true));
+
+				socket = Connect ("www.gmail.com", 80);
+				Assert.Throws<SslHandshakeException> (() => client.Connect (socket, "www.gmail.com", 80, SecureSocketOptions.SslOnConnect));
+
+				socket = Connect ("www.gmail.com", 80);
+				Assert.Throws<SslHandshakeException> (async () => await client.ConnectAsync (socket, "www.gmail.com", 80, SecureSocketOptions.SslOnConnect));
+			}
+		}
+
 		[Test]
 		public void TestInvalidStateExceptions ()
 		{

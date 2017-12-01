@@ -29,6 +29,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Text;
+using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
@@ -834,6 +835,43 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (async () => await inbox.ThreadAsync (UniqueIdRange.All, ThreadingAlgorithm.References, null));
 
 				client.Disconnect (false);
+			}
+		}
+
+		static Socket Connect (string host, int port)
+		{
+			var ipAddresses = Dns.GetHostAddresses (host);
+			Socket socket = null;
+
+			for (int i = 0; i < ipAddresses.Length; i++) {
+				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+				try {
+					socket.Connect (ipAddresses[i], port);
+					break;
+				} catch {
+					socket.Dispose ();
+					socket = null;
+				}
+			}
+
+			return socket;
+		}
+
+		[Test]
+		public void TestSslHandshakeExceptions ()
+		{
+			using (var client = new ImapClient ()) {
+				Socket socket;
+
+				Assert.Throws<SslHandshakeException> (() => client.Connect ("www.gmail.com", 80, true));
+				Assert.Throws<SslHandshakeException> (async () => await client.ConnectAsync ("www.gmail.com", 80, true));
+
+				socket = Connect ("www.gmail.com", 80);
+				Assert.Throws<SslHandshakeException> (() => client.Connect (socket, "www.gmail.com", 80, SecureSocketOptions.SslOnConnect));
+
+				socket = Connect ("www.gmail.com", 80);
+				Assert.Throws<SslHandshakeException> (async () => await client.ConnectAsync (socket, "www.gmail.com", 80, SecureSocketOptions.SslOnConnect));
 			}
 		}
 

@@ -263,6 +263,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
+		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
@@ -315,6 +318,9 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
@@ -377,8 +383,14 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.Net.Sockets.SocketException">
 		/// A socket error occurred trying to connect to the remote host.
 		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
@@ -442,8 +454,14 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.

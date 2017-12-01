@@ -205,6 +205,9 @@ namespace MailKit.Net.Smtp
 		/// <exception cref="System.Net.Sockets.SocketException">
 		/// A socket error occurred trying to connect to the remote host.
 		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -278,6 +281,9 @@ namespace MailKit.Net.Smtp
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
