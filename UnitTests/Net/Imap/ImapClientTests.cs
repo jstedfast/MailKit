@@ -991,9 +991,10 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1027,6 +1028,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
+
+				client.EnableUTF8 ();
 
 				var implementation = new ImapImplementation {
 					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc."
@@ -1076,9 +1079,10 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1112,6 +1116,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
+
+				await client.EnableUTF8Async ();
 
 				var implementation = new ImapImplementation {
 					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc."

@@ -1,2 +1,2 @@
 * ID ("name" "GImap" "vendor" "Google, Inc." "support-url" "http://support.google.com/mail" "version" "gmail_imap_150623.03_p1" "remote-host" "127.0.0.1")
-A00000005 OK Success
+A00000006 OK Success

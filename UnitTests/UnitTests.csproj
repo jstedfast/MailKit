@@ -290,6 +290,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search-summary.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-flags.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\utf8accept.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\xlist.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\capability.txt" />
@@ -397,7 +398,7 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
         </Policies>
       </Properties>
     </MonoDevelop>
