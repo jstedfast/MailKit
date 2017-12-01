@@ -551,7 +551,13 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			return rfc2047 ? Rfc2047.DecodeText (ImapEngine.Latin1.GetBytes (value)) : value;
+			if (rfc2047) {
+				var encoding = engine.UTF8Enabled ? ImapEngine.UTF8 : ImapEngine.Latin1;
+
+				return Rfc2047.DecodeText (encoding.GetBytes (value));
+			}
+
+			return value;
 		}
 
 		static async Task<uint> ReadNumberAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
@@ -976,16 +982,16 @@ namespace MailKit.Net.Imap {
 				get { return Mailbox == null; }
 			}
 
-			public MailboxAddress ToMailboxAddress ()
+			public MailboxAddress ToMailboxAddress (ImapEngine engine)
 			{
 				var mailbox = Mailbox;
 				var domain = Domain;
 				string name = null;
 
 				if (Name != null) {
-					// Note: since the ImapEngine.ReadLiteral() uses iso-8859-1
-					// to convert bytes to unicode, we can undo that here:
-					name = Rfc2047.DecodePhrase (ImapEngine.Latin1.GetBytes (Name));
+					var encoding = engine.UTF8Enabled ? ImapEngine.UTF8 : ImapEngine.Latin1;
+
+					name = Rfc2047.DecodePhrase (encoding.GetBytes (Name));
 				}
 
 				// Note: When parsing mailbox addresses w/o a domain, Dovecot will
@@ -1008,14 +1014,14 @@ namespace MailKit.Net.Imap {
 				return new MailboxAddress (name, address);
 			}
 
-			public GroupAddress ToGroupAddress ()
+			public GroupAddress ToGroupAddress (ImapEngine engine)
 			{
 				var name = string.Empty;
 
 				if (Mailbox != null) {
-					// Note: since the ImapEngine.ReadLiteral() uses iso-8859-1
-					// to convert bytes to unicode, we can undo that here:
-					name = Rfc2047.DecodePhrase (ImapEngine.Latin1.GetBytes (Mailbox));
+					var encoding = engine.UTF8Enabled ? ImapEngine.UTF8 : ImapEngine.Latin1;
+
+					name = Rfc2047.DecodePhrase (encoding.GetBytes (Mailbox));
 				}
 
 				return new GroupAddress (name);
@@ -1080,7 +1086,7 @@ namespace MailKit.Net.Imap {
 				var item = await ParseEnvelopeAddressAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (item.IsGroupStart && !engine.IsGMail && group == null) {
-					group = item.ToGroupAddress ();
+					group = item.ToGroupAddress (engine);
 					list.Add (group);
 				} else if (item.IsGroupEnd) {
 					group = null;
@@ -1092,7 +1098,7 @@ namespace MailKit.Net.Imap {
 						// returned by the IMAP server might be completely horked. For an example, see the
 						// second error report in https://github.com/jstedfast/MailKit/issues/494 where one
 						// of the addresses in the ENVELOPE has the name and address tokens flipped.
-						mailbox = item.ToMailboxAddress ();
+						mailbox = item.ToMailboxAddress (engine);
 					} catch {
 						continue;
 					}
