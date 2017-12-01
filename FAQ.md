@@ -56,11 +56,12 @@ that has been signed by a trusted Certificate Authority. When your system is una
 validate the mail server's certificate because it is not signed by a known and trusted
 Certificate Authority, the above error will occur.
 
-You can work around this problem by supplying a custom [RemoteServerCertificateValidationCallback](https://msdn.microsoft.com/en-us/library/ms145054)
+You can work around this problem by supplying a custom [RemoteCertificateValidationCallback](https://msdn.microsoft.com/en-us/library/ms145054)
 and setting it on the client's [ServerCertificateValidationCallback](http://mimekit.net/docs/html/P_MailKit_MailService_ServerCertificateValidationCallback.htm)
 property.
 
-In the most simplest example, you could do something like this (although I would strongly recommend against it in production use):
+In the most simplest example, you could do something like this (although I would strongly recommend against it in
+production use):
 
 ```csharp
 using (var client = new SmtpClient ()) {
@@ -76,7 +77,7 @@ Most likely you'll want to instead compare the certificate's [Thumbprint](https:
 property to a known value that you have verified at a prior date.
 
 You could also use this callback to prompt the user (much like you have probably seen web browsers do)
-as to whether or not certificate should be trusted.
+as to whether or not the certificate should be trusted.
 
 ### <a name="ProtocolLog">Q: How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
 
