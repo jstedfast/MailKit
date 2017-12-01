@@ -895,6 +895,15 @@ namespace UnitTests.Net.Imap {
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+
+				//var uri = new Uri ("imap://imap.mail.yahoo.com/?starttls=always");
+				//client.Connect (uri);
+				//Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				//Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				//Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				//client.Disconnect (true);
+				//Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				//Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
 			}
 		}
 
@@ -918,6 +927,15 @@ namespace UnitTests.Net.Imap {
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+
+				//var uri = new Uri ("imap://imap.mail.yahoo.com/?starttls=always");
+				//await client.ConnectAsync (uri);
+				//Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				//Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				//Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				//await client.DisconnectAsync (true);
+				//Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				//Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
 			}
 		}
 

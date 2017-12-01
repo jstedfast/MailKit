@@ -348,6 +348,15 @@ namespace UnitTests.Net.Pop3 {
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+
+				//var uri = new Uri ("pop3://pop.mail.yahoo.com/?starttls=always");
+				//client.Connect (uri);
+				//Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				//Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				//Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				//client.Disconnect (true);
+				//Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				//Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
 			}
 		}
 
@@ -371,6 +380,15 @@ namespace UnitTests.Net.Pop3 {
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+
+				//var uri = new Uri ("pop3://pop.gmail.com/?starttls=always");
+				//await client.ConnectAsync (uri);
+				//Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				//Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				//Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				//await client.DisconnectAsync (true);
+				//Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				//Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
 			}
 		}
 
