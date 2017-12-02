@@ -1840,6 +1840,23 @@ namespace MailKit.Net.Imap {
 				// read the eoln token
 				await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
+			case "ENABLED":
+				do {
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.Eoln)
+						break;
+
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, atom, token);
+
+					var feature = (string) token.Value;
+					switch (feature) {
+					case "UTF8=ACCEPT": UTF8Enabled = true; break;
+					case "QRESYNC": QResyncEnabled = true; break;
+					}
+				} while (true);
+				break;
 			case "FLAGS":
 				folder.UpdateAcceptedFlags (await ImapUtils.ParseFlagsListAsync (this, atom, null, doAsync, cancellationToken).ConfigureAwait (false));
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);

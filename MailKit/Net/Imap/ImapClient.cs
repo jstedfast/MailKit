@@ -360,8 +360,6 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
-
-			engine.QResyncEnabled = true;
 		}
 
 		/// <summary>
@@ -435,8 +433,6 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
-
-			engine.UTF8Enabled = true;
 		}
 
 		/// <summary>
