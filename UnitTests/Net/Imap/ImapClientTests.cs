@@ -986,8 +986,10 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
@@ -1007,18 +1009,20 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
-				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (6, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (100000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
-				// Note: Do not try XOAUTH2
+				// Note: Do not try XOAUTH2 or PLAIN
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+				client.AuthenticationMechanisms.Remove ("PLAIN");
 
 				try {
 					client.Authenticate (new NetworkCredential ("username", "password"));
@@ -1074,8 +1078,10 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
@@ -1095,18 +1101,20 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
-				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (6, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (100000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
-				// Note: Do not try XOAUTH2
+				// Note: Do not try XOAUTH2 or PLAIN
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+				client.AuthenticationMechanisms.Remove ("PLAIN");
 
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
@@ -1162,8 +1170,10 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
@@ -1179,19 +1189,20 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
-				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (6, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (100000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					var sasl = new SaslMechanismPlain (new Uri ("imap://localhost"), credentials);
+					var sasl = new SaslMechanismLogin (new Uri ("imap://localhost"), credentials);
 
 					client.Authenticate (sasl);
 				} catch (Exception ex) {
@@ -1210,8 +1221,10 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
@@ -1227,19 +1240,20 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
-				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (6, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (100000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					var sasl = new SaslMechanismPlain (new Uri ("imap://localhost"), credentials);
+					var sasl = new SaslMechanismLogin (new Uri ("imap://localhost"), credentials);
 
 					await client.AuthenticateAsync (sasl);
 				} catch (Exception ex) {

@@ -415,7 +415,9 @@ namespace UnitTests.Net.Smtp {
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
+			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
+			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
 			commands.Add (new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"));
 			commands.Add (new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"));
 			commands.Add (new SmtpReplayCommand ("NOOP\r\n", "comcast-noop.txt"));
@@ -466,6 +468,9 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.AreEqual (100000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
+
+				// disable PLAIN authentication
+				client.AuthenticationMechanisms.Remove ("PLAIN");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -534,7 +539,9 @@ namespace UnitTests.Net.Smtp {
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
+			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
+			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
 			commands.Add (new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"));
 			commands.Add (new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"));
 			commands.Add (new SmtpReplayCommand ("NOOP\r\n", "comcast-noop.txt"));
@@ -585,6 +592,9 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.AreEqual (100000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
+
+				// disable PLAIN authentication
+				client.AuthenticationMechanisms.Remove ("PLAIN");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -653,7 +663,9 @@ namespace UnitTests.Net.Smtp {
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
+			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
+			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new SmtpClient ()) {
@@ -688,7 +700,7 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					var sasl = new SaslMechanismPlain (new Uri ("smtp://localhost"), credentials);
+					var sasl = new SaslMechanismLogin (new Uri ("smtp://localhost"), credentials);
 
 					client.Authenticate (sasl);
 				} catch (Exception ex) {
@@ -711,7 +723,9 @@ namespace UnitTests.Net.Smtp {
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
+			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
+			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new SmtpClient ()) {
@@ -746,7 +760,7 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					var sasl = new SaslMechanismPlain (new Uri ("smtp://localhost"), credentials);
+					var sasl = new SaslMechanismLogin (new Uri ("smtp://localhost"), credentials);
 
 					await client.AuthenticateAsync (sasl);
 				} catch (Exception ex) {

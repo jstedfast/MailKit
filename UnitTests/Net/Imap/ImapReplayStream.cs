@@ -40,7 +40,8 @@ namespace UnitTests.Net.Imap {
 	enum ImapReplayCommandResponse {
 		OK,
 		NO,
-		BAD
+		BAD,
+		Plus
 	}
 
 	class ImapReplayCommand
@@ -72,6 +73,12 @@ namespace UnitTests.Net.Imap {
 
 		public ImapReplayCommand (string command, ImapReplayCommandResponse response)
 		{
+			if (response == ImapReplayCommandResponse.Plus) {
+				Response = Encoding.ASCII.GetBytes ("+\r\n");
+				Command = command;
+				return;
+			}
+
 			var tokens = command.Split (' ');
 			var cmd = (tokens[1] == "UID" ? tokens[2] : tokens[1]).TrimEnd ();
 			var tag = tokens[0];

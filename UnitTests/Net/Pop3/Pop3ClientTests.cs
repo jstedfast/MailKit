@@ -636,8 +636,9 @@ namespace UnitTests.Net.Pop3 {
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
-			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "exchange.plus.txt"));
-			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "exchange.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH LOGIN\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("dXNlcm5hbWU=\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("cGFzc3dvcmQ=\r\n", "exchange.auth.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
 			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "exchange.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "exchange.quit.txt"));
@@ -652,14 +653,15 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					var sasl = new SaslMechanismPlain (new Uri ("pop://localhost"), credentials);
+					var sasl = new SaslMechanismLogin (new Uri ("pop://localhost"), credentials);
 
 					client.Authenticate (sasl);
 				} catch (Exception ex) {
@@ -667,10 +669,11 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
 
@@ -690,8 +693,9 @@ namespace UnitTests.Net.Pop3 {
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
-			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "exchange.plus.txt"));
-			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "exchange.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH LOGIN\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("dXNlcm5hbWU=\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("cGFzc3dvcmQ=\r\n", "exchange.auth.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
 			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "exchange.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "exchange.quit.txt"));
@@ -706,14 +710,15 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					var sasl = new SaslMechanismPlain (new Uri ("pop://localhost"), credentials);
+					var sasl = new SaslMechanismLogin (new Uri ("pop://localhost"), credentials);
 
 					await client.AuthenticateAsync (sasl);
 				} catch (Exception ex) {
@@ -721,10 +726,11 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
 
@@ -744,8 +750,9 @@ namespace UnitTests.Net.Pop3 {
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
-			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "exchange.plus.txt"));
-			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "exchange.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH LOGIN\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("dXNlcm5hbWU=\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("cGFzc3dvcmQ=\r\n", "exchange.auth.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
 			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "exchange.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("UIDL\r\n", "exchange.uidl.txt"));
@@ -762,14 +769,16 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
-				// Note: remove these auth mechanisms to force PLAIN auth
+				// Note: remove these auth mechanisms to force LOGIN auth
 				client.AuthenticationMechanisms.Remove ("GSSAPI");
 				client.AuthenticationMechanisms.Remove ("NTLM");
+				client.AuthenticationMechanisms.Remove ("PLAIN");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -778,10 +787,11 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
 
@@ -815,8 +825,9 @@ namespace UnitTests.Net.Pop3 {
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
-			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "exchange.plus.txt"));
-			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "exchange.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH LOGIN\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("dXNlcm5hbWU=\r\n", "exchange.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("cGFzc3dvcmQ=\r\n", "exchange.auth.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
 			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "exchange.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("UIDL\r\n", "exchange.uidl.txt"));
@@ -833,14 +844,16 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
-				// Note: remove these auth mechanisms to force PLAIN auth
+				// Note: remove these auth mechanisms to force LOGIN auth
 				client.AuthenticationMechanisms.Remove ("GSSAPI");
 				client.AuthenticationMechanisms.Remove ("NTLM");
+				client.AuthenticationMechanisms.Remove ("PLAIN");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -849,10 +862,11 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
 
