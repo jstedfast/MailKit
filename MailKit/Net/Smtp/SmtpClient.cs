@@ -489,17 +489,17 @@ namespace MailKit.Net.Smtp {
 					// (strangely, it correctly capitalizes all other extensions...)
 					var capability = lines[i].Trim ().ToUpperInvariant ();
 
-					if (capability.StartsWith ("AUTH", StringComparison.Ordinal)) {
-						int index = 4;
+					if (capability.StartsWith ("AUTH", StringComparison.Ordinal) || capability.StartsWith ("X-EXPS", StringComparison.Ordinal)) {
+						int index = capability[0] == 'A' ? "AUTH".Length : "X-EXPS".Length;
 
-						capabilities |= SmtpCapabilities.Authentication;
-
-						if (index < capability.Length && capability[index] == '=')
+						if (index < capability.Length && (capability[index] == ' ' || capability[index] == '=')) {
+							capabilities |= SmtpCapabilities.Authentication;
 							index++;
 
-						var mechanisms = capability.Substring (index);
-						foreach (var mechanism in mechanisms.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-							AuthenticationMechanisms.Add (mechanism);
+							var mechanisms = capability.Substring (index);
+							foreach (var mechanism in mechanisms.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+								AuthenticationMechanisms.Add (mechanism);
+						}
 					} else if (capability.StartsWith ("SIZE", StringComparison.Ordinal)) {
 						int index = 4;
 						uint size;
