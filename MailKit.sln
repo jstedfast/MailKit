@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Net45", "MailKit\Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net45", "submodules\MimeKit\MimeKit\MimeKit.Net45.csproj", "{D5F54A4F-D84B-430F-9271-F7861E285B3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Net40", "MailKit\MailKit.Net40.csproj", "{DB3A2478-4742-452B-80C1-F672B64285AD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net40", "submodules\MimeKit\MimeKit\MimeKit.Net40.csproj", "{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Data.Sqlite", "submodules\MimeKit\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj", "{F26434C1-BA3D-41FB-B560-C009CB72B1B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle.Android", "submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.Android.csproj", "{A0D302CB-8866-4AB1-98B9-F0772EABF5DF}"
@@ -27,9 +23,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle.iOS", "submodu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MimeKit.NetStandard", "submodules\MimeKit\MimeKit\MimeKit.NetStandard.csproj", "{E8667DCE-A5BB-4D30-9815-FC8959E447F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.NetStandard", "submodules\MimeKit\MimeKit\MimeKit.NetStandard.csproj", "{E8667DCE-A5BB-4D30-9815-FC8959E447F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKit.NetStandard", "MailKit\MailKit.NetStandard.csproj", "{507D2CF2-55FF-463F-8513-778442EBD251}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.NetStandard", "MailKit\MailKit.NetStandard.csproj", "{507D2CF2-55FF-463F-8513-778442EBD251}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portable.Text.Encoding.WindowsUniversal81", "submodules\MimeKit\submodules\Portable.Text.Encoding\Portable.Text.Encoding\Portable.Text.Encoding.WindowsUniversal81.csproj", "{B76A64F9-B00E-4243-AE89-5D024CA3B436}"
 EndProject
@@ -51,14 +47,6 @@ Global
 		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB3A2478-4742-452B-80C1-F672B64285AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB3A2478-4742-452B-80C1-F672B64285AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB3A2478-4742-452B-80C1-F672B64285AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB3A2478-4742-452B-80C1-F672B64285AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -133,11 +121,25 @@ Global
 		$2.BeforeTypeOfParentheses = True
 		$2.SpacesAfterTypecast = True
 		$2.BlankLinesBeforeUsings = 1
-		$2.inheritsSet = Mono
-		$2.inheritsScope = text/x-csharp
 		$2.scope = text/x-csharp
+		$2.IndentSwitchSection = False
+		$2.NewLinesForBracesInProperties = False
+		$2.NewLinesForBracesInAccessors = False
+		$2.NewLinesForBracesInAnonymousMethods = False
+		$2.NewLinesForBracesInControlBlocks = False
+		$2.NewLinesForBracesInAnonymousTypes = False
+		$2.NewLinesForBracesInObjectCollectionArrayInitializers = False
+		$2.NewLinesForBracesInLambdaExpressionBody = False
+		$2.NewLineForElse = False
+		$2.NewLineForCatch = False
+		$2.NewLineForFinally = False
+		$2.NewLineForMembersInObjectInit = False
+		$2.NewLineForMembersInAnonymousTypes = False
+		$2.NewLineForClausesInQuery = False
+		$2.SpacingAfterMethodDeclarationName = True
+		$2.SpaceAfterMethodCallName = True
+		$2.SpaceBeforeOpenSquareBracket = True
 		$0.StandardHeader = $3
 		$3.Text = @\r\n${FileName}\n \nAuthor: ${AuthorName} <${AuthorEmail}>\n\nCopyright (c) ${Year} ${CopyrightHolder}\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n
-		$3.IncludeInNewFiles = True
 	EndGlobalSection
 EndGlobal

@@ -18,7 +18,7 @@ Will you be my +1?
 
 // create an image attachment for the file located at path
 var attachment = new MimePart ("image", "gif") {
-    ContentObject = new ContentObject (File.OpenRead (path), ContentEncoding.Default),
+    Content = new MimeContent (File.OpenRead (path), ContentEncoding.Default),
     ContentDisposition = new ContentDisposition (ContentDisposition.Attachment),
     ContentTransferEncoding = ContentEncoding.Base64,
     FileName = Path.GetFileName (path)

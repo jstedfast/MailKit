@@ -137,7 +137,7 @@ namespace MimeKit.Examples
 
 			if (!File.Exists (path)) {
 				using (var output = File.Create (path))
-					image.ContentObject.DecodeTo (output);
+					image.Content.DecodeTo (output);
 			}
 
 			return "file://" + path.Replace ('\\', '/');

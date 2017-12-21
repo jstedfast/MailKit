@@ -990,7 +990,7 @@ namespace UnitTests.Net.Pop3 {
 					using (var jpeg = new MemoryStream ()) {
 						var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-						attachment.ContentObject.DecodeTo (jpeg);
+						attachment.Content.DecodeTo (jpeg);
 						jpeg.Position = 0;
 
 						using (var md5 = new MD5CryptoServiceProvider ()) {
@@ -1010,7 +1010,7 @@ namespace UnitTests.Net.Pop3 {
 						using (var jpeg = new MemoryStream ()) {
 							var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-							attachment.ContentObject.DecodeTo (jpeg);
+							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
 							using (var md5 = new MD5CryptoServiceProvider ()) {
@@ -1031,7 +1031,7 @@ namespace UnitTests.Net.Pop3 {
 						using (var jpeg = new MemoryStream ()) {
 							var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-							attachment.ContentObject.DecodeTo (jpeg);
+							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
 							using (var md5 = new MD5CryptoServiceProvider ()) {
@@ -1262,7 +1262,7 @@ namespace UnitTests.Net.Pop3 {
 					using (var jpeg = new MemoryStream ()) {
 						var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-						attachment.ContentObject.DecodeTo (jpeg);
+						attachment.Content.DecodeTo (jpeg);
 						jpeg.Position = 0;
 
 						using (var md5 = new MD5CryptoServiceProvider ()) {
@@ -1282,7 +1282,7 @@ namespace UnitTests.Net.Pop3 {
 						using (var jpeg = new MemoryStream ()) {
 							var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-							attachment.ContentObject.DecodeTo (jpeg);
+							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
 							using (var md5 = new MD5CryptoServiceProvider ()) {
@@ -1303,7 +1303,7 @@ namespace UnitTests.Net.Pop3 {
 						using (var jpeg = new MemoryStream ()) {
 							var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-							attachment.ContentObject.DecodeTo (jpeg);
+							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
 							using (var md5 = new MD5CryptoServiceProvider ()) {

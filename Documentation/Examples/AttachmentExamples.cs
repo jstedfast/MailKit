@@ -10,7 +10,7 @@ namespace MimeKit.Examples
 		{
 			#region SaveMimePart
 			using (var stream = File.Create (fileName))
-				attachment.ContentObject.DecodeTo (stream);
+				attachment.Content.DecodeTo (stream);
 			#endregion SaveMimePart
 		}
 
@@ -37,7 +37,7 @@ namespace MimeKit.Examples
 					var fileName = part.FileName;
 
 					using (var stream = File.Create (fileName))
-						part.ContentObject.DecodeTo (stream);
+						part.Content.DecodeTo (stream);
 				}
 			}
 			#endregion SaveAttachments
@@ -61,7 +61,7 @@ namespace MimeKit.Examples
 					var fileName = part.FileName;
 
 					using (var stream = File.Create (fileName))
-						part.ContentObject.DecodeTo (stream);
+						part.Content.DecodeTo (stream);
 				}
 			}
 			#endregion SaveBodyParts

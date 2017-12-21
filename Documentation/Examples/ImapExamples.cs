@@ -205,7 +205,7 @@ namespace MailKit.Examples {
 
 							// decode and save the content to a file
 							using (var stream = File.Create (path))
-								part.ContentObject.DecodeTo (stream);
+								part.Content.DecodeTo (stream);
 						}
 					}
 				}

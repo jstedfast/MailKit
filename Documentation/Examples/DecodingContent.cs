@@ -3,5 +3,5 @@
 var fileName = part.FileName;
 
 using (var stream = File.Create (fileName)) {
-    part.ContentObject.DecodeTo (stream);
+    part.Content.DecodeTo (stream);
 }
