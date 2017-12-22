@@ -976,7 +976,7 @@ namespace MailKit.Net.Pop3 {
 				socket = null;
 
 				if (protection != SocketProtectionLevel.PlainSocket)
-					throw SslHandshakeException.Create (ex);
+					throw SslHandshakeException.Create (ex, false);
 
 				throw;
 			}

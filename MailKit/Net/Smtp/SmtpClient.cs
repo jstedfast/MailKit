@@ -1019,7 +1019,7 @@ namespace MailKit.Net.Smtp {
 				socket.Dispose ();
 
 				if (protection != SocketProtectionLevel.PlainSocket)
-					throw SslHandshakeException.Create (ex);
+					throw SslHandshakeException.Create (ex, false);
 
 				throw;
 			}
@@ -1064,17 +1064,22 @@ namespace MailKit.Net.Smtp {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 						Stream.Stream = tls;
 
-						if (doAsync)
+						if (doAsync) {
 							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-						else
+						} else {
+#if NETSTANDARD
+							tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
+#else
 							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
+#endif
+						}
 #else
 						if (doAsync)
 							await socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).ConfigureAwait (false);
 						else
 							socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).GetAwaiter ().GetResult ();
 #endif
-					} catch (Exception ex) {
+						} catch (Exception ex) {
 						throw SslHandshakeException.Create (ex, true);
 					}
 

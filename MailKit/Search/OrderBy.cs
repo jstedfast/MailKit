@@ -32,7 +32,7 @@ namespace MailKit.Search {
 	/// </summary>
 	/// <remarks>
 	/// You can combine multiple <see cref="OrderBy"/> rules to specify the sort
-	/// order that <see cref="IMailFolder.Search(SearchQuery,System.Collections.Generic.IList&lt;OrderBy&gt;,System.Threading.CancellationToken)"/>
+	/// order that <see cref="IMailFolder.Sort(SearchQuery,System.Collections.Generic.IList&lt;OrderBy&gt;,System.Threading.CancellationToken)"/>
 	/// should return the results in.
 	/// </remarks>
 	public class OrderBy

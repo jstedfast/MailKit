@@ -29,9 +29,16 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+
+#if NETFX_CORE
+using Windows.Networking;
+using Windows.Networking.Sockets;
+using Encoding = Portable.Text.Encoding;
+#else
+using System.Net.Sockets;
+#endif
 
 using MimeKit;
 

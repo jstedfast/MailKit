@@ -110,7 +110,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the
-		/// <see cref="ConnectAsync"/> method.
+		/// <see cref="ConnectAsync(Pop3Stream,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
@@ -122,7 +122,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection
-		/// has been made via the <see cref="ConnectAsync"/> method.
+		/// has been made via the <see cref="ConnectAsync(Pop3Stream,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public Pop3Capabilities Capabilities {

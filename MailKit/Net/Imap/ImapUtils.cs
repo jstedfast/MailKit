@@ -302,6 +302,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="ic">The IMAP command.</param>
 		/// <param name="index">The index.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		public static async Task ParseImplementationAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ID", "{0}");
@@ -373,6 +374,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="ic">The IMAP command.</param>
 		/// <param name="index">The index.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		public static async Task ParseFolderListAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "LIST", "{0}");
@@ -490,6 +492,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="ic">The IMAP command.</param>
 		/// <param name="index">The index.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		public static async Task ParseMetadataAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
@@ -1142,6 +1145,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The envelope.</returns>
 		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static async Task<Envelope> ParseEnvelopeAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -1217,6 +1221,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="name">The name of the flags being parsed.</param>
 		/// <param name="userFlags">A hash set of user-defined message flags that will be populated if non-null.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static async Task<MessageFlags> ParseFlagsListAsync (ImapEngine engine, string name, HashSet<string> userFlags, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -1263,6 +1268,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The message labels.</returns>
 		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static async Task<ReadOnlyCollection<string>> ParseLabelsListAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -1334,6 +1340,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The threads.</returns>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="uidValidity">The UIDVALIDITY of the folder.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static async Task<IList<MessageThread>> ParseThreadsAsync (ImapEngine engine, uint uidValidity, bool doAsync, CancellationToken cancellationToken)
 		{

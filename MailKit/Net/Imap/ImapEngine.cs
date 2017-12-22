@@ -179,7 +179,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the
-		/// <see cref="Connect"/> method.
+		/// <see cref="ConnectAsync"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
@@ -191,7 +191,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The compression algorithms are populated by the
-		/// <see cref="QueryCapabilities"/> method.
+		/// <see cref="QueryCapabilitiesAsync"/> method.
 		/// </remarks>
 		/// <value>The compression algorithms.</value>
 		public HashSet<string> CompressionAlgorithms {
@@ -203,7 +203,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The threading algorithms are populated by the
-		/// <see cref="QueryCapabilities"/> method.
+		/// <see cref="QueryCapabilitiesAsync"/> method.
 		/// </remarks>
 		/// <value>The threading algorithms.</value>
 		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
@@ -237,7 +237,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection
-		/// has been made via the <see cref="Connect"/> method.
+		/// has been made via the <see cref="ConnectAsync"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public ImapCapabilities Capabilities {
@@ -536,7 +536,8 @@ namespace MailKit.Net.Imap {
 		/// Takes posession of the <see cref="ImapStream"/> and reads the greeting.
 		/// </summary>
 		/// <param name="stream">The IMAP stream.</param>
-		/// <param name="cancellationToken">The cancellation token</param>
+		/// <param name="doAsync">Whether or not asyncrhonois IO methods should be used.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -1323,6 +1324,7 @@ namespace MailKit.Net.Imap {
 		/// Parses the response code.
 		/// </summary>
 		/// <returns>The response code.</returns>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapResponseCode> ParseResponseCodeAsync (bool doAsync, CancellationToken cancellationToken)
 		{
@@ -1786,6 +1788,7 @@ namespace MailKit.Net.Imap {
 		/// Processes an untagged response.
 		/// </summary>
 		/// <returns>The untagged response.</returns>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		internal async Task<ImapUntaggedResult> ProcessUntaggedResponseAsync (bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2004,6 +2007,7 @@ namespace MailKit.Net.Imap {
 		/// Wait for the specified command to finish.
 		/// </summary>
 		/// <param name="ic">The IMAP command.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="ic"/> is <c>null</c>.
 		/// </exception>
@@ -2064,6 +2068,7 @@ namespace MailKit.Net.Imap {
 		/// Queries the capabilities.
 		/// </summary>
 		/// <returns>The command result.</returns>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapCommandResponse> QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2104,6 +2109,7 @@ namespace MailKit.Net.Imap {
 		/// Looks up and sets the <see cref="MailFolder.ParentFolder"/> property of each of the folders.
 		/// </summary>
 		/// <param name="folders">The IMAP folders.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		async Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2157,6 +2163,7 @@ namespace MailKit.Net.Imap {
 		/// Queries the namespaces.
 		/// </summary>
 		/// <returns>The command result.</returns>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapCommandResponse> QueryNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2222,6 +2229,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Queries the special folders.
 		/// </summary>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task QuerySpecialFoldersAsync (bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2275,6 +2283,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The folder.</returns>
 		/// <param name="quotaRoot">The name of the quota root.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapFolder> GetQuotaRootFolderAsync (string quotaRoot, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2313,6 +2322,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The folder.</returns>
 		/// <param name="path">The folder path.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapFolder> GetFolderAsync (string path, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2384,6 +2394,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="namespace">The namespace.</param>
 		/// <param name="items">The status items to pre-populate.</param>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<IList<ImapFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, bool doAsync, CancellationToken cancellationToken)
 		{
