@@ -57,7 +57,7 @@ namespace ImapClientDemo
 				AddMessageSummaries (summaries);
 			}
 
-			folder.MessagesArrived += MessagesArrived_TaskThread;
+			folder.CountChanged += CountChanged_TaskThread;
 		}
 
 		public async void OpenFolder (IMailFolder folder)
@@ -68,7 +68,7 @@ namespace ImapClientDemo
 			if (this.folder != null) {
 				this.folder.MessageFlagsChanged -= MessageFlagsChanged_TaskThread;
 				this.folder.MessageExpunged -= MessageExpunged_TaskThread;
-				this.folder.MessagesArrived -= MessagesArrived_TaskThread;
+				this.folder.CountChanged -= CountChanged_TaskThread;
 			}
 
 			// Note: because we are using the *Async() methods, these events will fire
@@ -123,19 +123,22 @@ namespace ImapClientDemo
 			Invoke (new EventHandler<MessageEventArgs> (MessageExpunged), sender, e);
 		}
 
-		async void MessagesArrived (object sender, MessagesArrivedEventArgs e)
+		void CountChanged (object sender, EventArgs e)
 		{
 			var folder = (IMailFolder) sender;
 
-			var summaries = await folder.FetchAsync (messages.Count, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
+			// Note: we can't call back into the ImapFolder in this event handler since another command is still processing.
+			// TODO: queue this operation for later...
 
-			AddMessageSummaries (summaries);
+			//var summaries = await folder.FetchAsync (messages.Count, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
+
+			//AddMessageSummaries (summaries);
 		}
 
-		void MessagesArrived_TaskThread (object sender, MessagesArrivedEventArgs e)
+		void CountChanged_TaskThread (object sender, EventArgs e)
 		{
 			// proxy back to the main thread
-			Invoke (new EventHandler<MessagesArrivedEventArgs> (MessagesArrived), sender, e);
+			Invoke (new EventHandler<EventArgs> (CountChanged), sender, e);
 		}
 
 		public event EventHandler<MessageSelectedEventArgs> MessageSelected;
