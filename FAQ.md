@@ -32,6 +32,7 @@
 * [Why do I get InvalidOperationException: "The folder is not currently open."?](#FolderNotOpenException)
 * [Why doesn't ImapFolder.MoveTo() move the message out of the source folder?](#ImapMoveDoesNotMove)
 * [How can I mark messages as read using IMAP?](#ImapMarkAsRead)
+* [How can I re-synchronize the cache for an IMAP folder?](#ImapResyncFolder)
 
 ### SmtpClient
 * [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
@@ -1445,6 +1446,103 @@ To mark messages as unread, you would *remove* the `\Seen` flag, like so:
 
 ```csharp
 folder.RemoveFlags (uids, MessageFlags.Seen, true);
+```
+
+### <a name="ImapFolderResync">Q: How can I re-synchronize the cache for an IMAP folder?</a>
+
+Assuming your IMAP server does not support the `QRESYNC` extension (which simplifies this proceedure a ton),
+here is some simple code to illustrate how to go about re-synchronizing your cache with the remote IMAP
+server.
+
+```csharp
+/// <summary>
+/// Just a simple class to represent the cached information about a message.
+/// </summary>
+class CachedMessageInfo
+{
+	public UniqueId UniqueId;
+	public MessageFlags Flags;
+	public HashSet<string> UserFlags;
+	public Envelope Envelope;
+	public BodyPart Body;
+}
+
+/// <summary>
+/// Resynchronize the cache with the remote IMAP folder.
+/// </summary>
+/// <param name="folder">The IMAP folder.</param>
+/// <param name="cache">The local cache of message metadata.</param>
+/// <param name="cachedUidValidity">The cached UIDVALIDITY value of the IMAP folder from a previous session.</param>
+static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref uint cachedUidValidity)
+{
+	IList<IMessageSummary> summaries;
+
+	// Step 1: Open the folder.
+
+	// Note: we only need read-only access to update our cache, but depending on
+	// what you plan to do with the folder after resynchronizing, you may want
+	// top open the folder in read-write mode instead.
+	folder.Open (FolderAccess.ReadOnly);
+
+	if (cache.Count > 0) {
+		if (folder.UidValidity == cachedUidValidity) {
+			// Step 2: Remove messages from our cache that no longer exist on the server.
+
+			// get the full list of UIDs on the server...
+			var all = folder.Search (SearchQuery.All);
+
+			// remove any messages from our cache that no longer exist...
+			for (int i = 0; i < cache.Count; i++) {
+				if (!all.Contains (cache[i].UniqueId)) {
+					cache.RemoveAt (i);
+					i--;
+				}
+			}
+
+			// Step 3: Sync any flag changes for our cached messages.
+
+			// get a list of known uids... astute observers will note that an easy
+			// optimization to make here would be to merge this loop with the above
+			// loop.
+			var known = new UniqueIdSet (SortOrder.Ascending);
+			for (int i = 0; i < cache.Count; i++)
+				known.Add (cache[i].UniqueId);
+
+			// fetch the flags for our known messages...
+			summaries = folder.Fetch (known, MessageSummaryItems.Flags);
+			for (int i = 0; i < summaries.Count; i++) {
+				// Note: the indexes should match up with our cache, but it wouldn't
+				// hurt to add error checking to make sure. I'm not bothering to here
+				// for simplicity reasons.
+				cache[i].Flags = summaries[i].Flags.Value;
+				cache[i].UserFlags = summaries[i].UserFlags;
+			}
+		} else {
+			// The UIDVALIDITY of the folder has changed. This means that our entire
+			// cache is obsolete. We need to clear our cache and start from scratch.
+			cachedUidValidity = folder.UidValidity;
+			cache.Clear ();
+		}
+	} else {
+		// We have nothing cached, so just start from scratch.
+		cachedUidValidity = folder.UidValidity;
+	}
+
+	// Step 4: Fetch the messages we don't already know about and add them to our cache.
+
+	summaries = folder.Fetch (cache.Count, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure);
+	for (int i = 0; i < summaries.Count; i++) {
+		cache.Add (new CachedMessageInfo {
+			UniqueId = summaries[i].UniqueId,
+			Flags = summaries[i].Flags.Value,
+			UserFlags = summaries[i].UserFlags,
+			Envelope = summaries[i].Envelope,
+			Body = summaries[i].Body
+		});
+	}
+
+	// Tada! Now we are resynchronized with the server!
+}
 ```
 
 ## SmtpClient
