@@ -42,7 +42,7 @@ namespace ImapClientDemo
 			string GetDataUri (MimePart attachment)
 			{
 				using (var memory = new MemoryStream ()) {
-					attachment.ContentObject.DecodeTo (memory);
+					attachment.Content.DecodeTo (memory);
 					var buffer = memory.GetBuffer ();
 					var length = (int) memory.Length;
 					var base64 = Convert.ToBase64String (buffer, 0, length);

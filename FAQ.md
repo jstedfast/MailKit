@@ -252,7 +252,7 @@ Will you be my +1?
 
 // create an image attachment for the file located at path
 var attachment = new MimePart ("image", "gif") {
-    ContentObject = new ContentObject (File.OpenRead (path), ContentEncoding.Default),
+    Content = new MimeContent (File.OpenRead (path), ContentEncoding.Default),
     ContentDisposition = new ContentDisposition (ContentDisposition.Attachment),
     ContentTransferEncoding = ContentEncoding.Base64,
     FileName = Path.GetFileName (path)
@@ -498,7 +498,7 @@ class HtmlPreviewVisitor : MimeVisitor
 
         if (!File.Exists (path)) {
             using (var output = File.Create (path))
-                image.ContentObject.DecodeTo (output);
+                image.Content.DecodeTo (output);
         }
 
         return "file://" + path.Replace ('\\', '/');
@@ -713,7 +713,7 @@ the attachment that you'd like to save, here's how you might save it:
 
 ```csharp
 using (var stream = File.Create (fileName))
-    attachment.ContentObject.DecodeTo (stream);
+    attachment.Content.DecodeTo (stream);
 ```
 
 Pretty simple, right?
@@ -741,7 +741,7 @@ foreach (var attachment in message.Attachments) {
         } else {
             var part = (MimePart) attachment;
             
-            part.ContentObject.DecodeTo (stream);
+            part.Content.DecodeTo (stream);
         }
     }
 }
@@ -907,7 +907,7 @@ and then do this:
 static Stream DecryptEmbeddedPgp (TextPart text)
 {
     using (var memory = new MemoryStream ()) {
-        text.ContentObject.DecodeTo (memory);
+        text.Content.DecodeTo (memory);
         memory.Position = 0;
 
         using (var ctx = new MyGnuPGContext ()) {

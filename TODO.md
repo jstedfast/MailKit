@@ -9,8 +9,6 @@
     perhaps the BDAT command could be used always when the server supports the
     CHUNKING extension to avoid needing to byte-stuff the message?)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
-* POP3 Client
-  * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
 * IMAP4 Client
   * Consolidate MessageFlagsChanged, MessageLabelsChanged, and ModSeqChanged events into a single event?
   * Extensions:

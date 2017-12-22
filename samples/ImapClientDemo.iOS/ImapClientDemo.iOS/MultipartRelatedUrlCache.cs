@@ -55,7 +55,7 @@ namespace ImapClientDemo.iOS {
 					NSUrlResponse response;
 					NSData data;
 
-					using (var content = part.ContentObject.Open ())
+					using (var content = part.Content.Open ())
 						data = NSData.FromStream (content);
 
 					response = new NSUrlResponse (request.Url, mimeType, (int) (uint)data.Length, charset);

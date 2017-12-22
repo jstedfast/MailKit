@@ -38,12 +38,7 @@ namespace MailKit {
 	/// <para>For example, when copying or moving messages from one folder to another, it is often desirable
 	/// to know what the unique identifiers are for each of the messages in the destination folder.</para>
 	/// </remarks>
-	public class UniqueIdMap
-#if !NET_4_0
-		: IReadOnlyDictionary<UniqueId, UniqueId>
-#else
-		: IEnumerable<KeyValuePair<UniqueId, UniqueId>>
-#endif
+	public class UniqueIdMap : IReadOnlyDictionary<UniqueId, UniqueId>
 	{
 		/// <summary>
 		/// Any empty mapping of unique identifiers.

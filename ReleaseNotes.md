@@ -1,5 +1,23 @@
 # Release Notes
 
+### MailKit 2.0.0
+
+* Updated MailKit to fully support async IO instead of using Task.Run() wrappers.
+* Fixed a resource leak when fetching IMAP body parts gets an exception.
+* Fixed each of the Client.Connect() implementtions to catch exceptions thrown by
+  IProtocolLogger.LogConnect().
+* Removed the ImapFolder.MessagesArrived event.
+* Added new Authenticate() methods that take a SaslMechanism to avoid the need to
+  manipulate Client.AuthenticationMechanisms in order to tweak which SASL mechanisms
+  you'd like the client to use in Authenticate().
+* Added new SslHandshakeException with a helpful error message that can be thrown by
+  the Connect() methods. This replaces the obscure SocketExceptions previously thrown
+  by SslStream.
+* Fixed support for the IMAP UTF8=ACCEPT extension.
+* Improved ImapFolder.CommitStream() API to provide section, offset and length.
+* Treat the SMTP X-EXPS capability in an EHLO response the same as AUTH. (issue #603)
+* Dropped support for .NET 4.0.
+
 ### MailKit 1.22.0
 
 * Enable TLSv1.1 and 1.2 for .NETStandard.
