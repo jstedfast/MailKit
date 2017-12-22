@@ -32,7 +32,7 @@
 * [Why do I get InvalidOperationException: "The folder is not currently open."?](#FolderNotOpenException)
 * [Why doesn't ImapFolder.MoveTo() move the message out of the source folder?](#ImapMoveDoesNotMove)
 * [How can I mark messages as read using IMAP?](#ImapMarkAsRead)
-* [How can I re-synchronize the cache for an IMAP folder?](#ImapResyncFolder)
+* [How can I re-synchronize the cache for an IMAP folder?](#ImapFolderResync)
 
 ### SmtpClient
 * [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
