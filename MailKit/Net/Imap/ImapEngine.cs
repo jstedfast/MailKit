@@ -138,7 +138,6 @@ namespace MailKit.Net.Imap {
 		MimeParser parser;
 		internal int Tag;
 		bool disposed;
-		int nextId;
 
 		static ImapEngine ()
 		{
@@ -171,7 +170,6 @@ namespace MailKit.Net.Imap {
 			createImapFolder = createImapFolderDelegate;
 			Capabilities = ImapCapabilities.None;
 			queue = new List<ImapCommand> ();
-			nextId = 1;
 		}
 
 		/// <summary>
@@ -1963,7 +1961,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Iterate the command pipeline.
 		/// </summary>
-		async Task<int> IterateAsync (bool doAsync)
+		async Task IterateAsync (bool doAsync)
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
@@ -1984,8 +1982,6 @@ namespace MailKit.Net.Imap {
 
 			current.Status = ImapCommandStatus.Active;
 
-			int id = current.Id;
-
 			try {
 				while (await current.StepAsync (doAsync).ConfigureAwait (false)) {
 					// more literal data to send...
@@ -1999,8 +1995,6 @@ namespace MailKit.Net.Imap {
 			} finally {
 				current = null;
 			}
-
-			return id;
 		}
 
 		/// <summary>
@@ -2016,8 +2010,9 @@ namespace MailKit.Net.Imap {
 			if (ic == null)
 				throw new ArgumentNullException (nameof (ic));
 
-			while (await IterateAsync (doAsync).ConfigureAwait (false) < ic.Id) {
+			while (ic.Status < ImapCommandStatus.Complete) {
 				// continue processing commands...
+				await IterateAsync (doAsync).ConfigureAwait (false);
 			}
 		}
 
@@ -2060,7 +2055,6 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The ImapClient is currently busy processing a command in another thread. Lock the SyncRoot property to properly synchronize your threads.");
 
 			ic.Status = ImapCommandStatus.Queued;
-			ic.Id = nextId++;
 			queue.Add (ic);
 		}
 

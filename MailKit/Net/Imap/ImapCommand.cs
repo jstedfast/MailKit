@@ -370,7 +370,6 @@ namespace MailKit.Net.Imap {
 		public bool Lsub { get; internal set; }
 		public string Tag { get; private set; }
 		public bool Bye { get; internal set; }
-		public int Id { get; internal set; }
 
 		readonly List<ImapCommandPart> parts = new List<ImapCommandPart> ();
 		readonly ImapEngine Engine;
