@@ -1966,18 +1966,23 @@ namespace MailKit.Net.Imap {
 			if (Stream == null)
 				throw new InvalidOperationException ();
 
-			if (queue.Count == 0)
-				throw new InvalidOperationException ("The IMAP command queue is empty.");
+			lock (queue) {
+				if (queue.Count == 0)
+					throw new InvalidOperationException ("The IMAP command queue is empty.");
 
-			current = queue[0];
-			queue.RemoveAt (0);
+				if (IsBusy)
+					throw new InvalidOperationException ("The ImapClient is currently busy processing a command in another thread. Lock the SyncRoot property to properly synchronize your threads.");
 
-			try {
-				current.CancellationToken.ThrowIfCancellationRequested ();
-			} catch {
-				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
-				current = null;
-				throw;
+				current = queue[0];
+				queue.RemoveAt (0);
+
+				try {
+					current.CancellationToken.ThrowIfCancellationRequested ();
+				} catch {
+					queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
+					current = null;
+					throw;
+				}
 			}
 
 			current.Status = ImapCommandStatus.Active;
@@ -2051,11 +2056,10 @@ namespace MailKit.Net.Imap {
 		/// <param name="ic">The IMAP command.</param>
 		public void QueueCommand (ImapCommand ic)
 		{
-			if (IsBusy)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command in another thread. Lock the SyncRoot property to properly synchronize your threads.");
-
-			ic.Status = ImapCommandStatus.Queued;
-			queue.Add (ic);
+			lock (queue) {
+				ic.Status = ImapCommandStatus.Queued;
+				queue.Add (ic);
+			}
 		}
 
 		/// <summary>
