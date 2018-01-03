@@ -194,7 +194,7 @@ var credential = new ServiceAccountCredential (new ServiceAccountCredential
     .Initializer ("your-developer-id@developer.gserviceaccount.com") {
     // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
     Scopes = new[] { "https://mail.google.com/" },
-    User = "username@gmail.com"
+    User = "user@gmail.com"
 }.FromCertificate (certificate));
 
 bool result = await credential.RequestAccessTokenAsync (CancellationToken.None);
@@ -203,13 +203,13 @@ bool result = await credential.RequestAccessTokenAsync (CancellationToken.None);
 ```
 
 Now that you have an access token (`credential.Token.AccessToken`), you can use it with MailKit by using the
-token to creatre a new OAuth2 SASL mechanism context and then authenticating with it:
+token to create a new OAuth2 SASL mechanism context and then authenticating with it:
 
 ```csharp
 using (var client = new ImapClient ()) {
     client.Connect ("imap.gmail.com", 993, true);
 
-    var oauth2 = new SaslMechanismOAuth2 ("username@gmail.com", credential.Token.AccessToken);
+    var oauth2 = new SaslMechanismOAuth2 ("user@gmail.com", credential.Token.AccessToken);
     client.Authenticate (oauth2);
 }
 ```

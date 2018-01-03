@@ -15,9 +15,6 @@ namespace ImapIdleExample {
 			using (var client = new ImapClient (new ProtocolLogger (Console.OpenStandardError ()))) {
 				client.Connect ("imap.gmail.com", 993, true);
 
-				// Remove the XOAUTH2 authentication mechanism since we don't have an OAuth2 token.
-				client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
 				client.Authenticate ("username@gmail.com", "password");
 
 				client.Inbox.Open (FolderAccess.ReadOnly);

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <topic id="Frequently-Asked-Questions" revisionNumber="1">
   <developerConceptualDocument
     xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
@@ -140,10 +140,6 @@
         <code language="c#">
 using (var client = new ImapClient ()) {
     client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-    
-    // disable OAuth2 authentication unless you are actually using an access_token
-    client.AuthenticationMechanisms.Remove ("XOAUTH2");
-    
     client.Authenticate ("user@gmail.com", "password");
     
     // do stuff...
@@ -164,8 +160,7 @@ using (var client = new ImapClient ()) {
           </externalLink> to learn how to do this.
         </para>
         <para>
-          Once you've got the access_token, you simply use it as if it were the password when
-          calling the <application>Authenticate</application> method.
+          Once you obtain an OAuth2 access token, you can use it with MailKit by using the access token to create a new OAuth2 SASL mechanism context and then authenticating with it.
         </para>
         <code language="c#">
 var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
@@ -178,8 +173,11 @@ var credential = new ServiceAccountCredential (new ServiceAccountCredential.Init
 // Note: result will be true if the access token was received successfully
 bool result = await credential.RequestAccessTokenAsync (cancel.Token);
 
-// use the access token as the password string
-client.Authenticate ("user@gmail.com", credential.Token.AccessToken);
+// create an OAuth2 SASL context
+var oauth2 = new SaslMechanismOAuth2 ("user@gmail.com", credential.Token.AccessToken);
+
+// authenticate using the OAuth2 SASL mechanism
+client.Authenticate (oauth2);
         </code>
       </content>
     </section>

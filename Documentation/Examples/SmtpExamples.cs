@@ -59,10 +59,6 @@ namespace MailKit.Examples {
 				if (client.Capabilities.HasFlag (SmtpCapabilities.Authentication)) {
 					var mechanisms = string.Join (", ", client.AuthenticationMechanisms);
 					Console.WriteLine ("The SMTP server supports the following SASL mechanisms: {0}", mechanisms);
-
-					// Note: if we don't want MailKit to use a particular SASL mechanism, we can disable it like this:
-					client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
 					client.Authenticate ("username", "password");
 				}
 
