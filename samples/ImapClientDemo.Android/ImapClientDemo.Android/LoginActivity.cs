@@ -67,17 +67,10 @@ namespace ImapClientDemo
 			int.TryParse (textPort.Text, out port);
 
 			try {
-				await Mail.Client.ConnectAsync (textServer.Text, port, checkSsl.Checked);
+				// Note: for demo purposes, we're ignoring SSL validation errors (don't do this in production code)
+				Mail.Client.ServerCertificateValidationCallback = (s, certificate, chain, sslPolicyErrors) => true;
 
-				// Note: For the purposes of this demo, since we have not implemented support for
-				// obtaining the user's OAuth2.0 auth_token, we'll have to disable XOAUTH2.
-				//
-				// OAuth2 is the authentication mechanism that services like GMail are pushing.
-				// If you get an exception when trying to log in to your GMail account using this
-				// demo, then you probably have not enabled "less secure apps" in your GMail
-				// settings. Do not be fooled by Google's labeling of this checkbox, the claim
-				// is really only true if the user logs in w/o using SSL (which they enforce).
-				Mail.Client.AuthenticationMechanisms.Remove ("XOAUTH2");
+				await Mail.Client.ConnectAsync (textServer.Text, port, checkSsl.Checked);
 
 				try { 
 					await Mail.Client.AuthenticateAsync (textLogin.Text, textPassword.Text); 
