@@ -57,6 +57,7 @@ namespace MailKit.Net.Pop3
 		/// check the <see cref="AuthenticationMechanisms"/> property after the service has been
 		/// connected.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="mechanism">The SASL mechanism.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
