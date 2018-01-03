@@ -53,6 +53,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismOAuth2(NetworkCredential) instead.")]
 		public SaslMechanismOAuth2 (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}
@@ -73,7 +74,39 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="auth_token"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismOAuth2(string, string) instead.")]
 		public SaslMechanismOAuth2 (Uri uri, string userName, string auth_token) : base (uri, userName, auth_token)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuth2"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new XOAUTH2 SASL context.
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		public SaslMechanismOAuth2 (NetworkCredential credentials) : base (credentials)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuth2"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new XOAUTH2 SASL context.
+		/// </remarks>
+		/// <param name="userName">The user name.</param>
+		/// <param name="auth_token">The auth token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="auth_token"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismOAuth2 (string userName, string auth_token) : base (userName, auth_token)
 		{
 		}
 
@@ -121,9 +154,8 @@ namespace MailKit.Security {
 			if (IsAuthenticated)
 				throw new InvalidOperationException ();
 
-			var cred = Credentials.GetCredential (Uri, MechanismName);
-			var authToken = cred.Password;
-			var userName = cred.UserName;
+			var authToken = Credentials.Password;
+			var userName = Credentials.UserName;
 			int index = 0;
 
 			var buf = new byte[UserEquals.Length + userName.Length + AuthBearer.Length + authToken.Length + 3];

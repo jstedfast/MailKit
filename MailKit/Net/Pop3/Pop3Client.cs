@@ -485,6 +485,8 @@ namespace MailKit.Net.Pop3 {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
+			mechanism.Uri = uri;
+
 			pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text, xdoAsync) => {
 				if (mechanism.IsAuthenticated) {
 					if (cmd.Status == Pop3CommandStatus.Ok)
@@ -648,7 +650,7 @@ namespace MailKit.Net.Pop3 {
 					if (!engine.AuthenticationMechanisms.Contains (authmech))
 						continue;
 
-					if ((sasl = SaslMechanism.Create (authmech, uri, credentials)) == null)
+					if ((sasl = SaslMechanism.Create (authmech, uri, encoding, credentials)) == null)
 						continue;
 
 					cancellationToken.ThrowIfCancellationRequested ();

@@ -68,6 +68,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanism(NetworkCredential) instead.")]
 		protected SaslMechanism (Uri uri, ICredentials credentials)
 		{
 			if (uri == null)
@@ -76,7 +77,7 @@ namespace MailKit.Security {
 			if (credentials == null)
 				throw new ArgumentNullException (nameof (credentials));
 
-			Credentials = credentials;
+			Credentials = credentials.GetCredential (uri, MechanismName);
 			Uri = uri;
 		}
 
@@ -96,6 +97,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanism(string, string) instead.")]
 		protected SaslMechanism (Uri uri, string userName, string password)
 		{
 			if (uri == null)
@@ -109,6 +111,48 @@ namespace MailKit.Security {
 
 			Credentials = new NetworkCredential (userName, password);
 			Uri = uri;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanism"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new SASL context.
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		protected SaslMechanism (NetworkCredential credentials)
+		{
+			if (credentials == null)
+				throw new ArgumentNullException (nameof (credentials));
+
+			Credentials = credentials;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanism"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new SASL context.
+		/// </remarks>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		protected SaslMechanism (string userName, string password)
+		{
+			if (userName == null)
+				throw new ArgumentNullException (nameof (userName));
+
+			if (password == null)
+				throw new ArgumentNullException (nameof (password));
+
+			Credentials = new NetworkCredential (userName, password);
 		}
 
 		/// <summary>
@@ -129,7 +173,7 @@ namespace MailKit.Security {
 		/// Gets the user's credentials.
 		/// </remarks>
 		/// <value>The user's credentials.</value>
-		public ICredentials Credentials {
+		public NetworkCredential Credentials {
 			get; private set;
 		}
 
@@ -176,8 +220,8 @@ namespace MailKit.Security {
 		/// Gets or sets the URI of the service.
 		/// </remarks>
 		/// <value>The URI of the service.</value>
-		public Uri Uri {
-			get; protected set;
+		internal Uri Uri {
+			get; set;
 		}
 
 		/// <summary>
@@ -315,17 +359,19 @@ namespace MailKit.Security {
 			if (credentials == null)
 				throw new ArgumentNullException (nameof (credentials));
 
+			var cred = credentials.GetCredential (uri, mechanism);
+
 			switch (mechanism) {
 			//case "KERBEROS_V4":   return null;
-			case "SCRAM-SHA-256": return new SaslMechanismScramSha256 (uri, credentials);
-			case "SCRAM-SHA-1":   return new SaslMechanismScramSha1 (uri, credentials);
-			case "DIGEST-MD5":    return new SaslMechanismDigestMd5 (uri, credentials);
-			case "CRAM-MD5":      return new SaslMechanismCramMd5 (uri, credentials);
+			case "SCRAM-SHA-256": return new SaslMechanismScramSha256 (cred) { Uri = uri };
+			case "SCRAM-SHA-1":   return new SaslMechanismScramSha1 (cred) { Uri = uri };
+			case "DIGEST-MD5":    return new SaslMechanismDigestMd5 (cred) { Uri = uri };
+			case "CRAM-MD5":      return new SaslMechanismCramMd5 (cred) { Uri = uri };
 			//case "GSSAPI":        return null;
-			case "XOAUTH2":       return new SaslMechanismOAuth2 (uri, credentials);
-			case "PLAIN":         return new SaslMechanismPlain (uri, encoding, credentials);
-			case "LOGIN":         return new SaslMechanismLogin (uri, encoding, credentials);
-			case "NTLM":          return new SaslMechanismNtlm (uri, credentials);
+			case "XOAUTH2":       return new SaslMechanismOAuth2 (cred) { Uri = uri };
+			case "PLAIN":         return new SaslMechanismPlain (encoding, cred) { Uri = uri };
+			case "LOGIN":         return new SaslMechanismLogin (encoding, cred) { Uri = uri };
+			case "NTLM":          return new SaslMechanismNtlm (cred) { Uri = uri };
 			default:              return null;
 			}
 		}

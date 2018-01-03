@@ -58,6 +58,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismNtlm(NetworkCredential) instead.")]
 		public SaslMechanismNtlm (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}
@@ -78,7 +79,39 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismNtlm(string, string) instead.")]
 		public SaslMechanismNtlm (Uri uri, string userName, string password) : base (uri, userName, password)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new NTLM SASL context.
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		public SaslMechanismNtlm (NetworkCredential credentials) : base (credentials)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new NTLM SASL context.
+		/// </remarks>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismNtlm (string userName, string password) : base (userName, password)
 		{
 		}
 
@@ -126,10 +159,9 @@ namespace MailKit.Security {
 			if (IsAuthenticated)
 				throw new InvalidOperationException ();
 
-			var cred = Credentials.GetCredential (Uri, MechanismName);
-			string password = cred.Password ?? string.Empty;
-			string userName = cred.UserName;
-			string domain = cred.Domain;
+			string password = Credentials.Password ?? string.Empty;
+			string userName = Credentials.UserName;
+			string domain = Credentials.Domain;
 			MessageBase message;
 
 			if (string.IsNullOrEmpty (domain)) {

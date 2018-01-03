@@ -74,9 +74,10 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
-		internal SaslMechanismDigestMd5 (Uri uri, ICredentials credentials, string entropy) : base (uri, credentials)
+		internal SaslMechanismDigestMd5 (Uri uri, NetworkCredential credentials, string entropy) : base (credentials)
 		{
 			cnonce = entropy;
+			Uri = uri;
 		}
 
 		/// <summary>
@@ -92,6 +93,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismDigestMd5(NetworkCredential) instead.")]
 		public SaslMechanismDigestMd5 (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}
@@ -112,7 +114,39 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismDigestMd5(string, string) instead.")]
 		public SaslMechanismDigestMd5 (Uri uri, string userName, string password) : base (uri, userName, password)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new DIGEST-MD5 SASL context.
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		public SaslMechanismDigestMd5 (NetworkCredential credentials) : base (credentials)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new DIGEST-MD5 SASL context.
+		/// </remarks>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismDigestMd5 (string userName, string password) : base (userName, password)
 		{
 		}
 
@@ -154,8 +188,6 @@ namespace MailKit.Security {
 			if (token == null)
 				throw new NotSupportedException ("DIGEST-MD5 does not support SASL-IR.");
 
-			var cred = Credentials.GetCredential (Uri, MechanismName);
-
 			switch (state) {
 			case LoginState.Auth:
 				if (token.Length > 2048)
@@ -172,7 +204,7 @@ namespace MailKit.Security {
 					cnonce = Convert.ToBase64String (entropy);
 				}
 
-				response = new DigestResponse (challenge, Uri.Scheme, Uri.DnsSafeHost, cred.UserName, cred.Password, cnonce);
+				response = new DigestResponse (challenge, Uri.Scheme, Uri.DnsSafeHost, Credentials.UserName, Credentials.Password, cnonce);
 				state = LoginState.Final;
 				return response.Encode ();
 			case LoginState.Final:
@@ -186,7 +218,7 @@ namespace MailKit.Security {
 				if (!DigestChallenge.TryParseKeyValuePair (text, ref index, out key, out value))
 					throw new SaslException (MechanismName, SaslErrorCode.IncompleteChallenge, "Server response contained incomplete authentication data.");
 
-				var expected = response.ComputeHash (cred.Password, false);
+				var expected = response.ComputeHash (Credentials.Password, false);
 				if (value != expected)
 					throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, "Server response did not contain the expected hash.");
 

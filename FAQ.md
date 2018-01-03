@@ -168,10 +168,6 @@ code snippet to connect to GMail via IMAP:
 using (var client = new ImapClient ()) {
     client.ServerCertificateValidationCallback = (s,c,ch,e) => true;
     client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-    
-    // disable OAuth2 authentication unless you are actually using an access_token
-    client.AuthenticationMechanisms.Remove ("XOAUTH2");
-    
     client.Authenticate ("user@gmail.com", "password");
     
     // do stuff...
@@ -206,15 +202,15 @@ bool result = await credential.RequestAccessTokenAsync (CancellationToken.None);
 // Note: result will be true if the access token was received successfully
 ```
 
-Now that you have an access token (`credential.Token.AccessToken`), you can use it with MailKit as if it were
-the password:
+Now that you have an access token (`credential.Token.AccessToken`), you can use it with MailKit by using the
+token to creatre a new OAuth2 SASL mechanism context and then authenticating with it:
 
 ```csharp
 using (var client = new ImapClient ()) {
     client.Connect ("imap.gmail.com", 993, true);
-    
-    // use the access token as the password string
-    client.Authenticate ("username@gmail.com", credential.Token.AccessToken);
+
+    var oauth2 = new SaslMechanismOAuth2 ("username@gmail.com", credential.Token.AccessToken);
+    client.Authenticate (oauth2);
 }
 ```
 

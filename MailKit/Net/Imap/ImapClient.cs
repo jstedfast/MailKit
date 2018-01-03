@@ -820,11 +820,14 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The ImapClient is already authenticated.");
 
 			int capabilitiesVersion = engine.CapabilitiesVersion;
+			var uri = new Uri ("imap://" + engine.Uri.Host);
 			NetworkCredential cred;
 			ImapCommand ic = null;
 			string id;
 
 			cancellationToken.ThrowIfCancellationRequested ();
+
+			mechanism.Uri = uri;
 
 			var command = string.Format ("AUTHENTICATE {0}", mechanism.MechanismName);
 

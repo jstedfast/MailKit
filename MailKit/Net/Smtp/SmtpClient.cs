@@ -550,9 +550,12 @@ namespace MailKit.Net.Smtp {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
+			var uri = new Uri ("smtp://" + host);
 			SmtpResponse response;
 			string challenge;
 			string command;
+
+			mechanism.Uri = uri;
 
 			// send an initial challenge if the mechanism supports it
 			if (mechanism.SupportsInitialResponse) {

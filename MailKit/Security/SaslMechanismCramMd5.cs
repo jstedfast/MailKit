@@ -61,6 +61,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismCramMd5(NetworkCredential) instead.")]
 		public SaslMechanismCramMd5 (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}
@@ -81,7 +82,39 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismCramMd5(string, string) instead.")]
 		public SaslMechanismCramMd5 (Uri uri, string userName, string password) : base (uri, userName, password)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismCramMd5"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new CRAM-MD5 SASL context.
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		public SaslMechanismCramMd5 (NetworkCredential credentials) : base (credentials)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismCramMd5"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new CRAM-MD5 SASL context.
+		/// </remarks>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismCramMd5 (string userName, string password) : base (userName, password)
 		{
 		}
 
@@ -123,9 +156,8 @@ namespace MailKit.Security {
 			if (token == null)
 				throw new NotSupportedException ("CRAM-MD5 does not support SASL-IR.");
 
-			var cred = Credentials.GetCredential (Uri, MechanismName);
-			var userName = Encoding.UTF8.GetBytes (cred.UserName);
-			var password = Encoding.UTF8.GetBytes (cred.Password);
+			var userName = Encoding.UTF8.GetBytes (Credentials.UserName);
+			var password = Encoding.UTF8.GetBytes (Credentials.Password);
 			var ipad = new byte[64];
 			var opad = new byte[64];
 			byte[] digest;

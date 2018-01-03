@@ -18,6 +18,10 @@
 * Treat the SMTP X-EXPS capability in an EHLO response the same as AUTH. (issue #603)
 * Dropped support for .NET 4.0.
 
+Note: As of 2.0, XOAUTH2 is no longer in the list of SASL mechanisms that is tried
+when using the Authenticate() methods that have existed pre-MailKit 2.0.
+Instead, you must now use Authenticate(SaslMechanism, CancellationToken).
+
 ### MailKit 1.22.0
 
 * Enable TLSv1.1 and 1.2 for .NETStandard.

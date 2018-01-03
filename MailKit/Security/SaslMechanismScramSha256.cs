@@ -53,15 +53,12 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Creates a new SCRAM-SHA-256 SASL context.
 		/// </remarks>
-		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="entropy">Random characters to act as the cnonce token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
-		internal SaslMechanismScramSha256 (Uri uri, ICredentials credentials, string entropy) : base (uri, credentials, entropy)
+		internal SaslMechanismScramSha256 (NetworkCredential credentials, string entropy) : base (credentials, entropy)
 		{
 		}
 
@@ -78,6 +75,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismScramSha256(NetworkCredential) instead.")]
 		public SaslMechanismScramSha256 (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}
@@ -98,7 +96,39 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
+		[Obsolete ("Use SaslMechanismScramSha256(string, string) instead.")]
 		public SaslMechanismScramSha256 (Uri uri, string userName, string password) : base (uri, userName, password)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismScramSha256"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new SCRAM-SHA-256 SASL context.
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		public SaslMechanismScramSha256 (NetworkCredential credentials) : base (credentials)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismScramSha256"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new SCRAM-SHA-256 SASL context.
+		/// </remarks>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismScramSha256 (string userName, string password) : base (userName, password)
 		{
 		}
 
