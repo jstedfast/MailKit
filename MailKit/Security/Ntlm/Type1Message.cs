@@ -1,4 +1,4 @@
-//
+﻿//
 // Mono.Security.Protocol.Ntlm.Type1Message - Negotiation
 //
 // Authors: Sebastien Pouliot <sebastien@ximian.com>
@@ -6,7 +6,7 @@
 //
 // Copyright (c) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (c) 2004 Novell, Inc (http://www.novell.com)
-// Copyright (c) 2013-2017 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2018 Xamarin Inc. (www.xamarin.com)
 //
 // References
 // a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
