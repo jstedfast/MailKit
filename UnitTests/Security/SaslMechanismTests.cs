@@ -157,6 +157,36 @@ namespace UnitTests.Security {
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 ((string) null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 ("username", null));
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
+
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create (null, uri, Encoding.UTF8, credentials));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", null, Encoding.UTF8, credentials));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", uri, null, credentials));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", uri, Encoding.UTF8, null));
+
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create (null, uri, credentials));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", null, credentials));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", uri, null));
+
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.SaslPrep (null));
+		}
+
+		[Test]
+		public void TestIsSupported ()
+		{
+			var supported = new [] { "PLAIN", "LOGIN", "CRAM-MD5", "DIGEST-MD5", "SCRAM-SHA-1", "SCRAM-SHA-256", "NTLM", "XOAUTH2" };
+			var unsupported = new [] { "ANONYMOUS", "GSSAPI", "KERBEROS_V4" };
+			var credentials = new NetworkCredential ("username", "password");
+			var uri = new Uri ("smtp://localhost");
+
+			foreach (var mechanism in supported) {
+				Assert.IsTrue (SaslMechanism.IsSupported (mechanism), mechanism);
+				var sasl = SaslMechanism.Create (mechanism, uri, credentials);
+				Assert.IsNotNull (sasl, mechanism);
+				Assert.AreEqual (mechanism, sasl.MechanismName, "MechanismName");
+			}
+
+			foreach (var mechanism in unsupported)
+				Assert.IsFalse (SaslMechanism.IsSupported (mechanism), mechanism);
 		}
 
 		[Test]
@@ -444,6 +474,18 @@ namespace UnitTests.Security {
 			//	Assert.Fail ("7");
 			//} catch (ArgumentException) {
 			//}
+
+			var prohibited = new char [] { '\uF8FF', '\uDFFF', '\uFFFD', '\u2FFB', '\u200E' };
+			foreach (var c in prohibited) {
+				try {
+					SaslMechanism.SaslPrep (c.ToString ());
+					Assert.Fail ("prohibited: '\\u{0:X}'", c);
+				} catch (ArgumentException) {
+				}
+			}
+
+			Assert.AreEqual (string.Empty, SaslMechanism.SaslPrep (string.Empty));
+			Assert.AreEqual ("a b", SaslMechanism.SaslPrep ("a\u00A0b"));
 		}
 	}
 }
