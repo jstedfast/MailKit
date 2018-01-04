@@ -447,6 +447,33 @@ namespace UnitTests.Security {
 		}
 
 		[Test]
+		public void TestScramSha256 ()
+		{
+			const string cnonce = "rOprNGfwEbeRWgbNEkqO";
+			var uri = new Uri ("imap://elwood.innosoft.com");
+			var credentials = new NetworkCredential ("user", "pencil");
+			var sasl = new SaslMechanismScramSha256 (credentials, cnonce);
+			string token;
+
+			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
+
+			Assert.AreEqual ("n,,n=user,r=" + cnonce, challenge, "Initial SCRAM-SHA-256 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-256 should not be authenticated yet.");
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes ("r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096"));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+
+			const string expected = "c=biws,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=dHzbZapWIk4jUhN+Ute9ytag9zjfMHgsqmmiz7AndVQ=";
+			Assert.AreEqual (expected, challenge, "Second SCRAM-SHA-256 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-256 should not be authenticated yet.");
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes ("v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl95G4="));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+			Assert.AreEqual (string.Empty, challenge, "Third SCRAM-SHA-256 challenge should be an empty string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-256 should be authenticated now.");
+		}
+
+		[Test]
 		public void TestSaslPrep ()
 		{
 			// The following examples are from rfc4013, Section 3.
