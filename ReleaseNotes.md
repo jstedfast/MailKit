@@ -1,5 +1,18 @@
 # Release Notes
 
+### MailKit 2.0.1
+
+* Obsoleted all SaslMechanism constructors that took a Uri argument and replaced them
+  with variants that no longer require the Uri and instead take a NetworkCredential
+  or a set of strings for the user name and password. This simplifies authenticating
+  with OAuth 2.0:
+
+```csharp
+var oauth2 = new SaslMechanismOAuth2 (username, auth_token);
+
+client.Authenticate (oauth2);
+```
+
 ### MailKit 2.0.0
 
 * Updated MailKit to fully support async IO instead of using Task.Run() wrappers.
