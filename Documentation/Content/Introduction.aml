@@ -94,7 +94,7 @@
             <para>Client-side sorting and threading of messages.</para>
           </listItem>
           <listItem>
-            <para>Supports .NET 4.0, .NET 4.5, .NETStandard 1.3, Xamarin.Android, Xamarin.iOS, Windows Phone 8.1, and more.</para>
+            <para>Supports .NET 4.5, .NETStandard 1.3, .NETStandard 1.6, .NETStandard 2.0, Xamarin.Android, Xamarin.iOS, Windows Phone 8.1, and more.</para>
           </listItem>
         </list>
       </content>

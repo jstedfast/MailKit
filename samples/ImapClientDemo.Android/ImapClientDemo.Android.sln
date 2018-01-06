@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImapClientDemo.Android", "ImapClientDemo.Android\ImapClientDemo.Android.csproj", "{E24B6562-C9B2-4190-A43C-116FA52AACE5}"
 EndProject
 Global
@@ -11,7 +13,14 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E24B6562-C9B2-4190-A43C-116FA52AACE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E24B6562-C9B2-4190-A43C-116FA52AACE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E24B6562-C9B2-4190-A43C-116FA52AACE5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{E24B6562-C9B2-4190-A43C-116FA52AACE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E24B6562-C9B2-4190-A43C-116FA52AACE5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD43C050-ACBB-4A31-A155-C71AFC1D5AE2}
 	EndGlobalSection
 EndGlobal
