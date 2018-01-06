@@ -1082,7 +1082,7 @@ namespace MailKit.Net.Smtp {
 						else
 							socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).GetAwaiter ().GetResult ();
 #endif
-						} catch (Exception ex) {
+					} catch (Exception ex) {
 						throw SslHandshakeException.Create (ex, true);
 					}
 

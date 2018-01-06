@@ -195,7 +195,6 @@ namespace UnitTests.Security {
 			const string serverToken = "<1896.697170952@postoffice.example.net>";
 			const string expected = "joe 3dbc88f0624776a737b39093f6eb6427";
 			var credentials = new NetworkCredential ("joe", "tanstaaftanstaaf");
-			var uri = new Uri ("imap://imap.gmail.com");
 			var sasl = new SaslMechanismCramMd5 (credentials);
 
 			var token = Encoding.ASCII.GetBytes (serverToken);
@@ -240,8 +239,7 @@ namespace UnitTests.Security {
 			const string expected1 = "dXNlcm5hbWU=";
 			const string expected2 = "cGFzc3dvcmQ=";
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("imap://imap.gmail.com");
-			var sasl = new SaslMechanismLogin (uri, credentials);
+			var sasl = new SaslMechanismLogin (credentials);
 			string challenge;
 
 			challenge = sasl.Challenge (string.Empty);
@@ -260,8 +258,7 @@ namespace UnitTests.Security {
 		{
 			const string expected = "AHVzZXJuYW1lAHBhc3N3b3Jk";
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("imap://imap.gmail.com");
-			var sasl = new SaslMechanismPlain (uri, credentials);
+			var sasl = new SaslMechanismPlain (credentials);
 
 			var challenge = sasl.Challenge (string.Empty);
 
