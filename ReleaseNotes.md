@@ -22,6 +22,17 @@ Note: As of 2.0, XOAUTH2 is no longer in the list of SASL mechanisms that is tri
 when using the Authenticate() methods that have existed pre-MailKit 2.0.
 Instead, you must now use Authenticate(SaslMechanism, CancellationToken).
 
+An example usage might look like this:
+
+```csharp
+// Note: The Uri isn't used except with ICredentials.GetCredential (Uri) so unless
+// you implemented your own ICredentials class, the Uri is a dummy argument.
+var uri = new Uri ("imap://imap.gmail.com");
+var oauth2 = new SaslMechanismOAuth2 (uri, new NetworkCredentials (username, auth_token));
+
+client.Authenticate (oauth2);
+```
+
 ### MailKit 1.22.0
 
 * Enable TLSv1.1 and 1.2 for .NETStandard.
