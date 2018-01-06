@@ -28,7 +28,7 @@ An example usage might look like this:
 // Note: The Uri isn't used except with ICredentials.GetCredential (Uri) so unless
 // you implemented your own ICredentials class, the Uri is a dummy argument.
 var uri = new Uri ("imap://imap.gmail.com");
-var oauth2 = new SaslMechanismOAuth2 (uri, new NetworkCredentials (username, auth_token));
+var oauth2 = new SaslMechanismOAuth2 (uri, username, auth_token);
 
 client.Authenticate (oauth2);
 ```
