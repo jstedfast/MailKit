@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <!-- The configuration and platform will be used to determine which assemblies to include from solution and
@@ -108,6 +108,7 @@
     <None Include="Examples\ImapExamples.cs" />
     <None Include="Examples\ImapIdleExample.cs" />
     <None Include="Examples\InvalidSslCertificate.cs" />
+    <None Include="Examples\MessageDeliveryStatusExamples.cs" />
     <None Include="Examples\MimeIterator.cs" />
     <None Include="Examples\MimeMessageLoad.cs" />
     <None Include="Examples\MimeParserMbox.cs" />
