@@ -859,7 +859,11 @@ namespace MailKit.Net.Imap {
 					while (*inptr != (byte) '\n')
 						inptr++;
 
-					inputIndex = (int) (inptr - inbuf);
+					// Compiling on Linux with XBuild generated a "Not implemented exception".
+					// The use of this temp variable fixes this.
+					int inputIndexTmp = (int) (inptr - inbuf);
+					inputIndex = inputIndexTmp;
+					//inputIndex = (int) (inptr - inbuf);
 					count = (int) (inptr - start);
 
 					if (inptr == inend) {
