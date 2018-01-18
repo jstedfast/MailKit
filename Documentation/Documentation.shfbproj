@@ -67,7 +67,7 @@
       <NamespaceSummaryItem name="MailKit.Search" isDocumented="True">The &lt;b&gt;MailKit.Search&lt;/b&gt; namespace provides classes that are necessary for searching folders for messages matching a set of criteria.</NamespaceSummaryItem>
       <NamespaceSummaryItem name="MailKit.Security" isDocumented="True">The &lt;b&gt;MailKit.Security&lt;/b&gt; namespace provides implementations of various SASL authentication mechanisms used by the IMAP, POP3 and SMTP clients.</NamespaceSummaryItem>
     </NamespaceSummaries>
-    <CopyrightText>Copyright &amp;#169%3b 2013-2017 Jeffrey Stedfast</CopyrightText>
+    <CopyrightText>Copyright &amp;#169%3b 2013-2018 Jeffrey Stedfast</CopyrightText>
     <WorkingPath>obj\</WorkingPath>
     <FooterText>&amp;lt%3bscript&amp;gt%3b%28function%28i,s,o,g,r,a,m%29{{i[&amp;#39%3bGoogleAnalyticsObject&amp;#39%3b]=r%3bi[r]=i[r]||function%28%29{{ %28i[r].q=i[r].q||[]%29.push%28arguments%29}},i[r].l=1%2anew Date%28%29%3ba=s.createElement%28o%29, m=s.getElementsByTagName%28o%29[0]%3ba.async=1%3ba.src=g%3bm.parentNode.insertBefore%28a,m%29 }}%29%28window,document,&amp;#39%3bscript&amp;#39%3b,&amp;#39%3b//www.google-analytics.com/analytics.js&amp;#39%3b,&amp;#39%3bga&amp;#39%3b%29%3b ga%28&amp;#39%3bcreate&amp;#39%3b, &amp;#39%3bUA-63841238-1&amp;#39%3b, &amp;#39%3bauto&amp;#39%3b%29%3b ga%28&amp;#39%3bsend&amp;#39%3b, &amp;#39%3bpageview&amp;#39%3b%29%3b&amp;lt%3b/script&amp;gt%3b</FooterText>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
