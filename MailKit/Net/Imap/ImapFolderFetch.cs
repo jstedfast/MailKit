@@ -3099,45 +3099,106 @@ namespace MailKit.Net.Imap
 
 		class Section
 		{
+			public int Index;
 			public UniqueId? UniqueId;
 			public Stream Stream;
 			public string Name;
 			public int Offset;
 			public int Length;
 
-			public Section (Stream stream, UniqueId? uid, string name, int offset, int length)
+			public Section (Stream stream, int index, UniqueId? uid, string name, int offset, int length)
 			{
 				Stream = stream;
 				Offset = offset;
 				Length = length;
 				UniqueId = uid;
+				Index = index;
 				Name = name;
 			}
 		}
 
 		class FetchStreamContext : IDisposable
 		{
-			public readonly Dictionary<string, Section> Sections = new Dictionary<string, Section> (StringComparer.OrdinalIgnoreCase);
-			readonly ITransferProgress Progress;
+			readonly List<Section> sections = new List<Section> ();
+			readonly ITransferProgress progress;
 
 			public FetchStreamContext (ITransferProgress progress)
 			{
-				Progress = progress;
+				this.progress = progress;
+			}
+
+			public void Add (Section section)
+			{
+				sections.Add (section);
+			}
+
+			public bool TryGetSection (UniqueId uid, string specifier, out Section section, bool remove = false)
+			{
+				for (int i = 0; i < sections.Count; i++) {
+					var item = sections[i];
+
+					if (!item.UniqueId.HasValue || item.UniqueId.Value != uid)
+						continue;
+
+					if (item.Name.Equals (specifier, StringComparison.OrdinalIgnoreCase)) {
+						if (remove)
+							sections.RemoveAt (i);
+
+						section = item;
+						return true;
+					}
+				}
+
+				section = null;
+
+				return false;
+			}
+
+			public bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
+			{
+				for (int i = 0; i < sections.Count; i++) {
+					var item = sections[i];
+
+					if (item.Index != index)
+						continue;
+
+					if (item.Name.Equals (specifier, StringComparison.OrdinalIgnoreCase)) {
+						if (remove)
+							sections.RemoveAt (i);
+
+						section = item;
+						return true;
+					}
+				}
+
+				section = null;
+
+				return false;
+			}
+
+			public void SetUniqueId (int index, UniqueId uid)
+			{
+				for (int i = 0; i < sections.Count; i++) {
+					if (sections[i].Index == index)
+						sections[i].UniqueId = uid;
+				}
 			}
 
 			public void Report (long nread, long total)
 			{
-				if (Progress == null)
+				if (progress == null)
 					return;
 
-				Progress.Report (nread, total);
+				progress.Report (nread, total);
 			}
 
 			public void Dispose ()
 			{
-				foreach (var section in Sections) {
+				for (int i = 0; i < sections.Count; i++) {
+					var section = sections[i];
+
 					try {
-						section.Value.Stream.Dispose ();
+						section.Stream.Dispose ();
 					} catch (IOException) {
 					}
 				}
@@ -3310,11 +3371,11 @@ namespace MailKit.Net.Imap
 						stream = CommitStream (stream, uid.Value, name, offset, length);
 
 					// prevent leaks in the (invalid) case where a section may be returned twice
-					if (ctx.Sections.TryGetValue (name, out section))
+					if (ctx.TryGetSection (index, name, out section))
 						section.Stream.Dispose ();
 
-					section = new Section (stream, uid, name, offset, length);
-					ctx.Sections[name] = section;
+					section = new Section (stream, index, uid, name, offset, length);
+					ctx.Add (section);
 					break;
 				case "UID":
 					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
@@ -3324,15 +3385,7 @@ namespace MailKit.Net.Imap
 
 					uid = new UniqueId (UidValidity, value);
 
-					foreach (var kvp in ctx.Sections) {
-						section = kvp.Value;
-
-						if (section.UniqueId.HasValue)
-							continue;
-
-						section.Stream = CommitStream (section.Stream, uid.Value, section.Name, section.Offset, section.Length);
-						section.UniqueId = uid.Value;
-					}
+					ctx.SetUniqueId (index, uid.Value);
 
 					labels.UniqueId = uid.Value;
 					flags.UniqueId = uid.Value;
@@ -3446,10 +3499,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue ("HEADER", out section))
+				if (!ctx.TryGetSection (uid, "HEADER", out section, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested message headers.");
-
-				ctx.Sections.Remove ("HEADER");
 			} finally {
 				ctx.Dispose ();
 			}
@@ -3487,10 +3538,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (tags[0], out section))
+				if (!ctx.TryGetSection (uid, tags[0], out section, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested body part headers.");
-
-				ctx.Sections.Remove (tags[0]);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -3820,10 +3869,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue ("HEADER", out section))
+				if (!ctx.TryGetSection (index, "HEADER", out section, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested message.");
-
-				ctx.Sections.Remove ("HEADER");
 			} finally {
 				ctx.Dispose ();
 			}
@@ -3861,10 +3908,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (tags[0], out section))
+				if (!ctx.TryGetSection (index, tags[0], out section, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested body part headers.");
-
-				ctx.Sections.Remove (tags[0]);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -4194,10 +4239,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (string.Empty, out section))
+				if (!ctx.TryGetSection (uid, string.Empty, out section, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested message.");
-
-				ctx.Sections.Remove (string.Empty);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -4319,10 +4362,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (string.Empty, out section))
+				if (!ctx.TryGetSection (index, string.Empty, out section, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested message.");
-
-				ctx.Sections.Remove (string.Empty);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -4455,7 +4496,7 @@ namespace MailKit.Net.Imap
 				chained = new ChainedStream ();
 
 				foreach (var tag in tags) {
-					if (!ctx.Sections.TryGetValue (tag, out section))
+					if (!ctx.TryGetSection (uid, tag, out section, true))
 						throw new MessageNotFoundException ("The IMAP server did not return the requested body part.");
 
 					if (!(section.Stream is MemoryStream || section.Stream is MemoryBlockStream))
@@ -4463,9 +4504,6 @@ namespace MailKit.Net.Imap
 
 					chained.Add (section.Stream);
 				}
-
-				foreach (var tag in tags)
-					ctx.Sections.Remove (tag);
 			} catch {
 				if (chained != null)
 					chained.Dispose ();
@@ -4738,7 +4776,7 @@ namespace MailKit.Net.Imap
 				chained = new ChainedStream ();
 
 				foreach (var tag in tags) {
-					if (!ctx.Sections.TryGetValue (tag, out section))
+					if (!ctx.TryGetSection (index, tag, out section, true))
 						throw new MessageNotFoundException ("The IMAP server did not return the requested body part.");
 
 					if (!(section.Stream is MemoryStream || section.Stream is MemoryBlockStream))
@@ -4746,9 +4784,6 @@ namespace MailKit.Net.Imap
 
 					chained.Add (section.Stream);
 				}
-
-				foreach (var tag in tags)
-					ctx.Sections.Remove (tag);
 			} catch {
 				if (chained != null)
 					chained.Dispose ();
@@ -5013,10 +5048,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (string.Empty, out section))
+				if (!ctx.TryGetSection (uid, string.Empty, out section, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
-
-				ctx.Sections.Remove (string.Empty);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -5057,10 +5090,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (string.Empty, out section))
+				if (!ctx.TryGetSection (index, string.Empty, out section, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
-
-				ctx.Sections.Remove (string.Empty);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -5314,10 +5345,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (section, out s))
+				if (!ctx.TryGetSection (uid, section, out s, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
-
-				ctx.Sections.Remove (section);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -5464,10 +5493,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (section, out s))
+				if (!ctx.TryGetSection (uid, section, out s, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
-
-				ctx.Sections.Remove (section);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -5625,10 +5652,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (section, out s))
+				if (!ctx.TryGetSection (index, section, out s, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
-
-				ctx.Sections.Remove (section);
 			} finally {
 				ctx.Dispose ();
 			}
@@ -5775,10 +5800,8 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!ctx.Sections.TryGetValue (section, out s))
+				if (!ctx.TryGetSection (index, section, out s, true))
 					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
-
-				ctx.Sections.Remove (section);
 			} finally {
 				ctx.Dispose ();
 			}
