@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <topic id="Working-With-OpenPGP" revisionNumber="1">
   <developerConceptualDocument
     xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
@@ -49,7 +49,7 @@
           PGP/MIME uses a MIME part with a <literal>multipart/encrypted</literal> mime-type
           to encapsulate encrypted data. To encrypt any
           <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference>,
-          simply use the
+          use the
           <codeEntityReference autoUpgrade="true" linkText="MultipartEncrypted.Create">
             Overload:MimeKit.Cryptography.MultipartEncrypted.Create
           </codeEntityReference>

@@ -194,7 +194,7 @@ client.Authenticate (oauth2);
           You'll probably also want to set the <literal>filename</literal> parameter on the
           <literal>Content-Disposition</literal> header as well as the <literal>name</literal>
           parameter on the <literal>Content-Type</literal> header. The most convenient way to do this
-          is to simply use the <codeEntityReference qualifyHint="true">
+          is to use the <codeEntityReference qualifyHint="true">
           P:MimeKit.MimePart.FileName</codeEntityReference> property which will set both parameters
           for you as well as setting the <literal>Content-Disposition</literal> header value to
           <literal>attachment</literal> if it has not already been set to something else.
@@ -492,7 +492,7 @@ message.WriteTo (format, "message.eml");
         </para>
         <para>
           If you only care about getting a flattened list of the mailbox addresses in one of
-          the address headers, you can simply do something like this:
+          the address headers, you can do something like this:
         </para>
         <code language="c#">
 foreach (var mailbox in message.To.Mailboxes)
@@ -665,7 +665,7 @@ message.WriteTo (options, stream);
         </para>
         <code language="c#" source="Examples\ForwardExamples.cs" region="ForwardAttached"/>
         <para>
-          To forward a message by simply inlining the original message's text content, you can do something like this:
+          To forward a message by inlining the original message's text content, you can do something like this:
         </para>
         <code language="c#" source="Examples\ForwardExamples.cs" region="ForwardInline"/>
       </content>

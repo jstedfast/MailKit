@@ -166,7 +166,7 @@ MailKit is Copyright (C) 2013-2018 Xamarin Inc. and is licensed under the MIT li
 The easiest way to install MailKit is via [NuGet](https://www.nuget.org/packages/MailKit/).
 
 In Visual Studio's [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console),
-simply enter the following command:
+enter the following command:
 
     Install-Package MailKit
 
@@ -212,7 +212,7 @@ In the top-level MailKit directory, there are a number of solution files; they a
 If you don't have the Xamarin products, you'll probably want to open the MailKit.Net45.sln instead of MailKit.sln.
 
 Once you've opened the appropriate MailKit solution file in either [Xamarin Studio](https://www.xamarin.com/download)
-or [Visual Studio 2017](https://www.visualstudio.com/downloads/), you can simply choose the **Debug** or **Release**
+or [Visual Studio 2017](https://www.visualstudio.com/downloads/), you can choose the **Debug** or **Release**
 build configuration and then build.
 
 Note: The **Release** build will generate the xml API documentation, but the **Debug** build will not.
@@ -483,7 +483,7 @@ solution files are configured with the coding style used by MailKit. If you use 
 other editor, please try to maintain the existing coding style as best as you can.
 
 Once you've got some changes that you'd like to submit upstream to the official MailKit repository,
-simply send me a **Pull Request** and I will try to review your changes in a timely manner.
+send me a **Pull Request** and I will try to review your changes in a timely manner.
 
 If you'd like to contribute but don't have any particular features in mind to work on, check out the issue
 tracker and look for something that might pique your interest!
