@@ -294,7 +294,7 @@ builder.Attachments.Add (@"C:\Users\Joey\Documents\party.ics");
 message.Body = builder.ToMessageBody ();
 ```
 
-For more information, see [Creating Messages](http://www.mimekit.net/docs/html/CreatingMessages.htm).
+For more information, see [Creating Messages](http://www.mimekit.net/docs/html/Creating-Messages.htm).
 
 ### <a name="MessageBody">Q: How can I get the main body of a message?</a>
 
@@ -371,7 +371,7 @@ for this: [TextBody](http://www.mimekit.net/docs/html/P_MimeKit_MimeMessage_Text
 appropriate body part with a `Content-Type` of `text/html` that can be interpreted as the message body.
 Likewise, the `TextBody` property can be used to get the `text/plain` version of the message body.
 
-For more information, see [Working with Messages](http://www.mimekit.net/docs/html/WorkingWithMessages.htm).
+For more information, see [Working with Messages](http://www.mimekit.net/docs/html/Working-With-Messages.htm).
 
 ### <a name="HasAttachments">Q: How can I tell if a message has attachments?</a>
 
