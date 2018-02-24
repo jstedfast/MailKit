@@ -3117,7 +3117,14 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		class FetchStreamContext : IDisposable
+		interface IFetchStreamContext : IDisposable
+		{
+			void Add (Section section);
+			void SetUniqueId (int index, UniqueId uid);
+			void Report (long nread, long total);
+		}
+
+		class FetchStreamContext : IFetchStreamContext
 		{
 			readonly List<Section> sections = new List<Section> ();
 			readonly ITransferProgress progress;
@@ -3683,7 +3690,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public virtual HeaderList GetHeaders (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetHeadersAsync (uid, partSpecifier, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetHeadersAsync (uid, partSpecifier, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -3959,7 +3966,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override HeaderList GetHeaders (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetHeadersAsync (index, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetHeadersAsync (index, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -4053,7 +4060,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public virtual HeaderList GetHeaders (int index, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetHeadersAsync (index, partSpecifier, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetHeadersAsync (index, partSpecifier, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -4290,7 +4297,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetMessageAsync (uid, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetMessageAsync (uid, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -4413,7 +4420,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetMessageAsync (index, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetMessageAsync (index, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -4573,7 +4580,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public virtual MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetBodyPartAsync (uid, partSpecifier, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetBodyPartAsync (uid, partSpecifier, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -4853,7 +4860,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public virtual MimeEntity GetBodyPart (int index, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetBodyPartAsync (index, partSpecifier, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetBodyPartAsync (index, partSpecifier, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -5151,7 +5158,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStreamAsync (uid, offset, count, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetStreamAsync (uid, offset, count, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -5260,7 +5267,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStreamAsync (index, offset, count, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetStreamAsync (index, offset, count, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -5402,7 +5409,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStreamAsync (uid, section, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetStreamAsync (uid, section, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -5560,7 +5567,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStreamAsync (uid, section, offset, count, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetStreamAsync (uid, section, offset, count, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -5709,7 +5716,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStreamAsync (index, section, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetStreamAsync (index, section, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -5866,7 +5873,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStreamAsync (index, section, offset, count, false, cancellationToken, progress).GetAwaiter().GetResult();
+			return GetStreamAsync (index, section, offset, count, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -5927,6 +5934,358 @@ namespace MailKit.Net.Imap
 		public override Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return GetStreamAsync (index, section, offset, count, true, cancellationToken, progress);
+		}
+
+		class FetchStreamCallbackContext : IFetchStreamContext
+		{
+			readonly List<Section> sections = new List<Section> ();
+			readonly ImapFetchStreamCallback callback;
+			readonly ITransferProgress progress;
+			readonly ImapFolder folder;
+
+			public FetchStreamCallbackContext (ImapFolder folder, ImapFetchStreamCallback callback, ITransferProgress progress)
+			{
+				this.folder = folder;
+				this.callback = callback;
+				this.progress = progress;
+			}
+
+			public void Add (Section section)
+			{
+				if (section.UniqueId.HasValue)
+					callback (folder, section.Index, section.UniqueId.Value, section.Stream);
+				else
+					sections.Add (section);
+			}
+
+			public void SetUniqueId (int index, UniqueId uid)
+			{
+				for (int i = 0; i < sections.Count; i++) {
+					if (sections[i].Index == index) {
+						callback (folder, index, uid, sections[i].Stream);
+						sections.RemoveAt (i);
+					}
+				}
+			}
+
+			public void Report (long nread, long total)
+			{
+				if (progress == null)
+					return;
+
+				progress.Report (nread, total);
+			}
+
+			public void Dispose ()
+			{
+				for (int i = 0; i < sections.Count; i++) {
+					var section = sections[i];
+
+					try {
+						section.Stream.Dispose ();
+					} catch (IOException) {
+					}
+				}
+			}
+		}
+
+		async Task GetStreamsAsync (IList<UniqueId> uids, ImapFetchStreamCallback callback, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		{
+			var set = ImapUtils.FormatUidSet (uids);
+
+			if (callback == null)
+				throw new ArgumentNullException (nameof (callback));
+
+			CheckState (true, false);
+
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[])\r\n", set);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamCallbackContext (this, callback, progress);
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.UserData = ctx;
+
+			Engine.QueueCommand (ic);
+
+			try {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+				ProcessResponseCodes (ic, null);
+
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+			} finally {
+				ctx.Dispose ();
+			}
+		}
+
+		async Task GetStreamsAsync (IList<int> indexes, ImapFetchStreamCallback callback, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		{
+			var set = ImapUtils.FormatIndexSet (indexes);
+
+			if (callback == null)
+				throw new ArgumentNullException (nameof (callback));
+
+			CheckState (true, false);
+
+			var command = string.Format ("FETCH {0} (UID BODY.PEEK[])\r\n");
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamCallbackContext (this, callback, progress);
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.UserData = ctx;
+
+			Engine.QueueCommand (ic);
+
+			try {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+				ProcessResponseCodes (ic, null);
+
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+			} finally {
+				ctx.Dispose ();
+			}
+		}
+
+		async Task GetStreamsAsync (int min, int max, ImapFetchStreamCallback callback, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		{
+			if (min < 0)
+				throw new ArgumentOutOfRangeException (nameof (min));
+
+			if (max != -1 && max < min)
+				throw new ArgumentOutOfRangeException (nameof (max));
+
+			if (callback == null)
+				throw new ArgumentNullException (nameof (callback));
+
+			CheckState (true, false);
+
+			if (min == Count)
+				return;
+
+			var command = string.Format ("FETCH {0} (UID BODY.PEEK[])\r\n", GetFetchRange (min, max));
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamCallbackContext (this, callback, progress);
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.UserData = ctx;
+
+			Engine.QueueCommand (ic);
+
+			try {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+				ProcessResponseCodes (ic, null);
+
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+			} finally {
+				ctx.Dispose ();
+			}
+		}
+
+		/// <summary>
+		/// Get the streams for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the streams for the specified messages.</para>
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="callback"></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="callback"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="indexes"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public virtual void GetStreams (IList<int> indexes, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			GetStreamsAsync (indexes, callback, false, cancellationToken, progress).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Asyn chronously get the streams for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously gets the streams for the specified messages.</para>
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="callback"></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="callback"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="indexes"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public virtual Task GetStreamAsync (IList<int> indexes, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			return GetStreamsAsync (indexes, callback, true, cancellationToken, progress);
+		}
+
+		/// <summary>
+		/// Get the streams for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the streams for the specified messages.</para>
+		/// </remarks>
+		/// <param name="min">The minimum index.</param>
+		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="callback"></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="min"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="max"/> is out of range.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="callback"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public virtual void GetStreams (int min, int max, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			GetStreamsAsync (min, max, callback, false, cancellationToken, progress).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Asynchronously get the streams for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously gets the streams for the specified messages.</para>
+		/// </remarks>
+		/// <param name="min">The minimum index.</param>
+		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="callback"></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="min"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="max"/> is out of range.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="callback"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public virtual Task GetStreamAsync (int min, int max, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			return GetStreamsAsync (min, max, callback, true, cancellationToken, progress);
 		}
 	}
 }
