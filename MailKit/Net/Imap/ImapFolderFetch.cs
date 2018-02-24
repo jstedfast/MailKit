@@ -5952,10 +5952,12 @@ namespace MailKit.Net.Imap
 
 			public void Add (Section section)
 			{
-				if (section.UniqueId.HasValue)
+				if (section.UniqueId.HasValue) {
 					callback (folder, section.Index, section.UniqueId.Value, section.Stream);
-				else
+					section.Stream.Dispose ();
+				} else {
 					sections.Add (section);
+				}
 			}
 
 			public void SetUniqueId (int index, UniqueId uid)
@@ -5963,6 +5965,7 @@ namespace MailKit.Net.Imap
 				for (int i = 0; i < sections.Count; i++) {
 					if (sections[i].Index == index) {
 						callback (folder, index, uid, sections[i].Stream);
+						sections[i].Stream.Dispose ();
 						sections.RemoveAt (i);
 					}
 				}
