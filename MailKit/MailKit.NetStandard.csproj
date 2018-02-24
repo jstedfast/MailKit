@@ -53,6 +53,7 @@
 
   <ItemGroup>
     <Compile Include="Net\Imap\AsyncImapClient.cs" />
+    <Compile Include="Net\Imap\ImapCallbacks.cs" />
     <Compile Include="Net\Imap\ImapCapabilities.cs" />
     <Compile Include="Net\Imap\ImapClient.cs" />
     <Compile Include="Net\Imap\ImapCommand.cs" />

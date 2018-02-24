@@ -6092,6 +6092,100 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// <para>Gets the streams for the specified messages.</para>
 		/// </remarks>
+		/// <param name="uids">The uids of the messages.</param>
+		/// <param name="callback"></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="callback"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="uids"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public virtual void GetStreams (IList<UniqueId> uids, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			GetStreamsAsync (uids, callback, false, cancellationToken, progress).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Asynchronously get the streams for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously gets the streams for the specified messages.</para>
+		/// </remarks>
+		/// <param name="uids">The uids of the messages.</param>
+		/// <param name="callback"></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="callback"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="uids"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public virtual Task GetStreamAsync (IList<UniqueId> uids, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			return GetStreamsAsync (uids, callback, true, cancellationToken, progress);
+		}
+
+		/// <summary>
+		/// Get the streams for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the streams for the specified messages.</para>
+		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="callback"></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -6116,9 +6210,6 @@ namespace MailKit.Net.Imap
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The IMAP server did not return the requested message stream.
-		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -6137,7 +6228,7 @@ namespace MailKit.Net.Imap
 		}
 
 		/// <summary>
-		/// Asyn chronously get the streams for the specified messages.
+		/// Asynchronously get the streams for the specified messages.
 		/// </summary>
 		/// <remarks>
 		/// <para>Asynchronously gets the streams for the specified messages.</para>
@@ -6165,9 +6256,6 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The IMAP server did not return the requested message stream.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6217,9 +6305,6 @@ namespace MailKit.Net.Imap
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The IMAP server did not return the requested message stream.
-		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -6267,9 +6352,6 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The IMAP server did not return the requested message stream.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
