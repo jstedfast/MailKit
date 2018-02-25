@@ -6031,7 +6031,7 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			var command = string.Format ("FETCH {0} (UID BODY.PEEK[])\r\n");
+			var command = string.Format ("FETCH {0} (UID BODY.PEEK[])\r\n", set);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamCallbackContext (this, callback, progress);
 
