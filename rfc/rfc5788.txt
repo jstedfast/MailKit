@@ -1,0 +1,619 @@
+
+
+
+
+
+
+Internet Engineering Task Force (IETF)                       A. Melnikov
+Request for Comments: 5788                                   D. Cridland
+Category: Standards Track                                  Isode Limited
+ISSN: 2070-1721                                               March 2010
+
+
+                         IMAP4 Keyword Registry
+
+Abstract
+
+   The aim of this document is to establish a new IANA registry for IMAP
+   keywords and to define a procedure for keyword registration, in order
+   to improve interoperability between different IMAP clients.
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 5741.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   http://www.rfc-editor.org/info/rfc5788.
+
+Copyright Notice
+
+   Copyright (c) 2010 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 1]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+Table of Contents
+
+   1. Introduction ....................................................2
+   2. Conventions Used in This Document ...............................2
+   3. IANA Considerations .............................................3
+      3.1. Review Guidelines for the Designated Expert Reviewer .......4
+      3.2. Comments on IMAP Keywords' Registrations ...................5
+      3.3. Change Control .............................................5
+      3.4. Initial Registrations ......................................6
+           3.4.1. $MDNSent IMAP Keyword Registration ..................6
+           3.4.2. $Forwarded IMAP Keyword Registration ................7
+           3.4.3. $SubmitPending IMAP Keyword Registration ............8
+           3.4.4. $Submitted IMAP Keyword Registration ................9
+   4. Security Considerations ........................................10
+   5. Acknowledgements ...............................................10
+   6. References .....................................................10
+      6.1. Normative References ......................................10
+      6.2. Informative References ....................................11
+
+1.  Introduction
+
+   IMAP keywords [RFC3501] are boolean named flags that can be used by
+   clients to annotate messages in an IMAP mailbox.  Although IMAP
+   keywords are an optional feature of IMAP, the majority of IMAP
+   servers can store arbitrary keywords.  Many mainstream IMAP clients
+   use a limited set of specific keywords, and some can manage (create,
+   edit, display) arbitrary IMAP keywords.
+
+   Over the years, some IMAP keywords have become de-facto standards,
+   with some specific semantics associated with them.  In some cases,
+   different client implementors decided to define and use keywords with
+   different names, but the same semantics.  Some server implementors
+   decided to map such keywords automatically in order to improve cross-
+   client interoperability.
+
+   In other cases, the same keywords have been used with different
+   semantics, thus causing interoperability problems.
+
+   This document attempts to prevent further incompatible uses of IMAP
+   keywords by establishing an "IMAP Keywords" registry and allocating a
+   special prefix for standardized keywords.
+
+2.  Conventions Used in This Document
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [Kwds].
+
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 2]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+3.  IANA Considerations
+
+   IANA has established a new registry for IMAP keywords.
+
+   Registration of an IMAP keyword is requested by filling in the
+   following template and following the instructions on the IANA pages
+   for the registry to submit it to IANA:
+
+   Subject:    Registration of IMAP keyword X
+
+   IMAP keyword name:
+
+   Purpose (description):
+
+   Private or Shared on a server:  (One of PRIVATE, SHARED, or BOTH.
+                                   PRIVATE means that each different
+                                   user has a distinct copy of the
+                                   keyword.  SHARED means that all
+                                   different users see the same value of
+                                   the keyword.  BOTH means that an IMAP
+                                   server can have the keyword as either
+                                   private or shared.)
+
+   Is it an advisory keyword or may it cause an automatic action:
+
+   When/by whom the keyword is set/cleared:
+
+   Related keywords:  (for example, "mutually exclusive with keywords Y
+                      and Z")
+
+   Related IMAP capabilities:
+
+   Security considerations:
+
+   Published specification (recommended):
+
+   Person & email address to contact for further information:
+
+   Intended usage:  (One of COMMON, LIMITED USE, or DEPRECATED (i.e.,
+                    not recommended for use))
+
+   Owner/Change controller:  (MUST be "IESG" for any "common use"
+                             keyword registration specified in an IETF
+                             Review document.  See definition of "common
+                             use" below in this section.  When the
+                             Owner/Change controller is not a
+                             Standardization Organization, the
+                             registration request MUST make it clear if
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 3]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+                             the registration is controlled by a
+                             company, or the individual performing the
+                             registration.)
+
+   Note:       (Any other information that the author deems interesting
+               may be added here, for example, if the keyword(s) is
+               supported by existing clients.)
+
+   Registration of an IMAP keyword requires Expert Review [RFC5226].
+   Registration of any IMAP keyword is initiated by posting a
+   registration request to the Message Organization WG mailing list
+   <morg@ietf.org> (or its replacement as chosen by the responsible
+   Application Area Director) and CCing IANA (<iana@iana.org>).  After
+   allowing for at least two weeks for community input on the designated
+   mailing list, the expert will determine the appropriateness of the
+   registration request and either approve or disapprove the request
+   with notice to the requestor, the mailing list, and IANA.  Any
+   refusal must come with a clear explanation.
+
+   The IESG appoints one or more Expert Reviewers for the IMAP keyword
+   registry established by this document.
+
+   The Expert Reviewer should strive for timely reviews.  The Expert
+   Reviewer should take no longer than six weeks to make and announce
+   the decision, or notify the mailing list that more time is required.
+
+   Decisions (or lack of) made by an Expert Reviewer can be first
+   appealed to Application Area Directors and, if the appellant is not
+   satisfied with the response, to the full IESG.
+
+   There are two types of IMAP keywords in the "IMAP Keywords" registry:
+   intended for "common use" and vendor-/organization-specific use (also
+   known as "limited use").  An IMAP keyword is said to be for "common
+   use" if it is reasonably expected to be implemented in at least two
+   independent client implementations.  The two types of IMAP keywords
+   have different levels of requirements for registration (see below).
+
+3.1.  Review Guidelines for the Designated Expert Reviewer
+
+   Expert Reviewers should focus on the following requirements.
+
+   Registration of a vendor-/organization-specific ("limited use") IMAP
+   keyword is easier.  The Expert Reviewer only needs to check that the
+   requested name doesn't conflict with an already registered name, and
+   that the name is not too generic, misleading, etc.  The Expert
+   Reviewer MAY request the IMAP keyword name change before approving
+
+
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 4]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+   the registration.  The Expert Reviewer SHOULD refuse a registration
+   if there is an already registered IMAP keyword that serves the same
+   purpose, but has a different name.
+
+   When registering an IMAP keyword for "common use", the Expert
+   Reviewer performs the checks described for vendor-/
+   organization-specific IMAP keywords, plus additional checks as
+   detailed below.
+
+   Keywords intended for "common use" SHOULD start with the "$" prefix.
+   (Note that this is a SHOULD because some of the commonly used IMAP
+   keywords in widespread use don't follow this convention.)
+
+   IMAP keywords intended for "common use" SHOULD be standardized in
+   IETF Review [RFC5226] documents.  (Note that IETF Review documents
+   still require Expert Review.)
+
+   Values in the "IMAP Keywords" IANA registry intended for "common use"
+   must be clearly documented and likely to ensure interoperability.
+   They must be useful, not harmful to the Internet.  In cases when an
+   IMAP keyword being registered is already deployed, Expert Reviewers
+   should favor registering it over requiring perfect documentation
+   and/or requesting a change to the name of the IMAP keyword.
+
+   The Expert Reviewer MAY automatically "upgrade" registration requests
+   for a "limited use" IMAP keyword to "common use" level.  The Expert
+   Reviewer MAY also request that a registration targeted for "common
+   use" be registered as "limited use" instead.
+
+3.2.  Comments on IMAP Keywords' Registrations
+
+   Comments on registered IMAP keywords should be sent to both the
+   "owner" of the mechanism and to the mailing list designated to IMAP
+   keyword review (see Section 3).  This improves the chances of getting
+   a timely response.
+
+   Submitters of comments may, after a reasonable attempt to contact the
+   owner and after soliciting comments on the IMAP mailing list, request
+   the designated Expert Reviewer to attach their comment to the IMAP
+   keyword registration itself.  The procedure is similar to requesting
+   an Expert Review for the affected keyword.
+
+3.3.  Change Control
+
+   Once an IMAP keyword registration has been published by IANA, the
+   owner may request a change to its definition.  The change request
+   (including a change to the "intended usage" field) follows the same
+   procedure as the initial registration request, with the exception of
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 5]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+   changes to the "Person & email address to contact for further
+   information" and "Owner/Change controller" fields.  The latter can be
+   changed by the owner by informing IANA; this can be done without
+   discussion or review.
+
+   The IESG may reassign responsibility for an IMAP keyword.  The most
+   common case of this will be to enable clarifications to be made to
+   keywords where the owner of the registration has died, moved out of
+   contact, or is otherwise unable to make changes that are important to
+   the community.
+
+   IMAP keyword registrations MUST NOT be deleted; keywords that are no
+   longer believed appropriate for use can be declared DEPRECATED by a
+   change to their "intended usage" field.
+
+   The IESG is considered the owner of all "common use" IMAP keywords
+   that are published in an IETF Review document.
+
+3.4.  Initial Registrations
+
+   IANA has registered the IMAP keywords specified in following
+   subsections in the registry established by this document.
+
+3.4.1.  $MDNSent IMAP Keyword Registration
+
+   Subject:    Registration of IMAP keyword $MDNSent
+
+
+   IMAP keyword name:  $MDNSent
+
+   Purpose (description):  Specifies that a Message Disposition
+                           Notification (MDN) must not be sent for any
+                           message annotated with the $MDNSent IMAP
+                           keyword.
+
+   Private or Shared on a server:  SHARED
+
+   Is it an advisory keyword or may it cause an automatic action:
+                           This keyword can cause automatic action by
+                           the client.  See [RFC3503] for more details.
+
+   When/by whom the keyword is set/cleared:
+                           This keyword is set by an IMAP client when it
+                           decides to act on an MDN request, or when
+                           uploading a sent or draft message.  It can
+                           also be set by a delivery agent.  Once set,
+                           the flag SHOULD NOT be cleared.
+
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 6]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+   Related keywords:  None
+
+   Related IMAP capabilities:  None
+
+   Security considerations:  See Section 6 of [RFC3503]
+
+   Published specification (recommended):  [RFC3503]
+
+   Person & email address to contact for further information:
+                           Alexey Melnikov <alexey.melnikov@isode.com>
+
+   Intended usage:  COMMON
+
+   Owner/Change controller:  IESG
+
+   Note:
+
+3.4.2.  $Forwarded IMAP Keyword Registration
+
+   Subject:    Registration of the IMAP keyword $Forwarded
+
+   IMAP keyword name:  $Forwarded
+
+   Purpose (description):  $Forwarded is used by several IMAP clients to
+                           specify that the message was resent to
+                           another email address, embedded within or
+                           attached to a new message.  This keyword is
+                           set by the mail client when it successfully
+                           forwards the message to another email
+                           address.  Typical usage of this keyword is to
+                           show a different (or additional) icon for a
+                           message that has been forwarded.
+
+   Private or Shared on a server:  BOTH
+
+   Is it an advisory keyword or may it cause an automatic action:
+                           advisory
+
+   When/by whom the keyword is set/cleared:
+                           This keyword can be set by either a delivery
+                           agent or a mail client.  Once set, the flag
+                           SHOULD NOT be cleared.  Notes: There is no
+                           way to tell if a message with $Forwarded
+                           keyword set was forwarded more than once.
+
+   Related keywords:  None
+
+   Related IMAP capabilities:  None
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 7]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+   Security considerations:  A server implementing this keyword as a
+                             shared keyword may disclose that a
+                             confidential message was forwarded.
+
+   Published specification (recommended):  [RFC5550]
+
+   Person & email address to contact for further information:
+                           Alexey Melnikov <alexey.melnikov@isode.com>
+
+   Intended usage:  COMMON
+
+   Owner/Change controller:  IESG
+
+   Note:
+
+3.4.3.  $SubmitPending IMAP Keyword Registration
+
+   Subject:    Registration of IMAP keyword $SubmitPending
+
+   IMAP keyword name:  $SubmitPending
+
+   Purpose (description):  The $SubmitPending IMAP keyword designates
+                           the message as awaiting to be submitted.
+                           This keyword allows storing messages waiting
+                           to be submitted in the same mailbox where
+                           messages that were already submitted and/or
+                           are being edited are stored.
+
+                           A message that has both $Submitted and
+                           $SubmitPending IMAP keywords set is a message
+                           being actively submitted.
+
+   Private or Shared on a server:  SHARED
+
+   Is it an advisory keyword or may it cause an automatic action:
+                            This keyword can cause automatic action by
+                           the client.  See Section 5.10 of [RFC5550]
+                           for more details.
+
+   When/by whom the keyword is set/cleared:
+                           This keyword is set by a mail client when it
+                           decides that the message needs to be sent
+                           out.
+
+   Related keywords:  $Submitted
+
+   Related IMAP capabilities:  None
+
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 8]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+   Security considerations:  A server implementing this keyword as a
+                             shared keyword may disclose that a
+                             confidential message is scheduled to be
+                             sent out or is being actively sent out.
+
+   Published specification (recommended):  [RFC5550]
+
+   Person & email address to contact for further information:
+                           Alexey Melnikov <alexey.melnikov@isode.com>
+
+   Intended usage:  COMMON
+
+   Owner/Change controller:  IESG
+
+   Note:
+
+3.4.4.  $Submitted IMAP Keyword Registration
+
+   Subject:    Registration of IMAP keyword $Submitted
+
+   IMAP keyword name:  $Submitted
+
+   Purpose (description):  The $Submitted IMAP keyword designates the
+                           message as being sent out.
+
+                           A message that has both $Submitted and
+                           $SubmitPending IMAP keywords set is a message
+                           being actively submitted.
+
+   Private or Shared on a server:  SHARED
+
+   Is it an advisory keyword or may it cause an automatic action:
+                           This keyword can cause automatic action by
+                           the client.  See Section 5.10 of [RFC5550]
+                           for more details.
+
+   When/by whom the keyword is set/cleared:
+                           This keyword is set by a mail client when it
+                           decides to start sending it.
+
+   Related keywords:  $SubmitPending
+
+   Related IMAP capabilities:  None
+
+   Security considerations:  A server implementing this keyword as a
+                             shared keyword may disclose that a
+                             confidential message was sent or is being
+                             actively sent out.
+
+
+
+Melnikov & Cridland          Standards Track                    [Page 9]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+   Published specification (recommended):  [RFC5550]
+
+   Person & email address to contact for further information:
+                           Alexey Melnikov <alexey.melnikov@isode.com>
+
+   Intended usage:  COMMON
+
+   Owner/Change controller:  IESG
+
+   Note:
+
+4.  Security Considerations
+
+    IMAP keywords are one of the base IMAP features [RFC3501].  This
+    document doesn't change their behavior, so it does not add new
+    security issues.
+
+    A particular IMAP keyword might have specific security
+    considerations, which are documented in the IMAP keyword
+    registration template standardized by this document.
+
+5.  Acknowledgements
+
+   The creation of this document was prompted by one of many discussions
+   on the IMAP mailing list.
+
+   John Neystadt co-authored the first version of this document.
+
+   Special thanks to Chris Newman, David Harris, Lyndon Nerenberg, Mark
+   Crispin, Samuel Weiler, Alfred Hoenes, Lars Eggert, and Cullen
+   Jennings for reviewing different versions of this document.  However,
+   all errors or omissions must be attributed to the authors of this
+   document.
+
+   The authors would also like to thank the developers of Mozilla mail
+   clients for providing food for thought.
+
+6.  References
+
+6.1.  Normative References
+
+   [Kwds]     Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC3501]  Crispin, M., "INTERNET MESSAGE ACCESS PROTOCOL - VERSION
+              4rev1", RFC 3501, March 2003.
+
+
+
+
+
+Melnikov & Cridland          Standards Track                   [Page 10]
+
+RFC 5788                 IMAP4 Keyword Registry               March 2010
+
+
+   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+              May 2008.
+
+6.2.  Informative References
+
+   [RFC3503]  Melnikov, A., "Message Disposition Notification (MDN)
+              profile for Internet Message Access Protocol (IMAP)",
+              RFC 3503, March 2003.
+
+   [RFC5550]  Cridland, D., Melnikov, A., and S. Maes, "The Internet
+              Email to Support Diverse Service Environments (Lemonade)
+              Profile", RFC 5550, August 2009.
+
+Authors' Addresses
+
+   Alexey Melnikov
+   Isode Limited
+   5 Castle Business Village
+   36 Station Road
+   Hampton, Middlesex  TW12 2BX
+   UK
+
+   EMail: Alexey.Melnikov@isode.com
+   URI:   http://www.melnikov.ca/
+
+
+   Dave Cridland
+   Isode Limited
+   5 Castle Business Village
+   36 Station Road
+   Hampton, Middlesex  TW12 2BX
+   UK
+
+   EMail: dave.cridland@isode.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Melnikov & Cridland          Standards Track                   [Page 11]
+
