@@ -45,7 +45,7 @@ namespace MailKit {
 		None           = 0,
 
 		/// <summary>
-		/// <para>Fetch the <see cref="MessageSummary.Body"/>.</para>
+		/// <para>Fetch the <see cref="IMessageSummary.Body"/>.</para>
 		/// <note type="note">Unlike <see cref="BodyStructure"/>, <c>Body</c> will not populate the
 		/// <see cref="BodyPart.ContentType"/> parameters nor will it populate the
 		/// <see cref="BodyPartBasic.ContentDisposition"/>, <see cref="BodyPartBasic.ContentLanguage"/>
@@ -56,7 +56,7 @@ namespace MailKit {
 		Body           = 1 << 0,
 
 		/// <summary>
-		/// <para>Fetch the <see cref="MessageSummary.Body"/> (but with more details than <see cref="Body"/>).</para>
+		/// <para>Fetch the <see cref="IMessageSummary.Body"/> (but with more details than <see cref="Body"/>).</para>
 		/// <note type="note">Unlike <see cref="Body"/>, <c>BodyStructure</c> will also populate the
 		/// <see cref="BodyPart.ContentType"/> parameters as well as the
 		/// <see cref="BodyPartBasic.ContentDisposition"/>, <see cref="BodyPartBasic.ContentLanguage"/>
@@ -67,58 +67,63 @@ namespace MailKit {
 		BodyStructure  = 1 << 2,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.Envelope"/>.
+		/// Fetch the <see cref="IMessageSummary.Envelope"/>.
 		/// </summary>
 		Envelope       = 1 << 3,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.Flags"/>.
+		/// Fetch the <see cref="IMessageSummary.Flags"/>.
 		/// </summary>
 		Flags          = 1 << 4,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.InternalDate"/>.
+		/// Fetch the <see cref="IMessageSummary.InternalDate"/>.
 		/// </summary>
 		InternalDate   = 1 << 5,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.Size"/>.
+		/// Fetch the <see cref="IMessageSummary.Size"/>.
 		/// </summary>
 		Size           = 1 << 6,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.ModSeq"/>.
+		/// Fetch the <see cref="IMessageSummary.ModSeq"/>.
 		/// </summary>
 		ModSeq         = 1 << 7,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.References"/>.
+		/// Fetch the <see cref="IMessageSummary.References"/>.
 		/// </summary>
 		References     = 1 << 8,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.UniqueId"/>.
+		/// Fetch the <see cref="IMessageSummary.UniqueId"/>.
 		/// </summary>
 		UniqueId       = 1 << 9,
 
 		#region GMail extension items
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.GMailMessageId"/>.
+		/// Fetch the <see cref="IMessageSummary.GMailMessageId"/>.
 		/// </summary>
 		GMailMessageId = 1 << 10,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.GMailThreadId"/>.
+		/// Fetch the <see cref="IMessageSummary.GMailThreadId"/>.
 		/// </summary>
 		GMailThreadId  = 1 << 11,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.GMailLabels"/>.
+		/// Fetch the <see cref="IMessageSummary.GMailLabels"/>.
 		/// </summary>
 		GMailLabels    = 1 << 12,
 
 		#endregion
+
+		/// <summary>
+		/// Fetch the <see cref="IMessageSummary.PreviewText"/>.
+		/// </summary>
+		PreviewText    = 1 << 13,
 
 		#region Macros
 

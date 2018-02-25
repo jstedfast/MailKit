@@ -278,6 +278,12 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.42.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.43.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.50.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext7.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext8.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext9.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext10.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext11.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext12.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\go-ahead.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all.txt" />

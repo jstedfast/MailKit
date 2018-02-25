@@ -123,6 +123,19 @@ namespace MailKit {
 		IEnumerable<BodyPartBasic> Attachments { get; }
 
 		/// <summary>
+		/// Gets the preview text of the message.
+		/// </summary>
+		/// <remarks>
+		/// <para>The preview text is a short snippet of the beginning of the message
+		/// text, typically shown in a mail client's message list UI.</para>
+		/// <para>In order for this to work properly, it is necessary to include
+		/// <see cref="MessageSummaryItems.PreviewText"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// </remarks>
+		/// <value>The preview text.</value>
+		string PreviewText { get; }
+
+		/// <summary>
 		/// Gets the envelope of the message, if available.
 		/// </summary>
 		/// <remarks>

@@ -36,7 +36,7 @@ namespace MailKit.Net.Imap
 	/// <a href="Overload_MailKit_Net_Imap_ImapFolder_GetStreams.htm">GetStreams</a>
 	/// methods.</para>
 	/// <para>Once this callback returns, the stream argument will be disposed, so
-	/// it is important to make use of the stream right away and not add it to a queue
+	/// it is important to consume stream right away and not add it to a queue
 	/// for later processing.</para>
 	/// </remarks>
 	public delegate void ImapFetchStreamCallback (ImapFolder folder, int index, UniqueId uid, Stream stream);

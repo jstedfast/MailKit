@@ -80,6 +80,10 @@ namespace MailKit {
 				get { yield break; }
 			}
 
+			public string PreviewText {
+				get { return string.Empty; }
+			}
+
 			public Envelope Envelope {
 				get { return Message != null ? Message.Envelope : Children[0].Envelope; }
 			}

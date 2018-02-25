@@ -624,6 +624,8 @@ namespace UnitTests.Net.Imap {
 				// GetStreams
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStreams (-1, 0, GetStreamsCallback));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamsAsync (-1, 0, GetStreamsCallback));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStreams (1, 0, GetStreamsCallback));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamsAsync (1, 0, GetStreamsCallback));
 				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams (0, -1, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync (0, -1, null));
 
@@ -3429,6 +3431,124 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (created.Exists, "Expected Exists to be false after deleting the folder.");
 
 				await client.DisconnectAsync (true);
+			}
+		}
+
+		[Test]
+		public void TestFetchPreviewText ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 UID FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext7.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 UID FETCH 1:3 (BODY.PEEK[TEXT]<0.256>)\r\n", "gmail.fetch-previewtext8.txt"));
+			commands.Add (new ImapReplayCommand ("A00000009 FETCH 1:3 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext9.txt"));
+			commands.Add (new ImapReplayCommand ("A00000010 UID FETCH 1:3 (BODY.PEEK[TEXT]<0.256>)\r\n", "gmail.fetch-previewtext10.txt"));
+			commands.Add (new ImapReplayCommand ("A00000011 FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext11.txt"));
+			commands.Add (new ImapReplayCommand ("A00000012 UID FETCH 1:3 (BODY.PEEK[TEXT]<0.256>)\r\n", "gmail.fetch-previewtext12.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = personal.GetSubfolders ().ToList ();
+				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
+				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
+				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadOnly);
+
+				foreach (var message in inbox.Fetch (UniqueIdRange.All, MessageSummaryItems.Full | MessageSummaryItems.PreviewText))
+					Assert.AreEqual ("This is the message body.\r\n", message.PreviewText);
+
+				foreach (var message in inbox.Fetch (new int[] { 0, 1, 2 }, MessageSummaryItems.Full | MessageSummaryItems.PreviewText))
+					Assert.AreEqual ("This is the message body.\r\n", message.PreviewText);
+
+				foreach (var message in inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.PreviewText))
+					Assert.AreEqual ("This is the message body.\r\n", message.PreviewText);
+			}
+		}
+
+		[Test]
+		public async void TestFetchPreviewTextAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 UID FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext7.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 UID FETCH 1:3 (BODY.PEEK[TEXT]<0.256>)\r\n", "gmail.fetch-previewtext8.txt"));
+			commands.Add (new ImapReplayCommand ("A00000009 FETCH 1:3 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext9.txt"));
+			commands.Add (new ImapReplayCommand ("A00000010 UID FETCH 1:3 (BODY.PEEK[TEXT]<0.256>)\r\n", "gmail.fetch-previewtext10.txt"));
+			commands.Add (new ImapReplayCommand ("A00000011 FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext11.txt"));
+			commands.Add (new ImapReplayCommand ("A00000012 UID FETCH 1:3 (BODY.PEEK[TEXT]<0.256>)\r\n", "gmail.fetch-previewtext12.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = (await personal.GetSubfoldersAsync ()).ToList ();
+				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
+				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
+				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				foreach (var message in await inbox.FetchAsync (UniqueIdRange.All, MessageSummaryItems.Full | MessageSummaryItems.PreviewText))
+					Assert.AreEqual ("This is the message body.\r\n", message.PreviewText);
+
+				foreach (var message in await inbox.FetchAsync (new int[] { 0, 1, 2 }, MessageSummaryItems.Full | MessageSummaryItems.PreviewText))
+					Assert.AreEqual ("This is the message body.\r\n", message.PreviewText);
+
+				foreach (var message in await inbox.FetchAsync (0, -1, MessageSummaryItems.Full | MessageSummaryItems.PreviewText))
+					Assert.AreEqual ("This is the message body.\r\n", message.PreviewText);
 			}
 		}
 
