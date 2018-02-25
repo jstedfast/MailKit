@@ -162,6 +162,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream3.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream4.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstreams1.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstreams2.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstreams3.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream-section.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\getstream-section2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\greeting.txt" />

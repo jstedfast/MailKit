@@ -3117,79 +3117,21 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		interface IFetchStreamContext : IDisposable
+		abstract class FetchStreamContextBase : IDisposable
 		{
-			void Add (Section section);
-			void SetUniqueId (int index, UniqueId uid);
-			void Report (long nread, long total);
-		}
-
-		class FetchStreamContext : IFetchStreamContext
-		{
-			readonly List<Section> sections = new List<Section> ();
+			public readonly List<Section> Sections = new List<Section> ();
 			readonly ITransferProgress progress;
 
-			public FetchStreamContext (ITransferProgress progress)
+			public FetchStreamContextBase (ITransferProgress progress)
 			{
 				this.progress = progress;
 			}
 
-			public void Add (Section section)
-			{
-				sections.Add (section);
-			}
+			public abstract void Add (Section section);
 
-			public bool TryGetSection (UniqueId uid, string specifier, out Section section, bool remove = false)
-			{
-				for (int i = 0; i < sections.Count; i++) {
-					var item = sections[i];
+			public abstract bool TryGetSection (int index, string specifier, out Section section, bool remove = false);
 
-					if (!item.UniqueId.HasValue || item.UniqueId.Value != uid)
-						continue;
-
-					if (item.Name.Equals (specifier, StringComparison.OrdinalIgnoreCase)) {
-						if (remove)
-							sections.RemoveAt (i);
-
-						section = item;
-						return true;
-					}
-				}
-
-				section = null;
-
-				return false;
-			}
-
-			public bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
-			{
-				for (int i = 0; i < sections.Count; i++) {
-					var item = sections[i];
-
-					if (item.Index != index)
-						continue;
-
-					if (item.Name.Equals (specifier, StringComparison.OrdinalIgnoreCase)) {
-						if (remove)
-							sections.RemoveAt (i);
-
-						section = item;
-						return true;
-					}
-				}
-
-				section = null;
-
-				return false;
-			}
-
-			public void SetUniqueId (int index, UniqueId uid)
-			{
-				for (int i = 0; i < sections.Count; i++) {
-					if (sections[i].Index == index)
-						sections[i].UniqueId = uid;
-				}
-			}
+			public abstract void SetUniqueId (int index, UniqueId uid);
 
 			public void Report (long nread, long total)
 			{
@@ -3201,13 +3143,77 @@ namespace MailKit.Net.Imap
 
 			public void Dispose ()
 			{
-				for (int i = 0; i < sections.Count; i++) {
-					var section = sections[i];
+				for (int i = 0; i < Sections.Count; i++) {
+					var section = Sections[i];
 
 					try {
 						section.Stream.Dispose ();
 					} catch (IOException) {
 					}
+				}
+			}
+		}
+
+		class FetchStreamContext : FetchStreamContextBase
+		{
+			public FetchStreamContext (ITransferProgress progress) : base (progress)
+			{
+			}
+
+			public override void Add (Section section)
+			{
+				Sections.Add (section);
+			}
+
+			public bool TryGetSection (UniqueId uid, string specifier, out Section section, bool remove = false)
+			{
+				for (int i = 0; i < Sections.Count; i++) {
+					var item = Sections[i];
+
+					if (!item.UniqueId.HasValue || item.UniqueId.Value != uid)
+						continue;
+
+					if (item.Name.Equals (specifier, StringComparison.OrdinalIgnoreCase)) {
+						if (remove)
+							Sections.RemoveAt (i);
+
+						section = item;
+						return true;
+					}
+				}
+
+				section = null;
+
+				return false;
+			}
+
+			public override bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
+			{
+				for (int i = 0; i < Sections.Count; i++) {
+					var item = Sections[i];
+
+					if (item.Index != index)
+						continue;
+
+					if (item.Name.Equals (specifier, StringComparison.OrdinalIgnoreCase)) {
+						if (remove)
+							Sections.RemoveAt (i);
+
+						section = item;
+						return true;
+					}
+				}
+
+				section = null;
+
+				return false;
+			}
+
+			public override void SetUniqueId (int index, UniqueId uid)
+			{
+				for (int i = 0; i < Sections.Count; i++) {
+					if (Sections[i].Index == index)
+						Sections[i].UniqueId = uid;
 				}
 			}
 		}
@@ -3218,7 +3224,7 @@ namespace MailKit.Net.Imap
 			var labels = new MessageLabelsChangedEventArgs (index);
 			var flags = new MessageFlagsChangedEventArgs (index);
 			var modSeq = new ModSeqChangedEventArgs (index);
-			var ctx = (FetchStreamContext) ic.UserData;
+			var ctx = (FetchStreamContextBase) ic.UserData;
 			var sectionBuilder = new StringBuilder ();
 			bool modSeqChanged = false;
 			bool labelsChanged = false;
@@ -5936,57 +5942,41 @@ namespace MailKit.Net.Imap
 			return GetStreamAsync (index, section, offset, count, true, cancellationToken, progress);
 		}
 
-		class FetchStreamCallbackContext : IFetchStreamContext
+		class FetchStreamCallbackContext : FetchStreamContextBase
 		{
-			readonly List<Section> sections = new List<Section> ();
 			readonly ImapFetchStreamCallback callback;
-			readonly ITransferProgress progress;
 			readonly ImapFolder folder;
 
-			public FetchStreamCallbackContext (ImapFolder folder, ImapFetchStreamCallback callback, ITransferProgress progress)
+			public FetchStreamCallbackContext (ImapFolder folder, ImapFetchStreamCallback callback, ITransferProgress progress) : base (progress)
 			{
 				this.folder = folder;
 				this.callback = callback;
-				this.progress = progress;
 			}
 
-			public void Add (Section section)
+			public override void Add (Section section)
 			{
 				if (section.UniqueId.HasValue) {
 					callback (folder, section.Index, section.UniqueId.Value, section.Stream);
 					section.Stream.Dispose ();
 				} else {
-					sections.Add (section);
+					Sections.Add (section);
 				}
 			}
 
-			public void SetUniqueId (int index, UniqueId uid)
+			public override bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
 			{
-				for (int i = 0; i < sections.Count; i++) {
-					if (sections[i].Index == index) {
-						callback (folder, index, uid, sections[i].Stream);
-						sections[i].Stream.Dispose ();
-						sections.RemoveAt (i);
-					}
-				}
+				section = null;
+				return false;
 			}
 
-			public void Report (long nread, long total)
+			public override void SetUniqueId (int index, UniqueId uid)
 			{
-				if (progress == null)
-					return;
-
-				progress.Report (nread, total);
-			}
-
-			public void Dispose ()
-			{
-				for (int i = 0; i < sections.Count; i++) {
-					var section = sections[i];
-
-					try {
-						section.Stream.Dispose ();
-					} catch (IOException) {
+				for (int i = 0; i < Sections.Count; i++) {
+					if (Sections[i].Index == index) {
+						callback (folder, index, uid, Sections[i].Stream);
+						Sections[i].Stream.Dispose ();
+						Sections.RemoveAt (i);
+						break;
 					}
 				}
 			}
@@ -6178,7 +6168,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task GetStreamAsync (IList<UniqueId> uids, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task GetStreamsAsync (IList<UniqueId> uids, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return GetStreamsAsync (uids, callback, true, cancellationToken, progress);
 		}
@@ -6272,7 +6262,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task GetStreamAsync (IList<int> indexes, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task GetStreamsAsync (IList<int> indexes, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return GetStreamsAsync (indexes, callback, true, cancellationToken, progress);
 		}
@@ -6368,7 +6358,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task GetStreamAsync (int min, int max, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task GetStreamsAsync (int min, int max, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return GetStreamsAsync (min, max, callback, true, cancellationToken, progress);
 		}

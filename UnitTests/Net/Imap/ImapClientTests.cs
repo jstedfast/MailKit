@@ -104,6 +104,16 @@ namespace UnitTests.Net.Imap {
 			return hex.ToString ();
 		}
 
+		static void GetStreamsCallback (ImapFolder folder, int index, UniqueId uid, Stream stream)
+		{
+			using (var reader = new StreamReader (stream)) {
+				const string expected = "This is some dummy text just to make sure this is working correctly.";
+				var text = reader.ReadToEnd ();
+
+				Assert.AreEqual (expected, text);
+			}
+		}
+
 		[Test]
 		public void TestArgumentExceptions ()
 		{
@@ -610,6 +620,22 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamAsync (UniqueId.MinValue, bodyPart, -1, 1024));
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStream (UniqueId.MinValue, bodyPart, 0, -1));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamAsync (UniqueId.MinValue, bodyPart, 0, -1));
+
+				// GetStreams
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStreams (-1, 0, GetStreamsCallback));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamsAsync (-1, 0, GetStreamsCallback));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams (0, -1, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync (0, -1, null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams ((IList<int>) null, GetStreamsCallback));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync ((IList<int>) null, GetStreamsCallback));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams (new int[] { 0 }, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync (new int[] { 0 }, null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams ((IList<UniqueId>) null, GetStreamsCallback));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync ((IList<UniqueId>) null, GetStreamsCallback));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams (UniqueIdRange.All, null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync (UniqueIdRange.All, null));
 
 				// AddFlags
 				Assert.Throws<ArgumentException> (() => inbox.AddFlags (-1, MessageFlags.Seen, true));
@@ -1667,8 +1693,11 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000059 UID SORT RETURN (ALL COUNT MIN MAX) (DISPLAYTO) US-ASCII UID 1:14 OLDER 1 YOUNGER 3600\r\n", "dovecot.sort-uids-options.txt"));
 			commands.Add (new ImapReplayCommand ("A00000060 UID SEARCH ALL\r\n", "dovecot.search-raw.txt"));
 			commands.Add (new ImapReplayCommand ("A00000061 UID SORT (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-raw.txt"));
-			commands.Add (new ImapReplayCommand ("A00000062 EXPUNGE\r\n", "dovecot.expunge.txt"));
-			commands.Add (new ImapReplayCommand ("A00000063 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000062 UID FETCH 1:* (BODY.PEEK[])\r\n", "dovecot.getstreams1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000063 FETCH 1:3 (UID BODY.PEEK[])\r\n", "dovecot.getstreams2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000064 FETCH 1:* (UID BODY.PEEK[])\r\n", "dovecot.getstreams3.txt"));
+			commands.Add (new ImapReplayCommand ("A00000065 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000066 CLOSE\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1956,7 +1985,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
 
 				// Create a Destination folder to use for copying/moving messages to
-				var destination = unitTests.Create ("Destination", true);
+				var destination = (ImapFolder) unitTests.Create ("Destination", true);
 				Assert.AreEqual (FolderAttributes.HasNoChildren, destination.Attributes, "Unexpected UnitTests.Destination folder attributes");
 
 				// COPY messages to the Destination folder
@@ -2238,6 +2267,10 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
 
+				destination.GetStreams (UniqueIdRange.All, GetStreamsCallback);
+				destination.GetStreams (new int[] { 0, 1, 2 }, GetStreamsCallback);
+				destination.GetStreams (0, -1, GetStreamsCallback);
+
 				destination.Expunge ();
 				Assert.AreEqual (7, destination.HighestModSeq);
 				Assert.AreEqual (1, vanished.Count, "Unexpected number of Vanished events");
@@ -2366,8 +2399,11 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000059 UID SORT RETURN (ALL COUNT MIN MAX) (DISPLAYTO) US-ASCII UID 1:14 OLDER 1 YOUNGER 3600\r\n", "dovecot.sort-uids-options.txt"));
 			commands.Add (new ImapReplayCommand ("A00000060 UID SEARCH ALL\r\n", "dovecot.search-raw.txt"));
 			commands.Add (new ImapReplayCommand ("A00000061 UID SORT (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-raw.txt"));
-			commands.Add (new ImapReplayCommand ("A00000062 EXPUNGE\r\n", "dovecot.expunge.txt"));
-			commands.Add (new ImapReplayCommand ("A00000063 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000062 UID FETCH 1:* (BODY.PEEK[])\r\n", "dovecot.getstreams1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000063 FETCH 1:3 (UID BODY.PEEK[])\r\n", "dovecot.getstreams2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000064 FETCH 1:* (UID BODY.PEEK[])\r\n", "dovecot.getstreams3.txt"));
+			commands.Add (new ImapReplayCommand ("A00000065 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000066 CLOSE\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2655,7 +2691,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
 
 				// Create a Destination folder to use for copying/moving messages to
-				var destination = await unitTests.CreateAsync ("Destination", true);
+				var destination = (ImapFolder) await unitTests.CreateAsync ("Destination", true);
 				Assert.AreEqual (FolderAttributes.HasNoChildren, destination.Attributes, "Unexpected UnitTests.Destination folder attributes");
 
 				// COPY messages to the Destination folder
@@ -2936,6 +2972,10 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (14, matches.UniqueIds.Count);
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+
+				await destination.GetStreamsAsync (UniqueIdRange.All, GetStreamsCallback);
+				await destination.GetStreamsAsync (new int[] { 0, 1, 2 }, GetStreamsCallback);
+				await destination.GetStreamsAsync (0, -1, GetStreamsCallback);
 
 				await destination.ExpungeAsync ();
 				Assert.AreEqual (7, destination.HighestModSeq);
