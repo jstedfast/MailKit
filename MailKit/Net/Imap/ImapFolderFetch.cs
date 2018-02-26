@@ -425,10 +425,10 @@ namespace MailKit.Net.Imap
 
 		static string GetPreviewText (MemoryStream memory, string charset)
 		{
-			#if !PORTABLE && !NETSTANDARD
+#if !PORTABLE && !NETSTANDARD
 			var content = memory.GetBuffer ();
-			#else
-						var content = memory.ToArray ();
+#else
+			var content = memory.ToArray ();
 #endif
 			Encoding encoding = null;
 
@@ -490,6 +490,14 @@ namespace MailKit.Net.Imap
 					specifier = pair.Key;
 				else
 					specifier = "TEXT";
+
+				// TODO: if the IMAP server supports the CONVERT extension, we could possibly use the
+				// CONVERT command instead to decode *and* convert (html) into utf-8 plain text.
+				//
+				// e.g. "UID CONVERT {0} (\"text/plain\" (\"charset\" \"utf-8\")) BINARY[{1}]<0.{2}>\r\n"
+				//
+				// This would allow us to more accurately fetch X number of characters because we wouldn't
+				// need to guestimate accounting for base64/quoted-printable decoding.
 
 				var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<0.{2}>)\r\n", uids, specifier, PreviewTextLength);
 				var ic = new ImapCommand (Engine, cancellationToken, this, command);
