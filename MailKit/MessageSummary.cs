@@ -550,7 +550,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The index of the message.</value>
 		public int Index {
-			get; private set;
+			get; internal set;
 		}
 
 		#region GMail extension properties

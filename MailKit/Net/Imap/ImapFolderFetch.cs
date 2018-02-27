@@ -48,12 +48,27 @@ namespace MailKit.Net.Imap
 		class FetchSummaryContext
 		{
 			public readonly SortedDictionary<int, IMessageSummary> Results;
-			public readonly MessageSummaryItems RequestedItems;
 
-			public FetchSummaryContext (MessageSummaryItems requestedItems)
+			public FetchSummaryContext ()
 			{
 				Results = new SortedDictionary<int, IMessageSummary> ();
-				RequestedItems = requestedItems;
+			}
+
+			public void OnMessageExpunged (object sender, MessageEventArgs args)
+			{
+				if (Results.Count == 0 || args.Index > Results[Results.Count - 1].Index)
+					return;
+
+				for (int i = 0; i < Results.Count - 1; i++) {
+					if (Results[i].Index < args.Index)
+						continue;
+
+					var message = (MessageSummary) Results[i + 1];
+					Results[i] = message;
+					message.Index--;
+				}
+
+				Results.Remove (Results.Count - 1);
 			}
 		}
 
@@ -299,8 +314,7 @@ namespace MailKit.Net.Imap
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
-			if ((ctx.RequestedItems & message.Fields) == ctx.RequestedItems)
-				OnMessageSummaryFetched (message);
+			OnMessageSummaryFetched (message);
 		}
 
 		static HashSet<string> GetHeaderNames (HashSet<HeaderId> fields)
@@ -455,17 +469,55 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		async Task GetPreviewTextAsync (SortedDictionary<int, IMessageSummary> messages, bool doAsync, CancellationToken cancellationToken)
+		class FetchPreviewTextContext : FetchStreamContextBase
+		{
+			readonly FetchSummaryContext ctx;
+			readonly ImapFolder folder;
+
+			public FetchPreviewTextContext (ImapFolder folder, FetchSummaryContext ctx) : base (null)
+			{
+				this.folder = folder;
+				this.ctx = ctx;
+			}
+
+			public override void Add (Section section)
+			{
+				IMessageSummary summary;
+
+				if (!ctx.Results.TryGetValue (section.Index, out summary))
+					return;
+
+				var message = (MessageSummary) summary;
+				var body = message.TextBody ?? message.HtmlBody;
+				var charset = body.ContentType.Charset;
+				ContentEncoding encoding;
+
+				MimeUtils.TryParse (body.ContentTransferEncoding, out encoding);
+
+				using (var memory = new MemoryStream ()) {
+					var content = new MimeContent (section.Stream, encoding);
+
+					content.DecodeTo (memory);
+
+					message.PreviewText = GetPreviewText (memory, charset);
+					message.Fields |= MessageSummaryItems.PreviewText;
+					folder.OnMessageSummaryFetched (message);
+				}
+			}
+
+			public override void SetUniqueId (int index, UniqueId uid)
+			{
+			}
+		}
+
+		async Task GetPreviewTextAsync (FetchSummaryContext sctx, bool doAsync, CancellationToken cancellationToken)
 		{
 			var sets = new Dictionary<string, UniqueIdSet> ();
-			var all = new UniqueIdSet (SortOrder.Ascending);
 
-			for (int i = 0; i < messages.Count; i++) {
-				var message = (MessageSummary) messages[i];
+			foreach (var item in sctx.Results) {
+				var message = (MessageSummary) item.Value;
 				var body = message.TextBody ?? message.HtmlBody;
 				UniqueIdSet uids;
-
-				all.Add (message.UniqueId);
 
 				if (body == null) {
 					message.Fields |= MessageSummaryItems.PreviewText;
@@ -482,67 +534,48 @@ namespace MailKit.Net.Imap
 				uids.Add (message.UniqueId);
 			}
 
-			foreach (var pair in sets) {
-				var uids = pair.Value;
-				string specifier;
+			MessageExpunged += sctx.OnMessageExpunged;
 
-				if (!string.IsNullOrEmpty (pair.Key))
-					specifier = pair.Key;
-				else
-					specifier = "TEXT";
+			try {
+				foreach (var pair in sets) {
+					var uids = pair.Value;
+					string specifier;
 
-				// TODO: if the IMAP server supports the CONVERT extension, we could possibly use the
-				// CONVERT command instead to decode *and* convert (html) into utf-8 plain text.
-				//
-				// e.g. "UID CONVERT {0} (\"text/plain\" (\"charset\" \"utf-8\")) BINARY[{1}]<0.{2}>\r\n"
-				//
-				// This would allow us to more accurately fetch X number of characters because we wouldn't
-				// need to guestimate accounting for base64/quoted-printable decoding.
+					if (!string.IsNullOrEmpty (pair.Key))
+						specifier = pair.Key;
+					else
+						specifier = "TEXT";
 
-				var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<0.{2}>)\r\n", uids, specifier, PreviewTextLength);
-				var ic = new ImapCommand (Engine, cancellationToken, this, command);
-				var ctx = new FetchStreamContext (null);
+					// TODO: if the IMAP server supports the CONVERT extension, we could possibly use the
+					// CONVERT command instead to decode *and* convert (html) into utf-8 plain text.
+					//
+					// e.g. "UID CONVERT {0} (\"text/plain\" (\"charset\" \"utf-8\")) BINARY[{1}]<0.{2}>\r\n"
+					//
+					// This would allow us to more accurately fetch X number of characters because we wouldn't
+					// need to guestimate accounting for base64/quoted-printable decoding.
 
-				ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
-				ic.UserData = ctx;
+					var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<0.{2}>)\r\n", uids, specifier, PreviewTextLength);
+					var ic = new ImapCommand (Engine, cancellationToken, this, command);
+					var ctx = new FetchPreviewTextContext (this, sctx);
 
-				Engine.QueueCommand (ic);
+					ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+					ic.UserData = ctx;
 
-				try {
-					await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+					Engine.QueueCommand (ic);
 
-					ProcessResponseCodes (ic, null);
+					try {
+						await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-					if (ic.Response != ImapCommandResponse.Ok)
-						throw ImapCommandException.Create ("FETCH", ic);
+						ProcessResponseCodes (ic, null);
 
-					for (int i = 0; i < ctx.Sections.Count; i++) {
-						var uid = ctx.Sections[i].UniqueId;
-						int index;
-
-						if (!uid.HasValue || (index = all.IndexOf (uid.Value)) == -1)
-							continue;
-
-						var message = (MessageSummary) messages[i];
-						var body = message.TextBody ?? message.HtmlBody;
-						var charset = body.ContentType.Charset;
-						ContentEncoding encoding;
-
-						MimeUtils.TryParse (body.ContentTransferEncoding, out encoding);
-
-						using (var memory = new MemoryStream ()) {
-							var content = new MimeContent (ctx.Sections[i].Stream, encoding);
-
-							content.DecodeTo (memory);
-
-							message.PreviewText = GetPreviewText (memory, charset);
-							message.Fields |= MessageSummaryItems.PreviewText;
-							OnMessageSummaryFetched (message);
-						}
+						if (ic.Response != ImapCommandResponse.Ok)
+							throw ImapCommandException.Create ("FETCH", ic);
+					} finally {
+						ctx.Dispose ();
 					}
-				} finally {
-					ctx.Dispose ();
 				}
+			} finally {
+				MessageExpunged -= sctx.OnMessageExpunged;
 			}
 		}
 
@@ -562,22 +595,27 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
+			MessageExpunged += ctx.OnMessageExpunged;
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			try {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("FETCH", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+			} finally {
+				MessageExpunged -= ctx.OnMessageExpunged;
+			}
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -601,22 +639,27 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
+			MessageExpunged += ctx.OnMessageExpunged;
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			try {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("FETCH", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+			} finally {
+				MessageExpunged -= ctx.OnMessageExpunged;
+			}
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -641,22 +684,27 @@ namespace MailKit.Net.Imap
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
+			MessageExpunged += ctx.OnMessageExpunged;
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			try {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("FETCH", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+			} finally {
+				MessageExpunged -= ctx.OnMessageExpunged;
+			}
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -684,22 +732,27 @@ namespace MailKit.Net.Imap
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
+			MessageExpunged += ctx.OnMessageExpunged;
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			try {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("FETCH", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("FETCH", ic);
+			} finally {
+				MessageExpunged -= ctx.OnMessageExpunged;
+			}
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -1450,7 +1503,7 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -1465,7 +1518,7 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -1489,7 +1542,7 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -1504,7 +1557,7 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -1528,7 +1581,7 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -1543,7 +1596,7 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -1570,7 +1623,7 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -1585,7 +1638,7 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -2321,7 +2374,7 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -2336,7 +2389,7 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -2365,7 +2418,7 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -2380,7 +2433,7 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -2406,7 +2459,7 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -2421,7 +2474,7 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -2450,7 +2503,7 @@ namespace MailKit.Net.Imap
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext (items);
+			var ctx = new FetchSummaryContext ();
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -2465,7 +2518,7 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (previewText)
-				await GetPreviewTextAsync (ctx.Results, doAsync, cancellationToken).ConfigureAwait (false);
+				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return AsReadOnly (ctx.Results.Values);
 		}
@@ -3318,7 +3371,11 @@ namespace MailKit.Net.Imap
 
 			public abstract void Add (Section section);
 
-			public abstract bool TryGetSection (int index, string specifier, out Section section, bool remove = false);
+			public virtual bool Contains (int index, string specifier, out Section section)
+			{
+				section = null;
+				return false;
+			}
 
 			public abstract void SetUniqueId (int index, UniqueId uid);
 
@@ -3376,7 +3433,7 @@ namespace MailKit.Net.Imap
 				return false;
 			}
 
-			public override bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
+			public bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
 			{
 				for (int i = 0; i < Sections.Count; i++) {
 					var item = Sections[i];
@@ -3573,7 +3630,7 @@ namespace MailKit.Net.Imap
 						stream = CommitStream (stream, uid.Value, name, offset, length);
 
 					// prevent leaks in the (invalid) case where a section may be returned twice
-					if (ctx.TryGetSection (index, name, out section))
+					if (ctx.Contains (index, name, out section))
 						section.Stream.Dispose ();
 
 					section = new Section (stream, index, uid, name, offset, length);
@@ -6150,12 +6207,6 @@ namespace MailKit.Net.Imap
 				} else {
 					Sections.Add (section);
 				}
-			}
-
-			public override bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
-			{
-				section = null;
-				return false;
 			}
 
 			public override void SetUniqueId (int index, UniqueId uid)

@@ -14469,7 +14469,22 @@ namespace MailKit {
 		/// Occurs when a message summary is fetched from the folder.
 		/// </summary>
 		/// <remarks>
-		/// Emitted when a message summary is fetched from the folder.
+		/// <para>Emitted when a message summary is fetched from the folder.</para>
+		/// <para>When multiple message summaries are being fetched from a remote folder,
+		/// it is possible that the connection will drop or some other exception will
+		/// occur, causing the Fetch method to fail and lose all of the data that has been
+		/// downloaded up to that point, requiring the client to request the same set of
+		/// message summaries all over again after it reconnects. This is obviously
+		/// inefficient. To alleviate this potential problem, this event will be emitted
+		/// as soon as the <see cref="IMailFolder"/> successfully parses each untagged FETCH
+		/// response from the server, allowing the client to commit this data immediately to
+		/// its local cache.</para>
+		/// <note type="note">Depending on the IMAP server, it is possible that the
+		/// <see cref="MessageSummaryFetched"/> event will be emitted for the same message
+		/// multiple times if the IMAP server happens to split the requested fields into
+		/// multiple untagged FETCH responses. Use the <see cref="IMessageSummary.Fields"/>
+		/// property to determine which f<see cref="IMessageSummary"/> properties have
+		/// been populated.</note>
 		/// </remarks>
 		public event EventHandler<MessageSummaryFetchedEventArgs> MessageSummaryFetched;
 
@@ -14480,16 +14495,19 @@ namespace MailKit {
 		/// <para>Raises the message summary fetched event.</para>
 		/// <para>When multiple message summaries are being fetched from a remote folder,
 		/// it is possible that the connection will drop or some other exception will
-		/// occur, causing the Fetch method to fail, requiring the client to request the
-		/// same set of message summaries again after it reconnects. This is obviously
+		/// occur, causing the Fetch method to fail and lose all of the data that has been
+		/// downloaded up to that point, requiring the client to request the same set of
+		/// message summaries all over again after it reconnects. This is obviously
 		/// inefficient. To alleviate this potential problem, this event will be emitted
-		/// as soon as the <see cref="IMailFolder"/> successfully retrieves the complete
-		/// <see cref="IMessageSummary"/> for each requested message.</para>
-		/// <note type="note">The <a href="Overload_MailKit_MailFolder_Fetch.htm">Fetch</a>
-		/// methods will return a list of all message summaries that any information was
-		/// retrieved for, regardless of whether or not all of the requested items were fetched,
-		/// therefore there may be a discrepency between the number of times this event is
-		/// emitetd and the number of summary items returned from the Fetch method.</note>
+		/// as soon as the <see cref="IMailFolder"/> successfully parses each untagged FETCH
+		/// response from the server, allowing the client to commit this data immediately to
+		/// its local cache.</para>
+		/// <note type="note">Depending on the IMAP server, it is possible that
+		/// <see cref="OnMessageSummaryFetched"/> will be invoked for the same message
+		/// multiple times if the IMAP server happens to split the requested fields into
+		/// multiple untagged FETCH responses. Use the <see cref="IMessageSummary.Fields"/>
+		/// property to determine which f<see cref="IMessageSummary"/> properties have
+		/// been populated.</note>
 		/// </remarks>
 		/// <param name="message">The message summary.</param>
 		protected virtual void OnMessageSummaryFetched (IMessageSummary message)
