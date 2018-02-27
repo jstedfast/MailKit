@@ -47,28 +47,71 @@ namespace MailKit.Net.Imap
 
 		class FetchSummaryContext
 		{
-			public readonly SortedDictionary<int, IMessageSummary> Results;
+			public readonly List<IMessageSummary> Messages;
 
 			public FetchSummaryContext ()
 			{
-				Results = new SortedDictionary<int, IMessageSummary> ();
+				Messages = new List<IMessageSummary> ();
+			}
+
+			int BinarySearch (int index, bool insert)
+			{
+				int min = 0, max = Messages.Count;
+
+				if (max == 0)
+					return insert ? 0 : -1;
+
+				do {
+					int i = min + ((max - min) / 2);
+
+					if (index == Messages[i].Index)
+						return i;
+
+					if (index > Messages[i].Index) {
+						min = i + 1;
+					} else {
+						max = i;
+					}
+				} while (min < max);
+
+				return insert ? min : -1;
+			}
+
+			public void Add (int index, MessageSummary message)
+			{
+				int i = BinarySearch (index, true);
+
+				if (i < Messages.Count)
+					Messages.Insert (i, message);
+				else
+					Messages.Add (message);
+			}
+
+			public bool TryGetValue (int index, out MessageSummary message)
+			{
+				int i;
+
+				if ((i = BinarySearch (index, false)) == -1) {
+					message = null;
+					return false;
+				}
+
+				message = (MessageSummary) Messages[i];
+
+				return true;
 			}
 
 			public void OnMessageExpunged (object sender, MessageEventArgs args)
 			{
-				if (Results.Count == 0 || args.Index > Results[Results.Count - 1].Index)
-					return;
+				int index = BinarySearch (args.Index, true);
 
-				for (int i = 0; i < Results.Count - 1; i++) {
-					if (Results[i].Index < args.Index)
-						continue;
+				if (Messages[index].Index == args.Index)
+					Messages.RemoveAt (index);
 
-					var message = (MessageSummary) Results[i + 1];
-					Results[i] = message;
+				for (int i = index; i < Messages.Count; i++) {
+					var message = (MessageSummary) Messages[i];
 					message.Index--;
 				}
-
-				Results.Remove (Results.Count - 1);
 			}
 		}
 
@@ -93,14 +136,11 @@ namespace MailKit.Net.Imap
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			var ctx = (FetchSummaryContext) ic.UserData;
-			IMessageSummary isummary;
 			MessageSummary message;
 
-			if (!ctx.Results.TryGetValue (index, out isummary)) {
+			if (!ctx.TryGetValue (index, out message)) {
 				message = new MessageSummary (index);
-				ctx.Results.Add (index, message);
-			} else {
-				message = (MessageSummary) isummary;
+				ctx.Add (index, message);
 			}
 
 			do {
@@ -482,12 +522,11 @@ namespace MailKit.Net.Imap
 
 			public override void Add (Section section)
 			{
-				IMessageSummary summary;
+				MessageSummary message;
 
-				if (!ctx.Results.TryGetValue (section.Index, out summary))
+				if (!ctx.TryGetValue (section.Index, out message))
 					return;
 
-				var message = (MessageSummary) summary;
 				var body = message.TextBody ?? message.HtmlBody;
 				var charset = body.ContentType.Charset;
 				ContentEncoding encoding;
@@ -514,8 +553,8 @@ namespace MailKit.Net.Imap
 		{
 			var sets = new Dictionary<string, UniqueIdSet> ();
 
-			foreach (var item in sctx.Results) {
-				var message = (MessageSummary) item.Value;
+			foreach (var item in sctx.Messages) {
+				var message = (MessageSummary) item;
 				var body = message.TextBody ?? message.HtmlBody;
 				UniqueIdSet uids;
 
@@ -617,7 +656,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
@@ -661,7 +700,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
@@ -706,7 +745,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
@@ -754,7 +793,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		/// <summary>
@@ -1520,7 +1559,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
@@ -1559,7 +1598,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
@@ -1598,7 +1637,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
@@ -1640,7 +1679,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		/// <summary>
@@ -2391,7 +2430,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
@@ -2435,7 +2474,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
@@ -2476,7 +2515,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
@@ -2520,7 +2559,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Results.Values);
+			return AsReadOnly (ctx.Messages);
 		}
 
 		/// <summary>
