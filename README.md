@@ -496,9 +496,7 @@ goal of making it the very best email framework for .NET. I need your help to ac
 Donating helps pay for things such as web hosting, domain registration and licenses for developer tools
 such as a performance profiler, memory profiler, a static code analysis tool, and more.
 
-<a href="https://liberapay.com/MimeKit/donate" target="_blank">
-Click here to lend your support to MimeKit and MailKit by making a donation!
-</a>
+<a href="https://liberapay.com/MimeKit/donate" _target="blank"><img alt="Click here to lend your support to MimeKit and MailKit by making a donation!" src="https://liberapay.com/assets/widgets/donate.svg"></a>
 
 ## Reporting Bugs
 

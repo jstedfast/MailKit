@@ -172,17 +172,21 @@
         <para>
           MimeKit and MailKit are personal open source projects that I have put thousands of hours into perfecting
           by continuously improving the API based on feedback from developers like yourself, writing documentation,
-          and optimizing with the goal of making them not only the very best email framework for .NET, but the best
-          email framework for any programming language. I need your help to achieve this.
+          and optimizing with the goal of making them the very best email frameworks for .NET. I need your help to
+	  achieve this.
         </para>
+	<para>
+	  Donating helps pay for things such as web hosting, domain registration and licenses for developer tools
+	  such as a performance profiler, memory profiler, a static code analysis tool, and more.
+	</para>
         <para>
           If MimeKit and/or MailKit have been helpful to you, please consider donating. Your contributions will be
           greatly appreciated.
         </para>
         <markup>
           <p>
-            <a href="http://www.pledgie.com/campaigns/29300" target="_blank">
-              <img src="http://www.pledgie.com/campaigns/29300.png?skin_name=chrome" alt="Click here to lend your support to MimeKit and MailKit by making a donation via pledgie.com!" border="0" />
+            <a href="https://liberapay.com/MimeKit/donate" target="_blank">
+              <img src="https://liberapay.com/assets/widgets/donate.svg" alt="Click here to lend your support to MimeKit and MailKit by making a donation!" border="0" />
             </a>
           </p>
         </markup>
