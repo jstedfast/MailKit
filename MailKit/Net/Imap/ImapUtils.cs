@@ -1169,8 +1169,14 @@ namespace MailKit.Net.Imap {
 			if ((nstring = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false)) != null)
 				envelope.InReplyTo = MimeUtils.EnumerateReferences (nstring).FirstOrDefault ();
 
-			if ((nstring = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false)) != null)
-				envelope.MessageId = MimeUtils.ParseMessageId (nstring);
+			// Note: Some broken IMAP servers will forget to include the Message-Id token (I guess if the header isn't set?).
+			//
+			// See https://github.com/jstedfast/MailKit/issues/669
+			token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			if (token.Type != ImapTokenType.CloseParen) {
+				if ((nstring = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false)) != null)
+					envelope.MessageId = MimeUtils.ParseMessageId (nstring);
+			}
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
