@@ -2258,7 +2258,24 @@ namespace MailKit.Net.Imap {
 
 				QueueCommand (ic);
 
-				await RunAsync (ic, doAsync).ConfigureAwait (false);
+				try {
+					await RunAsync (ic, doAsync).ConfigureAwait (false);
+				} catch (ImapCommandException) {
+					// Note: Some IMAP servers like ProtonMail respond to SPECIAL-USE LIST queries with BAD, so fall
+					// back to just issuing a standard LIST command and hope we get back some SPECIAL-USE attributes.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/674 for dertails.
+					ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"%\"\r\n");
+					ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+					ic.UserData = list;
+
+					list.Clear ();
+
+					QueueCommand (ic);
+
+					await RunAsync (ic, doAsync).ConfigureAwait (false);
+				}
+
 				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
 				AssignSpecialFolders (list);
