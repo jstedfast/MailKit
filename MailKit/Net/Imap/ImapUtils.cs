@@ -443,10 +443,12 @@ namespace MailKit.Net.Imap {
 			switch (token.Type) {
 			case ImapTokenType.Literal:
 				encodedName = await engine.ReadLiteralAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				encodedName.TrimEnd (delim);
 				break;
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
 				encodedName = (string) token.Value;
+				encodedName.TrimEnd (delim);
 				break;
 			case ImapTokenType.Nil:
 				// Note: according to rfc3501, section 4.5, NIL is acceptable as a mailbox name.

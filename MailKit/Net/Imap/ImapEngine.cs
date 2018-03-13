@@ -92,6 +92,11 @@ namespace MailKit.Net.Imap {
 		Handled
 	}
 
+	enum ImapQuirksMode {
+		None,
+		ProtonMail
+	}
+
 	class ImapFolderNameComparer : IEqualityComparer<string>
 	{
 		public char DirectorySeparator;
@@ -132,6 +137,7 @@ namespace MailKit.Net.Imap {
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
 		readonly CreateImapFolderDelegate createImapFolder;
 		readonly ImapFolderNameComparer cacheComparer;
+		internal ImapQuirksMode QuirksMode;
 		readonly List<ImapCommand> queue;
 		internal char TagPrefix;
 		ImapCommand current;
@@ -169,6 +175,7 @@ namespace MailKit.Net.Imap {
 			ProtocolVersion = ImapProtocolVersion.Unknown;
 			createImapFolder = createImapFolderDelegate;
 			Capabilities = ImapCapabilities.None;
+			QuirksMode = ImapQuirksMode.None;
 			queue = new List<ImapCommand> ();
 		}
 
@@ -561,6 +568,7 @@ namespace MailKit.Net.Imap {
 			Rights.Clear ();
 
 			State = ImapEngineState.Connected;
+			QuirksMode = ImapQuirksMode.None;
 			SupportedCharsets.Add ("UTF-8");
 			CapabilitiesVersion = 0;
 			QResyncEnabled = false;
@@ -605,7 +613,10 @@ namespace MailKit.Net.Imap {
 						OnAlert (code.Message);
 				} else if (token.Type != ImapTokenType.Eoln) {
 					// throw away any remaining text up until the end of the line
-					await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					var line = await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (line.IndexOf ("ProtonMail", StringComparison.OrdinalIgnoreCase) != -1)
+						QuirksMode = ImapQuirksMode.ProtonMail;
 				}
 			} catch {
 				Disconnect ();
@@ -2252,30 +2263,20 @@ namespace MailKit.Net.Imap {
 			list.Clear ();
 
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
-				ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
+				// Note: Some IMAP servers like ProtonMail respond to SPECIAL-USE LIST queries with BAD, so fall
+				// back to just issuing a standard LIST command and hope we get back some SPECIAL-USE attributes.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/674 for dertails.
+				if (QuirksMode != ImapQuirksMode.ProtonMail)
+					ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
+				else
+					ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"%%\"\r\n");
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 				ic.UserData = list;
 
 				QueueCommand (ic);
 
-				try {
-					await RunAsync (ic, doAsync).ConfigureAwait (false);
-				} catch (ImapCommandException) {
-					// Note: Some IMAP servers like ProtonMail respond to SPECIAL-USE LIST queries with BAD, so fall
-					// back to just issuing a standard LIST command and hope we get back some SPECIAL-USE attributes.
-					//
-					// See https://github.com/jstedfast/MailKit/issues/674 for dertails.
-					ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"%\"\r\n");
-					ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
-					ic.UserData = list;
-
-					list.Clear ();
-
-					QueueCommand (ic);
-
-					await RunAsync (ic, doAsync).ConfigureAwait (false);
-				}
-
+				await RunAsync (ic, doAsync).ConfigureAwait (false);
 				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
 				AssignSpecialFolders (list);
