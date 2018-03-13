@@ -390,7 +390,7 @@ namespace MailKit.Net.Imap
 				items &= ~MessageSummaryItems.Body;
 			}
 
-			if (!Engine.IsGMail) {
+			if (Engine.QuirksMode != ImapQuirksMode.GMail) {
 				// first, eliminate the aliases...
 				var alias = items & ~MessageSummaryItems.PreviewText;
 

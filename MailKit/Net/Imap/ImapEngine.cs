@@ -94,6 +94,7 @@ namespace MailKit.Net.Imap {
 
 	enum ImapQuirksMode {
 		None,
+		GMail,
 		ProtonMail
 	}
 
@@ -247,17 +248,6 @@ namespace MailKit.Net.Imap {
 		/// <value>The capabilities.</value>
 		public ImapCapabilities Capabilities {
 			get; set;
-		}
-
-		/// <summary>
-		/// Indicates whether or not the engine is connected to a GMail server (used for various workarounds).
-		/// </summary>
-		/// <remarks>
-		/// Indicates whether or not the engine is connected to a GMail server (used for various workarounds).
-		/// </remarks>
-		/// <value><c>true</c> if the engine is connected to a GMail server; otherwise, <c>false</c>.</value>
-		internal bool IsGMail {
-			get { return (Capabilities & ImapCapabilities.GMailExt1) != 0; }
 		}
 
 		/// <summary>
@@ -613,10 +603,7 @@ namespace MailKit.Net.Imap {
 						OnAlert (code.Message);
 				} else if (token.Type != ImapTokenType.Eoln) {
 					// throw away any remaining text up until the end of the line
-					var line = await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					if (line.IndexOf ("ProtonMail", StringComparison.OrdinalIgnoreCase) != -1)
-						QuirksMode = ImapQuirksMode.ProtonMail;
+					await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				}
 			} catch {
 				Disconnect ();
@@ -1119,7 +1106,8 @@ namespace MailKit.Net.Imap {
 					case "LITERAL-":           Capabilities |= ImapCapabilities.LiteralMinus; break;
 					case "APPENDLIMIT":        Capabilities |= ImapCapabilities.AppendLimit; break;
 					case "XLIST":              Capabilities |= ImapCapabilities.XList; break;
-					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; break;
+					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; QuirksMode = ImapQuirksMode.GMail; break;
+					case "XSTOP":              QuirksMode = ImapQuirksMode.ProtonMail; break;
 					}
 				}
 

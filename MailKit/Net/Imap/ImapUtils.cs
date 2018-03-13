@@ -626,7 +626,7 @@ namespace MailKit.Net.Imap {
 
 			// Note: work around broken IMAP server implementations...
 			if (token.Type == ImapTokenType.OpenParen) {
-				if (engine.IsGMail) {
+				if (engine.QuirksMode == ImapQuirksMode.GMail) {
 					// Note: GMail's IMAP server implementation breaks when it encounters
 					// nested multiparts with the same boundary and returns a BODYSTRUCTURE
 					// like the example in https://github.com/jstedfast/MailKit/issues/205
@@ -1090,7 +1090,7 @@ namespace MailKit.Net.Imap {
 
 				var item = await ParseEnvelopeAddressAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (item.IsGroupStart && !engine.IsGMail && group == null) {
+				if (item.IsGroupStart && engine.QuirksMode != ImapQuirksMode.GMail && group == null) {
 					group = item.ToGroupAddress (engine);
 					list.Add (group);
 				} else if (item.IsGroupEnd) {
