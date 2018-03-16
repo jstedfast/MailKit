@@ -72,7 +72,7 @@ namespace ImapClientDemo
 			CheckCanLogin ();
 		}
 
-		async void SignInClicked (object sender, EventArgs e)
+		void SignInClicked (object sender, EventArgs e)
 		{
 			var host = serverCombo.Text.Trim ();
 			var passwd = passwordTextBox.Text;
@@ -94,7 +94,7 @@ namespace ImapClientDemo
 
 			Program.Uri = new Uri (url);
 
-			await Program.Reconnect ();
+			Program.Reconnect ();
 
 			Program.MainWindow.LoadContent ();
 

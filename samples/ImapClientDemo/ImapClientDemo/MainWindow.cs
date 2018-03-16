@@ -143,10 +143,10 @@ namespace ImapClientDemo
 			}
 		}
 
-		async void RenderMultipartRelated (IMailFolder folder, UniqueId uid, BodyPartMultipart bodyPart)
+		void RenderMultipartRelated (IMailFolder folder, UniqueId uid, BodyPartMultipart bodyPart)
 		{
 			// download the entire multipart/related for simplicity since we'll probably end up needing all of the image attachments anyway...
-			var related = await folder.GetBodyPartAsync (uid, bodyPart) as MultipartRelated;
+			var related = folder.GetBodyPart (uid, bodyPart) as MultipartRelated;
 
 			RenderMultipartRelated (related);
 		}
@@ -177,9 +177,9 @@ namespace ImapClientDemo
 			webBrowser.DocumentText = html;
 		}
 
-		async void RenderText (IMailFolder folder, UniqueId uid, BodyPartText bodyPart)
+		void RenderText (IMailFolder folder, UniqueId uid, BodyPartText bodyPart)
 		{
-			var entity = await folder.GetBodyPartAsync (uid, bodyPart);
+			var entity = folder.GetBodyPart (uid, bodyPart);
 
 			RenderText ((TextPart) entity);
 		}

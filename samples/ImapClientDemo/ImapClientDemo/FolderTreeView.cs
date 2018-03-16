@@ -109,22 +109,19 @@ namespace ImapClientDemo
 				map[child] = node;
 				nodes.Add (node);
 
-				// Note: because we are using the *Async() methods, these events will fire
-				// in another thread so we'll have to proxy them back to the main thread.
-				child.MessageFlagsChanged += UpdateUnreadCount_TaskThread;
-				child.CountChanged += UpdateUnreadCount_TaskThread;
+				child.MessageFlagsChanged += UpdateUnreadCount;
+				child.CountChanged += UpdateUnreadCount;
 
 				if (!child.Attributes.HasFlag (FolderAttributes.NonExistent) && !child.Attributes.HasFlag (FolderAttributes.NoSelect)) {
-					child.StatusAsync (StatusItems.Unread).ContinueWith (task => {
-						Invoke (new UpdateFolderNodeDelegate (UpdateFolderNode), child);
-					});
+					child.Status (StatusItems.Unread);
+					UpdateFolderNode (child);
 				}
 			}
 		}
 
-		async void LoadChildFolders (IMailFolder folder)
+		void LoadChildFolders (IMailFolder folder)
 		{
-			var children = await folder.GetSubfoldersAsync ();
+			var children = folder.GetSubfolders ();
 
 			LoadChildFolders (folder, children);
 		}
@@ -138,18 +135,12 @@ namespace ImapClientDemo
 			LoadChildFolders (personal);
 		}
 
-		async void UpdateUnreadCount (object sender, EventArgs e)
+		void UpdateUnreadCount (object sender, EventArgs e)
 		{
 			var folder = (IMailFolder) sender;
 
-			await folder.StatusAsync (StatusItems.Unread);
+			folder.Status (StatusItems.Unread);
 			UpdateFolderNode (folder);
-		}
-
-		void UpdateUnreadCount_TaskThread (object sender, EventArgs e)
-		{
-			// proxy to the main thread
-			Invoke (new EventHandler<EventArgs> (UpdateUnreadCount), sender, e);
 		}
 
 		protected override void OnBeforeExpand (TreeViewCancelEventArgs e)

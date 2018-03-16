@@ -34,17 +34,17 @@ namespace ImapClientDemo
 			Application.Run (new LoginWindow ());
 		}
 
-		static async void OnClientDisconnected (object sender, EventArgs e)
+		static void OnClientDisconnected (object sender, EventArgs e)
 		{
-			await Reconnect ();
+			Reconnect ();
 		}
 
-		public static async Task Reconnect ()
+		public static void Reconnect ()
 		{
 			// Note: for demo purposes, we're ignoring SSL validation errors (don't do this in production code)
 			Client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
 
-			await Client.ConnectAsync (Uri).ConfigureAwait (false);
+			Client.Connect (Uri);
 
 			try {
 				Client.Authenticate (Credentials);
