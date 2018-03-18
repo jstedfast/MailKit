@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
-		<version>2.0.1</version>
+		<version>2.0.2</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -23,7 +23,10 @@ Features include:
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
 		<releaseNotes>
-* Obsoleted all SaslMechanism constructors that took a Uri argument and replaced them with variants that no longer require the Uri and instead take a NetworkCredential or a set of strings for the user name and password.
+* Added work-around for ProtonMail's IMAP server. (issue #674)
+* Added work-around for IMAP servers that do not include msgid in the ENVELOPE response. (issue #669)
+* Added MessageSummaryItems.PreviewText to allow fetching a small preview of the message. (issue #650)
+* Added support for batch fetching IMAP message streams. (issue #650)
 
 Note to users upgrading from MailKit 1.x:
 

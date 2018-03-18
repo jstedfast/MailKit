@@ -1,5 +1,12 @@
 # Release Notes
 
+### MailKit 2.0.2
+
+* Added work-around for ProtonMail's IMAP server. (issue #674)
+* Added work-around for IMAP servers that do not include msgid in the ENVELOPE response. (issue #669)
+* Added MessageSummaryItems.PreviewText to allow fetching a small preview of the message. (issue #650)
+* Added support for batch fetching IMAP message streams. (issue #650)
+
 ### MailKit 2.0.1
 
 * Obsoleted all SaslMechanism constructors that took a Uri argument and replaced them
