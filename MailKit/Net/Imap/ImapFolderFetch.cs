@@ -479,7 +479,7 @@ namespace MailKit.Net.Imap
 
 		static string GetPreviewText (MemoryStream memory, string charset)
 		{
-#if !PORTABLE && !NETSTANDARD
+#if !PORTABLE && !NETSTANDARD && !NETFX_CORE
 			var content = memory.GetBuffer ();
 #else
 			var content = memory.ToArray ();
