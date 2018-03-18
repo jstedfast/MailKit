@@ -12,6 +12,7 @@ namespace ImapClientDemo
 	[ToolboxItem (true)]
 	class MessageList : TreeView
 	{
+		const MessageSummaryItems SummaryItems = MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.Flags | MessageSummaryItems.BodyStructure;
 		readonly Dictionary<MessageInfo, TreeNode> map = new Dictionary<MessageInfo, TreeNode> ();
 		readonly List<MessageInfo> messages = new List<MessageInfo> ();
 		IMailFolder folder;
@@ -58,7 +59,7 @@ namespace ImapClientDemo
 				await folder.OpenAsync (FolderAccess.ReadOnly);
 
 			if (folder.Count > 0) {
-				var summaries = await folder.FetchAsync (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
+				var summaries = await folder.FetchAsync (0, -1, SummaryItems);
 
 				AddMessageSummaries (summaries);
 			}
@@ -114,7 +115,7 @@ namespace ImapClientDemo
 			await task;
 
 			if (folder.Count > messages.Count) {
-				var summaries = await folder.FetchAsync (messages.Count, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
+				var summaries = await folder.FetchAsync (messages.Count, -1, SummaryItems);
 
 				AddMessageSummaries (summaries);
 			}

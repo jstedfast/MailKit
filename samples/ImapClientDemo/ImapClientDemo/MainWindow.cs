@@ -28,7 +28,7 @@ namespace ImapClientDemo
 
 		void MessageSelected (object sender, MessageSelectedEventArgs e)
 		{
-			Render (e.Folder, e.UniqueId, e.Body);
+			Program.Queue (Render, e);
 		}
 
 		class MultipartRelatedImageContext
@@ -144,10 +144,10 @@ namespace ImapClientDemo
 			}
 		}
 
-		void RenderMultipartRelated (IMailFolder folder, UniqueId uid, BodyPartMultipart bodyPart)
+		async Task RenderMultipartRelatedAsync (IMailFolder folder, UniqueId uid, BodyPartMultipart bodyPart)
 		{
 			// download the entire multipart/related for simplicity since we'll probably end up needing all of the image attachments anyway...
-			var related = folder.GetBodyPart (uid, bodyPart) as MultipartRelated;
+			var related = await folder.GetBodyPartAsync (uid, bodyPart) as MultipartRelated;
 
 			RenderMultipartRelated (related);
 		}
@@ -178,19 +178,19 @@ namespace ImapClientDemo
 			webBrowser.DocumentText = html;
 		}
 
-		void RenderText (IMailFolder folder, UniqueId uid, BodyPartText bodyPart)
+		async Task RenderTextAsync (IMailFolder folder, UniqueId uid, BodyPartText bodyPart)
 		{
-			var entity = folder.GetBodyPart (uid, bodyPart);
+			var entity = await folder.GetBodyPartAsync (uid, bodyPart);
 
 			RenderText ((TextPart) entity);
 		}
 
-		void Render (IMailFolder folder, UniqueId uid, BodyPart body)
+		async Task RenderAsync (IMailFolder folder, UniqueId uid, BodyPart body)
 		{
 			var multipart = body as BodyPartMultipart;
 
 			if (multipart != null && body.ContentType.IsMimeType ("multipart", "related")) {
-				RenderMultipartRelated (folder, uid, multipart);
+				await RenderMultipartRelatedAsync (folder, uid, multipart);
 				return;
 			}
 
@@ -218,7 +218,7 @@ namespace ImapClientDemo
 							}
 
 							if (root != null && root.ContentType.IsMimeType ("text", "html")) {
-								Render (folder, uid, multi);
+								await RenderAsync (folder, uid, multi);
 								return;
 							}
 
@@ -228,17 +228,26 @@ namespace ImapClientDemo
 						text = multipart.BodyParts[i - 1] as BodyPartText;
 
 						if (text != null) {
-							RenderText (folder, uid, text);
+							await RenderTextAsync (folder, uid, text);
 							return;
 						}
 					}
 				} else if (multipart.BodyParts.Count > 0) {
 					// The main message body is usually the first part of a multipart/mixed.
-					Render (folder, uid, multipart.BodyParts[0]);
+					await RenderAsync (folder, uid, multipart.BodyParts[0]);
 				}
 			} else if (text != null) {
-				RenderText (folder, uid, text);
+				await RenderTextAsync (folder, uid, text);
 			}
+		}
+
+		async Task Render (Task task, object state)
+		{
+			var e = (MessageSelectedEventArgs) state;
+
+			await task;
+
+			await RenderAsync (e.Folder, e.UniqueId, e.Body);
 		}
 
 		public Task LoadContentAsync ()

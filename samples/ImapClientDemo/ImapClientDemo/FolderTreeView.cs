@@ -22,6 +22,7 @@ namespace ImapClientDemo
 			ImageList.Images.Add ("inbox", GetImageResource ("inbox.png"));
 			ImageList.Images.Add ("archive", GetImageResource ("archive.png"));
 			ImageList.Images.Add ("drafts", GetImageResource ("pencil.png"));
+			ImageList.Images.Add ("flagged", GetImageResource ("flag.png"));
 			ImageList.Images.Add ("important", GetImageResource ("important.png"));
 			ImageList.Images.Add ("junk", GetImageResource ("junk.png"));
 			ImageList.Images.Add ("sent", GetImageResource ("paper-plane.png"));
@@ -62,8 +63,6 @@ namespace ImapClientDemo
 				node.SelectedImageKey = node.ImageKey = folder.Count > 0 ? "trash-full" : "trash-empty";
 		}
 
-		delegate void UpdateFolderNodeDelegate (IMailFolder folder);
-
 		TreeNode CreateFolderNode (IMailFolder folder)
 		{
 			var node = new TreeNode (folder.Name) { Tag = folder, ToolTipText = folder.FullName };
@@ -77,6 +76,8 @@ namespace ImapClientDemo
 			else if (folder.Attributes.HasFlag (FolderAttributes.Drafts))
 				node.SelectedImageKey = node.ImageKey = "drafts";
 			else if (folder.Attributes.HasFlag (FolderAttributes.Flagged))
+				node.SelectedImageKey = node.ImageKey = "flagged";
+			else if (folder.FullName == "[Gmail]/Important")
 				node.SelectedImageKey = node.ImageKey = "important";
 			else if (folder.Attributes.HasFlag (FolderAttributes.Junk))
 				node.SelectedImageKey = node.ImageKey = "junk";
