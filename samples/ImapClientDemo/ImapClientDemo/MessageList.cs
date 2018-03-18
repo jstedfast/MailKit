@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using MailKit;
@@ -45,14 +46,19 @@ namespace ImapClientDemo
 			}
 		}
 
-		void LoadMessages ()
+		async Task LoadMessagesAsync (Task task)
 		{
+			await task;
+
 			messages.Clear ();
 			Nodes.Clear ();
 			map.Clear ();
 
+			if (!folder.IsOpen)
+				await folder.OpenAsync (FolderAccess.ReadOnly);
+
 			if (folder.Count > 0) {
-				var summaries = folder.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
+				var summaries = await folder.FetchAsync (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
 
 				AddMessageSummaries (summaries);
 			}
@@ -75,14 +81,8 @@ namespace ImapClientDemo
 			folder.MessageExpunged += MessageExpunged;
 
 			this.folder = folder;
-
-			if (folder.IsOpen) {
-				LoadMessages ();
-				return;
-			}
-
-			folder.Open (FolderAccess.ReadOnly);
-			LoadMessages ();
+			
+			Program.CurrentTask = Program.CurrentTask.ContinueWith (LoadMessagesAsync, Program.GuiTaskScheduler);
 		}
 
 		void MessageFlagsChanged (object sender, MessageFlagsChangedEventArgs e)
@@ -109,14 +109,20 @@ namespace ImapClientDemo
 			}
 		}
 
+		async Task UpdateMessageListAsync (Task task)
+		{
+			await task;
+
+			var summaries = await folder.FetchAsync (messages.Count, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
+
+			AddMessageSummaries (summaries);
+		}
+
 		void CountChanged (object sender, EventArgs e)
 		{
-			// Note: we can't call back into the ImapFolder in this event handler since another command is still processing.
-			// TODO: queue this operation for later...
-
-			//var summaries = folder.Fetch (messages.Count, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
-
-			//AddMessageSummaries (summaries);
+			// Note: we can't call back into the ImapFolder in this event handler since another command is still processing,
+			// so queue it to run after our current command...
+			Program.CurrentTask = Program.CurrentTask.ContinueWith (UpdateMessageListAsync, Program.GuiTaskScheduler);
 		}
 
 		public event EventHandler<MessageSelectedEventArgs> MessageSelected;

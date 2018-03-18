@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using MailKit.Net.Imap;
@@ -92,7 +93,7 @@ namespace ImapClientDemo
 			return node;
 		}
 
-		void LoadChildFolders (IMailFolder folder, IEnumerable<IMailFolder> children)
+		async Task LoadChildFoldersAsync (IMailFolder folder, IEnumerable<IMailFolder> children)
 		{
 			TreeNodeCollection nodes;
 			TreeNode node;
@@ -113,43 +114,59 @@ namespace ImapClientDemo
 				child.CountChanged += UpdateUnreadCount;
 
 				if (!child.Attributes.HasFlag (FolderAttributes.NonExistent) && !child.Attributes.HasFlag (FolderAttributes.NoSelect)) {
-					child.Status (StatusItems.Unread);
+					await child.StatusAsync (StatusItems.Unread);
 					UpdateFolderNode (child);
 				}
 			}
 		}
 
-		void LoadChildFolders (IMailFolder folder)
+		async Task LoadChildFoldersAsync (IMailFolder folder)
 		{
-			var children = folder.GetSubfolders ();
+			var children = await folder.GetSubfoldersAsync ();
 
-			LoadChildFolders (folder, children);
+			await LoadChildFoldersAsync (folder, children);
 		}
 
-		public void LoadFolders ()
+		public Task LoadFoldersAsync ()
 		{
 			var personal = Program.Client.GetFolder (Program.Client.PersonalNamespaces[0]);
 
 			PathSeparator = personal.DirectorySeparator.ToString ();
 
-			LoadChildFolders (personal);
+			return LoadChildFoldersAsync (personal);
+		}
+
+		async Task UpdateUnreadCountAsync (Task task, object state)
+		{
+			var folder = (IMailFolder) state;
+
+			await task;
+
+			await folder.StatusAsync (StatusItems.Unread);
+			UpdateFolderNode (folder);
 		}
 
 		void UpdateUnreadCount (object sender, EventArgs e)
 		{
-			var folder = (IMailFolder) sender;
+			Program.CurrentTask = Program.CurrentTask.ContinueWith (UpdateUnreadCountAsync, sender, Program.GuiTaskScheduler);
+		}
 
-			folder.Status (StatusItems.Unread);
-			UpdateFolderNode (folder);
+		async Task ExpandFolderAsync (Task task, object state)
+		{
+			var folder = (IMailFolder) state;
+
+			await task;
+
+			await LoadChildFoldersAsync (folder);
 		}
 
 		protected override void OnBeforeExpand (TreeViewCancelEventArgs e)
 		{
 			if (e.Node.Nodes.Count == 1 && e.Node.Nodes[0].Tag == null) {
 				// this folder has never been expanded before...
-				var folder = (IMailFolder) e.Node.Tag;
+				var folder = e.Node.Tag;
 
-				LoadChildFolders (folder);
+				Program.CurrentTask = Program.CurrentTask.ContinueWith (ExpandFolderAsync, folder, Program.GuiTaskScheduler);
 			}
 
 			base.OnBeforeExpand (e);

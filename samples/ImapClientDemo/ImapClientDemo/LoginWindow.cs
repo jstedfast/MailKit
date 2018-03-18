@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using MailKit.Security;
 
 namespace ImapClientDemo
 {
@@ -72,35 +75,32 @@ namespace ImapClientDemo
 			CheckCanLogin ();
 		}
 
-		void SignInClicked (object sender, EventArgs e)
+		async void SignInClicked (object sender, EventArgs e)
 		{
-			var host = serverCombo.Text.Trim ();
 			var passwd = passwordTextBox.Text;
 			var user = loginTextBox.Text;
-			string protocol;
-			string url;
 
+			Program.HostName = serverCombo.Text.Trim ();
+
+			if (!string.IsNullOrEmpty (portCombo.Text))
+				Program.Port = int.Parse (portCombo.Text);
+			else
+				Program.Port = 0; // default
+
+			Program.GuiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
 			Program.Credentials = new NetworkCredential (user, passwd);
 
 			if (sslCheckbox.Checked)
-				protocol = "imaps";
+				Program.SslOptions = SecureSocketOptions.SslOnConnect;
 			else
-				protocol = "imap";
+				Program.SslOptions = SecureSocketOptions.StartTlsWhenAvailable;
 
-			if (!string.IsNullOrEmpty (portCombo.Text))
-				url = string.Format ("{0}://{1}:{2}", protocol, host, int.Parse (portCombo.Text));
-			else
-				url = string.Format ("{0}://{1}", protocol, host);
+			await Program.ReconnectAsync ();
 
-			Program.Uri = new Uri (url);
-
-			Program.Reconnect ();
-
-			Program.MainWindow.LoadContent ();
-
-			Visible = false;
+			Program.CurrentTask = Program.MainWindow.LoadContentAsync ();
 
 			Program.MainWindow.Visible = true;
+			Visible = false;
 		}
 
 		protected override void OnClosed (EventArgs e)
