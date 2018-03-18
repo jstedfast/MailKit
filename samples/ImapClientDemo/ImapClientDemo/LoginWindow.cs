@@ -87,7 +87,6 @@ namespace ImapClientDemo
 			else
 				Program.Port = 0; // default
 
-			Program.GuiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
 			Program.Credentials = new NetworkCredential (user, passwd);
 
 			if (sslCheckbox.Checked)
@@ -97,7 +96,7 @@ namespace ImapClientDemo
 
 			await Program.ReconnectAsync ();
 
-			Program.CurrentTask = Program.MainWindow.LoadContentAsync ();
+			Program.Run (Program.MainWindow.LoadContentAsync ());
 
 			Program.MainWindow.Visible = true;
 			Visible = false;

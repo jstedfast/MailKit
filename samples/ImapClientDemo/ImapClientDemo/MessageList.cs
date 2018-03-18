@@ -82,7 +82,7 @@ namespace ImapClientDemo
 
 			this.folder = folder;
 			
-			Program.CurrentTask = Program.CurrentTask.ContinueWith (LoadMessagesAsync, Program.GuiTaskScheduler);
+			Program.Queue (LoadMessagesAsync);
 		}
 
 		void MessageFlagsChanged (object sender, MessageFlagsChangedEventArgs e)
@@ -122,7 +122,7 @@ namespace ImapClientDemo
 		{
 			// Note: we can't call back into the ImapFolder in this event handler since another command is still processing,
 			// so queue it to run after our current command...
-			Program.CurrentTask = Program.CurrentTask.ContinueWith (UpdateMessageListAsync, Program.GuiTaskScheduler);
+			Program.Queue (UpdateMessageListAsync);
 		}
 
 		public event EventHandler<MessageSelectedEventArgs> MessageSelected;

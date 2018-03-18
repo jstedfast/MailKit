@@ -15,13 +15,14 @@ namespace ImapClientDemo
 	static class Program
 	{
 		public static readonly ImapClient Client = new ImapClient (new ProtocolLogger ("imap.txt"));
-		public static TaskScheduler GuiTaskScheduler;
 		public static SecureSocketOptions SslOptions;
 		public static ICredentials Credentials;
 		public static MainWindow MainWindow;
-		public static Task CurrentTask;
 		public static string HostName;
 		public static int Port;
+
+		static TaskScheduler GuiTaskScheduler;
+		static Task CurrentTask;
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -37,6 +38,24 @@ namespace ImapClientDemo
 			MainWindow = new MainWindow ();
 			
 			Application.Run (new LoginWindow ());
+		}
+
+		public static void Run (Task task)
+		{
+			if (GuiTaskScheduler == null)
+				GuiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
+			
+			CurrentTask = task;
+		}
+
+		public static void Queue (Func<Task, Task> action)
+		{
+			CurrentTask = CurrentTask.ContinueWith (action, GuiTaskScheduler);
+		}
+
+		public static void Queue (Func<Task, object, Task> action, object state)
+		{
+			CurrentTask = CurrentTask.ContinueWith (action, state, GuiTaskScheduler);
 		}
 
 		static async void OnClientDisconnected (object sender, EventArgs e)

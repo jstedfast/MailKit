@@ -148,7 +148,7 @@ namespace ImapClientDemo
 
 		void UpdateUnreadCount (object sender, EventArgs e)
 		{
-			Program.CurrentTask = Program.CurrentTask.ContinueWith (UpdateUnreadCountAsync, sender, Program.GuiTaskScheduler);
+			Program.Queue (UpdateUnreadCountAsync, sender);
 		}
 
 		async Task ExpandFolderAsync (Task task, object state)
@@ -166,7 +166,7 @@ namespace ImapClientDemo
 				// this folder has never been expanded before...
 				var folder = e.Node.Tag;
 
-				Program.CurrentTask = Program.CurrentTask.ContinueWith (ExpandFolderAsync, folder, Program.GuiTaskScheduler);
+				Program.Queue (ExpandFolderAsync, folder);
 			}
 
 			base.OnBeforeExpand (e);
