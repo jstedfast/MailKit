@@ -58,7 +58,7 @@ namespace ImapClientDemo
 				await folder.OpenAsync (FolderAccess.ReadOnly);
 
 			if (folder.Count > 0) {
-				var summaries = await folder.FetchAsync (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
+				var summaries = await folder.FetchAsync (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
 
 				AddMessageSummaries (summaries);
 			}
@@ -113,9 +113,11 @@ namespace ImapClientDemo
 		{
 			await task;
 
-			var summaries = await folder.FetchAsync (messages.Count, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
+			if (folder.Count > messages.Count) {
+				var summaries = await folder.FetchAsync (messages.Count, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
 
-			AddMessageSummaries (summaries);
+				AddMessageSummaries (summaries);
+			}
 		}
 
 		void CountChanged (object sender, EventArgs e)

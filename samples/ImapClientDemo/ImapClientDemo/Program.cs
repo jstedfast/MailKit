@@ -82,6 +82,9 @@ namespace ImapClientDemo
 					"Authentication Error");
 				throw;
 			}
+
+			if (Client.Capabilities.HasFlag (ImapCapabilities.UTF8Accept))
+				await Client.EnableUTF8Async ();
 		}
 	}
 }
