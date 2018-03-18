@@ -24,9 +24,6 @@ namespace ImapClientDemo
 			signInButton.Click += SignInClicked;
 
 			serverCombo.Text = "imap.gmail.com";
-
-			loginTextBox.Text = "anonymouscoward27@gmail.com";
-			passwordTextBox.Text = "sig11r0xjO0";
 		}
 
 		void CheckCanLogin ()
