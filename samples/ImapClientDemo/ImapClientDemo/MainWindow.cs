@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using MimeKit;
@@ -240,9 +241,9 @@ namespace ImapClientDemo
 			}
 		}
 
-		public void LoadContent ()
+		public Task LoadContentAsync ()
 		{
-			folderTreeView.LoadFolders ();
+			return folderTreeView.LoadFoldersAsync ();
 		}
 
 		protected override void OnClosed (EventArgs e)
