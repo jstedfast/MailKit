@@ -22,7 +22,7 @@ namespace ImapClientDemo
 		public static int Port;
 
 		static TaskScheduler GuiTaskScheduler;
-		static Task CurrentTask;
+		static Task CurrentTask = Task.FromResult (true);
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -40,21 +40,42 @@ namespace ImapClientDemo
 			Application.Run (new LoginWindow ());
 		}
 
-		public static void Run (Task task)
+		class AsyncTaskProxy
 		{
-			if (GuiTaskScheduler == null)
-				GuiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
-			
-			CurrentTask = task;
+			readonly Func<Task> action;
+
+			public AsyncTaskProxy (Func<Task> action)
+			{
+				this.action = action;
+			}
+
+			public async Task Run (Task task)
+			{
+				await task;
+				await action ();
+			}
+		}
+
+		public static void Queue (Func<Task> action)
+		{
+			var proxy = new AsyncTaskProxy (action);
+
+			Queue (proxy.Run);
 		}
 
 		public static void Queue (Func<Task, Task> action)
 		{
+			if (GuiTaskScheduler == null)
+				GuiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
+
 			CurrentTask = CurrentTask.ContinueWith (action, GuiTaskScheduler);
 		}
 
 		public static void Queue (Func<Task, object, Task> action, object state)
 		{
+			if (GuiTaskScheduler == null)
+				GuiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
+
 			CurrentTask = CurrentTask.ContinueWith (action, state, GuiTaskScheduler);
 		}
 
@@ -85,6 +106,8 @@ namespace ImapClientDemo
 
 			if (Client.Capabilities.HasFlag (ImapCapabilities.UTF8Accept))
 				await Client.EnableUTF8Async ();
+
+			CurrentTask = Task.FromResult (true);
 		}
 	}
 }

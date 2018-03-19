@@ -96,7 +96,7 @@ namespace ImapClientDemo
 
 			await Program.ReconnectAsync ();
 
-			Program.Run (Program.MainWindow.LoadContentAsync ());
+			Program.Queue (Program.MainWindow.LoadContentAsync);
 
 			Program.MainWindow.Visible = true;
 			Visible = false;
