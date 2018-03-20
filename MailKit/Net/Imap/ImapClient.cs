@@ -1890,16 +1890,15 @@ namespace MailKit.Net.Imap {
 			NoOpAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		static async void IdleComplete (object state)
+		static void IdleComplete (object state)
 		{
 			var ctx = (ImapIdleContext) state;
 
 			if (ctx.Engine.State == ImapEngineState.Idle) {
 				var buf = Encoding.ASCII.GetBytes ("DONE\r\n");
 
-				await ctx.Engine.Stream.WriteAsync (buf, 0, buf.Length, ctx.CancellationToken).ConfigureAwait (false);
-				await ctx.Engine.Stream.FlushAsync (ctx.CancellationToken).ConfigureAwait (false);
-
+				ctx.Engine.Stream.Write (buf, 0, buf.Length, ctx.CancellationToken);
+				ctx.Engine.Stream.Flush (ctx.CancellationToken);
 				ctx.Engine.State = ImapEngineState.Selected;
 			}
 		}
@@ -1918,6 +1917,9 @@ namespace MailKit.Net.Imap {
 
 			if (engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("An ImapFolder has not been opened.");
+
+			if (doneToken.IsCancellationRequested)
+				return;
 
 			using (var context = new ImapIdleContext (engine, doneToken, cancellationToken)) {
 				var ic = engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
