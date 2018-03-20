@@ -54,8 +54,8 @@ server that you are connecting to is using an SSL certificate that is either exp
 or untrusted by your system.
 
 Often times, mail servers will use self-signed certificates instead of using a certificate
-that has been signed by a trusted Certificate Authority. When your system is unable to
-validate the mail server's certificate because it is not signed by a known and trusted
+that has been signed by a trusted Certificate Authority, or an antivirus email protection can change the certificate to inspect traffic.
+When your system is unable to validate the mail server's certificate because it is not signed by a known and trusted
 Certificate Authority, the above error will occur.
 
 You can work around this problem by supplying a custom [RemoteCertificateValidationCallback](https://msdn.microsoft.com/en-us/library/ms145054)
