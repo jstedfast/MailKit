@@ -54,9 +54,12 @@ server that you are connecting to is using an SSL certificate that is either exp
 or untrusted by your system.
 
 Often times, mail servers will use self-signed certificates instead of using a certificate
-that has been signed by a trusted Certificate Authority. When your system is unable to
-validate the mail server's certificate because it is not signed by a known and trusted
-Certificate Authority, the above error will occur.
+that has been signed by a trusted Certificate Authority. Another potential pitfall is when
+locally installed anti-virus software replaces the certificate in order to scan web traffic
+for viruses.
+
+When your system is unable to validate the mail server's certificate because it is not signed
+by a known and trusted Certificate Authority, the above error will occur.
 
 You can work around this problem by supplying a custom [RemoteCertificateValidationCallback](https://msdn.microsoft.com/en-us/library/ms145054)
 and setting it on the client's [ServerCertificateValidationCallback](http://mimekit.net/docs/html/P_MailKit_MailService_ServerCertificateValidationCallback.htm)
