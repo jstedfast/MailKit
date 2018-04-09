@@ -347,7 +347,12 @@ namespace MailKit.Net.Imap
 					message.Fields |= MessageSummaryItems.GMailLabels;
 					break;
 				default:
-					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
+					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.OpenParen)
+						await SkipParenthesizedList (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					break;
 				}
 			} while (true);
 
@@ -3725,7 +3730,12 @@ namespace MailKit.Net.Imap
 					labelsChanged = true;
 					break;
 				default:
-					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
+					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.OpenParen)
+						await SkipParenthesizedList (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					break;
 				}
 			} while (true);
 
