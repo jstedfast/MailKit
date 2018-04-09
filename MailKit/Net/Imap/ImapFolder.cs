@@ -5100,6 +5100,27 @@ namespace MailKit.Net.Imap {
 			OnCountChanged ();
 		}
 
+		static async Task SkipParenthesizedList (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		{
+			do {
+				var token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.Eoln)
+					return;
+
+				// token is safe to read, so pop it off the queue
+				await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				if (token.Type == ImapTokenType.OpenParen) {
+					// skip the inner parenthesized list
+					await SkipParenthesizedList (engine, doAsync, cancellationToken).ConfigureAwait (false);
+				}
+			} while (true);
+		}
+
 		internal async Task OnFetchAsync (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -5170,7 +5191,12 @@ namespace MailKit.Net.Imap {
 					labelsChanged = true;
 					break;
 				default:
-					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
+					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.OpenParen)
+						await SkipParenthesizedList (engine, doAsync, cancellationToken).ConfigureAwait (false);
+					break;
 				}
 			} while (true);
 
