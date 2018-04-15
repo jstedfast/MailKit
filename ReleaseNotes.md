@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 2.0.3
+
+* Fixed IMAP IDLE support.
+* Ignore unknown tokens in IMAP untagged FETCH responses such as XAOL.SPAM.REASON.
+
 ### MailKit 2.0.2
 
 * Added work-around for ProtonMail's IMAP server. (issue #674)
