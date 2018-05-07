@@ -1947,6 +1947,7 @@ namespace MailKit.Net.Smtp {
 			format.HiddenHeaders.Add (HeaderId.ResentBcc);
 			format.HiddenHeaders.Add (HeaderId.Bcc);
 			format.NewLineFormat = NewLineFormat.Dos;
+			format.EnsureNewLine = true;
 
 			if (format.International && (Capabilities & SmtpCapabilities.UTF8) == 0)
 				format.International = false;

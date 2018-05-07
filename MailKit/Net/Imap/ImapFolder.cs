@@ -3754,6 +3754,7 @@ namespace MailKit.Net.Imap {
 
 			var format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
+			format.EnsureNewLine = true;
 
 			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
 				format.International = true;
@@ -3897,6 +3898,7 @@ namespace MailKit.Net.Imap {
 
 			var format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
+			format.EnsureNewLine = true;
 
 			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
 				format.International = true;
@@ -4082,6 +4084,7 @@ namespace MailKit.Net.Imap {
 
 			var format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
+			format.EnsureNewLine = true;
 
 			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
 				format.International = true;
@@ -4274,6 +4277,7 @@ namespace MailKit.Net.Imap {
 
 			var format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
+			format.EnsureNewLine = true;
 
 			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
 				format.International = true;
