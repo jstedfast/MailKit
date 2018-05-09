@@ -443,6 +443,9 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if (ip != null) {
+				if (ip.IsIPv4MappedToIPv6)
+					ip = ip.MapToIPv4 ();
+
 				if (ip.AddressFamily == AddressFamily.InterNetworkV6)
 					domain = "[IPv6:" + ip + "]";
 				else
