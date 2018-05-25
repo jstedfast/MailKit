@@ -386,26 +386,7 @@
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-expn.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-vrfy.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Net\" />
-    <Folder Include="Net\Imap\" />
-    <Folder Include="Net\Imap\Resources\" />
-    <Folder Include="Net\Imap\Resources\common\" />
-    <Folder Include="Net\Imap\Resources\gmail\" />
-    <Folder Include="Net\Pop3\" />
-    <Folder Include="Net\Pop3\Resources\" />
-    <Folder Include="Net\Pop3\Resources\comcast\" />
-    <Folder Include="Net\Pop3\Resources\exchange\" />
-    <Folder Include="Net\Pop3\Resources\gmail\" />
-    <Folder Include="Net\Smtp\" />
-    <Folder Include="Net\Smtp\Resources\" />
-    <Folder Include="Security\" />
-    <Folder Include="Net\Imap\Resources\acl\" />
-    <Folder Include="Net\Imap\Resources\metadata\" />
-    <Folder Include="Net\Imap\Resources\dovecot\" />
-    <Folder Include="Net\Pop3\Resources\lang\" />
-    <Folder Include="Search\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
@@ -418,5 +399,8 @@
   </ProjectExtensions>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
 </Project>
