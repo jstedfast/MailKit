@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 2.0.4
+
+* Fixed SmtpClient to use the IPv4 literal if the socket is IPv4 address mapped to IPv6. (issue #704)
+* Updated SmtpClient and ImapFolder.Append to use FormatOptions.EnsureNewLine. (MimeKit issue #251)
+
 ### MailKit 2.0.3
 
 * Fixed IMAP IDLE support.
