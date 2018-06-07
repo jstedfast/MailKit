@@ -123,10 +123,44 @@ namespace MailKit.Net.Smtp {
 		/// <param name="status">The status code.</param>
 		/// <param name="mailbox">The rejected mailbox.</param>
 		/// <param name="message">The error message.</param>
+		/// <param name="innerException">The inner exception.</param>
+		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message, Exception innerException) : base (message, innerException)
+		{
+			StatusCode = status;
+			Mailbox = mailbox;
+			ErrorCode = code;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpCommandException"/>.
+		/// </remarks>
+		/// <param name="code">The error code.</param>
+		/// <param name="status">The status code.</param>
+		/// <param name="mailbox">The rejected mailbox.</param>
+		/// <param name="message">The error message.</param>
 		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
 		{
 			StatusCode = status;
 			Mailbox = mailbox;
+			ErrorCode = code;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpCommandException"/>.
+		/// </remarks>
+		/// <param name="code">The error code.</param>
+		/// <param name="status">The status code.</param>>
+		/// <param name="message">The error message.</param>
+		/// <param name="innerException">The inner exception.</param>
+		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, string message, Exception innerException) : base (message, innerException)
+		{
+			StatusCode = status;
 			ErrorCode = code;
 		}
 

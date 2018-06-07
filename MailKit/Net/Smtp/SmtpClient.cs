@@ -731,11 +731,14 @@ namespace MailKit.Net.Smtp {
 				}
 
 				var message = string.Format ("{0}: {1}", response.StatusCode, response.Response);
+				Exception inner;
 
 				if (saslException != null)
-					authException = new AuthenticationException (message, saslException);
+					inner = new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response, saslException);
 				else
-					authException = new AuthenticationException (message);
+					inner = new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+				authException = new AuthenticationException (message, inner);
 			}
 
 			if (tried)
