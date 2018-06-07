@@ -1,17 +1,17 @@
-OUTDIR=MailKit/bin/Release/lib/net40
+OUTDIR=MailKit/bin/Release/lib/net45
 ASSEMBLY=$(OUTDIR)/MailKit.dll
 XMLDOCS=$(OUTDIR)/MailKit.xml
-SOLUTION=MailKit.Net40.sln
+SOLUTION=MailKit.Net45.sln
 
 all:
-	xbuild /target:Build /p:Configuration=Release $(SOLUTION)
+	msbuild /target:Build /p:Configuration=Release $(SOLUTION)
 
 debug:
-	xbuild /target:Build /p:Configuration=Debug $(SOLUTION)
+	msbuild /target:Build /p:Configuration=Debug $(SOLUTION)
 
 clean:
-	xbuild /target:Clean /p:Configuration=Debug $(SOLUTION)
-	xbuild /target:Clean /p:Configuration=Release $(SOLUTION)
+	msbuild /target:Clean /p:Configuration=Debug $(SOLUTION)
+	msbuild /target:Clean /p:Configuration=Release $(SOLUTION)
 
 check-docs:
 	@find docs/en -name "*.xml" -exec grep -l "To be added." {} \;
