@@ -262,18 +262,22 @@ namespace MailKit.Security {
 			if (IsAuthenticated)
 				throw new InvalidOperationException ();
 
-			var userName = encoding.GetBytes (Credentials.UserName);
-			var password = encoding.GetBytes (Credentials.Password);
-			var buffer = new byte[userName.Length + password.Length + 2];
+			var authzid = encoding.GetBytes (Credentials.Domain ?? string.Empty);
+			var authcid = encoding.GetBytes (Credentials.UserName);
+			var passwd = encoding.GetBytes (Credentials.Password);
+			var buffer = new byte[authzid.Length + authcid.Length + passwd.Length + 2];
 			int offset = 0;
 
-			buffer[offset++] = 0;
-			for (int i = 0; i < userName.Length; i++)
-				buffer[offset++] = userName[i];
+			for (int i = 0; i < authzid.Length; i++)
+				buffer[offset++] = authzid[i];
 
 			buffer[offset++] = 0;
-			for (int i = 0; i < password.Length; i++)
-				buffer[offset++] = password[i];
+			for (int i = 0; i < authcid.Length; i++)
+				buffer[offset++] = authcid[i];
+
+			buffer[offset++] = 0;
+			for (int i = 0; i < passwd.Length; i++)
+				buffer[offset++] = passwd[i];
 
 			IsAuthenticated = true;
 
