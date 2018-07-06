@@ -57,17 +57,13 @@ namespace MailKit {
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="ProtocolLogger"/> to log to a specified file. File is created if it does not exist.
+		/// Creates a new <see cref="ProtocolLogger"/> to log to a specified file. The file is created if it does not exist.
 		/// </remarks>
 		/// <param name="fileName">The file name.</param>
-		/// <param name="append">If <c>true</c>, existing file is appended to. If <c>false</c>, existing file is overwritten. Defaults to <c>true</c>.</param>
+		/// <param name="append"><c>true</c> if the file should be appended to; otherwise, <c>false</c>. Defaults to <c>true</c>.</param>
 		public ProtocolLogger (string fileName, bool append = true)
 		{
-			stream = File.Open(
-				fileName, 
-				append ? FileMode.Append : FileMode.Create, 
-				FileAccess.Write, 
-				FileShare.Read);
+			stream = File.Open (fileName, append ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.Read);
 		}
 #endif
 
