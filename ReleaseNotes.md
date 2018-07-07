@@ -1,5 +1,12 @@
 # Release Notes
 
+### MailKit 2.0.5
+
+* When throwing AuthenticationException within SmtpClient, add an SmtpCommandException as the
+  InnerException property to help consumers diagnose authentication problems. (issue #717)
+* Added support for the authzid to the SASL PLAIN mechanism.
+* Modified ProtocolLogger file constructor to support Shared Read and an Append/Overwrite option. (issue #730)
+
 ### MailKit 2.0.4
 
 * Fixed SmtpClient to use the IPv4 literal if the socket is IPv4 address mapped to IPv6. (issue #704)
