@@ -417,6 +417,7 @@ namespace MailKit.Net.Pop3 {
 					await ReadAheadAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
+				// terminate the input buffer with a '\n' to remove bounds checking in our inner loop
 				input[inputEnd] = (byte) '\n';
 
 				while (inputIndex < inputEnd) {
@@ -428,6 +429,7 @@ namespace MailKit.Net.Pop3 {
 						if (inputIndex == inputEnd || index == end)
 							break;
 
+						// consume the '\n' character
 						buffer[index++] = input[inputIndex++];
 						midline = false;
 					}
@@ -438,6 +440,7 @@ namespace MailKit.Net.Pop3 {
 					if (input[inputIndex] == (byte) '.') {
 						inputLeft = inputEnd - inputIndex;
 
+						// check for ".\r\n" which signifies the end of the data stream
 						if (inputLeft >= 3 && input[inputIndex + 1] == (byte) '\r' && input[inputIndex + 2] == (byte) '\n') {
 							IsEndOfData = true;
 							midline = false;
@@ -445,6 +448,7 @@ namespace MailKit.Net.Pop3 {
 							break;
 						}
 
+						// check for ".\n" which is used by some broken UNIX servers in place of ".\r\n"
 						if (inputLeft >= 2 && input[inputIndex + 1] == (byte) '\n') {
 							IsEndOfData = true;
 							midline = false;
@@ -452,11 +456,13 @@ namespace MailKit.Net.Pop3 {
 							break;
 						}
 
+						// check for "." or ".\r" which might be an incomplete termination sequence
 						if (inputLeft == 1 || (inputLeft == 2 && input[inputIndex + 1] == (byte) '\r')) {
 							// not enough data...
 							break;
 						}
 
+						// check for lines beginning with ".." which should be transformed into "."
 						if (input[inputIndex + 1] == (byte) '.')
 							inputIndex++;
 					}
