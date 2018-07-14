@@ -821,10 +821,8 @@ Outlook is one of those mail clients which decided to encode filenames using the
 rfc2047 and until Outlook 2007, did not support filenames encoded using the mechanism defined in rfc2231.
 
 As of MimeKit v1.2.18, it is possible to configure MimeKit to use the rfc2047 encoding mechanism for
-filenames in the following two ways:
-
-The first way is to set the encoding method on each individual
-[Parameter](http://www.mimekit.net/docs/html/T_MimeKit_Parameter.htm):
+filenames (and other `Content-Disposition` and `Content-Type` parameter values) by setting the encoding
+method on each individual [Parameter](http://www.mimekit.net/docs/html/T_MimeKit_Parameter.htm):
 
 ```csharp
 Parameter param;
@@ -833,13 +831,12 @@ if (attachment.ContentDisposition.Parameters.TryGetValue ("filename", out param)
     param.EncodingMethod = ParameterEncodingMethod.Rfc2047;
 ```
 
-The other way is to use a [FormatOptions](http://www.mimekit.net/docs/html/T_MimeKit_FormatOptions.htm):
+Or:
 
 ```csharp
-var options = FormatOptions.Default.Clone ();
-options.ParameterEncodingMethod = ParameterEncodingMethod.Rfc2047;
-
-message.WriteTo (options, stream);
+foreach (var param in attachment.ContentDisposition.Parameters) {
+    param.EncodingMethod = ParameterEncodingMethod.Rfc2047;
+}
 ```
 
 ### <a name="DecryptInlinePGP">Q: How can I decrypt PGP messages that are embedded in the main message text?</a>
