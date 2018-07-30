@@ -125,6 +125,11 @@ namespace MailKit {
 		/// </summary>
 		PreviewText    = 1 << 13,
 
+		/// <summary>
+		/// Fetch the the complete list of <see cref="IMessageSummary.Headers"/>.
+		/// </summary>
+		Headers        = 1 << 14,
+
 		#region Macros
 
 		/// <summary>

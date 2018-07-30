@@ -442,7 +442,9 @@ namespace MailKit.Net.Imap
 					tokens.Add ("X-GM-LABELS");
 			}
 
-			if ((items & MessageSummaryItems.References) != 0 || fields != null) {
+			if ((items & MessageSummaryItems.Headers) != 0) {
+				tokens.Add ("BODY.PEEK[HEADER]");
+			} else if ((items & MessageSummaryItems.References) != 0 || fields != null) {
 				var headers = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
 				bool references = false;
 
