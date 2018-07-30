@@ -219,6 +219,18 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
+		/// Gets or sets the authorization identifier.
+		/// </summary>
+		/// <remarks>
+		/// The authorization identifier is the desired user account that the server should use
+		/// for all accesses. This is separate from the user name used for authentication.
+		/// </remarks>
+		/// <value>The authorization identifier.</value>
+		public string AuthorizationId {
+			get; set;
+		}
+
+		/// <summary>
 		/// Gets the name of the mechanism.
 		/// </summary>
 		/// <remarks>
@@ -262,14 +274,14 @@ namespace MailKit.Security {
 			if (IsAuthenticated)
 				throw new InvalidOperationException ();
 
-			//var authzid = encoding.GetBytes (Credentials.Domain ?? string.Empty);
+			var authzid = encoding.GetBytes (AuthorizationId ?? string.Empty);
 			var authcid = encoding.GetBytes (Credentials.UserName);
 			var passwd = encoding.GetBytes (Credentials.Password);
-			var buffer = new byte[/*authzid.Length +*/ authcid.Length + passwd.Length + 2];
+			var buffer = new byte[authzid.Length + authcid.Length + passwd.Length + 2];
 			int offset = 0;
 
-			//for (int i = 0; i < authzid.Length; i++)
-			//	buffer[offset++] = authzid[i];
+			for (int i = 0; i < authzid.Length; i++)
+				buffer[offset++] = authzid[i];
 
 			buffer[offset++] = 0;
 			for (int i = 0; i < authcid.Length; i++)
