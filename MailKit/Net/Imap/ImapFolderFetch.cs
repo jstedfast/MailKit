@@ -443,37 +443,32 @@ namespace MailKit.Net.Imap
 			}
 
 			if ((items & MessageSummaryItems.References) != 0 || fields != null) {
-			    if (fields?.Count == 0)
-			    {
-			        tokens.Add("BODY.PEEK[HEADER]");
-			    }
-			    else
-			    {
-			        var headers = new StringBuilder("BODY.PEEK[HEADER.FIELDS (");
-			        bool references = false;
+				if (fields?.Count == 0)
+					tokens.Add ("BODY.PEEK[HEADER]");
+				else {
+					var headers = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
+					bool references = false;
 
-			        if (fields != null)
-			        {
-			            foreach (var field in fields)
-			            {
-			                var name = field.ToUpperInvariant();
+					if (fields != null) {
+						foreach (var field in fields) {
+							var name = field.ToUpperInvariant ();
 
-			                if (name == "REFERENCES")
-			                    references = true;
+							if (name == "REFERENCES")
+								references = true;
 
-			                headers.Append(name);
-			                headers.Append(' ');
-			            }
-			        }
+							headers.Append (name);
+							headers.Append (' ');
+						}
+					}
 
-			        if ((items & MessageSummaryItems.References) != 0 && !references)
-			            headers.Append("REFERENCES ");
+ 					if ((items & MessageSummaryItems.References) != 0 && !references)
+						headers.Append ("REFERENCES ");
 
-			        headers[headers.Length - 1] = ')';
-			        headers.Append(']');
+					headers[headers.Length - 1] = ')';
+					headers.Append (']');
 
-			        tokens.Add(headers.ToString());
-                }
+					tokens.Add (headers.ToString ());
+				}
 			}
 
 			if (tokens.Count == 1)
@@ -681,8 +676,6 @@ namespace MailKit.Net.Imap
 			if (fields == null)
 				throw new ArgumentNullException (nameof (fields));
 
-			//if (fields.Count == 0)
-			//	throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			CheckState (true, false);
 
