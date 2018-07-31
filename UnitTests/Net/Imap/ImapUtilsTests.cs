@@ -480,5 +480,76 @@ namespace UnitTests.Net.Imap {
 				}
 			}
 		}
+
+		[Test]
+		public void TestParseLongDovecotExampleThread ()
+		{
+			const string text = "(3 4 5 6 7)(1)((2)(8)(15))(9)(16)(10)(11)(12 13)(14)(17)(18)(19)(20)(21)(22)(23)(24)(25 (26)(29 39)(31)(32))(27)(28)(38 35)(30 33 34)(37)(36)(40)(41)((42 43)(44)(48)(49)(50)(51 52))(45)((46)(55))(47)(53)(54)(56)(57 (58)(59)(60)(63))((61)(62))(64)(65)(70)((66)(67)(68)(69)(71))(72 73 (74)(75)(76 77))\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						IList<MessageThread> threads;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							threads = ImapUtils.ParseThreadsAsync (engine, 0, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.AreEqual (40, threads.Count, "Expected 40 threads.");
+
+						Assert.AreEqual ((uint) 3, threads[0].UniqueId.Value.Id);
+						Assert.AreEqual ((uint) 1, threads[1].UniqueId.Value.Id);
+						Assert.AreEqual ((uint) 0, threads[2].UniqueId.Value.Id);
+
+						var branches = threads[2].Children.ToArray ();
+						Assert.AreEqual (3, branches.Length, "Expected 3 children.");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseShortDovecotExampleThread ()
+		{
+			const string text = "((352)(381))\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						IList<MessageThread> threads;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							threads = ImapUtils.ParseThreadsAsync (engine, 0, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.AreEqual (1, threads.Count, "Expected 1 thread.");
+
+						Assert.AreEqual ((uint) 0, threads[0].UniqueId.Value.Id);
+
+						var children = threads[0].Children;
+						Assert.AreEqual (2, children.Count, "Expected 2 children.");
+
+						Assert.AreEqual ((uint) 352, children[0].UniqueId.Value.Id);
+						Assert.AreEqual ((uint) 381, children[1].UniqueId.Value.Id);
+					}
+				}
+			}
+		}
 	}
 }

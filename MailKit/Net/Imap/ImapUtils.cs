@@ -1315,6 +1315,19 @@ namespace MailKit.Net.Imap {
 			MessageThread thread, node, child;
 			uint uid;
 
+			if (token.Type == ImapTokenType.OpenParen) {
+				thread = new MessageThread (UniqueId.Invalid);
+
+				do {
+					child = await ParseThreadAsync (engine, uidValidity, doAsync, cancellationToken).ConfigureAwait (false);
+					thread.Children.Add (child);
+
+					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				} while (token.Type != ImapTokenType.CloseParen);
+
+				return thread;
+			}
+
 			if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
 
