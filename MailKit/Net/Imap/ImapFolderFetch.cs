@@ -497,6 +497,7 @@ namespace MailKit.Net.Imap
 				try {
 					encoding = Encoding.GetEncoding (charset);
 				} catch (NotSupportedException) {
+				} catch (ArgumentException) {
 				}
 			}
 
