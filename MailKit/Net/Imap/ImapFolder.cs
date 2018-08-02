@@ -163,7 +163,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void ProcessResponseCodes (ImapCommand ic, IMailFolder folder)
+		void ProcessResponseCodes (ImapCommand ic, IMailFolder folder, bool throwNotFound = true)
 		{
 			bool tryCreate = false;
 
@@ -204,7 +204,7 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			if (tryCreate && folder != null)
+			if (tryCreate && throwNotFound && folder != null)
 				throw new FolderNotFoundException (folder.FullName);
 		}
 
@@ -1493,8 +1493,10 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create (lsub ? "LSUB" : "LIST", ic);
 
 			if (status) {
-				for (int i = 0; i < children.Count; i++)
-					children[i].Status (items, cancellationToken);
+				for (int i = 0; i < children.Count; i++) {
+					if (children[i].Exists)
+						await ((ImapFolder) children[i]).StatusAsync (items, doAsync, false, cancellationToken);
+				}
 			}
 
 			return children;
@@ -1789,7 +1791,7 @@ namespace MailKit.Net.Imap {
 			return CheckAsync (true, cancellationToken);
 		}
 
-		async Task StatusAsync (StatusItems items, bool doAsync, CancellationToken cancellationToken)
+		async Task StatusAsync (StatusItems items, bool doAsync, bool throwNotFound, CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Status) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the STATUS command.");
@@ -1804,7 +1806,7 @@ namespace MailKit.Net.Imap {
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, this);
+			ProcessResponseCodes (ic, this, throwNotFound);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("STATUS", ic);
@@ -1856,7 +1858,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			StatusAsync (items, false, cancellationToken).GetAwaiter ().GetResult ();
+			StatusAsync (items, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1905,7 +1907,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return StatusAsync (items, true, cancellationToken);
+			return StatusAsync (items, true, true, cancellationToken);
 		}
 
 		static async Task<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
