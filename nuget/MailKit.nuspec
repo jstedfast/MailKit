@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
-		<version>2.0.5</version>
+		<version>2.0.6</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -23,9 +23,11 @@ Features include:
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
 		<releaseNotes>
-* When throwing AuthenticationException within SmtpClient, add an SmtpCommandException as the InnerException property to help consumers diagnose authentication problems. (issue #717)
-* Added support for the authzid to the SASL PLAIN mechanism.
-* Modified ProtocolLogger file constructor to support Shared Read and an Append/Overwrite option. (issue #730)
+* Fixed ImapFolder.GetSubfolders (StatusItems) to make sure that the child folders exist before calling STATUS on them when the server does not support the LIST-STATUS command.
+* Catch ArgumentExceptions when calling Encoding.GetEncoding(string). (issue #740)
+* Fixed parsing of IMAP threads where the root of a subtree is empty. (issue #739)
+* Added AuthorizationId property for PLAIN and DIGEST-MD5 SASL mechanisms.
+* Added MessageSummaryItems.Headers enum to fetch all headers. (issue #738)
 
 Note to users upgrading from MailKit 1.x:
 
@@ -53,13 +55,13 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
 		<dependencies>
 			<group targetFramework="net45">
 				<dependency id="BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.0.5" />
+				<dependency id="MimeKit" version="2.0.6" />
 			</group>
 			<group targetFramework="monoandroid">
-				<dependency id="MimeKit" version="2.0.5" />
+				<dependency id="MimeKit" version="2.0.6" />
 			</group>
 			<group targetFramework="xamarinios">
-				<dependency id="MimeKit" version="2.0.5" />
+				<dependency id="MimeKit" version="2.0.6" />
 			</group>
 			<group targetFramework="netstandard1.3">
 				<dependency id="NETStandard.Library" version="1.6.1" />
@@ -73,7 +75,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
 				<dependency id="System.Data.Common" version="4.3.0" />
 				<dependency id="System.Net.Http" version="4.3.0" />
 				<dependency id="Portable.BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.0.5" />
+				<dependency id="MimeKit" version="2.0.6" />
 			</group>
 			<group targetFramework="netstandard1.6">
 				<dependency id="NETStandard.Library" version="1.6.1" />
@@ -87,7 +89,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
 				<dependency id="System.Data.Common" version="4.3.0" />
 				<dependency id="System.Net.Http" version="4.3.0" />
 				<dependency id="Portable.BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.0.5" />
+				<dependency id="MimeKit" version="2.0.6" />
 			</group>
 			<group targetFramework="netstandard2.0">
 				<dependency id="NETStandard.Library" version="1.6.1" />
@@ -101,11 +103,11 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
 				<dependency id="System.Data.Common" version="4.3.0" />
 				<dependency id="System.Net.Http" version="4.3.0" />
 				<dependency id="Portable.BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.0.5" />
+				<dependency id="MimeKit" version="2.0.6" />
 			</group>
 			<group targetFramework="portable-win81+wpa81">
 				<dependency id="Portable.BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.0.5" />
+				<dependency id="MimeKit" version="2.0.6" />
 			</group>
 		</dependencies>
 	</metadata>

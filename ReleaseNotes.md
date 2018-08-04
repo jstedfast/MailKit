@@ -1,5 +1,14 @@
 # Release Notes
 
+### MailKit 2.0.6
+
+* Fixed ImapFolder.GetSubfolders (StatusItems) to make sure that the child folders exist before
+  calling STATUS on them when the server does not support the LIST-STATUS command.
+* Catch ArgumentExceptions when calling Encoding.GetEncoding(string). (issue #740)
+* Fixed parsing of IMAP threads where the root of a subtree is empty. (issue #739)
+* Added AuthorizationId property for PLAIN and DIGEST-MD5 SASL mechanisms.
+* Added MessageSummaryItems.Headers enum to fetch all headers. (issue #738)
+
 ### MailKit 2.0.5
 
 * When throwing AuthenticationException within SmtpClient, add an SmtpCommandException as the
