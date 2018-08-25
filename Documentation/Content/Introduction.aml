@@ -185,9 +185,9 @@
         </para>
         <markup>
           <p>
-            <a href="https://liberapay.com/MimeKit/donate" target="_blank">
-              <img src="https://liberapay.com/assets/widgets/donate.svg" alt="Click here to lend your support to MimeKit and MailKit by making a donation!" border="0" />
-            </a>
+	    <a href="https://paypal.me/pools/c/857bnxBTXg" _target="blank">
+	      <img src="https://www.paypal.com/en_US/i/btn/x-click-but21.gif" alt="Click here to lend your support to MimeKit by making a donation!" border="0" />
+	    </a>
           </p>
         </markup>
       </content>
