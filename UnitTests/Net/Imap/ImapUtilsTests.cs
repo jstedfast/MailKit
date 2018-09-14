@@ -427,6 +427,58 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseMultipartBodyStructureWithoutBodyFldDsp ()
+		{
+			// Test case from https://stackoverflow.com/questions/33481604/mailkit-fetch-unexpected-token-in-imap-response-qstring-multipart-message
+			const string text = "((\"text\" \"plain\" (\"charset\" \"UTF-8\") NIL \"Message text\" \"Quoted-printable\" 209 6 NIL (\"inline\" NIL) NIL NIL)(\"text\" \"xml\" (\"name\" \"4441004299066.xml\") NIL \"4441004299066.xml\" \"Base64\" 10642 137 NIL (\"inline\" (\"filename\" \"4441004299066.xml\")) NIL NIL)(\"application\" \"pdf\" (\"name\" \"4441004299066.pdf\") NIL \"4441004299066.pdf\" \"Base64\" 48448 NIL (\"inline\" (\"filename\" \"4441004299066.pdf\")) NIL NIL) \"mixed\" (\"boundary\" \"6624CFB2_17170C36_Synapse_boundary\") \"Multipart message\" NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic basic;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (body.ContentType.IsMimeType ("multipart", "mixed"), "Content-Type did not match.");
+						Assert.AreEqual ("6624CFB2_17170C36_Synapse_boundary", body.ContentType.Parameters ["boundary"], "boundary param did not match");
+						Assert.AreEqual (3, multipart.BodyParts.Count, "BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.AreEqual ("plain", basic.ContentType.MediaSubtype, "Content-Type did not match.");
+						Assert.AreEqual ("Message text", basic.ContentDescription, "Content-Description does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[1];
+						Assert.AreEqual ("xml", basic.ContentType.MediaSubtype, "Content-Type did not match.");
+						Assert.AreEqual ("4441004299066.xml", basic.ContentDescription, "Content-Description does not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[2], "The type of the third child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[2];
+						Assert.AreEqual ("application", basic.ContentType.MediaType, "Content-Type did not match.");
+						Assert.AreEqual ("pdf", basic.ContentType.MediaSubtype, "Content-Type did not match.");
+						Assert.AreEqual ("4441004299066.pdf", basic.ContentDescription, "Content-Description does not match.");
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestParseExampleThreads ()
 		{
 			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
