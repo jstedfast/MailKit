@@ -662,25 +662,12 @@ namespace MailKit.Net.Imap {
 			return contentType;
 		}
 
-		static async Task<ContentDisposition> ParseContentDispositionAsync (ImapEngine engine, string format, bool isMultipart, bool doAsync, CancellationToken cancellationToken)
+		static async Task<ContentDisposition> ParseContentDispositionAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (token.Type == ImapTokenType.Nil)
 				return null;
-
-			if (token.Type != ImapTokenType.OpenParen) {
-				if (isMultipart && token.Type == ImapTokenType.QString) {
-					// Note: This is a work-around for broken Exchange servers.
-					//
-					// See https://stackoverflow.com/questions/33481604/mailkit-fetch-unexpected-token-in-imap-response-qstring-multipart-message
-					// for details.
-					engine.Stream.UngetToken (token);
-					return null;
-				}
-
-				throw ImapEngine.UnexpectedToken (format, token);
-			}
 
 			var dsp = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -841,8 +828,19 @@ namespace MailKit.Net.Imap {
 				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentDisposition = await ParseContentDispositionAsync (engine, format, true, doAsync, cancellationToken).ConfigureAwait (false);
+			if (token.Type == ImapTokenType.QString) {
+				// Note: This is a work-around for broken Exchange servers.
+				//
+				// See https://stackoverflow.com/questions/33481604/mailkit-fetch-unexpected-token-in-imap-response-qstring-multipart-message
+				// for details.
+
+				// Read what appears to be a Content-Description.
+				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				// Peek ahead at the next token. It has been suggested that this next token seems to be the Content-Language value.
+				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			} else if (token.Type != ImapTokenType.CloseParen) {
+				body.ContentDisposition = await ParseContentDispositionAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
@@ -948,7 +946,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentDisposition = await ParseContentDispositionAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
+				body.ContentDisposition = await ParseContentDispositionAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
