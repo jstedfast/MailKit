@@ -1,0 +1,619 @@
+
+
+
+
+
+
+Internet Engineering Task Force (IETF)                         C. Newman
+Request for Comments: 8437                                        Oracle
+Updates: 3501                                                August 2018
+Category: Standards Track
+ISSN: 2070-1721
+
+
+           IMAP UNAUTHENTICATE Extension for Connection Reuse
+
+Abstract
+
+   This specification extends the Internet Message Access Protocol
+   (IMAP) to allow an administrative client to reuse the same IMAP
+   connection on behalf of multiple IMAP user identities.
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 7841.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   https://www.rfc-editor.org/info/rfc8437.
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+
+
+Newman                       Standards Track                    [Page 1]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Conventions Used in This Document . . . . . . . . . . . . . .   2
+   3.  UNAUTHENTICATE Command  . . . . . . . . . . . . . . . . . . .   3
+   4.  Interactions  . . . . . . . . . . . . . . . . . . . . . . . .   4
+     4.1.  Stateful Extensions . . . . . . . . . . . . . . . . . . .   4
+     4.2.  Client Certificates, SASL EXTERNAL, and imaps . . . . . .   5
+   5.  Revised State Machine . . . . . . . . . . . . . . . . . . . .   6
+   6.  Formal Syntax . . . . . . . . . . . . . . . . . . . . . . . .   7
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+   9.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .   8
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .   8
+     10.2.  Informative References . . . . . . . . . . . . . . . . .   9
+   Appendix A.  Design Considerations  . . . . . . . . . . . . . . .  11
+   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .  11
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+
+1.  Introduction
+
+   Modern IMAP [RFC3501] server deployments often have peer systems with
+   administrative privilege that perform actions on behalf of IMAP end
+   users.  For example, a voicemail gateway can use IMAP to store a
+   user's voicemail and mark that voicemail as \Seen when the user
+   listens to it via the phone interface.  These systems can issue the
+   IMAP AUTHENTICATE command with administrative credentials to act on
+   behalf of other users.  However, with the IMAP base specification,
+   these specialized IMAP clients must close the connection and create a
+   new connection for each user.  For efficiency reasons, it is
+   desirable for these clients to reuse the same connection,
+   particularly if SSL has been negotiated.  This specification proposes
+   the UNAUTHENTICATE command to achieve this goal.
+
+   The IMAP state machine described in Section 3 of RFC 3501 does not
+   have a transition from authenticated or selected state to not
+   authenticated state.  The UNAUTHENTICATE command adds this
+   transition.
+
+2.  Conventions Used in This Document
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+
+
+
+Newman                       Standards Track                    [Page 2]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+3.  UNAUTHENTICATE Command
+
+   Arguments:  None
+
+   Responses:  No specific response for this command
+
+   Result:     OK - Completed, now in not authenticated state
+               BAD - Command unknown or arguments invalid
+
+   This command directs the server to reset all connection state except
+   for the state of the TLS [RFC8446] layer.  Upon completion, the
+   server connection is placed in not authenticated state.  This
+   represents Transition 7 in the State Machine Diagram (Section 5).
+
+   If a mailbox was selected, the mailbox ceases to be selected, but no
+   expunge event is generated.  If a Simple Authentication and Security
+   Layer (SASL) [RFC4422] was active, the server terminates its outgoing
+   security layer immediately after sending the CRLF following the OK
+   response.  The client's outgoing security layer terminates
+   immediately after the CRLF following the UNAUTHENTICATE command.
+   Note that a BAD response only occurs if UNAUTHENTICATE is issued in
+   an invalid state, is not advertised by the server, or does not follow
+   the command syntax in the specification.  A NO response is not
+   permitted.  As a result, specification-compliant implementations will
+   interoperate across security layer termination.
+
+   After sending this command, the client is free to issue a new
+   AUTHENTICATE or LOGIN command as permitted based on the server's
+   capabilities.  If no SASL security layer was active, the client is
+   permitted to pipeline the UNAUTHENTICATE command with a subsequent
+   AUTHENTICATE command.  If the IMAP server also advertises SASL-IR
+   [RFC4959], this permits an administrative client to re-authenticate
+   in one round trip.  Because of this pipelining optimization, a server
+   advertising UNAUTHENTICATE is not permitted to respond to the
+   UNAUTHENTICATE command with a NO response if it is unable to reset
+   the state associated with the connection.  Servers MAY close the
+   connection with an untagged BYE response if this preferably rare
+   situation occurs.
+
+   Servers MAY choose to advertise the UNAUTHENTICATE capability only
+   after authentication has completed.  As a result, clients may need to
+   issue an IMAP CAPABILITY command after authentication in order to
+   determine the availability of UNAUTHENTICATE.
+
+
+
+
+
+
+
+
+Newman                       Standards Track                    [Page 3]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+   The IMAP ID [RFC2971] command provides properties about the client
+   primarily for use in server log or audit files.  Because IMAP ID is
+   not related to application authentication or user identity in any
+   way, and caching it for the duration of the client connection can be
+   useful, the interaction between IMAP ID and the UNAUTHENTICATE
+   command is defined by the implementation.
+
+4.  Interactions
+
+   This section describes interactions between this extension and other
+   IMAP extensions or usage models.
+
+4.1.  Stateful Extensions
+
+   The connection state for the following list of IMAP extensions MUST
+   be reset if both a) the specified extension is advertised and b) the
+   UNAUTHENTICATE command is advertised and used.  This list may not be
+   complete; the requirement to reset the connection state applies to
+   all current and future extensions except STARTTLS and ID.  Additional
+   requirements apply to specific stateful extensions as follows:
+
+   o  Cached identity information, such as group memberships, that are
+      used to evaluate access control lists [RFC4314] MUST be reset.
+
+   o  After an UNAUTHENTICATE command is issued, CONDSTORE servers
+      [RFC7162] MUST behave as if no CONDSTORE-enabling command was
+      issued.
+
+   o  If IMAP COMPRESS [RFC4978] is active, the server terminates its
+      outgoing compression layer after it sends the CRLF following the
+      OK response.  The client terminates its outgoing compression layer
+      after the CRLF following the UNAUTHENTICATE command.  When it
+      matters, the compression layer terminates before a SASL layer
+      terminates.
+
+   o  Any extensions enabled by the IMAP ENABLE [RFC5161] command cease
+      to be enabled when the UNAUTHENTICATE command is issued.  This
+      includes, but is not limited to, CONDSTORE [RFC7162], QRESYNC
+      [RFC7162], METADATA [RFC5464], METADATA-SERVER [RFC5464], and
+      UTF8=ACCEPT [RFC6855].
+
+   o  A server advertising SEARCHRES [RFC5182] discards any saved search
+      results so that '$' subsequently represents the empty set.
+
+   o  A server advertising LANGUAGE [RFC5255] will revert to the
+      "i-default" language.
+
+
+
+
+
+Newman                       Standards Track                    [Page 4]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+   o  When a server advertises CONTEXT=SEARCH or CONTEXT=SORT [RFC5267],
+      the UNAUTHENTICATE command includes an implicit CANCELUPDATE for
+      all server contexts.
+
+   o  When a server advertises NOTIFY [RFC5465], the UNAUTHENTICATE
+      command cancels the server state related to the NOTIFY command and
+      reverts to default IMAP base-specification behavior for
+      notifications.
+
+4.2.  Client Certificates, SASL EXTERNAL, and imaps
+
+   When a TLS [RFC8446] security layer is negotiated using either the
+   STARTTLS command or the imaps port [RFC8314], IMAP servers may be
+   configured to request a client certificate, and IMAP clients may
+   provide one.  Client credentials at the TLS layer do not normally
+   impact the application layer; however, they do have an impact when
+   the SASL EXTERNAL mechanism [RFC4422] in an IMAP AUTHENTICATE command
+   is used to direct the server to use the provided client certificate
+   to authenticate as the specified IMAP user.  The UNAUTHENTICATE
+   command breaks any application-level binding of the TLS client
+   credentials but does not discard the client credentials.  As a
+   result, an administrative client may use a client certificate with
+   administrative privilege to act on behalf of multiple IMAP users in
+   the same connection via the EXTERNAL mechanism and the UNAUTHENTICATE
+   command.
+
+   Some server implementations using the imaps port will request and use
+   a TLS client certificate to authenticate immediately as the default
+   IMAP identity associated with that certificate.  These
+   implementations indicate this behavior by using the PREAUTH greeting,
+   as indicated by Transition 2 in the State Machine Diagram
+   (Section 5).  As a result, TLS client certificates cannot be used for
+   administrative proxy authentication with the imaps port unless the
+   UNAUTHENTICATE command is also advertised.  In that case, an
+   administrative client can respond to the PREAUTH greeting with an
+   UNAUTHENTICATE command and then issue an AUTHENTICATE EXTERNAL
+   command.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Newman                       Standards Track                    [Page 5]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+5.  Revised State Machine
+
+                      +----------------------+
+                      |connection established|
+                      +----------------------+
+                                 ||
+                                 \/
+               +--------------------------------------+
+               |          server greeting             |
+               +--------------------------------------+
+                         || (1)       || (2)        || (3)
+                         \/           ||            ||
+               +-----------------+    ||            ||
+               |Not Authenticated|<===||=========++ ||
+               +-----------------+    ||     (7) || ||
+                || (8)   || (4)       ||         || ||
+                ||       \/           \/         || ||
+                ||     +----------------+        || ||
+                ||     |                |========++ ||
+                ||     | Authenticated  |<=++    || ||
+                ||     +----------------+  ||    || ||
+                ||       || (8)   || (5)   ||(6) || ||
+                ||       ||       \/       ||    || ||
+                ||       ||    +--------+  ||    || ||
+                ||       ||    |Selected|==++    || ||
+                ||       ||    |        |========++ ||
+                ||       ||    +--------+           ||
+                ||       ||       || (8)            ||
+                \/       \/       \/                \/
+               +--------------------------------------+
+               |               Logout                 |
+               +--------------------------------------+
+                                 ||
+                                 \/
+                   +-------------------------------+
+                   |both sides close the connection|
+                   +-------------------------------+
+
+   Revised IMAP state machine transitions:
+
+   1.  Connection without pre-authentication (OK greeting)
+
+   2.  Pre-authenticated connection (PREAUTH greeting)
+
+   3.  Rejected connection (BYE greeting)
+
+   4.  Successful LOGIN or AUTHENTICATE command
+
+
+
+
+Newman                       Standards Track                    [Page 6]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+   5.  Successful SELECT or EXAMINE command
+
+   6.  CLOSE, UNSELECT [RFC3691], or failed SELECT or EXAMINE command
+
+   7.  UNAUTHENTICATE command
+
+   8.  LOGOUT command, server shutdown, or connection closed
+
+6.  Formal Syntax
+
+   The following syntax specification uses the Augmented Backus-Naur
+   Form (ABNF), as described in [RFC5234].  Amended terms are defined in
+   [RFC3501].
+
+     capability     =/ "UNAUTHENTICATE"
+
+     command-auth   =/ "UNAUTHENTICATE"
+
+     command-select =/ "UNAUTHENTICATE"
+
+7.  IANA Considerations
+
+   IANA has added the UNAUTHENTICATE capability to the "IMAP
+   Capabilities" registry.
+
+8.  Security Considerations
+
+   The original IMAP state machine was designed to allow a server-
+   implementation approach in which each IMAP authentication identity
+   matches an operating system identity and the server revokes all
+   administrative privilege once authentication completes.  This
+   extension is not compatible with that implementation approach.
+   However, that approach has significant performance costs on Unix
+   systems, and this extension is designed for environments where
+   efficiency is a relatively high-priority deployment goal.  This
+   extension is therefore appropriate for some deployments but may not
+   be appropriate for the most security-sensitive environments.
+
+   IMAP server implementations are complicated and can retain a lot of
+   state related to an authenticated user.  Server implementers need to
+   take care to reset all server state such that authentication as a
+   subsequent user does not inherit any data or privileges from the
+   previous user.  State data associated with a user can include cached
+   identity information such as group membership used to evaluate access
+   control lists [RFC4314], active notifications [RFC5465], access to
+   per-user data such as flags, etc.
+
+
+
+
+
+Newman                       Standards Track                    [Page 7]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+   IMAP server systems are often deployed in a two-tier model where a
+   server-side IMAP proxy routes to an IMAP backend that handles all
+   connections for a subset of possible users.  Some IMAP proxies enter
+   a pass-through mode after authentication.  If enabled, the
+   UNAUTHENTICATE command would allow a client, on a subsequent
+   authentication, to bypass any security restrictions present in the
+   proxy layer but not in the backend server layer.  As a result, IMAP
+   server implementations of this extension MUST provide a way to
+   disable it when it is not needed.  Use of an IMAP proxy that
+   processes the UNAUTHENTICATE command at the proxy layer eliminates
+   this concern.  Another option to mitigate this concern is for servers
+   to only enable the UNAUTHENTICATE extension if the supplied
+   authentication credentials are associated with an administrative
+   identity.
+
+9.  Privacy Considerations
+
+   For the most part, this extension will have no impact on the privacy
+   considerations already present in an IMAP implementation.  However,
+   if this extension were used between data centers, it could improve
+   end-user privacy by increasing the difficultly of traffic analysis
+   due to connection reuse.
+
+10.  References
+
+10.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC3501]  Crispin, M., "INTERNET MESSAGE ACCESS PROTOCOL - VERSION
+              4rev1", RFC 3501, DOI 10.17487/RFC3501, March 2003,
+              <https://www.rfc-editor.org/info/rfc3501>.
+
+   [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
+              <https://www.rfc-editor.org/info/rfc5234>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+
+
+
+
+
+
+Newman                       Standards Track                    [Page 8]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+10.2.  Informative References
+
+   [RFC2971]  Showalter, T., "IMAP4 ID extension", RFC 2971,
+              DOI 10.17487/RFC2971, October 2000,
+              <https://www.rfc-editor.org/info/rfc2971>.
+
+   [RFC3691]  Melnikov, A., "Internet Message Access Protocol (IMAP)
+              UNSELECT command", RFC 3691, DOI 10.17487/RFC3691,
+              February 2004, <https://www.rfc-editor.org/info/rfc3691>.
+
+   [RFC4314]  Melnikov, A., "IMAP4 Access Control List (ACL) Extension",
+              RFC 4314, DOI 10.17487/RFC4314, December 2005,
+              <https://www.rfc-editor.org/info/rfc4314>.
+
+   [RFC4422]  Melnikov, A., Ed. and K. Zeilenga, Ed., "Simple
+              Authentication and Security Layer (SASL)", RFC 4422,
+              DOI 10.17487/RFC4422, June 2006,
+              <https://www.rfc-editor.org/info/rfc4422>.
+
+   [RFC4959]  Siemborski, R. and A. Gulbrandsen, "IMAP Extension for
+              Simple Authentication and Security Layer (SASL) Initial
+              Client Response", RFC 4959, DOI 10.17487/RFC4959,
+              September 2007, <https://www.rfc-editor.org/info/rfc4959>.
+
+   [RFC4978]  Gulbrandsen, A., "The IMAP COMPRESS Extension", RFC 4978,
+              DOI 10.17487/RFC4978, August 2007,
+              <https://www.rfc-editor.org/info/rfc4978>.
+
+   [RFC5161]  Gulbrandsen, A., Ed. and A. Melnikov, Ed., "The IMAP
+              ENABLE Extension", RFC 5161, DOI 10.17487/RFC5161, March
+              2008, <https://www.rfc-editor.org/info/rfc5161>.
+
+   [RFC5182]  Melnikov, A., "IMAP Extension for Referencing the Last
+              SEARCH Result", RFC 5182, DOI 10.17487/RFC5182, March
+              2008, <https://www.rfc-editor.org/info/rfc5182>.
+
+   [RFC5255]  Newman, C., Gulbrandsen, A., and A. Melnikov, "Internet
+              Message Access Protocol Internationalization", RFC 5255,
+              DOI 10.17487/RFC5255, June 2008,
+              <https://www.rfc-editor.org/info/rfc5255>.
+
+   [RFC5267]  Cridland, D. and C. King, "Contexts for IMAP4", RFC 5267,
+              DOI 10.17487/RFC5267, July 2008,
+              <https://www.rfc-editor.org/info/rfc5267>.
+
+
+
+
+
+
+
+Newman                       Standards Track                    [Page 9]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+   [RFC5464]  Daboo, C., "The IMAP METADATA Extension", RFC 5464,
+              DOI 10.17487/RFC5464, February 2009,
+              <https://www.rfc-editor.org/info/rfc5464>.
+
+   [RFC5465]  Gulbrandsen, A., King, C., and A. Melnikov, "The IMAP
+              NOTIFY Extension", RFC 5465, DOI 10.17487/RFC5465,
+              February 2009, <https://www.rfc-editor.org/info/rfc5465>.
+
+   [RFC6855]  Resnick, P., Ed., Newman, C., Ed., and S. Shen, Ed., "IMAP
+              Support for UTF-8", RFC 6855, DOI 10.17487/RFC6855, March
+              2013, <https://www.rfc-editor.org/info/rfc6855>.
+
+   [RFC7162]  Melnikov, A. and D. Cridland, "IMAP Extensions: Quick Flag
+              Changes Resynchronization (CONDSTORE) and Quick Mailbox
+              Resynchronization (QRESYNC)", RFC 7162,
+              DOI 10.17487/RFC7162, May 2014,
+              <https://www.rfc-editor.org/info/rfc7162>.
+
+   [RFC8314]  Moore, K. and C. Newman, "Cleartext Considered Obsolete:
+              Use of Transport Layer Security (TLS) for Email Submission
+              and Access", RFC 8314, DOI 10.17487/RFC8314, January 2018,
+              <https://www.rfc-editor.org/info/rfc8314>.
+
+   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
+              <https://www.rfc-editor.org/info/rfc8446>.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Newman                       Standards Track                   [Page 10]
+
+RFC 8437        IMAP UNAUTHENTICATE for Connection Reuse     August 2018
+
+
+Appendix A.  Design Considerations
+
+   The author deliberately chose to add a separate UNAUTHENTICATE
+   command instead of allowing the LOGIN or AUTHENTICATE commands to be
+   issued when the connection is in a state other than unauthenticated.
+   The primary reason for this choice is that the code that transitions
+   from not authenticated state to authenticated state in a server is
+   often the most security-sensitive code, because it needs to assume
+   and handle unconditionally hostile attackers.  That sensitive code is
+   simpler if it only handles a single server state (unauthenticated)
+   and the state transition is as simple as possible.  Smaller and
+   simpler code is easier to audit and write in a secure way.
+
+   A secondary reason to have a separate command is that it is simpler
+   to enable or disable the feature with that design.  See the
+   discussion in the Security Considerations section recommending that
+   implementations provide a way to disable this extension.
+
+Acknowledgements
+
+   Thanks to Fred Batty for implementing UNAUTHENTICATE and to Cyrus
+   Daboo for constructive suggestions to improve this document.
+
+Author's Address
+
+   Chris Newman
+   Oracle
+   440 E. Huntington Dr., Suite 400
+   Arcadia, CA  91006
+   United States of America
+
+   Email: chris.newman@oracle.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Newman                       Standards Track                   [Page 11]
+
