@@ -291,6 +291,11 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		AppendLimit      = 1L << 48,
 
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc8437">UNAUTHENTICATE</a> extension.
+		/// </summary>
+		Unauthenticate   = 1L << 49,
+
 		#region GMail Extensions
 
 		/// <summary>

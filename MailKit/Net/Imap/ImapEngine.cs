@@ -1105,6 +1105,7 @@ namespace MailKit.Net.Imap {
 					case "UTF8=ONLY":          Capabilities |= ImapCapabilities.UTF8Only; break;
 					case "LITERAL-":           Capabilities |= ImapCapabilities.LiteralMinus; break;
 					case "APPENDLIMIT":        Capabilities |= ImapCapabilities.AppendLimit; break;
+					case "UNAUTHENTICATE":     Capabilities |= ImapCapabilities.Unauthenticate; break;
 					case "XLIST":              Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; QuirksMode = ImapQuirksMode.GMail; break;
 					case "XSTOP":              QuirksMode = ImapQuirksMode.ProtonMail; break;
