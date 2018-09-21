@@ -94,38 +94,50 @@ namespace ImapClientDemo
 			return node;
 		}
 
-		async Task LoadChildFoldersAsync (IMailFolder folder, IEnumerable<IMailFolder> children)
+		async Task LoadSubfoldersAsync (IMailFolder folder, IList<IMailFolder> subfolders)
 		{
 			TreeNodeCollection nodes;
 			TreeNode node;
 
 			if (map.TryGetValue (folder, out node)) {
+				// removes the dummy "Loading..." folder
 				nodes = node.Nodes;
 				nodes.Clear ();
 			} else {
 				nodes = Nodes;
 			}
 
-			foreach (var child in children) {
-				node = CreateFolderNode (child);
-				map[child] = node;
+			foreach (var subfolder in subfolders) {
+				node = CreateFolderNode (subfolder);
+				map[subfolder] = node;
 				nodes.Add (node);
 
-				child.MessageFlagsChanged += UpdateUnreadCount;
-				child.CountChanged += UpdateUnreadCount;
+				subfolder.MessageFlagsChanged += UpdateUnreadCount;
+				subfolder.CountChanged += UpdateUnreadCount;
 
-				if (!child.Attributes.HasFlag (FolderAttributes.NonExistent) && !child.Attributes.HasFlag (FolderAttributes.NoSelect)) {
-					await child.StatusAsync (StatusItems.Unread);
-					UpdateFolderNode (child);
+				if (!subfolder.Attributes.HasFlag (FolderAttributes.NonExistent) && !subfolder.Attributes.HasFlag (FolderAttributes.NoSelect)) {
+					await subfolder.StatusAsync (StatusItems.Unread);
+					UpdateFolderNode (subfolder);
 				}
 			}
 		}
 
-		async Task LoadChildFoldersAsync (IMailFolder folder)
+		class FolderComparer : IComparer<IMailFolder>
 		{
-			var children = await folder.GetSubfoldersAsync ();
+			public int Compare (IMailFolder x, IMailFolder y)
+			{
+				return string.Compare (x.Name, y.Name, StringComparison.CurrentCulture);
+			}
+		}
 
-			await LoadChildFoldersAsync (folder, children);
+		async Task LoadSubfoldersAsync (IMailFolder folder)
+		{
+			var subfolders = await folder.GetSubfoldersAsync ();
+			var sorted = new List<IMailFolder> (subfolders);
+
+			sorted.Sort (new FolderComparer ());
+
+			await LoadSubfoldersAsync (folder, sorted);
 		}
 
 		public Task LoadFoldersAsync ()
@@ -134,7 +146,7 @@ namespace ImapClientDemo
 
 			PathSeparator = personal.DirectorySeparator.ToString ();
 
-			return LoadChildFoldersAsync (personal);
+			return LoadSubfoldersAsync (personal);
 		}
 
 		async Task UpdateUnreadCountAsync (Task task, object state)
@@ -158,7 +170,7 @@ namespace ImapClientDemo
 
 			await task;
 
-			await LoadChildFoldersAsync (folder);
+			await LoadSubfoldersAsync (folder);
 		}
 
 		protected override void OnBeforeExpand (TreeViewCancelEventArgs e)
