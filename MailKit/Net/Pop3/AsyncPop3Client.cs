@@ -320,6 +320,46 @@ namespace MailKit.Net.Pop3
 		}
 
 		/// <summary>
+		/// Get the message count.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the message count.
+		/// </remarks>
+		/// <returns>The message count.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public async Task<int> GetMessageCountAsync (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			await UpdateMessageCountAsync (true, cancellationToken).ConfigureAwait (false);
+
+			return Count;
+		}
+
+		/// <summary>
 		/// Ping the POP3 server to keep the connection alive.
 		/// </summary>
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>

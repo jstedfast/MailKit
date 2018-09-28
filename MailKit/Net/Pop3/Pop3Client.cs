@@ -1365,6 +1365,46 @@ namespace MailKit.Net.Pop3 {
 			DisconnectAsync (quit, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
+		/// <summary>
+		/// Get the message count.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message count.
+		/// </remarks>
+		/// <returns>The message count.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public int GetMessageCount (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			UpdateMessageCountAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+
+			return Count;
+		}
+
 		Task NoOpAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
