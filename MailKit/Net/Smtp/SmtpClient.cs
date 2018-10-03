@@ -1718,6 +1718,7 @@ namespace MailKit.Net.Smtp {
 			case SmtpStatusCode.MailboxNameNotAllowed:
 			case SmtpStatusCode.MailboxUnavailable:
 			case SmtpStatusCode.MailboxBusy:
+			case SmtpStatusCode.SyntaxError:
 				OnRecipientNotAccepted (message, mailbox, response);
 				return false;
 			case SmtpStatusCode.AuthenticationRequired:
