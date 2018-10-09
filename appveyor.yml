@@ -37,33 +37,4 @@ test_script:
     	-output:opencover.xml `
     }
 
-    $revision = git rev-parse HEAD
-
-    $branch = git rev-parse --abbrev-ref HEAD
-
-    $commitAuthor = git show --quiet --format="%aN" $revision
-
-    $commitEmail = git show --quiet --format="%aE" $revision
-
-    $commitMessage = git show --quiet --format="%s" $revision
-
-    .\packages\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe `
-
-    --opencover -i opencover.xml `
-
-    --repoToken $Env:COVERALLS_REPO_TOKEN `
-
-    --commitId $revision `
-
-    --commitBranch $branch `
-
-    --commitAuthor $commitAuthor `
-
-    --commitEmail $commitEmail `
-
-    --commitMessage $commitMessage `
-
-    --useRelativePaths `
-
-    --basePath .\UnitTests\bin\Debug
-
+    .\packages\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencover.xml --repoToken $Env:COVERALLS_REPO_TOKEN --useRelativePaths --basePath .\UnitTests\bin\Debug --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_BUILD_NUMBER --serviceName appveyor
