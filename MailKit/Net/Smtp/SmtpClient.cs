@@ -1605,19 +1605,15 @@ namespace MailKit.Net.Smtp {
 
 		void ProcessMailFromResponse (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
 		{
-			switch (response.StatusCode) {
-			case SmtpStatusCode.Ok:
+			if (response.StatusCode >= SmtpStatusCode.Ok && response.StatusCode < (SmtpStatusCode) 260) {
 				OnSenderAccepted (message, mailbox, response);
-				break;
-			case SmtpStatusCode.MailboxNameNotAllowed:
-			case SmtpStatusCode.MailboxUnavailable:
-				OnSenderNotAccepted (message, mailbox, response);
-				break;
-			case SmtpStatusCode.AuthenticationRequired:
-				throw new ServiceNotAuthenticatedException (response.Response);
-			default:
-				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+				return;
 			}
+
+			if (response.StatusCode == SmtpStatusCode.AuthenticationRequired)
+				throw new ServiceNotAuthenticatedException (response.Response);
+
+			OnSenderNotAccepted (message, mailbox, response);
 		}
 
 		/// <summary>
@@ -1709,23 +1705,17 @@ namespace MailKit.Net.Smtp {
 
 		bool ProcessRcptToResponse (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
 		{
-			switch (response.StatusCode) {
-			case SmtpStatusCode.UserNotLocalWillForward:
-			case SmtpStatusCode.Ok:
+			if (response.StatusCode < (SmtpStatusCode) 300) {
 				OnRecipientAccepted (message, mailbox, response);
 				return true;
-			case SmtpStatusCode.UserNotLocalTryAlternatePath:
-			case SmtpStatusCode.MailboxNameNotAllowed:
-			case SmtpStatusCode.MailboxUnavailable:
-			case SmtpStatusCode.MailboxBusy:
-			case SmtpStatusCode.SyntaxError:
-				OnRecipientNotAccepted (message, mailbox, response);
-				return false;
-			case SmtpStatusCode.AuthenticationRequired:
-				throw new ServiceNotAuthenticatedException (response.Response);
-			default:
-				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			}
+
+			if (response.StatusCode == SmtpStatusCode.AuthenticationRequired)
+				throw new ServiceNotAuthenticatedException (response.Response);
+
+			OnRecipientNotAccepted (message, mailbox, response);
+
+			return false;
 		}
 
 		/// <summary>
