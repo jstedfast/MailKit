@@ -513,7 +513,7 @@ string. Please include the `Exception.StackTrace` as well. The `Message`, by its
 
 ## Documentation
 
-API documentation can be found at [http://mimekit.net/docs](http://mimekit.net/docs).
+API documentation can be found at [http://www.mimekit.net/docs](http://www.mimekit.net/docs).
 
 A copy of the xml formatted API documentation is also included in the NuGet and/or
 Xamarin Component package.
