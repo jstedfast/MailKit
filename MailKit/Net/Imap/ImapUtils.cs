@@ -1251,7 +1251,7 @@ namespace MailKit.Net.Imap {
 
 			token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 
-			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag) {
+			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.QString) {
 				var flag = (string) token.Value;
 
 				switch (flag) {
