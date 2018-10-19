@@ -2554,8 +2554,9 @@ namespace MailKit.Net.Imap {
 		void OnEngineDisconnected (object sender, EventArgs e)
 		{
 			engine.Disconnected -= OnEngineDisconnected;
-			OnDisconnected ();
 			secure = false;
+
+			OnDisconnected ();
 		}
 
 		/// <summary>
