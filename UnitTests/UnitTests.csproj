@@ -64,6 +64,7 @@
     <Compile Include="Net\Smtp\SmtpDataFilterTests.cs" />
     <Compile Include="Net\Smtp\SmtpProtocolExceptionTests.cs" />
     <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
+    <Compile Include="Net\Smtp\SmtpStreamTests.cs" />
     <Compile Include="Search\SearchQueryTests.cs" />
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="ArgumentExceptionTests.cs" />

@@ -224,7 +224,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override long Position {
 			get { return Stream.Position; }
-			set { Stream.Position = value; }
+			set { Seek (value, SeekOrigin.Begin); }
 		}
 
 		/// <summary>
