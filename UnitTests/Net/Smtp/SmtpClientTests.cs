@@ -226,6 +226,68 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
+		public void TestSendWithoutSenderOrRecipients ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var client = new SmtpClient ()) {
+				var message = CreateSimpleMessage ();
+
+				client.LocalDomain = "127.0.0.1";
+
+				try {
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				message.From.Clear ();
+				message.Sender = null;
+				Assert.Throws<InvalidOperationException> (() => client.Send (message));
+
+				message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
+				message.To.Clear ();
+				Assert.Throws<InvalidOperationException> (() => client.Send (message));
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestSendWithoutSenderOrRecipientsAsync ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var client = new SmtpClient ()) {
+				var message = CreateSimpleMessage ();
+
+				client.LocalDomain = "127.0.0.1";
+
+				try {
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				message.From.Clear ();
+				message.Sender = null;
+				Assert.Throws<InvalidOperationException> (async () => await client.SendAsync (message));
+
+				message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
+				message.To.Clear ();
+				Assert.Throws<InvalidOperationException> (async () => await client.SendAsync (message));
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		[Test]
 		public void TestInvalidStateExceptions ()
 		{
 			var commands = new List<SmtpReplayCommand> ();

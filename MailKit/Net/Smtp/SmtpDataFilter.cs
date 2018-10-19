@@ -62,6 +62,12 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
+			if (ndots == 0) {
+				outputIndex = startIndex;
+				outputLength = length;
+				return input;
+			}
+
 			EnsureOutputSize (length + ndots, false);
 			int index = 0;
 
