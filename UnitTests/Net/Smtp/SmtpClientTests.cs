@@ -45,6 +45,23 @@ namespace UnitTests.Net.Smtp {
 	[TestFixture]
 	public class SmtpClientTests
 	{
+		class MyProgress : ITransferProgress
+		{
+			public long BytesTransferred;
+			public long TotalSize;
+
+			public void Report (long bytesTransferred, long totalSize)
+			{
+				BytesTransferred = bytesTransferred;
+				TotalSize = totalSize;
+			}
+
+			public void Report (long bytesTransferred)
+			{
+				BytesTransferred = bytesTransferred;
+			}
+		}
+
 		MimeMessage CreateSimpleMessage ()
 		{
 			var message = new MimeMessage ();
@@ -93,7 +110,6 @@ namespace UnitTests.Net.Smtp {
 		{
 			using (var client = new SmtpClient ()) {
 				var credentials = new NetworkCredential ("username", "password");
-				var socket = new Socket (SocketType.Stream, ProtocolType.Tcp);
 				var message = CreateSimpleMessage ();
 				var sender = message.From.Mailboxes.FirstOrDefault ();
 				var recipients = message.To.Mailboxes.ToList ();
@@ -117,7 +133,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
 
 				Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 25, SecureSocketOptions.None));
-				Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 25, SecureSocketOptions.None));
+				using (var socket = new Socket (SocketType.Stream, ProtocolType.Tcp))
+					Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 25, SecureSocketOptions.None));
+
+				using (var socket = Connect ("www.gmail.com", 80)) {
+					Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentException> (() => client.Connect (socket, string.Empty, 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, "host", -1, SecureSocketOptions.None));
+					Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, "host", 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, string.Empty, 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, "host", -1, SecureSocketOptions.None));
+				}
 
 				// Authenticate
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate ((SaslMechanism) null));
@@ -212,16 +240,22 @@ namespace UnitTests.Net.Smtp {
 		public void TestSslHandshakeExceptions ()
 		{
 			using (var client = new SmtpClient ()) {
-				Socket socket;
-
 				Assert.Throws<SslHandshakeException> (() => client.Connect ("www.gmail.com", 80, true));
 				Assert.Throws<SslHandshakeException> (async () => await client.ConnectAsync ("www.gmail.com", 80, true));
 
-				socket = Connect ("www.gmail.com", 80);
-				Assert.Throws<SslHandshakeException> (() => client.Connect (socket, "www.gmail.com", 80, SecureSocketOptions.SslOnConnect));
+				using (var socket = Connect ("www.gmail.com", 80))
+					Assert.Throws<SslHandshakeException> (() => client.Connect (socket, "www.gmail.com", 80, SecureSocketOptions.SslOnConnect));
 
-				socket = Connect ("www.gmail.com", 80);
-				Assert.Throws<SslHandshakeException> (async () => await client.ConnectAsync (socket, "www.gmail.com", 80, SecureSocketOptions.SslOnConnect));
+				using (var socket = Connect ("www.gmail.com", 80))
+					Assert.Throws<SslHandshakeException> (async () => await client.ConnectAsync (socket, "www.gmail.com", 80, SecureSocketOptions.SslOnConnect));
+			}
+		}
+
+		[Test]
+		public void TestSyncRoot ()
+		{
+			using (var client = new SmtpClient ()) {
+				Assert.AreEqual (client, client.SyncRoot);
 			}
 		}
 
@@ -320,6 +354,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ServiceNotConnectedException> (() => client.Send (options, message));
 				Assert.Throws<ServiceNotConnectedException> (() => client.Send (message));
 
+				Assert.Throws<ServiceNotConnectedException> (() => client.Expand ("user@example.com"));
+				Assert.Throws<ServiceNotConnectedException> (() => client.Verify ("user@example.com"));
+
 				try {
 					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
@@ -328,6 +365,9 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect ("host", 465, SecureSocketOptions.SslOnConnect));
 				Assert.Throws<InvalidOperationException> (() => client.Connect ("host", 465, true));
+
+				using (var socket = Connect ("www.gmail.com", 80))
+					Assert.Throws<InvalidOperationException> (() => client.Connect (socket, "host", 465, SecureSocketOptions.SslOnConnect));
 
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.Send (options, message, sender, recipients));
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.Send (message, sender, recipients));
@@ -380,6 +420,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.SendAsync (options, message));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.SendAsync (message));
 
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.ExpandAsync ("user@example.com"));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.VerifyAsync ("user@example.com"));
+
 				try {
 					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
@@ -388,6 +431,9 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("host", 465, SecureSocketOptions.SslOnConnect));
 				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("host", 465, true));
+
+				using (var socket = Connect ("www.gmail.com", 80))
+					Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (socket, "host", 465, SecureSocketOptions.SslOnConnect));
 
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.SendAsync (options, message, sender, recipients));
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.SendAsync (message, sender, recipients));
@@ -420,7 +466,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
 
 				var socket = Connect ("smtp.gmail.com", 465);
-				client.Connect (socket, "smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
+				client.Connect (socket, "smtp.gmail.com", 465, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
@@ -452,7 +498,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
 
 				var socket = Connect ("smtp.gmail.com", 465);
-				await client.ConnectAsync (socket, "smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
+				await client.ConnectAsync (socket, "smtp.gmail.com", 465, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
@@ -947,22 +993,30 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		[Test]
-		public void TestBinaryMime ()
+		static long Measure (MimeMessage message)
+		{
+			var options = FormatOptions.Default.Clone ();
+
+			options.NewLineFormat = NewLineFormat.Dos;
+
+			using (var measure = new MeasuringStream ()) {
+				message.WriteTo (options, measure);
+				return measure.Length;
+			}
+		}
+
+		[TestCase (false, TestName = "TestBinaryMimeNoProgress")]
+		[TestCase (true, TestName = "TestBinaryMimeWithProgress")]
+		public void TestBinaryMime (bool showProgress)
 		{
 			var message = CreateBinaryMessage ();
+			var size = Measure (message);
 			string bdat;
 
 			using (var memory = new MemoryStream ()) {
 				var options = FormatOptions.Default.Clone ();
-				long size;
 
 				options.NewLineFormat = NewLineFormat.Dos;
-
-				using (var measure = new MeasuringStream ()) {
-					message.WriteTo (options, measure);
-					size = measure.Length;
-				}
 
 				var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
 				memory.Write (bytes, 0, bytes.Length);
@@ -1001,8 +1055,6 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
@@ -1013,7 +1065,15 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
 
 				try {
-					client.Send (message);
+					if (showProgress) {
+						var progress = new MyProgress ();
+
+						client.Send (message, progress: progress);
+
+						Assert.AreEqual (size, progress.BytesTransferred, "BytesTransferred");
+					} else {
+						client.Send (message);
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -1028,22 +1088,18 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		[Test]
-		public async void TestBinaryMimeAsync ()
+		[TestCase (false, TestName = "TestBinaryMimeAsyncNoProgress")]
+		[TestCase (true, TestName = "TestBinaryMimeAsyncWithProgress")]
+		public async void TestBinaryMimeAsync (bool showProgress)
 		{
 			var message = CreateBinaryMessage ();
+			var size = Measure (message);
 			string bdat;
 
 			using (var memory = new MemoryStream ()) {
 				var options = FormatOptions.Default.Clone ();
-				long size;
 
 				options.NewLineFormat = NewLineFormat.Dos;
-
-				using (var measure = new MeasuringStream ()) {
-					message.WriteTo (options, measure);
-					size = measure.Length;
-				}
 
 				var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
 				memory.Write (bytes, 0, bytes.Length);
@@ -1051,7 +1107,7 @@ namespace UnitTests.Net.Smtp {
 
 				bytes = memory.GetBuffer ();
 
-				bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
+				bdat = Encoding.UTF8.GetString (bytes, 0, (int)memory.Length);
 			}
 
 			var commands = new List<SmtpReplayCommand> ();
@@ -1082,8 +1138,6 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
@@ -1094,7 +1148,15 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
 
 				try {
-					await client.SendAsync (message);
+					if (showProgress) {
+						var progress = new MyProgress ();
+
+						await client.SendAsync (message, progress: progress);
+
+						Assert.AreEqual (size, progress.BytesTransferred, "BytesTransferred");
+					} else {
+						await client.SendAsync (message);
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -1109,8 +1171,9 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		[Test]
-		public void TestPipelining ()
+		[TestCase (false, TestName = "TestPipeliningNoProgress")]
+		[TestCase (true, TestName = "TestPipeliningWithProgress")]
+		public void TestPipelining (bool showProgress)
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -1135,12 +1198,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
@@ -1150,7 +1210,17 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Send (CreateEightBitMessage ());
+					var message = CreateEightBitMessage ();
+
+					if (showProgress) {
+						var progress = new MyProgress ();
+
+						client.Send (message, progress: progress);
+
+						Assert.AreEqual (Measure (message), progress.BytesTransferred, "BytesTransferred");
+					} else {
+						client.Send (message);
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -1165,8 +1235,9 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		[Test]
-		public async void TestPipeliningAsync ()
+		[TestCase (false, TestName = "TestPipeliningAsyncNoProgress")]
+		[TestCase (true, TestName = "TestPipeliningAsyncWithProgress")]
+		public async void TestPipeliningAsync (bool showProgress)
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -1191,12 +1262,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
@@ -1206,7 +1274,17 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					await client.SendAsync (CreateEightBitMessage ());
+					var message = CreateEightBitMessage ();
+
+					if (showProgress) {
+						var progress = new MyProgress ();
+
+						await client.SendAsync (message, progress: progress);
+
+						Assert.AreEqual (Measure (message), progress.BytesTransferred, "BytesTransferred");
+					} else {
+						await client.SendAsync (message);
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
