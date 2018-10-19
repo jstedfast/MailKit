@@ -34,6 +34,7 @@ using System.Collections.Generic;
 #if !NETFX_CORE
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using SslProtocols = System.Security.Authentication.SslProtocols;
 #else
 using Encoding = Portable.Text.Encoding;
 #endif
@@ -60,6 +61,20 @@ namespace MailKit {
 		object SyncRoot { get; }
 
 #if !NETFX_CORE
+		/// <summary>
+		/// Gets or sets the SSL and TLS protocol versions that the client is allowed to use.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets the SSL and TLS protocol versions that the client is allowed to use.</para>
+		/// <para>By default, MailKit initializes this value to support only TLS v1.0 and greater and
+		/// does not support any version of SSL due to those protocols no longer being considered
+		/// secure.</para>
+		/// <para>This property should be set before calling any of the
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> methods.</para>
+		/// </remarks>
+		/// <value>The SSL and TLS protocol versions that are supported.</value>
+		SslProtocols SslProtocols { get; set; }
+
 		/// <summary>
 		/// Get or set the client SSL certificates.
 		/// </summary>
