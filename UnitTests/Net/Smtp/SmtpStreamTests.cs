@@ -65,12 +65,12 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestGetSetTimeouts ()
 		{
-			using (var stream = new SmtpStream (new MemoryStream (), null, new NullProtocolLogger ())) {
-				Assert.Throws<InvalidOperationException> (() => { int x = stream.ReadTimeout; });
-				Assert.Throws<InvalidOperationException> (() => { int x = stream.WriteTimeout; });
+			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+				stream.ReadTimeout = 5;
+				Assert.AreEqual (5, stream.ReadTimeout, "ReadTimeout");
 
-				Assert.Throws<InvalidOperationException> (() => stream.ReadTimeout = 5);
-				Assert.Throws<InvalidOperationException> (() => stream.WriteTimeout = 5);
+				stream.WriteTimeout = 7;
+				Assert.AreEqual (7, stream.WriteTimeout, "WriteTimeout");
 			}
 		}
 
@@ -141,7 +141,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var rng = new RNGCryptoServiceProvider ()) {
 				var builder = new StringBuilder ();
-				var buffer = new byte[64];
+				var buffer = new byte[72];
 
 				while (builder.Length < 5120) {
 					rng.GetBytes (buffer);

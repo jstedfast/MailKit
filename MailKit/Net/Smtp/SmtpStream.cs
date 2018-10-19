@@ -58,20 +58,15 @@ namespace MailKit.Net.Smtp {
 	{
 		static readonly Encoding Latin1;
 		static readonly Encoding UTF8;
-		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
-		const int PadSize = 4;
 
 		// I/O buffering
-		readonly byte[] input = new byte[ReadAheadSize + BlockSize + PadSize];
-		const int inputStart = ReadAheadSize;
-
+		readonly byte[] input = new byte[BlockSize];
 		readonly byte[] output = new byte[BlockSize];
 		int outputIndex;
 
 		readonly IProtocolLogger logger;
-		int inputIndex = ReadAheadSize;
-		int inputEnd = ReadAheadSize;
+		int inputIndex, inputEnd;
 		bool disposed;
 
 		static SmtpStream ()
@@ -266,38 +261,10 @@ namespace MailKit.Net.Smtp {
 
 		async Task<int> ReadAheadAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			int left = inputEnd - inputIndex;
-			int start = inputStart;
-			int end = inputEnd;
 			int nread;
 
-			if (left > 0) {
-				int index = inputIndex;
-
-				// attempt to align the end of the remaining input with ReadAheadSize
-				if (index >= start) {
-					start -= Math.Min (ReadAheadSize, left);
-					Buffer.BlockCopy (input, index, input, start, left);
-					index = start;
-					start += left;
-				} else if (index > 0) {
-					int shift = Math.Min (index, end - start);
-					Buffer.BlockCopy (input, index, input, index - shift, left);
-					index -= shift;
-					start = index + left;
-				} else {
-					// we can't shift...
-					start = end;
-				}
-
-				inputIndex = index;
-				inputEnd = start;
-			} else {
-				inputIndex = start;
-				inputEnd = start;
-			}
-
-			end = input.Length - PadSize;
+			inputIndex = 0;
+			inputEnd = 0;
 
 			try {
 #if !NETFX_CORE
@@ -310,20 +277,20 @@ namespace MailKit.Net.Smtp {
 					cancellationToken.ThrowIfCancellationRequested ();
 
 					if (doAsync)
-						nread = await Stream.ReadAsync (input, start, end - start, cancellationToken).ConfigureAwait (false);
+						nread = await Stream.ReadAsync (input, 0, input.Length, cancellationToken).ConfigureAwait (false);
 					else
-						nread = Stream.Read (input, start, end - start);
+						nread = Stream.Read (input, 0, input.Length);
 				} else {
 					if (doAsync) {
-						nread = await Stream.ReadAsync (input, start, end - start, cancellationToken).ConfigureAwait (false);
+						nread = await Stream.ReadAsync (input, 0, input.Length, cancellationToken).ConfigureAwait (false);
 					} else {
 						Poll (SelectMode.SelectRead, cancellationToken);
-						nread = Stream.Read (input, start, end - start);
+						nread = Stream.Read (input, 0, input.Length);
 					}
 				}
 
 				if (nread > 0) {
-					logger.LogServer (input, start, nread);
+					logger.LogServer (input, 0, nread);
 					inputEnd += nread;
 				} else {
 					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
