@@ -77,6 +77,7 @@
     <Compile Include="Security\SaslMechanismScramSha1Tests.cs" />
     <Compile Include="Security\SaslMechanismScramSha256Tests.cs" />
     <Compile Include="Security\SaslMechanismTests.cs" />
+    <Compile Include="Security\SslHandshakeExceptionTests.cs" />
     <Compile Include="Net\DummyNetworkStream.cs" />
     <Compile Include="ArgumentExceptionTests.cs" />
     <Compile Include="BodyPartTests.cs" />
