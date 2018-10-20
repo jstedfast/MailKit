@@ -50,6 +50,8 @@ namespace MailKit.Security {
 	/// </remarks>
 	public class SaslMechanismDigestMd5 : SaslMechanism
 	{
+		static readonly Encoding Latin1;
+
 		enum LoginState {
 			Auth,
 			Final
@@ -58,7 +60,17 @@ namespace MailKit.Security {
 		DigestChallenge challenge;
 		DigestResponse response;
 		internal string cnonce;
+		Encoding encoding;
 		LoginState state;
+
+		static SaslMechanismDigestMd5 ()
+		{
+			try {
+				Latin1 = Encoding.GetEncoding (28591);
+			} catch (NotSupportedException) {
+				Latin1 = Encoding.GetEncoding (1252);
+			}
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
@@ -196,14 +208,16 @@ namespace MailKit.Security {
 					cnonce = Convert.ToBase64String (entropy);
 				}
 
-				response = new DigestResponse (challenge, Uri.Scheme, Uri.DnsSafeHost, AuthorizationId, Credentials.UserName, Credentials.Password, cnonce);
+				encoding = challenge.Charset != null ? Encoding.UTF8 : Latin1;
+				response = new DigestResponse (challenge, encoding, Uri.Scheme, Uri.DnsSafeHost, AuthorizationId, Credentials.UserName, Credentials.Password, cnonce);
 				state = LoginState.Final;
-				return response.Encode ();
+
+				return response.Encode (encoding);
 			case LoginState.Final:
 				if (token.Length == 0)
 					throw new SaslException (MechanismName, SaslErrorCode.MissingChallenge, "Server response did not contain any authentication data.");
 
-				var text = Encoding.UTF8.GetString (token, startIndex, length);
+				var text = encoding.GetString (token, startIndex, length);
 				string key, value;
 
 				if (!DigestChallenge.TryParseKeyValuePair (text, out key, out value))
@@ -212,7 +226,7 @@ namespace MailKit.Security {
 				if (!key.Equals ("rspauth", StringComparison.OrdinalIgnoreCase))
 					throw new SaslException (MechanismName, SaslErrorCode.InvalidChallenge, "Server response contained invalid data.");
 
-				var expected = response.ComputeHash (Credentials.Password, false);
+				var expected = response.ComputeHash (encoding, Credentials.Password, false);
 				if (value != expected)
 					throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, "Server response did not contain the expected hash.");
 
@@ -403,9 +417,9 @@ namespace MailKit.Security {
 					challenge.MaxBuf = maxbuf;
 					break;
 				case "charset":
-					if (challenge.Charset != null)
+					if (challenge.Charset != null || !value.Equals ("utf-8", StringComparison.OrdinalIgnoreCase))
 						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
-					challenge.Charset = value;
+					challenge.Charset = "utf-8";
 					break;
 				case "algorithm":
 					if (challenge.Algorithm != null)
@@ -448,7 +462,7 @@ namespace MailKit.Security {
 		public string Cipher { get; private set; }
 		public string AuthZid { get; private set; }
 
-		public DigestResponse (DigestChallenge challenge, string protocol, string hostName, string authzid, string userName, string password, string cnonce)
+		public DigestResponse (DigestChallenge challenge, Encoding encoding, string protocol, string hostName, string authzid, string userName, string password, string cnonce)
 		{
 			UserName = userName;
 
@@ -465,15 +479,12 @@ namespace MailKit.Security {
 			Qop = "auth";
 
 			DigestUri = string.Format ("{0}/{1}", protocol, hostName);
-
-			if (!string.IsNullOrEmpty (challenge.Charset))
-				Charset = challenge.Charset;
-
 			Algorithm = challenge.Algorithm;
+			Charset = challenge.Charset;
 			AuthZid = authzid;
 			Cipher = null;
 
-			Response = ComputeHash (password, true);
+			Response = ComputeHash (encoding, password, true);
 		}
 
 		static string HexEncode (byte[] digest)
@@ -486,14 +497,14 @@ namespace MailKit.Security {
 			return hex.ToString ();
 		}
 
-		public string ComputeHash (string password, bool client)
+		public string ComputeHash (Encoding encoding, string password, bool client)
 		{
 			string text, a1, a2;
 			byte[] buf, digest;
 
 			// compute A1
 			text = string.Format ("{0}:{1}:{2}", UserName, Realm, password);
-			buf = Encoding.UTF8.GetBytes (text);
+			buf = encoding.GetBytes (text);
 			using (var md5 = MD5.Create ())
 				digest = md5.ComputeHash (buf);
 
@@ -502,7 +513,7 @@ namespace MailKit.Security {
 				text = string.Format (":{0}:{1}", Nonce, CNonce);
 				if (!string.IsNullOrEmpty (AuthZid))
 					text += ":" + AuthZid;
-				buf = Encoding.ASCII.GetBytes (text);
+				buf = encoding.GetBytes (text);
 				md5.TransformFinalBlock (buf, 0, buf.Length);
 				a1 = HexEncode (md5.Hash);
 			}
@@ -514,14 +525,14 @@ namespace MailKit.Security {
 			if (Qop == "auth-int" || Qop == "auth-conf")
 				text += ":00000000000000000000000000000000";
 
-			buf = Encoding.ASCII.GetBytes (text);
+			buf = encoding.GetBytes (text);
 			using (var md5 = MD5.Create ())
 				digest = md5.ComputeHash (buf);
 			a2 = HexEncode (digest);
 
 			// compute KD
 			text = string.Format ("{0}:{1}:{2:x8}:{3}:{4}:{5}", a1, Nonce, Nc, CNonce, Qop, a2);
-			buf = Encoding.ASCII.GetBytes (text);
+			buf = encoding.GetBytes (text);
 			using (var md5 = MD5.Create ())
 				digest = md5.ComputeHash (buf);
 
@@ -543,15 +554,8 @@ namespace MailKit.Security {
 			return quoted.ToString ();
 		}
 
-		public byte[] Encode ()
+		public byte[] Encode (Encoding encoding)
 		{
-			Encoding encoding;
-
-			if (!string.IsNullOrEmpty (Charset))
-				encoding = Encoding.GetEncoding (Charset);
-			else
-				encoding = Encoding.UTF8;
-
 			var builder = new StringBuilder ();
 			builder.AppendFormat ("username={0}", Quote (UserName));
 			builder.AppendFormat (",realm=\"{0}\"", Realm);
