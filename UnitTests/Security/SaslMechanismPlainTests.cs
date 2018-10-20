@@ -103,5 +103,21 @@ namespace UnitTests.Security {
 
 			AssertPlain (sasl, "uri/user/pass");
 		}
+
+		[Test]
+		public void TestPlainWithAuthorizationId ()
+		{
+			const string expected = "YXV0aHppZAB1c2VybmFtZQBwYXNzd29yZA==";
+			var sasl = new SaslMechanismPlain ("username", "password") { AuthorizationId = "authzid" };
+			string challenge;
+
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SupportsInitialResponse");
+
+			challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (expected, challenge, "challenge response does not match the expected string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "should be authenticated.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty), "challenge while authenticated.");
+		}
 	}
 }
