@@ -34,12 +34,13 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
+using MimeKit;
+using MimeKit.IO;
+using MimeKit.Utils;
+
+using MailKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using MailKit;
-
-using MimeKit.IO;
-using MimeKit;
 
 namespace UnitTests.Net.Smtp {
 	[TestFixture]
@@ -115,6 +116,12 @@ namespace UnitTests.Net.Smtp {
 				var recipients = message.To.Mailboxes.ToList ();
 				var options = FormatOptions.Default;
 				var empty = new MailboxAddress[0];
+
+				// ReplayConnect
+				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect (null, Stream.Null));
+				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect ("host", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.ReplayConnectAsync (null, Stream.Null));
+				Assert.Throws<ArgumentNullException> (async () => await client.ReplayConnectAsync ("host", null));
 
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
@@ -346,6 +353,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.Throws<ServiceNotConnectedException> (() => client.Authenticate ("username", "password"));
 				Assert.Throws<ServiceNotConnectedException> (() => client.Authenticate (new NetworkCredential ("username", "password")));
+				Assert.Throws<ServiceNotConnectedException> (() => client.Authenticate (new SaslMechanismPlain ("username", "password")));
 
 				Assert.Throws<ServiceNotConnectedException> (() => client.NoOp ());
 
@@ -382,6 +390,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.Throws<InvalidOperationException> (() => client.Authenticate ("username", "password"));
 				Assert.Throws<InvalidOperationException> (() => client.Authenticate (new NetworkCredential ("username", "password")));
+				Assert.Throws<InvalidOperationException> (() => client.Authenticate (new SaslMechanismPlain ("username", "password")));
 
 				client.Disconnect (true);
 			}
@@ -412,6 +421,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync ("username", "password"));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password")));
 
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.NoOpAsync ());
 
@@ -448,6 +458,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync ("username", "password"));
 				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
+				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password")));
 
 				await client.DisconnectAsync (true);
 			}
@@ -1197,6 +1208,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
@@ -1261,6 +1273,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
@@ -1324,12 +1337,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
@@ -1384,12 +1394,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
@@ -1445,12 +1452,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
@@ -1506,12 +1510,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
@@ -1564,12 +1565,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
@@ -1616,12 +1614,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
@@ -1634,6 +1629,155 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		class DsnSmtpClient : SmtpClient
+		{
+			protected override string GetEnvelopeId (MimeMessage message)
+			{
+				var id = base.GetEnvelopeId (message);
+
+				Assert.IsNull (id);
+
+				return message.MessageId;
+			}
+
+			protected override DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
+			{
+				var notify = base.GetDeliveryStatusNotifications (message, mailbox);
+
+				Assert.IsFalse (notify.HasValue);
+
+				return DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
+			}
+		}
+
+		[Test]
+		public void TestDeliveryStatusNotification ()
+		{
+			var message = CreateEightBitMessage ();
+			message.MessageId = MimeUtils.GenerateMessageId ();
+
+			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0}\r\n", message.MessageId);
+
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+dsn.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
+			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
+			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var client = new DsnSmtpClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// disable pipelining
+				client.Capabilities &= ~SmtpCapabilities.Pipelining;
+
+				try {
+					client.Send (message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+				}
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async void TestDeliveryStatusNotificationAsync ()
+		{
+			var message = CreateEightBitMessage ();
+			message.MessageId = MimeUtils.GenerateMessageId ();
+
+			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0}\r\n", message.MessageId);
+
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+dsn.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
+			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
+			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var client = new DsnSmtpClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// disable pipelining
+				client.Capabilities &= ~SmtpCapabilities.Pipelining;
+
+				try {
+					await client.SendAsync (message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+				}
 
 				try {
 					await client.DisconnectAsync (true);
