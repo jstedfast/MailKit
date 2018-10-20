@@ -70,6 +70,10 @@
     <Compile Include="Security\SaslExceptionTests.cs" />
     <Compile Include="Security\SaslMechanismCramMd5Tests.cs" />
     <Compile Include="Security\SaslMechanismDigestMd5Tests.cs" />
+    <Compile Include="Security\SaslMechanismLoginTests.cs" />
+    <Compile Include="Security\SaslMechanismNtlmTests.cs" />
+    <Compile Include="Security\SaslMechanismOAuth2Tests.cs" />
+    <Compile Include="Security\SaslMechanismPlainTests.cs" />
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="Net\DummyNetworkStream.cs" />
     <Compile Include="ArgumentExceptionTests.cs" />

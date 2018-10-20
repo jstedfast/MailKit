@@ -30,6 +30,8 @@ using System.Text;
 
 #if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
+#else
+using System.Security.Cryptography;
 #endif
 
 namespace MailKit.Security {
@@ -575,6 +577,16 @@ namespace MailKit.Security {
 #else
 			return builder.ToString ();
 #endif
+		}
+
+		internal static string GenerateEntropy (int n)
+		{
+			var entropy = new byte[n];
+
+			using (var rng = RandomNumberGenerator.Create ())
+				rng.GetBytes (entropy);
+
+			return Convert.ToBase64String (entropy);
 		}
 	}
 }

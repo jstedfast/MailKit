@@ -161,6 +161,7 @@ namespace UnitTests.Security {
 			AssertSaslException (sasl, string.Empty, SaslErrorCode.MissingChallenge);
 			AssertSaslException (sasl, "rspauth", SaslErrorCode.IncompleteChallenge);
 			AssertSaslException (sasl, "maxbuf=123", SaslErrorCode.InvalidChallenge);
+			AssertSaslException (sasl, "rspauth=fffffffffffffffffffffffffffffff", SaslErrorCode.IncorrectHash);
 
 			token = Encoding.ASCII.GetBytes (serverToken2);
 			challenge = sasl.Challenge (Convert.ToBase64String (token));

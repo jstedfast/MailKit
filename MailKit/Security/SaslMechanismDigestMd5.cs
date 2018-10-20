@@ -198,17 +198,9 @@ namespace MailKit.Security {
 					throw new SaslException (MechanismName, SaslErrorCode.ChallengeTooLong, "Server challenge too long.");
 
 				challenge = DigestChallenge.Parse (Encoding.UTF8.GetString (token, startIndex, length));
-
-				if (string.IsNullOrEmpty (cnonce)) {
-					var entropy = new byte[15];
-
-					using (var rng = RandomNumberGenerator.Create ())
-						rng.GetBytes (entropy);
-
-					cnonce = Convert.ToBase64String (entropy);
-				}
-
 				encoding = challenge.Charset != null ? Encoding.UTF8 : Latin1;
+				cnonce = cnonce ?? GenerateEntropy (15);
+
 				response = new DigestResponse (challenge, encoding, Uri.Scheme, Uri.DnsSafeHost, AuthorizationId, Credentials.UserName, Credentials.Password, cnonce);
 				state = LoginState.Final;
 
@@ -456,7 +448,7 @@ namespace MailKit.Security {
 		public string Qop { get; private set; }
 		public string DigestUri { get; private set; }
 		public string Response { get; private set; }
-		public int MaxBuf { get; private set; }
+		public int? MaxBuf { get; private set; }
 		public string Charset { get; private set; }
 		public string Algorithm { get; private set; }
 		public string Cipher { get; private set; }
@@ -481,6 +473,7 @@ namespace MailKit.Security {
 			DigestUri = string.Format ("{0}/{1}", protocol, hostName);
 			Algorithm = challenge.Algorithm;
 			Charset = challenge.Charset;
+			MaxBuf = challenge.MaxBuf;
 			AuthZid = authzid;
 			Cipher = null;
 
@@ -565,8 +558,8 @@ namespace MailKit.Security {
 			builder.AppendFormat (",qop=\"{0}\"", Qop);
 			builder.AppendFormat (",digest-uri=\"{0}\"", DigestUri);
 			builder.AppendFormat (",response={0}", Response);
-			if (MaxBuf > 0)
-				builder.AppendFormat (",maxbuf={0}", MaxBuf);
+			if (MaxBuf.HasValue)
+				builder.AppendFormat (",maxbuf={0}", MaxBuf.Value);
 			if (!string.IsNullOrEmpty (Charset))
 				builder.AppendFormat (",charset={0}", Charset);
 			if (!string.IsNullOrEmpty (Algorithm))

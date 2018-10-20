@@ -291,15 +291,7 @@ namespace MailKit.Security {
 
 			switch (state) {
 			case LoginState.Initial:
-				if (string.IsNullOrEmpty (cnonce)) {
-					var entropy = new byte[18];
-
-					using (var rng = RandomNumberGenerator.Create ())
-						rng.GetBytes (entropy);
-
-					cnonce = Convert.ToBase64String (entropy);
-				}
-
+				cnonce = cnonce ?? GenerateEntropy (18);
 				client = "n=" + Normalize (Credentials.UserName) + ",r=" + cnonce;
 				response = Encoding.UTF8.GetBytes ("n,," + client);
 				state = LoginState.Final;
