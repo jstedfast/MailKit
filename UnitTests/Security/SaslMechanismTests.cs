@@ -180,6 +180,7 @@ namespace UnitTests.Security {
 
 			foreach (var mechanism in supported) {
 				Assert.IsTrue (SaslMechanism.IsSupported (mechanism), mechanism);
+
 				var sasl = SaslMechanism.Create (mechanism, uri, credentials);
 				Assert.IsNotNull (sasl, mechanism);
 				Assert.AreEqual (mechanism, sasl.MechanismName, "MechanismName");
@@ -197,6 +198,8 @@ namespace UnitTests.Security {
 			var credentials = new NetworkCredential ("joe", "tanstaaftanstaaf");
 			var sasl = new SaslMechanismCramMd5 (credentials);
 
+			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
+
 			var token = Encoding.ASCII.GetBytes (serverToken);
 			var challenge = sasl.Challenge (Convert.ToBase64String (token));
 			var decoded = Convert.FromBase64String (challenge);
@@ -204,6 +207,19 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (expected, result, "CRAM-MD5 challenge response does not match the expected string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "CRAM-MD5 should be authenticated.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
+
+			sasl = new SaslMechanismCramMd5 ("joe", "tanstaaftanstaaf");
+
+			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
+
+			challenge = sasl.Challenge (Convert.ToBase64String (token));
+			decoded = Convert.FromBase64String (challenge);
+			result = Encoding.ASCII.GetString (decoded);
+
+			Assert.AreEqual (expected, result, "CRAM-MD5 challenge response does not match the expected string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "CRAM-MD5 should be authenticated.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 		}
 
 		[Test]
@@ -214,7 +230,10 @@ namespace UnitTests.Security {
 			const string serverToken2 = "rspauth=ea40f60335c427b5527b84dbabcdfffd";
 			var credentials = new NetworkCredential ("chris", "secret");
 			var uri = new Uri ("imap://elwood.innosoft.com");
-			var sasl = new SaslMechanismDigestMd5 (uri, credentials, "OA6MHXh6VqTrRk");
+			const string entropy = "OA6MHXh6VqTrRk";
+			var sasl = new SaslMechanismDigestMd5 (credentials) { Uri = uri, cnonce = entropy };
+
+			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
 
 			var token = Encoding.ASCII.GetBytes (serverToken1);
 			var challenge = sasl.Challenge (Convert.ToBase64String (token));
@@ -231,6 +250,28 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (string.Empty, result, "Second DIGEST-MD5 challenge should be an empty string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "DIGEST-MD5 should be authenticated now.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
+
+			sasl = new SaslMechanismDigestMd5 ("chris", "secret") { Uri = uri, cnonce = entropy };
+
+			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
+
+			token = Encoding.ASCII.GetBytes (serverToken1);
+			challenge = sasl.Challenge (Convert.ToBase64String (token));
+			decoded = Convert.FromBase64String (challenge);
+			result = Encoding.ASCII.GetString (decoded);
+
+			Assert.AreEqual (expected1, result, "DIGEST-MD5 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "DIGEST-MD5 should not be authenticated yet.");
+
+			token = Encoding.ASCII.GetBytes (serverToken2);
+			challenge = sasl.Challenge (Convert.ToBase64String (token));
+			decoded = Convert.FromBase64String (challenge);
+			result = Encoding.ASCII.GetString (decoded);
+
+			Assert.AreEqual (string.Empty, result, "Second DIGEST-MD5 challenge should be an empty string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "DIGEST-MD5 should be authenticated now.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 		}
 
 		[Test]
@@ -242,6 +283,8 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismLogin (credentials);
 			string challenge;
 
+			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
+
 			challenge = sasl.Challenge (string.Empty);
 
 			Assert.AreEqual (expected1, challenge, "LOGIN initial challenge response does not match the expected string.");
@@ -251,6 +294,22 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (expected2, challenge, "LOGIN final challenge response does not match the expected string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "LOGIN should be authenticated.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
+
+			sasl = new SaslMechanismLogin ("username", "password");
+
+			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
+
+			challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (expected1, challenge, "LOGIN initial challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "LOGIN should not be authenticated.");
+
+			challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (expected2, challenge, "LOGIN final challenge response does not match the expected string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "LOGIN should be authenticated.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 		}
 
 		[Test]
@@ -260,10 +319,23 @@ namespace UnitTests.Security {
 			var credentials = new NetworkCredential ("username", "password");
 			var sasl = new SaslMechanismPlain (credentials);
 
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
+
 			var challenge = sasl.Challenge (string.Empty);
 
 			Assert.AreEqual (expected, challenge, "PLAIN challenge response does not match the expected string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "PLAIN should be authenticated.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
+
+			sasl = new SaslMechanismPlain ("username", "password");
+
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
+
+			challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (expected, challenge, "PLAIN challenge response does not match the expected string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "PLAIN should be authenticated.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 		}
 
 		static string HexEncode (byte[] message)
@@ -379,15 +451,30 @@ namespace UnitTests.Security {
 		public void TestNtlmAuthNoDomain ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("imap://imap.gmail.com");
-			var sasl = new SaslMechanismNtlm (uri, credentials);
+			var sasl = new SaslMechanismNtlm (credentials);
 			string challenge;
 			byte[] decoded;
+
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
 
 			challenge = sasl.Challenge (string.Empty);
 			decoded = Convert.FromBase64String (challenge);
 
 			var type1 = new Type1Message (decoded, 0, decoded.Length);
+
+			Assert.AreEqual (Type1Message.DefaultFlags, type1.Flags, "Expected initial NTLM client challenge flags do not match.");
+			Assert.AreEqual (string.Empty, type1.Domain, "Expected initial NTLM client challenge domain does not match.");
+			Assert.AreEqual (string.Empty, type1.Host, "Expected initial NTLM client challenge host does not match.");
+			Assert.IsFalse (sasl.IsAuthenticated, "NTLM should not be authenticated.");
+
+			sasl = new SaslMechanismNtlm ("username", "password");
+
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
+
+			challenge = sasl.Challenge (string.Empty);
+			decoded = Convert.FromBase64String (challenge);
+
+			type1 = new Type1Message (decoded, 0, decoded.Length);
 
 			Assert.AreEqual (Type1Message.DefaultFlags, type1.Flags, "Expected initial NTLM client challenge flags do not match.");
 			Assert.AreEqual (string.Empty, type1.Domain, "Expected initial NTLM client challenge domain does not match.");
@@ -400,10 +487,11 @@ namespace UnitTests.Security {
 		{
 			var initialFlags = Type1Message.DefaultFlags | NtlmFlags.NegotiateDomainSupplied;
 			var credentials = new NetworkCredential ("domain\\username", "password");
-			var uri = new Uri ("imap://imap.gmail.com");
-			var sasl = new SaslMechanismNtlm (uri, credentials);
+			var sasl = new SaslMechanismNtlm (credentials);
 			string challenge;
 			byte[] decoded;
+
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
 
 			challenge = sasl.Challenge (string.Empty);
 			decoded = Convert.FromBase64String (challenge);
@@ -414,60 +502,118 @@ namespace UnitTests.Security {
 			Assert.AreEqual ("DOMAIN", type1.Domain, "Expected initial NTLM client challenge domain does not match.");
 			Assert.AreEqual (string.Empty, type1.Host, "Expected initial NTLM client challenge host does not match.");
 			Assert.IsFalse (sasl.IsAuthenticated, "NTLM should not be authenticated.");
+
+			sasl = new SaslMechanismNtlm ("domain\\username", "password");
+
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
+
+			challenge = sasl.Challenge (string.Empty);
+			decoded = Convert.FromBase64String (challenge);
+
+			type1 = new Type1Message (decoded, 0, decoded.Length);
+
+			Assert.AreEqual (initialFlags, type1.Flags, "Expected initial NTLM client challenge flags do not match.");
+			Assert.AreEqual ("DOMAIN", type1.Domain, "Expected initial NTLM client challenge domain does not match.");
+			Assert.AreEqual (string.Empty, type1.Host, "Expected initial NTLM client challenge host does not match.");
+			Assert.IsFalse (sasl.IsAuthenticated, "NTLM should not be authenticated.");
 		}
 
 		[Test]
 		public void TestScramSha1 ()
 		{
-			const string cnonce = "fyko+d2lbbFgONRv9qkxdawL";
-			var uri = new Uri ("imap://elwood.innosoft.com");
+			const string expected = "c=biws,r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,p=v0X8v3Bz2T0CJGbJQyF0X+HI4Ts=";
+			const string challenge1 = "r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,s=QSXCR+Q6sek8bf92,i=4096";
+			const string challenge2 = "v=rmF9pqV8S7suAoZWja4dJRkFsKQ=";
+			const string entropy = "fyko+d2lbbFgONRv9qkxdawL";
+			//var uri = new Uri ("imap://elwood.innosoft.com");
 			var credentials = new NetworkCredential ("user", "pencil");
-			var sasl = new SaslMechanismScramSha1 (credentials, cnonce);
+			var sasl = new SaslMechanismScramSha1 (credentials) { cnonce = entropy };
 			string token;
 
 			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
-			Assert.AreEqual ("n,,n=user,r=" + cnonce, challenge, "Initial SCRAM-SHA-1 challenge response does not match the expected string.");
+			Assert.AreEqual ("n,,n=user,r=" + entropy, challenge, "Initial SCRAM-SHA-1 challenge response does not match the expected string.");
 			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-1 should not be authenticated yet.");
 
-			token = Convert.ToBase64String (Encoding.UTF8.GetBytes ("r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,s=QSXCR+Q6sek8bf92,i=4096"));
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 
-			const string expected = "c=biws,r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,p=v0X8v3Bz2T0CJGbJQyF0X+HI4Ts=";
 			Assert.AreEqual (expected, challenge, "Second SCRAM-SHA-1 challenge response does not match the expected string.");
 			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-1 should not be authenticated yet.");
 
-			token = Convert.ToBase64String (Encoding.UTF8.GetBytes ("v=rmF9pqV8S7suAoZWja4dJRkFsKQ="));
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 			Assert.AreEqual (string.Empty, challenge, "Third SCRAM-SHA-1 challenge should be an empty string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-1 should be authenticated now.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
+
+			sasl = new SaslMechanismScramSha1 ("user", "pencil") { cnonce = entropy };
+
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
+
+			Assert.AreEqual ("n,,n=user,r=" + entropy, challenge, "Initial SCRAM-SHA-1 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-1 should not be authenticated yet.");
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+
+			Assert.AreEqual (expected, challenge, "Second SCRAM-SHA-1 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-1 should not be authenticated yet.");
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+			Assert.AreEqual (string.Empty, challenge, "Third SCRAM-SHA-1 challenge should be an empty string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-1 should be authenticated now.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 		}
 
 		[Test]
 		public void TestScramSha256 ()
 		{
-			const string cnonce = "rOprNGfwEbeRWgbNEkqO";
-			var uri = new Uri ("imap://elwood.innosoft.com");
+			const string expected = "c=biws,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=dHzbZapWIk4jUhN+Ute9ytag9zjfMHgsqmmiz7AndVQ=";
+			const string challenge1 = "r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096";
+			const string challenge2 = "v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl95G4=";
+			const string entropy = "rOprNGfwEbeRWgbNEkqO";
+			//var uri = new Uri ("imap://elwood.innosoft.com");
 			var credentials = new NetworkCredential ("user", "pencil");
-			var sasl = new SaslMechanismScramSha256 (credentials, cnonce);
+			var sasl = new SaslMechanismScramSha256 (credentials) { cnonce = entropy };
 			string token;
 
 			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
-			Assert.AreEqual ("n,,n=user,r=" + cnonce, challenge, "Initial SCRAM-SHA-256 challenge response does not match the expected string.");
+			Assert.AreEqual ("n,,n=user,r=" + entropy, challenge, "Initial SCRAM-SHA-256 challenge response does not match the expected string.");
 			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-256 should not be authenticated yet.");
 
-			token = Convert.ToBase64String (Encoding.UTF8.GetBytes ("r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096"));
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 
-			const string expected = "c=biws,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=dHzbZapWIk4jUhN+Ute9ytag9zjfMHgsqmmiz7AndVQ=";
 			Assert.AreEqual (expected, challenge, "Second SCRAM-SHA-256 challenge response does not match the expected string.");
 			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-256 should not be authenticated yet.");
 
-			token = Convert.ToBase64String (Encoding.UTF8.GetBytes ("v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl95G4="));
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 			Assert.AreEqual (string.Empty, challenge, "Third SCRAM-SHA-256 challenge should be an empty string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-256 should be authenticated now.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
+
+			sasl = new SaslMechanismScramSha256 ("user", "pencil") { cnonce = entropy };
+
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
+
+			Assert.AreEqual ("n,,n=user,r=" + entropy, challenge, "Initial SCRAM-SHA-256 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-256 should not be authenticated yet.");
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+
+			Assert.AreEqual (expected, challenge, "Second SCRAM-SHA-256 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-256 should not be authenticated yet.");
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+			Assert.AreEqual (string.Empty, challenge, "Third SCRAM-SHA-256 challenge should be an empty string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-256 should be authenticated now.");
+			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 		}
 
 		[Test]

@@ -53,21 +53,6 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Creates a new SCRAM-SHA-256 SASL context.
 		/// </remarks>
-		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="entropy">Random characters to act as the cnonce token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
-		/// </exception>
-		internal SaslMechanismScramSha256 (NetworkCredential credentials, string entropy) : base (credentials, entropy)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismScramSha256"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new SCRAM-SHA-256 SASL context.
-		/// </remarks>
 		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">

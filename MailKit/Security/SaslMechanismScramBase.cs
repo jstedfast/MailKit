@@ -50,26 +50,10 @@ namespace MailKit.Security {
 			Validate
 		}
 
+		internal string cnonce;
 		string client, server;
 		byte[] salted, auth;
 		LoginState state;
-		string cnonce;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismScramBase"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new SCRAM-based SASL context.
-		/// </remarks>
-		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="entropy">Random characters to act as the cnonce token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
-		/// </exception>
-		internal protected SaslMechanismScramBase (NetworkCredential credentials, string entropy) : base (credentials)
-		{
-			cnonce = entropy;
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismScramBase"/> class.

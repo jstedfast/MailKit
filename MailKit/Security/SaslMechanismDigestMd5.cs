@@ -57,28 +57,8 @@ namespace MailKit.Security {
 
 		DigestChallenge challenge;
 		DigestResponse response;
+		internal string cnonce;
 		LoginState state;
-		string cnonce;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new DIGEST-MD5 SASL context.
-		/// </remarks>
-		/// <param name="uri">The URI of the service.</param>
-		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="entropy">Random characters to act as the cnonce token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
-		/// </exception>
-		internal SaslMechanismDigestMd5 (Uri uri, NetworkCredential credentials, string entropy) : base (credentials)
-		{
-			cnonce = entropy;
-			Uri = uri;
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.

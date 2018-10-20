@@ -270,11 +270,14 @@ namespace MailKit.Security {
 		{
 			byte[] challenge;
 
-			if (token == null)
-				throw new NotSupportedException ("LOGIN does not support SASL-IR.");
+			if (IsAuthenticated)
+				throw new InvalidOperationException ();
 
 			switch (state) {
 			case LoginState.UserName:
+				if (token == null)
+					throw new NotSupportedException ("LOGIN does not support SASL-IR.");
+
 				challenge = encoding.GetBytes (Credentials.UserName);
 				state = LoginState.Password;
 				break;
@@ -283,7 +286,7 @@ namespace MailKit.Security {
 				IsAuthenticated = true;
 				break;
 			default:
-				throw new InvalidOperationException ();
+				throw new IndexOutOfRangeException ();
 			}
 
 			return challenge;
