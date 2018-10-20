@@ -113,9 +113,8 @@ namespace MailKit.Security {
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
 		[Obsolete ("Use SaslMechanismPlain(NetworkCredential) instead.")]
-		public SaslMechanismPlain (Uri uri, ICredentials credentials) : base (uri, credentials)
+		public SaslMechanismPlain (Uri uri, ICredentials credentials) : this (uri, Encoding.UTF8, credentials)
 		{
-			encoding = Encoding.UTF8;
 		}
 
 		/// <summary>
@@ -135,9 +134,8 @@ namespace MailKit.Security {
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
 		[Obsolete ("Use SaslMechanismPlain(string, string) instead.")]
-		public SaslMechanismPlain (Uri uri, string userName, string password) : base (uri, userName, password)
+		public SaslMechanismPlain (Uri uri, string userName, string password) : this (uri, Encoding.UTF8, userName, password)
 		{
-			encoding = Encoding.UTF8;
 		}
 
 		/// <summary>
@@ -195,9 +193,8 @@ namespace MailKit.Security {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
-		public SaslMechanismPlain (NetworkCredential credentials) : base (credentials)
+		public SaslMechanismPlain (NetworkCredential credentials) : this (Encoding.UTF8, credentials)
 		{
-			encoding = Encoding.UTF8;
 		}
 
 		/// <summary>
@@ -213,9 +210,8 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
-		public SaslMechanismPlain (string userName, string password) : base (userName, password)
+		public SaslMechanismPlain (string userName, string password) : this (Encoding.UTF8, userName, password)
 		{
-			encoding = Encoding.UTF8;
 		}
 
 		/// <summary>
