@@ -37,7 +37,7 @@ namespace UnitTests.Net.Smtp {
 	[TestFixture]
 	public class SmtpCommandExceptionTests
 	{
-		static void TestSmtpCommandException (SmtpCommandException expected)
+		static void TestSerialization (SmtpCommandException expected)
 		{
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -58,15 +58,15 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestSmtpCommandException ()
 		{
-			TestSmtpCommandException (new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, SmtpStatusCode.MailboxUnavailable,
-																new MailboxAddress ("Unit Tests", "example@mimekit.net"), "Message"));
-			TestSmtpCommandException (new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, SmtpStatusCode.MailboxUnavailable,
-																new MailboxAddress ("Unit Tests", "example@mimekit.net"), "Message",
-																new IOException ("There was an IO error.")));
-			TestSmtpCommandException (new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.InsufficientStorage,
-																"Message"));
-			TestSmtpCommandException (new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.InsufficientStorage,
-																"Message", new IOException ("There was an IO error.")));
+			TestSerialization (new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, SmtpStatusCode.MailboxUnavailable,
+														 new MailboxAddress ("Unit Tests", "example@mimekit.net"), "Message"));
+			TestSerialization (new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, SmtpStatusCode.MailboxUnavailable,
+														 new MailboxAddress ("Unit Tests", "example@mimekit.net"), "Message",
+														 new IOException ("There was an IO error.")));
+			TestSerialization (new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.InsufficientStorage,
+														 "Message"));
+			TestSerialization (new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.InsufficientStorage,
+														 "Message", new IOException ("There was an IO error.")));
 		}
 	}
 }

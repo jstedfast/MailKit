@@ -205,10 +205,12 @@ namespace MailKit.Security {
 
 				var text = Encoding.UTF8.GetString (token, startIndex, length);
 				string key, value;
-				int index = 0;
 
-				if (!DigestChallenge.TryParseKeyValuePair (text, ref index, out key, out value))
+				if (!DigestChallenge.TryParseKeyValuePair (text, out key, out value))
 					throw new SaslException (MechanismName, SaslErrorCode.IncompleteChallenge, "Server response contained incomplete authentication data.");
+
+				if (!key.Equals ("rspauth", StringComparison.OrdinalIgnoreCase))
+					throw new SaslException (MechanismName, SaslErrorCode.InvalidChallenge, "Server response contained invalid data.");
 
 				var expected = response.ComputeHash (Credentials.Password, false);
 				if (value != expected)
@@ -242,8 +244,8 @@ namespace MailKit.Security {
 		public string[] Realms { get; private set; }
 		public string Nonce { get; private set; }
 		public HashSet<string> Qop { get; private set; }
-		public bool Stale { get; private set; }
-		public int MaxBuf { get; private set; }
+		public bool? Stale { get; private set; }
+		public int? MaxBuf { get; private set; }
 		public string Charset { get; private set; }
 		public string Algorithm { get; private set; }
 		public HashSet<string> Ciphers { get; private set; }
@@ -264,21 +266,14 @@ namespace MailKit.Security {
 			return index > startIndex;
 		}
 
-		static bool TryParseKey (string text, ref int index, out string key)
+		static string GetKey (string text, ref int index)
 		{
 			int startIndex = index;
-
-			key = null;
 
 			while (index < text.Length && !char.IsWhiteSpace (text[index]) && text[index] != '=' && text[index] != ',')
 				index++;
 
-			if (index == startIndex)
-				return false;
-
-			key = text.Substring (startIndex, index - startIndex);
-
-			return true;
+			return text.Substring (startIndex, index - startIndex);
 		}
 
 		static bool TryParseQuoted (string text, ref int index, out string value)
@@ -331,23 +326,16 @@ namespace MailKit.Security {
 			while (index < text.Length && !char.IsWhiteSpace (text[index]) && text[index] != ',')
 				index++;
 
-			if (index == startIndex)
-				return false;
-
 			value = text.Substring (startIndex, index - startIndex);
 
 			return true;
 		}
 
-		public static bool TryParseKeyValuePair (string text, ref int index, out string key, out string value)
+		static bool TryParseKeyValuePair (string text, ref int index, out string key, out string value)
 		{
 			value = null;
-			key = null;
 
-			SkipWhiteSpace (text, ref index);
-
-			if (!TryParseKey (text, ref index, out key))
-				return false;
+			key = GetKey (text, ref index);
 
 			SkipWhiteSpace (text, ref index);
 			if (index >= text.Length || text[index] != '=')
@@ -357,14 +345,33 @@ namespace MailKit.Security {
 			index++;
 
 			SkipWhiteSpace (text, ref index);
+			if (index >= text.Length)
+				return false;
 
 			return TryParseValue (text, ref index, out value);
+		}
+
+		public static bool TryParseKeyValuePair (string text, out string key, out string value)
+		{
+			int index = 0;
+
+			value = null;
+			key = null;
+
+			SkipWhiteSpace (text, ref index);
+			if (index >= text.Length || !TryParseKeyValuePair (text, ref index, out key, out value))
+				return false;
+
+			return true;
 		}
 
 		public static DigestChallenge Parse (string token)
 		{
 			var challenge = new DigestChallenge ();
 			int index = 0;
+			int maxbuf;
+
+			SkipWhiteSpace (token, ref index);
 
 			while (index < token.Length) {
 				string key, value;
@@ -377,6 +384,8 @@ namespace MailKit.Security {
 					challenge.Realms = value.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 					break;
 				case "nonce":
+					if (challenge.Nonce != null)
+						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
 					challenge.Nonce = value;
 					break;
 				case "qop":
@@ -384,26 +393,39 @@ namespace MailKit.Security {
 						challenge.Qop.Add (qop.Trim ());
 					break;
 				case "stale":
+					if (challenge.Stale.HasValue)
+						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
 					challenge.Stale = value.ToLowerInvariant () == "true";
 					break;
 				case "maxbuf":
-					challenge.MaxBuf = int.Parse (value);
+					if (challenge.MaxBuf.HasValue || !int.TryParse (value, out maxbuf))
+						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
+					challenge.MaxBuf = maxbuf;
 					break;
 				case "charset":
+					if (challenge.Charset != null)
+						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
 					challenge.Charset = value;
 					break;
 				case "algorithm":
+					if (challenge.Algorithm != null)
+						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
 					challenge.Algorithm = value;
 					break;
 				case "cipher":
+					if (challenge.Ciphers.Count > 0)
+						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
 					foreach (var cipher in value.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries))
 						challenge.Ciphers.Add (cipher.Trim ());
 					break;
 				}
 
 				SkipWhiteSpace (token, ref index);
-				if (index < token.Length && token[index] == ',')
+				if (index < token.Length && token [index] == ',') {
 					index++;
+
+					SkipWhiteSpace (token, ref index);
+				}
 			}
 
 			return challenge;

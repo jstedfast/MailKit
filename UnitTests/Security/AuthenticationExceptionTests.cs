@@ -1,5 +1,5 @@
 ﻿//
-// SmtpProtocolExceptionTests.cs
+// AuthenticationExceptionTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -30,45 +30,45 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit.Framework;
 
-using MailKit.Net.Smtp;
+using MailKit.Security;
 
-namespace UnitTests.Net.Smtp {
+namespace UnitTests.Security {
 	[TestFixture]
-	public class SmtpProtocolExceptionTests
+	public class AuthenticationExceptionTests
 	{
 		[Test]
 		public void TestSerialization ()
 		{
-			var expected = new SmtpProtocolException ("Bad boys, bad boys. Whatcha gonna do?", new Exception ("InnerException"));
+			var expected = new AuthenticationException ("Bad boys, bad boys. Whatcha gonna do?", new Exception ("InnerException"));
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
 				formatter.Serialize (stream, expected);
 				stream.Position = 0;
 
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
+				var ex = (AuthenticationException) formatter.Deserialize (stream);
 				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
 			}
 
-			expected = new SmtpProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
+			expected = new AuthenticationException ("Bad boys, bad boys. Whatcha gonna do?");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
 				formatter.Serialize (stream, expected);
 				stream.Position = 0;
 
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
+				var ex = (AuthenticationException) formatter.Deserialize (stream);
 				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
 			}
 
-			expected = new SmtpProtocolException ();
+			expected = new AuthenticationException ();
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
 				formatter.Serialize (stream, expected);
 				stream.Position = 0;
 
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
+				var ex = (AuthenticationException) formatter.Deserialize (stream);
 				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
 			}
 		}

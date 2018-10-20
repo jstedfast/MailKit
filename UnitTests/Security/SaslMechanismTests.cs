@@ -44,30 +44,6 @@ namespace UnitTests.Security {
 			var uri = new Uri ("smtp://localhost");
 			SaslMechanism sasl;
 
-			Assert.Throws<ArgumentNullException> (() => new SaslException (null, SaslErrorCode.MissingChallenge, "message"));
-
-			sasl = new SaslMechanismCramMd5 (credentials);
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, "username", null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 ("username", null));
-			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
-
-			sasl = new SaslMechanismDigestMd5 (credentials) { Uri = uri };
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, (string) null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, "username", null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 ("username", null));
-			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
-
 			sasl = new SaslMechanismLogin (credentials);
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin ((Uri) null, Encoding.UTF8, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismLogin (uri, null, credentials));
@@ -190,90 +166,6 @@ namespace UnitTests.Security {
 
 			foreach (var mechanism in unsupported)
 				Assert.IsFalse (SaslMechanism.IsSupported (mechanism), mechanism);
-		}
-
-		[Test]
-		public void TestCramMd5ExampleFromRfc2195 ()
-		{
-			const string serverToken = "<1896.697170952@postoffice.example.net>";
-			const string expected = "joe 3dbc88f0624776a737b39093f6eb6427";
-			var credentials = new NetworkCredential ("joe", "tanstaaftanstaaf");
-			var sasl = new SaslMechanismCramMd5 (credentials);
-
-			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
-
-			var token = Encoding.ASCII.GetBytes (serverToken);
-			var challenge = sasl.Challenge (Convert.ToBase64String (token));
-			var decoded = Convert.FromBase64String (challenge);
-			var result = Encoding.ASCII.GetString (decoded);
-
-			Assert.AreEqual (expected, result, "CRAM-MD5 challenge response does not match the expected string.");
-			Assert.IsTrue (sasl.IsAuthenticated, "CRAM-MD5 should be authenticated.");
-			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
-
-			sasl = new SaslMechanismCramMd5 ("joe", "tanstaaftanstaaf");
-
-			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
-
-			challenge = sasl.Challenge (Convert.ToBase64String (token));
-			decoded = Convert.FromBase64String (challenge);
-			result = Encoding.ASCII.GetString (decoded);
-
-			Assert.AreEqual (expected, result, "CRAM-MD5 challenge response does not match the expected string.");
-			Assert.IsTrue (sasl.IsAuthenticated, "CRAM-MD5 should be authenticated.");
-			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
-		}
-
-		[Test]
-		public void TestDigestMd5ExampleFromRfc2831 ()
-		{
-			const string serverToken1 = "realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",qop=\"auth\",algorithm=md5-sess,charset=utf-8";
-			const string expected1 = "username=\"chris\",realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",cnonce=\"OA6MHXh6VqTrRk\",nc=00000001,qop=\"auth\",digest-uri=\"imap/elwood.innosoft.com\",response=d388dad90d4bbd760a152321f2143af7,charset=utf-8,algorithm=md5-sess";
-			const string serverToken2 = "rspauth=ea40f60335c427b5527b84dbabcdfffd";
-			var credentials = new NetworkCredential ("chris", "secret");
-			var uri = new Uri ("imap://elwood.innosoft.com");
-			const string entropy = "OA6MHXh6VqTrRk";
-			var sasl = new SaslMechanismDigestMd5 (credentials) { Uri = uri, cnonce = entropy };
-
-			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
-
-			var token = Encoding.ASCII.GetBytes (serverToken1);
-			var challenge = sasl.Challenge (Convert.ToBase64String (token));
-			var decoded = Convert.FromBase64String (challenge);
-			var result = Encoding.ASCII.GetString (decoded);
-
-			Assert.AreEqual (expected1, result, "DIGEST-MD5 challenge response does not match the expected string.");
-			Assert.IsFalse (sasl.IsAuthenticated, "DIGEST-MD5 should not be authenticated yet.");
-
-			token = Encoding.ASCII.GetBytes (serverToken2);
-			challenge = sasl.Challenge (Convert.ToBase64String (token));
-			decoded = Convert.FromBase64String (challenge);
-			result = Encoding.ASCII.GetString (decoded);
-
-			Assert.AreEqual (string.Empty, result, "Second DIGEST-MD5 challenge should be an empty string.");
-			Assert.IsTrue (sasl.IsAuthenticated, "DIGEST-MD5 should be authenticated now.");
-			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
-
-			sasl = new SaslMechanismDigestMd5 ("chris", "secret") { Uri = uri, cnonce = entropy };
-
-			Assert.IsFalse (sasl.SupportsInitialResponse, "SASLIR");
-
-			token = Encoding.ASCII.GetBytes (serverToken1);
-			challenge = sasl.Challenge (Convert.ToBase64String (token));
-			decoded = Convert.FromBase64String (challenge);
-			result = Encoding.ASCII.GetString (decoded);
-
-			Assert.AreEqual (expected1, result, "DIGEST-MD5 challenge response does not match the expected string.");
-			Assert.IsFalse (sasl.IsAuthenticated, "DIGEST-MD5 should not be authenticated yet.");
-
-			token = Encoding.ASCII.GetBytes (serverToken2);
-			challenge = sasl.Challenge (Convert.ToBase64String (token));
-			decoded = Convert.FromBase64String (challenge);
-			result = Encoding.ASCII.GetString (decoded);
-
-			Assert.AreEqual (string.Empty, result, "Second DIGEST-MD5 challenge should be an empty string.");
-			Assert.IsTrue (sasl.IsAuthenticated, "DIGEST-MD5 should be authenticated now.");
-			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 		}
 
 		[Test]

@@ -1,5 +1,5 @@
 ﻿//
-// SmtpProtocolExceptionTests.cs
+// SaslExceptionTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -30,46 +30,32 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit.Framework;
 
-using MailKit.Net.Smtp;
+using MailKit.Security;
 
-namespace UnitTests.Net.Smtp {
+namespace UnitTests.Security {
 	[TestFixture]
-	public class SmtpProtocolExceptionTests
+	public class SaslExceptionTests
 	{
+		[Test]
+		public void TestArgumentExceptions ()
+		{
+			Assert.Throws<ArgumentNullException> (() => new SaslException (null, SaslErrorCode.MissingChallenge, "message"));
+		}
+
 		[Test]
 		public void TestSerialization ()
 		{
-			var expected = new SmtpProtocolException ("Bad boys, bad boys. Whatcha gonna do?", new Exception ("InnerException"));
+			var expected = new SaslException ("CRAM-MD5", SaslErrorCode.InvalidChallenge, "Bad boys, bad boys. Whatcha gonna do?");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
 				formatter.Serialize (stream, expected);
 				stream.Position = 0;
 
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
+				var ex = (SaslException) formatter.Deserialize (stream);
 				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-			}
-
-			expected = new SmtpProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-			}
-
-			expected = new SmtpProtocolException ();
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.AreEqual (expected.Mechanism, ex.Mechanism, "Unexpected Mechanism.");
+				Assert.AreEqual (expected.ErrorCode, ex.ErrorCode, "Unexpected ErrorCode.");
 			}
 		}
 	}
