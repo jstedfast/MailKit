@@ -184,6 +184,8 @@ namespace UnitTests.Security {
 				var sasl = SaslMechanism.Create (mechanism, uri, credentials);
 				Assert.IsNotNull (sasl, mechanism);
 				Assert.AreEqual (mechanism, sasl.MechanismName, "MechanismName");
+
+				sasl.Reset ();
 			}
 
 			foreach (var mechanism in unsupported)
@@ -530,6 +532,8 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismScramSha1 (credentials) { cnonce = entropy };
 			string token;
 
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
+
 			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
 			Assert.AreEqual ("n,,n=user,r=" + entropy, challenge, "Initial SCRAM-SHA-1 challenge response does not match the expected string.");
@@ -548,6 +552,8 @@ namespace UnitTests.Security {
 			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 
 			sasl = new SaslMechanismScramSha1 ("user", "pencil") { cnonce = entropy };
+
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
 
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
@@ -579,6 +585,8 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismScramSha256 (credentials) { cnonce = entropy };
 			string token;
 
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
+
 			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
 			Assert.AreEqual ("n,,n=user,r=" + entropy, challenge, "Initial SCRAM-SHA-256 challenge response does not match the expected string.");
@@ -597,6 +605,8 @@ namespace UnitTests.Security {
 			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty));
 
 			sasl = new SaslMechanismScramSha256 ("user", "pencil") { cnonce = entropy };
+
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SASLIR");
 
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
