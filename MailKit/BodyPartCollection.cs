@@ -220,20 +220,17 @@ namespace MailKit {
 				if (uri.IsAbsoluteUri) {
 					if (cid) {
 						if (!string.IsNullOrEmpty (bodyPart.ContentId)) {
-							var id = MimeUtils.EnumerateReferences (bodyPart.ContentId).FirstOrDefault ();
+							// Note: we might have a Content-Id in the form "<id@domain.com>", so attempt to decode it
+							var id = MimeUtils.EnumerateReferences (bodyPart.ContentId).FirstOrDefault () ?? bodyPart.ContentId;
 
 							if (id == uri.AbsolutePath)
 								return index;
 						}
 					} else if (bodyPart.ContentLocation != null) {
-						Uri absolute;
-
 						if (!bodyPart.ContentLocation.IsAbsoluteUri)
 							continue;
 
-						absolute = bodyPart.ContentLocation;
-
-						if (absolute == uri)
+						if (bodyPart.ContentLocation == uri)
 							return index;
 					}
 				} else if (bodyPart.ContentLocation == uri) {

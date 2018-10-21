@@ -43,7 +43,7 @@ namespace UnitTests {
 		public void TestBodyPartBasic ()
 		{
 			var uri = new Uri ("https://www.nationalgeographic.com/travel/contests/photographer-of-the-year-2018/wallpapers/week-9-nature/2/");
-			const string expected = "(\"image\" \"jpeg\" (\"name\" \"wallpaper.jpg\") \"id@localhost\" \"A majestic supercell storm approaching a house in Kansas, 2016.\" \"base64\" 0 \"8criUiOQmpfifOuOmYFtEQ==\" (\"attachment\" (\"filename\" \"wallpaper.jpg\")) (\"en\") \"https://www.nationalgeographic.com/travel/contests/photographer-of-the-year-2018/wallpapers/week-9-nature/2/\")";
+			const string expected = "(\"image\" \"jpeg\" (\"name\" \"wallpaper.jpg\") \"id@localhost\" \"A majestic supercell storm approaching a house in Kansas, 2016.\" \"base64\" 0 \"8criUiOQmpfifOuOmYFtEQ==\" (\"attachment\" (\"filename\" \"wallpaper.jpg\")) (\"en\" \"fr\") \"https://www.nationalgeographic.com/travel/contests/photographer-of-the-year-2018/wallpapers/week-9-nature/2/\")";
 			BodyPartBasic basic, parsed;
 			BodyPart body;
 
@@ -53,7 +53,7 @@ namespace UnitTests {
 				},
 				ContentId = "id@localhost",
 				ContentMd5 = "8criUiOQmpfifOuOmYFtEQ==",
-				ContentLanguage = new string[] { "en" },
+				ContentLanguage = new string[] { "en", "fr" },
 				ContentLocation = uri,
 				ContentDescription = "A majestic supercell storm approaching a house in Kansas, 2016.",
 				ContentDisposition = new ContentDisposition (ContentDisposition.Attachment) {
@@ -75,22 +75,97 @@ namespace UnitTests {
 		[Test]
 		public void TestSimplePlainTextBody ()
 		{
-			const string text = "(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 3028 NIL NIL NIL NIL 92)";
-			BodyPartText basic;
+			const string expected = "(\"text\" \"plain\" (\"charset\" \"us-ascii\" \"name\" \"body.txt\") NIL NIL \"7bit\" 3028 NIL NIL NIL NIL 92)";
+			BodyPartText text, parsed;
 			BodyPart body;
 
-			Assert.IsTrue (BodyPart.TryParse (text, out body), "Failed to parse body.");
+			text = new BodyPartText {
+				ContentType = new ContentType ("text", "plain") { Charset = "us-ascii", Name = "body.txt" },
+				ContentTransferEncoding = "7bit",
+				Octets = 3028,
+				Lines = 92,
+			};
 
-			Assert.IsInstanceOf<BodyPartText> (body, "Body types did not match.");
-			basic = (BodyPartText) body;
+			Assert.IsTrue (text.IsPlain);
+			Assert.IsFalse (text.IsHtml);
+			Assert.IsFalse (text.IsAttachment);
+			Assert.AreEqual ("body.txt", text.FileName);
+			Assert.AreEqual (expected, text.ToString ());
+			Assert.IsTrue (BodyPart.TryParse (expected, out body));
+			Assert.IsInstanceOf<BodyPartText> (body);
 
-			Assert.IsTrue (body.ContentType.IsMimeType ("text", "plain"), "Content-Type did not match.");
-			Assert.AreEqual ("US-ASCII", body.ContentType.Parameters["charset"], "charset param did not match");
+			parsed = (BodyPartText) body;
+			Assert.IsTrue (parsed.ContentType.IsMimeType ("text", "plain"), "Content-Type did not match.");
+			Assert.AreEqual ("us-ascii", parsed.ContentType.Charset, "charset param did not match");
+			Assert.AreEqual ("body.txt", parsed.ContentType.Name, "name param did not match");
+			Assert.AreEqual ("7bit", parsed.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+			Assert.AreEqual (3028, parsed.Octets, "Octet count did not match.");
+			Assert.AreEqual (92, parsed.Lines, "Line count did not match.");
+			Assert.AreEqual (expected, parsed.ToString ());
+		}
 
-			Assert.IsNotNull (basic, "The parsed body is not BodyPartText.");
-			Assert.AreEqual ("7BIT", basic.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
-			Assert.AreEqual (3028, basic.Octets, "Octet count did not match.");
-			Assert.AreEqual (92, basic.Lines, "Line count did not match.");
+		[Test]
+		public void TestBodyPartCollection ()
+		{
+			var text = new BodyPartText { ContentType = new ContentType ("text", "plain"), ContentLocation = new Uri ("body", UriKind.Relative) };
+			var image1 = new BodyPartBasic { ContentType = new ContentType ("image", "jpeg"), ContentLocation = new Uri ("http://localhost/image1.jpg") };
+			var image2 = new BodyPartBasic { ContentType = new ContentType ("image", "jpeg"), ContentId = "image2@localhost" };
+			var list = new BodyPartCollection ();
+			var parts = new BodyPart[3];
+			int i = 0;
+
+			Assert.Throws<ArgumentNullException> (() => list.Add (null));
+			Assert.Throws<ArgumentNullException> (() => list.Remove (null));
+			Assert.Throws<ArgumentNullException> (() => list.Contains (null));
+			Assert.Throws<ArgumentNullException> (() => list.IndexOf (null));
+			Assert.Throws<ArgumentNullException> (() => list.CopyTo (null, 0));
+			Assert.Throws<ArgumentOutOfRangeException> (() => list.CopyTo (parts, -1));
+			Assert.Throws<ArgumentOutOfRangeException> (() => { var x = list[0]; });
+
+			Assert.IsFalse (list.IsReadOnly);
+			Assert.AreEqual (0, list.Count);
+
+			list.Add (text);
+			Assert.AreEqual (1, list.Count);
+			Assert.IsTrue (list.Contains (text));
+			Assert.IsFalse (list.Contains (image1));
+			Assert.AreEqual (0, list.IndexOf (new Uri ("body", UriKind.Relative)));
+			Assert.AreEqual (-1, list.IndexOf (new Uri ("http://localhost/image1.jpg")));
+			Assert.AreEqual (-1, list.IndexOf (new Uri ("cid:image2@localhost")));
+			Assert.AreEqual (text, list[0]);
+
+			list.Add (image1);
+			Assert.AreEqual (2, list.Count);
+			Assert.IsTrue (list.Contains (text));
+			Assert.IsTrue (list.Contains (image1));
+			Assert.AreEqual (0, list.IndexOf (new Uri ("body", UriKind.Relative)));
+			Assert.AreEqual (1, list.IndexOf (new Uri ("http://localhost/image1.jpg")));
+			Assert.AreEqual (-1, list.IndexOf (new Uri ("cid:image2@localhost")));
+			Assert.AreEqual (text, list[0]);
+			Assert.AreEqual (image1, list[1]);
+
+			Assert.IsTrue (list.Remove (text));
+			Assert.AreEqual (1, list.Count);
+			Assert.IsFalse (list.Contains (text));
+			Assert.IsTrue (list.Contains (image1));
+			Assert.AreEqual (-1, list.IndexOf (new Uri ("body", UriKind.Relative)));
+			Assert.AreEqual (0, list.IndexOf (new Uri ("http://localhost/image1.jpg")));
+			Assert.AreEqual (-1, list.IndexOf (new Uri ("cid:image2@localhost")));
+			Assert.AreEqual (image1, list[0]);
+
+			list.Clear ();
+			Assert.AreEqual (0, list.Count);
+
+			list.Add (text);
+			list.Add (image1);
+			list.Add (image2);
+			list.CopyTo (parts, 0);
+			Assert.AreEqual (0, list.IndexOf (new Uri ("body", UriKind.Relative)));
+			Assert.AreEqual (1, list.IndexOf (new Uri ("http://localhost/image1.jpg")));
+			Assert.AreEqual (2, list.IndexOf (new Uri ("cid:image2@localhost")));
+
+			foreach (var part in list)
+				Assert.AreEqual (parts[i++], part);
 		}
 
 		[Test]
