@@ -105,5 +105,32 @@ namespace UnitTests
 
 			Assert.AreEqual ("B27397-0100000@cac.washington.edu", envelope.MessageId, "Message-Id does not match.");
 		}
+
+		[Test]
+		public void TestEmptyEnvelope ()
+		{
+			const string expected = "(NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL)";
+			var envelope = new Envelope ();
+
+			Assert.AreEqual (expected, envelope.ToString ());
+			Assert.IsTrue (Envelope.TryParse (expected, out envelope));
+			Assert.AreEqual (expected, envelope.ToString ());
+		}
+
+		[Test]
+		public void TestGroupAddress ()
+		{
+			const string expected = "(NIL NIL NIL NIL NIL ((NIL NIL \"Agents of Shield\" NIL)(\"Skye\" NIL \"skye\" \"shield.gov\")(\"Leo Fitz\" NIL \"fitz\" \"shield.gov\")(\"Melinda May\" NIL \"may\" \"shield.gov\")(NIL NIL NIL NIL)) NIL NIL NIL NIL)";
+			var group = GroupAddress.Parse ("Agents of Shield: Skye <skye@shield.gov>, Leo Fitz <fitz@shield.gov>, Melinda May <may@shield.gov>;");
+			var envelope = new Envelope ();
+
+			envelope.To.Add (group);
+
+			Assert.AreEqual (expected, envelope.ToString ());
+			Assert.IsTrue (Envelope.TryParse (expected, out envelope));
+			Assert.AreEqual (expected, envelope.ToString ());
+			Assert.AreEqual (1, envelope.To.Count);
+			Assert.AreEqual (group.ToString (), envelope.To[0].ToString ());
+		}
 	}
 }

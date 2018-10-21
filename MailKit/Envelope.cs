@@ -186,22 +186,26 @@ namespace MailKit {
 			else
 				builder.Append ("NIL ");
 
-			if (mailbox.Address != null) {
-				int at = mailbox.Address.LastIndexOf ('@');
+			int at = mailbox.Address.LastIndexOf ('@');
 
-				if (at >= 0) {
-					var domain = mailbox.Address.Substring (at + 1);
-					var user = mailbox.Address.Substring (0, at);
+			if (at >= 0) {
+				var domain = mailbox.Address.Substring (at + 1);
+				var user = mailbox.Address.Substring (0, at);
 
-					builder.AppendFormat ("{0} {1}", MimeUtils.Quote (user), MimeUtils.Quote (domain));
-				} else {
-					builder.AppendFormat ("{0} NIL", MimeUtils.Quote (mailbox.Address));
-				}
+				builder.AppendFormat ("{0} {1}", MimeUtils.Quote (user), MimeUtils.Quote (domain));
 			} else {
-				builder.Append ("NIL NIL");
+				builder.AppendFormat ("{0} \"localhost\"", MimeUtils.Quote (mailbox.Address));
 			}
 
 			builder.Append (')');
+		}
+
+		static void EncodeGroup (StringBuilder builder, GroupAddress group)
+		{
+			builder.AppendFormat ("(NIL NIL {0} NIL)", MimeUtils.Quote (group.Name));
+			foreach (var mailbox in group.Members.Mailboxes)
+				EncodeMailbox (builder, mailbox);
+			builder.Append ("(NIL NIL NIL NIL)");
 		}
 
 		static void EncodeAddressList (StringBuilder builder, InternetAddressList list)
@@ -213,8 +217,15 @@ namespace MailKit {
 
 			builder.Append ('(');
 
-			foreach (var mailbox in list.Mailboxes)
-				EncodeMailbox (builder, mailbox);
+			foreach (var addr in list) {
+				var mailbox = addr as MailboxAddress;
+				var group = addr as GroupAddress;
+
+				if (mailbox != null)
+					EncodeMailbox (builder, mailbox);
+				else if (group != null)
+					EncodeGroup (builder, group);
+			}
 
 			builder.Append (')');
 		}
@@ -360,12 +371,12 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out MailboxAddress mailbox)
+		static bool TryParse (string text, ref int index, out InternetAddress addr)
 		{
-			string name, route, user, domain, address;
+			string name, route, user, domain;
 			DomainList domains;
 
-			mailbox = null;
+			addr = null;
 
 			if (text[index] != '(')
 				return false;
@@ -392,19 +403,24 @@ namespace MailKit {
 
 			index++;
 
-			address = domain != null ? user + "@" + domain : user;
+			if (domain != null) {
+				var address = user + "@" + domain;
 
-			if (route != null && DomainList.TryParse (route, out domains))
-				mailbox = new MailboxAddress (name, domains, address);
-			else
-				mailbox = new MailboxAddress (name, address);
+				if (route != null && DomainList.TryParse (route, out domains))
+					addr = new MailboxAddress (name, domains, address);
+				else
+					addr = new MailboxAddress (name, address);
+			} else if (user != null) {
+				addr = new GroupAddress (user);
+			}
 
 			return true;
 		}
 
 		static bool TryParse (string text, ref int index, out InternetAddressList list)
 		{
-			MailboxAddress mailbox;
+			GroupAddress group = null;
+			InternetAddress addr;
 
 			list = null;
 
@@ -435,10 +451,19 @@ namespace MailKit {
 				if (text[index] == ')')
 					break;
 
-				if (!TryParse (text, ref index, out mailbox))
+				if (!TryParse (text, ref index, out addr))
 					return false;
 
-				list.Add (mailbox);
+				if (addr != null) {
+					if (group != null) {
+						group.Members.Add (addr);
+					} else {
+						group = addr as GroupAddress;
+						list.Add (addr);
+					}
+				} else {
+					group = null;
+				}
 
 				while (index < text.Length && text[index] == ' ')
 					index++;
