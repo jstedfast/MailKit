@@ -42,23 +42,6 @@ namespace UnitTests
 		[Test]
 		public void TestArgumentExceptions ()
 		{
-			var enumeratedRights = new [] { AccessRight.OpenFolder, AccessRight.CreateFolder };
-
-			Assert.Throws<ArgumentNullException> (() => new AccessControl (null));
-			Assert.Throws<ArgumentNullException> (() => new AccessControl (null, "rk"));
-			Assert.Throws<ArgumentNullException> (() => new AccessControl (null, enumeratedRights));
-			Assert.Throws<ArgumentNullException> (() => new AccessControl ("name", (string) null));
-			Assert.Throws<ArgumentNullException> (() => new AccessControl ("name", (IEnumerable<AccessRight>) null));
-
-			Assert.Throws<ArgumentNullException> (() => new AccessControlList (null));
-
-			Assert.Throws<ArgumentNullException> (() => new AccessRights ((IEnumerable<AccessRight>) null));
-			Assert.Throws<ArgumentNullException> (() => new AccessRights ((string) null));
-
-			var rights = new AccessRights ();
-			Assert.Throws<ArgumentNullException> (() => rights.AddRange ((string) null));
-			Assert.Throws<ArgumentNullException> (() => rights.AddRange ((IEnumerable<AccessRight>) null));
-
 			Assert.Throws<ArgumentNullException> (() => new AlertEventArgs (null));
 
 			Assert.Throws<ArgumentNullException> (() => new FolderNamespace ('.', null));

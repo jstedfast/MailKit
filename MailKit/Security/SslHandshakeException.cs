@@ -74,11 +74,11 @@ namespace MailKit.Security
 		}
 #endif
 
-		static string AddHelpLinkSuggestion (string message)
-		{
-			return string.Format ("{0}{1}See {2} for possible solutions to this problem.",
-			                      message, Environment.NewLine, SslHandshakeHelpLink);
-		}
+		//static string AddHelpLinkSuggestion (string message)
+		//{
+		//	return string.Format ("{0}{1}See {2} for possible solutions to this problem.",
+		//	                      message, Environment.NewLine, SslHandshakeHelpLink);
+		//}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SslHandshakeException"/> class.

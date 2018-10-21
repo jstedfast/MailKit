@@ -79,6 +79,7 @@
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="Security\SslHandshakeExceptionTests.cs" />
     <Compile Include="Net\DummyNetworkStream.cs" />
+    <Compile Include="AccessControlListTests.cs" />
     <Compile Include="ArgumentExceptionTests.cs" />
     <Compile Include="BodyPartTests.cs" />
     <Compile Include="EnvelopeTests.cs" />
