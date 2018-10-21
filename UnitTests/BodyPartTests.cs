@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -242,9 +243,54 @@ namespace UnitTests {
 			}
 		}
 
+		class TestVisitor : BodyPartVisitor
+		{
+			StringBuilder builder = new StringBuilder ();
+			int indent;
+
+			public override void Visit (BodyPart body)
+			{
+				builder.Length = 0;
+				indent = 0;
+
+				base.Visit (body);
+			}
+
+			protected internal override void VisitBodyPart (BodyPart entity)
+			{
+				builder.Append (' ', indent);
+				builder.Append (entity.ContentType.MimeType);
+				builder.AppendLine ();
+
+				base.VisitBodyPart (entity);
+			}
+
+			protected override void VisitMessage (BodyPart message)
+			{
+				indent++;
+				base.VisitMessage (message);
+				indent--;
+			}
+
+			protected override void VisitChildren (BodyPartMultipart multipart)
+			{
+				indent++;
+				base.VisitChildren (multipart);
+				indent--;
+			}
+
+			public override string ToString ()
+			{
+				return builder.ToString ();
+			}
+		}
+
 		[Test]
 		public void TestComplexPartSpecifiersExampleRfc3501 ()
 		{
+			const string expected = "MULTIPART/MIXED\n TEXT/PLAIN\n APPLICATION/OCTET-STREAM\n MESSAGE/RFC822\n  MULTIPART/MIXED\n   TEXT/PLAIN\n   APPLICATION/OCTET-STREAM\n MULTIPART/MIXED\n  IMAGE/GIF\n  MESSAGE/RFC822\n   MULTIPART/MIXED\n    TEXT/PLAIN\n    MULTIPART/ALTERNATIVE\n     TEXT/PLAIN\n     TEXT/RICHTEXT\n";
+			var visitor = new TestVisitor ();
+
 			BodyPart body = CreateMultipart ("MULTIPART", "MIXED", "",
 				CreateText ("TEXT", "PLAIN", "1"),
 				CreateBasic ("APPLICATION", "OCTET-STREAM", "2"),
@@ -267,6 +313,10 @@ namespace UnitTests {
 					)
 				)
 			);
+
+			visitor.Visit (body);
+
+			Assert.AreEqual (expected, visitor.ToString ());
 
 			var encoded = body.ToString ();
 
