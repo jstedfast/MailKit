@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -72,7 +73,7 @@ namespace UnitTests {
 			Assert.IsFalse (AccessRight.Administer != new AccessRight (AccessRight.Administer.Right), "!=");
 			Assert.IsTrue (AccessRight.Administer != new AccessRight (AccessRight.OpenFolder.Right), "!=");
 
-			Assert.IsTrue (AccessRight.Administer.Equals (new AccessRight (AccessRight.Administer.Right)), "Equals");
+			Assert.IsTrue (AccessRight.Administer.Equals ((object) new AccessRight (AccessRight.Administer.Right)), "Equals");
 			Assert.AreEqual (AccessRight.Administer.GetHashCode (), new AccessRight (AccessRight.Administer.Right).GetHashCode (), "GetHashCode");
 
 			Assert.AreEqual ("a", AccessRight.Administer.ToString (), "ToString");
@@ -114,13 +115,17 @@ namespace UnitTests {
 			for (i = 0; i < 6; i++)
 				Assert.AreEqual (expected[i], rights[i], "rights[{0}]", i);
 
-			rights.Add (AccessRight.Administer);
+			((ICollection<AccessRight>) rights).Add (AccessRight.Administer);
 			Assert.IsTrue (rights.Remove (AccessRight.Administer), "Remove Administer");
 			Assert.IsFalse (rights.Remove (AccessRight.Administer), "Remove Administer again");
 
 			i = 0;
 			foreach (var right in rights)
 				Assert.AreEqual (expected[i], right, "foreach rights[{0}]", i++);
+
+			i = 0;
+			foreach (AccessRight right in ((IEnumerable) rights))
+				Assert.AreEqual (expected[i], right, "generic foreach rights[{0}]", i++);
 
 			Assert.AreEqual ("rkxeit", rights.ToString (), "ToString");
 		}
@@ -142,6 +147,15 @@ namespace UnitTests {
 
 			Assert.AreEqual ("it", control.Name, "Name");
 			Assert.AreEqual ("it", control.Rights.ToString (), "Rights (it)");
+		}
+
+		[Test]
+		public void TestAccessControlList ()
+		{
+			var list = new AccessControlList (new [] { new AccessControl ("admin", new [] { AccessRight.Administer }) });
+
+			Assert.AreEqual (1, list.Count, "Count");
+			Assert.AreEqual ("admin", list[0].Name, "list[0].Name");
 		}
 	}
 }
