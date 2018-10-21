@@ -127,6 +127,12 @@ namespace UnitTests {
 			foreach (AccessRight right in ((IEnumerable) rights))
 				Assert.AreEqual (expected[i], right, "generic foreach rights[{0}]", i++);
 
+			var array = new AccessRight[rights.Count];
+			rights.CopyTo (array, 0);
+
+			for (i = 0; i < 6; i++)
+				Assert.AreEqual (expected[i], array[i], "CopyTo[{0}]", i);
+
 			Assert.AreEqual ("rkxeit", rights.ToString (), "ToString");
 		}
 
