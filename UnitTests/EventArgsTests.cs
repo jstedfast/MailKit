@@ -164,5 +164,55 @@ namespace UnitTests {
 			Assert.Throws<ArgumentNullException> (() => new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, null));
 			Assert.Throws<ArgumentNullException> (() => new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, null, modseq));
 		}
+
+		[Test]
+		public void TestMessageLabelsChangedEventArgs ()
+		{
+			var labels = new string[] { "label1", "label2" };
+			MessageLabelsChangedEventArgs args;
+			var uid = new UniqueId (5);
+			ulong modseq = 724;
+
+			args = new MessageLabelsChangedEventArgs (0);
+			Assert.IsNull (args.Labels);
+			Assert.IsFalse (args.UniqueId.HasValue);
+			Assert.IsFalse (args.ModSeq.HasValue);
+			Assert.AreEqual (0, args.Index);
+
+			args = new MessageLabelsChangedEventArgs (0, labels);
+			Assert.AreEqual (labels.Length, args.Labels.Count);
+			Assert.IsFalse (args.UniqueId.HasValue);
+			Assert.IsFalse (args.ModSeq.HasValue);
+			Assert.AreEqual (0, args.Index);
+
+			args = new MessageLabelsChangedEventArgs (0, labels, modseq);
+			Assert.AreEqual (labels.Length, args.Labels.Count);
+			Assert.IsFalse (args.UniqueId.HasValue);
+			Assert.AreEqual (modseq, args.ModSeq);
+			Assert.AreEqual (0, args.Index);
+
+			args = new MessageLabelsChangedEventArgs (0, uid, labels);
+			Assert.AreEqual (labels.Length, args.Labels.Count);
+			Assert.AreEqual (uid, args.UniqueId);
+			Assert.IsFalse (args.ModSeq.HasValue);
+			Assert.AreEqual (0, args.Index);
+
+			args = new MessageLabelsChangedEventArgs (0, uid, labels, modseq);
+			Assert.AreEqual (labels.Length, args.Labels.Count);
+			Assert.AreEqual (uid, args.UniqueId);
+			Assert.AreEqual (modseq, args.ModSeq);
+			Assert.AreEqual (0, args.Index);
+
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1, labels));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1, labels, modseq));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1, uid, labels));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1, uid, labels, modseq));
+
+			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, null));
+			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, null, modseq));
+			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, uid, null));
+			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, uid, null, modseq));
+		}
 	}
 }

@@ -64,11 +64,6 @@ namespace UnitTests
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message"));
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message", new Exception ("message")));
 
-			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, null));
-			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, null, 1));
-			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, UniqueId.MinValue, null));
-			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, UniqueId.MinValue, null, 1));
-
 			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (null, "response"));
 			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (new MimeMessage (), null));
 
