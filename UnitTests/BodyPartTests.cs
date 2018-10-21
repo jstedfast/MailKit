@@ -62,6 +62,8 @@ namespace UnitTests {
 				ContentTransferEncoding = "base64"
 			};
 
+			Assert.IsTrue (basic.IsAttachment);
+			Assert.AreEqual ("wallpaper.jpg", basic.FileName);
 			Assert.AreEqual (expected, basic.ToString ());
 			Assert.IsTrue (BodyPart.TryParse (expected, out body));
 			Assert.IsInstanceOf<BodyPartBasic> (body);
