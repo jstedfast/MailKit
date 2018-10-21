@@ -24,13 +24,11 @@
 // THE SOFTWARE.
 //
 
-using System.Collections.Generic;
+using System;
 
 using NUnit.Framework;
 
 using MimeKit;
-using MimeKit.Utils;
-
 using MailKit;
 
 // Note: These tests are for BodyPart and Envelope's custom format. While the format is similar
@@ -41,6 +39,37 @@ namespace UnitTests {
 	[TestFixture]
 	public class BodyPartTests
 	{
+		[Test]
+		public void TestBodyPartBasic ()
+		{
+			var uri = new Uri ("https://www.nationalgeographic.com/travel/contests/photographer-of-the-year-2018/wallpapers/week-9-nature/2/");
+			const string expected = "(\"image\" \"jpeg\" (\"name\" \"wallpaper.jpg\") \"id@localhost\" \"A majestic supercell storm approaching a house in Kansas, 2016.\" \"base64\" 0 \"8criUiOQmpfifOuOmYFtEQ==\" (\"attachment\" (\"filename\" \"wallpaper.jpg\")) (\"en\") \"https://www.nationalgeographic.com/travel/contests/photographer-of-the-year-2018/wallpapers/week-9-nature/2/\")";
+			BodyPartBasic basic, parsed;
+			BodyPart body;
+
+			basic = new BodyPartBasic {
+				ContentType = new ContentType ("image", "jpeg") {
+					Name = "wallpaper.jpg"
+				},
+				ContentId = "id@localhost",
+				ContentMd5 = "8criUiOQmpfifOuOmYFtEQ==",
+				ContentLanguage = new string[] { "en" },
+				ContentLocation = uri,
+				ContentDescription = "A majestic supercell storm approaching a house in Kansas, 2016.",
+				ContentDisposition = new ContentDisposition (ContentDisposition.Attachment) {
+					FileName = "wallpaper.jpg"
+				},
+				ContentTransferEncoding = "base64"
+			};
+
+			Assert.AreEqual (expected, basic.ToString ());
+			Assert.IsTrue (BodyPart.TryParse (expected, out body));
+			Assert.IsInstanceOf<BodyPartBasic> (body);
+
+			parsed = (BodyPartBasic) body;
+			Assert.AreEqual (expected, parsed.ToString ());
+		}
+
 		[Test]
 		public void TestSimplePlainTextBody ()
 		{
@@ -60,40 +89,6 @@ namespace UnitTests {
 			Assert.AreEqual ("7BIT", basic.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
 			Assert.AreEqual (3028, basic.Octets, "Octet count did not match.");
 			Assert.AreEqual (92, basic.Lines, "Line count did not match.");
-		}
-
-		[Test]
-		public void TestExampleEnvelopeRfc3501 ()
-		{
-			const string text = "(\"Wed, 17 Jul 1996 02:23:25 -0700 (PDT)\" \"IMAP4rev1 WG mtg summary and minutes\" ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((NIL NIL \"imap\" \"cac.washington.edu\")) ((NIL NIL \"minutes\" \"CNRI.Reston.VA.US\") (\"John Klensin\" NIL \"KLENSIN\" \"MIT.EDU\")) NIL NIL \"<B27397-0100000@cac.washington.edu>\")";
-			Envelope envelope;
-
-			Assert.IsTrue (Envelope.TryParse (text, out envelope), "Failed to parse envelope.");
-
-			Assert.IsTrue (envelope.Date.HasValue, "Parsed ENVELOPE date is null.");
-			Assert.AreEqual ("Wed, 17 Jul 1996 02:23:25 -0700", DateUtils.FormatDate (envelope.Date.Value), "Date does not match.");
-			Assert.AreEqual ("IMAP4rev1 WG mtg summary and minutes", envelope.Subject, "Subject does not match.");
-
-			Assert.AreEqual (1, envelope.From.Count, "From counts do not match.");
-			Assert.AreEqual ("\"Terry Gray\" <gray@cac.washington.edu>", envelope.From.ToString (), "From does not match.");
-
-			Assert.AreEqual (1, envelope.Sender.Count, "Sender counts do not match.");
-			Assert.AreEqual ("\"Terry Gray\" <gray@cac.washington.edu>", envelope.Sender.ToString (), "Sender does not match.");
-
-			Assert.AreEqual (1, envelope.ReplyTo.Count, "Reply-To counts do not match.");
-			Assert.AreEqual ("\"Terry Gray\" <gray@cac.washington.edu>", envelope.ReplyTo.ToString (), "Reply-To does not match.");
-
-			Assert.AreEqual (1, envelope.To.Count, "To counts do not match.");
-			Assert.AreEqual ("imap@cac.washington.edu", envelope.To.ToString (), "To does not match.");
-
-			Assert.AreEqual (2, envelope.Cc.Count, "Cc counts do not match.");
-			Assert.AreEqual ("minutes@CNRI.Reston.VA.US, \"John Klensin\" <KLENSIN@MIT.EDU>", envelope.Cc.ToString (), "Cc does not match.");
-
-			Assert.AreEqual (0, envelope.Bcc.Count, "Bcc counts do not match.");
-
-			Assert.IsNull (envelope.InReplyTo, "In-Reply-To is not null.");
-
-			Assert.AreEqual ("B27397-0100000@cac.washington.edu", envelope.MessageId, "Message-Id does not match.");
 		}
 
 		[Test]

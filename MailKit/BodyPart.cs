@@ -356,6 +356,7 @@ namespace MailKit {
 			if (index >= text.Length || text[index] != ')')
 				return false;
 
+			values = list.ToArray ();
 			index++;
 
 			return true;

@@ -26,11 +26,9 @@
 
 using System;
 using System.IO;
-using System.Collections.Generic;
 
 using NUnit.Framework;
 
-using MimeKit;
 using MailKit;
 using MailKit.Search;
 
