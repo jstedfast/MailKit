@@ -71,6 +71,8 @@ namespace UnitTests {
 
 			parsed = (BodyPartBasic) body;
 			Assert.AreEqual (expected, parsed.ToString ());
+
+			Assert.Throws<ArgumentNullException> (() => basic.Accept (null));
 		}
 
 		[Test]
@@ -103,6 +105,8 @@ namespace UnitTests {
 			Assert.AreEqual (3028, parsed.Octets, "Octet count did not match.");
 			Assert.AreEqual (92, parsed.Lines, "Line count did not match.");
 			Assert.AreEqual (expected, parsed.ToString ());
+
+			Assert.Throws<ArgumentNullException> (() => text.Accept (null));
 		}
 
 		[Test]
@@ -260,7 +264,7 @@ namespace UnitTests {
 			{
 				builder.Append (' ', indent);
 				builder.Append (entity.ContentType.MimeType);
-				builder.AppendLine ();
+				builder.Append ('\n');
 
 				base.VisitBodyPart (entity);
 			}
