@@ -30,6 +30,7 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
+using MimeKit;
 using MailKit;
 
 namespace UnitTests {
@@ -213,6 +214,74 @@ namespace UnitTests {
 			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, null, modseq));
 			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, uid, null));
 			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, uid, null, modseq));
+		}
+
+		[Test]
+		public void TestMessageSentEventArgs ()
+		{
+			var message = new MimeMessage ();
+			MessageSentEventArgs args;
+
+			args = new MessageSentEventArgs (message, "response");
+
+			Assert.AreEqual (message, args.Message);
+			Assert.AreEqual ("response", args.Response);
+
+			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (null, "response"));
+			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (message, null));
+		}
+
+		[Test]
+		public void TestMessageSummaryFetchedEventArgs ()
+		{
+			var message = new MessageSummary (0);
+			MessageSummaryFetchedEventArgs args;
+
+			args = new MessageSummaryFetchedEventArgs (message);
+
+			Assert.AreEqual (message, args.Message);
+
+			Assert.Throws<ArgumentNullException> (() => new MessageSummaryFetchedEventArgs (null));
+		}
+
+		[Test]
+		public void TestMessagesVanishedEventArgs ()
+		{
+			var uids = new UniqueIdRange (0, 5, 7);
+			MessagesVanishedEventArgs args;
+
+			args = new MessagesVanishedEventArgs (uids, true);
+
+			Assert.AreEqual (uids, args.UniqueIds);
+			Assert.IsTrue (args.Earlier);
+
+			Assert.Throws<ArgumentNullException> (() => new MessagesVanishedEventArgs (null, false));
+		}
+
+		[Test]
+		public void TestModSeqChangedEventArgs ()
+		{
+			ModSeqChangedEventArgs args;
+			ulong modseq = 724;
+
+			args = new ModSeqChangedEventArgs (0);
+			Assert.IsFalse (args.UniqueId.HasValue);
+			Assert.AreEqual (0, args.ModSeq);
+			Assert.AreEqual (0, args.Index);
+
+			args = new ModSeqChangedEventArgs (0, modseq);
+			Assert.IsFalse (args.UniqueId.HasValue);
+			Assert.AreEqual (modseq, args.ModSeq);
+			Assert.AreEqual (0, args.Index);
+
+			args = new ModSeqChangedEventArgs (0, UniqueId.MinValue, modseq);
+			Assert.AreEqual (UniqueId.MinValue, args.UniqueId);
+			Assert.AreEqual (modseq, args.ModSeq);
+			Assert.AreEqual (0, args.Index);
+
+			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1, modseq));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1, UniqueId.MinValue, modseq));
 		}
 	}
 }

@@ -64,21 +64,10 @@ namespace UnitTests
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message"));
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message", new Exception ("message")));
 
-			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (null, "response"));
-			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (new MimeMessage (), null));
-
-			Assert.Throws<ArgumentNullException> (() => new MessageSummaryFetchedEventArgs (null));
-
-			Assert.Throws<ArgumentNullException> (() => new MessagesVanishedEventArgs (null, false));
-
 			Assert.Throws<ArgumentNullException> (() => new MetadataCollection (null));
 
 			var metadataOptions = new MetadataOptions ();
 			Assert.Throws<ArgumentOutOfRangeException> (() => metadataOptions.Depth = 500);
-
-			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1, 1));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1, UniqueId.MinValue, 1));
 
 			Assert.Throws<ArgumentOutOfRangeException> (() => new OrderBy (OrderByType.To, SortOrder.None));
 
