@@ -43,8 +43,14 @@ namespace MailKit {
 		/// Creates a new <see cref="AuthenticatedEventArgs"/>.
 		/// </remarks>
 		/// <param name="message">The free-form text.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="message"/> is <c>null</c>.
+		/// </exception>
 		public AuthenticatedEventArgs (string message)
 		{
+			if (message == null)
+				throw new ArgumentNullException (nameof (message));
+
 			Message = message;
 		}
 

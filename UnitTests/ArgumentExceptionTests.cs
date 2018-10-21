@@ -42,8 +42,6 @@ namespace UnitTests
 		[Test]
 		public void TestArgumentExceptions ()
 		{
-			Assert.Throws<ArgumentNullException> (() => new AlertEventArgs (null));
-
 			Assert.Throws<ArgumentNullException> (() => new FolderNamespace ('.', null));
 
 			var namespaces = new FolderNamespaceCollection ();
@@ -65,16 +63,6 @@ namespace UnitTests
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly));
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message"));
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message", new Exception ("message")));
-
-			Assert.Throws<ArgumentNullException> (() => new FolderRenamedEventArgs (null, "name"));
-			Assert.Throws<ArgumentNullException> (() => new FolderRenamedEventArgs ("name", null));
-
-			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageEventArgs (-1));
-
-			Assert.Throws<ArgumentNullException> (() => new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, null));
-			Assert.Throws<ArgumentNullException> (() => new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, null, 1));
-			Assert.Throws<ArgumentNullException> (() => new MessageFlagsChangedEventArgs (0, UniqueId.MinValue, MessageFlags.Answered, null));
-			Assert.Throws<ArgumentNullException> (() => new MessageFlagsChangedEventArgs (0, UniqueId.MinValue, MessageFlags.Answered, null, 1));
 
 			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, null));
 			Assert.Throws<ArgumentNullException> (() => new MessageLabelsChangedEventArgs (0, null, 1));
