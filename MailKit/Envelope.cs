@@ -210,11 +210,6 @@ namespace MailKit {
 
 		static void EncodeAddressList (StringBuilder builder, InternetAddressList list)
 		{
-			if (list.Count == 0) {
-				builder.Append ("NIL");
-				return;
-			}
-
 			builder.Append ('(');
 
 			foreach (var addr in list) {
