@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 
 using NUnit.Framework;
 
@@ -61,6 +62,11 @@ namespace UnitTests {
 			Assert.IsTrue (namespaces.Contains (ns));
 			Assert.Throws<ArgumentNullException> (() => namespaces[0] = null);
 
+			ns = new FolderNamespace ('\\', "");
+			namespaces[0] = ns;
+			Assert.AreEqual (1, namespaces.Count);
+			Assert.IsTrue (namespaces.Contains (ns));
+
 			Assert.IsTrue (namespaces.Remove (ns));
 			Assert.AreEqual (0, namespaces.Count);
 			Assert.IsFalse (namespaces.Contains (ns));
@@ -68,6 +74,9 @@ namespace UnitTests {
 			namespaces.Add (new FolderNamespace ('.', ""));
 			namespaces.Add (new FolderNamespace ('\\', ""));
 			foreach (var item in namespaces)
+				Assert.AreEqual (namespaces[i++], item);
+			i = 0;
+			foreach (object item in (IEnumerable) namespaces)
 				Assert.AreEqual (namespaces[i++], item);
 
 			Assert.AreEqual ("((\".\" \"\")(\"\\\\\" \"\"))", namespaces.ToString ());
