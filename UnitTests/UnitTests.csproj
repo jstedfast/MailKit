@@ -88,6 +88,7 @@
     <Compile Include="FolderNamespaceTests.cs" />
     <Compile Include="MessageSortingTests.cs" />
     <Compile Include="MessageThreadingTests.cs" />
+    <Compile Include="ProgressStreamTests.cs" />
     <Compile Include="UniqueIdRangeTests.cs" />
     <Compile Include="UniqueIdSetTests.cs" />
     <Compile Include="UniqueIdTests.cs" />

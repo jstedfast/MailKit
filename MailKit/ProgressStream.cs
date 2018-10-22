@@ -41,6 +41,9 @@ namespace MailKit {
 			if (source == null)
 				throw new ArgumentNullException (nameof (source));
 
+			if (update == null)
+				throw new ArgumentNullException (nameof (update));
+
 			cancellable = source as ICancellableStream;
 			Source = source;
 			Update = update;
@@ -76,7 +79,7 @@ namespace MailKit {
 
 		public override long Position {
 			get { return Source.Position; }
-			set { Source.Position = value; }
+			set { Seek (value, SeekOrigin.Begin); }
 		}
 
 		public override int ReadTimeout {
