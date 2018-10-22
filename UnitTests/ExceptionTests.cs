@@ -76,6 +76,10 @@ namespace UnitTests
 				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
 				Assert.AreEqual (expected.FolderName, ex.FolderName, "Unexpected FolderName.");
 			}
+
+			Assert.Throws<ArgumentNullException> (() => new FolderNotFoundException (null));
+			Assert.Throws<ArgumentNullException> (() => new FolderNotFoundException ("message", null));
+			Assert.Throws<ArgumentNullException> (() => new FolderNotFoundException ("message", null, new Exception ("message")));
 		}
 
 		[Test]
@@ -116,6 +120,10 @@ namespace UnitTests
 				Assert.AreEqual (expected.FolderName, ex.FolderName, "Unexpected FolderName.");
 				Assert.AreEqual (expected.FolderAccess, ex.FolderAccess, "Unexpected FolderAcess.");
 			}
+
+			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly));
+			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message"));
+			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message", new Exception ("message")));
 		}
 
 		[Test]

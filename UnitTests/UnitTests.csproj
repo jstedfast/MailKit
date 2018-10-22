@@ -85,6 +85,7 @@
     <Compile Include="EnvelopeTests.cs" />
     <Compile Include="EventArgsTests.cs" />
     <Compile Include="ExceptionTests.cs" />
+    <Compile Include="FolderNamespaceTests.cs" />
     <Compile Include="MessageSortingTests.cs" />
     <Compile Include="MessageThreadingTests.cs" />
     <Compile Include="UniqueIdRangeTests.cs" />

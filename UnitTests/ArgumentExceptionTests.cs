@@ -40,32 +40,13 @@ namespace UnitTests
 		[Test]
 		public void TestArgumentExceptions ()
 		{
-			Assert.Throws<ArgumentNullException> (() => new FolderNamespace ('.', null));
-
-			var namespaces = new FolderNamespaceCollection ();
-			FolderNamespace ns;
-
-			Assert.Throws<ArgumentNullException> (() => namespaces.Add (null));
-			Assert.Throws<ArgumentNullException> (() => namespaces.Contains (null));
-			Assert.Throws<ArgumentNullException> (() => namespaces.Remove (null));
-			Assert.Throws<ArgumentOutOfRangeException> (() => ns = namespaces[-1]);
-			Assert.Throws<ArgumentOutOfRangeException> (() => namespaces[-1] = new FolderNamespace ('.', ""));
-
-			namespaces.Add (new FolderNamespace ('.', ""));
-			Assert.Throws<ArgumentNullException> (() => namespaces[0] = null);
-
-			Assert.Throws<ArgumentNullException> (() => new FolderNotFoundException (null));
-			Assert.Throws<ArgumentNullException> (() => new FolderNotFoundException ("message", null));
-			Assert.Throws<ArgumentNullException> (() => new FolderNotFoundException ("message", null, new Exception ("message")));
-
-			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly));
-			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message"));
-			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly, "message", new Exception ("message")));
-
 			Assert.Throws<ArgumentNullException> (() => new MetadataCollection (null));
 
 			var metadataOptions = new MetadataOptions ();
 			Assert.Throws<ArgumentOutOfRangeException> (() => metadataOptions.Depth = 500);
+
+			Assert.Throws<ArgumentNullException> (() => new MetadataTag (null));
+			Assert.Throws<ArgumentException> (() => new MetadataTag (string.Empty));
 
 			Assert.Throws<ArgumentOutOfRangeException> (() => new OrderBy (OrderByType.To, SortOrder.None));
 
