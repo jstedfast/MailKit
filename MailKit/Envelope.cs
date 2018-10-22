@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Linq;
+using System.Collections.Generic;
 
 using MimeKit;
 using MimeKit.Utils;
@@ -200,19 +201,9 @@ namespace MailKit {
 			builder.Append (')');
 		}
 
-		static void EncodeGroup (StringBuilder builder, GroupAddress group)
+		static void EncodeInternetAddressListAddresses (StringBuilder builder, InternetAddressList addresses)
 		{
-			builder.AppendFormat ("(NIL NIL {0} NIL)", MimeUtils.Quote (group.Name));
-			foreach (var mailbox in group.Members.Mailboxes)
-				EncodeMailbox (builder, mailbox);
-			builder.Append ("(NIL NIL NIL NIL)");
-		}
-
-		static void EncodeAddressList (StringBuilder builder, InternetAddressList list)
-		{
-			builder.Append ('(');
-
-			foreach (var addr in list) {
+			foreach (var addr in addresses) {
 				var mailbox = addr as MailboxAddress;
 				var group = addr as GroupAddress;
 
@@ -221,7 +212,19 @@ namespace MailKit {
 				else if (group != null)
 					EncodeGroup (builder, group);
 			}
+		}
 
+		static void EncodeGroup (StringBuilder builder, GroupAddress group)
+		{
+			builder.AppendFormat ("(NIL NIL {0} NIL)", MimeUtils.Quote (group.Name));
+			EncodeInternetAddressListAddresses (builder, group.Members);
+			builder.Append ("(NIL NIL NIL NIL)");
+		}
+
+		static void EncodeAddressList (StringBuilder builder, InternetAddressList list)
+		{
+			builder.Append ('(');
+			EncodeInternetAddressListAddresses (builder, list);
 			builder.Append (')');
 		}
 
@@ -414,9 +417,6 @@ namespace MailKit {
 
 		static bool TryParse (string text, ref int index, out InternetAddressList list)
 		{
-			GroupAddress group = null;
-			InternetAddress addr;
-
 			list = null;
 
 			while (index < text.Length && text[index] == ' ')
@@ -441,29 +441,39 @@ namespace MailKit {
 				return false;
 
 			list = new InternetAddressList ();
+			var stack = new List<InternetAddressList> ();
+			int sp = 0;
+
+			stack.Add (list);
 
 			do {
 				if (text[index] == ')')
 					break;
 
-				if (!TryParse (text, ref index, out addr))
+				if (!TryParse (text, ref index, out InternetAddress addr))
 					return false;
 
 				if (addr != null) {
+					var group = addr as GroupAddress;
+
+					stack[sp].Add (addr);
+
 					if (group != null) {
-						group.Members.Add (addr);
-					} else {
-						group = addr as GroupAddress;
-						list.Add (addr);
+						stack.Add (group.Members);
+						sp++;
 					}
-				} else {
-					group = null;
+				} else if (sp > 0) {
+					stack.RemoveAt (sp);
+					sp--;
 				}
 
 				while (index < text.Length && text[index] == ' ')
 					index++;
 			} while (index < text.Length);
 
+			// Note: technically, we should check that sp == 0 as well, since all groups should
+			// be popped off the stack, but in the interest of being liberal in what we accept,
+			// we'll ignore that.
 			if (index >= text.Length)
 				return false;
 
