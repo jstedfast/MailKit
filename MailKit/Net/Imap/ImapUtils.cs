@@ -988,11 +988,11 @@ namespace MailKit.Net.Imap {
 			}
 
 			public bool IsGroupStart {
-				get { return Domain == null; }
+				get { return Name == null && Route == null && Mailbox != null && Domain == null; }
 			}
 
 			public bool IsGroupEnd {
-				get { return Mailbox == null; }
+				get { return Name == null && Route == null && Mailbox == null && Domain == null; }
 			}
 
 			public MailboxAddress ToMailboxAddress (ImapEngine engine)
@@ -1018,7 +1018,7 @@ namespace MailKit.Net.Imap {
 				if (mailbox != null)
 					mailbox = mailbox.TrimStart ('<');
 
-				string address = domain != null ? mailbox + "@" + domain : Mailbox;
+				string address = domain != null ? mailbox + "@" + domain : mailbox;
 				DomainList route;
 
 				if (Route != null && DomainList.TryParse (Route, out route))
@@ -1085,7 +1085,10 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (format, token);
 
-			GroupAddress group = null;
+			var stack = new List<InternetAddressList> ();
+			int sp = 0;
+
+			stack.Add (list);
 
 			do {
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1096,30 +1099,29 @@ namespace MailKit.Net.Imap {
 				if (token.Type != ImapTokenType.OpenParen)
 					throw ImapEngine.UnexpectedToken (format, token);
 
-				var item = await ParseEnvelopeAddressAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+				var address = await ParseEnvelopeAddressAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (item.IsGroupStart && engine.QuirksMode != ImapQuirksMode.GMail && group == null) {
-					group = item.ToGroupAddress (engine);
-					list.Add (group);
-				} else if (item.IsGroupEnd) {
-					group = null;
+				if (address.IsGroupStart && engine.QuirksMode != ImapQuirksMode.GMail) {
+					var group = address.ToGroupAddress (engine);
+					stack[sp].Add (group);
+					stack.Add (group.Members);
+					sp++;
+				} else if (address.IsGroupEnd) {
+					if (sp > 0) {
+						stack.RemoveAt (sp);
+						sp--;
+					}
 				} else {
-					MailboxAddress mailbox;
-
 					try {
 						// Note: We need to do a try/catch around ToMailboxAddress() because some addresses
 						// returned by the IMAP server might be completely horked. For an example, see the
 						// second error report in https://github.com/jstedfast/MailKit/issues/494 where one
 						// of the addresses in the ENVELOPE has the name and address tokens flipped.
-						mailbox = item.ToMailboxAddress (engine);
+						var mailbox = address.ToMailboxAddress (engine);
+						stack[sp].Add (mailbox);
 					} catch {
 						continue;
 					}
-
-					if (group != null)
-						group.Members.Add (mailbox);
-					else
-						list.Add (mailbox);
 				}
 			} while (true);
 		}
