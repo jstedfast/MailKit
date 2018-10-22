@@ -36,6 +36,7 @@ using System.Collections.Generic;
 
 using MimeKit;
 using MimeKit.IO;
+using MimeKit.Cryptography;
 
 #if NETFX_CORE
 using Windows.Networking;
@@ -1548,14 +1549,9 @@ namespace MailKit.Net.Smtp {
 				get; private set;
 			}
 
-			protected override void VisitMultipart (Multipart multipart)
+			protected override void VisitMultipartSigned (MultipartSigned signed)
 			{
-				if (multipart.ContentType.IsMimeType ("multipart", "signed")) {
-					// do not modify children of a multipart/signed
-					return;
-				}
-
-				base.VisitMultipart (multipart);
+				// do not modify children of a multipart/signed
 			}
 
 			protected override void VisitMimePart (MimePart entity)
