@@ -95,13 +95,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="visitor"/> is <c>null</c>.
 		/// </exception>
-		public virtual void Accept (BodyPartVisitor visitor)
-		{
-			if (visitor == null)
-				throw new ArgumentNullException (nameof (visitor));
-
-			visitor.VisitBodyPart (this);
-		}
+		public abstract void Accept (BodyPartVisitor visitor);
 
 		internal static void Encode (StringBuilder builder, uint value)
 		{
