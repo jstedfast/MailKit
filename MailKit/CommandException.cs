@@ -87,16 +87,5 @@ namespace MailKit {
 		{
 			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
 		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="CommandException"/>.
-		/// </remarks>
-		protected CommandException ()
-		{
-			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
-		}
 	}
 }
