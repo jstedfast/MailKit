@@ -40,18 +40,6 @@ namespace UnitTests.Net.Smtp {
 	public class SmtpStreamTests
 	{
 		[Test]
-		public void TestArgumentExceptions ()
-		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
-				var buffer = new byte[1024];
-
-				Assert.Throws<ArgumentNullException> (() => stream.Write (null, 0, buffer.Length));
-				Assert.Throws<ArgumentOutOfRangeException> (() => stream.Write (buffer, -1, buffer.Length));
-				Assert.Throws<ArgumentOutOfRangeException> (() => stream.Write (buffer, 0, -1));
-			}
-		}
-
-		[Test]
 		public void TestCanReadWriteSeek ()
 		{
 			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
@@ -78,7 +66,7 @@ namespace UnitTests.Net.Smtp {
 		public void TestRead ()
 		{
 			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
-				var buffer = new byte[1024];
+				var buffer = new byte[16];
 
 				Assert.Throws<NotImplementedException> (() => stream.Read (buffer, 0, buffer.Length));
 				Assert.Throws<NotImplementedException> (async () => await stream.ReadAsync (buffer, 0, buffer.Length));
@@ -205,6 +193,10 @@ namespace UnitTests.Net.Smtp {
 					rng.GetBytes (buf4k);
 					rng.GetBytes (buf9k);
 				}
+
+				Assert.Throws<ArgumentNullException> (() => stream.Write (null, 0, buffer.Length));
+				Assert.Throws<ArgumentOutOfRangeException> (() => stream.Write (buffer, -1, buffer.Length));
+				Assert.Throws<ArgumentOutOfRangeException> (() => stream.Write (buffer, 0, -1));
 
 				// Test #1: write less than 4K to make sure that SmtpStream buffers it
 				stream.Write (buf1k, 0, buf1k.Length);

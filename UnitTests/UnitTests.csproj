@@ -82,6 +82,7 @@
     <Compile Include="AccessControlListTests.cs" />
     <Compile Include="ArgumentExceptionTests.cs" />
     <Compile Include="BodyPartTests.cs" />
+    <Compile Include="DuplexStreamTests.cs" />
     <Compile Include="EnvelopeTests.cs" />
     <Compile Include="EventArgsTests.cs" />
     <Compile Include="ExceptionTests.cs" />
