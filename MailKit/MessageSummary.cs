@@ -287,7 +287,7 @@ namespace MailKit {
 			}
 		}
 
-		static IEnumerable<BodyPartBasic> EnumerateBodyParts (BodyPart entity)
+		static IEnumerable<BodyPartBasic> EnumerateBodyParts (BodyPart entity, bool attachmentsOnly)
 		{
 			if (entity == null)
 				yield break;
@@ -296,27 +296,19 @@ namespace MailKit {
 
 			if (multipart != null) {
 				foreach (var subpart in multipart.BodyParts) {
-					foreach (var part in EnumerateBodyParts (subpart))
+					foreach (var part in EnumerateBodyParts (subpart, attachmentsOnly))
 						yield return part;
 				}
 
 				yield break;
 			}
 
-			var msgpart = entity as BodyPartMessage;
+			var basic = (BodyPartBasic) entity;
 
-			if (msgpart != null) {
-				var message = msgpart.Body;
-
-				if (message != null) {
-					foreach (var part in EnumerateBodyParts (message))
-						yield return part;
-				}
-
+			if (attachmentsOnly && !basic.IsAttachment)
 				yield break;
-			}
 
-			yield return (BodyPartBasic) entity;
+			yield return basic;
 		}
 
 		/// <summary>
@@ -332,7 +324,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The body parts.</value>
 		public IEnumerable<BodyPartBasic> BodyParts {
-			get { return EnumerateBodyParts (Body); }
+			get { return EnumerateBodyParts (Body, false); }
 		}
 
 		/// <summary>
@@ -351,7 +343,7 @@ namespace MailKit {
 		/// </example>
 		/// <value>The attachments.</value>
 		public IEnumerable<BodyPartBasic> Attachments {
-			get { return EnumerateBodyParts (Body).Where (part => part.IsAttachment); }
+			get { return EnumerateBodyParts (Body, true); }
 		}
 
 		/// <summary>
