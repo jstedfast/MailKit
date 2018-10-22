@@ -247,7 +247,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override long Position {
 			get { return Stream.Position; }
-			set { Stream.Position = value; }
+			set { throw new NotSupportedException (); }
 		}
 
 		/// <summary>

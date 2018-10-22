@@ -219,7 +219,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override long Position {
 			get { return Stream.Position; }
-			set { Seek (value, SeekOrigin.Begin); }
+			set { throw new NotSupportedException (); }
 		}
 
 		/// <summary>
