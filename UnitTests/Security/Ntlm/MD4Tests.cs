@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Text;
 
 using NUnit.Framework;
@@ -41,6 +42,10 @@ namespace UnitTests.Security.Ntlm {
 			using (var md4 = new MD4 ()) {
 				var buffer = new byte[16];
 
+				Assert.Throws<InvalidOperationException> (() => { var x = md4.Hash; });
+
+				Assert.Throws<ArgumentNullException> (() => md4.ComputeHash ((byte[]) null));
+				Assert.Throws<ArgumentNullException> (() => md4.ComputeHash ((Stream) null));
 				Assert.Throws<ArgumentNullException> (() => md4.ComputeHash (null, 0, buffer.Length));
 				Assert.Throws<ArgumentOutOfRangeException> (() => md4.ComputeHash (buffer, -1, buffer.Length));
 				Assert.Throws<ArgumentOutOfRangeException> (() => md4.ComputeHash (buffer, 0, -1));
@@ -64,9 +69,9 @@ namespace UnitTests.Security.Ntlm {
 
 			using (var md4 = new MD4 ()) {
 				StringBuilder builder = new StringBuilder ();
-				byte[] hash, output;
+				byte[] hash, output = new byte[16];
 
-				Assert.AreEqual (16, md4.TransformBlock (text, 0, 16, null, 0), "TransformBlock");
+				Assert.AreEqual (16, md4.TransformBlock (text, 0, 16, output, 0), "TransformBlock");
 				output = md4.TransformFinalBlock (text, 16, text.Length - 16);
 				Assert.NotNull (output, "TransformFinalBlock");
 				Assert.AreEqual (text.Length - 16, output.Length, "TransformFinalBlock");
@@ -81,6 +86,18 @@ namespace UnitTests.Security.Ntlm {
 				StringBuilder builder = new StringBuilder ();
 
 				var hash = md4.ComputeHash (text);
+				Assert.NotNull (hash, "ComputeHash");
+				for (int i = 0; i < hash.Length; i++)
+					builder.Append (hash[i].ToString ("x2"));
+				Assert.AreEqual (expected, builder.ToString (), "ComputeHash");
+			}
+
+			using (var md4 = new MD4 ()) {
+				StringBuilder builder = new StringBuilder ();
+				byte[] hash;
+
+				using (var stream = new MemoryStream (text, false))
+					hash = md4.ComputeHash (stream);
 				Assert.NotNull (hash, "ComputeHash");
 				for (int i = 0; i < hash.Length; i++)
 					builder.Append (hash[i].ToString ("x2"));

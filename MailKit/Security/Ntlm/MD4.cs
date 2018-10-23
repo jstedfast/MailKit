@@ -315,6 +315,9 @@ namespace MailKit.Security.Ntlm {
 
 		public byte[] ComputeHash (Stream inputStream)
 		{
+			if (inputStream == null)
+				throw new ArgumentNullException (nameof (inputStream));
+
 			// don't read stream unless object is ready to use
 			if (disposed)
 				throw new ObjectDisposedException (nameof (MD4));
