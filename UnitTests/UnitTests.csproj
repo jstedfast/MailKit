@@ -92,6 +92,7 @@
     <Compile Include="MessageSortingTests.cs" />
     <Compile Include="MessageSummaryTests.cs" />
     <Compile Include="MessageThreadingTests.cs" />
+    <Compile Include="MetadataTests.cs" />
     <Compile Include="ProgressStreamTests.cs" />
     <Compile Include="UniqueIdRangeTests.cs" />
     <Compile Include="UniqueIdSetTests.cs" />

@@ -40,14 +40,6 @@ namespace UnitTests
 		[Test]
 		public void TestArgumentExceptions ()
 		{
-			Assert.Throws<ArgumentNullException> (() => new MetadataCollection (null));
-
-			var metadataOptions = new MetadataOptions ();
-			Assert.Throws<ArgumentOutOfRangeException> (() => metadataOptions.Depth = 500);
-
-			Assert.Throws<ArgumentNullException> (() => new MetadataTag (null));
-			Assert.Throws<ArgumentException> (() => new MetadataTag (string.Empty));
-
 			Assert.Throws<ArgumentOutOfRangeException> (() => new OrderBy (OrderByType.To, SortOrder.None));
 
 			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((string) null));
