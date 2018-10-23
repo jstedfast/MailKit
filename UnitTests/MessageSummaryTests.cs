@@ -219,6 +219,48 @@ namespace UnitTests {
 		}
 
 		[Test]
+		public void TestRelatedTextPlainBody ()
+		{
+			var summary = new MessageSummary (0) {
+				Body = CreateMultipart ("MULTIPART", "RELATED", "",
+					CreateText ("TEXT", "PLAIN", "1", false),
+					CreateBasic ("IMAGE", "JPEG", "2", true)
+				)
+			};
+
+			var plain = summary.TextBody;
+			Assert.NotNull (plain, "TextBody");
+			Assert.AreEqual ("1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+
+			var html = summary.HtmlBody;
+			Assert.IsNull (html, "HtmlBody");
+
+			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
+			Assert.AreEqual (2, summary.BodyParts.Count (), "BodyParts");
+		}
+
+		[Test]
+		public void TestRelatedTextHtmlBody ()
+		{
+			var summary = new MessageSummary (0) {
+				Body = CreateMultipart ("MULTIPART", "RELATED", "",
+					CreateText ("TEXT", "HTML", "1", false),
+					CreateBasic ("IMAGE", "JPEG", "2", true)
+				)
+			};
+
+			var plain = summary.TextBody;
+			Assert.IsNull (plain, "TextBody");
+
+			var html = summary.HtmlBody;
+			Assert.NotNull (html, "HtmlBody");
+			Assert.AreEqual ("1", html.ContentType.Parameters ["part-specifier"], "HtmlBody");
+
+			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
+			Assert.AreEqual (2, summary.BodyParts.Count (), "BodyParts");
+		}
+
+		[Test]
 		public void TestMixedAlternativeRelated ()
 		{
 			var summary = new MessageSummary (0) {
@@ -241,6 +283,77 @@ namespace UnitTests {
 			var html = summary.HtmlBody;
 			Assert.NotNull (html, "HtmlBody");
 			Assert.AreEqual ("1.2.1", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+
+			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
+			Assert.AreEqual (4, summary.BodyParts.Count (), "BodyParts");
+		}
+
+		[Test]
+		public void TestMixedAlternativeRelatedWithStartParameter ()
+		{
+			var summary = new MessageSummary (0) {
+				Body = CreateMultipart ("MULTIPART", "MIXED", "",
+					CreateMultipart ("MULTIPART", "ALTERNATIVE", "1",
+						CreateText ("TEXT", "PLAIN", "1.1", false),
+						CreateMultipart ("MULTIPART", "RELATED", "1.2",
+							CreateBasic ("IMAGE", "JPEG", "1.2.1", false),
+							CreateText ("TEXT", "HTML", "1.2.2", false)
+						)
+					),
+					CreateBasic ("IMAGE", "JPEG", "2", true)
+				)
+			};
+			var cid = "html@localhost.com";
+			var mixed = (BodyPartMultipart) summary.Body;
+			var alternative = (BodyPartMultipart) mixed.BodyParts[0];
+			var related = (BodyPartMultipart) alternative.BodyParts[1];
+			var html = (BodyPartText) related.BodyParts[1];
+
+			related.ContentType.Parameters["start"] = cid;
+			html.ContentLocation = new Uri ("cid:" + cid);
+
+			var plain = summary.TextBody;
+			Assert.NotNull (plain, "TextBody");
+			Assert.AreEqual ("1.1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+
+			html = summary.HtmlBody;
+			Assert.NotNull (html, "HtmlBody");
+			Assert.AreEqual ("1.2.2", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+
+			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
+			Assert.AreEqual (4, summary.BodyParts.Count (), "BodyParts");
+		}
+
+		[Test]
+		public void TestMixedRelatedAlternativeWithStartParameter ()
+		{
+			var summary = new MessageSummary (0) {
+				Body = CreateMultipart ("MULTIPART", "MIXED", "",
+					CreateMultipart ("MULTIPART", "RELATED", "1",
+						CreateBasic ("IMAGE", "JPEG", "1.1", false),
+						CreateMultipart ("MULTIPART", "ALTERNATIVE", "1.2",
+							CreateText ("TEXT", "PLAIN", "1.2.1", false),
+							CreateText ("TEXT", "HTML", "1.2.2", false)
+						)
+					),
+					CreateBasic ("IMAGE", "JPEG", "2", true)
+				)
+			};
+			var cid = "alternative@localhost.com";
+			var mixed = (BodyPartMultipart) summary.Body;
+			var related = (BodyPartMultipart) mixed.BodyParts[0];
+			var alternative = (BodyPartMultipart) related.BodyParts[1];
+
+			related.ContentType.Parameters["start"] = cid;
+			alternative.ContentLocation = new Uri ("cid:" + cid);
+
+			var plain = summary.TextBody;
+			Assert.NotNull (plain, "TextBody");
+			Assert.AreEqual ("1.2.1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+
+			var html = summary.HtmlBody;
+			Assert.NotNull (html, "HtmlBody");
+			Assert.AreEqual ("1.2.2", html.ContentType.Parameters["part-specifier"], "HtmlBody");
 
 			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
 			Assert.AreEqual (4, summary.BodyParts.Count (), "BodyParts");
