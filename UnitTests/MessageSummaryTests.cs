@@ -26,6 +26,7 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -70,6 +71,22 @@ namespace UnitTests {
 			Assert.AreEqual (UniqueId.Invalid, summary.UniqueId, "UniqueId");
 			Assert.IsNotNull (summary.UserFlags, "UserFlags");
 			Assert.AreEqual (0, summary.UserFlags.Count, "UserFlags");
+		}
+
+		[Test]
+		public void TestGMailProperties ()
+		{
+			ulong msgid = 179111;
+			ulong thrid = 7192564;
+			var summary = new MessageSummary (0) {
+				GMailLabels = new List<string> (),
+				GMailMessageId = msgid,
+				GMailThreadId = thrid
+			};
+
+			Assert.AreEqual (0, summary.GMailLabels.Count, "GMailLabels");
+			Assert.AreEqual (msgid, summary.GMailMessageId, "GMailMessageId");
+			Assert.AreEqual (thrid, summary.GMailThreadId, "GMailThreadId");
 		}
 
 		static ContentType CreateContentType (string type, string subtype, string partSpecifier)
