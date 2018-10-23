@@ -37,8 +37,13 @@ namespace UnitTests {
 		[Test]
 		public void TestArgumentExceptions ()
 		{
+			UniqueId uid;
+
 			Assert.Throws<ArgumentOutOfRangeException> (() => new UniqueId (0, 0));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new UniqueId (0));
+
+			Assert.Throws<ArgumentNullException> (() => UniqueId.TryParse (null, out uid));
+			Assert.Throws<ArgumentNullException> (() => UniqueId.TryParse (null, 0, out uid));
 		}
 
 		[Test]
@@ -47,6 +52,8 @@ namespace UnitTests {
 			Assert.IsFalse (UniqueId.MinValue == UniqueId.MaxValue, "MinValue == MaxValue");
 			Assert.IsTrue (UniqueId.MinValue != UniqueId.MaxValue, "MinValue != MaxValue");
 			Assert.IsTrue (UniqueId.MinValue.Equals (new UniqueId (1)), "MinValue.Equals(1)");
+			Assert.IsTrue (UniqueId.MinValue.Equals ((object) new UniqueId (1)), "Boxed MinValue.Equals(1)");
+			Assert.AreEqual (UniqueId.MinValue.GetHashCode (), new UniqueId (1).GetHashCode (), "GetHashCode");
 			Assert.AreNotEqual (UniqueId.MinValue, UniqueId.MaxValue);
 			Assert.AreEqual (new UniqueId (5), new UniqueId (5));
 		}
