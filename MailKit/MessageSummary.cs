@@ -70,7 +70,7 @@ namespace MailKit {
 			if (normalizedSubject != null)
 				return;
 
-			if (Envelope.Subject != null) {
+			if (Envelope?.Subject != null) {
 				normalizedSubject = MessageThreader.GetThreadableSubject (Envelope.Subject, out threadableReplyDepth);
 			} else {
 				normalizedSubject = string.Empty;
@@ -419,7 +419,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The date.</value>
 		public DateTimeOffset Date {
-			get { return Envelope.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
+			get { return Envelope?.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
 		}
 
 		/// <summary>

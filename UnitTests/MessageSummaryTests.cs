@@ -42,6 +42,36 @@ namespace UnitTests {
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageSummary (-1));
 		}
 
+		[Test]
+		public void TestDefaultValues ()
+		{
+			var summary = new MessageSummary (17);
+
+			Assert.AreEqual (0, summary.Attachments.Count (), "Attachments");
+			Assert.IsNull (summary.Body, "Body");
+			Assert.AreEqual (0, summary.BodyParts.Count (), "BodyParts");
+			Assert.AreEqual (DateTimeOffset.MinValue, summary.Date, "Date");
+			Assert.IsNull (summary.Envelope, "Envelope");
+			Assert.IsNull (summary.Flags, "Flags");
+			Assert.IsNull (summary.GMailLabels, "GMailLabels");
+			Assert.IsNull (summary.GMailMessageId, "GMailMessageId");
+			Assert.IsNull (summary.GMailThreadId, "GMailThreadId");
+			Assert.IsNull (summary.Headers, "Headers");
+			Assert.IsNull (summary.HtmlBody, "HtmlBody");
+			Assert.AreEqual (17, summary.Index, "Index");
+			Assert.IsNull (summary.InternalDate, "InternalDate");
+			Assert.IsFalse (summary.IsReply, "IsReply");
+			Assert.IsNull (summary.ModSeq, "ModSeq");
+			Assert.AreEqual (string.Empty, summary.NormalizedSubject, "NormalizedSubject");
+			Assert.IsNull (summary.PreviewText, "PreviewText");
+			Assert.IsNull (summary.References, "References");
+			Assert.IsNull (summary.Size, "Size");
+			Assert.IsNull (summary.TextBody, "TextBody");
+			Assert.AreEqual (UniqueId.Invalid, summary.UniqueId, "UniqueId");
+			Assert.IsNotNull (summary.UserFlags, "UserFlags");
+			Assert.AreEqual (0, summary.UserFlags.Count, "UserFlags");
+		}
+
 		static ContentType CreateContentType (string type, string subtype, string partSpecifier)
 		{
 			var contentType = new ContentType (type, subtype);
