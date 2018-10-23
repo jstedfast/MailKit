@@ -42,8 +42,11 @@ namespace UnitTests {
 			var uids = new UniqueIdSet (SortOrder.Ascending);
 			UniqueId uid;
 
+			Assert.IsFalse (uids.IsReadOnly);
+
 			uids.Add (UniqueId.MinValue);
 
+			Assert.Throws<ArgumentOutOfRangeException> (() => new UniqueIdSet ((SortOrder)500));
 			Assert.Throws<ArgumentException> (() => uids.Add (UniqueId.Invalid));
 			Assert.Throws<ArgumentNullException> (() => uids.AddRange (null));
 			Assert.Throws<ArgumentNullException> (() => uids.CopyTo (null, 0));
@@ -397,6 +400,68 @@ namespace UnitTests {
 
 			Assert.AreEqual ("20:19,15,12:9,6:5,3:1", actual, "Unexpected result for descending set.");
 			Assert.AreEqual (11, list.IndexOf (new UniqueId (1)), "Unexpected index for descending set.");
+		}
+
+		[Test]
+		public void TestMergingRangesAscending ()
+		{
+			UniqueId[] uids = {
+				new UniqueId (1), new UniqueId (2), new UniqueId (3),
+				new UniqueId (5), new UniqueId (6), new UniqueId (7),
+				new UniqueId (9), new UniqueId (10), new UniqueId (11),
+				new UniqueId (8)
+			};
+			var list = new UniqueIdSet (uids, SortOrder.Ascending);
+			var actual = list.ToString ();
+
+			Assert.AreEqual ("1:3,5:11", actual, "Unexpected result for sorted set.");
+		}
+
+		[Test]
+		public void TestMergingRangesDescending ()
+		{
+			UniqueId[] uids = {
+				new UniqueId (1), new UniqueId (2), new UniqueId (3),
+				new UniqueId (5), new UniqueId (6), new UniqueId (7),
+				new UniqueId (9), new UniqueId (10), new UniqueId (11),
+				new UniqueId (4)
+			};
+			var list = new UniqueIdSet (uids, SortOrder.Descending);
+			var actual = list.ToString ();
+
+			Assert.AreEqual ("11:9,7:1", actual, "Unexpected result for sorted set.");
+		}
+
+		[Test]
+		public void TestContainsAscending ()
+		{
+			var uids = new UniqueIdSet (SortOrder.Ascending);
+
+			Assert.IsFalse (uids.Contains (new UniqueId (5)), "5");
+
+			uids.Add (new UniqueId (2));
+			uids.Add (new UniqueId (3));
+
+			Assert.IsFalse (uids.Contains (new UniqueId (1)), "1");
+			Assert.IsTrue (uids.Contains (new UniqueId (2)), "2");
+			Assert.IsTrue (uids.Contains (new UniqueId (3)), "3");
+			Assert.IsFalse (uids.Contains (new UniqueId (4)), "4");
+		}
+
+		[Test]
+		public void TestContainsDescending ()
+		{
+			var uids = new UniqueIdSet (SortOrder.Descending);
+
+			Assert.IsFalse (uids.Contains (new UniqueId (5)), "5");
+
+			uids.Add (new UniqueId (2));
+			uids.Add (new UniqueId (3));
+
+			Assert.IsFalse (uids.Contains (new UniqueId (1)), "1");
+			Assert.IsTrue (uids.Contains (new UniqueId (2)), "2");
+			Assert.IsTrue (uids.Contains (new UniqueId (3)), "3");
+			Assert.IsFalse (uids.Contains (new UniqueId (4)), "4");
 		}
 
 		[Test]

@@ -26,6 +26,7 @@
 
 using System;
 using System.Text;
+using System.Collections;
 
 using NUnit.Framework;
 
@@ -166,6 +167,10 @@ namespace UnitTests {
 			Assert.AreEqual (2, list.IndexOf (new Uri ("cid:image2@localhost")));
 
 			foreach (var part in list)
+				Assert.AreEqual (parts[i++], part);
+
+			i = 0;
+			foreach (var part in (IEnumerable) list)
 				Assert.AreEqual (parts[i++], part);
 		}
 
