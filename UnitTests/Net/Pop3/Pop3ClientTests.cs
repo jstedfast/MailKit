@@ -79,7 +79,12 @@ namespace UnitTests.Net.Pop3 {
 		{
 			using (var client = new Pop3Client ()) {
 				var credentials = new NetworkCredential ("username", "password");
-				var socket = new Socket (SocketType.Stream, ProtocolType.Tcp);
+
+				// ReplayConnect
+				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect (null, Stream.Null));
+				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect ("host", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.ReplayConnectAsync (null, Stream.Null));
+				Assert.Throws<ArgumentNullException> (async () => await client.ReplayConnectAsync ("host", null));
 
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
@@ -98,7 +103,19 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
 
 				Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 110, SecureSocketOptions.None));
-				Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 110, SecureSocketOptions.None));
+				using (var socket = new Socket (SocketType.Stream, ProtocolType.Tcp))
+					Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 110, SecureSocketOptions.None));
+
+				using (var socket = Connect ("www.gmail.com", 80)) {
+					Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentException> (() => client.Connect (socket, string.Empty, 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, "host", -1, SecureSocketOptions.None));
+					Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, "host", 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, string.Empty, 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, "host", -1, SecureSocketOptions.None));
+				}
 
 				// Authenticate
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate ((SaslMechanism) null));
@@ -165,6 +182,14 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
+		public void TestSyncRoot ()
+		{
+			using (var client = new Pop3Client ()) {
+				Assert.IsInstanceOf<Pop3Engine> (client.SyncRoot);
+			}
+		}
+
+		[Test]
 		public void TestInvalidStateExceptions ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
@@ -172,24 +197,35 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
 			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.err.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync ("username", "password"));
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
+				Assert.Throws<ServiceNotConnectedException> (() => client.Authenticate ("username", "password"));
+				Assert.Throws<ServiceNotConnectedException> (() => client.Authenticate (new NetworkCredential ("username", "password")));
+				Assert.Throws<ServiceNotConnectedException> (() => client.Authenticate (new SaslMechanismPlain ("username", "password")));
 
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.NoOpAsync ());
+				Assert.Throws<ServiceNotConnectedException> (() => client.EnableUTF8 ());
 
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageSizesAsync ());
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageSizeAsync (0));
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageUidsAsync ());
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageUidAsync (0));
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageAsync (0));
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync (0));
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamAsync (0));
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamsAsync (0, 1));
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamsAsync (new int[] { 0 }));
-				Assert.Throws<ServiceNotConnectedException> (async () => await client.DeleteMessageAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (() => client.NoOp ());
+
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageSizes ());
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageSize (0));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageUids ());
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageUid (0));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessage (0));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageHeaders (0));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageHeaders (0, 1));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageHeaders (new int[] { 0 }));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetStream (0));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetStreams (0, 1));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetStreams (new int[] { 0 }));
+				Assert.Throws<ServiceNotConnectedException> (() => client.DeleteMessage (0));
+				Assert.Throws<ServiceNotConnectedException> (() => client.DeleteMessages (0, 1));
+				Assert.Throws<ServiceNotConnectedException> (() => client.DeleteMessages (new int [] { 0 }));
 
 				try {
 					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
@@ -202,6 +238,10 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (ComcastCapa1, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.AreEqual (0, client.LoginDelay);
+
+				Assert.Throws<ArgumentException> (() => client.Capabilities |= Pop3Capabilities.Apop);
+				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
 
 				Assert.Throws<AuthenticationException> (() => client.Authenticate ("username", "password"));
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
@@ -236,6 +276,30 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessage (0));
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
+				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessages (0, 1));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessages (new int[] { 0 }));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				client.Authenticate (Encoding.UTF8, "username", "password");
+				Assert.IsTrue (client.IsAuthenticated, "IsAuthenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Authenticate ("username", "password"));
+				Assert.Throws<InvalidOperationException> (() => client.Authenticate (new NetworkCredential ("username", "password")));
+				Assert.Throws<InvalidOperationException> (() => client.Authenticate (new SaslMechanismPlain ("username", "password")));
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStream (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessage (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessageHeaders (-1));
+				Assert.Throws<ArgumentNullException> (() => client.GetMessageHeaders (null));
+				Assert.Throws<ArgumentException> (() => client.GetMessageHeaders (new int[] { -1 }));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessageHeaders (-1, 1));
+				Assert.Throws<ArgumentNullException> (() => client.GetStreams (null));
+				Assert.Throws<ArgumentException> (() => client.GetStreams (new int[] { -1 }));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStreams (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStreams (0, 10));
+
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
@@ -254,11 +318,18 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
 			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.err.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync ("username", "password"));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password")));
+
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.EnableUTF8Async ());
 
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.NoOpAsync ());
 
@@ -268,10 +339,14 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageUidAsync (0));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageAsync (0));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync (0, 1));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync (new int[] { 0 }));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamAsync (0));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamsAsync (0, 1));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamsAsync (new int[] { 0 }));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.DeleteMessageAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.DeleteMessagesAsync (0, 1));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.DeleteMessagesAsync (new int[] { 0 }));
 
 				try {
 					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
@@ -284,6 +359,10 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (ComcastCapa1, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.AreEqual (0, client.LoginDelay);
+
+				Assert.Throws<ArgumentException> (() => client.Capabilities |= Pop3Capabilities.Apop);
+				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
 
 				Assert.Throws<AuthenticationException> (async () => await client.AuthenticateAsync ("username", "password"));
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
@@ -317,6 +396,31 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.DeleteMessageAsync (0));
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.DeleteMessagesAsync (0, 1));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.DeleteMessagesAsync (new int[] { 0 }));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				await client.AuthenticateAsync (Encoding.UTF8, "username", "password");
+				Assert.IsTrue (client.IsAuthenticated, "IsAuthenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync ("username", "password"));
+				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
+				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password")));
+
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamAsync (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageAsync (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageHeadersAsync (-1));
+				Assert.Throws<ArgumentNullException> (async () => await client.GetMessageHeadersAsync (null));
+				Assert.Throws<ArgumentException> (async () => await client.GetMessageHeadersAsync (new int[] { -1 }));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageHeadersAsync (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageHeadersAsync (0, 10));
+				Assert.Throws<ArgumentNullException> (async () => await client.GetStreamsAsync (null));
+				Assert.Throws<ArgumentException> (async () => await client.GetStreamsAsync (new int[] { -1 }));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamsAsync (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamsAsync (0, 10));
 
 				try {
 					await client.DisconnectAsync (true);
@@ -403,6 +507,7 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
 			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -444,6 +549,13 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
+					var count = client.GetMessageCount ();
+					Assert.AreEqual (1, count, "Expected 1 message again");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
+				}
+
+				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
@@ -464,6 +576,7 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
 			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -502,6 +615,13 @@ namespace UnitTests.Net.Pop3 {
 					// TODO: assert that the message is byte-identical to what we expect
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+				}
+
+				try {
+					var count = await client.GetMessageCountAsync ();
+					Assert.AreEqual (1, count, "Expected 1 message again");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
 				}
 
 				try {

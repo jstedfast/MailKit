@@ -348,7 +348,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public async Task<int> GetMessageCountAsync (CancellationToken cancellationToken)
+		public async Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -739,9 +739,7 @@ namespace MailKit.Net.Pop3
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No indexes were specified.</para>
+		/// One or more of the <paramref name="indexes"/> are invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -769,15 +767,15 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", nameof (indexes));
-
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
+				return Task.FromResult ((IList<HeaderList>) new HeaderList[0]);
 
 			var seqids = new int[indexes.Count];
 
@@ -837,15 +835,15 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
 			if (startIndex < 0 || startIndex >= total)
 				throw new ArgumentOutOfRangeException (nameof (startIndex));
 
 			if (count < 0 || count > (total - startIndex))
 				throw new ArgumentOutOfRangeException (nameof (count));
-
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
 
 			if (count == 0)
 				return Task.FromResult ((IList<HeaderList>) new HeaderList[0]);
@@ -929,9 +927,7 @@ namespace MailKit.Net.Pop3
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No indexes were specified.</para>
+		/// One or more of the <paramref name="indexes"/> are invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -959,15 +955,15 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", nameof (indexes));
-
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
+				return Task.FromResult ((IList<MimeMessage>) new MimeMessage[0]);
 
 			var seqids = new int[indexes.Count];
 
@@ -1122,9 +1118,7 @@ namespace MailKit.Net.Pop3
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No indexes were specified.</para>
+		/// One or more of the <paramref name="indexes"/> are invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1160,7 +1154,7 @@ namespace MailKit.Net.Pop3
 				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", nameof (indexes));
+				return Task.FromResult ((IList<Stream>) new Stream[0]);
 
 			var seqids = new int[indexes.Count];
 
@@ -1303,9 +1297,7 @@ namespace MailKit.Net.Pop3
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No indexes were specified.</para>
+		/// One or more of the <paramref name="indexes"/> are invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
