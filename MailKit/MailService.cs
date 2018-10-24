@@ -86,9 +86,6 @@ namespace MailKit {
 		/// </remarks>
 		protected MailService () : this (new NullProtocolLogger ())
 		{
-#if !NETFX_CORE
-            CheckCertificateRevocation = true;
-#endif
 		}
 
 		/// <summary>
@@ -1019,15 +1016,7 @@ namespace MailKit {
 		/// </exception>
 		public void Authenticate (string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (userName == null)
-				throw new ArgumentNullException (nameof (userName));
-
-			if (password == null)
-				throw new ArgumentNullException (nameof (password));
-
-			var credentials = new NetworkCredential (userName, password);
-
-			Authenticate (Encoding.UTF8, credentials, cancellationToken);
+			Authenticate (Encoding.UTF8, userName, password, cancellationToken);
 		}
 
 		/// <summary>
@@ -1077,15 +1066,7 @@ namespace MailKit {
 		/// </exception>
 		public Task AuthenticateAsync (string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (userName == null)
-				throw new ArgumentNullException (nameof (userName));
-
-			if (password == null)
-				throw new ArgumentNullException (nameof (password));
-
-			var credentials = new NetworkCredential (userName, password);
-
-			return AuthenticateAsync (Encoding.UTF8, credentials, cancellationToken);
+			return AuthenticateAsync (Encoding.UTF8, userName, password, cancellationToken);
 		}
 
 		/// <summary>
