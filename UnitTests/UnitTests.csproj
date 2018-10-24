@@ -61,6 +61,7 @@
     <Compile Include="Net\Pop3\Pop3ClientTests.cs" />
     <Compile Include="Net\Pop3\Pop3CommandExceptionTests.cs" />
     <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
+    <Compile Include="Net\Pop3\Pop3StreamTests.cs" />
     <Compile Include="Net\Smtp\SmtpClientTests.cs" />
     <Compile Include="Net\Smtp\SmtpCommandExceptionTests.cs" />
     <Compile Include="Net\Smtp\SmtpDataFilterTests.cs" />
