@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Net\Imap\ImapClientTests.cs" />
+    <Compile Include="Net\Imap\ImapCommandExceptionTests.cs" />
     <Compile Include="Net\Imap\ImapEncodingTests.cs" />
     <Compile Include="Net\Imap\ImapReplayStream.cs" />
     <Compile Include="Net\Imap\ImapUtilsTests.cs" />
