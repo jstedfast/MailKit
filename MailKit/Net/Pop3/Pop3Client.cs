@@ -1598,14 +1598,14 @@ namespace MailKit.Net.Pop3 {
 
 		Task SetLanguageAsync (string lang, bool doAsync, CancellationToken cancellationToken)
 		{
+			CheckDisposed ();
+			CheckConnected ();
+
 			if (lang == null)
 				throw new ArgumentNullException (nameof (lang));
 
 			if (lang.Length == 0)
 				throw new ArgumentException ("The language code cannot be empty.", nameof (lang));
-
-			CheckDisposed ();
-			CheckConnected ();
 
 			if ((Capabilities & Pop3Capabilities.Lang) == 0)
 				throw new NotSupportedException ("The POP3 server does not support the LANG extension.");
@@ -2760,12 +2760,12 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
 			CheckDisposed ();
 			CheckConnected ();
 			CheckAuthenticated ();
+
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
 				return new MimeMessage[0];
@@ -2832,15 +2832,15 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
 			if (startIndex < 0 || startIndex >= total)
 				throw new ArgumentOutOfRangeException (nameof (startIndex));
 
 			if (count < 0 || count > (total - startIndex))
 				throw new ArgumentOutOfRangeException (nameof (count));
-
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
 
 			if (count == 0)
 				return new MimeMessage[0];

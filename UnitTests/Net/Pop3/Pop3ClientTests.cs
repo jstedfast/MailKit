@@ -136,11 +136,6 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, null, "password"));
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate (Encoding.UTF8, "username", null));
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, "username", null));
-
-				Assert.Throws<ArgumentNullException> (() => client.SetLanguage (null));
-				Assert.Throws<ArgumentNullException> (async () => await client.SetLanguageAsync (null));
-				Assert.Throws<ArgumentException> (() => client.SetLanguage (string.Empty));
-				Assert.Throws<ArgumentException> (async () => await client.SetLanguageAsync (string.Empty));
 			}
 		}
 
@@ -209,6 +204,8 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ServiceNotConnectedException> (() => client.Authenticate (new SaslMechanismPlain ("username", "password")));
 
 				Assert.Throws<ServiceNotConnectedException> (() => client.EnableUTF8 ());
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetLanguages ());
+				Assert.Throws<ServiceNotConnectedException> (() => client.SetLanguage ("en"));
 
 				Assert.Throws<ServiceNotConnectedException> (() => client.NoOp ());
 
@@ -217,6 +214,8 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageUids ());
 				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageUid (0));
 				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessage (0));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessages (0, 1));
+				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessages (new int[] { 0 }));
 				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageHeaders (0));
 				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageHeaders (0, 1));
 				Assert.Throws<ServiceNotConnectedException> (() => client.GetMessageHeaders (new int[] { 0 }));
@@ -243,42 +242,26 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= Pop3Capabilities.Apop);
 				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
 
+				Assert.Throws<ArgumentNullException> (() => client.SetLanguage (null));
+
 				Assert.Throws<AuthenticationException> (() => client.Authenticate ("username", "password"));
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
 
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageSizes ());
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageSize (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageUids ());
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageUid (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessage (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
+				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessages (0, 1));
+				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessages (new int[] { 0 }));
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageHeaders (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
+				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageHeaders (0, 1));
+				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageHeaders (new int[] { 0 }));
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetStream (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetStreams (0, 1));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetStreams (new int[] { 0 }));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessage (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessages (0, 1));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessages (new int[] { 0 }));
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
@@ -289,16 +272,28 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<InvalidOperationException> (() => client.Authenticate (new NetworkCredential ("username", "password")));
 				Assert.Throws<InvalidOperationException> (() => client.Authenticate (new SaslMechanismPlain ("username", "password")));
 
-				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStream (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessageSize (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessageUid (-1));
 				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessage (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessages (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessages (0, -1));
+				Assert.Throws<ArgumentNullException> (() => client.GetMessages (null));
+				Assert.Throws<ArgumentException> (() => client.GetMessages (new int[] { -1 }));
 				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessageHeaders (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessageHeaders (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessageHeaders (0, -1));
 				Assert.Throws<ArgumentNullException> (() => client.GetMessageHeaders (null));
 				Assert.Throws<ArgumentException> (() => client.GetMessageHeaders (new int[] { -1 }));
-				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetMessageHeaders (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStream (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStreams (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStreams (0, -1));
 				Assert.Throws<ArgumentNullException> (() => client.GetStreams (null));
 				Assert.Throws<ArgumentException> (() => client.GetStreams (new int[] { -1 }));
-				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStreams (-1, 1));
-				Assert.Throws<ArgumentOutOfRangeException> (() => client.GetStreams (0, 10));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.DeleteMessage (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.DeleteMessages (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.DeleteMessages (0, -1));
+				Assert.Throws<ArgumentNullException> (() => client.DeleteMessages (null));
+				Assert.Throws<ArgumentException> (() => client.DeleteMessages (new int[] { -1 }));
 
 				try {
 					client.Disconnect (true);
@@ -330,6 +325,8 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password")));
 
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.EnableUTF8Async ());
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetLanguagesAsync ());
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.SetLanguageAsync ("en"));
 
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.NoOpAsync ());
 
@@ -338,6 +335,8 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageUidsAsync ());
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageUidAsync (0));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessagesAsync (0, 1));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessagesAsync (new int[] { 0 }));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync (0));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync (0, 1));
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync (new int[] { 0 }));
@@ -364,42 +363,26 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= Pop3Capabilities.Apop);
 				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
 
+				Assert.Throws<ArgumentNullException> (async () => await client.SetLanguageAsync (null));
+
 				Assert.Throws<AuthenticationException> (async () => await client.AuthenticateAsync ("username", "password"));
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
 
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageSizesAsync ());
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageSizeAsync (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageUidsAsync ());
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageUidAsync (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageAsync (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessagesAsync (0, 1));
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessagesAsync (new int[] { 0 }));
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageHeadersAsync (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageHeadersAsync (0, 1));
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageHeadersAsync (new int[] { 0 }));
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetStreamAsync (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetStreamsAsync (0, 1));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetStreamsAsync (new int[] { 0 }));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.DeleteMessageAsync (0));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.DeleteMessagesAsync (0, 1));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
 				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.DeleteMessagesAsync (new int[] { 0 }));
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
@@ -410,17 +393,28 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
 				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password")));
 
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamAsync (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageSizeAsync (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageUidAsync (-1));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageAsync (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessagesAsync (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessagesAsync (0, -1));
+				Assert.Throws<ArgumentNullException> (async () => await client.GetMessagesAsync (null));
+				Assert.Throws<ArgumentException> (async () => await client.GetMessagesAsync (new int[] { -1 }));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageHeadersAsync (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageHeadersAsync (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageHeadersAsync (0, -1));
 				Assert.Throws<ArgumentNullException> (async () => await client.GetMessageHeadersAsync (null));
 				Assert.Throws<ArgumentException> (async () => await client.GetMessageHeadersAsync (new int[] { -1 }));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageHeadersAsync (-1, 1));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetMessageHeadersAsync (0, 10));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamAsync (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamsAsync (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamsAsync (0, -1));
 				Assert.Throws<ArgumentNullException> (async () => await client.GetStreamsAsync (null));
 				Assert.Throws<ArgumentException> (async () => await client.GetStreamsAsync (new int[] { -1 }));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamsAsync (-1, 1));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.GetStreamsAsync (0, 10));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.DeleteMessageAsync (-1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.DeleteMessagesAsync (-1, 1));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.DeleteMessagesAsync (0, -1));
+				Assert.Throws<ArgumentNullException> (async () => await client.DeleteMessagesAsync (null));
+				Assert.Throws<ArgumentException> (async () => await client.DeleteMessagesAsync (new int[] { -1 }));
 
 				try {
 					await client.DisconnectAsync (true);
