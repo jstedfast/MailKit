@@ -25,6 +25,8 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -65,6 +67,9 @@ namespace UnitTests {
 
 			foreach (var kvp in map)
 				Assert.AreEqual (kvp.Value.Id, kvp.Key.Id + 10, "KeyValuePair {0} -> {1}", kvp.Key, kvp.Value);
+
+			foreach (KeyValuePair<UniqueId,UniqueId> kvp in (IEnumerable) map)
+				Assert.AreEqual (kvp.Value.Id, kvp.Key.Id + 10, "Generic KeyValuePair {0} -> {1}", kvp.Key, kvp.Value);
 
 			Assert.Throws<ArgumentOutOfRangeException> (() => { var x = map[new UniqueId (27)]; });
 			foreach (var uid in map.Source)
