@@ -145,6 +145,7 @@ namespace MailKit.Net.Imap {
 		/// <value>The length of the literal.</value>
 		public int LiteralLength {
 			get { return literalDataLeft; }
+			internal set { literalDataLeft = value; }
 		}
 
 		/// <summary>
@@ -641,7 +642,7 @@ namespace MailKit.Net.Imap {
 				input[inputEnd] = (byte) '}';
 
 				while (input[inputIndex] != (byte) '}' && input[inputIndex] != '+')
-					builder.Append ((char)input[inputIndex++]);
+					builder.Append ((char) input[inputIndex++]);
 
 				if (inputIndex < inputEnd)
 					break;
