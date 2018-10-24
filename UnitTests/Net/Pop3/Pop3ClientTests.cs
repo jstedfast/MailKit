@@ -295,6 +295,13 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentNullException> (() => client.DeleteMessages (null));
 				Assert.Throws<ArgumentException> (() => client.DeleteMessages (new int[] { -1 }));
 
+				Assert.AreEqual (0, client.GetStreams (0, 0).Count);
+				Assert.AreEqual (0, client.GetStreams (new int[0]).Count);
+				Assert.AreEqual (0, client.GetMessages (0, 0).Count);
+				Assert.AreEqual (0, client.GetMessages (new int[0]).Count);
+				Assert.AreEqual (0, client.GetMessageHeaders (0, 0).Count);
+				Assert.AreEqual (0, client.GetMessageHeaders (new int[0]).Count);
+
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
@@ -415,6 +422,13 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.DeleteMessagesAsync (0, -1));
 				Assert.Throws<ArgumentNullException> (async () => await client.DeleteMessagesAsync (null));
 				Assert.Throws<ArgumentException> (async () => await client.DeleteMessagesAsync (new int[] { -1 }));
+
+				Assert.AreEqual (0, (await client.GetStreamsAsync (0, 0)).Count);
+				Assert.AreEqual (0, (await client.GetStreamsAsync (new int[0])).Count);
+				Assert.AreEqual (0, (await client.GetMessagesAsync (0, 0)).Count);
+				Assert.AreEqual (0, (await client.GetMessagesAsync (new int[0])).Count);
+				Assert.AreEqual (0, (await client.GetMessageHeadersAsync (0, 0)).Count);
+				Assert.AreEqual (0, (await client.GetMessageHeadersAsync (new int[0])).Count);
 
 				try {
 					await client.DisconnectAsync (true);
