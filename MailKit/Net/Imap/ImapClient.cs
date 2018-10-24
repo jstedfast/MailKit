@@ -114,6 +114,7 @@ namespace MailKit.Net.Imap {
 		{
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine (CreateImapFolder);
+			engine.Disconnected += OnEngineDisconnected;
 			engine.Alert += OnEngineAlert;
 		}
 
@@ -1148,7 +1149,6 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilitiesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 
-			engine.Disconnected += OnEngineDisconnected;
 			OnConnected ();
 		}
 
@@ -1170,7 +1170,6 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				await engine.QueryCapabilitiesAsync (true, cancellationToken).ConfigureAwait (false);
 
-			engine.Disconnected += OnEngineDisconnected;
 			OnConnected ();
 		}
 
@@ -1396,12 +1395,11 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} catch {
-				engine.Disconnect ();
+				engine.Disconnect (false);
 				secure = false;
 				throw;
 			}
 
-			engine.Disconnected += OnEngineDisconnected;
 			OnConnected ();
 		}
 
@@ -1587,12 +1585,11 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} catch {
-				engine.Disconnect ();
+				engine.Disconnect (false);
 				secure = false;
 				throw;
 			}
 
-			engine.Disconnected += OnEngineDisconnected;
 			OnConnected ();
 		}
 
@@ -1674,6 +1671,7 @@ namespace MailKit.Net.Imap {
 				try {
 					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
 
+					engine.State = ImapEngineState.Disconnecting;
 					await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
 					ProcessResponseCodes (ic);
@@ -1689,7 +1687,7 @@ namespace MailKit.Net.Imap {
 			socket = null;
 #endif
 
-			engine.Disconnect ();
+			engine.Disconnect (false);
 			secure = false;
 		}
 

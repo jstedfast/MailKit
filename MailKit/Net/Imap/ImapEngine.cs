@@ -54,14 +54,14 @@ namespace MailKit.Net.Imap {
 		Disconnected,
 
 		/// <summary>
-		/// The ImapEngine is connected but has not authenticated.
+		/// The ImapEngine is in the process of connecting.
 		/// </summary>
-		Connected,
+		Connecting,
 
 		/// <summary>
-		/// The ImapEngine is in the PREAUTH state.
+		/// The ImapEngine is connected but not yet authenticated.
 		/// </summary>
-		PreAuth,
+		Connected,
 
 		/// <summary>
 		/// The ImapEngine is in the authenticated state.
@@ -77,6 +77,11 @@ namespace MailKit.Net.Imap {
 		/// The ImapEngine is in the IDLE state.
 		/// </summary>
 		Idle,
+
+		/// <summary>
+		/// The ImapEngine is in the process of disconnecting.
+		/// </summary>
+		Disconnecting
 	}
 
 	enum ImapProtocolVersion {
@@ -557,7 +562,7 @@ namespace MailKit.Net.Imap {
 			SupportedContexts.Clear ();
 			Rights.Clear ();
 
-			State = ImapEngineState.Connected;
+			State = ImapEngineState.Connecting;
 			QuirksMode = ImapQuirksMode.None;
 			SupportedCharsets.Add ("UTF-8");
 			CapabilitiesVersion = 0;
@@ -581,15 +586,16 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
 
 				var atom = (string) token.Value;
+				ImapEngineState state;
 
 				switch (atom) {
 				case "BYE":
 					throw new ImapProtocolException ("IMAP server unexpectedly disconnected.");
 				case "PREAUTH":
-					State = ImapEngineState.Authenticated;
+					state = ImapEngineState.Authenticated;
 					break;
 				case "OK":
-					State = ImapEngineState.PreAuth;
+					state = ImapEngineState.Connected;
 					break;
 				default:
 					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
@@ -605,8 +611,10 @@ namespace MailKit.Net.Imap {
 					// throw away any remaining text up until the end of the line
 					await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				}
+
+				State = state;
 			} catch {
-				Disconnect ();
+				Disconnect (false);
 				throw;
 			}
 		}
@@ -617,7 +625,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Disconnects the <see cref="ImapEngine"/>.
 		/// </remarks>
-		public void Disconnect ()
+		public void Disconnect (bool emit)
 		{
 			if (Selected != null) {
 				Selected.OnClosed ();
@@ -633,7 +641,9 @@ namespace MailKit.Net.Imap {
 
 			if (State != ImapEngineState.Disconnected) {
 				State = ImapEngineState.Disconnected;
-				OnDisconnected ();
+
+				if (emit)
+					OnDisconnected ();
 			}
 		}
 
@@ -1832,7 +1842,7 @@ namespace MailKit.Net.Imap {
 				if (current != null) {
 					current.Bye = true;
 				} else {
-					Disconnect ();
+					Disconnect (State != ImapEngineState.Connecting && State != ImapEngineState.Disconnecting);
 				}
 				break;
 			case "CAPABILITY":
@@ -1993,9 +2003,9 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (current.Bye)
-					Disconnect ();
+					Disconnect (State != ImapEngineState.Connecting && State != ImapEngineState.Disconnecting);
 			} catch {
-				Disconnect ();
+				Disconnect (State != ImapEngineState.Connecting && State != ImapEngineState.Disconnecting);
 				throw;
 			} finally {
 				current = null;
@@ -2596,7 +2606,7 @@ namespace MailKit.Net.Imap {
 		public void Dispose ()
 		{
 			disposed = true;
-			Disconnect ();
+			Disconnect (false);
 		}
 	}
 }
