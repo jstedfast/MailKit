@@ -751,26 +751,6 @@ namespace MailKit.Net.Imap {
 		/// Reads the next available token from the stream.
 		/// </summary>
 		/// <returns>The token.</returns>
-		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The stream has been disposed.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		public ImapToken ReadToken (string specials, CancellationToken cancellationToken)
-		{
-			return ReadTokenAsync (specials, false, cancellationToken).GetAwaiter ().GetResult ();
-		}
-
-		/// <summary>
-		/// Reads the next available token from the stream.
-		/// </summary>
-		/// <returns>The token.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -784,26 +764,6 @@ namespace MailKit.Net.Imap {
 		public ImapToken ReadToken (CancellationToken cancellationToken)
 		{
 			return ReadTokenAsync (false, cancellationToken).GetAwaiter ().GetResult ();
-		}
-
-		/// <summary>
-		/// Asynchronously reads the next available token from the stream.
-		/// </summary>
-		/// <returns>The token.</returns>
-		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The stream has been disposed.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		public Task<ImapToken> ReadTokenAsync (string specials, CancellationToken cancellationToken)
-		{
-			return ReadTokenAsync (specials, true, cancellationToken);
 		}
 
 		/// <summary>
