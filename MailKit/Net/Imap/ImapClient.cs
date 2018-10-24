@@ -73,7 +73,6 @@ namespace MailKit.Net.Imap {
 #endif
 		string identifier = null;
 		int timeout = 100000;
-		bool disconnecting;
 		bool connecting;
 		bool disposed;
 		bool secure;
@@ -1688,32 +1687,26 @@ namespace MailKit.Net.Imap {
 			if (!engine.IsConnected)
 				return;
 
-			disconnecting = true;
+			if (quit) {
+				try {
+					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
+					await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			try {
-				if (quit) {
-					try {
-						var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
-						await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-						ProcessResponseCodes (ic);
-					} catch (OperationCanceledException) {
-					} catch (ImapProtocolException) {
-					} catch (ImapCommandException) {
-					} catch (IOException) {
-					}
+					ProcessResponseCodes (ic);
+				} catch (OperationCanceledException) {
+				} catch (ImapProtocolException) {
+				} catch (ImapCommandException) {
+				} catch (IOException) {
 				}
+			}
 
 #if NETFX_CORE
-				socket.Dispose ();
-				socket = null;
+			socket.Dispose ();
+			socket = null;
 #endif
 
-				engine.Disconnect ();
-			} finally {
-				disconnecting = false;
-				secure = false;
-			}
+			engine.Disconnect ();
+			secure = false;
 		}
 
 		/// <summary>
@@ -2576,6 +2569,9 @@ namespace MailKit.Net.Imap {
 
 		void OnEngineDisconnected (object sender, EventArgs e)
 		{
+			if (connecting)
+				return;
+
 			secure = false;
 
 			OnDisconnected ();
