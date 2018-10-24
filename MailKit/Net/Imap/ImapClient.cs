@@ -73,6 +73,8 @@ namespace MailKit.Net.Imap {
 #endif
 		string identifier = null;
 		int timeout = 100000;
+		bool disconnecting;
+		bool connecting;
 		bool disposed;
 		bool secure;
 
@@ -1342,7 +1344,15 @@ namespace MailKit.Net.Imap {
 				throw;
 			}
 
-			await engine.ConnectAsync (new ImapStream (stream, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
+			connecting = true;
+
+			try {
+				await engine.ConnectAsync (new ImapStream (stream, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
+			} catch {
+				connecting = false;
+				secure = false;
+				throw;
+			}
 
 			try {
 				// Only query the CAPABILITIES if the greeting didn't include them.
@@ -1395,9 +1405,11 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} catch {
-				engine.Disconnect (false);
+				engine.Disconnect ();
 				secure = false;
 				throw;
+			} finally {
+				connecting = false;
 			}
 
 			OnConnected ();
@@ -1539,7 +1551,14 @@ namespace MailKit.Net.Imap {
 				throw;
 			}
 
-			await engine.ConnectAsync (new ImapStream (stream, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
+			connecting = true;
+
+			try {
+				await engine.ConnectAsync (new ImapStream (stream, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
+			} catch {
+				connecting = false;
+				throw;
+			}
 
 			try {
 				// Only query the CAPABILITIES if the greeting didn't include them.
@@ -1585,9 +1604,11 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} catch {
-				engine.Disconnect (false);
+				engine.Disconnect ();
 				secure = false;
 				throw;
+			} finally {
+				connecting = false;
 			}
 
 			OnConnected ();
@@ -1667,28 +1688,32 @@ namespace MailKit.Net.Imap {
 			if (!engine.IsConnected)
 				return;
 
-			if (quit) {
-				try {
-					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
+			disconnecting = true;
 
-					engine.State = ImapEngineState.Disconnecting;
-					await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			try {
+				if (quit) {
+					try {
+						var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
+						await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-					ProcessResponseCodes (ic);
-				} catch (OperationCanceledException) {
-				} catch (ImapProtocolException) {
-				} catch (ImapCommandException) {
-				} catch (IOException) {
+						ProcessResponseCodes (ic);
+					} catch (OperationCanceledException) {
+					} catch (ImapProtocolException) {
+					} catch (ImapCommandException) {
+					} catch (IOException) {
+					}
 				}
-			}
 
 #if NETFX_CORE
-			socket.Dispose ();
-			socket = null;
+				socket.Dispose ();
+				socket = null;
 #endif
 
-			engine.Disconnect (false);
-			secure = false;
+				engine.Disconnect ();
+			} finally {
+				disconnecting = false;
+				secure = false;
+			}
 		}
 
 		/// <summary>
@@ -2551,7 +2576,6 @@ namespace MailKit.Net.Imap {
 
 		void OnEngineDisconnected (object sender, EventArgs e)
 		{
-			engine.Disconnected -= OnEngineDisconnected;
 			secure = false;
 
 			OnDisconnected ();
@@ -2570,6 +2594,8 @@ namespace MailKit.Net.Imap {
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
+				engine.Disconnected -= OnEngineDisconnected;
+				engine.Alert -= OnEngineAlert;
 				engine.Dispose ();
 
 #if NETFX_CORE

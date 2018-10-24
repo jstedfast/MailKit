@@ -76,12 +76,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The ImapEngine is in the IDLE state.
 		/// </summary>
-		Idle,
-
-		/// <summary>
-		/// The ImapEngine is in the process of disconnecting.
-		/// </summary>
-		Disconnecting
+		Idle
 	}
 
 	enum ImapProtocolVersion {
@@ -614,7 +609,7 @@ namespace MailKit.Net.Imap {
 
 				State = state;
 			} catch {
-				Disconnect (false);
+				Disconnect ();
 				throw;
 			}
 		}
@@ -625,9 +620,10 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Disconnects the <see cref="ImapEngine"/>.
 		/// </remarks>
-		public void Disconnect (bool emit)
+		public void Disconnect ()
 		{
 			if (Selected != null) {
+				Selected.Access = FolderAccess.None;
 				Selected.OnClosed ();
 				Selected = null;
 			}
@@ -641,9 +637,7 @@ namespace MailKit.Net.Imap {
 
 			if (State != ImapEngineState.Disconnected) {
 				State = ImapEngineState.Disconnected;
-
-				if (emit)
-					OnDisconnected ();
+				OnDisconnected ();
 			}
 		}
 
@@ -1842,7 +1836,7 @@ namespace MailKit.Net.Imap {
 				if (current != null) {
 					current.Bye = true;
 				} else {
-					Disconnect (State != ImapEngineState.Connecting && State != ImapEngineState.Disconnecting);
+					Disconnect ();
 				}
 				break;
 			case "CAPABILITY":
@@ -2003,9 +1997,9 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (current.Bye)
-					Disconnect (State != ImapEngineState.Connecting && State != ImapEngineState.Disconnecting);
+					Disconnect ();
 			} catch {
-				Disconnect (State != ImapEngineState.Connecting && State != ImapEngineState.Disconnecting);
+				Disconnect ();
 				throw;
 			} finally {
 				current = null;
@@ -2606,7 +2600,7 @@ namespace MailKit.Net.Imap {
 		public void Dispose ()
 		{
 			disposed = true;
-			Disconnect (false);
+			Disconnect ();
 		}
 	}
 }

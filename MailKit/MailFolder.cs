@@ -155,7 +155,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The read/write access.</value>
 		public FolderAccess Access {
-			get; protected set;
+			get; internal protected set;
 		}
 
 		/// <summary>

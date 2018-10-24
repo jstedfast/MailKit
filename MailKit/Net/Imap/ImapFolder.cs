@@ -80,10 +80,6 @@ namespace MailKit.Net.Imap {
 			FullName = args.FullName;
 			Engine = args.Engine;
 			Name = args.Name;
-
-			Engine.Disconnected += (sender, e) => {
-				Access = FolderAccess.None;
-			};
 		}
 
 		/// <summary>
