@@ -1404,8 +1404,8 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} catch {
-				engine.Disconnect ();
 				secure = false;
+				engine.Disconnect ();
 				throw;
 			} finally {
 				connecting = false;
@@ -1603,8 +1603,8 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} catch {
-				engine.Disconnect ();
 				secure = false;
+				engine.Disconnect ();
 				throw;
 			} finally {
 				connecting = false;
@@ -1705,8 +1705,8 @@ namespace MailKit.Net.Imap {
 			socket = null;
 #endif
 
-			engine.Disconnect ();
 			secure = false;
+			engine.Disconnect ();
 		}
 
 		/// <summary>
