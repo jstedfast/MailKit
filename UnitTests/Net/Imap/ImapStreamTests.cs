@@ -298,7 +298,7 @@ namespace UnitTests.Net.Imap {
 		public void TestReadBrokenLiteralToken ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
-				var data = Encoding.ASCII.GetBytes ("{4096+" + new string (' ', 4096) + "}\r\n");
+				var data = Encoding.ASCII.GetBytes ("{4096+" + new string (' ', 4096) + "}" + new string (' ', 4096) + "\r\n");
 
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;
@@ -313,7 +313,7 @@ namespace UnitTests.Net.Imap {
 		public async void TestReadBrokenLiteralTokenAsync ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
-				var data = Encoding.ASCII.GetBytes ("{4096+" + new string (' ', 4096) + "}\r\n");
+				var data = Encoding.ASCII.GetBytes ("{4096+" + new string (' ', 4096) + "}" + new string (' ', 4096) + "\r\n");
 
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;

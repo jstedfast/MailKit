@@ -45,7 +45,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="encodedName">The encoded name.</param>
 		/// <param name="attributes">The attributes.</param>
 		/// <param name="delim">The directory separator.</param>
-		internal ImapFolderConstructorArgs (ImapEngine engine, string encodedName, FolderAttributes attributes, char delim)
+		internal ImapFolderConstructorArgs (ImapEngine engine, string encodedName, FolderAttributes attributes, char delim) : this ()
 		{
 			FullName = engine.DecodeMailboxName (encodedName);
 			Name = GetBaseName (FullName, delim);
