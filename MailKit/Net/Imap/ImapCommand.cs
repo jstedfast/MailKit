@@ -75,7 +75,7 @@ namespace MailKit.Net.Imap {
 
 	enum ImapLiteralType {
 		String,
-		Stream,
+		//Stream,
 		MimeMessage
 	}
 
@@ -221,26 +221,31 @@ namespace MailKit.Net.Imap {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="literal">The literal.</param>
 		/// <param name="action">The progress update action.</param>
-		public ImapLiteral (FormatOptions options, object literal, Action<int> action = null)
+		public ImapLiteral (FormatOptions options, MimeMessage literal, Action<int> action = null)
 		{
 			format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
 
 			update = action;
 
-			if (literal is MimeMessage) {
-				Type = ImapLiteralType.MimeMessage;
-			} else if (literal is Stream) {
-				Type = ImapLiteralType.Stream;
-			} else if (literal is string) {
-				literal = Encoding.UTF8.GetBytes ((string) literal);
-				Type = ImapLiteralType.String;
-			} else if (literal is byte[]) {
-				Type = ImapLiteralType.String;
-			} else {
-				throw new ArgumentException ("Unknown literal type");
-			}
+			Type = ImapLiteralType.MimeMessage;
+			Literal = literal;
+		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapLiteral"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.Net.Imap.ImapLiteral"/>.
+		/// </remarks>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="literal">The literal.</param>
+		public ImapLiteral (FormatOptions options, byte[] literal)
+		{
+			format = options.Clone ();
+			format.NewLineFormat = NewLineFormat.Dos;
+
+			Type = ImapLiteralType.String;
 			Literal = literal;
 		}
 
@@ -257,13 +262,15 @@ namespace MailKit.Net.Imap {
 					return ((byte[]) Literal).Length;
 
 				using (var measure = new MeasuringStream ()) {
-					if (Type == ImapLiteralType.Stream) {
-						var stream = (Stream) Literal;
-						stream.CopyTo (measure, 4096);
-						stream.Position = 0;
-					} else {
-						((MimeMessage) Literal).WriteTo (format, measure);
-					}
+					//if (Type == ImapLiteralType.Stream) {
+					//	var stream = (Stream) Literal;
+					//	stream.CopyTo (measure, 4096);
+					//	stream.Position = 0;
+
+					//	return measure.Length;
+					//}
+
+					((MimeMessage) Literal).WriteTo (format, measure);
 
 					return measure.Length;
 				}
@@ -294,35 +301,35 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			if (Type == ImapLiteralType.MimeMessage) {
-				var message = (MimeMessage) Literal;
+			//if (Type == ImapLiteralType.Stream) {
+			//	var literal = (Stream) Literal;
+			//	var buf = new byte[4096];
+			//	int nread;
 
-				using (var s = new ProgressStream (stream, update)) {
-					if (doAsync) {
-						await message.WriteToAsync (format, s, cancellationToken).ConfigureAwait (false);
-						await s.FlushAsync (cancellationToken).ConfigureAwait (false);
-					} else {
-						message.WriteTo (format, s, cancellationToken);
-						s.Flush (cancellationToken);
-					}
-					return;
+			//	if (doAsync) {
+			//		while ((nread = await literal.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false)) > 0)
+			//			await stream.WriteAsync (buf, 0, nread, cancellationToken).ConfigureAwait (false);
+
+			//		await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+			//	} else {
+			//		while ((nread = literal.Read (buf, 0, buf.Length)) > 0)
+			//			stream.Write (buf, 0, nread, cancellationToken);
+
+			//		stream.Flush (cancellationToken);
+			//	}
+			//	return;
+			//}
+
+			var message = (MimeMessage) Literal;
+
+			using (var s = new ProgressStream (stream, update)) {
+				if (doAsync) {
+					await message.WriteToAsync (format, s, cancellationToken).ConfigureAwait (false);
+					await s.FlushAsync (cancellationToken).ConfigureAwait (false);
+				} else {
+					message.WriteTo (format, s, cancellationToken);
+					s.Flush (cancellationToken);
 				}
-			}
-
-			var literal = (Stream) Literal;
-			var buf = new byte[4096];
-			int nread;
-
-			if (doAsync) {
-				while ((nread = await literal.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false)) > 0)
-					await stream.WriteAsync (buf, 0, nread, cancellationToken).ConfigureAwait (false);
-
-				await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
-			} else {
-				while ((nread = literal.Read (buf, 0, buf.Length)) > 0)
-					stream.Write (buf, 0, nread, cancellationToken);
-
-				stream.Flush (cancellationToken);
 			}
 		}
 	}
@@ -428,8 +435,8 @@ namespace MailKit.Net.Imap {
 							var utf7 = ((ImapFolder) args[argc++]).EncodedName;
 							AppendString (options, true, builder, utf7);
 							break;
-						case 'L':
-							var literal = new ImapLiteral (options, args[argc++], UpdateProgress);
+						case 'L': // a MimeMessage
+							var literal = new ImapLiteral (options, (MimeMessage) args[argc++], UpdateProgress);
 							var length = literal.Length;
 							var plus = string.Empty;
 							bool wait = true;
