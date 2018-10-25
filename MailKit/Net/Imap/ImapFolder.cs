@@ -229,10 +229,11 @@ namespace MailKit.Net.Imap {
 
 		async Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
-
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException (nameof (access));
+
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			CheckState (false, false);
 
@@ -247,8 +248,10 @@ namespace MailKit.Net.Imap {
 
 			var qresync = string.Format ("(QRESYNC ({0} {1}", uidValidity, highestModSeq);
 
-			if (uids.Count > 0)
+			if (uids.Count > 0) {
+				var set = UniqueIdSet.ToString (uids);
 				qresync += " " + set;
+			}
 
 			qresync += "))";
 
@@ -3584,7 +3587,7 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			var set = ImapUtils.FormatUidSet (uids);
+			var set = UniqueIdSet.ToString (uids);
 			var command = string.Format ("UID EXPUNGE {0}\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command);
 
@@ -4447,7 +4450,8 @@ namespace MailKit.Net.Imap {
 
 		async Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
@@ -4466,6 +4470,7 @@ namespace MailKit.Net.Imap {
 				return UniqueIdMap.Empty;
 			}
 
+			var set = UniqueIdSet.ToString (uids);
 			var command = string.Format ("UID COPY {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 
@@ -4613,7 +4618,8 @@ namespace MailKit.Net.Imap {
 				return UniqueIdMap.Empty;
 			}
 
-			var set = ImapUtils.FormatUidSet (uids);
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
@@ -4626,6 +4632,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
+			var set = UniqueIdSet.ToString (uids);
 			var command = string.Format ("UID MOVE {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 
@@ -4772,7 +4779,8 @@ namespace MailKit.Net.Imap {
 
 		async Task CopyToAsync (IList<int> indexes, IMailFolder destination, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatIndexSet (indexes);
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
@@ -4785,6 +4793,7 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return;
 
+			var set = ImapUtils.FormatIndexSet (indexes);
 			var command = string.Format ("COPY {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 
@@ -4915,7 +4924,8 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
@@ -4928,6 +4938,7 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return;
 
+			var set = ImapUtils.FormatIndexSet (indexes);
 			var command = string.Format ("MOVE {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 

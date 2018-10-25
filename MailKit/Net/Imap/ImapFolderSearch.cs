@@ -246,7 +246,7 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.Uid:
 				uid = (UidSearchQuery) query;
-				builder.AppendFormat ("UID {0}", ImapUtils.FormatUidSet (uid.Uids));
+				builder.AppendFormat ("UID {0}", UniqueIdSet.ToString (uid.Uids));
 				break;
 			case SearchTerm.Younger:
 				if ((Engine.Capabilities & ImapCapabilities.Within) == 0)
@@ -1562,10 +1562,8 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, bool doAsync, CancellationToken cancellationToken)
 		{
-			var method = algorithm.ToString ().ToUpperInvariant ();
-			var set = ImapUtils.FormatUidSet (uids);
-			var args = new List<string> ();
-			string charset;
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
@@ -1577,6 +1575,14 @@ namespace MailKit.Net.Imap
 				throw new ArgumentNullException (nameof (query));
 
 			CheckState (true, false);
+
+			if (uids.Count == 0)
+				return new MessageThread[0];
+
+			var method = algorithm.ToString ().ToUpperInvariant ();
+			var set = UniqueIdSet.ToString (uids);
+			var args = new List<string> ();
+			string charset;
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);

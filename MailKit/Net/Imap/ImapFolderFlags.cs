@@ -37,9 +37,8 @@ namespace MailKit.Net.Imap
 	{
 		async Task<IList<UniqueId>> ModifyFlagsAsync (IList<UniqueId> uids, ulong? modseq, MessageFlags flags, HashSet<string> userFlags, string action, bool doAsync, CancellationToken cancellationToken)
 		{
-			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, userFlags != null ? userFlags.Count : 0);
-			var userFlagList = userFlags != null ? userFlags.ToArray () : new object[0];
-			var set = ImapUtils.FormatUidSet (uids);
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if (modseq.HasValue && !SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -49,7 +48,11 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new UniqueId[0];
 
-			string @params = string.Empty;
+			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, userFlags != null ? userFlags.Count : 0);
+			var userFlagList = userFlags != null ? userFlags.ToArray () : new object [0];
+			var set = UniqueIdSet.ToString (uids);
+			var @params = string.Empty;
+
 			if (modseq.HasValue)
 				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
 
@@ -704,9 +707,8 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<int>> ModifyFlagsAsync (IList<int> indexes, ulong? modseq, MessageFlags flags, HashSet<string> userFlags, string action, bool doAsync, CancellationToken cancellationToken)
 		{
-			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, userFlags != null ? userFlags.Count : 0);
-			var userFlagList = userFlags != null ? userFlags.ToArray () : new object[0];
-			var set = ImapUtils.FormatIndexSet (indexes);
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (modseq.HasValue && !SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -716,7 +718,11 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new int[0];
 
-			string @params = string.Empty;
+			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, userFlags != null ? userFlags.Count : 0);
+			var userFlagList = userFlags != null ? userFlags.ToArray () : new object [0];
+			var set = ImapUtils.FormatIndexSet (indexes);
+			var @params = string.Empty;
+
 			if (modseq.HasValue)
 				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
 
@@ -1408,7 +1414,8 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<UniqueId>> ModifyLabelsAsync (IList<UniqueId> uids, ulong? modseq, IList<string> labels, string action, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the Google Mail extensions.");
@@ -1418,7 +1425,9 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new UniqueId[0];
 
-			string @params = string.Empty;
+			var set = UniqueIdSet.ToString (uids);
+			var @params = string.Empty;
+
 			if (modseq.HasValue)
 				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
 
@@ -2101,7 +2110,8 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<int>> ModifyLabelsAsync (IList<int> indexes, ulong? modseq, IList<string> labels, string action, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatIndexSet (indexes);
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the Google Mail extensions.");
@@ -2111,7 +2121,9 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new int[0];
 
-			string @params = string.Empty;
+			var set = ImapUtils.FormatIndexSet (indexes);
+			var @params = string.Empty;
+
 			if (modseq.HasValue)
 				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
 

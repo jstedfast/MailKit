@@ -628,8 +628,10 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
 			bool previewText;
+
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException (nameof (items));
@@ -639,6 +641,7 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
+			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -669,8 +672,10 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
 			bool previewText;
+
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if (fields == null)
 				throw new ArgumentNullException (nameof (fields));
@@ -683,6 +688,7 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
+			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -713,8 +719,10 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
 			bool previewText;
+
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException (nameof (items));
@@ -727,6 +735,7 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
+			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
@@ -758,8 +767,10 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
 			bool previewText;
+
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if (fields == null)
 				throw new ArgumentNullException (nameof (fields));
@@ -775,6 +786,7 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
+			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
@@ -1536,8 +1548,10 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatIndexSet (indexes);
 			bool previewText;
+
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException (nameof (items));
@@ -1547,6 +1561,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
+			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -1572,8 +1587,10 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatIndexSet (indexes);
 			bool previewText;
+
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (fields == null)
 				throw new ArgumentNullException (nameof (fields));
@@ -1586,6 +1603,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
+			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -1611,8 +1629,10 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatIndexSet (indexes);
 			bool previewText;
+
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException (nameof (items));
@@ -1625,6 +1645,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
+			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -1650,8 +1671,10 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatIndexSet (indexes);
 			bool previewText;
+
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (fields == null)
 				throw new ArgumentNullException (nameof (fields));
@@ -1667,6 +1690,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
+			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -6276,13 +6300,18 @@ namespace MailKit.Net.Imap
 
 		async Task GetStreamsAsync (IList<UniqueId> uids, ImapFetchStreamCallback callback, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
 
 			if (callback == null)
 				throw new ArgumentNullException (nameof (callback));
 
 			CheckState (true, false);
 
+			if (uids.Count == 0)
+				return;
+
+			var set = UniqueIdSet.ToString (uids);
 			var command = string.Format ("UID FETCH {0} (BODY.PEEK[])\r\n", set);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamCallbackContext (this, callback, progress);
@@ -6306,13 +6335,18 @@ namespace MailKit.Net.Imap
 
 		async Task GetStreamsAsync (IList<int> indexes, ImapFetchStreamCallback callback, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
 		{
-			var set = ImapUtils.FormatIndexSet (indexes);
+			if (indexes == null)
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (callback == null)
 				throw new ArgumentNullException (nameof (callback));
 
 			CheckState (true, false);
 
+			if (indexes.Count == 0)
+				return;
+
+			var set = ImapUtils.FormatIndexSet (indexes);
 			var command = string.Format ("FETCH {0} (UID BODY.PEEK[])\r\n", set);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamCallbackContext (this, callback, progress);

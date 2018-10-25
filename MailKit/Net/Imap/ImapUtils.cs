@@ -275,28 +275,6 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Formats the array of UIDs as a string suitable for use with IMAP commands.
-		/// </summary>
-		/// <returns>The UID set.</returns>
-		/// <param name="uids">The UIDs.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the UIDs is invalid.
-		/// </exception>
-		public static string FormatUidSet (IList<UniqueId> uids)
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", nameof (uids));
-
-			return UniqueIdSet.ToString (uids);
-		}
-
-		/// <summary>
 		/// Parses an untagged ID response.
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
