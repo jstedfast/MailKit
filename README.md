@@ -7,8 +7,8 @@
 
 |             |Build Status|Code Coverage|Static Analysis|
 |-------------|:----------:|:-----------:|:-------------:|
-|**Linux/Mac**|[![Build Status](https://travis-ci.org/jstedfast/MailKit.svg)](https://travis-ci.org/jstedfast/MailKit)|[![Code Coverage](https://coveralls.io/repos/jstedfast/MailKit/badge.svg?branch=HEAD)](https://coveralls.io/r/jstedfast/MailKit?branch=HEAD)|[![Static Analysis](https://scan.coverity.com/projects/3202/badge.svg)](https://scan.coverity.com/projects/3202)|
-|**Windows**  |[![Build Status](https://ci.appveyor.com/api/projects/status/fd38t1ri3cmujnpq/branch/master?svg=true)](https://ci.appveyor.com/project/jstedfast/mailkit/branch/master)|[![Code Coverage](https://coveralls.io/repos/jstedfast/MailKit/badge.svg?branch=HEAD)](https://coveralls.io/r/jstedfast/MailKit?branch=HEAD)|[![Static Analysis](https://scan.coverity.com/projects/3202/badge.svg)](https://scan.coverity.com/projects/3202)|
+|**Linux/Mac**|[![Build Status](https://travis-ci.org/jstedfast/MailKit.svg)](https://travis-ci.org/jstedfast/MailKit)|[![Code Coverage](https://coveralls.io/repos/jstedfast/MailKit/badge.svg?branch=HEAD)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://scan.coverity.com/projects/3202/badge.svg)](https://scan.coverity.com/projects/3202)|
+|**Windows**  |[![Build Status](https://ci.appveyor.com/api/projects/status/fd38t1ri3cmujnpq/branch/master?svg=true)](https://ci.appveyor.com/project/jstedfast/mailkit/branch/master)|[![Code Coverage](https://coveralls.io/repos/jstedfast/MailKit/badge.svg?branch=HEAD)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://scan.coverity.com/projects/3202/badge.svg)](https://scan.coverity.com/projects/3202)|
 
 ## What is MailKit?
 
