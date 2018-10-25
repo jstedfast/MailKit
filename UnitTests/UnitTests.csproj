@@ -168,6 +168,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\setquota.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+gmail-capabilities.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\copy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\expunge.txt" />
