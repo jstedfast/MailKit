@@ -201,6 +201,8 @@ namespace UnitTests.Net.Imap {
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;
 
+				Assert.Throws<ArgumentNullException> (() => stream.UngetToken (null));
+
 				var token = stream.ReadToken (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Asterisk, token.Type);
 				Assert.AreEqual ("'*'", token.ToString ());
@@ -240,6 +242,11 @@ namespace UnitTests.Net.Imap {
 				token = stream.ReadToken (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
 				Assert.AreEqual ("'\\n'", token.ToString ());
+
+				stream.UngetToken (token);
+				token = stream.ReadToken (CancellationToken.None);
+				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
+				Assert.AreEqual ("'\\n'", token.ToString ());
 			}
 		}
 
@@ -251,6 +258,8 @@ namespace UnitTests.Net.Imap {
 
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;
+
+				Assert.Throws<ArgumentNullException> (() => stream.UngetToken (null));
 
 				var token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Asterisk, token.Type);
@@ -288,6 +297,11 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (ImapTokenType.CloseBracket, token.Type);
 				Assert.AreEqual ("']'", token.ToString ());
 
+				token = await stream.ReadTokenAsync (CancellationToken.None);
+				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
+				Assert.AreEqual ("'\\n'", token.ToString ());
+
+				stream.UngetToken (token);
 				token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
 				Assert.AreEqual ("'\\n'", token.ToString ());
