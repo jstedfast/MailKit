@@ -128,6 +128,8 @@ namespace UnitTests.Net.Imap {
 			using (var client = new ImapClient ()) {
 				var credentials = new NetworkCredential ("username", "password");
 
+				Assert.IsInstanceOf<ImapEngine> (client.SyncRoot, "SyncRoot");
+
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
 				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync ((Uri) null));
@@ -185,6 +187,10 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (() => client.GetFolders (null, false));
 				Assert.Throws<ArgumentNullException> (async () => await client.GetFoldersAsync (null));
 				Assert.Throws<ArgumentNullException> (async () => await client.GetFoldersAsync (null, false));
+
+				Assert.AreEqual (1, client.PersonalNamespaces.Count, "Personal");
+				Assert.AreEqual (0, client.SharedNamespaces.Count, "Shared");
+				Assert.AreEqual (0, client.OtherNamespaces.Count, "Other");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var dates = new List<DateTimeOffset> ();
@@ -3417,6 +3423,7 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.AreEqual ("texk", client.Rights.ToString (), "Rights");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -3528,6 +3535,7 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.AreEqual ("texk", client.Rights.ToString (), "Rights");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
