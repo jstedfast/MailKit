@@ -417,10 +417,6 @@ namespace MailKit.Net.Imap {
 						case '%': // a literal %
 							builder.WriteByte ((byte) '%');
 							break;
-						case 'c': // a character
-							c = (char) args[argc++];
-							builder.WriteByte ((byte) c);
-							break;
 						case 'd': // an integer
 							str = ((int) args[argc++]).ToString ();
 							buf = Encoding.ASCII.GetBytes (str);
@@ -467,10 +463,6 @@ namespace MailKit.Net.Imap {
 							break;
 						case 'Q': // similar to %S but string must be quoted at a minimum
 							AppendString (options, false, builder, (string) args[argc++]);
-							break;
-						case 's': // a safe atom string
-							buf = Encoding.ASCII.GetBytes ((string) args[argc++]);
-							builder.Write (buf, 0, buf.Length);
 							break;
 						default:
 							throw new FormatException ();
