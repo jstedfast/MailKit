@@ -836,13 +836,12 @@ namespace MailKit.Net.Imap {
 			}
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
-			var command = string.Format ("CREATE %s (USE ({0}))\r\n", uses);
+			var command = string.Format ("CREATE %S (USE ({0}))\r\n", uses);
 			var encodedName = Engine.EncodeMailboxName (fullName);
 			var list = new List<ImapFolder> ();
-			var createName = encodedName;
 			ImapFolder folder;
 
-			var ic = Engine.QueueCommand (cancellationToken, null, command, createName);
+			var ic = Engine.QueueCommand (cancellationToken, null, command, encodedName);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
