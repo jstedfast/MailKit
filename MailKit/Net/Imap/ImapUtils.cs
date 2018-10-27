@@ -840,9 +840,6 @@ namespace MailKit.Net.Imap {
 			// read the ')'
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (format, token);
-
 			return body;
 		}
 
@@ -947,9 +944,6 @@ namespace MailKit.Net.Imap {
 
 			// read the ')'
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (format, token);
 
 			return body;
 		}
