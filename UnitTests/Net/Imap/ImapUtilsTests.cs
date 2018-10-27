@@ -156,6 +156,23 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseInvalidInternalDates ()
+		{
+			var internalDates = new string [] {
+				"987654321-OCT-2018 13:41:57 EDT",
+				"27-JAG-2018 13:41:57 EDT",
+				"27-OCT-1909 13:41:57 EDT",
+				"27-OCT-2018 33:41:57 EDT",
+				"27-OCT-2018 13:411:57 EDT",
+				"27-OCT-2018 13:41:577 EDT",
+				"27-OCT-2018 13:41:57 EDT XYZ",
+			};
+
+			foreach (var internalDate in internalDates)
+				Assert.Throws<FormatException> (() => ImapUtils.ParseInternalDate (internalDate), internalDate);
+		}
+
+		[Test]
 		public void TestParseLabelsListWithNIL ()
 		{
 			const string text = "(atom-label \\flag-label \"quoted-label\" NIL)\r\n";

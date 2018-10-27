@@ -78,12 +78,7 @@ namespace MailKit.Net.Imap {
 			while (index < text.Length && text[index] >= '0' && text[index] <= '9') {
 				int digit = text[index] - '0';
 
-				if (value > int.MaxValue / 10) {
-					// integer overflow
-					return false;
-				}
-
-				if (value == int.MaxValue / 10 && digit > int.MaxValue % 10) {
+				if (value > int.MaxValue / 10 || (value == int.MaxValue / 10 && digit > int.MaxValue % 10)) {
 					// integer overflow
 					return false;
 				}
