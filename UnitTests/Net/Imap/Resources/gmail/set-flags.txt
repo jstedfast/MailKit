@@ -19,4 +19,4 @@
 * 42 FETCH (FLAGS (\Seen \Answered) UID 42)
 * 43 FETCH (FLAGS (\Seen \Answered) UID 43)
 * 50 FETCH (FLAGS (\Seen \Answered) UID 50)
-A00000082 OK Success
+A######## OK Success

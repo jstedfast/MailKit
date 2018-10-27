@@ -1023,7 +1023,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
 			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
 			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
@@ -1115,7 +1115,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
 			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
 			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
@@ -1207,7 +1207,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
 			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
 			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
@@ -1258,7 +1258,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
 			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
 			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
@@ -2938,12 +2938,13 @@ namespace UnitTests.Net.Imap {
 						latin1 = reader.ReadToEnd ();
 				}
 
-				var command = string.Format ("A{0:D8} APPEND UnitTests (\\Seen) ", i + 9);
+				var tag = string.Format ("A{0:D8}", i + 9);
+				var command = string.Format ("{0} APPEND UnitTests (\\Seen) ", tag);
 
 				if (length > 4096) {
 					command += "{" + length + "}\r\n";
 					commands.Add (new ImapReplayCommand (command, "gmail.go-ahead.txt"));
-					commands.Add (new ImapReplayCommand (latin1 + "\r\n", string.Format ("gmail.append.{0}.txt", i + 1)));
+					commands.Add (new ImapReplayCommand (tag, latin1 + "\r\n", string.Format ("gmail.append.{0}.txt", i + 1)));
 				} else {
 					command += "{" + length + "+}\r\n" + latin1 + "\r\n";
 					commands.Add (new ImapReplayCommand (command, string.Format ("gmail.append.{0}.txt", i + 1)));

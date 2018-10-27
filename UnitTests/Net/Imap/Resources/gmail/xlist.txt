@@ -7,4 +7,4 @@
 * XLIST (\HasNoChildren \Spam) "/" "[Gmail]/Spam"
 * XLIST (\HasNoChildren \Starred) "/" "[Gmail]/Starred"
 * XLIST (\HasNoChildren \Trash) "/" "[Gmail]/Trash"
-A00000004 OK Success
+A######## OK Success

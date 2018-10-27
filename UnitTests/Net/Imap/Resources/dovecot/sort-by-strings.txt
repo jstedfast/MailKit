@@ -1,2 +1,2 @@
-* ESEARCH (TAG "A00000058") UID ALL 1:14
-A00000058 OK Sort completed (0.002 + 0.000 secs).
+* ESEARCH (TAG "A########") UID ALL 1:14
+A######## OK Sort completed (0.002 + 0.000 secs).

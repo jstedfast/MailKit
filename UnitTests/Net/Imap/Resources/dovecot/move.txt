@@ -1,3 +1,3 @@
 * OK [COPYUID 1436832101 1:7 8:14] Moved UIDs.
 * VANISHED 1:7
-A00000028 OK [HIGHESTMODSEQ 7] Move completed (0.013 + 0.000 secs).
+A######## OK [HIGHESTMODSEQ 7] Move completed (0.013 + 0.000 secs).

@@ -1,2 +1,2 @@
-* ESEARCH (TAG "A00000020") UID MIN 1 MAX 7 ALL 1:7 COUNT 7 MODSEQ 4
-A00000020 OK Search completed (0.001 + 0.000 secs).
+* ESEARCH (TAG "A########") UID MIN 1 MAX 7 ALL 1:7 COUNT 7 MODSEQ 4
+A######## OK Search completed (0.001 + 0.000 secs).

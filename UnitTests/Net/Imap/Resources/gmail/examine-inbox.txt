@@ -5,4 +5,4 @@
 * 0 RECENT
 * OK [UIDNEXT 280] Predicted next UID.
 * OK [HIGHESTMODSEQ 35312]
-A00000006 OK [READ-ONLY] INBOX selected. (Success)
+A######## OK [READ-ONLY] INBOX selected. (Success)

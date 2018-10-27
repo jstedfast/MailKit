@@ -1,2 +1,2 @@
 * 1 EXISTS
-A00000009 OK [APPENDUID 23 1] (Success)
+A######## OK [APPENDUID 23 1] (Success)

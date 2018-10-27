@@ -5,4 +5,4 @@
 * 0 RECENT
 * OK [UIDNEXT 1] Predicted next UID.
 * OK [HIGHESTMODSEQ 29225]
-A00000008 OK [READ-WRITE] UnitTests selected. (Success)
+A######## OK [READ-WRITE] UnitTests selected. (Success)

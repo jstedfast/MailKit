@@ -6,4 +6,4 @@
 * OK [UIDVALIDITY 1436832128] UIDs valid
 * OK [UIDNEXT 15] Predicted next UID
 * OK [HIGHESTMODSEQ 3] Highest
-A00000030 OK [READ-WRITE] Select completed (0.000 + 0.000 secs).
+A######## OK [READ-WRITE] Select completed (0.000 + 0.000 secs).

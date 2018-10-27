@@ -1,2 +1,2 @@
 * STATUS UnitTests.Destination (MESSAGES 14 RECENT 14 UIDNEXT 15 UIDVALIDITY 1436832101 UNSEEN 0 HIGHESTMODSEQ 3)
-A00000029 OK Status completed (0.000 + 0.000 secs).
+A######## OK Status completed (0.000 + 0.000 secs).

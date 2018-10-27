@@ -44,6 +44,100 @@ namespace UnitTests.Net.Imap {
 		Plus
 	}
 
+	class ImapReplayFilter : MimeFilterBase
+	{
+		readonly byte[] variable;
+		readonly byte[] value;
+
+		public ImapReplayFilter (string variable, string value)
+		{
+			this.variable = Encoding.ASCII.GetBytes (variable);
+			this.value = Encoding.ASCII.GetBytes (value);
+		}
+
+		protected override byte[] Filter (byte[] input, int startIndex, int length, out int outputIndex, out int outputLength, bool flush)
+		{
+			int endIndex = startIndex + length;
+			int copyIndex = startIndex;
+			int copyLength = 0;
+
+			for (int index = startIndex; index < endIndex - variable.Length; index++) {
+				var matched = true;
+
+				for (int i = 0; i < variable.Length; i++) {
+					if (input[index + i] != variable[i]) {
+						matched = false;
+						break;
+					}
+				}
+
+				if (!matched)
+					continue;
+
+				int n = index - copyIndex;
+
+				EnsureOutputSize (copyLength + n + value.Length, true);
+				Buffer.BlockCopy (input, copyIndex, OutputBuffer, copyLength, n);
+				index += variable.Length;
+				copyIndex = index;
+				copyLength += n;
+
+				Buffer.BlockCopy (value, 0, OutputBuffer, copyLength, value.Length);
+				copyLength += value.Length;
+			}
+
+			if (flush) {
+				if (copyLength == 0) {
+					outputIndex = startIndex;
+					outputLength = length;
+
+					return input;
+				}
+
+				int n = endIndex - copyIndex;
+
+				EnsureOutputSize (copyLength + n, true);
+				Buffer.BlockCopy (input, copyIndex, OutputBuffer, copyLength, n);
+				copyLength += n;
+
+				outputLength = copyLength;
+				outputIndex = 0;
+
+				return OutputBuffer;
+			} else {
+				int n = Math.Min (variable.Length, length);
+
+				SaveRemainingInput (input, endIndex - n, n);
+
+				if (copyLength == 0) {
+					outputLength = length - n;
+					outputIndex = startIndex;
+
+					return input;
+				}
+
+				endIndex -= n;
+
+				if (endIndex > copyIndex) {
+					n = endIndex - copyIndex;
+					EnsureOutputSize (copyLength + n, true);
+					Buffer.BlockCopy (input, copyIndex, OutputBuffer, copyLength, n);
+					copyLength += n;
+				}
+
+				outputLength = copyLength;
+				outputIndex = 0;
+
+				return OutputBuffer;
+			}
+		}
+
+		public override void Reset ()
+		{
+			base.Reset ();
+		}
+	}
+
 	class ImapReplayCommand
 	{
 		public string Command { get; private set; }
@@ -57,13 +151,40 @@ namespace UnitTests.Net.Imap {
 
 		public ImapReplayCommand (string command, string resource)
 		{
+			string tag = null;
+
+			Command = command;
+
+			if (command.StartsWith ("A00000", StringComparison.Ordinal))
+				tag = command.Substring (0, 9);
+
+			using (var stream = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + resource)) {
+				using (var memory = new MemoryBlockStream ()) {
+					using (var filtered = new FilteredStream (memory)) {
+						if (tag != null)
+							filtered.Add (new ImapReplayFilter ("A########", tag));
+
+						filtered.Add (new Unix2DosFilter ());
+						stream.CopyTo (filtered, 4096);
+						filtered.Flush ();
+					}
+
+					Response = memory.ToArray ();
+				}
+			}
+		}
+
+		public ImapReplayCommand (string tag, string command, string resource)
+		{
 			Command = command;
 
 			using (var stream = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + resource)) {
 				using (var memory = new MemoryBlockStream ()) {
 					using (var filtered = new FilteredStream (memory)) {
+						filtered.Add (new ImapReplayFilter ("A########", tag));
 						filtered.Add (new Unix2DosFilter ());
 						stream.CopyTo (filtered, 4096);
+						filtered.Flush ();
 					}
 
 					Response = memory.ToArray ();

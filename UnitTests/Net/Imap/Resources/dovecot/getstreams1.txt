@@ -4,4 +4,4 @@ This is some dummy text just to make sure this is working correctly.)
 This is some dummy text just to make sure this is working correctly.)
 * 3 FETCH (UID 3 BODY[] {68}
 This is some dummy text just to make sure this is working correctly.)
-A00000062 OK Fetch completed (0.002 + 0.000 secs).
+A######## OK Fetch completed (0.002 + 0.000 secs).

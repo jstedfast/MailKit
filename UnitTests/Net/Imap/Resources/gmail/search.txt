@@ -1,2 +1,2 @@
-* ESEARCH (TAG "A00000059") UID ALL 1:3,5,7:9,11:14,26:29,31,34,41:43,50
-A00000059 OK SEARCH completed (Success)
+* ESEARCH (TAG "A########") UID ALL 1:3,5,7:9,11:14,26:29,31,34,41:43,50
+A######## OK SEARCH completed (Success)

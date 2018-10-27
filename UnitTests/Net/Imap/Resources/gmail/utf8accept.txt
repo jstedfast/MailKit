@@ -1,2 +1,2 @@
 * ENABLED UTF8=ACCEPT
-A00000005 OK Success
+A######## OK Success

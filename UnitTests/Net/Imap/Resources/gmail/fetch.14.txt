@@ -54,4 +54,4 @@ in <AKAHO.92Jun16162622@etlsu5.etl.go.jp> (etl.post.misc:148/etlss2):
  |--
  |赤穗＠情報数理 akaho@etl.go.jp / 5549 / D-622
 )
-A00000071 OK Success
+A######## OK Success

@@ -1,2 +1,2 @@
 * MYRIGHTS INBOX rwiptsldaex
-A00000007 OK MYRIGHTS completed.
+A######## OK MYRIGHTS completed.

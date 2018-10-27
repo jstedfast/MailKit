@@ -1,2 +1,2 @@
-* ESEARCH (TAG "A00000023") UID MIN 7 MAX 1 ALL 7,6,5,4,3,2,1 COUNT 7
-A00000023 OK Sort completed (0.001 + 0.000 secs).
+* ESEARCH (TAG "A########") UID MIN 7 MAX 1 ALL 7,6,5,4,3,2,1 COUNT 7
+A######## OK Sort completed (0.001 + 0.000 secs).

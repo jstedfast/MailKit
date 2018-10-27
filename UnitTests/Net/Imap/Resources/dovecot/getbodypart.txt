@@ -10,4 +10,4 @@ Content-Type: text/plain; charset=utf-8
  BODY[TEXT] {27}
 This is the message body.
 )
-A00000041 OK Fetch completed (0.002 + 0.000 secs).
+A######## OK Fetch completed (0.002 + 0.000 secs).

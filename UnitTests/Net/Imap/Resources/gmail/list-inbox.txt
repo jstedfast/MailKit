@@ -1,2 +1,2 @@
 * LIST (\HasNoChildren) "/" "INBOX"
-A00000003 OK Success
+A######## OK Success

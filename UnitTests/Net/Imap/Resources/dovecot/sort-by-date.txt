@@ -1,2 +1,2 @@
-* ESEARCH (TAG "A00000057") UID ALL 7,14,6,13,5,12,4,11,3,10,2,9,1,8
-A00000057 OK Sort completed (0.002 + 0.000 secs).
+* ESEARCH (TAG "A########") UID ALL 7,14,6,13,5,12,4,11,3,10,2,9,1,8
+A######## OK Sort completed (0.002 + 0.000 secs).

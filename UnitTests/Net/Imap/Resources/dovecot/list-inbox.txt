@@ -1,2 +1,2 @@
 * LIST (\HasNoChildren) "." INBOX
-A00000002 OK List completed (0.000 + 0.000 secs).
+A######## OK List completed (0.000 + 0.000 secs).

@@ -50,4 +50,4 @@ References: <b@mimekit.net>
 * 14 FETCH (UID 14 FLAGS (\Seen \Draft \Recent) INTERNALDATE "02-Oct-2016 17:34:25 -0400" RFC822.SIZE 253 MODSEQ (3) ENVELOPE ("Sun, 02 Oct 2016 17:34:25 -0400" "G" (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) (("Unit Tests" NIL "unit-tests" "mimekit.net")) NIL NIL NIL "<g@mimekit.net>") BODYSTRUCTURE ("text" "plain" ("charset" "utf-8") NIL NIL "7bit" 27 1 NIL NIL NIL NIL) BODY[HEADER.FIELDS (REFERENCES X-MAILER)] {2}
 
 )
-A00000037 OK Fetch completed (0.019 + 0.000 secs).
+A######## OK Fetch completed (0.019 + 0.000 secs).

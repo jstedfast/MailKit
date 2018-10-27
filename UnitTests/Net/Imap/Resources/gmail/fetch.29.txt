@@ -1599,4 +1599,4 @@ Phone: (507)-253-4528 (tie) 553-4528
 }}¥enddata{text,538724776}
 
 )
-A00000075 OK Success
+A######## OK Success

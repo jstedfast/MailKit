@@ -13,4 +13,4 @@ This is an ordinary text message in which my name (=ED=E5=EC=F9 =EF=E1 =E9=EC=E8
 is in Hebrew (=FA=E9=F8=E1=F2).  
 
 There is Hebrew in the Subject and Reply-to headers, if viewed with metamail.)
-A00000063 OK Success
+A######## OK Success

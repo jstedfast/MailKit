@@ -61,4 +61,4 @@ Information Base Section
 ELECTROTECHNICAL LABORATORY
 1-1-4 Umezono, Tsukuba, Ibaraki, 305 Japan
 )
-A00000065 OK Success
+A######## OK Success
