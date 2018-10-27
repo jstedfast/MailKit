@@ -57,6 +57,9 @@ namespace UnitTests.Net.Imap {
 			const string expect = "1:9";
 			string actual;
 
+			Assert.Throws<ArgumentNullException> (() => ImapUtils.FormatIndexSet (null));
+			Assert.Throws<ArgumentException> (() => ImapUtils.FormatIndexSet (new int[0]));
+
 			actual = ImapUtils.FormatIndexSet (indexes);
 			Assert.AreEqual (expect, actual, "Formatting a simple range of indexes failed.");
 		}
@@ -159,13 +162,13 @@ namespace UnitTests.Net.Imap {
 		public void TestParseInvalidInternalDates ()
 		{
 			var internalDates = new string [] {
-				"9876543210-OCT-2018 13:41:57 -0400",
+				"98765432100-OCT-2018 13:41:57 -0400",
 				"27-JAG-2018 13:41:57 -0400",
 				"27-OCT-1909 13:41:57 -0400",
 				"27-OCT-2018 33:41:57 -0400",
 				"27-OCT-2018 13:411:57 -0400",
 				"27-OCT-2018 13:41:577 -0400",
-				"27-OCT-2018 13:41:577 -9876543210",
+				"27-OCT-2018 13:41:577 -98765432100",
 				"27-OCT-2018 13:41:57 -0400 XYZ",
 			};
 
@@ -598,7 +601,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestParseBodyStructureWithBodyExtensions ()
 		{
-			const string text = "((\"text\" \"plain\" (\"charset\" \"iso-8859-1\") NIL NIL \"quoted-printable\" 28 2 \"md5sum\" (\"inline\" (\"filename\" \"body.txt\")) \"en\" \"http://www.google.com/body.txt\" \"extension1\" 123 (\"extension2\" (\"nested-extension3\" \"nested-extension4\"))) (\"text\" \"html\" (\"charset\" \"iso-8859-1\") NIL NIL \"quoted-printable\" 1707 65 \"md5sum\" (\"inline\" (\"filename\" \"body.html\")) \"en\" \"http://www.google.com/body.html\") \"alternative\" (\"boundary\" \"----=_NextPart_001_0078_01CBB179.57530990\") (\"inline\" (\"filename\" \"alternative.txt\")) \"en\" \"http://www.google.com/alternative.txt\" {10}\r\nextension1 123 (\"extension2\" (\"nested-extension3\" \"nested-extension4\")))\r\n";
+			const string text = "((\"text\" \"plain\" (\"charset\" \"iso-8859-1\") NIL NIL \"quoted-printable\" 28 2 \"md5sum\" (\"inline\" (\"filename\" \"body.txt\")) \"en\" \"body.txt\" \"extension1\" 123 (\"extension2\" (\"nested-extension3\" \"nested-extension4\"))) (\"text\" \"html\" (\"charset\" \"iso-8859-1\") NIL NIL \"quoted-printable\" 1707 65 \"md5sum\" (\"inline\" (\"filename\" \"body.html\")) \"en\" \"http://www.google.com/body.html\") \"alternative\" (\"boundary\" \"----=_NextPart_001_0078_01CBB179.57530990\") (\"inline\" (\"filename\" \"alternative.txt\")) \"en\" \"http://www.google.com/alternative.txt\" {10}\r\nextension1 123 (\"extension2\" (\"nested-extension3\" \"nested-extension4\")))\r\n";
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
@@ -641,7 +644,7 @@ namespace UnitTests.Net.Imap {
 						Assert.NotNull (plain.ContentLanguage, "text/plain Content-Language should not be null");
 						Assert.AreEqual (1, plain.ContentLanguage.Length, "text/plain Content-Language count did not match");
 						Assert.AreEqual ("en", plain.ContentLanguage [0], "text/plain Content-Language value did not match");
-						Assert.AreEqual ("http://www.google.com/body.txt", plain.ContentLocation.ToString (), "text/plain location did not match");
+						Assert.AreEqual ("body.txt", plain.ContentLocation.ToString (), "text/plain location did not match");
 						Assert.AreEqual (28, plain.Octets, "text/plain octets did not match");
 						Assert.AreEqual (2, plain.Lines, "text/plain lines did not match");
 
@@ -657,6 +660,105 @@ namespace UnitTests.Net.Imap {
 						Assert.AreEqual ("http://www.google.com/body.html", html.ContentLocation.ToString (), "text/html location did not match");
 						Assert.AreEqual (1707, html.Octets, "text/html octets did not match");
 						Assert.AreEqual (65, html.Lines, "text/html lines did not match");
+					}
+				}
+			}
+		}
+
+		// This tests the work-around for issue #205
+		[Test]
+		public void TestParseGMailBadlyFormedMultipartBodyStructure ()
+		{
+			const string text = "((\"ALTERNATIVE\" (\"BOUNDARY\" \"==alternative_xad5934455aeex\") NIL NIL)(\"TEXT\" \"HTML\" (\"CHARSET\" \"iso-8859-1\" \"NAME\" \"seti_letter.html\") NIL NIL \"7BIT\" 6769 171 NIL NIL NIL) \"ALTERNATIVE\" (\"BOUNDARY\" \"==alternative_xad5934455aeex\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart, broken;
+						BodyPartText html;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+						engine.QuirksMode = ImapQuirksMode.GMail;
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "alternative"), "outer multipart/alternative Content-Type did not match.");
+						Assert.AreEqual ("==alternative_xad5934455aeex", multipart.ContentType.Parameters["boundary"], "outer multipart/alternative boundary param did not match");
+						Assert.AreEqual (2, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
+						broken = (BodyPartMultipart) multipart.BodyParts[0];
+						Assert.IsTrue (broken.ContentType.IsMimeType ("multipart", "alternative"), "inner multipart/alternative Content-Type did not match.");
+						Assert.AreEqual ("==alternative_xad5934455aeex", broken.ContentType.Parameters["boundary"], "inner multipart/alternative boundary param did not match");
+						Assert.AreEqual (0, broken.BodyParts.Count, "inner multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						html = (BodyPartText) multipart.BodyParts[1];
+						Assert.IsTrue (html.ContentType.IsMimeType ("text", "html"), "text/html Content-Type did not match.");
+						Assert.AreEqual ("iso-8859-1", html.ContentType.Charset, "text/html charset parameter did not match");
+						Assert.AreEqual ("seti_letter.html", html.ContentType.Name, "text/html name parameter did not match");
+					}
+				}
+			}
+		}
+
+		// Note: This tests the work-around for issue #371 (except that the example from issue #371 is also missing body-fld-enc and body-fld-octets)
+		[Test]
+		public void TestParseBadlyFormedBodyStructureWithMissingMediaType ()
+		{
+			const string text = "((\"TEXT\" \"PLAIN\" (\"CHARSET\" \"windows-1251\") NIL NIL \"base64\" 356 5)( \"X-ZIP\" (\"BOUNDARY\" \"\") NIL NIL \"base64\" 4096) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic xzip;
+						BodyPartText plain;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (2, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						plain = (BodyPartText) multipart.BodyParts[0];
+						Assert.IsTrue (plain.ContentType.IsMimeType ("text", "plain"), "text/plain Content-Type did not match.");
+						Assert.AreEqual ("windows-1251", plain.ContentType.Charset, "text/plain charset parameter did not match");
+						Assert.AreEqual (356, plain.Octets, "text/plain octets did not match");
+						Assert.AreEqual (5, plain.Lines, "text/plain lines did not match");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child does not match.");
+						xzip = (BodyPartBasic) multipart.BodyParts[1];
+						Assert.IsTrue (xzip.ContentType.IsMimeType ("application", "x-zip"), "x-zip Content-Type did not match.");
+						Assert.AreEqual ("", xzip.ContentType.Parameters["boundary"], "x-zip boundary parameter did not match");
+						Assert.AreEqual (4096, xzip.Octets, "x-zip octets did not match");
 					}
 				}
 			}

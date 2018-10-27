@@ -554,7 +554,7 @@ namespace MailKit.Net.Imap {
 					return true;
 			}
 
-			return false;
+			return value.Length == 0;
 		}
 
 		static async Task ParseParameterListAsync (StringBuilder builder, ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
@@ -592,8 +592,8 @@ namespace MailKit.Net.Imap {
 			ContentType contentType;
 			string subtype;
 
-			// Note: work around broken IMAP server implementations...
 			if (token.Type == ImapTokenType.OpenParen) {
+				// Note: work around broken IMAP server implementations...
 				if (engine.QuirksMode == ImapQuirksMode.GMail) {
 					// Note: GMail's IMAP server implementation breaks when it encounters
 					// nested multiparts with the same boundary and returns a BODYSTRUCTURE
