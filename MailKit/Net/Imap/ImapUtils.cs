@@ -118,11 +118,6 @@ namespace MailKit.Net.Imap {
 		{
 			int tzone, sign = 1;
 
-			if (index >= text.Length) {
-				timezone = new TimeSpan ();
-				return false;
-			}
-
 			if (text[index] == '-') {
 				sign = -1;
 				index++;

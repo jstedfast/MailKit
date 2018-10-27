@@ -159,13 +159,14 @@ namespace UnitTests.Net.Imap {
 		public void TestParseInvalidInternalDates ()
 		{
 			var internalDates = new string [] {
-				"987654321-OCT-2018 13:41:57 EDT",
-				"27-JAG-2018 13:41:57 EDT",
-				"27-OCT-1909 13:41:57 EDT",
-				"27-OCT-2018 33:41:57 EDT",
-				"27-OCT-2018 13:411:57 EDT",
-				"27-OCT-2018 13:41:577 EDT",
-				"27-OCT-2018 13:41:57 EDT XYZ",
+				"987654321-OCT-2018 13:41:57 -0400",
+				"27-JAG-2018 13:41:57 -0400",
+				"27-OCT-1909 13:41:57 -0400",
+				"27-OCT-2018 33:41:57 -0400",
+				"27-OCT-2018 13:411:57 -0400",
+				"27-OCT-2018 13:41:577 -0400",
+				"27-OCT-2018 13:41:577 -987654321",
+				"27-OCT-2018 13:41:57 -0400 XYZ",
 			};
 
 			foreach (var internalDate in internalDates)
