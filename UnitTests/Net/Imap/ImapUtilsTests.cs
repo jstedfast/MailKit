@@ -51,6 +51,50 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestFormattingSimpleIndexRange ()
+		{
+			int[] indexes = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+			const string expect = "1:9";
+			string actual;
+
+			actual = ImapUtils.FormatIndexSet (indexes);
+			Assert.AreEqual (expect, actual, "Formatting a simple range of indexes failed.");
+		}
+
+		[Test]
+		public void TestFormattingNonSequentialIndexes ()
+		{
+			int[] indexes = { 1, 3, 5, 7, 9 };
+			const string expect = "1,3,5,7,9";
+			string actual;
+
+			actual = ImapUtils.FormatIndexSet (indexes);
+			Assert.AreEqual (expect, actual, "Formatting a non-sequential list of indexes.");
+		}
+
+		[Test]
+		public void TestFormattingComplexSetOfIndexes ()
+		{
+			int[] indexes = { 1, 2, 3, 5, 6, 9, 10, 11, 12, 15, 19, 20 };
+			const string expect = "1:3,5:6,9:12,15,19:20";
+			string actual;
+
+			actual = ImapUtils.FormatIndexSet (indexes);
+			Assert.AreEqual (expect, actual, "Formatting a complex list of indexes.");
+		}
+
+		[Test]
+		public void TestFormattingReversedIndexes ()
+		{
+			int[] indexes = { 20, 19, 15, 12, 11, 10, 9, 6, 5, 3, 2, 1 };
+			const string expect = "20:19,15,12:9,6:5,3:1";
+			string actual;
+
+			actual = ImapUtils.FormatIndexSet (indexes);
+			Assert.AreEqual (expect, actual, "Formatting a complex list of indexes.");
+		}
+
+		[Test]
 		public void TestFormattingSimpleUidRange ()
 		{
 			UniqueId[] uids = {
