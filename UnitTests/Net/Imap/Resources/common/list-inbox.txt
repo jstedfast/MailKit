@@ -1,0 +1,2 @@
+* LIST () "/" INBOX
+A######## OK LIST Completed

@@ -1016,6 +1016,136 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestImapClientPreAuthGreeting ()
+		{
+			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "common.preauth-greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "common.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"\"\r\n", "common.list-namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsTrue (client.IsAuthenticated, "Client should be authenticated.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.AreEqual (capabilities, client.Capabilities, "Capabilities");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.Inbox, inbox.Attributes, "Expected Inbox attributes to be empty.");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async void TestImapClientPreAuthGreetingAsync ()
+		{
+			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "common.preauth-greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "common.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"\"\r\n", "common.list-namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsTrue (client.IsAuthenticated, "Client should be authenticated.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.AreEqual (capabilities, client.Capabilities, "Capabilities");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.Inbox, inbox.Attributes, "Expected Inbox attributes to be empty.");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
+		public void TestImapClientPreAuthCapabilityGreeting ()
+		{
+			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "common.preauth-capability-greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LIST \"\" \"\"\r\n", "common.list-namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsTrue (client.IsAuthenticated, "Client should be authenticated.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.AreEqual (capabilities, client.Capabilities, "Capabilities");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.Inbox, inbox.Attributes, "Expected Inbox attributes to be empty.");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async void TestImapClientPreAuthCapabilityGreetingAsync ()
+		{
+			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "common.preauth-capability-greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LIST \"\" \"\"\r\n", "common.list-namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsTrue (client.IsAuthenticated, "Client should be authenticated.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.AreEqual (capabilities, client.Capabilities, "Capabilities");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.Inbox, inbox.Attributes, "Expected Inbox attributes to be empty.");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
 		public void TestImapClientFeatures ()
 		{
 			var commands = new List<ImapReplayCommand> ();

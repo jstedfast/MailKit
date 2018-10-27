@@ -1,0 +1,2 @@
+* CAPABILITY IMAP4rev1
+A######## OK CAPABILITY Complete

@@ -112,10 +112,13 @@
     <EmbeddedResource Include="Net\Imap\Resources\acl\getacl.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\listrights.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\myrights.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\getquota.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\getquota-no-root.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\id.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\list-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\list-namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.0.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.1.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.10.msg" />
@@ -166,6 +169,8 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\message.7.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.8.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.9.msg" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\preauth-capability-greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\preauth-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\setquota.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />

@@ -1151,6 +1151,12 @@ namespace MailKit.Net.Imap {
 				engine.QueryCapabilitiesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 
 			OnConnected ();
+
+			if (engine.State == ImapEngineState.Authenticated) {
+				engine.QueryNamespacesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+				engine.QuerySpecialFoldersAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+				OnAuthenticated (string.Empty);
+			}
 		}
 
 		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
@@ -1172,6 +1178,12 @@ namespace MailKit.Net.Imap {
 				await engine.QueryCapabilitiesAsync (true, cancellationToken).ConfigureAwait (false);
 
 			OnConnected ();
+
+			if (engine.State == ImapEngineState.Authenticated) {
+				await engine.QueryNamespacesAsync (true, cancellationToken).ConfigureAwait (false);
+				await engine.QuerySpecialFoldersAsync (true, cancellationToken).ConfigureAwait (false);
+				OnAuthenticated (string.Empty);
+			}
 		}
 
 		static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
@@ -1412,6 +1424,12 @@ namespace MailKit.Net.Imap {
 			}
 
 			OnConnected ();
+
+			if (engine.State == ImapEngineState.Authenticated) {
+				await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				OnAuthenticated (string.Empty);
+			}
 		}
 
 		/// <summary>
@@ -1611,6 +1629,12 @@ namespace MailKit.Net.Imap {
 			}
 
 			OnConnected ();
+
+			if (engine.State == ImapEngineState.Authenticated) {
+				await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				OnAuthenticated (string.Empty);
+			}
 		}
 
 		/// <summary>
