@@ -60,14 +60,14 @@ namespace UnitTests.Net.Imap {
 			Command = command;
 
 			using (var stream = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + resource)) {
-				var memory = new MemoryBlockStream ();
+				using (var memory = new MemoryBlockStream ()) {
+					using (var filtered = new FilteredStream (memory)) {
+						filtered.Add (new Unix2DosFilter ());
+						stream.CopyTo (filtered, 4096);
+					}
 
-				using (var filtered = new FilteredStream (memory)) {
-					filtered.Add (new Unix2DosFilter ());
-					stream.CopyTo (filtered, 4096);
+					Response = memory.ToArray ();
 				}
-
-				Response = memory.ToArray ();
 			}
 		}
 
