@@ -948,45 +948,12 @@ namespace MailKit.Net.Smtp {
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 #if !NETFX_CORE
-			IPAddress[] ipAddresses;
-			Socket socket = null;
+			Socket socket;
 
-			if (doAsync) {
-				ipAddresses = await Dns.GetHostAddressesAsync (uri.DnsSafeHost).ConfigureAwait (false);
-			} else {
-#if NETSTANDARD
-				ipAddresses = Dns.GetHostAddressesAsync (uri.DnsSafeHost).GetAwaiter ().GetResult ();
-#else
-				ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
-#endif
-			}
-
-			for (int i = 0; i < ipAddresses.Length; i++) {
-				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-				try {
-					cancellationToken.ThrowIfCancellationRequested ();
-
-					if (LocalEndPoint != null)
-						socket.Bind (LocalEndPoint);
-
-					socket.Connect (ipAddresses[i], port);
-					break;
-				} catch (OperationCanceledException) {
-					socket.Dispose ();
-					socket = null;
-					throw;
-				} catch {
-					socket.Dispose ();
-					socket = null;
-
-					if (i + 1 == ipAddresses.Length)
-						throw;
-				}
-			}
-
-			if (socket == null)
-				throw new IOException (string.Format ("Failed to resolve host: {0}", host));
+			if (doAsync)
+				socket = await ConnectAsync (uri, true, cancellationToken).ConfigureAwait (false);
+			else
+				socket = ConnectAsync (uri, false, cancellationToken).GetAwaiter ().GetResult ();
 
 			this.host = host;
 
