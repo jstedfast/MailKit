@@ -239,6 +239,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\thread-references.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\uid-expunge.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\add-flags.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\add-labels.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.3.txt" />
@@ -338,6 +339,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search-summary.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-flags.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\set-labels.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\utf8accept.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\xlist.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\authenticate.txt" />
