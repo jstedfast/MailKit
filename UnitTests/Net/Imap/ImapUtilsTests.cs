@@ -517,6 +517,73 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		[Test]
+		public void TestParseBodyStructureWithBodyExtensions ()
+		{
+			const string text = "((\"text\" \"plain\" (\"charset\" \"iso-8859-1\") NIL NIL \"quoted-printable\" 28 2 \"md5sum\" (\"inline\" (\"filename\" \"body.txt\")) \"en\" \"http://www.google.com/body.txt\" \"extension1\" 123 (\"extension2\" (\"nested-extension3\" \"nested-extension4\"))) (\"text\" \"html\" (\"charset\" \"iso-8859-1\") NIL NIL \"quoted-printable\" 1707 65 \"md5sum\" (\"inline\" (\"filename\" \"body.html\")) \"en\" \"http://www.google.com/body.html\") \"alternative\" (\"boundary\" \"----=_NextPart_001_0078_01CBB179.57530990\") (\"inline\" (\"filename\" \"alternative.txt\")) \"en\" \"http://www.google.com/alternative.txt\" {10}\r\nextension1 123 (\"extension2\" (\"nested-extension3\" \"nested-extension4\")))\r\n";
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						var multipart = (BodyPartMultipart)body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "alternative"), "multipart/alternative Content-Type did not match.");
+						Assert.AreEqual ("----=_NextPart_001_0078_01CBB179.57530990", multipart.ContentType.Parameters ["boundary"], "boundary param did not match");
+						Assert.AreEqual ("inline", multipart.ContentDisposition.Disposition, "multipart/alternative disposition did not match");
+						Assert.AreEqual ("alternative.txt", multipart.ContentDisposition.FileName, "multipart/alternative filename did not match");
+						Assert.NotNull (multipart.ContentLanguage, "multipart/alternative Content-Language should not be null");
+						Assert.AreEqual (1, multipart.ContentLanguage.Length, "multipart/alternative Content-Language count did not match");
+						Assert.AreEqual ("en", multipart.ContentLanguage [0], "multipart/alternative Content-Language value did not match");
+						Assert.AreEqual ("http://www.google.com/alternative.txt", multipart.ContentLocation.ToString (), "multipart/alternative location did not match");
+						Assert.AreEqual (2, multipart.BodyParts.Count, "BodyParts count did not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts [0], "The type of the first child did not match.");
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts [1], "The type of the second child did not match.");
+
+						var plain = (BodyPartText)multipart.BodyParts [0];
+						Assert.IsTrue (plain.ContentType.IsMimeType ("text", "plain"), "text/plain Content-Type did not match.");
+						Assert.AreEqual ("iso-8859-1", plain.ContentType.Charset, "text/plain charset param did not match");
+						Assert.AreEqual ("inline", plain.ContentDisposition.Disposition, "text/plain disposition did not match");
+						Assert.AreEqual ("body.txt", plain.ContentDisposition.FileName, "text/plain filename did not match");
+						Assert.AreEqual ("md5sum", plain.ContentMd5, "text/html Content-Md5 did not match");
+						Assert.NotNull (plain.ContentLanguage, "text/plain Content-Language should not be null");
+						Assert.AreEqual (1, plain.ContentLanguage.Length, "text/plain Content-Language count did not match");
+						Assert.AreEqual ("en", plain.ContentLanguage [0], "text/plain Content-Language value did not match");
+						Assert.AreEqual ("http://www.google.com/body.txt", plain.ContentLocation.ToString (), "text/plain location did not match");
+						Assert.AreEqual (28, plain.Octets, "text/plain octets did not match");
+						Assert.AreEqual (2, plain.Lines, "text/plain lines did not match");
+
+						var html = (BodyPartText)multipart.BodyParts [1];
+						Assert.IsTrue (html.ContentType.IsMimeType ("text", "html"), "text/html Content-Type did not match.");
+						Assert.AreEqual ("iso-8859-1", html.ContentType.Charset, "text/html charset param did not match");
+						Assert.AreEqual ("inline", html.ContentDisposition.Disposition, "text/html disposition did not match");
+						Assert.AreEqual ("body.html", html.ContentDisposition.FileName, "text/html filename did not match");
+						Assert.AreEqual ("md5sum", html.ContentMd5, "text/html Content-Md5 did not match");
+						Assert.NotNull (html.ContentLanguage, "text/html Content-Language should not be null");
+						Assert.AreEqual (1, html.ContentLanguage.Length, "text/html Content-Language count did not match");
+						Assert.AreEqual ("en", html.ContentLanguage [0], "text/html Content-Language value did not match");
+						Assert.AreEqual ("http://www.google.com/body.html", html.ContentLocation.ToString (), "text/html location did not match");
+						Assert.AreEqual (1707, html.Octets, "text/html octets did not match");
+						Assert.AreEqual (65, html.Lines, "text/html lines did not match");
+					}
+				}
+			}
+		}
+
 		// Note: This tests the work-around for issue #485
 		[Test]
 		public void TestParseBadlyQuotedBodyStructure ()

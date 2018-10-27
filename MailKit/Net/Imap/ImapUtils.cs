@@ -733,7 +733,7 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
-		static async Task SkipBodyExtensionsAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		static async Task SkipBodyExtensionAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -745,7 +745,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type == ImapTokenType.CloseParen)
 						break;
 
-					await SkipBodyExtensionsAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+					await SkipBodyExtensionAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 				} while (true);
 
 				// read the ')'
@@ -832,8 +832,10 @@ namespace MailKit.Net.Imap {
 				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type != ImapTokenType.CloseParen)
-				await SkipBodyExtensionsAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+			while (token.Type != ImapTokenType.CloseParen) {
+				await SkipBodyExtensionAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			}
 
 			// read the ')'
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -938,8 +940,10 @@ namespace MailKit.Net.Imap {
 				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type != ImapTokenType.CloseParen)
-				await SkipBodyExtensionsAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+			while (token.Type != ImapTokenType.CloseParen) {
+				await SkipBodyExtensionAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			}
 
 			// read the ')'
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
