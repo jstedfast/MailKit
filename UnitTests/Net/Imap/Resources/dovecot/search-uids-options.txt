@@ -1,2 +1,2 @@
-* ESEARCH (TAG "A########") UID MIN 2 MAX 13 ALL 2:6,9:13 COUNT 10
+* ESEARCH (TAG "A########") UID MIN 2 MAX 13 ALL 2:6,9:13 COUNT 10 RELEVANCY (2 3 4 5 6 9 10 11 12 13)
 A######## OK Search completed (0.001 + 0.000 secs).

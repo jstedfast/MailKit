@@ -1804,10 +1804,10 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000017 UID THREAD ORDEREDSUBJECT US-ASCII UID 1:* ALL\r\n", "dovecot.thread-orderedsubject.txt"));
 			commands.Add (new ImapReplayCommand ("A00000018 UNSELECT\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000019 SELECT UnitTests.Messages (QRESYNC (1436832084 2 1:8))\r\n", "dovecot.select-unittests-messages-qresync.txt"));
-			commands.Add (new ImapReplayCommand ("A00000020 UID SEARCH RETURN (ALL COUNT MIN MAX) MODSEQ 2\r\n", "dovecot.search-changed-since.txt"));
+			commands.Add (new ImapReplayCommand ("A00000020 UID SEARCH RETURN (ALL RELEVANCY COUNT MIN MAX) MODSEQ 2\r\n", "dovecot.search-changed-since.txt"));
 			commands.Add (new ImapReplayCommand ("A00000021 UID FETCH 1:7 (UID FLAGS MODSEQ)\r\n", "dovecot.fetch1.txt"));
 			commands.Add (new ImapReplayCommand ("A00000022 UID FETCH 1:* (UID FLAGS MODSEQ) (CHANGEDSINCE 2 VANISHED)\r\n", "dovecot.fetch2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000023 UID SORT RETURN (ALL COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
+			commands.Add (new ImapReplayCommand ("A00000023 UID SORT RETURN (ALL RELEVANCY COUNT MIN MAX) (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-reverse-arrival.txt"));
 			commands.Add (new ImapReplayCommand ("A00000024 UID SEARCH RETURN () UNDELETED SEEN\r\n", "dovecot.optimized-search.txt"));
 			commands.Add (new ImapReplayCommand ("A00000025 CREATE UnitTests.Destination\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000026 LIST \"\" UnitTests.Destination\r\n", "dovecot.list-unittests-destination.txt"));
@@ -1840,10 +1840,10 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000053 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
 			commands.Add (new ImapReplayCommand ("A00000054 STORE 1:7 (UNCHANGEDSINCE 5) FLAGS.SILENT (\\Deleted \\Seen $MailKit)\r\n", "dovecot.setflags-unchangedsince.txt"));
 			commands.Add (new ImapReplayCommand ("A00000055 UID SEARCH RETURN () UID 1:14 OR ANSWERED OR DELETED OR DRAFT OR FLAGGED OR RECENT OR UNANSWERED OR UNDELETED OR UNDRAFT OR UNFLAGGED OR UNSEEN OR KEYWORD $MailKit UNKEYWORD $MailKit\r\n", "dovecot.search-uids.txt"));
-			commands.Add (new ImapReplayCommand ("A00000056 UID SEARCH RETURN (ALL COUNT MIN MAX) UID 1:14 LARGER 256 SMALLER 512\r\n", "dovecot.search-uids-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000056 UID SEARCH RETURN (ALL RELEVANCY COUNT MIN MAX) UID 1:14 LARGER 256 SMALLER 512\r\n", "dovecot.search-uids-options.txt"));
 			commands.Add (new ImapReplayCommand ("A00000057 UID SORT RETURN () (REVERSE DATE SUBJECT DISPLAYFROM SIZE) US-ASCII OR OR (SENTBEFORE 12-Oct-2016 SENTSINCE 10-Oct-2016) NOT SENTON 11-Oct-2016 OR (BEFORE 12-Oct-2016 SINCE 10-Oct-2016) NOT ON 11-Oct-2016\r\n", "dovecot.sort-by-date.txt"));
 			commands.Add (new ImapReplayCommand ("A00000058 UID SORT RETURN () (FROM TO CC) US-ASCII UID 1:14 OR BCC xyz OR CC xyz OR FROM xyz OR TO xyz OR SUBJECT xyz OR HEADER Message-Id mimekit.net OR BODY \"This is the message body.\" TEXT message\r\n", "dovecot.sort-by-strings.txt"));
-			commands.Add (new ImapReplayCommand ("A00000059 UID SORT RETURN (ALL COUNT MIN MAX) (DISPLAYTO) US-ASCII UID 1:14 OLDER 1 YOUNGER 3600\r\n", "dovecot.sort-uids-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000059 UID SORT RETURN (ALL RELEVANCY COUNT MIN MAX) (DISPLAYTO) US-ASCII UID 1:14 OLDER 1 YOUNGER 3600\r\n", "dovecot.sort-uids-options.txt"));
 			commands.Add (new ImapReplayCommand ("A00000060 UID SEARCH ALL\r\n", "dovecot.search-raw.txt"));
 			commands.Add (new ImapReplayCommand ("A00000061 UID SORT (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-raw.txt"));
 			commands.Add (new ImapReplayCommand ("A00000062 UID FETCH 1:* (BODY.PEEK[])\r\n", "dovecot.getstreams1.txt"));
@@ -2105,9 +2105,10 @@ namespace UnitTests.Net.Imap {
 				vanished.Clear ();
 
 				// Use SEARCH and FETCH to get the same info
-				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max;
+				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var changed = folder.Search (searchOptions, SearchQuery.ChangedSince (highestModSeq));
 				Assert.AreEqual (7, changed.UniqueIds.Count, "Unexpected number of UIDs");
+				Assert.AreEqual (changed.Count, changed.Relevancy.Count, "Unexpected number of relevancy scores");
 				Assert.IsTrue (changed.ModSeq.HasValue, "Expected the ModSeq property to be set");
 				Assert.AreEqual (4, changed.ModSeq.Value, "Unexpected ModSeq value");
 				Assert.AreEqual (1, changed.Min.Value.Id, "Unexpected Min");
@@ -2138,6 +2139,7 @@ namespace UnitTests.Net.Imap {
 				var orderBy = new OrderBy[] { new OrderBy (OrderByType.Arrival, SortOrder.Descending) };
 				var sorted = folder.Sort (searchOptions, SearchQuery.All, orderBy);
 				Assert.AreEqual (7, sorted.UniqueIds.Count, "Unexpected number of UIDs");
+				Assert.AreEqual (sorted.Count, sorted.Relevancy.Count, "Unexpected number of relevancy scores");
 				for (int i = 0; i < sorted.UniqueIds.Count; i++)
 					Assert.AreEqual (7 - i, sorted.UniqueIds[i].Id, "Unexpected value for UniqueId[{0}]", i);
 				Assert.IsFalse (sorted.ModSeq.HasValue, "Expected the ModSeq property to be null");
@@ -2361,22 +2363,28 @@ namespace UnitTests.Net.Imap {
 				var custom = new HashSet<string> ();
 				custom.Add ("$MailKit");
 
-				destination.AddFlags (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
+				var unchanged1 = destination.AddFlags (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
 				Assert.AreEqual (14, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
 				Assert.AreEqual (5, destination.HighestModSeq);
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected value for modSeqChanged[{0}].Index", i);
 					Assert.AreEqual (5, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
 				}
+				Assert.AreEqual (2, unchanged1.Count, "[MODIFIED uid-set]");
+				Assert.AreEqual (7, unchanged1[0].Id, "unchanged uids[0]");
+				Assert.AreEqual (9, unchanged1[1].Id, "unchanged uids[1]");
 				modSeqChanged.Clear ();
 
-				destination.SetFlags (new int[] { 0, 1, 2, 3, 4, 5, 6 }, destination.HighestModSeq, MessageFlags.Seen | MessageFlags.Deleted, custom, true);
+				var unchanged2 = destination.SetFlags (new int[] { 0, 1, 2, 3, 4, 5, 6 }, destination.HighestModSeq, MessageFlags.Seen | MessageFlags.Deleted, custom, true);
 				Assert.AreEqual (7, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
 				Assert.AreEqual (6, destination.HighestModSeq);
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected value for modSeqChanged[{0}].Index", i);
 					Assert.AreEqual (6, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
 				}
+				Assert.AreEqual (2, unchanged2.Count, "[MODIFIED seq-set]");
+				Assert.AreEqual (6, unchanged2[0], "unchanged indexes[0]");
+				Assert.AreEqual (8, unchanged2[1], "unchanged indexes[1]");
 				modSeqChanged.Clear ();
 
 				var results = destination.Search (uids, SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasCustomFlag ("$MailKit").Or (SearchQuery.DoesNotHaveCustomFlag ("$MailKit")))))))))))));
@@ -2390,6 +2398,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (10, matches.UniqueIds.Count, "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.AreEqual (expectedMatchedUids[i], matches.UniqueIds[i].Id);
+				Assert.AreEqual (matches.Count, matches.Relevancy.Count, "Unexpected number of relevancy scores");
 
 				orderBy = new OrderBy[] { OrderBy.ReverseDate, OrderBy.Subject, OrderBy.DisplayFrom, OrderBy.Size };
 				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
@@ -2415,6 +2424,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (14, matches.UniqueIds.Count, "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+				Assert.AreEqual (matches.Count, matches.Relevancy.Count, "Unexpected number of relevancy scores");
 
 				client.Capabilities &= ~ImapCapabilities.ESearch;
 				matches = ((ImapFolder) destination).Search ("ALL");
@@ -2703,9 +2713,10 @@ namespace UnitTests.Net.Imap {
 				vanished.Clear ();
 
 				// Use SEARCH and FETCH to get the same info
-				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max;
+				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var changed = await folder.SearchAsync (searchOptions, SearchQuery.ChangedSince (highestModSeq));
 				Assert.AreEqual (7, changed.UniqueIds.Count, "Unexpected number of UIDs");
+				Assert.AreEqual (changed.Count, changed.Relevancy.Count, "Unexpected number of relevancy scores");
 				Assert.IsTrue (changed.ModSeq.HasValue, "Expected the ModSeq property to be set");
 				Assert.AreEqual (4, changed.ModSeq.Value, "Unexpected ModSeq value");
 				Assert.AreEqual (1, changed.Min.Value.Id, "Unexpected Min");
@@ -2738,6 +2749,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (7, sorted.UniqueIds.Count, "Unexpected number of UIDs");
 				for (int i = 0; i < sorted.UniqueIds.Count; i++)
 					Assert.AreEqual (7 - i, sorted.UniqueIds[i].Id, "Unexpected value for UniqueId[{0}]", i);
+				Assert.AreEqual (sorted.Count, sorted.Relevancy.Count, "Unexpected number of relevancy scores");
 				Assert.IsFalse (sorted.ModSeq.HasValue, "Expected the ModSeq property to be null");
 				Assert.AreEqual (7, sorted.Min.Value.Id, "Unexpected Min");
 				Assert.AreEqual (1, sorted.Max.Value.Id, "Unexpected Max");
@@ -2959,22 +2971,28 @@ namespace UnitTests.Net.Imap {
 				var custom = new HashSet<string> ();
 				custom.Add ("$MailKit");
 
-				await destination.AddFlagsAsync (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
+				var unchanged1 = await destination.AddFlagsAsync (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
 				Assert.AreEqual (14, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
 				Assert.AreEqual (5, destination.HighestModSeq);
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected value for modSeqChanged[{0}].Index", i);
 					Assert.AreEqual (5, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
 				}
+				Assert.AreEqual (2, unchanged1.Count, "[MODIFIED uid-set]");
+				Assert.AreEqual (7, unchanged1[0].Id, "unchanged uids[0]");
+				Assert.AreEqual (9, unchanged1[1].Id, "unchanged uids[1]");
 				modSeqChanged.Clear ();
 
-				await destination.SetFlagsAsync (new int[] { 0, 1, 2, 3, 4, 5, 6 }, destination.HighestModSeq, MessageFlags.Seen | MessageFlags.Deleted, custom, true);
+				var unchanged2 = await destination.SetFlagsAsync (new int[] { 0, 1, 2, 3, 4, 5, 6 }, destination.HighestModSeq, MessageFlags.Seen | MessageFlags.Deleted, custom, true);
 				Assert.AreEqual (7, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
 				Assert.AreEqual (6, destination.HighestModSeq);
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.AreEqual (i, modSeqChanged[i].Index, "Unexpected value for modSeqChanged[{0}].Index", i);
 					Assert.AreEqual (6, modSeqChanged[i].ModSeq, "Unexpected value for modSeqChanged[{0}].ModSeq", i);
 				}
+				Assert.AreEqual (2, unchanged2.Count, "[MODIFIED seq-set]");
+				Assert.AreEqual (6, unchanged2[0], "unchanged indexes[0]");
+				Assert.AreEqual (8, unchanged2[1], "unchanged indexes[1]");
 				modSeqChanged.Clear ();
 
 				var results = await destination.SearchAsync (uids, SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasCustomFlag ("$MailKit").Or (SearchQuery.DoesNotHaveCustomFlag ("$MailKit")))))))))))));
@@ -2988,6 +3006,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (10, matches.UniqueIds.Count, "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.AreEqual (expectedMatchedUids[i], matches.UniqueIds[i].Id);
+				Assert.AreEqual (matches.Count, matches.Relevancy.Count, "Unexpected number of relevancy scores");
 
 				orderBy = new OrderBy[] { OrderBy.ReverseDate, OrderBy.Subject, OrderBy.DisplayFrom, OrderBy.Size };
 				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
@@ -3013,6 +3032,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (14, matches.UniqueIds.Count, "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+				Assert.AreEqual (matches.Count, matches.Relevancy.Count, "Unexpected number of relevancy scores");
 
 				client.Capabilities &= ~ImapCapabilities.ESearch;
 				matches = await ((ImapFolder) destination).SearchAsync ("ALL");

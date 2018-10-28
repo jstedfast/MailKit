@@ -1,2 +1,2 @@
-* ESEARCH (TAG "A########") UID MIN 1 MAX 7 ALL 1:7 COUNT 7 MODSEQ 4
+* ESEARCH (TAG "A########") UID MIN 1 MAX 7 ALL 1:7 COUNT 7 MODSEQ 4 RELEVANCY (11 22 33 44 55 66 77)
 A######## OK Search completed (0.001 + 0.000 secs).

@@ -5,4 +5,4 @@
 * 5 FETCH (UID 5 MODSEQ (6))
 * 6 FETCH (UID 6 MODSEQ (6))
 * 7 FETCH (UID 7 MODSEQ (6))
-A######## OK Store completed (0.001 + 0.000 secs).
+A######## OK [MODIFIED 7,9] Store completed (0.001 + 0.000 secs).

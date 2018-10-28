@@ -1,2 +1,2 @@
-* ESEARCH (TAG "A########") UID MIN 7 MAX 1 ALL 7,6,5,4,3,2,1 COUNT 7
+* ESEARCH (TAG "A########") UID MIN 7 MAX 1 ALL 7,6,5,4,3,2,1 COUNT 7 RELEVANCY (7 6 5 4 3 2 1)
 A######## OK Sort completed (0.001 + 0.000 secs).
