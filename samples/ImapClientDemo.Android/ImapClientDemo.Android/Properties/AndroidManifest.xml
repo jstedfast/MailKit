@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="ImapClientDemo.Android">
-	<uses-sdk />
-	<application android:theme="@style/AppTheme" android:label="Imap Demo" android:icon="@drawable/icon">
-	</application>
+	<uses-sdk android:targetSdkVersion="26" />
+	<application android:theme="@style/AppTheme" android:label="Imap Demo" android:icon="@drawable/icon"></application>
 </manifest>
