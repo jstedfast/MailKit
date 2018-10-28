@@ -1,5 +1,31 @@
 # Release Notes
 
+### MailKit 2.0.7
+
+* Added a work-around for Exchange IMAP servers that send broken multipart BODYSTRUCTURE responses
+  without a `body-fld-dsp` token.
+* Added support for detecting (but not using) the UNAUTHENTICATE IMAP extension.
+* Reintroduced the Pop3Client.GetMessageCount[Async]() methods to allow developers to poll
+  POP3 servers for new messages. (issue #762)
+* Fixed SmtpClient's status code logic to handle more than the expected error codes for the
+  `MAIL FROM` and `RCPT TO` commands. (issue #764)
+* Added a work-around for IMAP servers that quote FLAGS responses. (issue #771)
+* Optimized SmtpClient's logic for byte-stuffing the message when writing it to the socket during
+  the `DATA` command.
+* Added an `SslProtocols` property to IMailService (was already in MailService).
+* Fixed the DIGEST-MD5 charset handling.
+* Fixed a bug in the BodyPart.TryParse() method that could be used when serializing and deserializing
+  FETCH'd responses from an IMAP server.
+* Fixed BodyPartCollection.IndexOf().
+* Fixed Envelope.ToString and TryParse() to properly deal with the rfc822 group address syntax.
+* Fixed the ImapClient logic to properly handle parsing nested group addresses (not likely that
+  anyone would hit this).
+* Improved ImapClient's state tracking so that it is possible to re-connect the ImapClient in the
+  Disconnected event handler. (issue #770)
+* Fixed IMAP API's that take IList of UIDs or indexes to accept 0 UIDs/indexes.
+* Fixed ImapClient's BODYSTRUCTURE parser to properly handle multiple body-extensions tokens.
+* Fixed ImapClient to properly handle the `* PREAUTH` greeting when connecting to an IMAP server.
+
 ### MailKit 2.0.6
 
 * Fixed ImapFolder.GetSubfolders (StatusItems) to make sure that the child folders exist before

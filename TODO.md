@@ -19,5 +19,6 @@
     * ANNOTATE
     * NOTIFY (Note: only Dovecot seems to support this)
     * MULTISEARCH (Note: none of the mainstream IMAP servers seem to support this)
+    * UNAUTHENTICATE
 * Maildir
 * Thunderbird mbox folder trees

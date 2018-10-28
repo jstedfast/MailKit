@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.12">
 		<id>MailKit</id>
-		<version>2.0.6</version>
+		<version>2.0.7</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -23,11 +23,22 @@ Features include:
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
 		<releaseNotes>
-* Fixed ImapFolder.GetSubfolders (StatusItems) to make sure that the child folders exist before calling STATUS on them when the server does not support the LIST-STATUS command.
-* Catch ArgumentExceptions when calling Encoding.GetEncoding(string). (issue #740)
-* Fixed parsing of IMAP threads where the root of a subtree is empty. (issue #739)
-* Added AuthorizationId property for PLAIN and DIGEST-MD5 SASL mechanisms.
-* Added MessageSummaryItems.Headers enum to fetch all headers. (issue #738)
+* Added a work-around for Exchange IMAP servers that send broken multipart BODYSTRUCTURE responses without a `body-fld-dsp` token.
+* Added support for detecting (but not using) the UNAUTHENTICATE IMAP extension.
+* Reintroduced the Pop3Client.GetMessageCount[Async]() methods to allow developers to poll POP3 servers for new messages. (issue #762)
+* Fixed SmtpClient's status code logic to handle more than the expected error codes for the `MAIL FROM` and `RCPT TO` commands. (issue #764)
+* Added a work-around for IMAP servers that quote FLAGS responses. (issue #771)
+* Optimized SmtpClient's logic for byte-stuffing the message when writing it to the socket during the `DATA` command.
+* Added an `SslProtocols` property to IMailService (was already in MailService).
+* Fixed the DIGEST-MD5 charset handling.
+* Fixed a bug in the BodyPart.TryParse() method that could be used when serializing and deserializing FETCH'd responses from an IMAP server.
+* Fixed BodyPartCollection.IndexOf().
+* Fixed Envelope.ToString and TryParse() to properly deal with the rfc822 group address syntax.
+* Fixed the ImapClient logic to properly handle parsing nested group addresses (not likely that anyone would hit this).
+* Improved ImapClient's state tracking so that it is possible to re-connect the ImapClient in the Disconnected event handler. (issue #770)
+* Fixed IMAP API's that take IList of UIDs or indexes to accept 0 UIDs/indexes.
+* Fixed ImapClient's BODYSTRUCTURE parser to properly handle multiple body-extensions tokens.
+* Fixed ImapClient to properly handle the `* PREAUTH` greeting when connecting to an IMAP server.
 
 Note to users upgrading from MailKit 1.x:
 
