@@ -320,7 +320,7 @@ namespace MailKit.Net.Pop3
 		}
 
 		/// <summary>
-		/// Get the message count.
+		/// Asynchronously get the message count.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously gets the message count.

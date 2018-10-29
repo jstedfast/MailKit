@@ -5,23 +5,23 @@
 * Added a work-around for Exchange IMAP servers that send broken multipart BODYSTRUCTURE responses
   without a `body-fld-dsp` token.
 * Added support for detecting (but not using) the UNAUTHENTICATE IMAP extension.
-* Reintroduced the Pop3Client.GetMessageCount[Async]() methods to allow developers to poll
-  POP3 servers for new messages. (issue #762)
+* Reintroduced the Pop3Client.GetMessageCount() and GetMessageCountAsync() methods to allow developers
+  to poll POP3 servers for new messages. ([issue #762](https://github.com/jstedfast/MailKit/issues/762))
 * Fixed SmtpClient's status code logic to handle more than the expected error codes for the
-  `MAIL FROM` and `RCPT TO` commands. (issue #764)
-* Added a work-around for IMAP servers that quote FLAGS responses. (issue #771)
+  `MAIL FROM` and `RCPT TO` commands. ([issue #764](https://github.com/jstedfast/MailKit/issues/764))
+* Added a work-around for IMAP servers that quote FLAGS responses. ([issue #771](https://github.com/jstedfast/MailKit/issues/771))
 * Optimized SmtpClient's logic for byte-stuffing the message when writing it to the socket during
   the `DATA` command.
 * Added an `SslProtocols` property to IMailService (was already in MailService).
 * Fixed the DIGEST-MD5 charset handling.
 * Fixed a bug in the BodyPart.TryParse() method that could be used when serializing and deserializing
   FETCH'd responses from an IMAP server.
-* Fixed BodyPartCollection.IndexOf().
-* Fixed Envelope.ToString and TryParse() to properly deal with the rfc822 group address syntax.
+* Fixed BodyPartCollection.IndexOf(Uri).
+* Fixed Envelope.ToString() and TryParse() to properly deal with the rfc822 group address syntax.
 * Fixed the ImapClient logic to properly handle parsing nested group addresses (not likely that
   anyone would hit this).
 * Improved ImapClient's state tracking so that it is possible to re-connect the ImapClient in the
-  Disconnected event handler. (issue #770)
+  Disconnected event handler. ([issue #770](https://github.com/jstedfast/MailKit/issues/770))
 * Fixed IMAP API's that take IList of UIDs or indexes to accept 0 UIDs/indexes.
 * Fixed ImapClient's BODYSTRUCTURE parser to properly handle multiple body-extensions tokens.
 * Fixed ImapClient to properly handle the `* PREAUTH` greeting when connecting to an IMAP server.
@@ -30,22 +30,22 @@
 
 * Fixed ImapFolder.GetSubfolders (StatusItems) to make sure that the child folders exist before
   calling STATUS on them when the server does not support the LIST-STATUS command.
-* Catch ArgumentExceptions when calling Encoding.GetEncoding(string). (issue #740)
-* Fixed parsing of IMAP threads where the root of a subtree is empty. (issue #739)
+* Catch ArgumentExceptions when calling Encoding.GetEncoding(string). ([issue #740](https://github.com/jstedfast/MailKit/issues/740))
+* Fixed parsing of IMAP threads where the root of a subtree is empty. ([issue #739](https://github.com/jstedfast/MailKit/issues/739))
 * Added AuthorizationId property for PLAIN and DIGEST-MD5 SASL mechanisms.
-* Added MessageSummaryItems.Headers enum to fetch all headers. (issue #738)
+* Added MessageSummaryItems.Headers enum to fetch all headers. ([issue #738](https://github.com/jstedfast/MailKit/issues/738))
 
 ### MailKit 2.0.5
 
 * When throwing AuthenticationException within SmtpClient, add an SmtpCommandException as the
-  InnerException property to help consumers diagnose authentication problems. (issue #717)
+  InnerException property to help consumers diagnose authentication problems. ([issue #717](https://github.com/jstedfast/MailKit/issues/717))
 * Added support for the authzid to the SASL PLAIN mechanism.
-* Modified ProtocolLogger file constructor to support Shared Read and an Append/Overwrite option. (issue #730)
+* Modified ProtocolLogger file constructor to support Shared Read and an Append/Overwrite option. ([issue #730](https://github.com/jstedfast/MailKit/issues/730))
 
 ### MailKit 2.0.4
 
-* Fixed SmtpClient to use the IPv4 literal if the socket is IPv4 address mapped to IPv6. (issue #704)
-* Updated SmtpClient and ImapFolder.Append to use FormatOptions.EnsureNewLine. (MimeKit issue #251)
+* Fixed SmtpClient to use the IPv4 literal if the socket is IPv4 address mapped to IPv6. ([issue #704](https://github.com/jstedfast/MailKit/issues/704))
+* Updated SmtpClient and ImapFolder.Append to use FormatOptions.EnsureNewLine. ([issues #251](https://github.com/jstedfast/MimeKit/issues/251))
 
 ### MailKit 2.0.3
 
@@ -54,10 +54,10 @@
 
 ### MailKit 2.0.2
 
-* Added work-around for ProtonMail's IMAP server. (issue #674)
-* Added work-around for IMAP servers that do not include msgid in the ENVELOPE response. (issue #669)
-* Added MessageSummaryItems.PreviewText to allow fetching a small preview of the message. (issue #650)
-* Added support for batch fetching IMAP message streams. (issue #650)
+* Added work-around for ProtonMail's IMAP server. ([issue #674](https://github.com/jstedfast/MailKit/issues/674))
+* Added work-around for IMAP servers that do not include msgid in the ENVELOPE response. ([issue #669](https://github.com/jstedfast/MailKit/issues/669))
+* Added MessageSummaryItems.PreviewText to allow fetching a small preview of the message. ([issue #650](https://github.com/jstedfast/MailKit/issues/650))
+* Added support for batch fetching IMAP message streams. ([issue #650](https://github.com/jstedfast/MailKit/issues/650))
 
 ### MailKit 2.0.1
 
@@ -87,7 +87,7 @@ client.Authenticate (oauth2);
   by SslStream.
 * Fixed support for the IMAP UTF8=ACCEPT extension.
 * Improved ImapFolder.CommitStream() API to provide section, offset and length.
-* Treat the SMTP X-EXPS capability in an EHLO response the same as AUTH. (issue #603)
+* Treat the SMTP X-EXPS capability in an EHLO response the same as AUTH. ([issue #603](https://github.com/jstedfast/MailKit/issues/603))
 * Dropped support for .NET 4.0.
 
 Note: As of 2.0, XOAUTH2 is no longer in the list of SASL mechanisms that is tried
@@ -114,12 +114,12 @@ client.Authenticate (oauth2);
 ### MailKit 1.20.0
 
 * Fixed UniqueIdRange.ToString() to always output a string in the form ${start}:${end} even if
-  start == end. (issue #572)
+  start == end. ([issue #572](https://github.com/jstedfast/MailKit/issues/572))
 
 ### MailKit 1.18.1
 
-* Gracefully handle IMAP COPYUID resp-codes without src or dest uid-set tokens. (issue #555)
-* Be more lenient with unquoted IMAP folder names containing ']'. (issue #557)
+* Gracefully handle IMAP COPYUID resp-codes without src or dest uid-set tokens. ([issue #555](https://github.com/jstedfast/MailKit/issues/555))
+* Be more lenient with unquoted IMAP folder names containing ']'. ([issue #557](https://github.com/jstedfast/MailKit/issues/557))
 
 ### MailKit 1.18.0
 
@@ -132,33 +132,33 @@ client.Authenticate (oauth2);
 
 ### MailKit 1.16.2
 
-* Added a leaveOpen param to the ProtocolLogger .ctor. (issue #506)
-* Added a CheckCertificateRevocation property on MailService. (issue #520)
+* Added a leaveOpen param to the ProtocolLogger .ctor. ([issue #506](https://github.com/jstedfast/MailKit/issues/506))
+* Added a CheckCertificateRevocation property on MailService. ([issue #520](https://github.com/jstedfast/MailKit/issues/520))
 * Fixed ImapFolder to update the Count property and emit CountChanged when the IMAP server sends
-  an untagged VANISHED response. (issue #521)
-* Fixed ImapEngine to properly handle converting character tokens into strings. (issue #522)
+  an untagged VANISHED response. ([issue #521](https://github.com/jstedfast/MailKit/issues/521))
+* Fixed ImapEngine to properly handle converting character tokens into strings. ([issue #522](https://github.com/jstedfast/MailKit/issues/522))
 * Fixed SmtpClient to properly handle DIGEST-MD5 auth errors in order to fall back to the next
   authentication mechanism.
-* Fixed Pop3Client to properly detect APOP tokens after arbitrary text. (issue #529)
-* Disabled NTLM authentication since it often doesn't work properly. (issue #532)
+* Fixed Pop3Client to properly detect APOP tokens after arbitrary text. ([issue #529](https://github.com/jstedfast/MailKit/issues/529))
+* Disabled NTLM authentication since it often doesn't work properly. ([issue #532](https://github.com/jstedfast/MailKit/issues/532))
 
 ### MailKit 1.16.1
 
-* Properly handle a NIL body-fld-params token for body-part-mpart. (issue #503)
+* Properly handle a NIL body-fld-params token for body-part-mpart. ([issue #503](https://github.com/jstedfast/MailKit/issues/503))
 
 ### MailKit 1.16.0
 
-* Improved IMAP ENVELOPE parser to prevent exceptions when parsing invalid mailbox addresses. (issue #494)
+* Improved IMAP ENVELOPE parser to prevent exceptions when parsing invalid mailbox addresses. ([issue #494](https://github.com/jstedfast/MailKit/issues/494))
 * Fixed UniqueId and UniqueIdRange to prevent developers from creating invalid UIDs and ranges.
 * Fixed ImapFolder.FetchStream() to properly emit MODSEQ changes if the server sends them.
-* Fixed SmtpClient to call OnNoRecipientsAccepted even in the non-PIPELINE case. (issue #491)
+* Fixed SmtpClient to call OnNoRecipientsAccepted even in the non-PIPELINE case. ([issue #491](https://github.com/jstedfast/MailKit/issues/491))
 
 ### MailKit 1.14.0
 
-* Improved IMAP's BODYSTRUCTURE parser to sanitize the Content-Disposition values. (issue #486)
+* Improved IMAP's BODYSTRUCTURE parser to sanitize the Content-Disposition values. ([issue #486](https://github.com/jstedfast/MailKit/issues/486))
 * Improved robustness of IMAP's BODYSTRUCTURE parser in cases where qstring tokens have unescaped
-  quotes. (issue #485)
-* Fixed IMAP to properly handle NIL as a folder name in LIST, LSUB and STATUS responses. (issue #482)
+  quotes. ([issue #485](https://github.com/jstedfast/MailKit/issues/485))
+* Fixed IMAP to properly handle NIL as a folder name in LIST, LSUB and STATUS responses. ([issue #482](https://github.com/jstedfast/MailKit/issues/482))
 * Added ImapFolder.GetHeaders() to allow developers to download the entire set of message headers.
 * Added SMTP support for International Domain Names in email addresses used in the MAIL FROM and
   RCPT TO commands.
@@ -169,7 +169,7 @@ client.Authenticate (oauth2);
 
 ### MailKit 1.12.0
 
-* Allow an empty string text argument for SearchQuery.ContainsHeader(). (issue #451)
+* Allow an empty string text argument for SearchQuery.ContainsHeader(). ([issue #451](https://github.com/jstedfast/MailKit/issues/451))
 * Fixed SaslMechanism.IsProhibited() logic to properly use logical ands. Thanks to
   Stefan Seering for this fix.
 
@@ -182,8 +182,8 @@ client.Authenticate (oauth2);
 
 * Modified the ImapClient to always LIST the INBOX even if it is a namespace in order to get any
   flags set on it.
-* Fixed ImapFolder to handle Quota Roots that do not match an existing folder. (issue #433)
-* Added work-around for Courier-IMAP sending "* 0 FETCH ..." on flag changes. (issue #428)
+* Fixed ImapFolder to handle Quota Roots that do not match an existing folder. ([issue #433](https://github.com/jstedfast/MailKit/issues/433))
+* Added work-around for Courier-IMAP sending "* 0 FETCH ..." on flag changes. ([issue #428](https://github.com/jstedfast/MailKit/issues/428))
 * Updated MessageSorter to be smarter about validating arguments such that it will only
   check for IMessageSummary fields that it will *actually* need in order to perform
   the specified sort.
@@ -215,7 +215,7 @@ client.Authenticate (oauth2);
 
 * Added a new Search()/SearchAsync() to ImapFolder that take a raw query string.
 * Implemented support for the IMAP FILTERS extension and improved support for the METADATA extension.
-* Fixed NTLM authentication support to use NTLMv2. (issue #397)
+* Fixed NTLM authentication support to use NTLMv2. ([issue #397](https://github.com/jstedfast/MailKit/issues/397))
 * Added support for IMAP's SEARCH=FUZZY relevancy scores.
 * Added an IMailFolder.ModSeqChanged event.
 * Added UniqueIdRange.All for convenience.
@@ -224,26 +224,26 @@ client.Authenticate (oauth2);
 
 * Added support for the new IMAP LITERAL- extension.
 * Added support for the new IMAP APPENDLIMIT extension.
-* Fixed APOP authentication in the Pop3Client. (issue #395)
+* Fixed APOP authentication in the Pop3Client. ([issue #395](https://github.com/jstedfast/MailKit/issues/395))
 * Reset the SmtpClient's Capabilities after disconnecting.
 * Modified ImapFolder.Search() to return a UniqueIdSet for IMAP servers that do not support
   the ESEARCH extension (which already returns a UniqueIdSet).
-* Added mail.shaw.ca to the list of SMTP servers that break when sending EHLO after AUTH. (issue #393)
-* Work around broken POP3 servers that reply "+OK" instead of "+" in SASL negotiations. (issue #391)
-* Modified the IMAP parser to properly allow "[" to appear within flag tokens. (issue #390)
+* Added mail.shaw.ca to the list of SMTP servers that break when sending EHLO after AUTH. ([issue #393](https://github.com/jstedfast/MailKit/issues/393))
+* Work around broken POP3 servers that reply "+OK" instead of "+" in SASL negotiations. ([issue #391](https://github.com/jstedfast/MailKit/issues/391))
+* Modified the IMAP parser to properly allow "[" to appear within flag tokens. ([issue #390](https://github.com/jstedfast/MailKit/issues/390))
 
 ### MailKit 1.4.2.1
 
 * Fixed a regression in 1.4.2 where using a bad password in ImapClient.Authenticate() did not properly
-  throw an exception when using a SASL mechanism. (issue #383)
+  throw an exception when using a SASL mechanism. ([issue #383](https://github.com/jstedfast/MailKit/issues/383))
 
 ### MailKit 1.4.2
 
-* Properly initialize the private Uri fields in Connect() for Windows Universal 8.1. (issue #381, #382)
+* Properly initialize the private Uri fields in Connect() for Windows Universal 8.1. ([issue #381, #382](https://github.com/jstedfast/MailKit/issues/381, #382))
 * Added SecuritySafeCritical attributes to try and match base Exception in case that matters.
 * Added missing GetObjectData() implementation to Pop3CommandException.
 * Strong-name the .NET Core assemblies.
-* Make sure to process Alert resp-codes in ImapClient. (issue #377)
+* Make sure to process Alert resp-codes in ImapClient. ([issue #377](https://github.com/jstedfast/MailKit/issues/377))
 
 ### MailKit 1.4.1
 
@@ -251,10 +251,10 @@ client.Authenticate (oauth2);
   requests it (apparently this should only happen if the server is in debug mode).
 * Updated the IMAP BODYSTRUCTURE parser to try and work around BODYSTRUCTURE responses that
   do not properly encode the mime-type of a part where it only provides the media-subtype token
-  instead of both the media-type and media-subtype tokens. (issue #371)
+  instead of both the media-type and media-subtype tokens. ([issue #371](https://github.com/jstedfast/MailKit/issues/371))
 * Added smtp.dm.aliyun.com to the list of broken SMTP servers that failed to read the SMTP
   specifications and improperly reset their state after sending an EHLO command after
-  authenticating (which the specifications explicitly state the clients SHOULD do). (issue #370)
+  authenticating (which the specifications explicitly state the clients SHOULD do). ([issue #370](https://github.com/jstedfast/MailKit/issues/370))
 
 ### MailKit 1.4.0
 
@@ -262,29 +262,29 @@ client.Authenticate (oauth2);
 
 ### MailKit 1.2.24
 
-* Fixed logic for constructing the HELO command on WP8. (issue #351)
+* Fixed logic for constructing the HELO command on WP8. ([issue #351](https://github.com/jstedfast/MailKit/issues/351))
 * Modified ImapFolder.Search() to not send the optional CHARSET search param if the charset
   is US-ASCII. This way work around some broken IMAP servers that do not properly implement
-  support for the CHARSET parameter. (issue #348)
+  support for the CHARSET parameter. ([issue #348](https://github.com/jstedfast/MailKit/issues/348))
 * Added more MailService methods to IMailService.
 
 ### MailKit 1.2.23
 
-* Properly apply SecurityCriticalAttribute to GetObjectData() on custom Exceptions. (issue #340)
+* Properly apply SecurityCriticalAttribute to GetObjectData() on custom Exceptions. ([issue #340](https://github.com/jstedfast/MailKit/issues/340))
 
 ### MailKit 1.2.22
 
 * Updated IMAP BODY parser to handle a NIL media type by treating it as "application".
 * Updated IMAP SEARCH response parser to work around search-return-data pairs within parens.
-* Added a missing SmtpStatusCode enum value for code 555. (issue #327)
+* Added a missing SmtpStatusCode enum value for code 555. ([issue #327](https://github.com/jstedfast/MailKit/issues/327))
 * Opened up more of the SearchQuery API to make it possible to serialize/deserialize via JSON.
-  (issue #331)
+  ([issue #331](https://github.com/jstedfast/MailKit/issues/331))
 * Updated to reference BouncyCastle via NuGet.org packages rather than via project references.
 
 ### MailKit 1.2.21
 
 * Replaced SmtpClient's virtual ProcessRcptToResponse() method with OnRecipientAccepted()
-  and OnRecipientNotAccepted(). (issue #309)
+  and OnRecipientNotAccepted(). ([issue #309](https://github.com/jstedfast/MailKit/issues/309))
 * Added MailService.DefaultServerCertificateValidationCallback() which accepts all
   self-signed certificates (a common operation that consumers want).
 * Fixed encoding and decoding of IMAP folder names that include surrogate pairs.
@@ -304,7 +304,7 @@ client.Authenticate (oauth2);
 ### MailKit 1.2.18
 
 * If the IMAP server sends a `* ID NIL` response, return null for ImapClient.Identify().
-* Allow developers to override the charset used when authenticating. (issue #292)
+* Allow developers to override the charset used when authenticating. ([issue #292](https://github.com/jstedfast/MailKit/issues/292))
 
 ### MailKit 1.2.17
 
@@ -331,52 +331,52 @@ client.Authenticate (oauth2);
 ### MailKit 1.2.15
 
 * Be more forgiving during SASL auth when a POP3 server sends unexpected text after a + response.
-  (issue #268)
+  ([issue #268](https://github.com/jstedfast/MailKit/issues/268))
 
 ### MailKit 1.2.14
 
-* Fixed ImapFolder.Search() to not capitalize the date strings in date queries. (issue #252)
+* Fixed ImapFolder.Search() to not capitalize the date strings in date queries. ([issue #252](https://github.com/jstedfast/MailKit/issues/252))
 * Fixed filtering logic in ImapFolder.GetSubfolders() to not filter out subfolders named Inbox.
-  (issue #255)
+  ([issue #255](https://github.com/jstedfast/MailKit/issues/255))
 * Exposed SmtpClient.ProcessRcptToResponse() as virtual protected to allow subclasses to override
-  error handling. (issue #256)
-* Modified SmtpCommandException .ctors to be public and fixed serialization logic. (issue #257)
+  error handling. ([issue #256](https://github.com/jstedfast/MailKit/issues/256))
+* Modified SmtpCommandException .ctors to be public and fixed serialization logic. ([issue #257](https://github.com/jstedfast/MailKit/issues/257))
 * Added workaround for broken smtp.sina.com mail server.
 * Throw a custom ImapProtocolException on "* BYE" during connection instead of "unexpected token".
-  (issue #262)
+  ([issue #262](https://github.com/jstedfast/MailKit/issues/262))
 
 ### MailKit 1.2.13
 
 * Fixed SmtpClient to not double dispose the socket.
 * Added a BodyPartVisitor class.
-* Fixed ImapFolder to allow NIL tokens for body parts. (issue #244)
+* Fixed ImapFolder to allow NIL tokens for body parts. ([issue #244](https://github.com/jstedfast/MailKit/issues/244))
 
 ### MailKit 1.2.12
 
 * Allow developers to specify a local IPEndPoint to use for connecting to remote servers.
-  (issue #247)
-* Added support for NIL GMail labels. (issue #244)
+  ([issue #247](https://github.com/jstedfast/MailKit/issues/247))
+* Added support for NIL GMail labels. ([issue #244](https://github.com/jstedfast/MailKit/issues/244))
 
 ### MailKit 1.2.11.1
 
 * Fixed ImapFolder.GetSubfolders() to work with Yahoo! Mail and other IMAP servers that
-  do not use the canonical INBOX naming convention for the INBOX folder. (issue #242)
+  do not use the canonical INBOX naming convention for the INBOX folder. ([issue #242](https://github.com/jstedfast/MailKit/issues/242))
 
 ### MailKit 1.2.11
 
-* Fixed SmtpStream logic for determining if a call to ReadAhead() is needed. (issue #232)
+* Fixed SmtpStream logic for determining if a call to ReadAhead() is needed. ([issue #232](https://github.com/jstedfast/MailKit/issues/232))
 * Fixed ImapFolder.Close() to change the state to Closed even if the IMAP server does not
   support the UNSELECT command.
 * Allow the UIDVALIDITY argument to the COPYUID and APPENDUID resp-codes to be 0 even though
-  that value is illegal. Improves compatibility with SmarterMail. (issue #240)
+  that value is illegal. Improves compatibility with SmarterMail. ([issue #240](https://github.com/jstedfast/MailKit/issues/240))
 
 ### MailKit 1.2.10
 
 * Added an SslProtocols property to ImapClient, Pop3Client, and SmtpClient to allow
   developers to override which SSL protocols are to be allowed for SSL connections.
-  (issue #229)
+  ([issue #229](https://github.com/jstedfast/MailKit/issues/229))
 * Added a work-around for GMail IMAP (and other IMAP servers) that sometimes send an
-  illegal MODSEQ value of 0. (issue #228)
+  illegal MODSEQ value of 0. ([issue #228](https://github.com/jstedfast/MailKit/issues/228))
 
 ### MailKit 1.2.9
 
@@ -395,11 +395,11 @@ client.Authenticate (oauth2);
 * Modified IMessageSummary.UniqueId to no longer be nullable.
 * Added TextBody, HtmlBody, BodyParts and Attachments properties to IMessageSummary.
 * Modified the IMAP parser to allow NIL for the Content-Type and subtype strings in
-  BODY and BODYSTRUCTURE values even though it is illegal. (issue #226)
+  BODY and BODYSTRUCTURE values even though it is illegal. ([issue #226](https://github.com/jstedfast/MailKit/issues/226))
 * Modified the IMAP parser to properly handle Message-Id tokens that are not properly
-  encapsulated within angle brackets. (issue #224)
+  encapsulated within angle brackets. ([issue #224](https://github.com/jstedfast/MailKit/issues/224))
 * Fixed IMAP to properly deal with folder names that contained unescaped square brackets.
-  (issue #222)
+  ([issue #222](https://github.com/jstedfast/MailKit/issues/222))
 
 ### MailKit 1.2.8
 
@@ -409,14 +409,14 @@ client.Authenticate (oauth2);
 * Fixed SmtpClient to filter out duplicate recipient addresses in RCPT TO.
 * Modified MessageSorter/Threader to take IList<OrderBy> arguments instead of OrderBy[].
 * Added support for parsing group addresses in IMAP ENVELOPE responses.
-* Disable SASL-IR support for the LOGIN mechanism. (issue #216)
+* Disable SASL-IR support for the LOGIN mechanism. ([issue #216](https://github.com/jstedfast/MailKit/issues/216))
 * Capture whether or not the IMAP server supports the I18NLEVEL and LANGUAGE extensions.
 
 ### MailKit 1.2.7
 
 * Fixed ImapFolder.Rename() to properly emit the Renamed event for child folders as well.
 * Fixed ImapFolder.Fetch() to always fill in the Headers property when requesting specific
-  headers even if the server replies with an empty list. (issue #210)
+  headers even if the server replies with an empty list. ([issue #210](https://github.com/jstedfast/MailKit/issues/210))
 
 ### MailKit 1.2.6
 
@@ -427,7 +427,7 @@ client.Authenticate (oauth2);
 
 * Added support for extended IMAP search options (see the SearchOptions flags).
 * Added TryParse() convenience methods for UniqueIdSet, UniqueIdRange, and UniqueId.
-* Added a workaround for a GMail IMAP BODYSTRUCTURE bug. (issue #205)
+* Added a workaround for a GMail IMAP BODYSTRUCTURE bug. ([issue #205](https://github.com/jstedfast/MailKit/issues/205))
 * Added a ProtocolLogger property for ImapClient, Pop3Client, and SmtpClient.
 * Fixed the ImapFolder.GetStream() methods that take a BodyPart to call the
   proper overload.
@@ -444,9 +444,9 @@ client.Authenticate (oauth2);
 ### MailKit 1.2.3
 
 * Fixed ImapFolder.AddFlags() to throw FolderNotOpenException if the folder is not
-  opened in read-write mode. (issue #202)
+  opened in read-write mode. ([issue #202](https://github.com/jstedfast/MailKit/issues/202))
 * Fixed ImapFolder.GetMessage/BodyPart/Stream() to not modify a dictionary while
-  looping over it. (issue #201)
+  looping over it. ([issue #201](https://github.com/jstedfast/MailKit/issues/201))
 * Fixed ImapFolder to throw FolderNotFoundException instead of ArgumentException
   when the command fails due to the folder not existing.
 
@@ -460,7 +460,7 @@ client.Authenticate (oauth2);
   FolderNotOpenException as a more specific errors than InvalidOperationException.
   (Note: they all subclass InvalidOperationException so old code continues to work).
 * Added Pop3Client.GetStream() to allow fetching messages or headers as an unparsed
-  stream. (issue #198)
+  stream. ([issue #198](https://github.com/jstedfast/MailKit/issues/198))
 * Fixed usage of Socket.Poll() to not loop 1000 times per second.
 * Added more ImapFolder.GetStream() overloads.
 * Added ImapFolder.CreateStream() and CommitStream() protected methods which are meant
@@ -476,35 +476,35 @@ client.Authenticate (oauth2);
   stream.
 * Fixed ImapFolder.Search() to always treat the search results as UIDs even
   when the server (such as AOL) does not include the required UID tag in the
-  ESEARCH response. (issue #191)
+  ESEARCH response. ([issue #191](https://github.com/jstedfast/MailKit/issues/191))
 * Fixed ImapClient to set the engine.Uri even for Windows*81 profiles (fixes
-  a NullReferenceException for the various Windows*81 profiles). (issue #192)
+  a NullReferenceException for the various Windows*81 profiles). ([issue #192](https://github.com/jstedfast/MailKit/issues/192))
 * Work around a GMail bug where it does not quote flags containing []'s.
-  (issue #193)
+  ([issue #193](https://github.com/jstedfast/MailKit/issues/193))
 * Fixed the IMAP code to accept GMail label names that start with a '+'.
-  (issue #195)
+  ([issue #195](https://github.com/jstedfast/MailKit/issues/195))
 * Delay throwing ProtocolException due to an unexpected disconnect when reading
   responses to PIPELINE'd SMTP commands in case one of the responses to those
   commands contains an error code that might hint at why the server disconnected.
-  (issue #194)
+  ([issue #194](https://github.com/jstedfast/MailKit/issues/194))
 
 ### MailKit 1.0.17
 
 * Fixed a STARTTLS regression in SmtpClient that was introduced in 1.0.15.
-  (issue #187)
+  ([issue #187](https://github.com/jstedfast/MailKit/issues/187))
 
 ### MailKit 1.0.16
 
 * Modified the Pop3Client to immediately query for the message count once the
   client is authenticated. This allows the Pop3Client to now have a Count
-  property that replaces the need for calling GetMessageCount(). (issue #184)
+  property that replaces the need for calling GetMessageCount(). ([issue #184](https://github.com/jstedfast/MailKit/issues/184))
 
 ### MailKit 1.0.15
 
 * Added SearchQuery.HeaderContains() and obsoleted SearchQuery.Header() for
   API consistency.
 * Added workaround for GMail's broken FETCH command parser that does not accept
-  aliases. (issue #183)
+  aliases. ([issue #183](https://github.com/jstedfast/MailKit/issues/183))
 
 ### MailKit 1.0.14
 
@@ -512,18 +512,18 @@ client.Authenticate (oauth2);
   it is not necessary to set the global
   System.Net.ServicePointManager.ServerCertificateValidationCallback property.
 * Fixed MailService.Connect(Uri) to properly handle Uri's with Port value that
-  had not been explicitly set. (issue #170)
+  had not been explicitly set. ([issue #170](https://github.com/jstedfast/MailKit/issues/170))
 * Added logic to properly handle MODSEQ-based search responses.
-  (issue #166 and issue #173)
+  ([issue #166 and issue #173](https://github.com/jstedfast/MailKit/issues/166 and issue #173))
 * When an ImapClient gets disconnected, if an ImapFolder was in an opened state,
   update its state to closed to prevent confusion once the ImapClient is
   reconnected.
 * Fixed a bug in Pop3Client.Authenticate() for servers that just reply with
-  "+OK\r\n" to the SASL challenge. (issue #171)
+  "+OK\r\n" to the SASL challenge. ([issue #171](https://github.com/jstedfast/MailKit/issues/171))
 * Clear the POP3 capability flags if the POP3 server responds with -ERR at
   any time. Some servers will reply with a list of capabilities until the
   client is authenticated, and then reply with -ERR meaning that the client
-  should not attempt to use previously listed capabilities. (issue #174)
+  should not attempt to use previously listed capabilities. ([issue #174](https://github.com/jstedfast/MailKit/issues/174))
 
 ### MailKit 1.0.13
 
@@ -545,10 +545,10 @@ client.Authenticate (oauth2);
 * Added new, much more usable, Connect() methods to ImapClient, Pop3Client,
   and SmtpClient that take a hostname, port, and SecureSocketOptions.
 * Added a workaround for smtp.strato.de's blatant disregard for standards.
-  (issue #162)
+  ([issue #162](https://github.com/jstedfast/MailKit/issues/162))
 * Fixed ImapFolder.Close() to require ReadWrite access if expunge is true.
 * Fixed IMAP SORT queries to inject "RETURN" before the orderBy param.
-  (issue #164)
+  ([issue #164](https://github.com/jstedfast/MailKit/issues/164))
 * Implemented support for the IMAP ACL extension.
 
 ### MailKit 1.0.11
@@ -577,14 +577,14 @@ client.Authenticate (oauth2);
   only makes more sense but also simplifies comparison.
 * Fixed GMail Label APIs to use the modified UTF-7 encoding logic meant for
   folder names as it appears that GMail wants label names to be encoded in this
-  way. (issue #154)
+  way. ([issue #154](https://github.com/jstedfast/MailKit/issues/154))
 
 ### MailKit 1.0.8
 
-* Fixed the SMTP BINARYMIME extension support to work properly. (issue #151)
+* Fixed the SMTP BINARYMIME extension support to work properly. ([issue #151](https://github.com/jstedfast/MailKit/issues/151))
 * Fixed ImapFolder.Open() to not set the PermanentFlags to None if another
   folder was open (preventing SetFlags/AddFlags/RemoveFlags from functioning
-  properly). (issue #153)
+  properly). ([issue #153](https://github.com/jstedfast/MailKit/issues/153))
 
 ### MailKit 1.0.7
 
@@ -593,12 +593,12 @@ client.Authenticate (oauth2);
   mapping is done by the developer. This takes the burden off of the Pop3Client
   to maintain a mapping of UIDs to indexes that it cannot easily maintain.
 * Fixed SmtpCommandException to only serialize the Mailbox property when it is
-  non-null. (issue #148)
+  non-null. ([issue #148](https://github.com/jstedfast/MailKit/issues/148))
 * Fixed IMAP support to accept a UIDVALIDITY value of 0 (even though it is
-  technically illegal) to work around a bug in SmarterMail 13.0. (issue #150)
+  technically illegal) to work around a bug in SmarterMail 13.0. ([issue #150](https://github.com/jstedfast/MailKit/issues/150))
 * Fixed ImapFolder.GetSubfolders() to filter out non-child folders from the list
   that it returns (once again, a work-around for a SmarterMail 13.0 bug).
-  (issue #149)
+  ([issue #149](https://github.com/jstedfast/MailKit/issues/149))
 
 ### MailKit 1.0.6
 
@@ -611,18 +611,18 @@ Note: If you are not yet ready to port your iOS application to the Unified API,
 
 ### MailKit 1.0.5
 
-* Added Connect() overloads which takes a Socket argument (issue #128).
-* Added support for SMTP Delivery Status Notifications (issue #136).
+* Added Connect() overloads which takes a Socket argument ([issue #128](https://github.com/jstedfast/MailKit/issues/128)).
+* Added support for SMTP Delivery Status Notifications ([issue #136](https://github.com/jstedfast/MailKit/issues/136)).
 * Modified the ImapFolder logic such that if the IMAP server does not
   send a PERMANENTFLAGS resp-code when SELECTing the folder, then it
-  will assume that all flags are permanent (issue #140).
+  will assume that all flags are permanent ([issue #140](https://github.com/jstedfast/MailKit/issues/140)).
 
 ### MailKit 1.0.4
 
 * Modified the IMAP BODYSTRUCTURE parser to allow NIL tokens for
-  Content-Type and Content-Disposition parameter values. (issue #124)
+  Content-Type and Content-Disposition parameter values. ([issue #124](https://github.com/jstedfast/MailKit/issues/124))
 * Added ImapFolder.GetBodyPart() overrides to allow fetching body parts
-  based on a part specifier string. (issue #130)
+  based on a part specifier string. ([issue #130](https://github.com/jstedfast/MailKit/issues/130))
 
 ### MailKit 1.0.3
 
@@ -645,9 +645,9 @@ Note: If you are not yet ready to port your iOS application to the Unified API,
 
 * Fixed Pop3Client.GetMessages (int startIndex, int count, ...) to use
   1-based sequence numbers.
-* Fixed POP3 PIPELINING support to work as intended (issue #114).
+* Fixed POP3 PIPELINING support to work as intended ([issue #114](https://github.com/jstedfast/MailKit/issues/114)).
 * Added a work-around for Office365.com IMAP to avoid
   ImapProtocolExceptions about unexpected '[' tokens when moving or
-  copying messages between folders (issue #115).
+  copying messages between folders ([issue #115](https://github.com/jstedfast/MailKit/issues/115)).
 * Disabled SSLv3 for security reasons (POODLE), opting instead to use
   TLS.
