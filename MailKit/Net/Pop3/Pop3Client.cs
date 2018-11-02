@@ -1923,19 +1923,6 @@ namespace MailKit.Net.Pop3 {
 				Engine = engine;
 			}
 
-			void Reset (int capacity)
-			{
-				index = 0;
-
-				if (sizes == null) {
-					sizes = new int[capacity];
-					return;
-				}
-
-				if (capacity != sizes.Length)
-					Array.Resize (ref sizes, capacity);
-			}
-
 			void Add (int size)
 			{
 				sizes[index++] = size;
@@ -2185,20 +2172,6 @@ namespace MailKit.Net.Pop3 {
 				nread += n;
 
 				Progress.Report (nread);
-			}
-
-			void Reset (int capacity)
-			{
-				nread = 0;
-				index = 0;
-
-				if (downloaded == null) {
-					downloaded = new T[capacity];
-					return;
-				}
-
-				if (capacity != downloaded.Length)
-					Array.Resize (ref downloaded, capacity);
 			}
 
 			void Add (T item)
