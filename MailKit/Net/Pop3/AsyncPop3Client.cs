@@ -636,9 +636,9 @@ namespace MailKit.Net.Pop3
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			var ctx = new MessageSizeContext (engine);
+			var ctx = new MessageSizeContext (engine, index + 1);
 
-			return ctx.GetSizeAsync (index + 1, true, cancellationToken);
+			return ctx.GetSizeAsync (true, cancellationToken);
 		}
 
 		/// <summary>

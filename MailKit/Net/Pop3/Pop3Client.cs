@@ -83,6 +83,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		bool disposed, secure, utf8;
 		int timeout = 100000;
+		long octets;
 		int total;
 
 		/// <summary>
@@ -420,7 +421,12 @@ namespace MailKit.Net.Pop3 {
 					return Task.FromResult (false);
 				}
 
-				if (!int.TryParse (tokens[0], out total)) {
+				if (!int.TryParse (tokens[0], out total) || total < 0) {
+					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command.");
+					return Task.FromResult (false);
+				}
+
+				if (!long.TryParse (tokens[1], out octets) || octets < 0) {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command.");
 					return Task.FromResult (false);
 				}
@@ -1714,13 +1720,8 @@ namespace MailKit.Net.Pop3 {
 					return Task.FromResult (true);
 				}
 
-				if (!int.TryParse (tokens[0], out seqid) || seqid < 1) {
+				if (!int.TryParse (tokens[0], out seqid) || seqid != index + 1) {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the UIDL command.");
-					return Task.FromResult (true);
-				}
-
-				if (seqid != index + 1) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned the UID for the wrong message.");
 					return Task.FromResult (true);
 				}
 
@@ -1836,7 +1837,7 @@ namespace MailKit.Net.Pop3 {
 						continue;
 					}
 
-					if (!int.TryParse (tokens[0], out seqid)) {
+					if (!int.TryParse (tokens[0], out seqid) || seqid != uids.Count + 1) {
 						cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the UIDL command.");
 						continue;
 					}
@@ -1915,17 +1916,13 @@ namespace MailKit.Net.Pop3 {
 		class MessageSizeContext
 		{
 			protected readonly Pop3Engine Engine;
-			int[] sizes;
-			int index;
+			readonly int seqid;
+			int size;
 
-			public MessageSizeContext (Pop3Engine engine)
+			public MessageSizeContext (Pop3Engine engine, int seqid)
 			{
 				Engine = engine;
-			}
-
-			void Add (int size)
-			{
-				sizes[index++] = size;
+				this.seqid = seqid;
 			}
 
 			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
@@ -1934,14 +1931,14 @@ namespace MailKit.Net.Pop3 {
 					return Task.FromResult (true);
 
 				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				int id, size;
+				int id;
 
 				if (tokens.Length < 2) {
 					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command.");
 					return Task.FromResult (true);
 				}
 
-				if (!int.TryParse (tokens[0], out id) || id < 1) {
+				if (!int.TryParse (tokens[0], out id) || id != seqid) {
 					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the LIST command.");
 					return Task.FromResult (true);
 				}
@@ -1951,19 +1948,12 @@ namespace MailKit.Net.Pop3 {
 					return Task.FromResult (true);
 				}
 
-				Add (size);
-
 				return Task.FromResult (true);
 			}
 
-			Pop3Command QueueCommand (int seqid, CancellationToken cancellationToken)
+			async Task SendCommandAsync (bool doAsync, CancellationToken cancellationToken)
 			{
-				return Engine.QueueCommand (cancellationToken, OnDataReceived, "LIST {0}", seqid);
-			}
-
-			async Task SendCommandAsync (int seqid, bool doAsync, CancellationToken cancellationToken)
-			{
-				var pc = QueueCommand (seqid, cancellationToken);
+				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "LIST {0}", seqid);
 				int id;
 
 				do {
@@ -1980,14 +1970,11 @@ namespace MailKit.Net.Pop3 {
 					throw pc.Exception;
 			}
 
-			public async Task<int> GetSizeAsync (int seqid, bool doAsync, CancellationToken cancellationToken)
+			public async Task<int> GetSizeAsync (bool doAsync, CancellationToken cancellationToken)
 			{
-				sizes = new int[1];
-				index = 0;
+				await SendCommandAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				await SendCommandAsync (seqid, doAsync, cancellationToken).ConfigureAwait (false);
-
-				return sizes[0];
+				return size;
 			}
 		}
 
@@ -2033,9 +2020,9 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			var ctx = new MessageSizeContext (engine);
+			var ctx = new MessageSizeContext (engine, index + 1);
 
-			return ctx.GetSizeAsync (index + 1, false, cancellationToken).GetAwaiter ().GetResult ();
+			return ctx.GetSizeAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		async Task<IList<int>> GetMessageSizesAsync (bool doAsync, CancellationToken cancellationToken)
@@ -2073,13 +2060,8 @@ namespace MailKit.Net.Pop3 {
 						continue;
 					}
 
-					if (!int.TryParse (tokens[0], out seqid) || seqid < 1) {
+					if (!int.TryParse (tokens[0], out seqid) || seqid != sizes.Count + 1) {
 						cmd.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the LIST command.");
-						continue;
-					}
-
-					if (seqid != sizes.Count + 1) {
-						cmd.Exception = CreatePop3ParseException ("Pop3 server returned the size for the wrong message.");
 						continue;
 					}
 
