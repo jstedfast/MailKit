@@ -634,8 +634,8 @@ namespace MailKit.Net.Pop3 {
 			if (stream == null)
 				throw new InvalidOperationException ();
 
-			// clear all CAPA response capabilities (except the APOP capability)
-			Capabilities &= Pop3Capabilities.Apop;
+			// clear all CAPA response capabilities (except the APOP and USER capabilities)
+			Capabilities &= Pop3Capabilities.Apop | Pop3Capabilities.User;
 			AuthenticationMechanisms.Clear ();
 			Implementation = null;
 			ExpirePolicy = 0;

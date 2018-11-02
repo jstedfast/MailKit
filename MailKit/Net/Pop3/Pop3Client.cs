@@ -445,7 +445,7 @@ namespace MailKit.Net.Pop3 {
 
 		async Task ProbeCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			if ((engine.Capabilities & Pop3Capabilities.UIDL) == 0) {
+			if ((engine.Capabilities & Pop3Capabilities.UIDL) == 0 && (probed & ProbedCapabilities.UIDL) == 0) {
 				// if the message count is > 0, we can probe the UIDL command
 				if (total > 0) {
 					try {

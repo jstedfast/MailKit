@@ -912,6 +912,102 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
+		public void TestProbedUidlSupport ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.err.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.err.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL 1\r\n", "gmail.uidl1.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (0, client.ExpirePolicy);
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (Pop3Capabilities.User | Pop3Capabilities.UIDL, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (0, client.ExpirePolicy);
+
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async void TestProbedUidlSupportAsync ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.err.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.err.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL 1\r\n", "gmail.uidl1.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (0, client.ExpirePolicy);
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (Pop3Capabilities.User | Pop3Capabilities.UIDL, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (0, client.ExpirePolicy);
+
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
 		public void TestSaslAuthentication ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
