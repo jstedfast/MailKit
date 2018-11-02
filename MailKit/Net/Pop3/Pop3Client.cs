@@ -2002,45 +2002,6 @@ namespace MailKit.Net.Pop3 {
 
 				return sizes[0];
 			}
-
-			public async Task<IList<int>> GetSizesAsync (IList<int> seqids, bool doAsync, CancellationToken cancellationToken)
-			{
-				sizes = new int[seqids.Count];
-				index = 0;
-
-				if ((Engine.Capabilities & Pop3Capabilities.Pipelining) == 0) {
-					for (int i = 0; i < seqids.Count; i++)
-						await SendCommandAsync (seqids[i], doAsync, cancellationToken);
-
-					return sizes;
-				}
-
-				var commands = new Pop3Command[seqids.Count];
-				Pop3Command pc = null;
-				int id;
-
-				for (int i = 0; i < seqids.Count; i++)
-					commands[i] = QueueCommand (seqids[i], cancellationToken);
-
-				pc = commands[commands.Length - 1];
-
-				do {
-					if (doAsync)
-						id = await Engine.IterateAsync ().ConfigureAwait (false);
-					else
-						id = Engine.Iterate ();
-				} while (id < pc.Id);
-
-				for (int i = 0; i < commands.Length; i++) {
-					if (commands[i].Status != Pop3CommandStatus.Ok)
-						throw CreatePop3Exception (commands[i]);
-
-					if (commands[i].Exception != null)
-						throw commands[i].Exception;
-				}
-
-				return sizes;
-			}
 		}
 
 		/// <summary>
