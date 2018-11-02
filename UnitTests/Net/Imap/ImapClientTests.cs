@@ -910,7 +910,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestConnect ()
+		public void TestConnectGMail ()
 		{
 			using (var client = new ImapClient ()) {
 				client.Connect ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect);
@@ -920,16 +920,57 @@ namespace UnitTests.Net.Imap {
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
 
+		[Test]
+		public async void TestConnectGMailAsync ()
+		{
+			using (var client = new ImapClient ()) {
+				await client.ConnectAsync ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				await client.DisconnectAsync (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public void TestConnectGMailSocket ()
+		{
+			using (var client = new ImapClient ()) {
 				var socket = Connect ("imap.gmail.com", 993);
-				client.Connect (socket, "imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+				client.Connect (socket, "imap.gmail.com", 993, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
 
+		[Test]
+		public async void TestConnectGMailSocketAsync ()
+		{
+			using (var client = new ImapClient ()) {
+				var socket = Connect ("imap.gmail.com", 993);
+				await client.ConnectAsync (socket, "imap.gmail.com", 993, SecureSocketOptions.Auto);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				await client.DisconnectAsync (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public void TestConnectGmxDe ()
+		{
+			using (var client = new ImapClient ()) {
 				var uri = new Uri ("imap://imap.gmx.de/?starttls=always");
 				client.Connect (uri);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
@@ -938,8 +979,29 @@ namespace UnitTests.Net.Imap {
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
 
-				socket = Connect ("imap.gmx.de", 143);
+		[Test]
+		public async void TestConnectGmxDeAsync ()
+		{
+			using (var client = new ImapClient ()) {
+				var uri = new Uri ("imap://imap.gmx.de/?starttls=always");
+				await client.ConnectAsync (uri);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				await client.DisconnectAsync (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public void TestConnectGmxDeSocket ()
+		{
+			using (var client = new ImapClient ()) {
+				var socket = Connect ("imap.gmx.de", 143);
 				client.Connect (socket, "imap.gmx.de", 143, SecureSocketOptions.StartTls);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
@@ -951,36 +1013,10 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestConnectAsync ()
+		public async void TestConnectGmxDeSocketAsync ()
 		{
 			using (var client = new ImapClient ()) {
-				await client.ConnectAsync ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-
-				var socket = Connect ("imap.gmail.com", 993);
-				await client.ConnectAsync (socket, "imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-
-				var uri = new Uri ("imap://imap.gmx.de/?starttls=always");
-				await client.ConnectAsync (uri);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-
-				socket = Connect ("imap.gmx.de", 143);
+				var socket = Connect ("imap.gmx.de", 143);
 				await client.ConnectAsync (socket, "imap.gmx.de", 143, SecureSocketOptions.StartTls);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");

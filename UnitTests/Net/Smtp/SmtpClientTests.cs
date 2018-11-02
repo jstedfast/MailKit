@@ -465,7 +465,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public void TestConnect ()
+		public void TestConnectGMail ()
 		{
 			using (var client = new SmtpClient ()) {
 				client.Connect ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
@@ -475,7 +475,27 @@ namespace UnitTests.Net.Smtp {
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
 
+		[Test]
+		public async void TestConnectGMailAsync ()
+		{
+			using (var client = new SmtpClient ()) {
+				await client.ConnectAsync ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				await client.DisconnectAsync (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public void TestConnectGMailSocket ()
+		{
+			using (var client = new SmtpClient ()) {
 				var socket = Connect ("smtp.gmail.com", 465);
 				client.Connect (socket, "smtp.gmail.com", 465, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
@@ -484,7 +504,28 @@ namespace UnitTests.Net.Smtp {
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
 
+		[Test]
+		public async void TestConnectGMailSocketAsync ()
+		{
+			using (var client = new SmtpClient ()) {
+				var socket = Connect ("smtp.gmail.com", 465);
+				await client.ConnectAsync (socket, "smtp.gmail.com", 465, SecureSocketOptions.Auto);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				await client.DisconnectAsync (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public void TestConnectYahoo ()
+		{
+			using (var client = new SmtpClient ()) {
 				var uri = new Uri ("smtp://smtp.mail.yahoo.com:587/?starttls=always");
 				client.Connect (uri);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
@@ -497,28 +538,41 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestConnectAsync ()
+		public async void TestConnectYahooAsync ()
 		{
 			using (var client = new SmtpClient ()) {
-				await client.ConnectAsync ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-
-				var socket = Connect ("smtp.gmail.com", 465);
-				await client.ConnectAsync (socket, "smtp.gmail.com", 465, SecureSocketOptions.Auto);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-
 				var uri = new Uri ("smtp://smtp.mail.yahoo.com:587/?starttls=always");
 				await client.ConnectAsync (uri);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				await client.DisconnectAsync (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public void TestConnectYahooSocket ()
+		{
+			using (var client = new SmtpClient ()) {
+				var socket = Connect ("smtp.mail.yahoo.com", 587);
+				client.Connect (socket, "smtp.mail.yahoo.com", 587, SecureSocketOptions.StartTls);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				client.Disconnect (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public async void TestConnectYahooSocketAsync ()
+		{
+			using (var client = new SmtpClient ()) {
+				var socket = Connect ("smtp.mail.yahoo.com", 587);
+				await client.ConnectAsync (socket, "smtp.mail.yahoo.com", 587, SecureSocketOptions.StartTls);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
