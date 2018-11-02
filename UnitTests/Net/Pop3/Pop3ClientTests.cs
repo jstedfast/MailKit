@@ -29,6 +29,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -501,60 +502,68 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestConnectGmxDe ()
 		{
-			using (var client = new Pop3Client ()) {
-				var uri = new Uri ("pop://pop.gmx.de/?starttls=always");
-				client.Connect (uri);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				client.Disconnect (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			using (var cancel = new CancellationTokenSource (30 * 1000)) {
+				using (var client = new Pop3Client ()) {
+					var uri = new Uri ("pop://pop.gmx.de/?starttls=always");
+					client.Connect (uri, cancel.Token);
+					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					client.Disconnect (true);
+					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectGmxDeAsync ()
 		{
-			using (var client = new Pop3Client ()) {
-				var uri = new Uri ("pop3://pop.gmx.de/?starttls=always");
-				await client.ConnectAsync (uri);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			using (var cancel = new CancellationTokenSource (30 * 1000)) {
+				using (var client = new Pop3Client ()) {
+					var uri = new Uri ("pop3://pop.gmx.de/?starttls=always");
+					await client.ConnectAsync (uri, cancel.Token);
+					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					await client.DisconnectAsync (true);
+					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				}
 			}
 		}
 
 		[Test]
 		public void TestConnectGmxDeSocket ()
 		{
-			using (var client = new Pop3Client ()) {
-				var socket = Connect ("pop.gmx.de", 110);
-				client.Connect (socket, "pop.gmx.de", 110, SecureSocketOptions.StartTls);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				client.Disconnect (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			using (var cancel = new CancellationTokenSource (30 * 1000)) {
+				using (var client = new Pop3Client ()) {
+					var socket = Connect ("pop.gmx.de", 110);
+					client.Connect (socket, "pop.gmx.de", 110, SecureSocketOptions.StartTls, cancel.Token);
+					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					client.Disconnect (true);
+					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectGmxDeSocketAsync ()
 		{
-			using (var client = new Pop3Client ()) {
-				var socket = Connect ("pop.gmx.de", 110);
-				await client.ConnectAsync (socket, "pop.gmx.de", 110, SecureSocketOptions.StartTls);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			using (var cancel = new CancellationTokenSource (30 * 1000)) {
+				using (var client = new Pop3Client ()) {
+					var socket = Connect ("pop.gmx.de", 110);
+					await client.ConnectAsync (socket, "pop.gmx.de", 110, SecureSocketOptions.StartTls, cancel.Token);
+					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					await client.DisconnectAsync (true);
+					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				}
 			}
 		}
 
