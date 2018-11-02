@@ -196,7 +196,7 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -244,6 +244,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
 
 				Assert.Throws<ArgumentNullException> (() => client.SetLanguage (null));
+				Assert.Throws<ArgumentException> (() => client.SetLanguage (string.Empty));
 
 				Assert.Throws<AuthenticationException> (() => client.Authenticate ("username", "password"));
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
@@ -324,7 +325,7 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -372,6 +373,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
 
 				Assert.Throws<ArgumentNullException> (async () => await client.SetLanguageAsync (null));
+				Assert.Throws<ArgumentException> (async () => await client.SetLanguageAsync (string.Empty));
 
 				Assert.Throws<AuthenticationException> (async () => await client.AuthenticateAsync ("username", "password"));
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
@@ -576,9 +578,11 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST\r\n", "comcast.list.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 1\r\n", "comcast.list1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -610,7 +614,23 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
-				Assert.AreEqual (1, client.Count, "Expected 1 message");
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+
+				try {
+					var sizes = client.GetMessageSizes ();
+					Assert.AreEqual (7, sizes.Count, "Expected 7 message sizes");
+					for (int i = 0; i < sizes.Count; i++)
+						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+				}
+
+				try {
+					var size = client.GetMessageSize (0);
+					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+				}
 
 				try {
 					var message = client.GetMessage (0);
@@ -621,7 +641,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var count = client.GetMessageCount ();
-					Assert.AreEqual (1, count, "Expected 1 message again");
+					Assert.AreEqual (7, count, "Expected 7 messages again");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
 				}
@@ -645,9 +665,11 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST\r\n", "comcast.list.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 1\r\n", "comcast.list1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -679,7 +701,23 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
-				Assert.AreEqual (1, client.Count, "Expected 1 message");
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+
+				try {
+					var sizes = await client.GetMessageSizesAsync ();
+					Assert.AreEqual (7, sizes.Count, "Expected 7 message sizes");
+					for (int i = 0; i < sizes.Count; i++)
+						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+				}
+
+				try {
+					var size = await client.GetMessageSizeAsync (0);
+					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+				}
 
 				try {
 					var message = await client.GetMessageAsync (0);
@@ -690,7 +728,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var count = await client.GetMessageCountAsync ();
-					Assert.AreEqual (1, count, "Expected 1 message again");
+					Assert.AreEqual (7, count, "Expected 7 messages again");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
 				}
@@ -714,8 +752,11 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST\r\n", "comcast.list.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 1\r\n", "comcast.list1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -744,13 +785,36 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
-				Assert.AreEqual (1, client.Count, "Expected 1 message");
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+
+				try {
+					var sizes = client.GetMessageSizes ();
+					Assert.AreEqual (7, sizes.Count, "Expected 7 message sizes");
+					for (int i = 0; i < sizes.Count; i++)
+						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+				}
+
+				try {
+					var size = client.GetMessageSize (0);
+					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+				}
 
 				try {
 					var message = client.GetMessage (0);
 					// TODO: assert that the message is byte-identical to what we expect
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+				}
+
+				try {
+					var count = client.GetMessageCount ();
+					Assert.AreEqual (7, count, "Expected 7 messages again");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
 				}
 
 				try {
@@ -772,8 +836,11 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST\r\n", "comcast.list.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 1\r\n", "comcast.list1.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -802,13 +869,36 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
-				Assert.AreEqual (1, client.Count, "Expected 1 message");
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+
+				try {
+					var sizes = await client.GetMessageSizesAsync ();
+					Assert.AreEqual (7, sizes.Count, "Expected 7 message sizes");
+					for (int i = 0; i < sizes.Count; i++)
+						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+				}
+
+				try {
+					var size = await client.GetMessageSizeAsync (0);
+					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+				}
 
 				try {
 					var message = await client.GetMessageAsync (0);
 					// TODO: assert that the message is byte-identical to what we expect
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+				}
+
+				try {
+					var count = await client.GetMessageCountAsync ();
+					Assert.AreEqual (7, count, "Expected 7 messages again");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
 				}
 
 				try {

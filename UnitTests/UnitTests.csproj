@@ -360,10 +360,12 @@
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa2.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\err.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\greeting.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\list.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\list1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\ok.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\quit.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\retr1.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\comcast\stat1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\stat.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\exchange\auth.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\exchange\capa.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\exchange\greeting.txt" />
