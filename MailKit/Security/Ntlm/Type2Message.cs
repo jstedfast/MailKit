@@ -84,11 +84,11 @@ namespace MailKit.Security.Ntlm {
 		}
 
 		public string TargetName {
-			get; private set;
+			get; set;
 		}
 
 		public TargetInfo TargetInfo {
-			get; private set;
+			get; set;
 		}
 
 		public byte[] EncodedTargetInfo {
@@ -118,11 +118,11 @@ namespace MailKit.Security.Ntlm {
 			}
 
 			// The Target Info block is optional.
-			if (message.Length >= 48 && targetNameOffset >= 48) {
+			if (length >= 48 && targetNameOffset >= 48) {
 				var targetInfoLength = BitConverterLE.ToUInt16 (message, startIndex + 40);
 				var targetInfoOffset = BitConverterLE.ToUInt16 (message, startIndex + 44);
 
-				if (targetInfoLength > 0 && targetInfoOffset < message.Length && targetInfoLength <= (message.Length - targetInfoOffset)) {
+				if (targetInfoLength > 0 && targetInfoOffset < length && targetInfoLength <= (length - targetInfoOffset)) {
 					TargetInfo = new TargetInfo (message, startIndex + targetInfoOffset, targetInfoLength, (Flags & NtlmFlags.NegotiateUnicode) != 0);
 
 					targetInfo = new byte[targetInfoLength];
@@ -133,7 +133,27 @@ namespace MailKit.Security.Ntlm {
 
 		public override byte[] Encode ()
 		{
-			byte[] data = PrepareMessage (40);
+			int targetNameOffset = 40;
+			int targetInfoOffset = 48;
+			byte[] targetName = null;
+			int size = 40;
+
+			if (TargetName != null) {
+				var encoding = (Flags & NtlmFlags.NegotiateOem) != 0 ? Encoding.UTF8 : Encoding.Unicode;
+
+				targetName = encoding.GetBytes (TargetName);
+				targetInfoOffset += targetName.Length;
+				size += targetName.Length;
+			}
+
+			if (TargetInfo != null || targetInfo != null) {
+				if (targetInfo == null)
+					targetInfo = TargetInfo.Encode (true);
+				size += targetInfo.Length + 8;
+				targetNameOffset += 8;
+			}
+
+			var data = PrepareMessage (size);
 
 			// message length
 			short length = (short) data.Length;
@@ -147,6 +167,28 @@ namespace MailKit.Security.Ntlm {
 			data[23] = (byte)((uint) Flags >> 24);
 
 			Buffer.BlockCopy (nonce, 0, data, 24, nonce.Length);
+
+			if (targetName != null) {
+				data[12] = (byte) targetName.Length;
+				data[13] = (byte)(targetName.Length >> 8);
+				data[14] = (byte)targetName.Length;
+				data[15] = (byte)(targetName.Length >> 8);
+				data[16] = (byte) targetNameOffset;
+				data[17] = (byte)(targetNameOffset >> 8);
+
+				Buffer.BlockCopy (targetName, 0, data, targetNameOffset, targetName.Length);
+			}
+
+			if (targetInfo != null) {
+				data[40] = (byte) targetInfo.Length;
+				data[41] = (byte)(targetInfo.Length >> 8);
+				data[42] = (byte) targetInfo.Length;
+				data[43] = (byte)(targetInfo.Length >> 8);
+				data[44] = (byte) targetInfoOffset;
+				data[45] = (byte)(targetInfoOffset >> 8);
+
+				Buffer.BlockCopy (targetInfo, 0, data, targetInfoOffset, targetInfo.Length);
+			}
 
 			return data;
 		}

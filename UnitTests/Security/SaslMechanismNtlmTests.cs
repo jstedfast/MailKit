@@ -56,12 +56,38 @@ namespace UnitTests.Security {
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm ("username", null));
 		}
 
-		static string HexEncode (byte [] message)
+		static byte ToXDigit (char c)
+		{
+			if (c >= 0x41) {
+				if (c >= 0x61)
+					return (byte) (c - (0x61 - 0x0a));
+
+				return (byte) (c - (0x41 - 0x0A));
+			}
+
+			return (byte) (c - 0x30);
+		}
+
+		static byte[] HexDecode (string value)
+		{
+			var decoded = new byte[value.Length / 2];
+
+			for (int i = 0; i < decoded.Length; i++) {
+				var b1 = ToXDigit (value[i * 2]);
+				var b2 = ToXDigit (value[i * 2 + 1]);
+
+				decoded[i] = (byte) ((b1 << 4) | b2);
+			}
+
+			return decoded;
+		}
+
+		static string HexEncode (byte[] value)
 		{
 			var builder = new StringBuilder ();
 
-			for (int i = 0; i < message.Length; i++)
-				builder.Append (message [i].ToString ("x2"));
+			for (int i = 0; i < value.Length; i++)
+				builder.Append (value[i].ToString ("x2"));
 
 			return builder.ToString ();
 		}
@@ -139,6 +165,32 @@ namespace UnitTests.Security {
 			0x6e, 0x00, 0x2e, 0x00, 0x63, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x00, 0x00,
 			0x00, 0x00
 		};
+
+		[Test]
+		public void TestNtlmType2MessageEncode ()
+		{
+			var targetInfo = new TargetInfo {
+				DomainName = "DOMAIN",
+				ServerName = "SERVER",
+				DnsDomainName = "domain.com",
+				DnsServerName = "server.domain.com"
+			};
+
+			var type2 = new Type2Message {
+				Flags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo,
+				Nonce = HexDecode ("0123456789abcdef"),
+				TargetInfo = targetInfo,
+				TargetName = "DOMAIN",
+			};
+
+			var encoded = type2.Encode ();
+			string actual, expected;
+
+			expected = HexEncode (NtlmType2EncodedMessage);
+			actual = HexEncode (encoded);
+
+			Assert.AreEqual (expected, actual, "The encoded Type2Message did not match the expected result.");
+		}
 
 		[Test]
 		public void TestNtlmType2MessageDecode ()

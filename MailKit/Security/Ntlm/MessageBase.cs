@@ -61,7 +61,7 @@ namespace MailKit.Security.Ntlm {
 			var message = new byte[size];
 
 			Buffer.BlockCopy (header, 0, message, 0, 8);
-			
+
 			message[ 8] = (byte) type;
 			message[ 9] = (byte)(type >> 8);
 			message[10] = (byte)(type >> 16);
