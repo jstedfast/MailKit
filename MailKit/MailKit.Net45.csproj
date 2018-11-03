@@ -111,7 +111,6 @@
     <Compile Include="Search\UidSearchQuery.cs" />
     <Compile Include="Search\UnarySearchQuery.cs" />
     <Compile Include="Security\Ntlm\BitConverterLE.cs" />
-    <Compile Include="Security\Ntlm\ChallengeResponse.cs" />
     <Compile Include="Security\Ntlm\ChallengeResponse2.cs" />
     <Compile Include="Security\Ntlm\MD4.cs" />
     <Compile Include="Security\Ntlm\MessageBase.cs" />

@@ -184,22 +184,10 @@ namespace MailKit.Security.Ntlm {
 			bool reqVersion;
 			byte[] lm, ntlm;
 
-			if (type2 == null) {
-				if (Level != NtlmAuthLevel.NTLMv2_only)
-					throw new InvalidOperationException ("Refusing to use legacy-mode LM/NTLM authentication.");
+			ChallengeResponse2.Compute (type2, Level, Username, Password, Domain, out lm, out ntlm);
 
-				using (var legacy = new ChallengeResponse (Password, challenge)) {
-					lm = legacy.LM;
-					ntlm = legacy.NT;
-				}
-
-				reqVersion = false;
-			} else {
-				ChallengeResponse2.Compute (type2, Level, Username, Password, Domain, out lm, out ntlm);
-
-				if (reqVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0)
-					payloadOffset += 8;
-			}
+			if (reqVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0)
+				payloadOffset += 8;
 
 			var lmResponseLength = lm != null ? lm.Length : 0;
 			var ntResponseLength = ntlm != null ? ntlm.Length : 0;
