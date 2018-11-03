@@ -288,7 +288,6 @@ namespace UnitTests.Security {
 		[Test]
 		public void TestNtlmAuthWithDomain ()
 		{
-
 			var credentials = new NetworkCredential ("domain\\username", "password");
 			var sasl = new SaslMechanismNtlm (credentials);
 			var uri = new Uri ("smtp://localhost");
@@ -306,6 +305,141 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismNtlm (uri, "domain\\username", "password");
 
 			AssertNtlmAuthWithDomain (sasl, "uri/user/pass");
+		}
+
+		static Type1Message DecodeType1Message (string token)
+		{
+			var message = Convert.FromBase64String (token);
+
+			return new Type1Message (message, 0, message.Length);
+		}
+
+		static Type2Message DecodeType2Message (string token)
+		{
+			var message = Convert.FromBase64String (token);
+
+			return new Type2Message (message, 0, message.Length);
+		}
+
+		static Type3Message DecodeType3Message (string token)
+		{
+			var message = Convert.FromBase64String (token);
+
+			return new Type3Message (message, 0, message.Length);
+		}
+
+		static void AssertNtlmv1 (SaslMechanismNtlm sasl, string challenge1, string challenge2, string challenge3)
+		{
+			var challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (challenge1, challenge, "Initial challenge");
+			Assert.IsFalse (sasl.IsAuthenticated, "IsAuthenticated");
+
+			challenge = sasl.Challenge (challenge2);
+
+			Assert.AreEqual (challenge3, challenge, "Final challenge");
+			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
+		}
+
+		[Test]
+		public void TestAuthenticationLmAndNtlm ()
+		{
+			const string challenge1 = "TlRMTVNTUAABAAAABwIAAAAAAAAgAAAAAAAAACAAAAA=";
+			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
+
+			var credentials = new NetworkCredential ("user", "password");
+			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.LM_and_NTLM };
+
+			AssertNtlmv1 (sasl, challenge1, challenge2, challenge3);
+		}
+
+		[Test]
+		public void TestAuthenticationLmAndNtlmWithDomain ()
+		{
+			const string challenge1 = "TlRMTVNTUAABAAAABxIAAAYABgAgAAAAAAAAACAAAABET01BSU4=";
+			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
+			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
+			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.LM_and_NTLM };
+
+			AssertNtlmv1 (sasl, challenge1, challenge2, challenge3);
+		}
+
+		[Test]
+		public void TestAuthenticationLmAndNtlmWithDomainAndWorkstation ()
+		{
+			const string challenge1 = "TlRMTVNTUAABAAAABzIAAAYABgArAAAACwALACAAAABXT1JLU1RBVElPTkRPTUFJTg==";
+			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
+			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
+			var sasl = new SaslMechanismNtlm (credentials) { Workstation = "WORKSTATION", Level = NtlmAuthLevel.LM_and_NTLM };
+
+			AssertNtlmv1 (sasl, challenge1, challenge2, challenge3);
+		}
+
+		static void AssertNtlmv2 (SaslMechanismNtlm sasl, string challenge1, string challenge2)
+		{
+			var challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (challenge1, challenge, "Initial challenge");
+			Assert.IsFalse (sasl.IsAuthenticated, "IsAuthenticated");
+
+			challenge = sasl.Challenge (challenge2);
+
+			var token = Convert.FromBase64String (challenge2);
+			var type2 = new Type2Message (token, 0, token.Length);
+			var type3 = new Type3Message (type2, NtlmAuthLevel.NTLMv2_only, sasl.Credentials.UserName, sasl.Credentials.Password, sasl.Workstation);
+			var ignoreLength = type2.EncodedTargetInfo.Length + 28 + 16;
+
+			var actual = Convert.FromBase64String (challenge);
+			var expected = type3.Encode ();
+			var ntlmBufferIndex = expected.Length - ignoreLength;
+			var targetInfoIndex = ntlmBufferIndex + 16 /* md5 hash */ + 28;
+
+			Assert.AreEqual (expected.Length, actual.Length, "Final challenge differs in length: {0} vs {1}", expected.Length, actual.Length);
+
+			for (int i = 0; i < expected.Length - ignoreLength; i++)
+				Assert.AreEqual (expected[i], actual[i], "Final challenge differs at index {0}", i);
+
+			// now compare the TargetInfo blobs
+			for (int i = targetInfoIndex; i < expected.Length; i++)
+				Assert.AreEqual (expected[i], actual[i], "Final challenge differs at index {0}", i);
+
+			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
+		}
+
+		[Test]
+		public void TestAuthenticationNtlmv2 ()
+		{
+			const string challenge1 = "TlRMTVNTUAABAAAABwIAAAAAAAAgAAAAAAAAACAAAAA=";
+			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
+			var credentials = new NetworkCredential ("user", "password");
+			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.NTLMv2_only };
+
+			AssertNtlmv2 (sasl, challenge1, challenge2);
+		}
+
+		[Test]
+		public void TestAuthenticationNtlmv2WithDomain ()
+		{
+			const string challenge1 = "TlRMTVNTUAABAAAABxIAAAYABgAgAAAAAAAAACAAAABET01BSU4=";
+			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
+			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
+			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.NTLMv2_only };
+
+			AssertNtlmv2 (sasl, challenge1, challenge2);
+		}
+
+		[Test]
+		public void TestAuthenticationNtlmv2WithDomainAndWorkstation ()
+		{
+			const string challenge1 = "TlRMTVNTUAABAAAABzIAAAYABgArAAAACwALACAAAABXT1JLU1RBVElPTkRPTUFJTg==";
+			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
+			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
+			var sasl = new SaslMechanismNtlm (credentials) { Workstation = "WORKSTATION", Level = NtlmAuthLevel.NTLMv2_only };
+
+			AssertNtlmv2 (sasl, challenge1, challenge2);
 		}
 	}
 }

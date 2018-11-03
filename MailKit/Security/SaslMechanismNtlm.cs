@@ -61,6 +61,7 @@ namespace MailKit.Security {
 		[Obsolete ("Use SaslMechanismNtlm(NetworkCredential) instead.")]
 		public SaslMechanismNtlm (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
+			Level = NtlmAuthLevel.NTLMv2_only;
 		}
 
 		/// <summary>
@@ -82,6 +83,7 @@ namespace MailKit.Security {
 		[Obsolete ("Use SaslMechanismNtlm(string, string) instead.")]
 		public SaslMechanismNtlm (Uri uri, string userName, string password) : base (uri, userName, password)
 		{
+			Level = NtlmAuthLevel.NTLMv2_only;
 		}
 
 		/// <summary>
@@ -96,6 +98,7 @@ namespace MailKit.Security {
 		/// </exception>
 		public SaslMechanismNtlm (NetworkCredential credentials) : base (credentials)
 		{
+			Level = NtlmAuthLevel.NTLMv2_only;
 		}
 
 		/// <summary>
@@ -113,6 +116,7 @@ namespace MailKit.Security {
 		/// </exception>
 		public SaslMechanismNtlm (string userName, string password) : base (userName, password)
 		{
+			Level = NtlmAuthLevel.NTLMv2_only;
 		}
 
 		/// <summary>
@@ -136,6 +140,21 @@ namespace MailKit.Security {
 		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
 		public override bool SupportsInitialResponse {
 			get { return true; }
+		}
+
+		internal NtlmAuthLevel Level {
+			get; set;
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation name to use for authentication.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the workstation name to use for authentication.
+		/// </remarks>
+		/// <value>The workstation name.</value>
+		public string Workstation {
+			get; set;
 		}
 
 		/// <summary>
@@ -177,11 +196,11 @@ namespace MailKit.Security {
 
 			switch (state) {
 			case LoginState.Initial:
-				message = GetInitialResponse (domain);
+				message = new Type1Message (Workstation, domain);
 				state = LoginState.Challenge;
 				break;
 			case LoginState.Challenge:
-				message = GetChallengeResponse (userName, password, domain, token, startIndex, length);
+				message = GetChallengeResponse (userName, password, token, startIndex, length);
 				IsAuthenticated = true;
 				break;
 			default:
@@ -191,21 +210,11 @@ namespace MailKit.Security {
 			return message.Encode ();
 		}
 
-		static MessageBase GetInitialResponse (string domain)
-		{
-			return new Type1Message (string.Empty, domain);
-		}
-
-		static MessageBase GetChallengeResponse (string userName, string password, string domain, byte[] token, int startIndex, int length)
+		MessageBase GetChallengeResponse (string userName, string password, byte[] token, int startIndex, int length)
 		{
 			var type2 = new Type2Message (token, startIndex, length);
-			var type3 = new Type3Message (type2, NtlmAuthLevel.NTLMv2_only, userName, string.Empty);
-			type3.Password = password;
 
-			if (!string.IsNullOrEmpty (domain))
-				type3.Domain = domain;
-
-			return type3;
+			return new Type3Message (type2, Level, userName, password, Workstation);
 		}
 
 		/// <summary>

@@ -161,8 +161,7 @@ namespace MailKit.Security.Ntlm {
 			Array.Clear (ntlm_hash, 0, ntlm_hash.Length);
 
 			using (var md5 = new HMACMD5 (ntlm_v2_hash)) {
-				var now = DateTime.Now;
-				var timestamp = now.Ticks - 504911232000000000;
+				var timestamp = DateTime.Now.Ticks - 504911232000000000;
 				var nonce = new byte[8];
 
 				using (var rng = RandomNumberGenerator.Create ())
