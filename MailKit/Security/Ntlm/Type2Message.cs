@@ -112,7 +112,7 @@ namespace MailKit.Security.Ntlm {
 			var targetNameOffset = BitConverterLE.ToUInt16 (message, startIndex + 16);
 
 			if (targetNameLength > 0) {
-				var encoding = (Flags & NtlmFlags.NegotiateOem) != 0 ? Encoding.UTF8 : Encoding.Unicode;
+				var encoding = (Flags & NtlmFlags.NegotiateUnicode) != 0 ? Encoding.Unicode : Encoding.UTF8;
 
 				TargetName = encoding.GetString (message, startIndex + targetNameOffset, targetNameLength);
 			}
@@ -123,7 +123,7 @@ namespace MailKit.Security.Ntlm {
 				var targetInfoOffset = BitConverterLE.ToUInt16 (message, startIndex + 44);
 
 				if (targetInfoLength > 0 && targetInfoOffset < length && targetInfoLength <= (length - targetInfoOffset)) {
-					TargetInfo = new TargetInfo (message, startIndex + targetInfoOffset, targetInfoLength, (Flags & NtlmFlags.NegotiateUnicode) != 0);
+					TargetInfo = new TargetInfo (message, startIndex + targetInfoOffset, targetInfoLength, (Flags & NtlmFlags.NegotiateOem) == 0);
 
 					targetInfo = new byte[targetInfoLength];
 					Buffer.BlockCopy (message, startIndex + targetInfoOffset, targetInfo, 0, targetInfoLength);
@@ -139,7 +139,7 @@ namespace MailKit.Security.Ntlm {
 			int size = 40;
 
 			if (TargetName != null) {
-				var encoding = (Flags & NtlmFlags.NegotiateOem) != 0 ? Encoding.UTF8 : Encoding.Unicode;
+				var encoding = (Flags & NtlmFlags.NegotiateUnicode) != 0 ? Encoding.Unicode : Encoding.UTF8;
 
 				targetName = encoding.GetBytes (TargetName);
 				targetInfoOffset += targetName.Length;
