@@ -98,11 +98,14 @@ namespace UnitTests.Security {
 			var now = DateTime.Now.Ticks;
 
 			var targetInfo = new TargetInfo {
+				TargetName = "TARGET",
+				DnsTreeName = "target.domain.com",
 				DomainName = "DOMAIN",
 				ServerName = "SERVER",
 				DnsDomainName = "domain.com",
 				DnsServerName = "server.domain.com",
 				Timestamp = now,
+				Flags = 1776
 			};
 
 			var encoded = targetInfo.Encode (true);
@@ -110,9 +113,12 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (targetInfo.DnsDomainName, decoded.DnsDomainName, "DnsDomainName does not match.");
 			Assert.AreEqual (targetInfo.DnsServerName, decoded.DnsServerName, "DnsServerName does not match.");
+			Assert.AreEqual (targetInfo.DnsTreeName, decoded.DnsTreeName, "DnsTreeName does not match.");
 			Assert.AreEqual (targetInfo.DomainName, decoded.DomainName, "DomainName does not match.");
 			Assert.AreEqual (targetInfo.ServerName, decoded.ServerName, "ServerName does not match.");
+			Assert.AreEqual (targetInfo.TargetName, decoded.TargetName, "TargetName does not match.");
 			Assert.AreEqual (targetInfo.Timestamp, decoded.Timestamp, "Timestamp does not match.");
+			Assert.AreEqual (targetInfo.Flags, decoded.Flags, "Flags does not match.");
 		}
 
 		static readonly byte [] NtlmType1EncodedMessage = {
