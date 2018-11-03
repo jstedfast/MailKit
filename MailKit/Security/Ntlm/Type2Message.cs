@@ -148,7 +148,7 @@ namespace MailKit.Security.Ntlm {
 
 			if (TargetInfo != null || targetInfo != null) {
 				if (targetInfo == null)
-					targetInfo = TargetInfo.Encode (true);
+					targetInfo = TargetInfo.Encode ((Flags & NtlmFlags.NegotiateUnicode) != 0);
 				size += targetInfo.Length + 8;
 				targetNameOffset += 8;
 			}
