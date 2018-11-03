@@ -873,6 +873,54 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static void AssertDefaultValues (string host, int port, SecureSocketOptions options, Uri expected)
+		{
+			ImapClient.ComputeDefaultValues (host, ref port, ref options, out Uri uri, out bool starttls);
+
+			if (expected.PathAndQuery == "/?starttls=when-available") {
+				Assert.AreEqual (SecureSocketOptions.StartTlsWhenAvailable, options, "{0}", expected);
+				Assert.IsTrue (starttls, "{0}", expected);
+			} else if (expected.PathAndQuery == "/?starttls=always") {
+				Assert.AreEqual (SecureSocketOptions.StartTls, options, "{0}", expected);
+				Assert.IsTrue (starttls, "{0}", expected);
+			} else if (expected.Scheme == "imaps") {
+				Assert.AreEqual (SecureSocketOptions.SslOnConnect, options, "{0}", expected);
+				Assert.IsFalse (starttls, "{0}", expected);
+			} else {
+				Assert.AreEqual (SecureSocketOptions.None, options, "{0}", expected);
+				Assert.IsFalse (starttls, "{0}", expected);
+			}
+
+			Assert.AreEqual (expected.ToString (), uri.ToString ());
+			Assert.AreEqual (expected.Port, port, "{0}", expected);
+		}
+
+		[Test]
+		public void TestComputeDefaultValues ()
+		{
+			const string host = "imap.skyfall.net";
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.None, new Uri ($"imap://{host}:143"));
+			AssertDefaultValues (host, 143, SecureSocketOptions.None, new Uri ($"imap://{host}:143"));
+			AssertDefaultValues (host, 993, SecureSocketOptions.None, new Uri ($"imap://{host}:993"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.SslOnConnect, new Uri ($"imaps://{host}:993"));
+			AssertDefaultValues (host, 143, SecureSocketOptions.SslOnConnect, new Uri ($"imaps://{host}:143"));
+			AssertDefaultValues (host, 993, SecureSocketOptions.SslOnConnect, new Uri ($"imaps://{host}:993"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.StartTls, new Uri ($"imap://{host}:143/?starttls=always"));
+			AssertDefaultValues (host, 143, SecureSocketOptions.StartTls, new Uri ($"imap://{host}:143/?starttls=always"));
+			AssertDefaultValues (host, 993, SecureSocketOptions.StartTls, new Uri ($"imap://{host}:993/?starttls=always"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"imap://{host}:143/?starttls=when-available"));
+			AssertDefaultValues (host, 143, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"imap://{host}:143/?starttls=when-available"));
+			AssertDefaultValues (host, 993, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"imap://{host}:993/?starttls=when-available"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.Auto, new Uri ($"imap://{host}:143/?starttls=when-available"));
+			AssertDefaultValues (host, 143, SecureSocketOptions.Auto, new Uri ($"imap://{host}:143/?starttls=when-available"));
+			AssertDefaultValues (host, 993, SecureSocketOptions.Auto, new Uri ($"imaps://{host}:993"));
+		}
+
 		static Socket Connect (string host, int port)
 		{
 			var ipAddresses = Dns.GetHostAddresses (host);

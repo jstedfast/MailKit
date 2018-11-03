@@ -826,7 +826,7 @@ namespace MailKit.Net.Pop3 {
 			OnConnected ();
 		}
 
-		static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
+		internal static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
 		{
 			switch (options) {
 			default:

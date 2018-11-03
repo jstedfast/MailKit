@@ -224,6 +224,54 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static void AssertDefaultValues (string host, int port, SecureSocketOptions options, Uri expected)
+		{
+			SmtpClient.ComputeDefaultValues (host, ref port, ref options, out Uri uri, out bool starttls);
+
+			if (expected.PathAndQuery == "/?starttls=when-available") {
+				Assert.AreEqual (SecureSocketOptions.StartTlsWhenAvailable, options, "{0}", expected);
+				Assert.IsTrue (starttls, "{0}", expected);
+			} else if (expected.PathAndQuery == "/?starttls=always") {
+				Assert.AreEqual (SecureSocketOptions.StartTls, options, "{0}", expected);
+				Assert.IsTrue (starttls, "{0}", expected);
+			} else if (expected.Scheme == "smtps") {
+				Assert.AreEqual (SecureSocketOptions.SslOnConnect, options, "{0}", expected);
+				Assert.IsFalse (starttls, "{0}", expected);
+			} else {
+				Assert.AreEqual (SecureSocketOptions.None, options, "{0}", expected);
+				Assert.IsFalse (starttls, "{0}", expected);
+			}
+
+			Assert.AreEqual (expected.ToString (), uri.ToString ());
+			Assert.AreEqual (expected.Port, port, "{0}", expected);
+		}
+
+		[Test]
+		public void TestComputeDefaultValues ()
+		{
+			const string host = "smtp.skyfall.net";
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.None, new Uri ($"smtp://{host}:25"));
+			AssertDefaultValues (host, 25, SecureSocketOptions.None, new Uri ($"smtp://{host}:25"));
+			AssertDefaultValues (host, 465, SecureSocketOptions.None, new Uri ($"smtp://{host}:465"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.SslOnConnect, new Uri ($"smtps://{host}:465"));
+			AssertDefaultValues (host, 25, SecureSocketOptions.SslOnConnect, new Uri ($"smtps://{host}:25"));
+			AssertDefaultValues (host, 465, SecureSocketOptions.SslOnConnect, new Uri ($"smtps://{host}:465"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.StartTls, new Uri ($"smtp://{host}:25/?starttls=always"));
+			AssertDefaultValues (host, 25, SecureSocketOptions.StartTls, new Uri ($"smtp://{host}:25/?starttls=always"));
+			AssertDefaultValues (host, 465, SecureSocketOptions.StartTls, new Uri ($"smtp://{host}:465/?starttls=always"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"smtp://{host}:25/?starttls=when-available"));
+			AssertDefaultValues (host, 25, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"smtp://{host}:25/?starttls=when-available"));
+			AssertDefaultValues (host, 465, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"smtp://{host}:465/?starttls=when-available"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.Auto, new Uri ($"smtp://{host}:25/?starttls=when-available"));
+			AssertDefaultValues (host, 25, SecureSocketOptions.Auto, new Uri ($"smtp://{host}:25/?starttls=when-available"));
+			AssertDefaultValues (host, 465, SecureSocketOptions.Auto, new Uri ($"smtps://{host}:465"));
+		}
+
 		static Socket Connect (string host, int port)
 		{
 			var ipAddresses = Dns.GetHostAddresses (host);

@@ -140,6 +140,54 @@ namespace UnitTests.Net.Pop3 {
 			}
 		}
 
+		static void AssertDefaultValues (string host, int port, SecureSocketOptions options, Uri expected)
+		{
+			Pop3Client.ComputeDefaultValues (host, ref port, ref options, out Uri uri, out bool starttls);
+
+			if (expected.PathAndQuery == "/?starttls=when-available") {
+				Assert.AreEqual (SecureSocketOptions.StartTlsWhenAvailable, options, "{0}", expected);
+				Assert.IsTrue (starttls, "{0}", expected);
+			} else if (expected.PathAndQuery == "/?starttls=always") {
+				Assert.AreEqual (SecureSocketOptions.StartTls, options, "{0}", expected);
+				Assert.IsTrue (starttls, "{0}", expected);
+			} else if (expected.Scheme == "pops") {
+				Assert.AreEqual (SecureSocketOptions.SslOnConnect, options, "{0}", expected);
+				Assert.IsFalse (starttls, "{0}", expected);
+			} else {
+				Assert.AreEqual (SecureSocketOptions.None, options, "{0}", expected);
+				Assert.IsFalse (starttls, "{0}", expected);
+			}
+
+			Assert.AreEqual (expected.ToString (), uri.ToString ());
+			Assert.AreEqual (expected.Port, port, "{0}", expected);
+		}
+
+		[Test]
+		public void TestComputeDefaultValues ()
+		{
+			const string host = "pop.skyfall.net";
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.None, new Uri ($"pop://{host}:110"));
+			AssertDefaultValues (host, 110, SecureSocketOptions.None, new Uri ($"pop://{host}:110"));
+			AssertDefaultValues (host, 995, SecureSocketOptions.None, new Uri ($"pop://{host}:995"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.SslOnConnect, new Uri ($"pops://{host}:995"));
+			AssertDefaultValues (host, 110, SecureSocketOptions.SslOnConnect, new Uri ($"pops://{host}:110"));
+			AssertDefaultValues (host, 995, SecureSocketOptions.SslOnConnect, new Uri ($"pops://{host}:995"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.StartTls, new Uri ($"pop://{host}:110/?starttls=always"));
+			AssertDefaultValues (host, 110, SecureSocketOptions.StartTls, new Uri ($"pop://{host}:110/?starttls=always"));
+			AssertDefaultValues (host, 995, SecureSocketOptions.StartTls, new Uri ($"pop://{host}:995/?starttls=always"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"pop://{host}:110/?starttls=when-available"));
+			AssertDefaultValues (host, 110, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"pop://{host}:110/?starttls=when-available"));
+			AssertDefaultValues (host, 995, SecureSocketOptions.StartTlsWhenAvailable, new Uri ($"pop://{host}:995/?starttls=when-available"));
+
+			AssertDefaultValues (host, 0, SecureSocketOptions.Auto, new Uri ($"pop://{host}:110/?starttls=when-available"));
+			AssertDefaultValues (host, 110, SecureSocketOptions.Auto, new Uri ($"pop://{host}:110/?starttls=when-available"));
+			AssertDefaultValues (host, 995, SecureSocketOptions.Auto, new Uri ($"pops://{host}:995"));
+		}
+
 		static Socket Connect (string host, int port)
 		{
 			var ipAddresses = Dns.GetHostAddresses (host);
