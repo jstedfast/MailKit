@@ -629,16 +629,7 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
-
-			if (index < 0 || index >= total)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			var ctx = new MessageSizeContext (engine, index + 1);
-
-			return ctx.GetSizeAsync (true, cancellationToken);
+			return GetMessageSizeAsync (index, true, cancellationToken);
 		}
 
 		/// <summary>

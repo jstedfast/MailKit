@@ -71,8 +71,7 @@ namespace MailKit.Net.Pop3 {
 		enum ProbedCapabilities : byte {
 			None   = 0,
 			Top    = (1 << 0),
-			UIDL   = (1 << 1),
-			User   = (1 << 2),
+			UIDL   = (1 << 1)
 		}
 
 		readonly MimeParser parser = new MimeParser (Stream.Null);
@@ -470,6 +469,77 @@ namespace MailKit.Net.Pop3 {
 				engine.QueryCapabilities (cancellationToken);
 		}
 
+		class SaslAuthContext
+		{
+			readonly SaslMechanism mechanism;
+			readonly Pop3Client client;
+
+			public SaslAuthContext (Pop3Client client, SaslMechanism mechanism)
+			{
+				this.mechanism = mechanism;
+				this.client = client;
+			}
+
+			public string AuthMessage {
+				get; private set;
+			}
+
+			Pop3Engine Engine {
+				get { return client.engine; }
+			}
+
+			async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
+			{
+				if (mechanism.IsAuthenticated) {
+					if (pc.Status == Pop3CommandStatus.Ok)
+						AuthMessage = text;
+					return;
+				}
+
+				while (!mechanism.IsAuthenticated) {
+					var challenge = mechanism.Challenge (text);
+
+					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
+					string response;
+
+					if (doAsync) {
+						await pop3.Stream.WriteAsync (buf, 0, buf.Length, pc.CancellationToken).ConfigureAwait (false);
+						await pop3.Stream.FlushAsync (pc.CancellationToken).ConfigureAwait (false);
+
+						response = (await pop3.ReadLineAsync (pc.CancellationToken).ConfigureAwait (false)).TrimEnd ();
+					} else {
+						pop3.Stream.Write (buf, 0, buf.Length, pc.CancellationToken);
+						pop3.Stream.Flush (pc.CancellationToken);
+
+						response = pop3.ReadLine (pc.CancellationToken).TrimEnd ();
+					}
+
+					pc.Status = Pop3Engine.GetCommandStatus (response, out text);
+					pc.StatusText = text;
+
+					if (pc.Status == Pop3CommandStatus.ProtocolError)
+						throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+				}
+			}
+
+			public async Task<Pop3Command> AuthenticateAsync (bool doAsync, CancellationToken cancellationToken)
+			{
+				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "AUTH {0}", mechanism.MechanismName);
+				int id;
+
+				AuthMessage = string.Empty;
+
+				do {
+					if (doAsync)
+						id = await Engine.IterateAsync ().ConfigureAwait (false);
+					else
+						id = Engine.Iterate ();
+				} while (id < pc.Id);
+
+				return pc;
+			}
+		}
+
 		async Task AuthenticateAsync (SaslMechanism mechanism, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (mechanism == null)
@@ -483,55 +553,13 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 
-			var uri = new Uri ("pop://" + engine.Uri.Host);
-			string authMessage = string.Empty;
-			string challenge;
-			Pop3Command pc;
-			int id;
-
 			cancellationToken.ThrowIfCancellationRequested ();
 
+			var uri = new Uri ("pop://" + engine.Uri.Host);
 			mechanism.Uri = uri;
 
-			pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text, xdoAsync) => {
-				if (mechanism.IsAuthenticated) {
-					if (cmd.Status == Pop3CommandStatus.Ok)
-						authMessage = text;
-					return;
-				}
-
-				while (!mechanism.IsAuthenticated) {
-					challenge = mechanism.Challenge (text);
-
-					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
-					string response;
-
-					if (xdoAsync) {
-						await pop3.Stream.WriteAsync (buf, 0, buf.Length, cmd.CancellationToken).ConfigureAwait (false);
-						await pop3.Stream.FlushAsync (cmd.CancellationToken).ConfigureAwait (false);
-
-						response = (await pop3.ReadLineAsync (cmd.CancellationToken).ConfigureAwait (false)).TrimEnd ();
-					} else {
-						pop3.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
-						pop3.Stream.Flush (cancellationToken);
-
-						response = pop3.ReadLine (cmd.CancellationToken).TrimEnd ();
-					}
-
-					cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
-					cmd.StatusText = text;
-
-					if (cmd.Status == Pop3CommandStatus.ProtocolError)
-						throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
-				}
-			}, "AUTH {0}", mechanism.MechanismName);
-
-			do {
-				if (doAsync)
-					id = await engine.IterateAsync ().ConfigureAwait (false);
-				else
-					id = engine.Iterate ();
-			} while (id < pc.Id);
+			var ctx = new SaslAuthContext (this, mechanism);
+			var pc = await ctx.AuthenticateAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (pc.Status == Pop3CommandStatus.Error)
 				throw new AuthenticationException ();
@@ -547,7 +575,7 @@ namespace MailKit.Net.Pop3 {
 			await QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			await UpdateMessageCountAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			await ProbeCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			OnAuthenticated (authMessage);
+			OnAuthenticated (ctx.AuthMessage);
 		}
 
 		/// <summary>
@@ -613,18 +641,14 @@ namespace MailKit.Net.Pop3 {
 			CheckDisposed ();
 
 			var uri = new Uri ("pop://" + engine.Uri.Host);
-			string authMessage = string.Empty;
-			string userName, password;
+			string userName, password, message = null;
 			NetworkCredential cred;
-			string challenge;
-			Pop3Command pc;
-			int id;
 
 			if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
 				cred = credentials.GetCredential (uri, "APOP");
 				userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
 				password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
-				challenge = engine.ApopToken + password;
+				var challenge = engine.ApopToken + password;
 				var md5sum = new StringBuilder ();
 				byte[] digest;
 
@@ -635,7 +659,7 @@ namespace MailKit.Net.Pop3 {
 					md5sum.Append (digest[i].ToString ("x2"));
 
 				try {
-					authMessage = await SendCommandAsync (doAsync, cancellationToken, encoding, "APOP {0} {1}", userName, md5sum).ConfigureAwait (false);
+					message = await SendCommandAsync (doAsync, cancellationToken, encoding, "APOP {0} {1}", userName, md5sum).ConfigureAwait (false);
 					engine.State = Pop3EngineState.Transaction;
 				} catch (Pop3CommandException) {
 				}
@@ -644,7 +668,7 @@ namespace MailKit.Net.Pop3 {
 					await QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					await UpdateMessageCountAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					await ProbeCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					OnAuthenticated (authMessage);
+					OnAuthenticated (message);
 					return;
 				}
 			}
@@ -661,45 +685,8 @@ namespace MailKit.Net.Pop3 {
 
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text, xdoAsync) => {
-						if (sasl.IsAuthenticated) {
-							if (cmd.Status == Pop3CommandStatus.Ok)
-								authMessage = text;
-							return;
-						}
-
-						while (!sasl.IsAuthenticated) {
-							challenge = sasl.Challenge (text);
-
-							var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
-							string response;
-
-							if (xdoAsync) {
-								await pop3.Stream.WriteAsync (buf, 0, buf.Length, cmd.CancellationToken).ConfigureAwait (false);
-								await pop3.Stream.FlushAsync (cmd.CancellationToken).ConfigureAwait (false);
-
-								response = (await pop3.ReadLineAsync (cmd.CancellationToken).ConfigureAwait (false)).TrimEnd ();
-							} else {
-								pop3.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
-								pop3.Stream.Flush (cancellationToken);
-
-								response = pop3.ReadLine (cmd.CancellationToken).TrimEnd ();
-							}
-
-							cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
-							cmd.StatusText = text;
-
-							if (cmd.Status == Pop3CommandStatus.ProtocolError)
-								throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
-						}
-					}, "AUTH {0}", authmech);
-
-					do {
-						if (doAsync)
-							id = await engine.IterateAsync ().ConfigureAwait (false);
-						else
-							id = engine.Iterate ();
-					} while (id < pc.Id);
+					var ctx = new SaslAuthContext (this, sasl);
+					var pc = await ctx.AuthenticateAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					if (pc.Status == Pop3CommandStatus.Error)
 						continue;
@@ -715,7 +702,7 @@ namespace MailKit.Net.Pop3 {
 					await QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					await UpdateMessageCountAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					await ProbeCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					OnAuthenticated (authMessage);
+					OnAuthenticated (ctx.AuthMessage);
 					return;
 				}
 			}
@@ -727,7 +714,7 @@ namespace MailKit.Net.Pop3 {
 
 			try {
 				await SendCommandAsync (doAsync, cancellationToken, encoding, "USER {0}", userName).ConfigureAwait (false);
-				authMessage = await SendCommandAsync (doAsync, cancellationToken, encoding, "PASS {0}", password).ConfigureAwait (false);
+				message = await SendCommandAsync (doAsync, cancellationToken, encoding, "PASS {0}", password).ConfigureAwait (false);
 			} catch (Pop3CommandException) {
 				throw new AuthenticationException ();
 			}
@@ -737,7 +724,7 @@ namespace MailKit.Net.Pop3 {
 			await QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			await UpdateMessageCountAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			await ProbeCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			OnAuthenticated (authMessage);
+			OnAuthenticated (message);
 		}
 
 		/// <summary>
@@ -1693,7 +1680,76 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		async Task<string> GetMessageUidAsync (int index, bool doAsync, CancellationToken cancellationToken)
+		class MessageUidContext
+		{
+			readonly Pop3Client client;
+			readonly int seqid;
+			string uid;
+
+			public MessageUidContext (Pop3Client client, int seqid)
+			{
+				this.client = client;
+				this.seqid = seqid;
+			}
+
+			Pop3Engine Engine {
+				get { return client.engine; }
+			}
+
+			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
+			{
+				if (pc.Status != Pop3CommandStatus.Ok)
+					return Task.FromResult (true);
+
+				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				int id;
+
+				if (tokens.Length < 2) {
+					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
+					return Task.FromResult (true);
+				}
+
+				if (!int.TryParse (tokens[0], out id) || id != seqid) {
+					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the UIDL command.");
+					return Task.FromResult (true);
+				}
+
+				uid = tokens[1];
+
+				return Task.FromResult (true);
+			}
+
+			public async Task<string> GetUidAsync (bool doAsync, CancellationToken cancellationToken)
+			{
+				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "UIDL {0}", seqid);
+				int id;
+
+				do {
+					if (doAsync)
+						id = await Engine.IterateAsync ().ConfigureAwait (false);
+					else
+						id = Engine.Iterate ();
+				} while (id < pc.Id);
+
+				client.probed |= ProbedCapabilities.UIDL;
+
+				if (pc.Status != Pop3CommandStatus.Ok) {
+					if (!client.SupportsUids)
+						throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
+
+					throw CreatePop3Exception (pc);
+				}
+
+				if (pc.Exception != null)
+					throw pc.Exception;
+
+				Engine.Capabilities |= Pop3Capabilities.UIDL;
+
+				return uid;
+			}
+		}
+
+		Task<string> GetMessageUidAsync (int index, bool doAsync, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1705,54 +1761,9 @@ namespace MailKit.Net.Pop3 {
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
-			string uid = null;
+			var ctx = new MessageUidContext (this, index + 1);
 
-			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text, xdoAsync) => {
-				if (cmd.Status != Pop3CommandStatus.Ok)
-					return Task.FromResult (true);
-
-				// the response should be "<seqid> <uid>"
-				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				int seqid;
-
-				if (tokens.Length < 2) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
-					return Task.FromResult (true);
-				}
-
-				if (!int.TryParse (tokens[0], out seqid) || seqid != index + 1) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the UIDL command.");
-					return Task.FromResult (true);
-				}
-
-				uid = tokens[1];
-
-				return Task.FromResult (true);
-			}, "UIDL {0}", index + 1);
-			int id;
-
-			do {
-				if (doAsync)
-					id = await engine.IterateAsync ().ConfigureAwait (false);
-				else
-					id = engine.Iterate ();
-			} while (id < pc.Id);
-
-			probed |= ProbedCapabilities.UIDL;
-
-			if (pc.Status != Pop3CommandStatus.Ok) {
-				if (!SupportsUids)
-					throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
-
-				throw CreatePop3Exception (pc);
-			}
-
-			if (pc.Exception != null)
-				throw pc.Exception;
-
-			engine.Capabilities |= Pop3Capabilities.UIDL;
-
-			return uid;
+			return ctx.GetUidAsync (doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -1799,7 +1810,88 @@ namespace MailKit.Net.Pop3 {
 			return GetMessageUidAsync (index, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		async Task<IList<string>> GetMessageUidsAsync (bool doAsync, CancellationToken cancellationToken)
+		class MessageUidsContext
+		{
+			readonly Pop3Client client;
+			readonly List<string> uids;
+
+			public MessageUidsContext (Pop3Client client)
+			{
+				uids = new List<string> ();
+				this.client = client;
+			}
+
+			Pop3Engine Engine {
+				get { return client.engine; }
+			}
+
+			async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
+			{
+				if (pc.Status != Pop3CommandStatus.Ok)
+					return;
+
+				do {
+					string response;
+
+					if (doAsync)
+						response = await Engine.ReadLineAsync (pc.CancellationToken).ConfigureAwait (false);
+					else
+						response = Engine.ReadLine (pc.CancellationToken);
+
+					if (response == ".")
+						break;
+
+					if (pc.Exception != null)
+						continue;
+
+					var tokens = response.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+					int seqid;
+
+					if (tokens.Length < 2) {
+						pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
+						continue;
+					}
+
+					if (!int.TryParse (tokens[0], out seqid) || seqid != uids.Count + 1) {
+						pc.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the UIDL command.");
+						continue;
+					}
+
+					uids.Add (tokens[1]);
+				} while (true);
+			}
+
+			public async Task<IList<string>> GetUidsAsync (bool doAsync, CancellationToken cancellationToken)
+			{
+				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "UIDL");
+				int id;
+
+				do {
+					if (doAsync)
+						id = await Engine.IterateAsync ().ConfigureAwait (false);
+					else
+						id = Engine.Iterate ();
+				} while (id < pc.Id);
+
+				client.probed |= ProbedCapabilities.UIDL;
+
+				if (pc.Status != Pop3CommandStatus.Ok) {
+					if (!client.SupportsUids)
+						throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
+
+					throw CreatePop3Exception (pc);
+				}
+
+				if (pc.Exception != null)
+					throw pc.Exception;
+
+				Engine.Capabilities |= Pop3Capabilities.UIDL;
+
+				return uids;
+			}
+		}
+
+		Task<IList<string>> GetMessageUidsAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1808,66 +1900,9 @@ namespace MailKit.Net.Pop3 {
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
-			var uids = new List<string> ();
-			int id;
+			var ctx = new MessageUidsContext (this);
 
-			var pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text, xdoAsync) => {
-				if (cmd.Status != Pop3CommandStatus.Ok)
-					return;
-
-				do {
-					string response;
-
-					if (xdoAsync)
-						response = await engine.ReadLineAsync (cmd.CancellationToken).ConfigureAwait (false);
-					else
-						response = engine.ReadLine (cmd.CancellationToken);
-
-					if (response == ".")
-						break;
-
-					if (cmd.Exception != null)
-						continue;
-
-					var tokens = response.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-					int seqid;
-
-					if (tokens.Length < 2) {
-						cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
-						continue;
-					}
-
-					if (!int.TryParse (tokens[0], out seqid) || seqid != uids.Count + 1) {
-						cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the UIDL command.");
-						continue;
-					}
-
-					uids.Add (tokens[1]);
-				} while (true);
-			}, "UIDL");
-
-			do {
-				if (doAsync)
-					id = await engine.IterateAsync ().ConfigureAwait (false);
-				else
-					id = engine.Iterate ();
-			} while (id < pc.Id);
-
-			probed |= ProbedCapabilities.UIDL;
-
-			if (pc.Status != Pop3CommandStatus.Ok) {
-				if (!SupportsUids)
-					throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
-
-				throw CreatePop3Exception (pc);
-			}
-
-			if (pc.Exception != null)
-				throw pc.Exception;
-
-			engine.Capabilities |= Pop3Capabilities.UIDL;
-
-			return uids;
+			return ctx.GetUidsAsync (doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -1915,14 +1950,18 @@ namespace MailKit.Net.Pop3 {
 
 		class MessageSizeContext
 		{
-			protected readonly Pop3Engine Engine;
+			readonly Pop3Client client;
 			readonly int seqid;
 			int size;
 
-			public MessageSizeContext (Pop3Engine engine, int seqid)
+			public MessageSizeContext (Pop3Client client, int seqid)
 			{
-				Engine = engine;
+				this.client = client;
 				this.seqid = seqid;
+			}
+
+			Pop3Engine Engine {
+				get { return client.engine; }
 			}
 
 			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
@@ -1951,7 +1990,7 @@ namespace MailKit.Net.Pop3 {
 				return Task.FromResult (true);
 			}
 
-			async Task SendCommandAsync (bool doAsync, CancellationToken cancellationToken)
+			public async Task<int> GetSizeAsync (bool doAsync, CancellationToken cancellationToken)
 			{
 				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "LIST {0}", seqid);
 				int id;
@@ -1968,14 +2007,23 @@ namespace MailKit.Net.Pop3 {
 
 				if (pc.Exception != null)
 					throw pc.Exception;
-			}
-
-			public async Task<int> GetSizeAsync (bool doAsync, CancellationToken cancellationToken)
-			{
-				await SendCommandAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				return size;
 			}
+		}
+
+		Task<int> GetMessageSizeAsync (int index, bool doAsync, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			if (index < 0 || index >= total)
+				throw new ArgumentOutOfRangeException (nameof (index));
+
+			var ctx = new MessageSizeContext (this, index + 1);
+
+			return ctx.GetSizeAsync (doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -2013,81 +2061,96 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
-
-			if (index < 0 || index >= total)
-				throw new ArgumentOutOfRangeException (nameof (index));
-
-			var ctx = new MessageSizeContext (engine, index + 1);
-
-			return ctx.GetSizeAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			return GetMessageSizeAsync (index, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		async Task<IList<int>> GetMessageSizesAsync (bool doAsync, CancellationToken cancellationToken)
+		class MessageSizesContext
 		{
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
+			readonly Pop3Client client;
+			readonly List<int> sizes;
 
-			var sizes = new List<int> ();
-			int id;
+			public MessageSizesContext (Pop3Client client)
+			{
+				sizes = new List<int> ();
+				this.client = client;
+			}
 
-			var pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text, xdoAsync) => {
-				if (cmd.Status != Pop3CommandStatus.Ok)
+			Pop3Engine Engine {
+				get { return client.engine; }
+			}
+
+			async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
+			{
+				if (pc.Status != Pop3CommandStatus.Ok)
 					return;
 
 				do {
 					string response;
 
-					if (xdoAsync)
-						response = await engine.ReadLineAsync (cmd.CancellationToken).ConfigureAwait (false);
+					if (doAsync)
+						response = await Engine.ReadLineAsync (pc.CancellationToken).ConfigureAwait (false);
 					else
-						response = engine.ReadLine (cmd.CancellationToken);
+						response = Engine.ReadLine (pc.CancellationToken);
 
 					if (response == ".")
 						break;
 
-					if (cmd.Exception != null)
+					if (pc.Exception != null)
 						continue;
 
 					var tokens = response.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 					int seqid, size;
 
 					if (tokens.Length < 2) {
-						cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command.");
+						pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command.");
 						continue;
 					}
 
 					if (!int.TryParse (tokens[0], out seqid) || seqid != sizes.Count + 1) {
-						cmd.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the LIST command.");
+						pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the LIST command.");
 						continue;
 					}
 
 					if (!int.TryParse (tokens[1], out size) || size < 0) {
-						cmd.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command.");
+						pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command.");
 						continue;
 					}
 
 					sizes.Add (size);
 				} while (true);
-			}, "LIST");
+			}
 
-			do {
-				if (doAsync)
-					id = await engine.IterateAsync ().ConfigureAwait (false);
-				else
-					id = engine.Iterate ();
-			} while (id < pc.Id);
+			public async Task<IList<int>> GetSizesAsync (bool doAsync, CancellationToken cancellationToken)
+			{
+				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "LIST");
+				int id;
 
-			if (pc.Status != Pop3CommandStatus.Ok)
-				throw CreatePop3Exception (pc);
+				do {
+					if (doAsync)
+						id = await Engine.IterateAsync ().ConfigureAwait (false);
+					else
+						id = Engine.Iterate ();
+				} while (id < pc.Id);
 
-			if (pc.Exception != null)
-				throw pc.Exception;
+				if (pc.Status != Pop3CommandStatus.Ok)
+					throw CreatePop3Exception (pc);
 
-			return sizes;
+				if (pc.Exception != null)
+					throw pc.Exception;
+
+				return sizes;
+			}
+		}
+
+		Task<IList<int>> GetMessageSizesAsync (bool doAsync, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			var ctx = new MessageSizesContext (this);
+
+			return ctx.GetSizesAsync (doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -2126,20 +2189,20 @@ namespace MailKit.Net.Pop3 {
 
 		abstract class DownloadContext<T>
 		{
-			protected readonly Pop3Client Client;
-			readonly ITransferProgress Progress;
+			readonly ITransferProgress progress;
+			readonly Pop3Client client;
 			T[] downloaded;
 			long nread;
 			int index;
 
 			protected DownloadContext (Pop3Client client, ITransferProgress progress)
 			{
-				Progress = progress;
-				Client = client;
+				this.progress = progress;
+				this.client = client;
 			}
 
 			protected Pop3Engine Engine {
-				get { return Client.engine; }
+				get { return client.engine; }
 			}
 
 			protected abstract T Parse (Pop3Stream data, CancellationToken cancellationToken);
@@ -2148,17 +2211,12 @@ namespace MailKit.Net.Pop3 {
 
 			protected void Update (int n)
 			{
-				if (Progress == null)
+				if (progress == null)
 					return;
 
 				nread += n;
 
-				Progress.Report (nread);
-			}
-
-			void Add (T item)
-			{
-				downloaded[index++] = item;
+				progress.Report (nread);
 			}
 
 			async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
@@ -2176,7 +2234,7 @@ namespace MailKit.Net.Pop3 {
 					else
 						item = Parse (pop3.Stream, pc.CancellationToken);
 
-					Add (item);
+					downloaded[index++] = item;
 				} catch (FormatException ex) {
 					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
 
