@@ -59,7 +59,7 @@ namespace MailKit.Security.Ntlm {
 		{
 			this.type2 = type2;
 
-			challenge = (byte[]) type2.Nonce.Clone ();
+			challenge = type2.Nonce;
 			Domain = type2.TargetName;
 			Username = userName;
 			Host = hostName;

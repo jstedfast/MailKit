@@ -183,6 +183,9 @@ namespace UnitTests.Security {
 				TargetName = "DOMAIN",
 			};
 
+			Assert.Throws<ArgumentNullException> (() => type2.Nonce = null);
+			Assert.Throws<ArgumentException> (() => type2.Nonce = new byte[0]);
+
 			var encoded = type2.Encode ();
 			string actual, expected;
 
