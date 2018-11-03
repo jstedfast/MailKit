@@ -454,7 +454,9 @@ namespace MailKit.Net.Pop3 {
 				// if the message count is > 0, we can probe the UIDL command
 				if (total > 0) {
 					try {
-						await GetMessageUidAsync (0, doAsync, cancellationToken).ConfigureAwait (false);
+						var ctx = new MessageUidContext (this, 1);
+
+						await ctx.GetUidAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					} catch (NotSupportedException) {
 					}
 				}
@@ -490,13 +492,7 @@ namespace MailKit.Net.Pop3 {
 
 			async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
 			{
-				if (mechanism.IsAuthenticated) {
-					if (pc.Status == Pop3CommandStatus.Ok)
-						AuthMessage = text;
-					return;
-				}
-
-				while (!mechanism.IsAuthenticated) {
+				while (pc.Status == Pop3CommandStatus.Continue && !mechanism.IsAuthenticated) {
 					var challenge = mechanism.Challenge (text);
 
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
@@ -520,6 +516,8 @@ namespace MailKit.Net.Pop3 {
 					if (pc.Status == Pop3CommandStatus.ProtocolError)
 						throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
 				}
+
+				AuthMessage = text;
 			}
 
 			public async Task<Pop3Command> AuthenticateAsync (bool doAsync, CancellationToken cancellationToken)
