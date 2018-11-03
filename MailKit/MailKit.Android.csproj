@@ -126,7 +126,6 @@
     <Compile Include="Security\Ntlm\MessageBase.cs" />
     <Compile Include="Security\Ntlm\NtlmAuthLevel.cs" />
     <Compile Include="Security\Ntlm\NtlmFlags.cs" />
-    <Compile Include="Security\Ntlm\NtlmSettings.cs" />
     <Compile Include="Security\Ntlm\TargetInfo.cs" />
     <Compile Include="Security\Ntlm\Type1Message.cs" />
     <Compile Include="Security\Ntlm\Type2Message.cs" />
