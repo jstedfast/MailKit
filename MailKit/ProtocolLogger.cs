@@ -48,9 +48,9 @@ namespace MailKit {
 		static readonly byte[] ServerPrefix = Encoding.ASCII.GetBytes ("S: ");
 
 		readonly Stream stream;
+		readonly bool leaveOpen;
 		bool clientMidline;
 		bool serverMidline;
-		bool leaveOpen;
 
 #if !NETFX_CORE
 		/// <summary>
