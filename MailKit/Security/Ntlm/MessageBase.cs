@@ -41,19 +41,17 @@ namespace MailKit.Security.Ntlm {
 	{
 		static readonly byte[] header = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00 };
 
-		readonly int type;
-
-		protected MessageBase (int messageType)
+		protected MessageBase (int type)
 		{
-			type = messageType;
+			Type = type;
 		}
 		
 		public NtlmFlags Flags {
 			get; set;
 		}
 
-		public int Type { 
-			get { return type; }
+		public int Type {
+			get; private set;
 		}
 
 		protected byte[] PrepareMessage (int size)
@@ -62,10 +60,10 @@ namespace MailKit.Security.Ntlm {
 
 			Buffer.BlockCopy (header, 0, message, 0, 8);
 
-			message[ 8] = (byte) type;
-			message[ 9] = (byte)(type >> 8);
-			message[10] = (byte)(type >> 16);
-			message[11] = (byte)(type >> 24);
+			message[ 8] = (byte) Type;
+			message[ 9] = (byte)(Type >> 8);
+			message[10] = (byte)(Type >> 16);
+			message[11] = (byte)(Type >> 24);
 
 			return message;
 		}
@@ -77,7 +75,7 @@ namespace MailKit.Security.Ntlm {
 					return false;
 			}
 
-			return BitConverterLE.ToUInt32 (message, startIndex + 8) == type;
+			return BitConverterLE.ToUInt32 (message, startIndex + 8) == Type;
 		}
 
 		protected void ValidateArguments (byte[] message, int startIndex, int length)
@@ -92,7 +90,7 @@ namespace MailKit.Security.Ntlm {
 				throw new ArgumentOutOfRangeException (nameof (length));
 
 			if (!CheckHeader (message, startIndex))
-				throw new ArgumentException (string.Format ("Invalid Type{0} message.", type), nameof (message));
+				throw new ArgumentException (string.Format ("Invalid Type{0} message.", Type), nameof (message));
 		}
 
 		public abstract byte[] Encode ();
