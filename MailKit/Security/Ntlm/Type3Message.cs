@@ -55,16 +55,15 @@ namespace MailKit.Security.Ntlm {
 			type2 = null;
 		}
 
-		public Type3Message (Type2Message type2, string userName, string hostName) : base (3)
+		public Type3Message (Type2Message type2, NtlmAuthLevel level, string userName, string hostName) : base (3)
 		{
 			this.type2 = type2;
-
-			Level = NtlmSettings.DefaultAuthLevel;
 
 			challenge = (byte[]) type2.Nonce.Clone ();
 			Domain = type2.TargetName;
 			Username = userName;
 			Host = hostName;
+			Level = level;
 
 			Flags = (NtlmFlags) 0x8200;
 			if ((type2.Flags & NtlmFlags.NegotiateUnicode) != 0)
@@ -204,9 +203,9 @@ namespace MailKit.Security.Ntlm {
 			byte[] lm, ntlm;
 
 			if (type2 == null) {
-				if (Level != NtlmAuthLevel.LM_and_NTLM)
-					throw new InvalidOperationException ("Refusing to use legacy-mode LM/NTLM authentication unless explicitly enabled using NtlmSettings.DefaultAuthLevel.");
-				
+				if (Level != NtlmAuthLevel.NTLMv2_only)
+					throw new InvalidOperationException ("Refusing to use legacy-mode LM/NTLM authentication.");
+
 				using (var legacy = new ChallengeResponse (Password, challenge)) {
 					lm = legacy.LM;
 					ntlm = legacy.NT;
@@ -216,7 +215,7 @@ namespace MailKit.Security.Ntlm {
 			} else {
 				ChallengeResponse2.Compute (type2, Level, Username, Password, domain, out lm, out ntlm);
 
-				if ((reqVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0))
+				if (reqVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0)
 					payloadOffset += 8;
 			}
 

@@ -199,7 +199,7 @@ namespace MailKit.Security {
 		static MessageBase GetChallengeResponse (string userName, string password, string domain, byte[] token, int startIndex, int length)
 		{
 			var type2 = new Type2Message (token, startIndex, length);
-			var type3 = new Type3Message (type2, userName, string.Empty);
+			var type3 = new Type3Message (type2, NtlmAuthLevel.NTLMv2_only, userName, string.Empty);
 			type3.Password = password;
 
 			if (!string.IsNullOrEmpty (domain))
