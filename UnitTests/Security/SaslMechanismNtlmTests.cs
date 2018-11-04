@@ -226,6 +226,39 @@ namespace UnitTests.Security {
 			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected re-encoded TargetInfo does not match.");
 		}
 
+		[Test]
+		public void TestNtlmType3MessageEncode ()
+		{
+			const string expected = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
+			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
+			var token = Convert.FromBase64String (challenge2);
+			var type2 = new Type2Message (token, 0, token.Length);
+			var type3 = new Type3Message (type2, NtlmAuthLevel.LM_and_NTLM, "user", "password", "WORKSTATION");
+			var actual = Convert.ToBase64String (type3.Encode ());
+
+			Assert.AreEqual (expected, actual, "The encoded Type3Message did not match the expected result.");
+		}
+
+		[Test]
+		public void TestNtlmType3MessageDecode ()
+		{
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
+			var flags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateUnicode;
+			var token = Convert.FromBase64String (challenge3);
+			var type3 = new Type3Message (token, 0, token.Length);
+
+			Assert.AreEqual (flags, type3.Flags, "The expected flags do not match.");
+			Assert.AreEqual ("DOMAIN", type3.Domain, "The expected Domain does not match.");
+			Assert.AreEqual ("WORKSTATION", type3.Host, "The expected Host does not match.");
+			Assert.AreEqual ("user", type3.Username, "The expected Username does not match.");
+
+			var nt = HexEncode (type3.NT);
+			Assert.AreEqual ("dd5428b01e86f4dfcabeac394946dbd43ee88f794dd63255", nt, "The NT payload does not match.");
+
+			var lm = HexEncode (type3.LM);
+			Assert.AreEqual ("98def7b87f88aa5dafe2df779688a172def11c7d5ccdef13", lm, "The LM payload does not match.");
+		}
+
 		static void AssertNtlmAuthNoDomain (SaslMechanismNtlm sasl, string prefix)
 		{
 			string challenge;
