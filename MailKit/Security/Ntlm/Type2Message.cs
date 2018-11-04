@@ -51,7 +51,7 @@ namespace MailKit.Security.Ntlm {
 
 		public Type2Message () : base (2)
 		{
-			Flags = (NtlmFlags) 0x8201;
+			Flags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateUnicode /*| NtlmFlags.NegotiateAlwaysSign*/;
 			nonce = new byte[8];
 
 			using (var rng = RandomNumberGenerator.Create ())
