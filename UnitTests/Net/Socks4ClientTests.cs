@@ -88,7 +88,7 @@ namespace UnitTests.Net {
 		[Test]
 		public void TestConnectByIPv4 ()
 		{
-			var socks = new Socks4Client ("100.39.36.100", 58288, new NetworkCredential ("", ""));
+			var socks = new Socks4Client ("100.39.36.100", 58288);
 			var host = ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
@@ -106,7 +106,7 @@ namespace UnitTests.Net {
 		[Test]
 		public async void TestConnectByIPv4Async ()
 		{
-			var socks = new Socks4Client ("100.39.36.100", 58288, new NetworkCredential ("", ""));
+			var socks = new Socks4Client ("100.39.36.100", 58288);
 			var host = ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
@@ -124,7 +124,7 @@ namespace UnitTests.Net {
 		[Test]
 		public void TestConnectByDomain ()
 		{
-			var socks = new Socks4Client ("100.39.36.100", 58288, new NetworkCredential ("", ""));
+			var socks = new Socks4Client ("100.39.36.100", 58288);
 
 			Assert.Throws<ProxyProtocolException> (() => socks.Connect ("www.google.com", 80, 10 * 1000));
 		}
@@ -132,7 +132,7 @@ namespace UnitTests.Net {
 		[Test]
 		public void TestConnectByDomainAsync ()
 		{
-			var socks = new Socks4Client ("100.39.36.100", 58288, new NetworkCredential ("", ""));
+			var socks = new Socks4Client ("100.39.36.100", 58288);
 
 			Assert.Throws<ProxyProtocolException> (async () => await socks.ConnectAsync ("www.google.com", 80, 10 * 1000));
 		}
