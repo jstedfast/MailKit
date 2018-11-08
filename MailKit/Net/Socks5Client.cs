@@ -150,6 +150,12 @@ namespace MailKit.Net
 			}
 		}
 
+		void VerifySocksVersion (byte version)
+		{
+			if (version != (byte) SocksVersion)
+				throw new ProxyProtocolException (string.Format ("Proxy server responded with unknown SOCKS version: {0}", (int) version));
+		}
+
 		Socks5AuthMethod NegotiateAuthMethod (Socket socket, CancellationToken cancellationToken, params Socks5AuthMethod[] methods)
 		{
 			// +-----+----------+----------+
@@ -180,6 +186,8 @@ namespace MailKit.Net
 				if ((nread = socket.Receive (buffer, 0 + n, 2 - n, SocketFlags.None)) > 0)
 					n += nread;
 			} while (n < 2);
+
+			VerifySocksVersion (buffer[0]);
 
 			return (Socks5AuthMethod) buffer[1];
 		}
@@ -217,6 +225,8 @@ namespace MailKit.Net
 				if ((nread = socket.Receive (buffer, 0 + n, 2 - n, SocketFlags.None)) > 0)
 					n += nread;
 			} while (n < 2);
+
+			VerifySocksVersion (buffer[0]);
 
 			if (buffer[1] != (byte) Socks5Reply.Success)
 				throw new AuthenticationException ("Failed to authenticate with SOCKS5 proxy server.");
@@ -261,8 +271,7 @@ namespace MailKit.Net
 				case Socks5AuthMethod.Anonymous:
 					break;
 				default:
-					//throw new ProxyProtocolException ("Failed to negotiate authentication method with the proxy server.");
-					break;
+					throw new ProxyProtocolException ("Failed to negotiate authentication method with the proxy server.");
 				}
 
 				// +----+-----+-------+------+----------+----------+
@@ -273,7 +282,7 @@ namespace MailKit.Net
 				var buffer = new byte[bufferSize];
 				int nread, n = 0;
 
-				buffer [n++] = (byte) SocksVersion;
+				buffer[n++] = (byte) SocksVersion;
 				buffer[n++] = (byte) Socks5Command.Connect;
 				buffer[n++] = 0x00;
 				buffer[n++] = (byte) addrType;
@@ -316,6 +325,8 @@ namespace MailKit.Net
 					if ((nread = socket.Receive (buffer, 0 + n, need - n, SocketFlags.None)) > 0)
 						n += nread;
 				} while (n < need);
+
+				VerifySocksVersion (buffer[0]);
 
 				if (buffer[1] != (byte) Socks5Reply.Success)
 					throw new ProxyProtocolException (string.Format ("Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));

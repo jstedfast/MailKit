@@ -73,6 +73,18 @@ namespace UnitTests.Net {
 			Assert.Throws<ArgumentOutOfRangeException> (async () => await socks.ConnectAsync ("www.google.com", 80, -100000));
 		}
 
+		static string ResolveIPv4 (string host)
+		{
+			var ipAddresses = Dns.GetHostAddresses (host);
+
+			for (int i = 0; i < ipAddresses.Length; i++) {
+				if (ipAddresses [i].AddressFamily == AddressFamily.InterNetwork)
+					return ipAddresses [i].ToString ();
+			}
+
+			return null;
+		}
+
 		[Test]
 		public void TestConnectAnonymous ()
 		{
@@ -98,6 +110,42 @@ namespace UnitTests.Net {
 
 			try {
 				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
+				socket.Disconnect (false);
+			} catch (Exception ex) {
+				Assert.Fail (ex.Message);
+			} finally {
+				if (socket != null)
+					socket.Dispose ();
+			}
+		}
+
+		[Test]
+		public void TestConnectByIPv4 ()
+		{
+			var socks = new Socks5Client ("98.174.90.36", 1080); // this is a socks 4 & 5 proxy server
+			var host = ResolveIPv4 ("www.google.com");
+			Socket socket = null;
+
+			try {
+				socket = socks.Connect (host, 80, 10 * 1000);
+				socket.Disconnect (false);
+			} catch (Exception ex) {
+				Assert.Fail (ex.Message);
+			} finally {
+				if (socket != null)
+					socket.Dispose ();
+			}
+		}
+
+		[Test]
+		public async void TestConnectByIPv4Async ()
+		{
+			var socks = new Socks5Client ("98.174.90.36", 1080); // this is a socks 4 & 5 proxy server
+			var host = ResolveIPv4 ("www.google.com");
+			Socket socket = null;
+
+			try {
+				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
