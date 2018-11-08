@@ -96,6 +96,7 @@
     <Compile Include="Net\Smtp\SmtpResponse.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
+    <Compile Include="Net\SocketUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\BinarySearchQuery.cs" />
     <Compile Include="Search\DateSearchQuery.cs" />

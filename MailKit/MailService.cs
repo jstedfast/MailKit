@@ -321,51 +321,6 @@ namespace MailKit {
 
 			return false;
 		}
-
-		internal async Task<Socket> ConnectAsync (Uri uri, bool doAsync, CancellationToken cancellationToken)
-		{
-			IPAddress[] ipAddresses;
-			Socket socket = null;
-
-			if (doAsync) {
-				ipAddresses = await Dns.GetHostAddressesAsync (uri.DnsSafeHost).ConfigureAwait (false);
-			} else {
-#if NETSTANDARD
-				ipAddresses = Dns.GetHostAddressesAsync (uri.DnsSafeHost).GetAwaiter ().GetResult ();
-#else
-				ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
-#endif
-			}
-
-			for (int i = 0; i < ipAddresses.Length; i++) {
-				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-				try {
-					cancellationToken.ThrowIfCancellationRequested ();
-
-					if (LocalEndPoint != null)
-						socket.Bind (LocalEndPoint);
-
-					socket.Connect (ipAddresses[i], uri.Port);
-					break;
-				} catch (OperationCanceledException) {
-					socket.Dispose ();
-					socket = null;
-					throw;
-				} catch {
-					socket.Dispose ();
-					socket = null;
-
-					if (i + 1 == ipAddresses.Length)
-						throw;
-				}
-			}
-
-			if (socket == null)
-				throw new IOException (string.Format ("Failed to resolve host: {0}", uri.Host));
-
-			return socket;
-		}
 #endif
 
 		/// <summary>

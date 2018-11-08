@@ -889,12 +889,7 @@ namespace MailKit.Net.Pop3 {
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 #if !NETFX_CORE
-			Socket socket;
-
-			if (doAsync)
-				socket = await ConnectAsync (uri, true, cancellationToken).ConfigureAwait (false);
-			else
-				socket = ConnectAsync (uri, false, cancellationToken).GetAwaiter ().GetResult ();
+			var socket = await SocketUtils.ConnectAsync (host, port, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
 
 			engine.Uri = uri;
 
