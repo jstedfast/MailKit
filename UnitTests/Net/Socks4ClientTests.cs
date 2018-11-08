@@ -124,6 +124,7 @@ namespace UnitTests.Net {
 		[Test]
 		public void TestConnectByDomain ()
 		{
+			// Note: this Socks4 proxy does not support the Socks4a protocol
 			var socks = new Socks4Client ("100.39.36.100", 58288);
 
 			Assert.Throws<ProxyProtocolException> (() => socks.Connect ("www.google.com", 80, 10 * 1000));
@@ -132,6 +133,7 @@ namespace UnitTests.Net {
 		[Test]
 		public void TestConnectByDomainAsync ()
 		{
+			// Note: this Socks4 proxy does not support the Socks4a protocol
 			var socks = new Socks4Client ("100.39.36.100", 58288);
 
 			Assert.Throws<ProxyProtocolException> (async () => await socks.ConnectAsync ("www.google.com", 80, 10 * 1000));

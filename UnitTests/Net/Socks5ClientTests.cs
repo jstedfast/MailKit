@@ -24,7 +24,7 @@
 // THE SOFTWARE.
 //
 
-// Note: Find Socks5 proxy list here: http://www.gatherproxy.com/sockslist
+// Note: Find Socks5 proxy list here: http://www.gatherproxy.com/sockslist/country/?c=United%20States
 
 using System;
 using System.Net;
@@ -38,6 +38,9 @@ namespace UnitTests.Net {
 	[TestFixture]
 	public class Socks5ClientTests
 	{
+		static readonly string[] Socks5ProxyList = { "98.174.90.36", "198.12.157.31", "72.210.252.134" };
+		static readonly int[] Socks5ProxyPorts = { 1080, 46906, 46164 };
+
 		[Test]
 		public void TestArgumentExceptions ()
 		{
@@ -78,8 +81,20 @@ namespace UnitTests.Net {
 			var ipAddresses = Dns.GetHostAddresses (host);
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
-				if (ipAddresses [i].AddressFamily == AddressFamily.InterNetwork)
-					return ipAddresses [i].ToString ();
+				if (ipAddresses[i].AddressFamily == AddressFamily.InterNetwork)
+					return ipAddresses[i].ToString ();
+			}
+
+			return null;
+		}
+
+		static string ResolveIPv6 (string host)
+		{
+			var ipAddresses = Dns.GetHostAddresses (host);
+
+			for (int i = 0; i < ipAddresses.Length; i++) {
+				if (ipAddresses[i].AddressFamily == AddressFamily.InterNetworkV6)
+					return ipAddresses[i].ToString ();
 			}
 
 			return null;
@@ -88,7 +103,7 @@ namespace UnitTests.Net {
 		[Test]
 		public void TestConnectAnonymous ()
 		{
-			var socks = new Socks5Client ("98.174.90.36", 1080); // this is a socks 4 & 5 proxy server
+			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0]);
 			Socket socket = null;
 
 			try {
@@ -105,7 +120,7 @@ namespace UnitTests.Net {
 		[Test]
 		public async void TestConnectAnonymousAsync ()
 		{
-			var socks = new Socks5Client ("98.174.90.36", 1080); // this is a socks 4 & 5 proxy server
+			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0]);
 			Socket socket = null;
 
 			try {
@@ -122,7 +137,7 @@ namespace UnitTests.Net {
 		[Test]
 		public void TestConnectByIPv4 ()
 		{
-			var socks = new Socks5Client ("98.174.90.36", 1080); // this is a socks 4 & 5 proxy server
+			var socks = new Socks5Client (Socks5ProxyList[1], Socks5ProxyPorts[1]);
 			var host = ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
@@ -140,7 +155,7 @@ namespace UnitTests.Net {
 		[Test]
 		public async void TestConnectByIPv4Async ()
 		{
-			var socks = new Socks5Client ("98.174.90.36", 1080); // this is a socks 4 & 5 proxy server
+			var socks = new Socks5Client (Socks5ProxyList[1], Socks5ProxyPorts[1]);
 			var host = ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
@@ -153,6 +168,26 @@ namespace UnitTests.Net {
 				if (socket != null)
 					socket.Dispose ();
 			}
+		}
+
+		[Test]
+		public void TestConnectByIPv6 ()
+		{
+			var socks = new Socks5Client (Socks5ProxyList[2], Socks5ProxyPorts[2]);
+			var host = ResolveIPv6 ("www.google.com");
+
+			// This Socks5 server does not support IPv6
+			Assert.Throws<ProxyProtocolException> (() => socks.Connect (host, 80, 10 * 1000));
+		}
+
+		[Test]
+		public void TestConnectByIPv6Async ()
+		{
+			var socks = new Socks5Client (Socks5ProxyList[2], Socks5ProxyPorts[2]);
+			var host = ResolveIPv6 ("www.google.com");
+
+			// This Socks5 server does not support IPv6
+			Assert.Throws<ProxyProtocolException> (async () => await socks.ConnectAsync (host, 80, 10 * 1000));
 		}
 	}
 }
