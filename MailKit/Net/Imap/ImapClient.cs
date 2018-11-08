@@ -894,7 +894,7 @@ namespace MailKit.Net.Imap {
 
 			await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			OnAuthenticated (ic.ResponseText);
+			OnAuthenticated (ic.ResponseText ?? string.Empty);
 		}
 
 		/// <summary>
@@ -1036,7 +1036,7 @@ namespace MailKit.Net.Imap {
 
 				await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				OnAuthenticated (ic.ResponseText);
+				OnAuthenticated (ic.ResponseText ?? string.Empty);
 				return;
 			}
 
@@ -1074,7 +1074,7 @@ namespace MailKit.Net.Imap {
 
 			await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			OnAuthenticated (ic.ResponseText);
+			OnAuthenticated (ic.ResponseText ?? string.Empty);
 		}
 
 		/// <summary>
