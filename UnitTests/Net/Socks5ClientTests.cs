@@ -101,6 +101,38 @@ namespace UnitTests.Net {
 		}
 
 		[Test]
+		public void TestGetAddressType ()
+		{
+			const string host = "www.google.com";
+			IPAddress ipv4 = null, ipv6 = null;
+			IPAddress ip;
+
+			var ipAddresses = Dns.GetHostAddresses (host);
+
+			for (int i = 0; i < ipAddresses.Length && ipv4 == null && ipv6 == null; i++) {
+				if (ipv6 == null && ipAddresses[i].AddressFamily == AddressFamily.InterNetworkV6)
+					ipv6 = ipAddresses[i];
+				else if (ipv4 == null && ipAddresses[i].AddressFamily == AddressFamily.InterNetwork)
+					ipv4 = ipAddresses[i];
+			}
+
+			Assert.AreEqual (Socks5Client.Socks5AddressType.Domain, Socks5Client.GetAddressType (host, out ip));
+			Assert.AreEqual (Socks5Client.Socks5AddressType.IPv4, Socks5Client.GetAddressType (ipv4.ToString (), out ip));
+			Assert.AreEqual (Socks5Client.Socks5AddressType.IPv6, Socks5Client.GetAddressType (ipv6.ToString (), out ip));
+		}
+
+		[Test]
+		public void TestGetFailureReason ()
+		{
+			for (byte i = 1; i < 10; i++) {
+				var reason = Socks5Client.GetFailureReason (i);
+
+				if (i > 8)
+					Assert.IsTrue (reason.StartsWith ("Unknown error", StringComparison.Ordinal));
+			}
+		}
+
+		[Test]
 		public void TestConnectAnonymous ()
 		{
 			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0]);
