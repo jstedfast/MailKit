@@ -92,7 +92,8 @@ namespace MailKit.Net
 					}
 					break;
 				} catch (OperationCanceledException) {
-					socket.Disconnect (false);
+					if (socket.Connected)
+						socket.Disconnect (false);
 					socket.Dispose ();
 					socket = null;
 					throw;
