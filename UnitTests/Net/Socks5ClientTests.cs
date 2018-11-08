@@ -141,6 +141,7 @@ namespace UnitTests.Net {
 			try {
 				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
 				socket.Disconnect (false);
+			} catch (TimeoutException) {
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -158,6 +159,7 @@ namespace UnitTests.Net {
 			try {
 				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
 				socket.Disconnect (false);
+			} catch (TimeoutException) {
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -173,9 +175,13 @@ namespace UnitTests.Net {
 			var host = ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
+			if (host == null)
+				return;
+
 			try {
 				socket = socks.Connect (host, 80, 10 * 1000);
 				socket.Disconnect (false);
+			} catch (TimeoutException) {
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -191,9 +197,13 @@ namespace UnitTests.Net {
 			var host = ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
+			if (host == null)
+				return;
+
 			try {
 				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
 				socket.Disconnect (false);
+			} catch (TimeoutException) {
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -207,19 +217,47 @@ namespace UnitTests.Net {
 		{
 			var socks = new Socks5Client (Socks5ProxyList[2], Socks5ProxyPorts[2]);
 			var host = ResolveIPv6 ("www.google.com");
+			Socket socket = null;
 
-			// This Socks5 server does not support IPv6
-			Assert.Throws<ProxyProtocolException> (() => socks.Connect (host, 80, 10 * 1000));
+			if (host == null)
+				return;
+
+			try {
+				socket = socks.Connect (host, 80, 10 * 1000);
+				socket.Disconnect (false);
+			} catch (ProxyProtocolException) {
+				// This is the expected outcome since this Socks5 server does not support IPv6 address types
+			} catch (TimeoutException) {
+			} catch (Exception ex) {
+				Assert.Fail (ex.Message);
+			} finally {
+				if (socket != null)
+					socket.Dispose ();
+			}
 		}
 
 		[Test]
-		public void TestConnectByIPv6Async ()
+		public async void TestConnectByIPv6Async ()
 		{
 			var socks = new Socks5Client (Socks5ProxyList[2], Socks5ProxyPorts[2]);
 			var host = ResolveIPv6 ("www.google.com");
+			Socket socket = null;
 
-			// This Socks5 server does not support IPv6
-			Assert.Throws<ProxyProtocolException> (async () => await socks.ConnectAsync (host, 80, 10 * 1000));
+			if (host == null)
+				return;
+
+			try {
+				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
+				socket.Disconnect (false);
+			} catch (ProxyProtocolException) {
+				// This is the expected outcome since this Socks5 server does not support IPv6 address types
+			} catch (TimeoutException) {
+			} catch (Exception ex) {
+				Assert.Fail (ex.Message);
+			} finally {
+				if (socket != null)
+					socket.Dispose ();
+			}
 		}
 	}
 }

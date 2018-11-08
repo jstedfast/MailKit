@@ -92,9 +92,13 @@ namespace UnitTests.Net {
 			var host = ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
+			if (host == null)
+				return;
+
 			try {
 				socket = socks.Connect (host, 80, 10 * 1000);
 				socket.Disconnect (false);
+			} catch (TimeoutException) {
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -110,9 +114,13 @@ namespace UnitTests.Net {
 			var host = ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
+			if (host == null)
+				return;
+
 			try {
 				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
 				socket.Disconnect (false);
+			} catch (TimeoutException) {
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -126,17 +134,41 @@ namespace UnitTests.Net {
 		{
 			// Note: this Socks4 proxy does not support the Socks4a protocol
 			var socks = new Socks4Client ("100.39.36.100", 58288);
+			Socket socket = null;
 
-			Assert.Throws<ProxyProtocolException> (() => socks.Connect ("www.google.com", 80, 10 * 1000));
+			try {
+				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
+				socket.Disconnect (false);
+			} catch (ProxyProtocolException) {
+				// This is expected since this proxy does not support Socks4a
+			} catch (TimeoutException) {
+			} catch (Exception ex) {
+				Assert.Fail (ex.Message);
+			} finally {
+				if (socket != null)
+					socket.Dispose ();
+			}
 		}
 
 		[Test]
-		public void TestConnectByDomainAsync ()
+		public async void TestConnectByDomainAsync ()
 		{
 			// Note: this Socks4 proxy does not support the Socks4a protocol
 			var socks = new Socks4Client ("100.39.36.100", 58288);
+			Socket socket = null;
 
-			Assert.Throws<ProxyProtocolException> (async () => await socks.ConnectAsync ("www.google.com", 80, 10 * 1000));
+			try {
+				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
+				socket.Disconnect (false);
+			} catch (ProxyProtocolException) {
+				// This is expected since this proxy does not support Socks4a
+			} catch (TimeoutException) {
+			} catch (Exception ex) {
+				Assert.Fail (ex.Message);
+			} finally {
+				if (socket != null)
+					socket.Dispose ();
+			}
 		}
 	}
 }
