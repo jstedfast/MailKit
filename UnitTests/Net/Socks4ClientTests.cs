@@ -89,7 +89,7 @@ namespace UnitTests.Net {
 		public void TestConnectByIPv4 ()
 		{
 			var socks = new Socks4Client ("100.39.36.100", 58288);
-			var host = ResolveIPv4 ("www.google.com");
+			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
 			if (host == null)
@@ -111,7 +111,7 @@ namespace UnitTests.Net {
 		public async void TestConnectByIPv4Async ()
 		{
 			var socks = new Socks4Client ("100.39.36.100", 58288);
-			var host = ResolveIPv4 ("www.google.com");
+			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
 			if (host == null)

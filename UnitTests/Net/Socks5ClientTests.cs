@@ -104,21 +104,13 @@ namespace UnitTests.Net {
 		public void TestGetAddressType ()
 		{
 			const string host = "www.google.com";
-			IPAddress ipv4 = null, ipv6 = null;
+			const string ipv6 = "2607:f8b0:400e:c03::69";
+			const string ipv4 = "74.125.197.99";
 			IPAddress ip;
 
-			var ipAddresses = Dns.GetHostAddresses (host);
-
-			for (int i = 0; i < ipAddresses.Length && ipv4 == null && ipv6 == null; i++) {
-				if (ipv6 == null && ipAddresses[i].AddressFamily == AddressFamily.InterNetworkV6)
-					ipv6 = ipAddresses[i];
-				else if (ipv4 == null && ipAddresses[i].AddressFamily == AddressFamily.InterNetwork)
-					ipv4 = ipAddresses[i];
-			}
-
 			Assert.AreEqual (Socks5Client.Socks5AddressType.Domain, Socks5Client.GetAddressType (host, out ip));
-			Assert.AreEqual (Socks5Client.Socks5AddressType.IPv4, Socks5Client.GetAddressType (ipv4.ToString (), out ip));
-			Assert.AreEqual (Socks5Client.Socks5AddressType.IPv6, Socks5Client.GetAddressType (ipv6.ToString (), out ip));
+			Assert.AreEqual (Socks5Client.Socks5AddressType.IPv4, Socks5Client.GetAddressType (ipv4, out ip));
+			Assert.AreEqual (Socks5Client.Socks5AddressType.IPv6, Socks5Client.GetAddressType (ipv6, out ip));
 		}
 
 		[Test]
@@ -172,7 +164,7 @@ namespace UnitTests.Net {
 		public void TestConnectByIPv4 ()
 		{
 			var socks = new Socks5Client (Socks5ProxyList[1], Socks5ProxyPorts[1]);
-			var host = ResolveIPv4 ("www.google.com");
+			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
 			if (host == null)
@@ -194,7 +186,7 @@ namespace UnitTests.Net {
 		public async void TestConnectByIPv4Async ()
 		{
 			var socks = new Socks5Client (Socks5ProxyList[1], Socks5ProxyPorts[1]);
-			var host = ResolveIPv4 ("www.google.com");
+			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
 			Socket socket = null;
 
 			if (host == null)
@@ -216,7 +208,7 @@ namespace UnitTests.Net {
 		public void TestConnectByIPv6 ()
 		{
 			var socks = new Socks5Client (Socks5ProxyList[2], Socks5ProxyPorts[2]);
-			var host = ResolveIPv6 ("www.google.com");
+			var host = "2607:f8b0:400e:c03::69"; // ResolveIPv6 ("www.google.com");
 			Socket socket = null;
 
 			if (host == null)
@@ -240,7 +232,7 @@ namespace UnitTests.Net {
 		public async void TestConnectByIPv6Async ()
 		{
 			var socks = new Socks5Client (Socks5ProxyList[2], Socks5ProxyPorts[2]);
-			var host = ResolveIPv6 ("www.google.com");
+			var host = "2607:f8b0:400e:c03::69"; // ResolveIPv6 ("www.google.com");
 			Socket socket = null;
 
 			if (host == null)
