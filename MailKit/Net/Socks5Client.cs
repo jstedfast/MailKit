@@ -88,7 +88,7 @@ namespace MailKit.Net
 		{
 		}
 
-		enum Socks5AddressType : byte
+		internal enum Socks5AddressType : byte
 		{
 			IPv4   = 0x01,
 			Domain = 0x03,
@@ -110,7 +110,7 @@ namespace MailKit.Net
 			UdpAssociate = 0x03,
 		}
 
-		enum Socks5Reply : byte
+		internal enum Socks5Reply : byte
 		{
 			Success                 = 0x00,
 			GeneralServerFailure    = 0x01,
@@ -123,7 +123,7 @@ namespace MailKit.Net
 			AddressTypeNotSupported = 0x08
 		}
 
-		static string GetFailureReason (byte reply)
+		internal static string GetFailureReason (byte reply)
 		{
 			switch ((Socks5Reply) reply) {
 			case Socks5Reply.GeneralServerFailure:    return "General server failure.";
@@ -138,7 +138,7 @@ namespace MailKit.Net
 			}
 		}
 
-		static Socks5AddressType GetAddressType (string host, out IPAddress ip)
+		internal static Socks5AddressType GetAddressType (string host, out IPAddress ip)
 		{
 			if (!IPAddress.TryParse (host, out ip))
 				return Socks5AddressType.Domain;
@@ -350,7 +350,8 @@ namespace MailKit.Net
 
 				return socket;
 			} catch {
-				socket.Disconnect (false);
+				if (socket.Connected)
+					socket.Disconnect (false);
 				socket.Dispose ();
 				throw;
 			}

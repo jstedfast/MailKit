@@ -182,7 +182,8 @@ namespace MailKit.Net
 
 				return socket;
 			} catch {
-				socket.Disconnect (false);
+				if (socket.Connected)
+					socket.Disconnect (false);
 				socket.Dispose ();
 				throw;
 			}
