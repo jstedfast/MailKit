@@ -338,11 +338,8 @@ namespace MailKit.Net
 				// TODO: do we care about BND.ADDR and BND.PORT?
 
 				return socket;
-			} catch (OperationCanceledException) {
-				socket.Disconnect (false);
-				socket.Dispose ();
-				throw;
 			} catch {
+				socket.Disconnect (false);
 				socket.Dispose ();
 				throw;
 			}
