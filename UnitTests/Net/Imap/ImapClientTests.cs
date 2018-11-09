@@ -1000,6 +1000,9 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Connect ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -1014,6 +1017,9 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -1034,6 +1040,9 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Connect (socket, "imap.gmail.com", 993, SecureSocketOptions.Auto));
+
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -1054,6 +1063,9 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (socket, "imap.gmail.com", 993, SecureSocketOptions.Auto));
+
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");

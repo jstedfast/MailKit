@@ -104,18 +104,11 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
 
 				Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 110, SecureSocketOptions.None));
-				using (var socket = new Socket (SocketType.Stream, ProtocolType.Tcp))
-					Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 110, SecureSocketOptions.None));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, "host", 110, SecureSocketOptions.None));
 
-				using (var socket = Connect ("www.gmail.com", 80)) {
-					Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentException> (() => client.Connect (socket, string.Empty, 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, "host", -1, SecureSocketOptions.None));
-					Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, "host", 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, string.Empty, 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, "host", -1, SecureSocketOptions.None));
+				using (var socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+					Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 110, SecureSocketOptions.None));
+					Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, "host", 110, SecureSocketOptions.None));
 				}
 
 				// Authenticate
@@ -499,6 +492,9 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Connect ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -513,6 +509,9 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -524,10 +523,18 @@ namespace UnitTests.Net.Pop3 {
 		{
 			using (var client = new Pop3Client ()) {
 				var socket = Connect ("pop.gmail.com", 995);
+
+				Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, 995, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentException> (() => client.Connect (socket, "", 995, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, "pop.gmail.com", -1, SecureSocketOptions.Auto));
+
 				client.Connect (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Connect (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto));
+
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -539,10 +546,18 @@ namespace UnitTests.Net.Pop3 {
 		{
 			using (var client = new Pop3Client ()) {
 				var socket = Connect ("pop.gmail.com", 995);
+
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, 995, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, "", 995, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, "pop.gmail.com", -1, SecureSocketOptions.Auto));
+
 				await client.ConnectAsync (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto));
+
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");

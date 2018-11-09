@@ -141,18 +141,11 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
 
 				Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 25, SecureSocketOptions.None));
-				using (var socket = new Socket (SocketType.Stream, ProtocolType.Tcp))
-					Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 25, SecureSocketOptions.None));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, "host", 25, SecureSocketOptions.None));
 
-				using (var socket = Connect ("www.gmail.com", 80)) {
-					Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentException> (() => client.Connect (socket, string.Empty, 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, "host", -1, SecureSocketOptions.None));
-					Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, "host", 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, string.Empty, 25, SecureSocketOptions.None));
-					Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, "host", -1, SecureSocketOptions.None));
+				using (var socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+					Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 25, SecureSocketOptions.None));
+					Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, "host", 25, SecureSocketOptions.None));
 				}
 
 				// Authenticate
@@ -521,6 +514,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Connect ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -535,6 +531,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -546,10 +545,18 @@ namespace UnitTests.Net.Smtp {
 		{
 			using (var client = new SmtpClient ()) {
 				var socket = Connect ("smtp.gmail.com", 465);
+
+				Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, 465, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentException> (() => client.Connect (socket, "", 465, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, "smtp.gmail.com", -1, SecureSocketOptions.Auto));
+
 				client.Connect (socket, "smtp.gmail.com", 465, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Connect (socket, "smtp.gmail.com", 465, SecureSocketOptions.Auto));
+
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -561,10 +568,18 @@ namespace UnitTests.Net.Smtp {
 		{
 			using (var client = new SmtpClient ()) {
 				var socket = Connect ("smtp.gmail.com", 465);
+
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, 465, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, "", 465, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, "smtp.gmail.com", -1, SecureSocketOptions.Auto));
+
 				await client.ConnectAsync (socket, "smtp.gmail.com", 465, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (socket, "smtp.gmail.com", 946, SecureSocketOptions.Auto));
+
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
