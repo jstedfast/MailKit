@@ -714,6 +714,17 @@ namespace MailKit.Net.Imap {
 			return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
 		}
 
+		static uint HexUnescape (uint c)
+		{
+			if (c >= 'a')
+				return (c - 'a') + 10;
+
+			if (c >= 'A')
+				return (c - 'A') + 10;
+
+			return c - '0';
+		}
+
 		static char HexUnescape (string pattern, ref int index)
 		{
 			uint value, c;
@@ -722,22 +733,9 @@ namespace MailKit.Net.Imap {
 				return '%';
 
 			c = (uint) pattern[index++];
-
-			if (c >= 'a')
-				value = (((c - 'a') + 10) << 4);
-			else if (c >= 'A')
-				value = (((c - 'A') + 10) << 4);
-			else
-				value = ((c - '0') << 4);
-
+			value = HexUnescape (c) << 4;
 			c = pattern[index++];
-
-			if (c >= 'a')
-				value |= ((c - 'a') + 10);
-			else if (c >= 'A')
-				value |= ((c - 'A') + 10);
-			else
-				value |= (c - '0');
+			value |= HexUnescape (c);
 
 			return (char) value;
 		}
