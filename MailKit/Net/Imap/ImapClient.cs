@@ -709,6 +709,18 @@ namespace MailKit.Net.Imap {
 			return new AuthenticationException (ic.ResponseText);
 		}
 
+		void EmitAndThrowOnAlert (ImapCommand ic)
+		{
+			for (int i = 0; i < ic.RespCodes.Count; i++) {
+				if (ic.RespCodes[i].Type != ImapResponseCodeType.Alert)
+					continue;
+
+				OnAlert (ic.RespCodes[i].Message);
+
+				throw new AuthenticationException (ic.ResponseText ?? ic.RespCodes[i].Message);
+			}
+		}
+
 		static bool IsHexDigit (char c)
 		{
 			return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
@@ -864,14 +876,7 @@ namespace MailKit.Net.Imap {
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
 			if (ic.Response != ImapCommandResponse.Ok) {
-				for (int i = 0; i < ic.RespCodes.Count; i++) {
-					if (ic.RespCodes[i].Type != ImapResponseCodeType.Alert)
-						continue;
-
-					OnAlert (ic.RespCodes[i].Message);
-
-					throw new AuthenticationException (ic.ResponseText ?? ic.RespCodes[i].Message);
-				}
+				EmitAndThrowOnAlert (ic);
 
 				throw new AuthenticationException ();
 			}
@@ -1006,15 +1011,7 @@ namespace MailKit.Net.Imap {
 				await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
 				if (ic.Response != ImapCommandResponse.Ok) {
-					for (int i = 0; i < ic.RespCodes.Count; i++) {
-						if (ic.RespCodes[i].Type != ImapResponseCodeType.Alert)
-							continue;
-
-						OnAlert (ic.RespCodes[i].Message);
-
-						throw new AuthenticationException (ic.ResponseText ?? ic.RespCodes[i].Message);
-					}
-
+					EmitAndThrowOnAlert (ic);
 					continue;
 				}
 
