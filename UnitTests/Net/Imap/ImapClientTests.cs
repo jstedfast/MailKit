@@ -131,6 +131,12 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsInstanceOf<ImapEngine> (client.SyncRoot, "SyncRoot");
 
+				// ReplayConnect
+				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect (null, Stream.Null));
+				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect ("host", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.ReplayConnectAsync (null, Stream.Null));
+				Assert.Throws<ArgumentNullException> (async () => await client.ReplayConnectAsync ("host", null));
+
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
 				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync ((Uri) null));
@@ -146,6 +152,14 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (string.Empty, 143, SecureSocketOptions.None));
 				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect ("host", -1, SecureSocketOptions.None));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
+
+				Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 143, SecureSocketOptions.None));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, "host", 143, SecureSocketOptions.None));
+
+				using (var socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+					Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 143, SecureSocketOptions.None));
+					Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, "host", 143, SecureSocketOptions.None));
+				}
 
 				try {
 					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
@@ -1011,6 +1025,11 @@ namespace UnitTests.Net.Imap {
 		{
 			using (var client = new ImapClient ()) {
 				var socket = Connect ("imap.gmail.com", 993);
+
+				Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, 993, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentException> (() => client.Connect (socket, "", 993, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, "imap.gmail.com", -1, SecureSocketOptions.Auto));
+
 				client.Connect (socket, "imap.gmail.com", 993, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
@@ -1026,6 +1045,11 @@ namespace UnitTests.Net.Imap {
 		{
 			using (var client = new ImapClient ()) {
 				var socket = Connect ("imap.gmail.com", 993);
+
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, 993, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, "", 993, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, "imap.gmail.com", -1, SecureSocketOptions.Auto));
+
 				await client.ConnectAsync (socket, "imap.gmail.com", 993, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
