@@ -65,7 +65,7 @@ namespace MailKit.Net.Imap {
 	/// </example>
 	public partial class ImapClient : MailStore
 	{
-		static readonly char[] ReservedUriCharacters = new [] { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',' };
+		static readonly char[] ReservedUriCharacters = new [] { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '%' };
 		const string HexAlphabet = "0123456789ABCDEF";
 		readonly ImapEngine engine;
 #if NETFX_CORE
@@ -742,7 +742,7 @@ namespace MailKit.Net.Imap {
 			return (char) value;
 		}
 
-		static string UnescapeUserName (string escaped)
+		internal static string UnescapeUserName (string escaped)
 		{
 			StringBuilder userName;
 			int startIndex, index;
@@ -775,7 +775,7 @@ namespace MailKit.Net.Imap {
 			return "%" + HexAlphabet[(c >> 4) & 0xF] + HexAlphabet[c & 0xF];
 		}
 
-		static string EscapeUserName (string userName)
+		internal static string EscapeUserName (string userName)
 		{
 			StringBuilder escaped;
 			int startIndex, index;

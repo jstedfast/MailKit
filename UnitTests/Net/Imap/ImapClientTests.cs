@@ -873,6 +873,22 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		[Test]
+		public void TestEscapeUserName ()
+		{
+			var escaped = ImapClient.EscapeUserName ("user:/?@&=+$%,;");
+
+			Assert.AreEqual ("user%3A%2F%3F%40%26%3D%2B%24%25%2C%3B", escaped);
+		}
+
+		[Test]
+		public void TestUnescapeUserName ()
+		{
+			var unescaped = ImapClient.UnescapeUserName ("user%3A%2F%3F%40%26%3D%2B%24%25%2C%3B");
+
+			Assert.AreEqual ("user:/?@&=+$%,;", unescaped);
+		}
+
 		static void AssertDefaultValues (string host, int port, SecureSocketOptions options, Uri expected)
 		{
 			ImapClient.ComputeDefaultValues (host, ref port, ref options, out Uri uri, out bool starttls);
