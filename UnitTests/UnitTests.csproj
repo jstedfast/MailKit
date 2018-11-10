@@ -359,6 +359,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search-summary.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-sublevel1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-sublevel2.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\select-toplevel.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-labels.txt" />

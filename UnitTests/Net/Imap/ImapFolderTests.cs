@@ -634,8 +634,9 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000015 DELETE TopLevel1\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000016 SELECT TopLevel2/SubLevel2 (CONDSTORE)\r\n", "gmail.select-sublevel2.txt"));
 			commands.Add (new ImapReplayCommand ("A00000017 RENAME TopLevel2 TopLevel\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000018 DELETE TopLevel\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000019 LOGOUT\r\n", "gmail.logout.txt"));
+			commands.Add (new ImapReplayCommand ("A00000018 SELECT TopLevel (CONDSTORE)\r\n", "gmail.select-toplevel.txt"));
+			commands.Add (new ImapReplayCommand ("A00000019 DELETE TopLevel\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000020 LOGOUT\r\n", "gmail.logout.txt"));
 
 			return commands;
 		}
@@ -704,7 +705,10 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (sublevel2.IsOpen, "SubLevel2 should be closed after being renamed");
 				Assert.AreEqual (1, top2Renamed, "TopLevel2 folder should have received a Renamed event");
 
+				toplevel2.Open (FolderAccess.ReadWrite);
 				toplevel2.Delete ();
+				Assert.AreEqual (1, top2Closed, "TopLevel2 should have received a Closed event");
+				Assert.IsFalse (toplevel2.IsOpen, "TopLevel2 should be closed after being deleted");
 				Assert.AreEqual (1, top2Deleted, "TopLevel2 should have received a Deleted event");
 				Assert.IsFalse (toplevel2.Exists, "TopLevel2.Exists");
 
@@ -776,7 +780,10 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (sublevel2.IsOpen, "SubLevel2 should be closed after being renamed");
 				Assert.AreEqual (1, top2Renamed, "TopLevel2 folder should have received a Renamed event");
 
+				await toplevel2.OpenAsync (FolderAccess.ReadWrite);
 				await toplevel2.DeleteAsync ();
+				Assert.AreEqual (1, top2Closed, "TopLevel2 should have received a Closed event");
+				Assert.IsFalse (toplevel2.IsOpen, "TopLevel2 should be closed after being deleted");
 				Assert.AreEqual (1, top2Deleted, "TopLevel2 should have received a Deleted event");
 				Assert.IsFalse (toplevel2.Exists, "TopLevel2.Exists");
 
