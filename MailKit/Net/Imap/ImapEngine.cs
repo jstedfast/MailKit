@@ -2157,29 +2157,35 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Assigns a folder as a special folder.
+		/// </summary>
+		/// <param name="folder">The special folder.</param>
+		public void AssignSpecialFolder (ImapFolder folder)
+		{
+			if ((folder.Attributes & FolderAttributes.All) != 0)
+				All = folder;
+			if ((folder.Attributes & FolderAttributes.Archive) != 0)
+				Archive = folder;
+			if ((folder.Attributes & FolderAttributes.Drafts) != 0)
+				Drafts = folder;
+			if ((folder.Attributes & FolderAttributes.Flagged) != 0)
+				Flagged = folder;
+			if ((folder.Attributes & FolderAttributes.Junk) != 0)
+				Junk = folder;
+			if ((folder.Attributes & FolderAttributes.Sent) != 0)
+				Sent = folder;
+			if ((folder.Attributes & FolderAttributes.Trash) != 0)
+				Trash = folder;
+		}
+
+		/// <summary>
 		/// Assigns the special folders.
 		/// </summary>
 		/// <param name="list">The list of folders.</param>
 		public void AssignSpecialFolders (IList<ImapFolder> list)
 		{
-			for (int i = 0; i < list.Count; i++) {
-				var folder = list[i];
-
-				if ((folder.Attributes & FolderAttributes.All) != 0)
-					All = folder;
-				if ((folder.Attributes & FolderAttributes.Archive) != 0)
-					Archive = folder;
-				if ((folder.Attributes & FolderAttributes.Drafts) != 0)
-					Drafts = folder;
-				if ((folder.Attributes & FolderAttributes.Flagged) != 0)
-					Flagged = folder;
-				if ((folder.Attributes & FolderAttributes.Junk) != 0)
-					Junk = folder;
-				if ((folder.Attributes & FolderAttributes.Sent) != 0)
-					Sent = folder;
-				if ((folder.Attributes & FolderAttributes.Trash) != 0)
-					Trash = folder;
-			}
+			for (int i = 0; i < list.Count; i++)
+				AssignSpecialFolder (list[i]);
 		}
 
 		/// <summary>

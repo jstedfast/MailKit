@@ -237,38 +237,8 @@ namespace MailKit.Net.Imap {
 			return ic.Folder.OnFetchAsync (engine, index, doAsync, ic.CancellationToken);
 		}
 
-		async Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)
+		async Task<FolderAccess> OpenAsync (ImapCommand ic, FolderAccess access, bool doAsync, CancellationToken cancellationToken)
 		{
-			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException (nameof (access));
-
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			CheckState (false, false);
-
-			if (IsOpen && Access == access)
-				return access;
-
-			if ((Engine.Capabilities & ImapCapabilities.QuickResync) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
-
-			if (!Engine.QResyncEnabled)
-				throw new InvalidOperationException ("The QRESYNC extension has not been enabled.");
-
-			var qresync = string.Format ("(QRESYNC ({0} {1}", uidValidity, highestModSeq);
-
-			if (uids.Count > 0) {
-				var set = UniqueIdSet.ToString (uids);
-				qresync += " " + set;
-			}
-
-			qresync += "))";
-
-			var command = string.Format ("{0} %F {1}\r\n", SelectOrExamine (access), qresync);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
-			ic.RegisterUntaggedHandler ("FETCH", QResyncFetchAsync);
-
 			if (access == FolderAccess.ReadWrite) {
 				// Note: if the server does not respond with a PERMANENTFLAGS response,
 				// then we need to assume all flags are permanent.
@@ -310,6 +280,41 @@ namespace MailKit.Net.Imap {
 			OnOpened ();
 
 			return Access;
+		}
+
+		Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
+				throw new ArgumentOutOfRangeException (nameof (access));
+
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
+
+			CheckState (false, false);
+
+			if (IsOpen && Access == access)
+				return Task.FromResult (access);
+
+			if ((Engine.Capabilities & ImapCapabilities.QuickResync) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
+
+			if (!Engine.QResyncEnabled)
+				throw new InvalidOperationException ("The QRESYNC extension has not been enabled.");
+
+			var qresync = string.Format ("(QRESYNC ({0} {1}", uidValidity, highestModSeq);
+
+			if (uids.Count > 0) {
+				var set = UniqueIdSet.ToString (uids);
+				qresync += " " + set;
+			}
+
+			qresync += "))";
+
+			var command = string.Format ("{0} %F {1}\r\n", SelectOrExamine (access), qresync);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
+			ic.RegisterUntaggedHandler ("FETCH", QResyncFetchAsync);
+
+			return OpenAsync (ic, access, doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -422,7 +427,7 @@ namespace MailKit.Net.Imap {
 			return OpenAsync (access, uidValidity, highestModSeq, uids, true, cancellationToken);
 		}
 
-		async Task<FolderAccess> OpenAsync (FolderAccess access, bool doAsync, CancellationToken cancellationToken)
+		Task<FolderAccess> OpenAsync (FolderAccess access, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException (nameof (access));
@@ -430,53 +435,13 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			if (IsOpen && Access == access)
-				return access;
+				return Task.FromResult (access);
 
 			var condstore = (Engine.Capabilities & ImapCapabilities.CondStore) != 0 ? " (CONDSTORE)" : string.Empty;
 			var command = string.Format ("{0} %F{1}\r\n", SelectOrExamine (access), condstore);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
 
-			if (access == FolderAccess.ReadWrite) {
-				// Note: if the server does not respond with a PERMANENTFLAGS response,
-				// then we need to assume all flags are permanent.
-				PermanentFlags = SettableFlags | MessageFlags.UserDefined;
-			} else {
-				PermanentFlags = MessageFlags.None;
-			}
-
-			try {
-				Engine.QueueCommand (ic);
-
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-				ProcessResponseCodes (ic, this);
-
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
-			} catch {
-				PermanentFlags = MessageFlags.None;
-				throw;
-			}
-
-			if (Engine.Selected != null && Engine.Selected != this) {
-				var folder = Engine.Selected;
-
-				folder.PermanentFlags = MessageFlags.None;
-				folder.AcceptedFlags = MessageFlags.None;
-				folder.Access = FolderAccess.None;
-
-				folder.OnClosed ();
-			}
-
-			if (ic.Bye)
-				return FolderAccess.None;
-
-			Engine.State = ImapEngineState.Selected;
-			Engine.Selected = this;
-
-			OnOpened ();
-
-			return Access;
+			return OpenAsync (ic, access, doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -668,6 +633,34 @@ namespace MailKit.Net.Imap {
 			return CloseAsync (expunge, true, cancellationToken);
 		}
 
+		async Task<IMailFolder> GetCreatedFolderAsync (string encodedName, bool specialUse, bool doAsync, CancellationToken cancellationToken)
+		{
+			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
+			var list = new List<ImapFolder> ();
+			ImapFolder folder;
+
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.UserData = list;
+
+			Engine.QueueCommand (ic);
+
+			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("LIST", ic);
+
+			if ((folder = list.FirstOrDefault ()) != null) {
+				folder.ParentFolder = this;
+
+				if (specialUse)
+					Engine.AssignSpecialFolder (folder);
+			}
+
+			return folder;
+		}
+
 		async Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (name == null)
@@ -683,9 +676,7 @@ namespace MailKit.Net.Imap {
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
 			var encodedName = Engine.EncodeMailboxName (fullName);
-			var list = new List<ImapFolder> ();
 			var createName = encodedName;
-			ImapFolder folder;
 
 			if (!isMessageFolder && Engine.QuirksMode != ImapQuirksMode.GMail)
 				createName += DirectorySeparator;
@@ -699,23 +690,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok && GetResponseCode (ic, ImapResponseCodeType.AlreadyExists) == null)
 				throw ImapCommandException.Create ("CREATE", ic);
 
-			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
-			ic.UserData = list;
-
-			Engine.QueueCommand (ic);
-
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("LIST", ic);
-
-			if ((folder = list.FirstOrDefault ()) != null)
-				folder.ParentFolder = this;
-
-			return folder;
+			return await GetCreatedFolderAsync (encodedName, false, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -848,8 +823,6 @@ namespace MailKit.Net.Imap {
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
 			var command = string.Format ("CREATE %S (USE ({0}))\r\n", uses);
 			var encodedName = Engine.EncodeMailboxName (fullName);
-			var list = new List<ImapFolder> ();
-			ImapFolder folder;
 
 			var ic = Engine.QueueCommand (cancellationToken, null, command, encodedName);
 
@@ -866,25 +839,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("CREATE", ic);
 			}
 
-			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
-			ic.UserData = list;
-
-			Engine.QueueCommand (ic);
-
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("LIST", ic);
-
-			if ((folder = list.FirstOrDefault ()) != null)
-				folder.ParentFolder = this;
-
-			Engine.AssignSpecialFolders (new [] { folder });
-
-			return folder;
+			return await GetCreatedFolderAsync (encodedName, true, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>

@@ -621,7 +621,6 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			//commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"[Gmail]\"\r\n", "gmail."));
 			commands.Add (new ImapReplayCommand ("A00000005 CREATE TopLevel1\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" TopLevel1\r\n", "gmail.list-toplevel1.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 CREATE TopLevel2\r\n", ImapReplayCommandResponse.OK));
