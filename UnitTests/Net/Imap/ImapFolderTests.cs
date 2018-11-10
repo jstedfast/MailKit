@@ -791,6 +791,116 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		List<ImapReplayCommand> CreateCopyToCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN () ALL\r\n", "gmail.search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" \"Archived Messages\"\r\n", "gmail.list-archived-messages.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 UID COPY 1:3,5,7:9,11:14,26:29,31,34,41:43,50 \"Archived Messages\"\r\n", "gmail.uid-copy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000009 SEARCH UID 1:3,5,7:9,11:14,26:29,31,34,41:43,50\r\n", "gmail.get-indexes.txt"));
+			commands.Add (new ImapReplayCommand ("A00000010 COPY 1:21 \"Archived Messages\"\r\n", "gmail.uid-copy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000011 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestCopyTo ()
+		{
+			var commands = CreateCopyToCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), "Expected UIDPLUS extension");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadWrite);
+				var uids = inbox.Search (SearchQuery.All);
+
+				var archived = personal.GetSubfolder ("Archived Messages");
+
+				// Test copying using the UIDPLUS extension
+				var copied = inbox.CopyTo (uids, archived);
+
+				Assert.AreEqual (copied.Source.Count, copied.Destination.Count, "Source and Destination UID counts do not match");
+
+				// Disable UIDPLUS and try again (to test GetIndexesAsync() and CopyTo(IList<int>, IMailFolder)
+				client.Capabilities &= ~ImapCapabilities.UidPlus;
+				copied = inbox.CopyTo (uids, archived);
+
+				Assert.AreEqual (copied.Source.Count, copied.Destination.Count, "Source and Destination UID counts do not match");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestCopyToAsync ()
+		{
+			var commands = CreateCopyToCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), "Expected UIDPLUS extension");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+				var uids = await inbox.SearchAsync (SearchQuery.All);
+
+				var archived = await personal.GetSubfolderAsync ("Archived Messages");
+
+				// Test copying using the UIDPLUS extension
+				var copied = await inbox.CopyToAsync (uids, archived);
+
+				Assert.AreEqual (copied.Source.Count, copied.Destination.Count, "Source and Destination UID counts do not match");
+
+				// Disable UIDPLUS and try again (to test GetIndexesAsync() and CopyTo(IList<int>, IMailFolder)
+				client.Capabilities &= ~ImapCapabilities.UidPlus;
+				copied = await inbox.CopyToAsync (uids, archived);
+
+				Assert.AreEqual (copied.Source.Count, copied.Destination.Count, "Source and Destination UID counts do not match");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		[Test]
 		public void TestCountChanged ()
 		{

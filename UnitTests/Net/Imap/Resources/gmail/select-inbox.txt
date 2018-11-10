@@ -1,0 +1,8 @@
+* FLAGS (\Answered \Flagged \Draft \Deleted \Seen $Junk $MailFlagBit0 $NotJunk $NotPhishing $Phishing JunkRecorded)
+* OK [PERMANENTFLAGS (\Answered \Flagged \Draft \Deleted \Seen $Junk $MailFlagBit0 $NotJunk $NotPhishing $Phishing JunkRecorded \*)] Flags permitted.
+* OK [UIDVALIDITY 81] UIDs valid.
+* 0 EXISTS
+* 0 RECENT
+* OK [UIDNEXT 1] Predicted next UID.
+* OK [HIGHESTMODSEQ 126550]
+A######## OK [READ-WRITE] TopLevel1/SubLevel1 selected. (Success)

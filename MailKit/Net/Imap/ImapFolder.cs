@@ -4419,6 +4419,34 @@ namespace MailKit.Net.Imap {
 			return AppendAsync (options, messages, flags, dates, true, cancellationToken, progress);
 		}
 
+		async Task<IList<int>> GetIndexesAsync (IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)
+		{
+			var command = string.Format ("SEARCH UID {0}\r\n", uids);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var results = new SearchResults ();
+
+			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
+
+			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
+			ic.UserData = results;
+
+			Engine.QueueCommand (ic);
+
+			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("SEARCH", ic);
+
+			var indexes = new int[results.UniqueIds.Count];
+			for (int i = 0; i < indexes.Length; i++)
+				indexes[i] = (int) results.UniqueIds[i].Id - 1;
+
+			return indexes;
+		}
+
 		async Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (uids == null)
@@ -4436,7 +4464,7 @@ namespace MailKit.Net.Imap {
 				return UniqueIdMap.Empty;
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				var indexes = (await FetchAsync (uids, MessageSummaryItems.UniqueId, doAsync, cancellationToken).ConfigureAwait (false)).Select (x => x.Index).ToList ();
+				var indexes = await GetIndexesAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
 				await CopyToAsync (indexes, destination, doAsync, cancellationToken).ConfigureAwait (false);
 				return UniqueIdMap.Empty;
 			}
@@ -4583,7 +4611,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				var indexes = (await FetchAsync (uids, MessageSummaryItems.UniqueId, doAsync, cancellationToken).ConfigureAwait (false)).Select (x => x.Index).ToList ();
+				var indexes = await GetIndexesAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
 				await MoveToAsync (indexes, destination, doAsync, cancellationToken).ConfigureAwait (false);
 				await ExpungeAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
 				return UniqueIdMap.Empty;
