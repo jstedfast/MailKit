@@ -687,7 +687,7 @@ namespace MailKit.Net.Imap {
 			var createName = encodedName;
 			ImapFolder folder;
 
-			if (!isMessageFolder)
+			if (!isMessageFolder && Engine.QuirksMode != ImapQuirksMode.GMail)
 				createName += DirectorySeparator;
 
 			var ic = Engine.QueueCommand (cancellationToken, null, "CREATE %S\r\n", createName);
