@@ -214,6 +214,16 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
+		static ImapFolder GetFolder (List<ImapFolder> folders, string encodedName)
+		{
+			for (int i = 0; i < folders.Count; i++) {
+				if (folders[i].EncodedName == encodedName)
+					return folders[i];
+			}
+
+			return null;
+		}
+
 		#region IMailFolder implementation
 
 		/// <summary>
@@ -651,7 +661,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
-			if ((folder = list.FirstOrDefault ()) != null) {
+			if ((folder = GetFolder (list, encodedName)) != null) {
 				folder.ParentFolder = this;
 
 				if (specialUse)
@@ -1550,10 +1560,10 @@ namespace MailKit.Net.Imap {
 			var fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
 			var encodedName = Engine.EncodeMailboxName (fullName);
 			List<ImapFolder> list;
-			ImapFolder subfolder;
+			ImapFolder folder;
 
-			if (Engine.GetCachedFolder (encodedName, out subfolder))
-				return subfolder;
+			if (Engine.GetCachedFolder (encodedName, out folder))
+				return folder;
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
@@ -1568,10 +1578,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
-			if (list.Count == 0)
-				throw new FolderNotFoundException (fullName);
+			if ((folder = GetFolder (list, encodedName)) != null)
+				return folder;
 
-			return list[0];
+			throw new FolderNotFoundException (fullName);
 		}
 
 		/// <summary>
