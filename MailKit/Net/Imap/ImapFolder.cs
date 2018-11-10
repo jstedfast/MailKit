@@ -204,6 +204,16 @@ namespace MailKit.Net.Imap {
 				throw new FolderNotFoundException (folder.FullName);
 		}
 
+		static ImapResponseCode GetResponseCode (ImapCommand ic, ImapResponseCodeType type)
+		{
+			for (int i = 0; i < ic.RespCodes.Count; i++) {
+				if (ic.RespCodes[i].Type == type)
+					return ic.RespCodes[i];
+			}
+
+			return null;
+		}
+
 		#region IMailFolder implementation
 
 		/// <summary>
@@ -686,7 +696,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok && GetResponseCode (ic, ImapResponseCodeType.AlreadyExists) != null)
 				throw ImapCommandException.Create ("CREATE", ic);
 
 			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
@@ -848,7 +858,7 @@ namespace MailKit.Net.Imap {
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok) {
-				var useAttr = ic.RespCodes.FirstOrDefault (rc => rc.Type == ImapResponseCodeType.UseAttr);
+				var useAttr = GetResponseCode (ic, ImapResponseCodeType.UseAttr);
 
 				if (useAttr != null)
 					throw new ImapCommandException (ic.Response, useAttr.Message);
@@ -2878,12 +2888,9 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
 
-			if (ic.RespCodes.Count > 0 && ic.RespCodes[ic.RespCodes.Count - 1].Type == ImapResponseCodeType.Metadata) {
-				var metadata = (MetadataResponseCode) ic.RespCodes[ic.RespCodes.Count - 1];
-
-				if (metadata.SubType == MetadataResponseCodeSubType.LongEntries)
-					options.LongEntries = metadata.Value;
-			}
+			var metadata = (MetadataResponseCode) GetResponseCode (ic, ImapResponseCodeType.Metadata);
+			if (metadata != null && metadata.SubType == MetadataResponseCodeSubType.LongEntries)
+				options.LongEntries = metadata.Value;
 
 			return (MetadataCollection) ic.UserData;
 		}
@@ -3771,7 +3778,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
 
-			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+			var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
 
 			if (append != null)
 				return append.UidSet[0];
@@ -3915,7 +3922,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
 
-			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+			var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
 
 			if (append != null)
 				return append.UidSet[0];
@@ -4105,7 +4112,7 @@ namespace MailKit.Net.Imap {
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
 
-				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+				var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
 
 				if (append != null)
 					return append.UidSet;
@@ -4298,7 +4305,7 @@ namespace MailKit.Net.Imap {
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
 
-				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+				var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
 
 				if (append != null)
 					return append.UidSet;
@@ -4480,7 +4487,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("COPY", ic);
 
-			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+			var copy = (CopyUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.CopyUid);
 
 			if (copy != null)
 				return new UniqueIdMap (copy.SrcUidSet, copy.DestUidSet);
@@ -4642,7 +4649,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("MOVE", ic);
 
-			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+			var copy = (CopyUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.CopyUid);
 
 			if (copy != null)
 				return new UniqueIdMap (copy.SrcUidSet, copy.DestUidSet);
