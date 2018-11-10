@@ -736,11 +736,11 @@ namespace UnitTests.Net.Imap {
 				int top1Renamed = 0, top2Renamed = 0, sub1Renamed = 0, sub2Renamed = 0;
 				int top1Deleted = 0, top2Deleted = 0, sub1Deleted = 0, sub2Deleted = 0;
 				int top1Closed = 0, top2Closed = 0, sub1Closed = 0, sub2Closed = 0;
-				var personal = client.GetFolder (client.PersonalNamespaces [0]);
-				var toplevel1 = personal.Create ("TopLevel1", false);
-				var toplevel2 = personal.Create ("TopLevel2", false);
-				var sublevel1 = toplevel1.Create ("SubLevel1", true);
-				var sublevel2 = toplevel2.Create ("SubLevel2", true);
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var toplevel1 = await personal.CreateAsync ("TopLevel1", false);
+				var toplevel2 = await personal.CreateAsync ("TopLevel2", false);
+				var sublevel1 = await toplevel1.CreateAsync ("SubLevel1", true);
+				var sublevel2 = await toplevel2.CreateAsync ("SubLevel2", true);
 
 				toplevel1.Renamed += (o, e) => { top1Renamed++; };
 				toplevel2.Renamed += (o, e) => { top2Renamed++; };
