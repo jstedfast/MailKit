@@ -612,6 +612,179 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		List<ImapReplayCommand> CreateCreateRenameDeleteCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			//commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"[Gmail]\"\r\n", "gmail."));
+			commands.Add (new ImapReplayCommand ("A00000005 CREATE TopLevel1\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" TopLevel1\r\n", "gmail.list-toplevel1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 CREATE TopLevel2\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000008 LIST \"\" TopLevel2\r\n", "gmail.list-toplevel2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000009 CREATE TopLevel1/SubLevel1\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000010 LIST \"\" TopLevel1/SubLevel1\r\n", "gmail.list-sublevel1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000011 CREATE TopLevel2/SubLevel2\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000012 LIST \"\" TopLevel2/SubLevel2\r\n", "gmail.list-sublevel2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000013 SELECT TopLevel1/SubLevel1 (CONDSTORE)\r\n", "gmail.select-sublevel1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000014 RENAME TopLevel1/SubLevel1 TopLevel2/SubLevel1\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000015 DELETE TopLevel1\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000016 SELECT TopLevel2/SubLevel2 (CONDSTORE)\r\n", "gmail.select-sublevel2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000017 RENAME TopLevel2 TopLevel\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000018 DELETE TopLevel\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000019 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestCreateRenameDelete ()
+		{
+			var commands = CreateCreateRenameDeleteCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				int top1Renamed = 0, top2Renamed = 0, sub1Renamed = 0, sub2Renamed = 0;
+				int top1Deleted = 0, top2Deleted = 0, sub1Deleted = 0, sub2Deleted = 0;
+				int top1Closed = 0, top2Closed = 0, sub1Closed = 0, sub2Closed = 0;
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var toplevel1 = personal.Create ("TopLevel1", false);
+				var toplevel2 = personal.Create ("TopLevel2", false);
+				var sublevel1 = toplevel1.Create ("SubLevel1", true);
+				var sublevel2 = toplevel2.Create ("SubLevel2", true);
+
+				toplevel1.Renamed += (o, e) => { top1Renamed++; };
+				toplevel2.Renamed += (o, e) => { top2Renamed++; };
+				sublevel1.Renamed += (o, e) => { sub1Renamed++; };
+				sublevel2.Renamed += (o, e) => { sub2Renamed++; };
+
+				toplevel1.Deleted += (o, e) => { top1Deleted++; };
+				toplevel2.Deleted += (o, e) => { top2Deleted++; };
+				sublevel1.Deleted += (o, e) => { sub1Deleted++; };
+				sublevel2.Deleted += (o, e) => { sub2Deleted++; };
+
+				toplevel1.Closed += (o, e) => { top1Closed++; };
+				toplevel2.Closed += (o, e) => { top2Closed++; };
+				sublevel1.Closed += (o, e) => { sub1Closed++; };
+				sublevel2.Closed += (o, e) => { sub2Closed++; };
+
+				sublevel1.Open (FolderAccess.ReadWrite);
+				sublevel1.Rename (toplevel2, "SubLevel1");
+
+				Assert.AreEqual (1, sub1Renamed, "SubLevel1 folder should have received a Renamed event");
+				Assert.AreEqual (1, sub1Closed, "SubLevel1 should have received a Closed event");
+				Assert.IsFalse (sublevel1.IsOpen, "SubLevel1 should be closed after being renamed");
+
+				toplevel1.Delete ();
+				Assert.AreEqual (1, top1Deleted, "TopLevel1 should have received a Deleted event");
+				Assert.IsFalse (toplevel1.Exists, "TopLevel1.Exists");
+
+				sublevel2.Open (FolderAccess.ReadWrite);
+				toplevel2.Rename (personal, "TopLevel");
+
+				Assert.AreEqual (2, sub1Renamed, "SubLevel1 folder should have received a Renamed event");
+				Assert.AreEqual (1, sub2Renamed, "SubLevel2 folder should have received a Renamed event");
+				Assert.AreEqual (1, sub2Closed, "SubLevel2 should have received a Closed event");
+				Assert.IsFalse (sublevel2.IsOpen, "SubLevel2 should be closed after being renamed");
+				Assert.AreEqual (1, top2Renamed, "TopLevel2 folder should have received a Renamed event");
+
+				toplevel2.Delete ();
+				Assert.AreEqual (1, top2Deleted, "TopLevel2 should have received a Deleted event");
+				Assert.IsFalse (toplevel2.Exists, "TopLevel2.Exists");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestCreateRenameDeleteAsync ()
+		{
+			var commands = CreateCreateRenameDeleteCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				int top1Renamed = 0, top2Renamed = 0, sub1Renamed = 0, sub2Renamed = 0;
+				int top1Deleted = 0, top2Deleted = 0, sub1Deleted = 0, sub2Deleted = 0;
+				int top1Closed = 0, top2Closed = 0, sub1Closed = 0, sub2Closed = 0;
+				var personal = client.GetFolder (client.PersonalNamespaces [0]);
+				var toplevel1 = personal.Create ("TopLevel1", false);
+				var toplevel2 = personal.Create ("TopLevel2", false);
+				var sublevel1 = toplevel1.Create ("SubLevel1", true);
+				var sublevel2 = toplevel2.Create ("SubLevel2", true);
+
+				toplevel1.Renamed += (o, e) => { top1Renamed++; };
+				toplevel2.Renamed += (o, e) => { top2Renamed++; };
+				sublevel1.Renamed += (o, e) => { sub1Renamed++; };
+				sublevel2.Renamed += (o, e) => { sub2Renamed++; };
+
+				toplevel1.Deleted += (o, e) => { top1Deleted++; };
+				toplevel2.Deleted += (o, e) => { top2Deleted++; };
+				sublevel1.Deleted += (o, e) => { sub1Deleted++; };
+				sublevel2.Deleted += (o, e) => { sub2Deleted++; };
+
+				toplevel1.Closed += (o, e) => { top1Closed++; };
+				toplevel2.Closed += (o, e) => { top2Closed++; };
+				sublevel1.Closed += (o, e) => { sub1Closed++; };
+				sublevel2.Closed += (o, e) => { sub2Closed++; };
+
+				await sublevel1.OpenAsync (FolderAccess.ReadWrite);
+				await sublevel1.RenameAsync (toplevel2, "SubLevel1");
+
+				Assert.AreEqual (1, sub1Renamed, "SubLevel1 folder should have received a Renamed event");
+				Assert.AreEqual (1, sub1Closed, "SubLevel1 should have received a Closed event");
+				Assert.IsFalse (sublevel1.IsOpen, "SubLevel1 should be closed after being renamed");
+
+				await toplevel1.DeleteAsync ();
+				Assert.AreEqual (1, top1Deleted, "TopLevel1 should have received a Deleted event");
+				Assert.IsFalse (toplevel1.Exists, "TopLevel1.Exists");
+
+				await sublevel2.OpenAsync (FolderAccess.ReadWrite);
+				await toplevel2.RenameAsync (personal, "TopLevel");
+
+				Assert.AreEqual (2, sub1Renamed, "SubLevel1 folder should have received a Renamed event");
+				Assert.AreEqual (1, sub2Renamed, "SubLevel2 folder should have received a Renamed event");
+				Assert.AreEqual (1, sub2Closed, "SubLevel2 should have received a Closed event");
+				Assert.IsFalse (sublevel2.IsOpen, "SubLevel2 should be closed after being renamed");
+				Assert.AreEqual (1, top2Renamed, "TopLevel2 folder should have received a Renamed event");
+
+				await toplevel2.DeleteAsync ();
+				Assert.AreEqual (1, top2Deleted, "TopLevel2 should have received a Deleted event");
+				Assert.IsFalse (toplevel2.Exists, "TopLevel2.Exists");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		[Test]
 		public void TestCountChanged ()
 		{
@@ -636,9 +809,6 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				// Note: Do not try XOAUTH2
-				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -686,9 +856,6 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				// Note: Do not try XOAUTH2
-				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
