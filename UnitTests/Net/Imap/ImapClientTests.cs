@@ -95,16 +95,6 @@ namespace UnitTests.Net.Imap {
 			return GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + name);
 		}
 
-		static string HexEncode (byte[] digest)
-		{
-			var hex = new StringBuilder ();
-
-			for (int i = 0; i < digest.Length; i++)
-				hex.Append (digest[i].ToString ("x2"));
-
-			return hex.ToString ();
-		}
-
 		static void GetStreamsCallback (ImapFolder folder, int index, UniqueId uid, Stream stream)
 		{
 			using (var reader = new StreamReader (stream)) {

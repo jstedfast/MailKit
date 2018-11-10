@@ -47,6 +47,30 @@ namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapFolderFetchTests
 	{
+		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
+		{
+			switch (special) {
+			case SpecialFolder.All:     return FolderAttributes.All;
+			case SpecialFolder.Archive: return FolderAttributes.Archive;
+			case SpecialFolder.Drafts:  return FolderAttributes.Drafts;
+			case SpecialFolder.Flagged: return FolderAttributes.Flagged;
+			case SpecialFolder.Junk:    return FolderAttributes.Junk;
+			case SpecialFolder.Sent:    return FolderAttributes.Sent;
+			case SpecialFolder.Trash:   return FolderAttributes.Trash;
+			default: throw new ArgumentOutOfRangeException ();
+			}
+		}
+
+		static string HexEncode (byte [] digest)
+		{
+			var hex = new StringBuilder ();
+
+			for (int i = 0; i < digest.Length; i++)
+				hex.Append (digest[i].ToString ("x2"));
+
+			return hex.ToString ();
+		}
+
 		static void GetStreamsCallback (ImapFolder folder, int index, UniqueId uid, Stream stream)
 		{
 			using (var reader = new StreamReader (stream)) {
@@ -541,16 +565,6 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
-				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
-
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
@@ -559,8 +573,6 @@ namespace UnitTests.Net.Imap {
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
-
-				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 
 				var inbox = client.Inbox;
 				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
@@ -630,16 +642,6 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
-				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
-
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
@@ -648,8 +650,6 @@ namespace UnitTests.Net.Imap {
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
-
-				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 
 				var inbox = client.Inbox;
 				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
