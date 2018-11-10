@@ -47,6 +47,8 @@ namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapFolderTests
 	{
+		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+
 		static MimeMessage CreateThreadableMessage (string subject, string msgid, string references, DateTimeOffset date)
 		{
 			var message = new MimeMessage ();
@@ -251,8 +253,158 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		List<ImapReplayCommand> CreateMultiAppendCommands (bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
+
+			var command = new StringBuilder ("A00000004 APPEND INBOX");
+			var now = DateTimeOffset.Now;
+
+			internalDates = withInternalDates ? new List<DateTimeOffset> () : null;
+			messages = new List<MimeMessage> ();
+			flags = new List<MessageFlags> ();
+
+			messages.Add (CreateThreadableMessage ("A", "<a@mimekit.net>", null, now.AddMinutes (-7)));
+			messages.Add (CreateThreadableMessage ("B", "<b@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-6)));
+			messages.Add (CreateThreadableMessage ("C", "<c@mimekit.net>", "<a@mimekit.net> <b@mimekit.net>", now.AddMinutes (-5)));
+			messages.Add (CreateThreadableMessage ("D", "<d@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-4)));
+			messages.Add (CreateThreadableMessage ("E", "<e@mimekit.net>", "<c@mimekit.net> <x@mimekit.net> <y@mimekit.net> <z@mimekit.net>", now.AddMinutes (-3)));
+			messages.Add (CreateThreadableMessage ("F", "<f@mimekit.net>", "<b@mimekit.net>", now.AddMinutes (-2)));
+			messages.Add (CreateThreadableMessage ("G", "<g@mimekit.net>", null, now.AddMinutes (-1)));
+			messages.Add (CreateThreadableMessage ("H", "<h@mimekit.net>", null, now));
+
+			for (int i = 0; i < messages.Count; i++) {
+				var message = messages[i];
+				string latin1;
+				long length;
+
+				if (withInternalDates)
+					internalDates.Add (messages[i].Date);
+				flags.Add (MessageFlags.Seen);
+
+				using (var stream = new MemoryStream ()) {
+					var options = FormatOptions.Default.Clone ();
+					options.NewLineFormat = NewLineFormat.Dos;
+
+					message.WriteTo (options, stream);
+					length = stream.Length;
+					stream.Position = 0;
+
+					using (var reader = new StreamReader (stream, Latin1))
+						latin1 = reader.ReadToEnd ();
+				}
+
+				command.Append (" (\\Seen) ");
+				if (withInternalDates)
+					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
+				command.Append ('{');
+				command.AppendFormat ("{0}+", length);
+				command.Append ("}\r\n");
+				command.Append (latin1);
+			}
+			command.Append ("\r\n");
+			commands.Add (new ImapReplayCommand (command.ToString (), "dovecot.multiappend.txt"));
+
+			for (int i = 0; i < messages.Count; i++) {
+				var message = messages[i];
+				string latin1;
+				long length;
+
+				command.Clear ();
+				command.AppendFormat ("A{0:D8} APPEND INBOX", i + 5);
+
+				using (var stream = new MemoryStream ()) {
+					var options = FormatOptions.Default.Clone ();
+					options.NewLineFormat = NewLineFormat.Dos;
+
+					message.WriteTo (options, stream);
+					length = stream.Length;
+					stream.Position = 0;
+
+					using (var reader = new StreamReader (stream, Latin1))
+						latin1 = reader.ReadToEnd ();
+				}
+
+				command.Append (" (\\Seen) ");
+				if (withInternalDates)
+					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
+				command.Append ('{');
+				command.AppendFormat ("{0}+", length);
+				command.Append ("}\r\n");
+				command.Append (latin1);
+				command.Append ("\r\n");
+				commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
+			}
+
+			commands.Add (new ImapReplayCommand ("A00000013 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[TestCase (true, TestName = "TestMultiAppendWithInternalDates")]
+		[TestCase (false, TestName = "TestMultiAppendWithoutInternalDates")]
+		public void TestMultiAppend (bool withInternalDates)
+		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+			List<DateTimeOffset> internalDates;
+			List<MimeMessage> messages;
+			List<MessageFlags> flags;
+			IList<UniqueId> uids;
+
+			var commands = CreateMultiAppendCommands (withInternalDates, out messages, out flags, out internalDates);
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), "MULTIAPPEND");
+
+				// Use MULTIAPPEND to append some test messages
+				if (withInternalDates)
+					uids = client.Inbox.Append (messages, flags, internalDates);
+				else
+					uids = client.Inbox.Append (messages, flags);
+				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+
+				// Disable the MULTIAPPEND extension and do it again
+				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				if (withInternalDates)
+					uids = client.Inbox.Append (messages, flags, internalDates);
+				else
+					uids = client.Inbox.Append (messages, flags);
+
+				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+
+				client.Disconnect (true);
+			}
+		}
+
 		[Test]
-		public void TestMessageCount ()
+		public void TestCountChanged ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -265,6 +417,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
 			// next command simulates one expunge + one new message
 			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", "gmail.count.noop.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -296,12 +449,12 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (1, count, "Count is not correct");
 
-				client.Disconnect (false);
+				client.Disconnect (true);
 			}
 		}
 
 		[Test]
-		public async void TestMessageCountAsync ()
+		public async void TestCountChangedAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -314,6 +467,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
 			// next command simulates one expunge + one new message
 			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", "gmail.count.noop.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -345,7 +499,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (1, count, "Count is not correct");
 
-				await client.DisconnectAsync (false);
+				await client.DisconnectAsync (true);
 			}
 		}
 	}
