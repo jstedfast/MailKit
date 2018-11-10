@@ -403,6 +403,63 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		[TestCase (true, TestName = "TestMultiAppendWithInternalDatesAsync")]
+		[TestCase (false, TestName = "TestMultiAppendWithoutInternalDatesAsync")]
+		public async void TestMultiAppendAsync (bool withInternalDates)
+		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+			List<DateTimeOffset> internalDates;
+			List<MimeMessage> messages;
+			List<MessageFlags> flags;
+			IList<UniqueId> uids;
+
+			var commands = CreateMultiAppendCommands (withInternalDates, out messages, out flags, out internalDates);
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), "MULTIAPPEND");
+
+				// Use MULTIAPPEND to append some test messages
+				if (withInternalDates)
+					uids = await client.Inbox.AppendAsync (messages, flags, internalDates);
+				else
+					uids = await client.Inbox.AppendAsync (messages, flags);
+				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+
+				// Disable the MULTIAPPEND extension and do it again
+				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				if (withInternalDates)
+					uids = await client.Inbox.AppendAsync (messages, flags, internalDates);
+				else
+					uids = await client.Inbox.AppendAsync (messages, flags);
+
+				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		[Test]
 		public void TestCountChanged ()
 		{
