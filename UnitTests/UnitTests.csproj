@@ -344,6 +344,10 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-personal.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-sublevel1.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-sublevel2.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-toplevel1.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-toplevel2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests-dummy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\logout.txt" />
@@ -353,6 +357,8 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\rename-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search-summary.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\select-sublevel1.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\select-sublevel2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-labels.txt" />
