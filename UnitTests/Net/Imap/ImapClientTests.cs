@@ -187,6 +187,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((string) null));
 				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((FolderNamespace) null));
+				Assert.Throws<ArgumentNullException> (async () => await client.GetFolderAsync ((string) null));
 				Assert.Throws<ArgumentNullException> (() => client.GetFolders (null));
 				Assert.Throws<ArgumentNullException> (() => client.GetFolders (null, false));
 				Assert.Throws<ArgumentNullException> (async () => await client.GetFoldersAsync (null));
