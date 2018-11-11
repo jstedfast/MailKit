@@ -1059,7 +1059,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN () ALL\r\n", "gmail.search.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK));
 			if (!disableUidPlus) {
-				commands.Add (new ImapReplayCommand ("A00000008 UID EXPUNGE 1:3\r\n", "gmail.uid-expunge.txt"));
+				commands.Add (new ImapReplayCommand ("A00000008 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt"));
 				commands.Add (new ImapReplayCommand ("A00000009 LOGOUT\r\n", "gmail.logout.txt"));
 			} else {
 				commands.Add (new ImapReplayCommand ("A00000008 UID SEARCH RETURN () DELETED NOT UID 1:3\r\n", "gmail.search-deleted-not-1-3.txt"));
