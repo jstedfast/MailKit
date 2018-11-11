@@ -36,6 +36,8 @@ using NUnit.Framework;
 using MimeKit.IO;
 using MimeKit.IO.Filters;
 
+using MailKit;
+
 namespace UnitTests.Net.Imap {
 	enum ImapReplayCommandResponse {
 		OK,
@@ -140,19 +142,36 @@ namespace UnitTests.Net.Imap {
 
 	class ImapReplayCommand
 	{
+		public byte[] CommandBuffer { get; private set; }
 		public string Command { get; private set; }
 		public byte[] Response { get; private set; }
+		public bool Compressed { get; private set; }
 
-		public ImapReplayCommand (string command, byte[] response)
+		public ImapReplayCommand (string command, byte[] response, bool compressed = false)
 		{
 			Command = command;
 			Response = response;
+			Compressed = compressed;
+			CommandBuffer = Encoding.UTF8.GetBytes (command);
+
+			if (compressed) {
+				using (var memory = new MemoryStream ()) {
+					using (var compress = new CompressedStream (memory)) {
+						compress.Write (CommandBuffer, 0, CommandBuffer.Length);
+						compress.Flush ();
+
+						CommandBuffer = memory.ToArray ();
+					}
+				}
+			}
 		}
 
-		public ImapReplayCommand (string command, string resource)
+		public ImapReplayCommand (string command, string resource, bool compressed = false)
 		{
 			string tag = null;
 
+			CommandBuffer = Encoding.UTF8.GetBytes (command);
+			Compressed = compressed;
 			Command = command;
 
 			if (command.StartsWith ("A00000", StringComparison.Ordinal))
@@ -160,53 +179,107 @@ namespace UnitTests.Net.Imap {
 
 			using (var stream = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + resource)) {
 				using (var memory = new MemoryBlockStream ()) {
-					using (var filtered = new FilteredStream (memory)) {
-						if (tag != null)
-							filtered.Add (new ImapReplayFilter ("A########", tag));
+					using (Stream compress = new CompressedStream (memory)) {
+						using (var filtered = new FilteredStream (compressed ? compress : memory)) {
+							if (tag != null)
+								filtered.Add (new ImapReplayFilter ("A########", tag));
 
-						filtered.Add (new Unix2DosFilter ());
-						stream.CopyTo (filtered, 4096);
-						filtered.Flush ();
+							filtered.Add (new Unix2DosFilter ());
+							stream.CopyTo (filtered, 4096);
+							filtered.Flush ();
+						}
+
+						Response = memory.ToArray ();
 					}
+				}
+			}
 
-					Response = memory.ToArray ();
+			if (compressed) {
+				using (var memory = new MemoryStream ()) {
+					using (var compress = new CompressedStream (memory)) {
+						compress.Write (CommandBuffer, 0, CommandBuffer.Length);
+						compress.Flush ();
+
+						CommandBuffer = memory.ToArray ();
+					}
 				}
 			}
 		}
 
-		public ImapReplayCommand (string tag, string command, string resource)
+		public ImapReplayCommand (string tag, string command, string resource, bool compressed = false)
 		{
+			CommandBuffer = Encoding.UTF8.GetBytes (command);
+			Compressed = compressed;
 			Command = command;
 
 			using (var stream = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + resource)) {
 				using (var memory = new MemoryBlockStream ()) {
-					using (var filtered = new FilteredStream (memory)) {
-						filtered.Add (new ImapReplayFilter ("A########", tag));
-						filtered.Add (new Unix2DosFilter ());
-						stream.CopyTo (filtered, 4096);
-						filtered.Flush ();
-					}
+					using (Stream compress = new CompressedStream (memory)) {
+						using (var filtered = new FilteredStream (compressed ? compress : memory)) {
+							filtered.Add (new ImapReplayFilter ("A########", tag));
+							filtered.Add (new Unix2DosFilter ());
+							stream.CopyTo (filtered, 4096);
+							filtered.Flush ();
+						}
 
-					Response = memory.ToArray ();
+						Response = memory.ToArray ();
+					}
+				}
+			}
+
+			if (compressed) {
+				using (var memory = new MemoryStream ()) {
+					using (var compress = new CompressedStream (memory)) {
+						compress.Write (CommandBuffer, 0, CommandBuffer.Length);
+						compress.Flush ();
+
+						CommandBuffer = memory.ToArray ();
+					}
 				}
 			}
 		}
 
-		public ImapReplayCommand (string command, ImapReplayCommandResponse response)
+		public ImapReplayCommand (string command, ImapReplayCommandResponse response, bool compressed = false)
 		{
+			CommandBuffer = Encoding.UTF8.GetBytes (command);
+			Compressed = compressed;
+			Command = command;
+
+			string text;
+
 			if (response == ImapReplayCommandResponse.Plus) {
-				Response = Encoding.ASCII.GetBytes ("+\r\n");
-				Command = command;
-				return;
+				text = "+\r\n";
+			} else {
+				var tokens = command.Split (' ');
+				var cmd = (tokens [1] == "UID" ? tokens [2] : tokens [1]).TrimEnd ();
+				var tag = tokens [0];
+
+				text = string.Format ("{0} {1} {2} completed\r\n", tag, response, cmd);
 			}
 
-			var tokens = command.Split (' ');
-			var cmd = (tokens[1] == "UID" ? tokens[2] : tokens[1]).TrimEnd ();
-			var tag = tokens[0];
+			if (compressed) {
+				using (var memory = new MemoryStream ()) {
+					using (var compress = new CompressedStream (memory)) {
+						var buffer = Encoding.ASCII.GetBytes (text);
 
-			var text = string.Format ("{0} {1} {2} completed\r\n", tag, response, cmd);
-			Response = Encoding.ASCII.GetBytes (text);
-			Command = command;
+						compress.Write (buffer, 0, buffer.Length);
+						compress.Flush ();
+
+						Response = memory.ToArray ();
+					}
+				}
+
+				using (var memory = new MemoryStream ()) {
+					using (var compress = new CompressedStream (memory)) {
+						compress.Write (CommandBuffer, 0, CommandBuffer.Length);
+						compress.Flush ();
+
+						CommandBuffer = memory.ToArray ();
+					}
+				}
+			} else {
+				Response = Encoding.ASCII.GetBytes (text);
+			}
 		}
 	}
 
@@ -293,7 +366,7 @@ namespace UnitTests.Net.Imap {
 			}
 
 			if (state != ImapReplayState.SendResponse) {
-				var command = Latin1.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+				var command = GetSentCommand ();
 
 				Assert.AreEqual (ImapReplayState.SendResponse, state, "Trying to read before command received. Sent so far: {0}", command);
 			}
@@ -324,7 +397,7 @@ namespace UnitTests.Net.Imap {
 		{
 			MemoryStream memory;
 
-			if (testUnixFormat) {
+			if (testUnixFormat && !command.Compressed) {
 				memory = new MemoryStream ();
 
 				using (var filtered = new FilteredStream (memory)) {
@@ -339,6 +412,22 @@ namespace UnitTests.Net.Imap {
 			}
 
 			return memory;
+		}
+
+		string GetSentCommand ()
+		{
+			if (!commands[index].Compressed)
+				return Latin1.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+
+			using (var memory = new MemoryStream (sent.GetBuffer (), 0, (int) sent.Length)) {
+				using (var compressed = new CompressedStream (memory)) {
+					using (var decompressed = new MemoryStream ()) {
+						compressed.CopyTo (decompressed, 4096);
+
+						return Latin1.GetString (decompressed.GetBuffer (), 0, (int) decompressed.Length);
+					}
+				}
+			}
 		}
 
 		public override void Write (byte[] buffer, int offset, int count)
@@ -358,8 +447,8 @@ namespace UnitTests.Net.Imap {
 
 			sent.Write (buffer, offset, count);
 
-			if (sent.Length >= commands[index].Command.Length) {
-				var command = Latin1.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+			if (sent.Length >= commands[index].CommandBuffer.Length) {
+				var command = GetSentCommand ();
 
 				Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
 

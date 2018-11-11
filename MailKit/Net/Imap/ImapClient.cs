@@ -293,11 +293,6 @@ namespace MailKit.Net.Imap {
 			}
 
 			engine.Stream.Stream = new CompressedStream (engine.Stream.Stream);
-
-			// Query the CAPABILITIES again if the server did not include an
-			// untagged CAPABILITIES response to the COMPRESS command.
-			if (engine.CapabilitiesVersion == capabilitiesVersion)
-				await engine.QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>

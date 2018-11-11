@@ -3095,7 +3095,7 @@ namespace UnitTests.Net.Imap {
 
 					Assert.AreEqual (21, expunged, "Unexpected number of Expunged events");
 					Assert.AreEqual (23, count, "Unexpected number of CountChanged events");
-					Assert.AreEqual (21, flags, "Unexpected number of FlagsCHanged events");
+					Assert.AreEqual (21, flags, "Unexpected number of FlagsChanged events");
 					Assert.AreEqual (1, inbox.Count, "Count");
 				}
 
@@ -3152,9 +3152,116 @@ namespace UnitTests.Net.Imap {
 
 					Assert.AreEqual (21, expunged, "Unexpected number of Expunged events");
 					Assert.AreEqual (23, count, "Unexpected number of CountChanged events");
-					Assert.AreEqual (21, flags, "Unexpected number of FlagsCHanged events");
+					Assert.AreEqual (21, flags, "Unexpected number of FlagsChanged events");
 					Assert.AreEqual (1, inbox.Count, "Count");
 				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		List<ImapReplayCommand> CreateCompressCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000006 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt", true));
+			commands.Add (new ImapReplayCommand ("A00000007 UID SEARCH RETURN () ALL\r\n", "gmail.search.txt", true));
+			commands.Add (new ImapReplayCommand ("A00000008 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK, true));
+			commands.Add (new ImapReplayCommand ("A00000009 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt", true));
+			commands.Add (new ImapReplayCommand ("A00000010 LOGOUT\r\n", "gmail.logout.txt", true));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestCompress ()
+		{
+			var commands = CreateCompressCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				client.Compress ();
+
+				int changed = 0, expunged = 0;
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadWrite);
+
+				inbox.MessageExpunged += (o, e) => { expunged++; Assert.AreEqual (0, e.Index, "Expunged event message index"); };
+				inbox.CountChanged += (o, e) => { changed++; };
+
+				var uids = inbox.Search (SearchQuery.All);
+				inbox.AddFlags (uids, MessageFlags.Deleted, true);
+
+				uids = new UniqueIdRange (0, 1, 3);
+				inbox.Expunge (uids);
+
+				Assert.AreEqual (3, expunged, "Unexpected number of Expunged events");
+				Assert.AreEqual (4, changed, "Unexpected number of CountChanged events");
+				Assert.AreEqual (18, inbox.Count, "Count");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestCompressAsync ()
+		{
+			var commands = CreateCompressCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				await client.CompressAsync ();
+
+				int changed = 0, expunged = 0;
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				inbox.MessageExpunged += (o, e) => { expunged++; Assert.AreEqual (0, e.Index, "Expunged event message index"); };
+				inbox.CountChanged += (o, e) => { changed++; };
+
+				var uids = await inbox.SearchAsync (SearchQuery.All);
+				await inbox.AddFlagsAsync (uids, MessageFlags.Deleted, true);
+
+				uids = new UniqueIdRange (0, 1, 3);
+				await inbox.ExpungeAsync (uids);
+
+				Assert.AreEqual (3, expunged, "Unexpected number of Expunged events");
+				Assert.AreEqual (4, changed, "Unexpected number of CountChanged events");
+				Assert.AreEqual (18, inbox.Count, "Count");
 
 				await client.DisconnectAsync (true);
 			}
