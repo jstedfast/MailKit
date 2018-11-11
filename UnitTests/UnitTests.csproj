@@ -477,9 +477,6 @@
     <EmbeddedResource Include="Net\Smtp\Resources\pipelined-mail-from-rcpt-to.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-expn.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-vrfy.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-level1.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-level2.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-level3.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
