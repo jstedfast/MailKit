@@ -3029,6 +3029,117 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		List<ImapReplayCommand> CreateGetFolderCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" Level1/Level2/Level3\r\n", "gmail.list-level3.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" Level1/Level2\r\n", "gmail.list-level2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" Level1\r\n", "gmail.list-level1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestGetFolder ()
+		{
+			var commands = CreateGetFolderCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var level3 = client.GetFolder ("Level1/Level2/Level3");
+				Assert.AreEqual ("Level1/Level2/Level3", level3.FullName);
+				Assert.AreEqual ("Level3", level3.Name);
+				Assert.AreEqual ('/', level3.DirectorySeparator);
+				Assert.AreEqual (FolderAttributes.HasNoChildren, level3.Attributes);
+
+				var level2 = level3.ParentFolder;
+				Assert.AreEqual ("Level1/Level2", level2.FullName);
+				Assert.AreEqual ("Level2", level2.Name);
+				Assert.AreEqual ('/', level2.DirectorySeparator);
+				Assert.AreEqual (FolderAttributes.HasChildren, level2.Attributes);
+
+				var level1 = level2.ParentFolder;
+				Assert.AreEqual ("Level1", level1.FullName);
+				Assert.AreEqual ("Level1", level1.Name);
+				Assert.AreEqual ('/', level1.DirectorySeparator);
+				Assert.AreEqual (FolderAttributes.HasChildren, level1.Attributes);
+
+				var personal = level1.ParentFolder;
+				Assert.AreEqual (string.Empty, personal.FullName);
+				Assert.AreEqual (string.Empty, personal.Name);
+				Assert.IsTrue (personal.IsNamespace, "IsNamespace");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestGetFolderAsync ()
+		{
+			var commands = CreateGetFolderCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var level3 = await client.GetFolderAsync ("Level1/Level2/Level3");
+				Assert.AreEqual ("Level1/Level2/Level3", level3.FullName);
+				Assert.AreEqual ("Level3", level3.Name);
+				Assert.AreEqual ('/', level3.DirectorySeparator);
+				Assert.AreEqual (FolderAttributes.HasNoChildren, level3.Attributes);
+
+				var level2 = level3.ParentFolder;
+				Assert.AreEqual ("Level1/Level2", level2.FullName);
+				Assert.AreEqual ("Level2", level2.Name);
+				Assert.AreEqual ('/', level2.DirectorySeparator);
+				Assert.AreEqual (FolderAttributes.HasChildren, level2.Attributes);
+
+				var level1 = level2.ParentFolder;
+				Assert.AreEqual ("Level1", level1.FullName);
+				Assert.AreEqual ("Level1", level1.Name);
+				Assert.AreEqual ('/', level1.DirectorySeparator);
+				Assert.AreEqual (FolderAttributes.HasChildren, level1.Attributes);
+
+				var personal = level1.ParentFolder;
+				Assert.AreEqual (string.Empty, personal.FullName);
+				Assert.AreEqual (string.Empty, personal.Name);
+				Assert.IsTrue (personal.IsNamespace, "IsNamespace");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		List<ImapReplayCommand> CreateIdleCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
