@@ -948,8 +948,7 @@ namespace MailKit.Net.Smtp {
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 #if !NETFX_CORE
-			var socket = await SocketUtils.ConnectAsync (host, port, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
-
+			var socket = await ConnectSocket (host, port, doAsync, cancellationToken).ConfigureAwait (false);
 			this.host = host;
 
 			if (options == SecureSocketOptions.SslOnConnect) {

@@ -27,7 +27,7 @@
 using System;
 using System.Net;
 
-namespace MailKit.Net
+namespace MailKit.Net.Proxy
 {
 	/// <summary>
 	/// An abstract SOCKS proxy client.

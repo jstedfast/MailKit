@@ -30,7 +30,8 @@ using System.Security;
 using System.Runtime.Serialization;
 #endif
 
-namespace MailKit.Net {
+namespace MailKit.Net.Proxy
+{
 	/// <summary>
 	/// A proxy protocol exception.
 	/// </summary>

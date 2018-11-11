@@ -1,5 +1,5 @@
 ﻿//
-// IProxyClient.cs
+// ProxyClient.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -30,17 +30,77 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace MailKit.Net
+namespace MailKit.Net.Proxy
 {
 	/// <summary>
-	/// An interface for connecting to services via a proxy.
+	/// An abstract proxy client base class.
 	/// </summary>
 	/// <remarks>
-	/// Implemented by <see cref="MailKit.Net.Smtp.SmtpClient"/>
-	/// and <see cref="MailKit.Net.Pop3.Pop3Client"/>.
+	/// A proxy client can be used to connect to a service through a firewall that
+	/// would otherwise be blocked.
 	/// </remarks>
-	public interface IProxyClient
+	public abstract class ProxyClient : IProxyClient
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.ProxyClient"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.ProxyClient"/> class.
+		/// </remarks>
+		/// <param name="host">The host name of the proxy server.</param>
+		/// <param name="port">The proxy server port.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="host"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="host"/> is a zero-length string.
+		/// </exception>
+		protected ProxyClient (string host, int port)
+		{
+			if (host == null)
+				throw new ArgumentNullException (nameof (host));
+
+			if (host.Length == 0)
+				throw new ArgumentException (nameof (host));
+
+			if (port < 0 || port > 65535)
+				throw new ArgumentOutOfRangeException (nameof (port));
+
+			ProxyHost = host;
+			ProxyPort = port == 0 ? 1080 : port;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.ProxyClient"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.ProxyClient"/> class.
+		/// </remarks>
+		/// <param name="host">The host name of the proxy server.</param>
+		/// <param name="port">The proxy server port.</param>
+		/// <param name="credentials">The credentials to use to authenticate with the proxy server.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/>is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="host"/> is a zero-length string.
+		/// </exception>
+		protected ProxyClient (string host, int port, NetworkCredential credentials) : this (host, port)
+		{
+			if (credentials == null)
+				throw new ArgumentNullException (nameof (credentials));
+
+			ProxyCredentials = credentials;
+		}
+
 		/// <summary>
 		/// Gets the proxy credentials.
 		/// </summary>
@@ -48,7 +108,9 @@ namespace MailKit.Net
 		/// Gets the credentials to use when authenticating with the proxy server.
 		/// </remarks>
 		/// <value>The proxy credentials.</value>
-		NetworkCredential ProxyCredentials { get; }
+		public NetworkCredential ProxyCredentials {
+			get; private set;
+		}
 
 		/// <summary>
 		/// Get the proxy host.
@@ -57,7 +119,9 @@ namespace MailKit.Net
 		/// Gets the host name of the proxy server.
 		/// </remarks>
 		/// <value>The host name of the proxy server.</value>
-		string ProxyHost { get; }
+		public string ProxyHost {
+			get; private set;
+		}
 
 		/// <summary>
 		/// Get the proxy port.
@@ -66,7 +130,40 @@ namespace MailKit.Net
 		/// Gets the port to use when connecting to the proxy server.
 		/// </remarks>
 		/// <value>The proxy port.</value>
-		int ProxyPort { get; }
+		public int ProxyPort {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Get or set the local IP end point to use when connecting to a remote host.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the local IP end point to use when connecting to a remote host.
+		/// </remarks>
+		/// <value>The local IP end point or <c>null</c> to use the default end point.</value>
+		public IPEndPoint LocalEndPoint {
+			get; set;
+		}
+
+		internal static void ValidateArguments (string host, int port)
+		{
+			if (host == null)
+				throw new ArgumentNullException (nameof (host));
+
+			if (host.Length == 0)
+				throw new ArgumentException (nameof (host));
+
+			if (port <= 0 || port > 65535)
+				throw new ArgumentOutOfRangeException (nameof (port));
+		}
+
+		static void ValidateArguments (string host, int port, int timeout)
+		{
+			ValidateArguments (host, port);
+
+			if (timeout < -1)
+				throw new ArgumentOutOfRangeException (nameof (timeout));
+		}
 
 		/// <summary>
 		/// Connect to the target host.
@@ -82,7 +179,7 @@ namespace MailKit.Net
 		/// <paramref name="host"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// <paramref name="port"/> is not between <c>1</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// The <paramref name="host"/> is a zero-length string.
@@ -96,7 +193,7 @@ namespace MailKit.Net
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		Socket Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Socket Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously connect to the target host.
@@ -112,7 +209,7 @@ namespace MailKit.Net
 		/// <paramref name="host"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// <paramref name="port"/> is not between <c>1</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// The <paramref name="host"/> is a zero-length string.
@@ -126,7 +223,7 @@ namespace MailKit.Net
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		Task<Socket> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<Socket> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Connect to the target host.
@@ -143,7 +240,9 @@ namespace MailKit.Net
 		/// <paramref name="host"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// <para><paramref name="port"/> is not between <c>1</c> and <c>65535</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="timeout"/> is less than <c>-1</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// The <paramref name="host"/> is a zero-length string.
@@ -160,7 +259,22 @@ namespace MailKit.Net
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		Socket Connect (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual Socket Connect (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			ValidateArguments (host, port, timeout);
+
+			using (var ts = new CancellationTokenSource (timeout)) {
+				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
+					try {
+						return Connect (host, port, linked.Token);
+ 					} catch (OperationCanceledException) {
+						if (!cancellationToken.IsCancellationRequested)
+							throw new TimeoutException ();
+						throw;
+					}
+				}
+			}
+		}
 
 		/// <summary>
 		/// Asynchronously connect to the target host.
@@ -177,7 +291,9 @@ namespace MailKit.Net
 		/// <paramref name="host"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// <para><paramref name="port"/> is not between <c>1</c> and <c>65535</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="timeout"/> is less than <c>-1</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// The <paramref name="host"/> is a zero-length string.
@@ -194,6 +310,21 @@ namespace MailKit.Net
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		Task<Socket> ConnectAsync (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken));
+		public async virtual Task<Socket> ConnectAsync (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			ValidateArguments (host, port, timeout);
+
+			using (var ts = new CancellationTokenSource (timeout)) {
+				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
+					try {
+						return await ConnectAsync (host, port, linked.Token).ConfigureAwait (false);
+					} catch (OperationCanceledException) {
+						if (!cancellationToken.IsCancellationRequested)
+							throw new TimeoutException ();
+						throw;
+					}
+				}
+			}
+		}
 	}
 }

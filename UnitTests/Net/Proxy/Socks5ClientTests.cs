@@ -32,14 +32,14 @@ using System.Net.Sockets;
 
 using NUnit.Framework;
 
-using MailKit.Net;
+using MailKit.Net.Proxy;
 
-namespace UnitTests.Net {
+namespace UnitTests.Net.Proxy {
 	[TestFixture]
 	public class Socks5ClientTests
 	{
-		static readonly string[] Socks5ProxyList = { "98.174.90.36", "198.12.157.31", "72.210.252.134" };
-		static readonly int[] Socks5ProxyPorts = { 1080, 46906, 46164 };
+		public static readonly string[] Socks5ProxyList = { "98.174.90.36", "198.12.157.31", "72.210.252.134" };
+		public static readonly int[] Socks5ProxyPorts = { 1080, 46906, 46164 };
 
 		[Test]
 		public void TestArgumentExceptions ()

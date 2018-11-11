@@ -31,7 +31,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace MailKit.Net
+namespace MailKit.Net.Proxy
 {
 	/// <summary>
 	/// A SOCKS4 proxy client.
@@ -131,7 +131,7 @@ namespace MailKit.Net
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, null, doAsync, cancellationToken).ConfigureAwait (false);
+			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
 			var user = ProxyCredentials != null ? Encoding.UTF8.GetBytes (ProxyCredentials.UserName) : new byte[0];
 
 			try {

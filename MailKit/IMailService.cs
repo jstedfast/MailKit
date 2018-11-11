@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using SslProtocols = System.Security.Authentication.SslProtocols;
+
+using MailKit.Net.Proxy;
 #else
 using Encoding = Portable.Text.Encoding;
 #endif
@@ -81,7 +83,8 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Some servers may require the client SSL certificates in order
 		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
+		/// <para>This property should be set before calling any of the
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		X509CertificateCollection ClientCertificates { get; set; }
@@ -100,7 +103,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets a callback function to validate the server certificate.</para>
-		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
+		/// <para>This property should be set before calling any of the
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\InvalidSslCertificate.cs" region="Simple"/>
@@ -109,13 +113,23 @@ namespace MailKit {
 		RemoteCertificateValidationCallback ServerCertificateValidationCallback { get; set; }
 
 		/// <summary>
-		/// Get or set the local IP end point to use when connecting to the remote host.
+		/// Get or set the local IP end point to use when connecting to a remote host.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the local IP end point to use when connecting to the remote host.
+		/// Gets or sets the local IP end point to use when connecting to a remote host.
 		/// </remarks>
 		/// <value>The local IP end point or <c>null</c> to use the default end point.</value>
 		IPEndPoint LocalEndPoint { get; set; }
+
+		/// <summary>
+		/// Get or set the proxy client to use when connecting to a remote host.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the proxy client to use when connecting to a remote host via any of the
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> methods.
+		/// </remarks>
+		/// <value>The proxy client.</value>
+		IProxyClient ProxyClient { get; set; }
 #endif
 
 		/// <summary>
@@ -123,7 +137,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the
-		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> method.
 		/// </remarks>
 		/// <value>The supported authentication mechanisms.</value>
 		HashSet<string> AuthenticationMechanisms { get; }

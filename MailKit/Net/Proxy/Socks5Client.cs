@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 
 using MailKit.Security;
 
-namespace MailKit.Net
+namespace MailKit.Net.Proxy
 {
 	/// <summary>
 	/// A SOCKS5 proxy client.
@@ -243,7 +243,7 @@ namespace MailKit.Net
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, null, doAsync, cancellationToken).ConfigureAwait (false);
+			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
 			var method = ProxyCredentials != null ? Socks5AuthMethod.UserPassword : Socks5AuthMethod.Anonymous;
 			byte[] domain = null, addr = null;
 			int bufferSize = 6;

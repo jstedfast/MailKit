@@ -30,9 +30,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit.Framework;
 
-using MailKit.Net;
+using MailKit.Net.Proxy;
 
-namespace UnitTests.Net {
+namespace UnitTests.Net.Proxy {
 	[TestFixture]
 	public class ProxyProtocolExceptionTests
 	{

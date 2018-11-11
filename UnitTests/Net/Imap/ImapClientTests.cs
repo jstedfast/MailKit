@@ -38,10 +38,13 @@ using NUnit.Framework;
 
 using MimeKit;
 
-using MailKit.Net.Imap;
-using MailKit.Security;
-using MailKit.Search;
 using MailKit;
+using MailKit.Search;
+using MailKit.Security;
+using MailKit.Net.Imap;
+using MailKit.Net.Proxy;
+
+using UnitTests.Net.Proxy;
 
 namespace UnitTests.Net.Imap {
 	[TestFixture]
@@ -329,6 +332,44 @@ namespace UnitTests.Net.Imap {
 		public async void TestConnectGMailAsync ()
 		{
 			using (var client = new ImapClient ()) {
+				await client.ConnectAsync ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
+				await client.DisconnectAsync (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public void TestConnectGMailViaProxy ()
+		{
+			using (var client = new ImapClient ()) {
+				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[0], Socks5ClientTests.Socks5ProxyPorts[0]);
+
+				client.Connect ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Connect ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
+				client.Disconnect (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public async void TestConnectGMailViaProxyAsync ()
+		{
+			using (var client = new ImapClient ()) {
+				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[1], Socks5ClientTests.Socks5ProxyPorts[1]);
+
 				await client.ConnectAsync ("imap.gmail.com", 0, SecureSocketOptions.SslOnConnect);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");

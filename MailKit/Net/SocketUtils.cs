@@ -112,6 +112,21 @@ namespace MailKit.Net
 			return socket;
 		}
 
+		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, int timeout, bool doAsync, CancellationToken cancellationToken)
+		{
+			using (var ts = new CancellationTokenSource (timeout)) {
+				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
+					try {
+						return await ConnectAsync (host, port, localEndPoint, doAsync, linked.Token).ConfigureAwait (false);
+					} catch (OperationCanceledException) {
+						if (!cancellationToken.IsCancellationRequested)
+							throw new TimeoutException ();
+						throw;
+					}
+				}
+			}
+		}
+
 		public static void Poll (Socket socket, SelectMode mode, CancellationToken cancellationToken)
 		{
 			do {

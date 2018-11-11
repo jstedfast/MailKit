@@ -37,6 +37,9 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using SslProtocols = System.Security.Authentication.SslProtocols;
+
+using MailKit.Net;
+using MailKit.Net.Proxy;
 #else
 using Encoding = Portable.Text.Encoding;
 #endif
@@ -204,6 +207,18 @@ namespace MailKit {
 		public IPEndPoint LocalEndPoint {
 			get; set;
 		}
+
+		/// <summary>
+		/// Get or set the proxy client to use when connecting to a remote host.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the proxy client to use when connecting to a remote host via any of the
+		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> methods.
+		/// </remarks>
+		/// <value>The proxy client.</value>
+		public IProxyClient ProxyClient {
+			get; set;
+		}
 #endif
 
 		/// <summary>
@@ -320,6 +335,20 @@ namespace MailKit {
 			}
 
 			return false;
+		}
+
+		internal async Task<Socket> ConnectSocket (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (ProxyClient != null) {
+				ProxyClient.LocalEndPoint = LocalEndPoint;
+
+				if (doAsync)
+					return await ProxyClient.ConnectAsync (host, port, Timeout, cancellationToken).ConfigureAwait (false);
+
+				return ProxyClient.Connect (host, port, Timeout, cancellationToken);
+			}
+
+			return await SocketUtils.ConnectAsync (host, port, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 #endif
 

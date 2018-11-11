@@ -84,6 +84,12 @@
     <Compile Include="Net\Pop3\Pop3Language.cs" />
     <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
     <Compile Include="Net\Pop3\Pop3Stream.cs" />
+    <Compile Include="Net\Proxy\IProxyClient.cs" />
+    <Compile Include="Net\Proxy\ProxyClient.cs" />
+    <Compile Include="Net\Proxy\ProxyProtocolException.cs" />
+    <Compile Include="Net\Proxy\Socks4Client.cs" />
+    <Compile Include="Net\Proxy\Socks5Client.cs" />
+    <Compile Include="Net\Proxy\SocksClient.cs" />
     <Compile Include="Net\Smtp\AsyncSmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
@@ -93,13 +99,7 @@
     <Compile Include="Net\Smtp\SmtpResponse.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
-    <Compile Include="Net\IProxyClient.cs" />
-    <Compile Include="Net\ProxyClient.cs" />
-    <Compile Include="Net\ProxyProtocolException.cs" />
     <Compile Include="Net\SocketUtils.cs" />
-    <Compile Include="Net\Socks4Client.cs" />
-    <Compile Include="Net\Socks5Client.cs" />
-    <Compile Include="Net\SocksClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\BinarySearchQuery.cs" />
     <Compile Include="Search\DateSearchQuery.cs" />

@@ -37,9 +37,13 @@ using System.Security.Cryptography;
 using NUnit.Framework;
 
 using MimeKit;
+
 using MailKit;
-using MailKit.Net.Pop3;
 using MailKit.Security;
+using MailKit.Net.Pop3;
+using MailKit.Net.Proxy;
+
+using UnitTests.Net.Proxy;
 
 namespace UnitTests.Net.Pop3 {
 	[TestFixture]
@@ -505,6 +509,44 @@ namespace UnitTests.Net.Pop3 {
 		public async void TestConnectGMailAsync ()
 		{
 			using (var client = new Pop3Client ()) {
+				await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
+				await client.DisconnectAsync (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public void TestConnectGMailViaProxy ()
+		{
+			using (var client = new Pop3Client ()) {
+				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[0], Socks5ClientTests.Socks5ProxyPorts[0]);
+
+				client.Connect ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+
+				Assert.Throws<InvalidOperationException> (() => client.Connect ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+
+				client.Disconnect (true);
+				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			}
+		}
+
+		[Test]
+		public async void TestConnectGMailViaProxyAsync ()
+		{
+			using (var client = new Pop3Client ()) {
+				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[1], Socks5ClientTests.Socks5ProxyPorts[1]);
+
 				await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
