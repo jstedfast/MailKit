@@ -3539,7 +3539,7 @@ namespace MailKit.Net.Imap {
 				if (unmark.Count > 0) {
 					// clear the \Deleted flag on all messages except the ones that are to be expunged
 					if (doAsync)
-						await RemoveFlagsAsync (unmark, MessageFlags.Deleted, true, cancellationToken);
+						await RemoveFlagsAsync (unmark, MessageFlags.Deleted, true, cancellationToken).ConfigureAwait (false);
 					else
 						RemoveFlags (unmark, MessageFlags.Deleted, true, cancellationToken);
 				}
@@ -4282,7 +4282,7 @@ namespace MailKit.Net.Imap {
 			var uids = new List<UniqueId> ();
 
 			for (int i = 0; i < messages.Count; i++) {
-				var uid = await AppendAsync (format, messages[i], flags[i], dates[i], doAsync, cancellationToken, progress);
+				var uid = await AppendAsync (format, messages[i], flags[i], dates[i], doAsync, cancellationToken, progress).ConfigureAwait (false);
 				if (uids != null && uid.HasValue)
 					uids.Add (uid.Value);
 				else
