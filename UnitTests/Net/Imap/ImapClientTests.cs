@@ -350,6 +350,7 @@ namespace UnitTests.Net.Imap {
 		{
 			using (var client = new ImapClient ()) {
 				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[0], Socks5ClientTests.Socks5ProxyPorts[0]);
+				client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 				client.Timeout = 20000;
 
 				try {
@@ -376,6 +377,7 @@ namespace UnitTests.Net.Imap {
 		{
 			using (var client = new ImapClient ()) {
 				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[1], Socks5ClientTests.Socks5ProxyPorts[1]);
+				client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 				client.Timeout = 20000;
 
 				try {
