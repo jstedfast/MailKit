@@ -436,20 +436,20 @@ namespace MailKit {
 
 		SecureSocketOptions GetSecureSocketOptions (Uri uri)
 		{
-			var protocol = uri.Scheme.ToLowerInvariant ();
 			var query = uri.ParsedQuery ();
+			var protocol = uri.Scheme;
 			string value;
 
 			// Note: early versions of MailKit used "pop3" and "pop3s"
-			if (protocol == "pop3s")
+			if (protocol.Equals ("pop3s", StringComparison.OrdinalIgnoreCase))
 				protocol = "pops";
-			else if (protocol == "pop3")
+			else if (protocol.Equals ("pop3", StringComparison.OrdinalIgnoreCase))
 				protocol = "pop";
 
-			if (protocol == Protocol + "s")
+			if (protocol.Equals (Protocol + "s", StringComparison.OrdinalIgnoreCase))
 				return SecureSocketOptions.SslOnConnect;
 
-			if (protocol != Protocol)
+			if (!protocol.Equals (Protocol, StringComparison.OrdinalIgnoreCase))
 				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
 
 			if (query.TryGetValue ("starttls", out value)) {
