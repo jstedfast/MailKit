@@ -348,7 +348,7 @@ namespace MailKit {
 				return ProxyClient.Connect (host, port, Timeout, cancellationToken);
 			}
 
-			return await SocketUtils.ConnectAsync (host, port, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
+			return await SocketUtils.ConnectAsync (host, port, LocalEndPoint, Timeout, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 #endif
 
