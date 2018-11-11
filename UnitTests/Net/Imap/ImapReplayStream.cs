@@ -227,6 +227,7 @@ namespace UnitTests.Net.Imap {
 		bool disposed;
 		bool asyncIO;
 		bool isAsync;
+		bool done;
 		int index;
 
 		public ImapReplayStream (IList<ImapReplayCommand> commands, bool asyncIO, bool testUnixFormat)
@@ -345,7 +346,10 @@ namespace UnitTests.Net.Imap {
 			CheckDisposed ();
 
 			if (asyncIO) {
-				Assert.IsTrue (isAsync, "Trying to Write in an async unit test.");
+				if (count != 6 || Encoding.ASCII.GetString (buffer, offset, count) != "DONE\r\n")
+					Assert.IsTrue (isAsync, "Trying to Write in an async unit test.");
+				else
+					done = true;
 			} else {
 				Assert.IsFalse (isAsync, "Trying to WriteAsync in a non-async unit test.");
 			}
@@ -384,7 +388,8 @@ namespace UnitTests.Net.Imap {
 		{
 			CheckDisposed ();
 
-			Assert.IsFalse (asyncIO, "Trying to Flush in an async unit test.");
+			Assert.IsFalse (asyncIO && !done, "Trying to Flush in an async unit test.");
+			done = false;
 		}
 
 		public override Task FlushAsync (CancellationToken cancellationToken)

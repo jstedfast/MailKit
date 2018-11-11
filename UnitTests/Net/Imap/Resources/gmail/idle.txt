@@ -1,0 +1,45 @@
++ okay, go ahead
+* 1 FETCH (FLAGS (\Seen \Answered \Deleted) UID 1)
+* 2 FETCH (FLAGS (\Seen \Answered \Deleted) UID 2)
+* 3 FETCH (FLAGS (\Seen \Answered \Deleted) UID 3)
+* 5 FETCH (FLAGS (\Seen \Answered \Deleted) UID 5)
+* 7 FETCH (FLAGS (\Seen \Answered \Deleted) UID 7)
+* 8 FETCH (FLAGS (\Seen \Answered \Deleted) UID 8)
+* 9 FETCH (FLAGS (\Seen \Answered \Deleted) UID 9)
+* 11 FETCH (FLAGS (\Seen \Answered \Deleted) UID 11)
+* 12 FETCH (FLAGS (\Seen \Answered \Deleted) UID 12)
+* 13 FETCH (FLAGS (\Seen \Answered \Deleted) UID 13)
+* 14 FETCH (FLAGS (\Seen \Answered \Deleted) UID 14)
+* 26 FETCH (FLAGS (\Seen \Answered \Deleted) UID 26)
+* 27 FETCH (FLAGS (\Seen \Answered \Deleted) UID 27)
+* 28 FETCH (FLAGS (\Seen \Answered \Deleted) UID 28)
+* 29 FETCH (FLAGS (\Seen \Answered \Deleted) UID 29)
+* 31 FETCH (FLAGS (\Seen \Answered \Deleted) UID 31)
+* 34 FETCH (FLAGS (\Seen \Answered \Deleted) UID 34)
+* 41 FETCH (FLAGS (\Seen \Answered \Deleted) UID 41)
+* 42 FETCH (FLAGS (\Seen \Answered \Deleted) UID 42)
+* 43 FETCH (FLAGS (\Seen \Answered \Deleted) UID 43)
+* 50 FETCH (FLAGS (\Seen \Answered \Deleted) UID 50)
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 0 EXISTS
+* 1 EXISTS

@@ -1100,7 +1100,7 @@ namespace MailKit.Net.Imap
 
 			if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0) {
 				for (int i = 0; i < orderBy.Count; i++) {
-					if (orderBy [i].Type == OrderByType.DisplayFrom || orderBy [i].Type == OrderByType.DisplayTo)
+					if (orderBy[i].Type == OrderByType.DisplayFrom || orderBy[i].Type == OrderByType.DisplayTo)
 						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
 				}
 			}

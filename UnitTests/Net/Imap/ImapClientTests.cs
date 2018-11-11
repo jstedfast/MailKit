@@ -3029,6 +3029,137 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		List<ImapReplayCommand> CreateIdleCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 IDLE\r\n", "gmail.idle.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006", "DONE\r\n", "gmail.idle-done.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestIdle ()
+		{
+			var commands = CreateIdleCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadWrite);
+
+				using (var done = new CancellationTokenSource ()) {
+					int count = 0, expunged = 0, flags = 0;
+					bool droppedToZero = false;
+
+					inbox.MessageExpunged += (o, e) => {
+						expunged++;
+						Assert.AreEqual (0, e.Index, "Expunged Index");
+					};
+					inbox.MessageFlagsChanged += (o, e) => {
+						flags++;
+						Assert.AreEqual (MessageFlags.Answered | MessageFlags.Deleted | MessageFlags.Seen, e.Flags, "Flags");
+					};
+					inbox.CountChanged += (o, e) => {
+						count++;
+
+						if (inbox.Count == 0)
+							droppedToZero = true;
+						else if (droppedToZero && inbox.Count == 1)
+							done.Cancel ();
+					};
+
+					client.Idle (done.Token);
+
+					Assert.AreEqual (21, expunged, "Unexpected number of Expunged events");
+					Assert.AreEqual (23, count, "Unexpected number of CountChanged events");
+					Assert.AreEqual (21, flags, "Unexpected number of FlagsCHanged events");
+					Assert.AreEqual (1, inbox.Count, "Count");
+				}
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestIdleAsync ()
+		{
+			var commands = CreateIdleCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				using (var done = new CancellationTokenSource ()) {
+					int count = 0, expunged = 0, flags = 0;
+					bool droppedToZero = false;
+
+					inbox.MessageExpunged += (o, e) => {
+						expunged++;
+						Assert.AreEqual (0, e.Index, "Expunged Index");
+					};
+					inbox.MessageFlagsChanged += (o, e) => {
+						flags++;
+						Assert.AreEqual (MessageFlags.Answered | MessageFlags.Deleted | MessageFlags.Seen, e.Flags, "Flags");
+					};
+					inbox.CountChanged += (o, e) => {
+						count++;
+
+						if (inbox.Count == 0)
+							droppedToZero = true;
+						else if (droppedToZero && inbox.Count == 1)
+							done.Cancel ();
+					};
+
+					await client.IdleAsync (done.Token);
+
+					Assert.AreEqual (21, expunged, "Unexpected number of Expunged events");
+					Assert.AreEqual (23, count, "Unexpected number of CountChanged events");
+					Assert.AreEqual (21, flags, "Unexpected number of FlagsCHanged events");
+					Assert.AreEqual (1, inbox.Count, "Count");
+				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		[Test]
 		public void TestAccessControlLists ()
 		{

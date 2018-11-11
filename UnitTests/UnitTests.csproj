@@ -343,6 +343,8 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\get-indexes.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\go-ahead.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\idle.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\idle-done.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-archived-messages.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-inbox.txt" />
