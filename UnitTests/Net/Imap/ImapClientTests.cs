@@ -132,6 +132,8 @@ namespace UnitTests.Net.Imap {
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
 				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync ((Uri) null));
+				Assert.Throws<ArgumentException> (() => client.Connect (new Uri ("path", UriKind.Relative)));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (new Uri ("path", UriKind.Relative)));
 				Assert.Throws<ArgumentNullException> (() => client.Connect (null, 143, false));
 				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, 143, false));
 				Assert.Throws<ArgumentException> (() => client.Connect (string.Empty, 143, false));
@@ -351,6 +353,8 @@ namespace UnitTests.Net.Imap {
 			using (var client = new ImapClient ()) {
 				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[0], Socks5ClientTests.Socks5ProxyPorts[0]);
 				client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+				client.ClientCertificates = null;
+				client.LocalEndPoint = null;
 				client.Timeout = 20000;
 
 				try {
@@ -378,6 +382,8 @@ namespace UnitTests.Net.Imap {
 			using (var client = new ImapClient ()) {
 				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[1], Socks5ClientTests.Socks5ProxyPorts[1]);
 				client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+				client.ClientCertificates = null;
+				client.LocalEndPoint = null;
 				client.Timeout = 20000;
 
 				try {
