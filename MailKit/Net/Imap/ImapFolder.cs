@@ -1468,7 +1468,7 @@ namespace MailKit.Net.Imap {
 			if (status) {
 				for (int i = 0; i < children.Count; i++) {
 					if (children[i].Exists)
-						await ((ImapFolder) children[i]).StatusAsync (items, doAsync, false, cancellationToken);
+						await ((ImapFolder) children[i]).StatusAsync (items, doAsync, false, cancellationToken).ConfigureAwait (false);
 				}
 			}
 

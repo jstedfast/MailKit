@@ -1,0 +1,5 @@
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 1 EXPUNGE
+* 18 EXISTS
+A######## OK Success

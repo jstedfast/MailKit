@@ -312,6 +312,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\count.examine.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\count.noop.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\examine-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\expunge.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.3.txt" />
@@ -358,6 +359,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\precise-pangolin-message.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\rename-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\search-deleted-not-1-3.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search-summary.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-sublevel1.txt" />

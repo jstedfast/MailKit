@@ -1,0 +1,2 @@
+* ESEARCH (TAG "A########") UID ALL 5,7:9,11:14,26:29,31,34,41:43,50
+A######## OK SEARCH completed (Success)
