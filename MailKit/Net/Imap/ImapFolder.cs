@@ -4613,7 +4613,6 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				var indexes = await GetIndexesAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
 				await MoveToAsync (indexes, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				await ExpungeAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
 				return UniqueIdMap.Empty;
 			}
 

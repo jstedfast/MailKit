@@ -367,6 +367,8 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-labels.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\uid-copy.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\uid-expunge.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\uid-move.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\utf8accept.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\xlist.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\authenticate.txt" />
