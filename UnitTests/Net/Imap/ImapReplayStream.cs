@@ -142,6 +142,8 @@ namespace UnitTests.Net.Imap {
 
 	class ImapReplayCommand
 	{
+		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+
 		public byte[] CommandBuffer { get; private set; }
 		public string Command { get; private set; }
 		public byte[] Response { get; private set; }
@@ -152,7 +154,7 @@ namespace UnitTests.Net.Imap {
 			Command = command;
 			Response = response;
 			Compressed = compressed;
-			CommandBuffer = Encoding.UTF8.GetBytes (command);
+			CommandBuffer = Latin1.GetBytes (command);
 
 			if (compressed) {
 				using (var memory = new MemoryStream ()) {
@@ -170,7 +172,7 @@ namespace UnitTests.Net.Imap {
 		{
 			string tag = null;
 
-			CommandBuffer = Encoding.UTF8.GetBytes (command);
+			CommandBuffer = Latin1.GetBytes (command);
 			Compressed = compressed;
 			Command = command;
 
@@ -208,7 +210,7 @@ namespace UnitTests.Net.Imap {
 
 		public ImapReplayCommand (string tag, string command, string resource, bool compressed = false)
 		{
-			CommandBuffer = Encoding.UTF8.GetBytes (command);
+			CommandBuffer = Latin1.GetBytes (command);
 			Compressed = compressed;
 			Command = command;
 
@@ -241,7 +243,7 @@ namespace UnitTests.Net.Imap {
 
 		public ImapReplayCommand (string command, ImapReplayCommandResponse response, bool compressed = false)
 		{
-			CommandBuffer = Encoding.UTF8.GetBytes (command);
+			CommandBuffer = Latin1.GetBytes (command);
 			Compressed = compressed;
 			Command = command;
 
