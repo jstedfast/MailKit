@@ -62,7 +62,7 @@ namespace UnitTests.Net.Imap {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}

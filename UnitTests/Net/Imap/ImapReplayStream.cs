@@ -305,7 +305,7 @@ namespace UnitTests.Net.Imap {
 		bool done;
 		int index;
 
-		public ImapReplayStream (IList<ImapReplayCommand> commands, bool asyncIO, bool testUnixFormat)
+		public ImapReplayStream (IList<ImapReplayCommand> commands, bool asyncIO, bool testUnixFormat = false)
 		{
 			stream = GetResponseStream (commands[0]);
 			state = ImapReplayState.SendResponse;
