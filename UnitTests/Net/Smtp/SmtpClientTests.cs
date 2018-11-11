@@ -548,8 +548,15 @@ namespace UnitTests.Net.Smtp {
 		{
 			using (var client = new SmtpClient ()) {
 				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[0], Socks5ClientTests.Socks5ProxyPorts[0]);
+				client.Timeout = 20000;
 
-				client.Connect ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				try {
+					client.Connect ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+ 				} catch (TimeoutException) {
+					return;
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				}
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
@@ -567,8 +574,15 @@ namespace UnitTests.Net.Smtp {
 		{
 			using (var client = new SmtpClient ()) {
 				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[1], Socks5ClientTests.Socks5ProxyPorts[1]);
+				client.Timeout = 20000;
 
-				await client.ConnectAsync ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				try {
+					await client.ConnectAsync ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				} catch (TimeoutException) {
+					return;
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				}
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");

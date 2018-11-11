@@ -36,6 +36,9 @@ motivate me to continue working on the project.
   * SCRAM-SHA-1
   * SCRAM-SHA-256
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
+* Proxy Support
+  * SOCKS4/4a
+  * SOCKS5
 * SMTP Client
   * Supports all of the SASL mechanisms listed above.
   * Supports SSL-wrapped connections via the "smtps" protocol.
