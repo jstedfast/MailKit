@@ -800,7 +800,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35+}\r\n1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
 			commands.Add (new ImapReplayCommand ("A00000008 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
 
@@ -842,7 +842,7 @@ namespace UnitTests.Net.Imap {
 				client.EnableUTF8 ();
 
 				var implementation = new ImapImplementation {
-					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc."
+					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc.", Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
 				};
 
 				implementation = client.Identify (implementation);
@@ -892,7 +892,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35+}\r\n1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
 			commands.Add (new ImapReplayCommand ("A00000008 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
 
@@ -934,7 +934,7 @@ namespace UnitTests.Net.Imap {
 				await client.EnableUTF8Async ();
 
 				var implementation = new ImapImplementation {
-					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc."
+					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc.", Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
 				};
 
 				implementation = await client.IdentifyAsync (implementation);
