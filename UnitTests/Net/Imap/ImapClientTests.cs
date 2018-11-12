@@ -972,6 +972,106 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestSendingStringsAsLiterals ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35}\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("A00000006", "1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: Do not try XOAUTH2 or PLAIN
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+				client.AuthenticationMechanisms.Remove ("PLAIN");
+
+				try {
+					client.Authenticate (new NetworkCredential ("username", "password"));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				client.EnableUTF8 ();
+
+				var implementation = new ImapImplementation {
+					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc.", Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
+				};
+
+				// Disable LITERAL+ and LITERAL- extensions
+				client.Capabilities &= ~ImapCapabilities.LiteralPlus;
+				client.Capabilities &= ~ImapCapabilities.LiteralMinus;
+
+				implementation = client.Identify (implementation);
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestSendingStringsAsLiteralsAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35}\r\n", ImapReplayCommandResponse.Plus));
+			commands.Add (new ImapReplayCommand ("A00000006", "1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: Do not try XOAUTH2 or PLAIN
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+				client.AuthenticationMechanisms.Remove ("PLAIN");
+
+				try {
+					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				await client.EnableUTF8Async ();
+
+				var implementation = new ImapImplementation {
+					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc.", Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
+				};
+
+				// Disable LITERAL+ and LITERAL- extensions
+				client.Capabilities &= ~ImapCapabilities.LiteralPlus;
+				client.Capabilities &= ~ImapCapabilities.LiteralMinus;
+
+				implementation = await client.IdentifyAsync (implementation);
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		[Test]
 		public void TestSaslAuthentication ()
 		{
 			var commands = new List<ImapReplayCommand> ();
