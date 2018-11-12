@@ -374,6 +374,7 @@ namespace MailKit.Net.Imap {
 		public string ResponseText { get; internal set; }
 		public ImapFolder Folder { get; private set; }
 		public object UserData { get; internal set; }
+		public bool Logout { get; private set; }
 		public bool Lsub { get; internal set; }
 		public string Tag { get; private set; }
 		public bool Bye { get; internal set; }
@@ -398,6 +399,7 @@ namespace MailKit.Net.Imap {
 		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
 		{
 			UntaggedHandlers = new Dictionary<string, ImapUntaggedHandler> ();
+			Logout = format.Equals ("LOGOUT\r\n", StringComparison.Ordinal);
 			RespCodes = new List<ImapResponseCode> ();
 			CancellationToken = cancellationToken;
 			Response = ImapCommandResponse.None;
@@ -409,7 +411,6 @@ namespace MailKit.Net.Imap {
 				int argc = 0;
 				byte[] buf;
 				string str;
-				char c;
 
 				for (int i = 0; i < format.Length; i++) {
 					if (format[i] == '%') {

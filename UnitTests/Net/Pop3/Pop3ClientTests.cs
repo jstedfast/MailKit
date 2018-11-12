@@ -493,41 +493,108 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestConnectGMail ()
 		{
+			var options = SecureSocketOptions.SslOnConnect;
+			var host = "pop.gmail.com";
+			int port = 995;
+
 			using (var client = new Pop3Client ()) {
-				client.Connect ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				int connected = 0, disconnected = 0;
+
+				client.Connected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					connected++;
+				};
+
+				client.Disconnected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					disconnected++;
+				};
+
+				client.Connect (host, 0, options);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				Assert.AreEqual (1, connected, "ConnectedEvent");
 
-				Assert.Throws<InvalidOperationException> (() => client.Connect ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+				Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
 
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
 
 		[Test]
 		public async void TestConnectGMailAsync ()
 		{
+			var options = SecureSocketOptions.SslOnConnect;
+			var host = "pop.gmail.com";
+			int port = 995;
+
 			using (var client = new Pop3Client ()) {
-				await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+				int connected = 0, disconnected = 0;
+
+				client.Connected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					connected++;
+				};
+
+				client.Disconnected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					disconnected++;
+				};
+
+				await client.ConnectAsync (host, 0, options);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				Assert.AreEqual (1, connected, "ConnectedEvent");
 
-				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
 
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
 
 		[Test]
 		public void TestConnectGMailViaProxy ()
 		{
+			var options = SecureSocketOptions.SslOnConnect;
+			var host = "pop.gmail.com";
+			int port = 995;
+
 			using (var client = new Pop3Client ()) {
+				int connected = 0, disconnected = 0;
+
+				client.Connected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					connected++;
+				};
+
+				client.Disconnected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					disconnected++;
+				};
+
 				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[0], Socks5ClientTests.Socks5ProxyPorts[0]);
 				client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 				client.ClientCertificates = null;
@@ -535,7 +602,7 @@ namespace UnitTests.Net.Pop3 {
 				client.Timeout = 20000;
 
 				try {
-					client.Connect ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+					client.Connect (host, 0, options);
 				} catch (TimeoutException) {
 					return;
 				} catch (Exception ex) {
@@ -544,19 +611,42 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				Assert.AreEqual (1, connected, "ConnectedEvent");
 
-				Assert.Throws<InvalidOperationException> (() => client.Connect ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+				Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
 
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
 
 		[Test]
 		public async void TestConnectGMailViaProxyAsync ()
 		{
+			var options = SecureSocketOptions.SslOnConnect;
+			var host = "pop.gmail.com";
+			int port = 995;
+
 			using (var client = new Pop3Client ()) {
+				int connected = 0, disconnected = 0;
+
+				client.Connected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					connected++;
+				};
+
+				client.Disconnected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					disconnected++;
+				};
+
 				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[1], Socks5ClientTests.Socks5ProxyPorts[1]);
 				client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 				client.ClientCertificates = null;
@@ -564,7 +654,7 @@ namespace UnitTests.Net.Pop3 {
 				client.Timeout = 20000;
 
 				try {
-					await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect);
+					await client.ConnectAsync (host, 0, options);
 				} catch (TimeoutException) {
 					return;
 				} catch (Exception ex) {
@@ -573,74 +663,146 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				Assert.AreEqual (1, connected, "ConnectedEvent");
 
-				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
 
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
 
 		[Test]
 		public void TestConnectGMailSocket ()
 		{
+			var options = SecureSocketOptions.SslOnConnect;
+			var host = "pop.gmail.com";
+			int port = 995;
+
 			using (var client = new Pop3Client ()) {
-				var socket = Connect ("pop.gmail.com", 995);
+				int connected = 0, disconnected = 0;
 
-				Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, 995, SecureSocketOptions.Auto));
-				Assert.Throws<ArgumentException> (() => client.Connect (socket, "", 995, SecureSocketOptions.Auto));
-				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, "pop.gmail.com", -1, SecureSocketOptions.Auto));
+				client.Connected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					connected++;
+				};
 
-				client.Connect (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto);
+				client.Disconnected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					disconnected++;
+				};
+
+				var socket = Connect (host, port);
+
+				Assert.Throws<ArgumentNullException> (() => client.Connect (socket, null, port, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentException> (() => client.Connect (socket, "", port, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, host, -1, SecureSocketOptions.Auto));
+
+				client.Connect (socket, host, port, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				Assert.AreEqual (1, connected, "ConnectedEvent");
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto));
 
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
 
 		[Test]
 		public async void TestConnectGMailSocketAsync ()
 		{
+			var options = SecureSocketOptions.SslOnConnect;
+			var host = "pop.gmail.com";
+			int port = 995;
+
 			using (var client = new Pop3Client ()) {
-				var socket = Connect ("pop.gmail.com", 995);
+				int connected = 0, disconnected = 0;
 
-				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, 995, SecureSocketOptions.Auto));
-				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, "", 995, SecureSocketOptions.Auto));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, "pop.gmail.com", -1, SecureSocketOptions.Auto));
+				client.Connected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					connected++;
+				};
 
-				await client.ConnectAsync (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto);
+				client.Disconnected += (sender, e) => {
+					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					disconnected++;
+				};
+
+				var socket = Connect (host, port);
+
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (socket, null, port, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (socket, "", port, SecureSocketOptions.Auto));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, host, -1, SecureSocketOptions.Auto));
+
+				await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				Assert.AreEqual (1, connected, "ConnectedEvent");
 
-				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto));
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto));
 
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
 
 		[Test]
 		public void TestConnectGmxDe ()
 		{
+			var options = SecureSocketOptions.StartTls;
+			var host = "pop.gmx.de";
+			var port = 110;
+
 			using (var cancel = new CancellationTokenSource (30 * 1000)) {
 				using (var client = new Pop3Client ()) {
-					var uri = new Uri ("pop://pop.gmx.de/?starttls=always");
+					int connected = 0, disconnected = 0;
+
+					client.Connected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						connected++;
+					};
+
+					client.Disconnected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						disconnected++;
+					};
+
+					var uri = new Uri ($"pop://{host}/?starttls=always");
 					client.Connect (uri, cancel.Token);
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					Assert.AreEqual (1, connected, "ConnectedEvent");
+
 					client.Disconnect (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
 		}
@@ -648,16 +810,40 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public async void TestConnectGmxDeAsync ()
 		{
+			var options = SecureSocketOptions.StartTls;
+			var host = "pop.gmx.de";
+			var port = 110;
+
 			using (var cancel = new CancellationTokenSource (30 * 1000)) {
 				using (var client = new Pop3Client ()) {
-					var uri = new Uri ("pop3://pop.gmx.de/?starttls=always");
+					int connected = 0, disconnected = 0;
+
+					client.Connected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						connected++;
+					};
+
+					client.Disconnected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						disconnected++;
+					};
+
+					var uri = new Uri ($"pop://{host}/?starttls=always");
 					await client.ConnectAsync (uri, cancel.Token);
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					Assert.AreEqual (1, connected, "ConnectedEvent");
+
 					await client.DisconnectAsync (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
 		}
@@ -665,16 +851,40 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestConnectGmxDeSocket ()
 		{
+			var options = SecureSocketOptions.StartTls;
+			var host = "pop.gmx.de";
+			var port = 110;
+
 			using (var cancel = new CancellationTokenSource (30 * 1000)) {
 				using (var client = new Pop3Client ()) {
-					var socket = Connect ("pop.gmx.de", 110);
-					client.Connect (socket, "pop.gmx.de", 110, SecureSocketOptions.StartTls, cancel.Token);
+					int connected = 0, disconnected = 0;
+
+					client.Connected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						connected++;
+					};
+
+					client.Disconnected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						disconnected++;
+					};
+
+					var socket = Connect (host, port);
+					client.Connect (socket, host, port, options, cancel.Token);
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					Assert.AreEqual (1, connected, "ConnectedEvent");
+
 					client.Disconnect (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
 		}
@@ -682,16 +892,40 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public async void TestConnectGmxDeSocketAsync ()
 		{
+			var options = SecureSocketOptions.StartTls;
+			var host = "pop.gmx.de";
+			var port = 110;
+
 			using (var cancel = new CancellationTokenSource (30 * 1000)) {
 				using (var client = new Pop3Client ()) {
-					var socket = Connect ("pop.gmx.de", 110);
-					await client.ConnectAsync (socket, "pop.gmx.de", 110, SecureSocketOptions.StartTls, cancel.Token);
+					int connected = 0, disconnected = 0;
+
+					client.Connected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						connected++;
+					};
+
+					client.Disconnected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						disconnected++;
+					};
+
+					var socket = Connect (host, port);
+					await client.ConnectAsync (socket, host, port, options, cancel.Token);
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					Assert.AreEqual (1, connected, "ConnectedEvent");
+
 					await client.DisconnectAsync (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
 		}
@@ -725,7 +959,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (ComcastCapa1, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
-				Assert.AreEqual (100000, client.Timeout, "Timeout");
+				Assert.AreEqual (120000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
 				try {
@@ -812,7 +1046,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (ComcastCapa1, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
-				Assert.AreEqual (100000, client.Timeout, "Timeout");
+				Assert.AreEqual (120000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
 				try {

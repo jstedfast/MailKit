@@ -71,8 +71,9 @@ namespace MailKit.Net.Imap {
 #if NETFX_CORE
 		StreamSocket socket;
 #endif
-		string identifier = null;
-		int timeout = 100000;
+		int timeout = 2 * 60 * 1000;
+		string identifier;
+		bool disconnecting;
 		bool connecting;
 		bool disposed;
 		bool secure;
@@ -1132,7 +1133,7 @@ namespace MailKit.Net.Imap {
 			if (replayStream == null)
 				throw new ArgumentNullException (nameof (replayStream));
 
-			engine.Uri = new Uri ("imap://" + host);
+			engine.Uri = new Uri ($"imap://{host}:143");
 			engine.ConnectAsync (new ImapStream (replayStream, null, ProtocolLogger), false, cancellationToken).GetAwaiter ().GetResult ();
 			engine.TagPrefix = 'A';
 			secure = false;
@@ -1140,7 +1141,7 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilitiesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 
-			OnConnected ();
+			OnConnected (host, 143, SecureSocketOptions.None);
 
 			if (engine.State == ImapEngineState.Authenticated) {
 				engine.QueryNamespacesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
@@ -1159,7 +1160,7 @@ namespace MailKit.Net.Imap {
 			if (replayStream == null)
 				throw new ArgumentNullException (nameof (replayStream));
 
-			engine.Uri = new Uri ("imap://" + host);
+			engine.Uri = new Uri ($"imap://{host}:143");
 			await engine.ConnectAsync (new ImapStream (replayStream, null, ProtocolLogger), true, cancellationToken).ConfigureAwait (false);
 			engine.TagPrefix = 'A';
 			secure = false;
@@ -1167,7 +1168,7 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				await engine.QueryCapabilitiesAsync (true, cancellationToken).ConfigureAwait (false);
 
-			OnConnected ();
+			OnConnected (host, 143, SecureSocketOptions.None);
 
 			if (engine.State == ImapEngineState.Authenticated) {
 				await engine.QueryNamespacesAsync (true, cancellationToken).ConfigureAwait (false);
@@ -1377,7 +1378,7 @@ namespace MailKit.Net.Imap {
 				connecting = false;
 			}
 
-			OnConnected ();
+			OnConnected (host, port, options);
 
 			if (engine.State == ImapEngineState.Authenticated) {
 				await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1582,7 +1583,7 @@ namespace MailKit.Net.Imap {
 				connecting = false;
 			}
 
-			OnConnected ();
+			OnConnected (host, port, options);
 
 			if (engine.State == ImapEngineState.Authenticated) {
 				await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1683,7 +1684,8 @@ namespace MailKit.Net.Imap {
 			socket = null;
 #endif
 
-			secure = false;
+			disconnecting = true;
+
 			engine.Disconnect ();
 		}
 
@@ -2550,9 +2552,13 @@ namespace MailKit.Net.Imap {
 			if (connecting)
 				return;
 
+			var requested = disconnecting;
+			var uri = engine.Uri;
+
+			disconnecting = false;
 			secure = false;
 
-			OnDisconnected ();
+			OnDisconnected (uri.Host, uri.Port, GetSecureSocketOptions (uri), requested);
 		}
 
 		/// <summary>

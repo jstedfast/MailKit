@@ -909,7 +909,7 @@ namespace MailKit {
 		/// The <see cref="Connected"/> event is raised when the client
 		/// successfully connects to the mail server.
 		/// </remarks>
-		event EventHandler<EventArgs> Connected;
+		event EventHandler<ConnectedEventArgs> Connected;
 
 		/// <summary>
 		/// Occurs when the client has been disconnected.
@@ -918,7 +918,7 @@ namespace MailKit {
 		/// The <see cref="Disconnected"/> event is raised whenever the client
 		/// has been disconnected.
 		/// </remarks>
-		event EventHandler<EventArgs> Disconnected;
+		event EventHandler<DisconnectedEventArgs> Disconnected;
 
 		/// <summary>
 		/// Occurs when the client has been successfully authenticated.

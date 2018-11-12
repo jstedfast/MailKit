@@ -1954,7 +1954,7 @@ namespace MailKit.Net.Imap {
 					// more literal data to send...
 				}
 
-				if (current.Bye)
+				if (current.Bye && !current.Logout)
 					Disconnect ();
 			} catch {
 				Disconnect ();

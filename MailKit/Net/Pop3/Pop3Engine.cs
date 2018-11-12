@@ -302,8 +302,6 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		public void Disconnect ()
 		{
-			Uri = null;
-
 			if (stream != null) {
 				stream.Dispose ();
 				stream = null;

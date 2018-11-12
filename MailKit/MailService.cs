@@ -434,7 +434,7 @@ namespace MailKit {
 		/// </exception>
 		public abstract Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
-		SecureSocketOptions GetSecureSocketOptions (Uri uri)
+		internal SecureSocketOptions GetSecureSocketOptions (Uri uri)
 		{
 			var query = uri.ParsedQuery ();
 			var protocol = uri.Scheme;
@@ -1271,7 +1271,7 @@ namespace MailKit {
 		/// The <see cref="Connected"/> event is raised when the client
 		/// successfully connects to the mail server.
 		/// </remarks>
-		public event EventHandler<EventArgs> Connected;
+		public event EventHandler<ConnectedEventArgs> Connected;
 
 		/// <summary>
 		/// Raise the connected event.
@@ -1279,12 +1279,15 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the connected event.
 		/// </remarks>
-		protected virtual void OnConnected ()
+		/// <param name="host">The name of the host that the client connected to.</param>
+		/// <param name="port">The port that the client connected to on the remote host.</param>
+		/// <param name="options">The SSL/TLS options that were used when connecting.</param>
+		protected virtual void OnConnected (string host, int port, SecureSocketOptions options)
 		{
 			var handler = Connected;
 
 			if (handler != null)
-				handler (this, EventArgs.Empty);
+				handler (this, new ConnectedEventArgs (host, port, options));
 		}
 
 		/// <summary>
@@ -1294,7 +1297,7 @@ namespace MailKit {
 		/// The <see cref="Disconnected"/> event is raised whenever the client
 		/// gets disconnected.
 		/// </remarks>
-		public event EventHandler<EventArgs> Disconnected;
+		public event EventHandler<DisconnectedEventArgs> Disconnected;
 
 		/// <summary>
 		/// Raise the disconnected event.
@@ -1302,12 +1305,16 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the disconnected event.
 		/// </remarks>
-		protected virtual void OnDisconnected ()
+		/// <param name="host">The name of the host that the client was connected to.</param>
+		/// <param name="port">The port that the client was connected to on the remote host.</param>
+		/// <param name="options">The SSL/TLS options that were used by the client.</param>
+		/// <param name="requested"><c>true</c> if the disconnect was explicitly requested; otherwise, <c>false</c>.</param>
+		protected virtual void OnDisconnected (string host, int port, SecureSocketOptions options, bool requested)
 		{
 			var handler = Disconnected;
 
 			if (handler != null)
-				handler (this, EventArgs.Empty);
+				handler (this, new DisconnectedEventArgs (host, port, options, requested));
 		}
 
 		/// <summary>

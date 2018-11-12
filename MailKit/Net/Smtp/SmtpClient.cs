@@ -83,12 +83,12 @@ namespace MailKit.Net.Smtp {
 		readonly HashSet<string> authenticationMechanisms = new HashSet<string> ();
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
 		SmtpCapabilities capabilities;
-		int timeout = 100000;
+		int timeout = 2 * 60 * 1000;
 		bool authenticated;
 		bool connected;
 		bool disposed;
 		bool secure;
-		string host;
+		Uri uri;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpClient"/> class.
@@ -313,11 +313,11 @@ namespace MailKit.Net.Smtp {
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			if (ServerCertificateValidationCallback != null)
-				return ServerCertificateValidationCallback (host, certificate, chain, sslPolicyErrors);
+				return ServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
 
 #if !NETSTANDARD
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
-				return ServicePointManager.ServerCertificateValidationCallback (host, certificate, chain, sslPolicyErrors);
+				return ServicePointManager.ServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
 #endif
 
 			return DefaultServerCertificateValidationCallback (sender, certificate, chain, sslPolicyErrors);
@@ -554,12 +554,11 @@ namespace MailKit.Net.Smtp {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			var uri = new Uri ("smtp://" + host);
 			SmtpResponse response;
 			string challenge;
 			string command;
 
-			mechanism.Uri = uri;
+			mechanism.Uri = new Uri ($"smtp://{uri.Host}");
 
 			// send an initial challenge if the mechanism supports it
 			if (mechanism.SupportsInitialResponse) {
@@ -673,7 +672,7 @@ namespace MailKit.Net.Smtp {
 			if ((capabilities & SmtpCapabilities.Authentication) == 0)
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
 
-			var uri = new Uri ("smtp://" + host);
+			var saslUri = new Uri ($"smtp://{uri.Host}");
 			AuthenticationException authException = null;
 			SmtpResponse response;
 			SaslMechanism sasl;
@@ -685,7 +684,7 @@ namespace MailKit.Net.Smtp {
 				if (!AuthenticationMechanisms.Contains (authmech))
 					continue;
 
-				if ((sasl = SaslMechanism.Create (authmech, uri, encoding, credentials)) == null)
+				if ((sasl = SaslMechanism.Create (authmech, saslUri, encoding, credentials)) == null)
 					continue;
 
 				tried = true;
@@ -806,12 +805,12 @@ namespace MailKit.Net.Smtp {
 			AuthenticateAsync (encoding, credentials, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
+		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
-			if (hostName == null)
-				throw new ArgumentNullException (nameof (hostName));
+			if (host == null)
+				throw new ArgumentNullException (nameof (host));
 
 			if (replayStream == null)
 				throw new ArgumentNullException (nameof (replayStream));
@@ -819,7 +818,7 @@ namespace MailKit.Net.Smtp {
 			Stream = new SmtpStream (replayStream, null, ProtocolLogger);
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
-			host = hostName;
+			uri = new Uri ($"smtp://{host}:25");
 			secure = false;
 			MaxSize = 0;
 
@@ -840,15 +839,15 @@ namespace MailKit.Net.Smtp {
 				throw;
 			}
 
-			OnConnected ();
+			OnConnected (host, 25, SecureSocketOptions.None);
 		}
 
-		internal async Task ReplayConnectAsync (string hostName, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
+		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
-			if (hostName == null)
-				throw new ArgumentNullException (nameof (hostName));
+			if (host == null)
+				throw new ArgumentNullException (nameof (host));
 
 			if (replayStream == null)
 				throw new ArgumentNullException (nameof (replayStream));
@@ -856,7 +855,7 @@ namespace MailKit.Net.Smtp {
 			Stream = new SmtpStream (replayStream, null, ProtocolLogger);
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
-			host = hostName;
+			uri = new Uri ($"smtp://{host}:25");
 			secure = false;
 			MaxSize = 0;
 
@@ -877,7 +876,7 @@ namespace MailKit.Net.Smtp {
 				throw;
 			}
 
-			OnConnected ();
+			OnConnected (host, 25, SecureSocketOptions.None);
 		}
 
 		internal static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
@@ -943,13 +942,11 @@ namespace MailKit.Net.Smtp {
 			SmtpResponse response;
 			Stream stream;
 			bool starttls;
-			Uri uri;
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 #if !NETFX_CORE
 			var socket = await ConnectSocket (host, port, doAsync, cancellationToken).ConfigureAwait (false);
-			this.host = host;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
@@ -1068,7 +1065,7 @@ namespace MailKit.Net.Smtp {
 				throw;
 			}
 
-			OnConnected ();
+			OnConnected (host, port, options);
 		}
 
 		/// <summary>
@@ -1177,11 +1174,8 @@ namespace MailKit.Net.Smtp {
 			SmtpResponse response;
 			Stream stream;
 			bool starttls;
-			Uri uri;
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
-
-			this.host = host;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
@@ -1270,7 +1264,7 @@ namespace MailKit.Net.Smtp {
 				throw;
 			}
 
-			OnConnected ();
+			OnConnected (host, port, options);
 		}
 
 		/// <summary>
@@ -1366,7 +1360,7 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
-			Disconnect ();
+			Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), true);
 		}
 
 		/// <summary>
@@ -1429,20 +1423,21 @@ namespace MailKit.Net.Smtp {
 			NoOpAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		void Disconnect ()
+		void Disconnect (string host, int port, SecureSocketOptions options, bool requested)
 		{
 			capabilities = SmtpCapabilities.None;
 			authenticated = false;
 			connected = false;
 			secure = false;
-			host = null;
+			uri = null;
 
 			if (Stream != null) {
 				Stream.Dispose ();
 				Stream = null;
 			}
 
-			OnDisconnected ();
+			if (host != null)
+				OnDisconnected (host, port, options, requested);
 		}
 
 		#endregion
@@ -1876,16 +1871,12 @@ namespace MailKit.Net.Smtp {
 		{
 			try {
 				var response = await SendCommandAsync ("RSET", doAsync, cancellationToken).ConfigureAwait (false);
-				if (response.StatusCode != SmtpStatusCode.Ok) {
-					if (doAsync)
-						await DisconnectAsync (false, cancellationToken).ConfigureAwait (false);
-					else
-						Disconnect (false, cancellationToken);
-				}
+				if (response.StatusCode != SmtpStatusCode.Ok)
+					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 			} catch (SmtpCommandException) {
 				// do not disconnect
 			} catch {
-				Disconnect ();
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 			}
 		}
 
@@ -1957,7 +1948,7 @@ namespace MailKit.Net.Smtp {
 				await ResetAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				throw;
 			} catch {
-				Disconnect ();
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri) , false);
 				throw;
 			}
 		}
@@ -2267,7 +2258,7 @@ namespace MailKit.Net.Smtp {
 		{
 			if (disposing && !disposed) {
 				disposed = true;
-				Disconnect ();
+				Disconnect (null, 0, SecureSocketOptions.None, false);
 			}
 
 			base.Dispose (disposed);

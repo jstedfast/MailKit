@@ -80,8 +80,8 @@ namespace MailKit.Net.Pop3 {
 #if NETFX_CORE
 		StreamSocket socket;
 #endif
-		bool disposed, secure, utf8;
-		int timeout = 100000;
+		bool disposed, disconnecting, secure, utf8;
+		int timeout = 2 * 60 * 1000;
 		long octets;
 		int total;
 
@@ -553,8 +553,7 @@ namespace MailKit.Net.Pop3 {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			var uri = new Uri ("pop://" + engine.Uri.Host);
-			mechanism.Uri = uri;
+			mechanism.Uri = new Uri ("pop://" + engine.Uri.Host);
 
 			var ctx = new SaslAuthContext (this, mechanism);
 			var pc = await ctx.AuthenticateAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -638,12 +637,12 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 
-			var uri = new Uri ("pop://" + engine.Uri.Host);
+			var saslUri = new Uri ("pop://" + engine.Uri.Host);
 			string userName, password, message = null;
 			NetworkCredential cred;
 
 			if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
-				cred = credentials.GetCredential (uri, "APOP");
+				cred = credentials.GetCredential (saslUri, "APOP");
 				userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
 				password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
 				var challenge = engine.ApopToken + password;
@@ -678,7 +677,7 @@ namespace MailKit.Net.Pop3 {
 					if (!engine.AuthenticationMechanisms.Contains (authmech))
 						continue;
 
-					if ((sasl = SaslMechanism.Create (authmech, uri, encoding, credentials)) == null)
+					if ((sasl = SaslMechanism.Create (authmech, saslUri, encoding, credentials)) == null)
 						continue;
 
 					cancellationToken.ThrowIfCancellationRequested ();
@@ -706,7 +705,7 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			// fall back to the classic USER & PASS commands...
-			cred = credentials.GetCredential (uri, "DEFAULT");
+			cred = credentials.GetCredential (saslUri, "DEFAULT");
 			userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
 			password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
 
@@ -799,11 +798,11 @@ namespace MailKit.Net.Pop3 {
 			probed = ProbedCapabilities.None;
 			secure = false;
 
-			engine.Uri = new Uri ("pop://" + host);
+			engine.Uri = new Uri ($"pop://{host}:110");
 			engine.Connect (new Pop3Stream (replayStream, null, ProtocolLogger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 			engine.Disconnected += OnEngineDisconnected;
-			OnConnected ();
+			OnConnected (host, 110, SecureSocketOptions.None);
 		}
 
 		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
@@ -819,11 +818,11 @@ namespace MailKit.Net.Pop3 {
 			probed = ProbedCapabilities.None;
 			secure = false;
 
-			engine.Uri = new Uri ("pop://" + host);
+			engine.Uri = new Uri ($"pop://{host}:110");
 			await engine.ConnectAsync (new Pop3Stream (replayStream, null, ProtocolLogger), cancellationToken).ConfigureAwait (false);
 			await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
 			engine.Disconnected += OnEngineDisconnected;
-			OnConnected ();
+			OnConnected (host, 110, SecureSocketOptions.None);
 		}
 
 		internal static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
@@ -1012,7 +1011,7 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			engine.Disconnected += OnEngineDisconnected;
-			OnConnected ();
+			OnConnected (host, port, options);
 		}
 
 		/// <summary>
@@ -1200,7 +1199,7 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			engine.Disconnected += OnEngineDisconnected;
-			OnConnected ();
+			OnConnected (host, port, options);
 		}
 
 		/// <summary>
@@ -1295,9 +1294,7 @@ namespace MailKit.Net.Pop3 {
 			socket = null;
 #endif
 
-			secure = utf8 = false;
-			total = 0;
-
+			disconnecting = true;
 			engine.Disconnect ();
 		}
 
@@ -1402,10 +1399,24 @@ namespace MailKit.Net.Pop3 {
 
 		void OnEngineDisconnected (object sender, EventArgs e)
 		{
-			engine.Disconnected -= OnEngineDisconnected;
-			secure = utf8 = false;
+			var options = SecureSocketOptions.None;
+			bool requested = disconnecting;
+			string host = null;
+			int port = 0;
 
-			OnDisconnected ();
+			if (engine.Uri != null) {
+				options = GetSecureSocketOptions (engine.Uri);
+				host = engine.Uri.Host;
+				port = engine.Uri.Port;
+			}
+
+			engine.Disconnected -= OnEngineDisconnected;
+			disconnecting = secure = utf8 = false;
+			octets = total = 0;
+			engine.Uri = null;
+
+			if (host != null)
+				OnDisconnected (host, port, options, requested);
 		}
 
 		#endregion
