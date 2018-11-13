@@ -164,7 +164,7 @@ namespace MailKit.Net.Proxy
 				}
 			} else {
 				if (ip.AddressFamily != AddressFamily.InterNetwork)
-					throw new ArgumentException (nameof (host));
+					throw new ArgumentException ("The specified host address must be IPv4.", nameof (host));
 
 				addr = ip.GetAddressBytes ();
 			}

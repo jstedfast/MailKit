@@ -150,7 +150,7 @@ namespace MailKit.Net.Proxy
 			switch (ip.AddressFamily) {
 			case AddressFamily.InterNetworkV6: return Socks5AddressType.IPv6;
 			case AddressFamily.InterNetwork: return Socks5AddressType.IPv4;
-			default: throw new ArgumentException (nameof (host));
+			default: throw new ArgumentException ("The host address must be an IPv4 or IPv6 address.", nameof (host));
 			}
 		}
 
