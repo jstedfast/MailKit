@@ -64,7 +64,7 @@ namespace MailKit.Net
 				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
 			} else {
 #if NETSTANDARD
-				ipAddresses = Dns.GetHostAddressesAsync (uri.DnsSafeHost).GetAwaiter ().GetResult ();
+				ipAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
 #else
 				ipAddresses = Dns.GetHostAddresses (host);
 #endif

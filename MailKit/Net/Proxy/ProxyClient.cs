@@ -56,15 +56,17 @@ namespace MailKit.Net.Proxy
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="host"/> is a zero-length string.
+		/// <para>The <paramref name="host"/> is a zero-length string.</para>
+		/// <para>-or-</para>
+		/// <para>The length of <paramref name="host"/> is greater than 255 characters.</para>
 		/// </exception>
 		protected ProxyClient (string host, int port)
 		{
 			if (host == null)
 				throw new ArgumentNullException (nameof (host));
 
-			if (host.Length == 0)
-				throw new ArgumentException (nameof (host));
+			if (host.Length == 0 || host.Length > 255)
+				throw new ArgumentException ("The length of the host name must be between 0 and 256 characters.", nameof (host));
 
 			if (port < 0 || port > 65535)
 				throw new ArgumentOutOfRangeException (nameof (port));
@@ -91,7 +93,9 @@ namespace MailKit.Net.Proxy
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="host"/> is a zero-length string.
+		/// <para>The <paramref name="host"/> is a zero-length string.</para>
+		/// <para>-or-</para>
+		/// <para>The length of <paramref name="host"/> is greater than 255 characters.</para>
 		/// </exception>
 		protected ProxyClient (string host, int port, NetworkCredential credentials) : this (host, port)
 		{
@@ -150,8 +154,8 @@ namespace MailKit.Net.Proxy
 			if (host == null)
 				throw new ArgumentNullException (nameof (host));
 
-			if (host.Length == 0)
-				throw new ArgumentException (nameof (host));
+			if (host.Length == 0 || host.Length > 255)
+				throw new ArgumentException ("The length of the host name must be between 0 and 256 characters.", nameof (host));
 
 			if (port <= 0 || port > 65535)
 				throw new ArgumentOutOfRangeException (nameof (port));

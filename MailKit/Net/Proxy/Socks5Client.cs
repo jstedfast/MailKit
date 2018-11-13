@@ -58,7 +58,9 @@ namespace MailKit.Net.Proxy
 		/// <paramref name="port"/> is not between <c>1</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="host"/> is a zero-length string.
+		/// <para>The <paramref name="host"/> is a zero-length string.</para>
+		/// <para>-or-</para>
+		/// <para>The length of <paramref name="host"/> is greater than 255 characters.</para>
 		/// </exception>
 		public Socks5Client (string host, int port) : base (5, host, port)
 		{
@@ -82,7 +84,9 @@ namespace MailKit.Net.Proxy
 		/// <paramref name="port"/> is not between <c>1</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="host"/> is a zero-length string.
+		/// <para>The <paramref name="host"/> is a zero-length string.</para>
+		/// <para>-or-</para>
+		/// <para>The length of <paramref name="host"/> is greater than 255 characters.</para>
 		/// </exception>
 		public Socks5Client (string host, int port, NetworkCredential credentials) : base (5, host, port, credentials)
 		{

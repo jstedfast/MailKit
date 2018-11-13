@@ -96,6 +96,7 @@
     <Compile Include="Net\Proxy\IProxyClient.cs" />
     <Compile Include="Net\Proxy\ProxyClient.cs" />
     <Compile Include="Net\Proxy\ProxyProtocolException.cs" />
+    <Compile Include="Net\Proxy\Socks4aClient.cs" />
     <Compile Include="Net\Proxy\Socks4Client.cs" />
     <Compile Include="Net\Proxy\Socks5Client.cs" />
     <Compile Include="Net\Proxy\SocksClient.cs" />

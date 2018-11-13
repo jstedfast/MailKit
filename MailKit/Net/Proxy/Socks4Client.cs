@@ -58,7 +58,9 @@ namespace MailKit.Net.Proxy
 		/// <paramref name="port"/> is not between <c>1</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="host"/> is a zero-length string.
+		/// <para>The <paramref name="host"/> is a zero-length string.</para>
+		/// <para>-or-</para>
+		/// <para>The length of <paramref name="host"/> is greater than 255 characters.</para>
 		/// </exception>
 		public Socks4Client (string host, int port) : base (4, host, port)
 		{
@@ -88,6 +90,17 @@ namespace MailKit.Net.Proxy
 		{
 		}
 
+		/// <summary>
+		/// Get or set whether this <see cref="T:MailKit.Net.Proxy.Socks4Client"/> is a Socks4a client.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets whether this <see cref="T:MailKit.Net.Proxy.Socks4Client"/> is a Socks4a client.
+		/// </remarks>
+		/// <value><c>true</c> if is is a Socks4a client; otherwise, <c>false</c>.</value>
+		protected bool IsSocks4a {
+			get; set;
+		}
+
 		enum Socks4Command : byte
 		{
 			Connect = 0x01,
@@ -112,6 +125,28 @@ namespace MailKit.Net.Proxy
 			}
 		}
 
+		async Task<IPAddress> Resolve (string host, bool doAsync, CancellationToken cancellationToken)
+		{
+			IPAddress[] ipAddresses;
+
+			if (doAsync) {
+				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
+			} else {
+#if NETSTANDARD
+				ipAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
+#else
+				ipAddresses = Dns.GetHostAddresses (host);
+#endif
+			}
+
+			for (int i = 0; i < ipAddresses.Length; i++) {
+				if (ipAddresses[i].AddressFamily == AddressFamily.InterNetwork)
+					return ipAddresses[i];
+			}
+
+			throw new ArgumentException ($"Could not resolve a suitable IPv4 address for '{host}'.", nameof (host));
+		}
+
 		async Task<Socket> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{
 			byte[] addr, domain = null;
@@ -120,8 +155,13 @@ namespace MailKit.Net.Proxy
 			ValidateArguments (host, port);
 
 			if (!IPAddress.TryParse (host, out ip)) {
-				domain = Encoding.UTF8.GetBytes (host);
-				addr = InvalidIPAddress;
+				if (IsSocks4a) {
+					domain = Encoding.UTF8.GetBytes (host);
+					addr = InvalidIPAddress;
+				} else {
+					ip = await Resolve (host, doAsync, cancellationToken);
+					addr = ip.GetAddressBytes ();
+				}
 			} else {
 				if (ip.AddressFamily != AddressFamily.InterNetwork)
 					throw new ArgumentException (nameof (host));
