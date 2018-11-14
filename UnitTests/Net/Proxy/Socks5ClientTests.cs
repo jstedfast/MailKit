@@ -32,6 +32,7 @@ using System.Net.Sockets;
 
 using NUnit.Framework;
 
+using MailKit.Security;
 using MailKit.Net.Proxy;
 
 namespace UnitTests.Net.Proxy {
@@ -134,6 +135,7 @@ namespace UnitTests.Net.Proxy {
 				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -152,6 +154,53 @@ namespace UnitTests.Net.Proxy {
 				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
+			} catch (Exception ex) {
+				Assert.Fail (ex.Message);
+			} finally {
+				if (socket != null)
+					socket.Dispose ();
+			}
+		}
+
+		[Test]
+		public void TestConnectWithCredentials ()
+		{
+			var credentials = new NetworkCredential ("username", "password");
+			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0], credentials);
+			Socket socket = null;
+
+			try {
+				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
+				socket.Disconnect (false);
+			} catch (AuthenticationException) {
+				// this is what we expect to get
+				Assert.Pass ("Got an AuthenticationException just as expected");
+			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
+			} catch (Exception ex) {
+				Assert.Fail (ex.Message);
+			} finally {
+				if (socket != null)
+					socket.Dispose ();
+			}
+		}
+
+		[Test]
+		public async void TestConnectWithCredentialsAsync ()
+		{
+			var credentials = new NetworkCredential ("username", "password");
+			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0], credentials);
+			Socket socket = null;
+
+			try {
+				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
+				socket.Disconnect (false);
+			} catch (AuthenticationException) {
+				// this is what we expect to get
+				Assert.Pass ("Got an AuthenticationException just as expected");
+			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -174,6 +223,7 @@ namespace UnitTests.Net.Proxy {
 				socket = socks.Connect (host, 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -196,6 +246,7 @@ namespace UnitTests.Net.Proxy {
 				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -219,7 +270,9 @@ namespace UnitTests.Net.Proxy {
 				socket.Disconnect (false);
 			} catch (ProxyProtocolException) {
 				// This is the expected outcome since this Socks5 server does not support IPv6 address types
+				Assert.Pass ($"{socks.ProxyHost} does not support IPv4 addresses, just as expected.");
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -243,7 +296,9 @@ namespace UnitTests.Net.Proxy {
 				socket.Disconnect (false);
 			} catch (ProxyProtocolException) {
 				// This is the expected outcome since this Socks5 server does not support IPv6 address types
+				Assert.Pass ($"{socks.ProxyHost} does not support IPv4 addresses, just as expected.");
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {

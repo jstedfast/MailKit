@@ -625,6 +625,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (host, 0, options);
  				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
 					return;
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
@@ -677,6 +678,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
 				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
 					return;
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);

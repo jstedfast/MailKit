@@ -99,6 +99,7 @@ namespace UnitTests.Net.Proxy {
 				socket = socks.Connect (host, 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -121,6 +122,7 @@ namespace UnitTests.Net.Proxy {
 				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -139,6 +141,7 @@ namespace UnitTests.Net.Proxy {
 				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -157,6 +160,7 @@ namespace UnitTests.Net.Proxy {
 				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {

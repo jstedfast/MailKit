@@ -99,6 +99,7 @@ namespace UnitTests.Net.Proxy {
 				socket = socks.Connect (host, 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -121,6 +122,7 @@ namespace UnitTests.Net.Proxy {
 				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
 				socket.Disconnect (false);
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -141,7 +143,9 @@ namespace UnitTests.Net.Proxy {
 				socket.Disconnect (false);
 			} catch (ProxyProtocolException) {
 				// This is expected since this proxy does not support Socks4a
+				Assert.Pass ($"{socks.ProxyHost} does not support Socks4a, just as predicted.");
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {
@@ -162,7 +166,9 @@ namespace UnitTests.Net.Proxy {
 				socket.Disconnect (false);
 			} catch (ProxyProtocolException) {
 				// This is expected since this proxy does not support Socks4a
+				Assert.Pass ($"{socks.ProxyHost} does not support Socks4a, just as predicted.");
 			} catch (TimeoutException) {
+				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
 				Assert.Fail (ex.Message);
 			} finally {

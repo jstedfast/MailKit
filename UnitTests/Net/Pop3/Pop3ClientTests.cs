@@ -604,6 +604,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (host, 0, options);
 				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
 					return;
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
@@ -656,6 +657,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (host, 0, options);
 				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
 					return;
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);

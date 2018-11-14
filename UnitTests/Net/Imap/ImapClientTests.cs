@@ -427,6 +427,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (host, 0, options);
 				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
 					return;
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
@@ -479,6 +480,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (host, 0, options);
 				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
 					return;
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);

@@ -248,7 +248,6 @@ namespace MailKit.Net.Proxy
 			cancellationToken.ThrowIfCancellationRequested ();
 
 			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
-			var method = ProxyCredentials != null ? Socks5AuthMethod.UserPassword : Socks5AuthMethod.Anonymous;
 			byte[] domain = null, addr = null;
 			int bufferSize = 6;
 
@@ -266,7 +265,12 @@ namespace MailKit.Net.Proxy
 			}
 
 			try {
-				method = NegotiateAuthMethod (socket, cancellationToken, method);
+				Socks5AuthMethod method;
+
+				if (ProxyCredentials != null)
+					method = NegotiateAuthMethod (socket, cancellationToken, Socks5AuthMethod.UserPassword, Socks5AuthMethod.Anonymous);
+				else
+					method = NegotiateAuthMethod (socket, cancellationToken, Socks5AuthMethod.Anonymous);
 
 				switch (method) {
 				case Socks5AuthMethod.UserPassword:
