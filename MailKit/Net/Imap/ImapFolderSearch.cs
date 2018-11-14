@@ -377,9 +377,11 @@ namespace MailKit.Net.Imap
 						token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
 						if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq)) {
-							Debug.WriteLine ("Expected 64-bit nz-number as the MODSEQ value, but got: {0}", token);
+							//Debug.WriteLine ("Expected 64-bit nz-number as the MODSEQ value, but got: {0}", token);
 							throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 						}
+
+						results.ModSeq = modseq;
 						break;
 					}
 
