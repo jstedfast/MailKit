@@ -693,16 +693,15 @@ namespace MailKit.Net.Imap {
 
 		static AuthenticationException CreateAuthenticationException (ImapCommand ic)
 		{
-			if (string.IsNullOrEmpty (ic.ResponseText)) {
-				for (int i = 0; i < ic.RespCodes.Count; i++) {
-					if (ic.RespCodes[i].IsError || ic.RespCodes[i].Type == ImapResponseCodeType.Alert)
-						return new AuthenticationException (ic.RespCodes[i].Message);
-				}
-
-				return new AuthenticationException ();
+			for (int i = 0; i < ic.RespCodes.Count; i++) {
+				if (ic.RespCodes[i].IsError || ic.RespCodes[i].Type == ImapResponseCodeType.Alert)
+					return new AuthenticationException (ic.RespCodes[i].Message);
 			}
 
-			return new AuthenticationException (ic.ResponseText);
+			if (ic.ResponseText != null)
+				return new AuthenticationException (ic.ResponseText);
+
+			return new AuthenticationException ();
 		}
 
 		void EmitAndThrowOnAlert (ImapCommand ic)
