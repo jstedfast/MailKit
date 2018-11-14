@@ -256,7 +256,7 @@ namespace UnitTests.Net.Imap {
 				var cmd = (tokens [1] == "UID" ? tokens [2] : tokens [1]).TrimEnd ();
 				var tag = tokens [0];
 
-				text = string.Format ("{0} {1} {2} completed\r\n", tag, response, cmd);
+				text = string.Format ("{0} {1} {2} {3}\r\n", tag, response, cmd, response == ImapReplayCommandResponse.OK ? "completed" : "failed");
 			}
 
 			if (compressed) {

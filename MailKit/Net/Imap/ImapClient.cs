@@ -816,6 +816,13 @@ namespace MailKit.Net.Imap {
 			return string.Format ("{0}://{1}@{2}:{3}", uri.Scheme, EscapeUserName (userName), uri.Host, uri.Port);
 		}
 
+		async Task OnAuthenticatedAsync (string message, bool doAsync, CancellationToken cancellationToken)
+		{
+			await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			OnAuthenticated (message);
+		}
+
 		async Task AuthenticateAsync (SaslMechanism mechanism, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (mechanism == null)
@@ -891,9 +898,7 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == capabilitiesVersion)
 				await engine.QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			OnAuthenticated (ic.ResponseText ?? string.Empty);
+			await OnAuthenticatedAsync (ic.ResponseText ?? string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -1025,9 +1030,7 @@ namespace MailKit.Net.Imap {
 				if (engine.CapabilitiesVersion == capabilitiesVersion)
 					await engine.QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				OnAuthenticated (ic.ResponseText ?? string.Empty);
+				await OnAuthenticatedAsync (ic.ResponseText ?? string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 				return;
 			}
 
@@ -1063,9 +1066,7 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == capabilitiesVersion)
 				await engine.QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			OnAuthenticated (ic.ResponseText ?? string.Empty);
+			await OnAuthenticatedAsync (ic.ResponseText ?? string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -1143,11 +1144,8 @@ namespace MailKit.Net.Imap {
 
 			OnConnected (host, 143, SecureSocketOptions.None);
 
-			if (engine.State == ImapEngineState.Authenticated) {
-				engine.QueryNamespacesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
-				engine.QuerySpecialFoldersAsync (false, cancellationToken).GetAwaiter ().GetResult ();
-				OnAuthenticated (string.Empty);
-			}
+			if (engine.State == ImapEngineState.Authenticated)
+				OnAuthenticatedAsync (string.Empty, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
@@ -1170,11 +1168,8 @@ namespace MailKit.Net.Imap {
 
 			OnConnected (host, 143, SecureSocketOptions.None);
 
-			if (engine.State == ImapEngineState.Authenticated) {
-				await engine.QueryNamespacesAsync (true, cancellationToken).ConfigureAwait (false);
-				await engine.QuerySpecialFoldersAsync (true, cancellationToken).ConfigureAwait (false);
-				OnAuthenticated (string.Empty);
-			}
+			if (engine.State == ImapEngineState.Authenticated)
+				await OnAuthenticatedAsync (string.Empty, true, cancellationToken).ConfigureAwait (false);
 		}
 
 		internal static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
@@ -1380,11 +1375,8 @@ namespace MailKit.Net.Imap {
 
 			OnConnected (host, port, options);
 
-			if (engine.State == ImapEngineState.Authenticated) {
-				await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				OnAuthenticated (string.Empty);
-			}
+			if (engine.State == ImapEngineState.Authenticated)
+				await OnAuthenticatedAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -1585,11 +1577,8 @@ namespace MailKit.Net.Imap {
 
 			OnConnected (host, port, options);
 
-			if (engine.State == ImapEngineState.Authenticated) {
-				await engine.QueryNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				await engine.QuerySpecialFoldersAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				OnAuthenticated (string.Empty);
-			}
+			if (engine.State == ImapEngineState.Authenticated)
+				await OnAuthenticatedAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
