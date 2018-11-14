@@ -353,7 +353,6 @@ namespace MailKit.Net.Smtp {
 		{
 			try {
 				var responses = new List<SmtpResponse> ();
-				Exception rex = null;
 				int accepted = 0;
 				int rcpt = 0;
 
@@ -365,21 +364,15 @@ namespace MailKit.Net.Smtp {
 
 				// Note: we need to read all responses from the server before we can process
 				// them in case any of them have any errors so that we can RSET the state.
-				try {
-					for (int i = 0; i < queued.Count; i++) {
-						SmtpResponse response;
+				for (int i = 0; i < queued.Count; i++) {
+					SmtpResponse response;
 
-						if (doAsync)
-							response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
-						else
-							response = Stream.ReadResponse (cancellationToken);
+					if (doAsync)
+						response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+					else
+						response = Stream.ReadResponse (cancellationToken);
 
-						responses.Add (response);
-					}
-				} catch (Exception ex) {
-					// Note: save this exception for later (it may be related to
-					// an error response for a MAIL FROM or RCPT TO command).
-					rex = ex;
+					responses.Add (response);
 				}
 
 				for (int i = 0; i < responses.Count; i++) {
@@ -396,9 +389,6 @@ namespace MailKit.Net.Smtp {
 
 				if (accepted == 0)
 					OnNoRecipientsAccepted (message);
-
-				if (rex != null)
-					throw new SmtpProtocolException ("Error reading a response from the SMTP server.", rex);
 			} finally {
 				queued.Clear ();
 			}
