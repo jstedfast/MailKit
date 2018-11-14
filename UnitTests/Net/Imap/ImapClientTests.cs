@@ -3778,11 +3778,12 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000006 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt", true));
-			commands.Add (new ImapReplayCommand ("A00000007 UID SEARCH RETURN () ALL\r\n", "gmail.search.txt", true));
-			commands.Add (new ImapReplayCommand ("A00000008 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK, true));
-			commands.Add (new ImapReplayCommand ("A00000009 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt", true));
-			commands.Add (new ImapReplayCommand ("A00000010 LOGOUT\r\n", "gmail.logout.txt", true));
+			commands.Add (new ImapReplayCommand ("A00000006 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.NO, true));
+			commands.Add (new ImapReplayCommand ("A00000007 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt", true));
+			commands.Add (new ImapReplayCommand ("A00000008 UID SEARCH RETURN () ALL\r\n", "gmail.search.txt", true));
+			commands.Add (new ImapReplayCommand ("A00000009 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK, true));
+			commands.Add (new ImapReplayCommand ("A00000010 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt", true));
+			commands.Add (new ImapReplayCommand ("A00000011 LOGOUT\r\n", "gmail.logout.txt", true));
 
 			return commands;
 		}
@@ -3808,6 +3809,8 @@ namespace UnitTests.Net.Imap {
 				}
 
 				client.Compress ();
+
+				Assert.Throws<ImapCommandException> (() => client.Compress ());
 
 				int changed = 0, expunged = 0;
 				var inbox = client.Inbox;
@@ -3852,6 +3855,8 @@ namespace UnitTests.Net.Imap {
 				}
 
 				await client.CompressAsync ();
+
+				Assert.Throws<ImapCommandException> (async () => await client.CompressAsync ());
 
 				int changed = 0, expunged = 0;
 				var inbox = client.Inbox;
