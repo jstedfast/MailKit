@@ -266,7 +266,7 @@ namespace MailKit.Search {
 				throw new ArgumentNullException (nameof (flag));
 
 			if (flag.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.");
+				throw new ArgumentException ("The flag cannot be an empty string.", nameof (flag));
 
 			return new TextSearchQuery (SearchTerm.NotKeyword, flag);
 		}
@@ -446,7 +446,7 @@ namespace MailKit.Search {
 				throw new ArgumentNullException (nameof (flag));
 
 			if (flag.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.");
+				throw new ArgumentException ("The flag cannot be an empty string.", nameof (flag));
 
 			return new TextSearchQuery (SearchTerm.Keyword, flag);
 		}

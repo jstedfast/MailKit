@@ -156,7 +156,7 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.LargerThan:
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat ("LARGER {0}", numeric.Value);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "LARGER {0}", numeric.Value);
 				break;
 			case SearchTerm.MessageContains:
 				text = (TextSearchQuery) query;
@@ -165,7 +165,7 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.ModSeq:
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat ("MODSEQ {0}", numeric.Value);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "MODSEQ {0}", numeric.Value);
 				break;
 			case SearchTerm.New:
 				builder.Append ("NEW");
@@ -203,7 +203,7 @@ namespace MailKit.Net.Imap
 					throw new NotSupportedException ("The OLDER search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat ("OLDER {0}", numeric.Value);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "OLDER {0}", numeric.Value);
 				break;
 			case SearchTerm.Or:
 				builder.Append ("OR ");
@@ -232,7 +232,7 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.SmallerThan:
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat ("SMALLER {0}", numeric.Value);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "SMALLER {0}", numeric.Value);
 				break;
 			case SearchTerm.SubjectContains:
 				text = (TextSearchQuery) query;
@@ -253,21 +253,21 @@ namespace MailKit.Net.Imap
 					throw new NotSupportedException ("The YOUNGER search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat ("YOUNGER {0}", numeric.Value);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "YOUNGER {0}", numeric.Value);
 				break;
 			case SearchTerm.GMailMessageId:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 					throw new NotSupportedException ("The X-GM-MSGID search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat ("X-GM-MSGID {0}", numeric.Value);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "X-GM-MSGID {0}", numeric.Value);
 				break;
 			case SearchTerm.GMailThreadId:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 					throw new NotSupportedException ("The X-GM-THRID search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat ("X-GM-THRID {0}", numeric.Value);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "X-GM-THRID {0}", numeric.Value);
 				break;
 			case SearchTerm.GMailLabels:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
