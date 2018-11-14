@@ -190,7 +190,7 @@ namespace MailKit.Search {
 		/// Match messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
 		/// </summary>
 		/// <remarks>
-		///  Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
+		/// Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="modseq">The mod-sequence value.</param>
