@@ -657,6 +657,14 @@ namespace MailKit.Search {
 		public static readonly SearchQuery NotSeen = new SearchQuery (SearchTerm.NotSeen);
 
 		/// <summary>
+		/// Match messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
+		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
+		/// </remarks>
+		public static readonly SearchQuery Old = new SearchQuery (SearchTerm.NotRecent);
+
+		/// <summary>
 		/// Match messages older than the specified number of seconds.
 		/// </summary>
 		/// <remarks>
