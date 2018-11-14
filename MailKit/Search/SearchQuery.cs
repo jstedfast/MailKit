@@ -367,6 +367,19 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
+		/// Match messages using a saved search filter.
+		/// </summary>
+		/// <remarks>
+		/// Matches messages using a saved search filter.
+		/// </remarks>
+		/// <returns>A <see cref="FilterSearchQuery"/>.</returns>
+		/// <param name="filter">The name of the saved search.</param>
+		public static SearchQuery Filter (MetadataTag filter)
+		{
+			return new FilterSearchQuery (filter);
+		}
+
+		/// <summary>
 		/// Match messages with the <see cref="MessageFlags.Flagged"/> flag set.
 		/// </summary>
 		/// <remarks>

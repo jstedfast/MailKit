@@ -2161,6 +2161,14 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (8, vanished[0].UniqueIds[0].Id, "Unexpected UID for vanished message");
 				vanished.Clear ();
 
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.GMailMessageId (1)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.GMailThreadId (1)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.HasGMailLabel ("Custom Label")));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.GMailRawSearch ("has:attachment in:unread")));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Fuzzy (SearchQuery.SubjectContains ("some fuzzy text"))));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter (new MetadataTag ("/private/filters/values/saved-search"))));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter ("saved-search")));
+
 				// Use SEARCH and FETCH to get the same info
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var changed = folder.Search (searchOptions, SearchQuery.ChangedSince (highestModSeq));
@@ -2768,6 +2776,14 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (1, vanished[0].UniqueIds.Count, "Unexpected number of messages vanished");
 				Assert.AreEqual (8, vanished[0].UniqueIds[0].Id, "Unexpected UID for vanished message");
 				vanished.Clear ();
+
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.GMailMessageId (1)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.GMailThreadId (1)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.HasGMailLabel ("Custom Label")));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.GMailRawSearch ("has:attachment in:unread")));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Fuzzy (SearchQuery.SubjectContains ("some fuzzy text"))));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter (new MetadataTag ("/private/filters/values/saved-search"))));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter ("saved-search")));
 
 				// Use SEARCH and FETCH to get the same info
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
