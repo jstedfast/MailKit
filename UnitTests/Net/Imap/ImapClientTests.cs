@@ -3192,7 +3192,7 @@ namespace UnitTests.Net.Imap {
 				}
 			}
 			commands.Add (new ImapReplayCommand ("A00000059 UID SEARCH RETURN () OR X-GM-MSGID 1 OR X-GM-THRID 5 OR X-GM-LABELS \"Custom Label\" X-GM-RAW \"has:attachment in:unread\"\r\n", "gmail.search.txt"));
-			commands.Add (new ImapReplayCommand ("A00000060 UID FETCH 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODY)\r\n", "gmail.search-summary.txt"));
+			commands.Add (new ImapReplayCommand ("A00000060 UID FETCH 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODY X-GM-MSGID X-GM-THRID X-GM-LABELS)\r\n", "gmail.search-summary.txt"));
 			commands.Add (new ImapReplayCommand ("A00000061 UID FETCH 1 (BODY.PEEK[])\r\n", "gmail.fetch.1.txt"));
 			commands.Add (new ImapReplayCommand ("A00000062 UID FETCH 2 (BODY.PEEK[])\r\n", "gmail.fetch.2.txt"));
 			commands.Add (new ImapReplayCommand ("A00000063 UID FETCH 3 (BODY.PEEK[])\r\n", "gmail.fetch.3.txt"));
@@ -3325,15 +3325,19 @@ namespace UnitTests.Net.Imap {
 				var matches = created.Search (query);
 				Assert.AreEqual (21, matches.Count);
 
-				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId;
+				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId | MessageSummaryItems.GMailLabels | MessageSummaryItems.GMailMessageId | MessageSummaryItems.GMailThreadId;
 				var summaries = created.Fetch (matches, items);
 				var indexes = new List<int> ();
 
 				foreach (var summary in summaries) {
-					if (summary.UniqueId.IsValid)
-						created.GetMessage (summary.UniqueId);
-					else
-						created.GetMessage (summary.Index);
+					Assert.AreEqual (1592225494819146100 + summary.UniqueId.Id, summary.GMailMessageId.Value, "GMailMessageId");
+					Assert.AreEqual (1592225494819146100 + summary.UniqueId.Id, summary.GMailThreadId.Value, "GMailThreadId");
+					Assert.AreEqual (2, summary.GMailLabels.Count, "GMailLabels.Count");
+					Assert.AreEqual ("Test Messages", summary.GMailLabels[0]);
+					Assert.AreEqual ("\\Important", summary.GMailLabels[1]);
+					Assert.IsTrue (summary.UniqueId.IsValid, "UniqueId.IsValid");
+
+					created.GetMessage (summary.UniqueId);
 					indexes.Add (summary.Index);
 				}
 
@@ -3478,15 +3482,19 @@ namespace UnitTests.Net.Imap {
 				var matches = await created.SearchAsync (query);
 				Assert.AreEqual (21, matches.Count);
 
-				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId;
+				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId | MessageSummaryItems.GMailLabels | MessageSummaryItems.GMailMessageId | MessageSummaryItems.GMailThreadId;
 				var summaries = await created.FetchAsync (matches, items);
 				var indexes = new List<int> ();
 
 				foreach (var summary in summaries) {
-					if (summary.UniqueId.IsValid)
-						await created.GetMessageAsync (summary.UniqueId);
-					else
-						await created.GetMessageAsync (summary.Index);
+					Assert.AreEqual (1592225494819146100 + summary.UniqueId.Id, summary.GMailMessageId.Value, "GMailMessageId");
+					Assert.AreEqual (1592225494819146100 + summary.UniqueId.Id, summary.GMailThreadId.Value, "GMailThreadId");
+					Assert.AreEqual (2, summary.GMailLabels.Count, "GMailLabels.Count");
+					Assert.AreEqual ("Test Messages", summary.GMailLabels[0]);
+					Assert.AreEqual ("\\Important", summary.GMailLabels[1]);
+					Assert.IsTrue (summary.UniqueId.IsValid, "UniqueId.IsValid");
+
+					await created.GetMessageAsync (summary.UniqueId);
 					indexes.Add (summary.Index);
 				}
 
