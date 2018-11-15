@@ -1220,7 +1220,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static ImapResponseCodeType GetResponseCodeType (string atom)
+		internal static ImapResponseCodeType GetResponseCodeType (string atom)
 		{
 			switch (atom) {
 			case "ALERT":                return ImapResponseCodeType.Alert;

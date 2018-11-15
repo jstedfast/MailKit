@@ -56,6 +56,7 @@
     <Compile Include="Net\Imap\ImapClientTests.cs" />
     <Compile Include="Net\Imap\ImapCommandExceptionTests.cs" />
     <Compile Include="Net\Imap\ImapEncodingTests.cs" />
+    <Compile Include="Net\Imap\ImapEngineTests.cs" />
     <Compile Include="Net\Imap\ImapFolderFetchTests.cs" />
     <Compile Include="Net\Imap\ImapFolderFlagsTests.cs" />
     <Compile Include="Net\Imap\ImapFolderTests.cs" />
