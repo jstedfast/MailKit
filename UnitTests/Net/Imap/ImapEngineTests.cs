@@ -25,9 +25,13 @@
 //
 
 using System;
+using System.IO;
+using System.Text;
+using System.Threading;
 
 using NUnit.Framework;
 
+using MailKit;
 using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {
@@ -50,6 +54,212 @@ namespace UnitTests.Net.Imap {
 
 				var result = ImapEngine.GetResponseCodeType (atom);
 				Assert.AreEqual (type, result);
+			}
+		}
+
+		[Test]
+		public void TestParseResponseCodeBadCharset ()
+		{
+			const string text = "BADCHARSET (US-ASCII \"iso-8859-1\" UTF-8)] This is some free-form text\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						ImapResponseCode respCode;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							respCode = engine.ParseResponseCodeAsync (false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual (ImapResponseCodeType.BadCharset, respCode.Type);
+						Assert.AreEqual ("This is some free-form text", respCode.Message);
+
+						Assert.AreEqual (3, engine.SupportedCharsets.Count);
+						Assert.IsTrue (engine.SupportedCharsets.Contains ("US-ASCII"), "US-ASCII");
+						Assert.IsTrue (engine.SupportedCharsets.Contains ("iso-8859-1"), "iso-8859-1");
+						Assert.IsTrue (engine.SupportedCharsets.Contains ("UTF-8"), "UTF-8");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseResponseCodeBadUrl ()
+		{
+			const string text = "BADURL \"/INBOX;UIDVALIDITY=785799047/;UID=113330;section=1.5.9\"] CATENATE append has failed, one message expunged\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						ImapResponseCode respCode;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							respCode = engine.ParseResponseCodeAsync (false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual (ImapResponseCodeType.BadUrl, respCode.Type);
+						Assert.AreEqual ("CATENATE append has failed, one message expunged", respCode.Message);
+
+						var badurl = (BadUrlResponseCode) respCode;
+						Assert.AreEqual ("/INBOX;UIDVALIDITY=785799047/;UID=113330;section=1.5.9", badurl.BadUrl);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseResponseCodeMaxConvertMessages ()
+		{
+			const string text = "MAXCONVERTMESSAGES 1] This is some free-form text\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						ImapResponseCode respCode;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							respCode = engine.ParseResponseCodeAsync (false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual (ImapResponseCodeType.MaxConvertMessages, respCode.Type);
+						Assert.AreEqual ("This is some free-form text", respCode.Message);
+
+						var maxconvert = (MaxConvertResponseCode) respCode;
+						Assert.AreEqual (1, maxconvert.MaxConvert);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseResponseCodeMaxConvertParts ()
+		{
+			const string text = "MAXCONVERTPARTS 1] This is some free-form text\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						ImapResponseCode respCode;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							respCode = engine.ParseResponseCodeAsync (false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual (ImapResponseCodeType.MaxConvertParts, respCode.Type);
+						Assert.AreEqual ("This is some free-form text", respCode.Message);
+
+						var maxconvert = (MaxConvertResponseCode) respCode;
+						Assert.AreEqual (1, maxconvert.MaxConvert);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseResponseCodeNoUpdate ()
+		{
+			const string text = "NOUPDATE \"B02\"] Too many contexts\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						ImapResponseCode respCode;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							respCode = engine.ParseResponseCodeAsync (false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual (ImapResponseCodeType.NoUpdate, respCode.Type);
+						Assert.AreEqual ("Too many contexts", respCode.Message);
+
+						var noupdate = (NoUpdateResponseCode) respCode;
+						Assert.AreEqual ("B02", noupdate.Tag);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseResponseCodeNewName ()
+		{
+			const string text = "NEWNAME OldName NewName] This is some free-form text\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						ImapResponseCode respCode;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							respCode = engine.ParseResponseCodeAsync (false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual (ImapResponseCodeType.NewName, respCode.Type);
+						Assert.AreEqual ("This is some free-form text", respCode.Message);
+
+						var newname = (NewNameResponseCode) respCode;
+						Assert.AreEqual ("OldName", newname.OldName);
+						Assert.AreEqual ("NewName", newname.NewName);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseResponseCodeUndefinedFilter ()
+		{
+			const string text = "UNDEFINED-FILTER filter-name] This is some free-form text\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						ImapResponseCode respCode;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							respCode = engine.ParseResponseCodeAsync (false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual (ImapResponseCodeType.UndefinedFilter, respCode.Type);
+						Assert.AreEqual ("This is some free-form text", respCode.Message);
+
+						var undefined = (UndefinedFilterResponseCode) respCode;
+						Assert.AreEqual ("filter-name", undefined.Name);
+					}
+				}
 			}
 		}
 	}
