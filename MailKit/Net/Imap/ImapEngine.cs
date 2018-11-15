@@ -673,6 +673,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+#if false
 		/// <summary>
 		/// Reads a single line from the <see cref="ImapStream"/>.
 		/// </summary>
@@ -716,6 +717,7 @@ namespace MailKit.Net.Imap {
 		{
 			return ReadLineAsync (true, cancellationToken);
 		}
+#endif
 
 		internal Task<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2442,7 +2444,7 @@ namespace MailKit.Net.Imap {
 
 			if (status) {
 				for (int i = 0; i < list.Count; i++)
-					list[i].Status (items, cancellationToken);
+					await list[i].StatusAsync (items, doAsync, false, cancellationToken).ConfigureAwait (false);
 			}
 
 			return list;
