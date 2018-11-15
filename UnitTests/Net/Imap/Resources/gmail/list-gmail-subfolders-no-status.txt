@@ -1,0 +1,8 @@
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/All Mail"
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Drafts"
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Important"
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Sent Mail"
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Spam"
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Starred"
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Trash"
+A######## OK Success

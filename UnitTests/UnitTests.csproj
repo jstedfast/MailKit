@@ -351,6 +351,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all-no-status.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-archived-messages.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-gmail.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-gmail-subfolders.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-gmail-subfolders-no-status.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-level1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-level2.txt" />

@@ -1579,7 +1579,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 
 				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread;
-				var folders = client.GetFolders (client.PersonalNamespaces[0], all, true).ToList ();
+				var folders = client.GetFolders (client.PersonalNamespaces[0], all, true);
 				Assert.AreEqual (9, folders.Count, "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0);
@@ -1603,7 +1603,7 @@ namespace UnitTests.Net.Imap {
 
 				// Now make the same query but disable LIST-STATUS
 				client.Capabilities &= ~ImapCapabilities.ListStatus;
-				folders = client.GetFolders (client.PersonalNamespaces[0], all, false).ToList ();
+				folders = client.GetFolders (client.PersonalNamespaces[0], all, false);
 				Assert.AreEqual (9, folders.Count, "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0);
@@ -1663,7 +1663,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 
 				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread;
-				var folders = (await client.GetFoldersAsync (client.PersonalNamespaces[0], all, true)).ToList ();
+				var folders = await client.GetFoldersAsync (client.PersonalNamespaces[0], all, true);
 				Assert.AreEqual (9, folders.Count, "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0);
@@ -1687,7 +1687,7 @@ namespace UnitTests.Net.Imap {
 
 				// Now make the same query but disable LIST-STATUS
 				client.Capabilities &= ~ImapCapabilities.ListStatus;
-				folders = (await client.GetFoldersAsync (client.PersonalNamespaces[0], all, false)).ToList ();
+				folders = await client.GetFoldersAsync (client.PersonalNamespaces[0], all, false);
 				Assert.AreEqual (9, folders.Count, "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0);
@@ -1708,7 +1708,6 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.GetFolder (SpecialFolder.Junk), "[Gmail]/Spam", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0);
 				AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Starred", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0);
 				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 41234, 0, 0, 1143, 2, 0);
-
 
 				await client.DisconnectAsync (true);
 			}
@@ -3369,7 +3368,7 @@ namespace UnitTests.Net.Imap {
 				client.Capabilities &= ~ImapCapabilities.ListExtended;
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
-				var folders = personal.GetSubfolders ().ToList ();
+				var folders = personal.GetSubfolders ();
 				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
@@ -3438,7 +3437,7 @@ namespace UnitTests.Net.Imap {
 				created.Subscribe ();
 				Assert.IsTrue (created.IsSubscribed, "Expected IsSubscribed to be true after subscribing to the folder.");
 
-				var subscribed = personal.GetSubfolders (true).ToList ();
+				var subscribed = personal.GetSubfolders (true);
 				Assert.IsTrue (subscribed.Contains (created), "Expected the list of subscribed folders to contain the UnitTests folder.");
 
 				created.Unsubscribe ();
@@ -3526,7 +3525,7 @@ namespace UnitTests.Net.Imap {
 				client.Capabilities &= ~ImapCapabilities.ListExtended;
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
-				var folders = (await personal.GetSubfoldersAsync ()).ToList ();
+				var folders = await personal.GetSubfoldersAsync ();
 				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
@@ -3595,7 +3594,7 @@ namespace UnitTests.Net.Imap {
 				await created.SubscribeAsync ();
 				Assert.IsTrue (created.IsSubscribed, "Expected IsSubscribed to be true after subscribing to the folder.");
 
-				var subscribed = (await personal.GetSubfoldersAsync (true)).ToList ();
+				var subscribed = await personal.GetSubfoldersAsync (true);
 				Assert.IsTrue (subscribed.Contains (created), "Expected the list of subscribed folders to contain the UnitTests folder.");
 
 				await created.UnsubscribeAsync ();

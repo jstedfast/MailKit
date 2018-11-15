@@ -1,0 +1,15 @@
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/All Mail"
+* STATUS "[Gmail]/All Mail" (HIGHESTMODSEQ 41234 MESSAGES 67 RECENT 0 UIDNEXT 1210 UIDVALIDITY 11 UNSEEN 3)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Drafts"
+* STATUS "[Gmail]/Drafts" (HIGHESTMODSEQ 41234 MESSAGES 0 RECENT 0 UIDNEXT 1 UIDVALIDITY 6 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Important"
+* STATUS "[Gmail]/Important" (HIGHESTMODSEQ 41234 MESSAGES 58 RECENT 0 UIDNEXT 307 UIDVALIDITY 9 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Sent Mail"
+* STATUS "[Gmail]/Sent Mail" (HIGHESTMODSEQ 41234 MESSAGES 4 RECENT 0 UIDNEXT 7 UIDVALIDITY 5 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Spam"
+* STATUS "[Gmail]/Spam" (HIGHESTMODSEQ 41234 MESSAGES 0 RECENT 0 UIDNEXT 1 UIDVALIDITY 3 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Starred"
+* STATUS "[Gmail]/Starred" (HIGHESTMODSEQ 41234 MESSAGES 1 RECENT 0 UIDNEXT 7 UIDVALIDITY 4 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Trash"
+* STATUS "[Gmail]/Trash" (HIGHESTMODSEQ 41234 MESSAGES 0 RECENT 0 UIDNEXT 1143 UIDVALIDITY 2 UNSEEN 0)
+A######## OK Success
