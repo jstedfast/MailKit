@@ -1907,6 +1907,8 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000064 FETCH 1:* (UID BODY.PEEK[])\r\n", "dovecot.getstreams3.txt"));
 			commands.Add (new ImapReplayCommand ("A00000065 EXPUNGE\r\n", "dovecot.expunge.txt"));
 			commands.Add (new ImapReplayCommand ("A00000066 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000067 NOOP\r\n", "dovecot.noop+alert.txt"));
+			commands.Add (new ImapReplayCommand ("A00000068 LOGOUT\r\n", "gmail.logout.txt"));
 
 			return commands;
 		}
@@ -2523,7 +2525,15 @@ namespace UnitTests.Net.Imap {
 
 				destination.Close (true);
 
-				client.Disconnect (false);
+				int alerts = 0;
+				client.Alert += (sender, e) => {
+					Assert.AreEqual ("System shutdown in 10 minutes", e.Message);
+					alerts++;
+				};
+				client.NoOp ();
+				Assert.AreEqual (1, alerts, "Alert event failed to fire.");
+
+				client.Disconnect (true);
 			}
 		}
 
@@ -3139,7 +3149,15 @@ namespace UnitTests.Net.Imap {
 
 				await destination.CloseAsync (true);
 
-				await client.DisconnectAsync (false);
+				int alerts = 0;
+				client.Alert += (sender, e) => {
+					Assert.AreEqual ("System shutdown in 10 minutes", e.Message);
+					alerts++;
+				};
+				await client.NoOpAsync ();
+				Assert.AreEqual (1, alerts, "Alert event failed to fire.");
+
+				await client.DisconnectAsync (true);
 			}
 		}
 

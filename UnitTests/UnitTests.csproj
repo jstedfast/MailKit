@@ -232,6 +232,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\move.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\multiappend.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\namespace.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\noop+alert.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\optimized-search.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-changed-since.txt" />
