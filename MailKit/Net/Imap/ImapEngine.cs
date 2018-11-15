@@ -2443,8 +2443,10 @@ namespace MailKit.Net.Imap {
 			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (status) {
-				for (int i = 0; i < list.Count; i++)
-					await list[i].StatusAsync (items, doAsync, false, cancellationToken).ConfigureAwait (false);
+				for (int i = 0; i < list.Count; i++) {
+					if (list[i].Exists)
+						await list[i].StatusAsync (items, doAsync, false, cancellationToken).ConfigureAwait (false);
+				}
 			}
 
 			return list;

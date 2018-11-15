@@ -349,6 +349,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\idle.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\idle-done.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all-no-status.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-archived-messages.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-level1.txt" />
@@ -376,6 +377,14 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-labels.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-all-mail.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-drafts.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-important.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-sent-mail.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-spam.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-starred.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-trash.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\uid-copy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\uid-expunge.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\uid-move.txt" />
