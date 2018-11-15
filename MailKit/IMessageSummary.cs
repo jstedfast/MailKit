@@ -202,6 +202,19 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The user-defined message flags.</value>
+		HashSet<string> Keywords { get; }
+
+		/// <summary>
+		/// Gets the user-defined message flags, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the user-defined message flags, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
+		/// <value>The user-defined message flags.</value>
+		[Obsolete ("Use Keywords instead.")]
 		HashSet<string> UserFlags { get; }
 
 		/// <summary>

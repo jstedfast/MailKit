@@ -62,8 +62,19 @@ namespace UnitTests.Search
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasCustomFlag (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HasCustomFlag (string.Empty));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasCustomFlags (null));
-			Assert.Throws<ArgumentException> (() => SearchQuery.HasCustomFlags (new string [0]));
+			Assert.Throws<ArgumentException> (() => SearchQuery.HasCustomFlags (new string[0]));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HasFlags (MessageFlags.None));
+			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasKeyword (null));
+			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeyword (string.Empty));
+			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasKeywords (null));
+			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeywords (new string[0]));
+			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeywords (new string[] { "keyword", null }));
+			Assert.Throws<ArgumentException> (() => SearchQuery.NotFlags (MessageFlags.None));
+			Assert.Throws<ArgumentNullException> (() => SearchQuery.NotKeyword (null));
+			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeyword (string.Empty));
+			Assert.Throws<ArgumentNullException> (() => SearchQuery.NotKeywords (null));
+			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeywords (new string[0]));
+			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeywords (new string [] { "keyword", null }));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasGMailLabel (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HasGMailLabel (string.Empty));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HeaderContains (null, "text"));
@@ -139,18 +150,18 @@ namespace UnitTests.Search
 		}
 
 		[Test]
-		public void TestCustomFlagsQueries ()
+		public void TestKeywordsQueries ()
 		{
 			BinarySearchQuery binary;
 			TextSearchQuery text;
 
-			var query = SearchQuery.HasCustomFlags (new [] { "custom1" });
+			var query = SearchQuery.HasKeywords (new [] { "custom1" });
 			Assert.IsInstanceOf<TextSearchQuery> (query);
 			text = (TextSearchQuery)query;
 			Assert.AreEqual (SearchTerm.Keyword, text.Term);
 			Assert.AreEqual ("custom1", text.Text);
 
-			query = SearchQuery.HasCustomFlags (new [] { "custom1", "custom2" });
+			query = SearchQuery.HasKeywords (new [] { "custom1", "custom2" });
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery)query;
 			Assert.AreEqual (SearchTerm.And, binary.Term);
@@ -159,13 +170,13 @@ namespace UnitTests.Search
 			Assert.AreEqual ("custom1", ((TextSearchQuery)binary.Left).Text);
 			Assert.AreEqual ("custom2", ((TextSearchQuery)binary.Right).Text);
 
-			query = SearchQuery.DoesNotHaveCustomFlags (new [] { "custom1" });
+			query = SearchQuery.NotKeywords (new [] { "custom1" });
 			Assert.IsInstanceOf<TextSearchQuery> (query);
 			text = (TextSearchQuery) query;
 			Assert.AreEqual (SearchTerm.NotKeyword, text.Term);
 			Assert.AreEqual ("custom1", text.Text);
 
-			query = SearchQuery.DoesNotHaveCustomFlags (new [] { "custom1", "custom2" });
+			query = SearchQuery.NotKeywords (new [] { "custom1", "custom2" });
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
 			Assert.AreEqual (SearchTerm.And, binary.Term);
@@ -201,21 +212,21 @@ namespace UnitTests.Search
 			Assert.AreEqual (SearchQuery.Draft.Term, binary.Left.Term);
 			Assert.AreEqual (SearchQuery.Recent.Term, binary.Right.Term);
 
-			query = SearchQuery.DoesNotHaveFlags (MessageFlags.Answered | MessageFlags.Seen);
+			query = SearchQuery.NotFlags (MessageFlags.Answered | MessageFlags.Seen);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
 			Assert.AreEqual (SearchTerm.And, binary.Term);
 			Assert.AreEqual (SearchQuery.NotSeen.Term, binary.Left.Term);
 			Assert.AreEqual (SearchQuery.NotAnswered.Term, binary.Right.Term);
 
-			query = SearchQuery.DoesNotHaveFlags (MessageFlags.Flagged | MessageFlags.Deleted);
+			query = SearchQuery.NotFlags (MessageFlags.Flagged | MessageFlags.Deleted);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
 			Assert.AreEqual (SearchTerm.And, binary.Term);
 			Assert.AreEqual (SearchQuery.NotFlagged.Term, binary.Left.Term);
 			Assert.AreEqual (SearchQuery.NotDeleted.Term, binary.Right.Term);
 
-			query = SearchQuery.DoesNotHaveFlags (MessageFlags.Draft | MessageFlags.Recent);
+			query = SearchQuery.NotFlags (MessageFlags.Draft | MessageFlags.Recent);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
 			Assert.AreEqual (SearchTerm.And, binary.Term);

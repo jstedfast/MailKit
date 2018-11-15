@@ -104,8 +104,12 @@ namespace MailKit {
 				get { return Message != null ? Message.Flags : Children[0].Flags; }
 			}
 
+			public HashSet<string> Keywords {
+				get { return Message != null ? Message.Keywords : Children[0].Keywords; }
+			}
+
 			public HashSet<string> UserFlags {
-				get { return Message != null ? Message.UserFlags : Children[0].UserFlags; }
+				get { return Keywords; }
 			}
 
 			public HeaderList Headers {

@@ -61,7 +61,7 @@ namespace MailKit {
 			if (index < 0)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			UserFlags = new HashSet<string> ();
+			Keywords = new HashSet<string> ();
 			Index = index;
 		}
 
@@ -446,8 +446,24 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The user-defined message flags.</value>
-		public HashSet<string> UserFlags {
+		public HashSet<string> Keywords {
 			get; set;
+		}
+
+		/// <summary>
+		/// Gets the user-defined message flags, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the user-defined message flags, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
+		/// <value>The user-defined message flags.</value>
+		[Obsolete ("Use Keywords instead.")]
+		public HashSet<string> UserFlags {
+			get { return Keywords; }
+			set { Keywords = value; }
 		}
 
 		/// <summary>

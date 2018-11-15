@@ -260,22 +260,17 @@ namespace MailKit.Search {
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="flag"/> is empty.
 		/// </exception>
+		[Obsolete ("Use NotKeyword() instead.")]
 		public static TextSearchQuery DoesNotHaveCustomFlag (string flag)
 		{
-			if (flag == null)
-				throw new ArgumentNullException (nameof (flag));
-
-			if (flag.Length == 0)
-				throw new ArgumentException ("The flag cannot be an empty string.", nameof (flag));
-
-			return new TextSearchQuery (SearchTerm.NotKeyword, flag);
+			return NotKeyword (flag);
 		}
 
 		/// <summary>
-		/// Match messages that do not have the specified custom flags set.
+		/// Match messages that do not have any of the specified custom flags set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the specified custom flags set.
+		/// Matches messages that do not have any of the specified custom flags set.
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The custom flags.</param>
@@ -287,62 +282,27 @@ namespace MailKit.Search {
 		/// <para>-or-</para>
 		/// <para>No custom flags were given.</para>
 		/// </exception>
+		[Obsolete ("Use NotKeywords() instead.")]
 		public static SearchQuery DoesNotHaveCustomFlags (IEnumerable<string> flags)
 		{
-			if (flags == null)
-				throw new ArgumentNullException (nameof (flags));
-
-			var list = new List<SearchQuery> ();
-
-			foreach (var flag in flags)
-				list.Add (new TextSearchQuery (SearchTerm.NotKeyword, flag));
-
-			if (list.Count == 0)
-				throw new ArgumentException ("No flags specified.", nameof (flags));
-
-			var query = list[0];
-			for (int i = 1; i < list.Count; i++)
-				query = query.And (list[i]);
-
-			return query;
+			return NotKeywords (flags);
 		}
 
 		/// <summary>
-		/// Match messages that do not have the specified flags set.
+		/// Match messages that do not have any of the specified flags set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the specified flags set.
+		/// Matches messages that do not have any of the specified flags set.
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The message flags.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="flags"/> does not contain any of the valie flag values.
+		/// <paramref name="flags"/> does not specify any valid message flags.
 		/// </exception>
+		[Obsolete ("Use NotFlags() instead.")]
 		public static SearchQuery DoesNotHaveFlags (MessageFlags flags)
 		{
-			var list = new List<SearchQuery> ();
-
-			if ((flags & MessageFlags.Seen) != 0)
-				list.Add (NotSeen);
-			if ((flags & MessageFlags.Answered) != 0)
-				list.Add (NotAnswered);
-			if ((flags & MessageFlags.Flagged) != 0)
-				list.Add (NotFlagged);
-			if ((flags & MessageFlags.Deleted) != 0)
-				list.Add (NotDeleted);
-			if ((flags & MessageFlags.Draft) != 0)
-				list.Add (NotDraft);
-			if ((flags & MessageFlags.Recent) != 0)
-				list.Add (NotRecent);
-
-			if (list.Count == 0)
-				throw new ArgumentException ("No flags specified.", nameof (flags));
-
-			var query = list[0];
-			for (int i = 1; i < list.Count; i++)
-				query = query.And (list[i]);
-
-			return query;
+			return NotFlags (flags);
 		}
 
 		/// <summary>
@@ -440,15 +400,10 @@ namespace MailKit.Search {
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="flag"/> is empty.
 		/// </exception>
+		[Obsolete ("Use HasKeyword() instead.")]
 		public static TextSearchQuery HasCustomFlag (string flag)
 		{
-			if (flag == null)
-				throw new ArgumentNullException (nameof (flag));
-
-			if (flag.Length == 0)
-				throw new ArgumentException ("The flag cannot be an empty string.", nameof (flag));
-
-			return new TextSearchQuery (SearchTerm.Keyword, flag);
+			return HasKeyword (flag);
 		}
 
 		/// <summary>
@@ -467,24 +422,10 @@ namespace MailKit.Search {
 		/// <para>-or-</para>
 		/// <para>No custom flags were given.</para>
 		/// </exception>
+		[Obsolete ("Use HasKeywords() instead.")]
 		public static SearchQuery HasCustomFlags (IEnumerable<string> flags)
 		{
-			if (flags == null)
-				throw new ArgumentNullException (nameof (flags));
-
-			var list = new List<SearchQuery> ();
-
-			foreach (var flag in flags)
-				list.Add (new TextSearchQuery (SearchTerm.Keyword, flag));
-
-			if (list.Count == 0)
-				throw new ArgumentException ("No flags specified.", nameof (flags));
-
-			var query = list[0];
-			for (int i = 1; i < list.Count; i++)
-				query = query.And (list[i]);
-
-			return query;
+			return HasKeywords (flags);
 		}
 
 		/// <summary>
@@ -496,7 +437,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The message flags.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="flags"/> does not contain any of the valie flag values.
+		/// <paramref name="flags"/> does not specify any valid message flags.
 		/// </exception>
 		public static SearchQuery HasFlags (MessageFlags flags)
 		{
@@ -517,6 +458,178 @@ namespace MailKit.Search {
 
 			if (list.Count == 0)
 				throw new ArgumentException ("No flags specified.", nameof (flags));
+
+			var query = list[0];
+			for (int i = 1; i < list.Count; i++)
+				query = query.And (list[i]);
+
+			return query;
+		}
+
+		/// <summary>
+		/// Match messages that do not have any of the specified flags set.
+		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have any of the specified flags set.
+		/// </remarks>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="flags">The message flags.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="flags"/> does not specify any valid message flags.
+		/// </exception>
+		public static SearchQuery NotFlags (MessageFlags flags)
+		{
+			var list = new List<SearchQuery> ();
+
+			if ((flags & MessageFlags.Seen) != 0)
+				list.Add (NotSeen);
+			if ((flags & MessageFlags.Answered) != 0)
+				list.Add (NotAnswered);
+			if ((flags & MessageFlags.Flagged) != 0)
+				list.Add (NotFlagged);
+			if ((flags & MessageFlags.Deleted) != 0)
+				list.Add (NotDeleted);
+			if ((flags & MessageFlags.Draft) != 0)
+				list.Add (NotDraft);
+			if ((flags & MessageFlags.Recent) != 0)
+				list.Add (NotRecent);
+
+			if (list.Count == 0)
+				throw new ArgumentException ("No flags specified.", nameof (flags));
+
+			var query = list[0];
+			for (int i = 1; i < list.Count; i++)
+				query = query.And (list[i]);
+
+			return query;
+		}
+
+		/// <summary>
+		/// Match messages that have the specified keyword set.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that have the specified keyword set.</para>
+		/// <note type="info">A keyword is a user-defined message flag.</note>
+		/// </remarks>
+		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
+		/// <param name="keyword">The keyword.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="keyword"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="keyword"/> is empty.
+		/// </exception>
+		public static TextSearchQuery HasKeyword (string keyword)
+		{
+			if (keyword == null)
+				throw new ArgumentNullException (nameof (keyword));
+
+			if (keyword.Length == 0)
+				throw new ArgumentException ("The keyword cannot be an empty string.", nameof (keyword));
+
+			return new TextSearchQuery (SearchTerm.Keyword, keyword);
+		}
+
+		/// <summary>
+		/// Match messages that have all of the specified keywords set.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that have all of the specified keywords set.</para>
+		/// <note type="info">A keyword is a user-defined message flag.</note>
+		/// </remarks>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="keywords">The keywords.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="keywords"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="keywords"/> is <c>null</c> or empty.</para>
+		/// <para>-or-</para>
+		/// <para>No keywords were given.</para>
+		/// </exception>
+		public static SearchQuery HasKeywords (IEnumerable<string> keywords)
+		{
+			if (keywords == null)
+				throw new ArgumentNullException (nameof (keywords));
+
+			var list = new List<SearchQuery> ();
+
+			foreach (var keyword in keywords) {
+				if (string.IsNullOrEmpty (keyword))
+					throw new ArgumentException ("Cannot search for null or empty keywords.", nameof (keywords));
+
+				list.Add (new TextSearchQuery (SearchTerm.Keyword, keyword));
+			}
+
+			if (list.Count == 0)
+				throw new ArgumentException ("No keywords specified.", nameof (keywords));
+
+			var query = list[0];
+			for (int i = 1; i < list.Count; i++)
+				query = query.And (list[i]);
+
+			return query;
+		}
+
+		/// <summary>
+		/// Match messages that do not have the specified keyword set.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that do not have the specified keyword set.</para>
+		/// <note type="info">A keyword is a user-defined message flag.</note>
+		/// </remarks>
+		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
+		/// <param name="keyword">The keyword.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="keyword"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="keyword"/> is empty.
+		/// </exception>
+		public static TextSearchQuery NotKeyword (string keyword)
+		{
+			if (keyword == null)
+				throw new ArgumentNullException (nameof (keyword));
+
+			if (keyword.Length == 0)
+				throw new ArgumentException ("The keyword cannot be an empty string.", nameof (keyword));
+
+			return new TextSearchQuery (SearchTerm.NotKeyword, keyword);
+		}
+
+		/// <summary>
+		/// Match messages that do not have any of the specified keywords set.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that do not have any of the specified keywords set.</para>
+		/// <note type="info">A keyword is a user-defined message flag.</note>
+		/// </remarks>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="keywords">The keywords.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="keywords"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="keywords"/> is <c>null</c> or empty.</para>
+		/// <para>-or-</para>
+		/// <para>No keywords were given.</para>
+		/// </exception>
+		public static SearchQuery NotKeywords (IEnumerable<string> keywords)
+		{
+			if (keywords == null)
+				throw new ArgumentNullException (nameof (keywords));
+
+			var list = new List<SearchQuery> ();
+
+			foreach (var keyword in keywords) {
+				if (string.IsNullOrEmpty (keyword))
+					throw new ArgumentException ("Cannot search for null or empty keywords.", nameof (keywords));
+
+				list.Add (new TextSearchQuery (SearchTerm.NotKeyword, keyword));
+			}
+
+			if (list.Count == 0)
+				throw new ArgumentException ("No flags specified.", nameof (keywords));
 
 			var query = list[0];
 			for (int i = 1; i < list.Count; i++)

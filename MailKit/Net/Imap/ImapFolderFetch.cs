@@ -293,7 +293,7 @@ namespace MailKit.Net.Imap
 					message.Fields |= MessageSummaryItems.Envelope;
 					break;
 				case "FLAGS":
-					message.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, message.UserFlags, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					message.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, message.Keywords, doAsync, ic.CancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Flags;
 					break;
 				case "MODSEQ":
