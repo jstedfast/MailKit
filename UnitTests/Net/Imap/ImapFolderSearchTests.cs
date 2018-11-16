@@ -25,23 +25,14 @@
 //
 
 using System;
-using System.IO;
 using System.Net;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Net.Sockets;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 
 using NUnit.Framework;
 
-using MimeKit;
-
-using MailKit.Net.Imap;
-using MailKit.Security;
-using MailKit.Search;
 using MailKit;
+using MailKit.Search;
+using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {
 	[TestFixture]
@@ -101,6 +92,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.Throws<ArgumentNullException> (() => inbox.Search ((string) null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.SearchAsync ((string) null));
+				Assert.Throws<ArgumentException> (() => inbox.Search (string.Empty));
+				Assert.Throws<ArgumentException> (async () => await inbox.SearchAsync (string.Empty));
 
 				// Sort
 				Assert.Throws<ArgumentNullException> (() => inbox.Sort ((SearchQuery) null, orderBy));
