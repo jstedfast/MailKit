@@ -228,5 +228,102 @@ namespace UnitTests.Net.Imap {
 				client.Disconnect (false);
 			}
 		}
+
+		[Test]
+		public void TestNotSupportedExceptions ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX\r\n", "common.select-inbox-no-modseq.txt"));
+
+			using (var client = new ImapClient ()) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+
+				// disable all features
+				client.Capabilities = ImapCapabilities.None;
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var indexes = new int[] { 0 };
+				ulong modseq = 409601020304;
+
+				// AddFlags
+				Assert.Throws<NotSupportedException> (() => inbox.AddFlags (indexes, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AddFlagsAsync (indexes, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (() => inbox.AddFlags (UniqueIdRange.All, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AddFlagsAsync (UniqueIdRange.All, modseq, MessageFlags.Seen, true));
+
+				// RemoveFlags
+				Assert.Throws<NotSupportedException> (() => inbox.RemoveFlags (indexes, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.RemoveFlagsAsync (indexes, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (() => inbox.RemoveFlags (UniqueIdRange.All, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.RemoveFlagsAsync (UniqueIdRange.All, modseq, MessageFlags.Seen, true));
+
+				// SetFlags
+				Assert.Throws<NotSupportedException> (() => inbox.SetFlags (indexes, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.SetFlagsAsync (indexes, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (() => inbox.SetFlags (UniqueIdRange.All, modseq, MessageFlags.Seen, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.SetFlagsAsync (UniqueIdRange.All, modseq, MessageFlags.Seen, true));
+
+				var labels = new string[] { "Label1", "Label2" };
+
+				// AddLabels
+				Assert.Throws<NotSupportedException> (() => inbox.AddLabels (indexes, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AddLabelsAsync (indexes, labels, true));
+				Assert.Throws<NotSupportedException> (() => inbox.AddLabels (UniqueIdRange.All, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AddLabelsAsync (UniqueIdRange.All, labels, true));
+
+				Assert.Throws<NotSupportedException> (() => inbox.AddLabels (indexes, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AddLabelsAsync (indexes, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (() => inbox.AddLabels (UniqueIdRange.All, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AddLabelsAsync (UniqueIdRange.All, modseq, labels, true));
+
+				// RemoveLabels
+				Assert.Throws<NotSupportedException> (() => inbox.RemoveLabels (indexes, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.RemoveLabelsAsync (indexes, labels, true));
+				Assert.Throws<NotSupportedException> (() => inbox.RemoveLabels (UniqueIdRange.All, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.RemoveLabelsAsync (UniqueIdRange.All, labels, true));
+
+				Assert.Throws<NotSupportedException> (() => inbox.RemoveLabels (indexes, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.RemoveLabelsAsync (indexes, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (() => inbox.RemoveLabels (UniqueIdRange.All, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.RemoveLabelsAsync (UniqueIdRange.All, modseq, labels, true));
+
+				// SetLabels
+				Assert.Throws<NotSupportedException> (() => inbox.SetLabels (indexes, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.SetLabelsAsync (indexes, labels, true));
+				Assert.Throws<NotSupportedException> (() => inbox.SetLabels (UniqueIdRange.All, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.SetLabelsAsync (UniqueIdRange.All, labels, true));
+
+				Assert.Throws<NotSupportedException> (() => inbox.SetLabels (indexes, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.SetLabelsAsync (indexes, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (() => inbox.SetLabels (UniqueIdRange.All, modseq, labels, true));
+				Assert.Throws<NotSupportedException> (async () => await inbox.SetLabelsAsync (UniqueIdRange.All, modseq, labels, true));
+
+				client.Disconnect (false);
+			}
+		}
 	}
 }
