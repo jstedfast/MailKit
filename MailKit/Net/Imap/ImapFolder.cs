@@ -813,8 +813,16 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the CREATE-SPECIAL-USE extension.");
 
 			var uses = new StringBuilder ();
+			uint used = 0;
 
 			foreach (var use in specialUses) {
+				var bit = (uint) (1 << ((int) use));
+
+				if ((used & bit) != 0)
+					continue;
+
+				used |= bit;
+
 				if (uses.Length > 0)
 					uses.Append (' ');
 
@@ -831,8 +839,13 @@ namespace MailKit.Net.Imap {
 			}
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
-			var command = string.Format ("CREATE %S (USE ({0}))\r\n", uses);
 			var encodedName = Engine.EncodeMailboxName (fullName);
+			string command;
+
+			if (uses.Length > 0)
+				command = string.Format ("CREATE %S (USE ({0}))\r\n", uses);
+			else
+				command = "CREATE %S\r\n";
 
 			var ic = Engine.QueueCommand (cancellationToken, null, command, encodedName);
 

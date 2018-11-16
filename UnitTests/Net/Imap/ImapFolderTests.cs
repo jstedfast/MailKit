@@ -868,6 +868,114 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		List<ImapReplayCommand> CreateCreateSpecialUseMultipleCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+create-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 CREATE \"[Gmail]/Archives\" (USE (\\All \\Archive \\Drafts \\Flagged \\Junk \\Sent \\Trash))\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" \"[Gmail]/Archives\"\r\n", "gmail.list-archives.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestCreateSpecialUseMultiple ()
+		{
+			var commands = CreateCreateSpecialUseMultipleCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.CreateSpecialUse), "CREATE-SPECIAL-USE");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var gmail = personal.GetSubfolder ("[Gmail]");
+
+				var uses = new List<SpecialFolder> ();
+				uses.Add (SpecialFolder.All);
+				uses.Add (SpecialFolder.Archive);
+				uses.Add (SpecialFolder.Drafts);
+				uses.Add (SpecialFolder.Flagged);
+				uses.Add (SpecialFolder.Junk);
+				uses.Add (SpecialFolder.Sent);
+				uses.Add (SpecialFolder.Trash);
+
+				// specifically duplicate some special uses
+				uses.Add (SpecialFolder.All);
+				uses.Add (SpecialFolder.Flagged);
+
+				var archive = gmail.Create ("Archives", uses);
+				Assert.AreEqual (FolderAttributes.HasNoChildren | FolderAttributes.Archive, archive.Attributes);
+				Assert.AreEqual (archive, client.GetFolder (SpecialFolder.Archive));
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestCreateSpecialUseMultipleAsync ()
+		{
+			var commands = CreateCreateSpecialUseMultipleCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.CreateSpecialUse), "CREATE-SPECIAL-USE");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var gmail = await personal.GetSubfolderAsync ("[Gmail]");
+
+				var uses = new List<SpecialFolder> ();
+				uses.Add (SpecialFolder.All);
+				uses.Add (SpecialFolder.Archive);
+				uses.Add (SpecialFolder.Drafts);
+				uses.Add (SpecialFolder.Flagged);
+				uses.Add (SpecialFolder.Junk);
+				uses.Add (SpecialFolder.Sent);
+				uses.Add (SpecialFolder.Trash);
+
+				// specifically duplicate some special uses
+				uses.Add (SpecialFolder.All);
+				uses.Add (SpecialFolder.Flagged);
+
+				var archive = await gmail.CreateAsync ("Archives", uses);
+				Assert.AreEqual (FolderAttributes.HasNoChildren | FolderAttributes.Archive, archive.Attributes);
+				Assert.AreEqual (archive, client.GetFolder (SpecialFolder.Archive));
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		List<ImapReplayCommand> CreateCopyToCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
