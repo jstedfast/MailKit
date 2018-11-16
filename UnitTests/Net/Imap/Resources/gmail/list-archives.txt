@@ -1,0 +1,2 @@
+* LIST (\HasNoChildren \Archive) "/" "[Gmail]/Archives"
+A######## OK Success

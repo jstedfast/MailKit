@@ -311,6 +311,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.49.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.50.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+create-special-use.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability+login.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability+logindisabled.txt" />
@@ -353,6 +354,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all-no-status.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-archived-messages.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-archives.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-gmail.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-gmail-subfolders.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-gmail-subfolders-no-status.txt" />
