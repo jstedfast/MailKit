@@ -179,6 +179,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\message.7.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.8.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.9.msg" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\preauth-capability-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\preauth-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox.txt" />

@@ -1,0 +1,2 @@
+* NAMESPACE (("" "/")) (("Other Users/" "/" "TRANSLATION" ("Andere Ben&APw-tzer/"))) (("Public Folders/" "/" "TRANSLATION" ("Gemeinsame Postf&AM8-cher/")))
+A######## OK Success

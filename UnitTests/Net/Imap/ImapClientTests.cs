@@ -4540,5 +4540,91 @@ namespace UnitTests.Net.Imap {
 				await client.DisconnectAsync (false);
 			}
 		}
+
+		List<ImapReplayCommand> CreateNamespaceExtensionCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "common.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestNamespaceExtensions ()
+		{
+			var commands = CreateNamespaceExtensionCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (1, client.PersonalNamespaces.Count, "PersonalNamespaces.Count");
+				Assert.AreEqual (string.Empty, client.PersonalNamespaces[0].Path, "PersonalNamespaces[0].Path");
+				Assert.AreEqual ('/', client.PersonalNamespaces[0].DirectorySeparator, "PersonalNamespaces[0].DirectorySeparator");
+
+				Assert.AreEqual (1, client.OtherNamespaces.Count, "OtherNamespaces.Count");
+				Assert.AreEqual ("Other Users", client.OtherNamespaces[0].Path, "OtherNamespaces[0].Path");
+				Assert.AreEqual ('/', client.OtherNamespaces[0].DirectorySeparator, "OtherNamespaces[0].DirectorySeparator");
+
+				Assert.AreEqual (1, client.SharedNamespaces.Count, "SharedNamespaces.Count");
+				Assert.AreEqual ("Public Folders", client.SharedNamespaces[0].Path, "SharedNamespaces[0].Path");
+				Assert.AreEqual ('/', client.SharedNamespaces[0].DirectorySeparator, "SharedNamespaces[0].DirectorySeparator");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestNamespaceExtensionsAsync ()
+		{
+			var commands = CreateNamespaceExtensionCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (1, client.PersonalNamespaces.Count, "PersonalNamespaces.Count");
+				Assert.AreEqual (string.Empty, client.PersonalNamespaces[0].Path, "PersonalNamespaces[0].Path");
+				Assert.AreEqual ('/', client.PersonalNamespaces[0].DirectorySeparator, "PersonalNamespaces[0].DirectorySeparator");
+
+				Assert.AreEqual (1, client.OtherNamespaces.Count, "OtherNamespaces.Count");
+				Assert.AreEqual ("Other Users", client.OtherNamespaces[0].Path, "OtherNamespaces[0].Path");
+				Assert.AreEqual ('/', client.OtherNamespaces[0].DirectorySeparator, "OtherNamespaces[0].DirectorySeparator");
+
+				Assert.AreEqual (1, client.SharedNamespaces.Count, "SharedNamespaces.Count");
+				Assert.AreEqual ("Public Folders", client.SharedNamespaces[0].Path, "SharedNamespaces[0].Path");
+				Assert.AreEqual ('/', client.SharedNamespaces[0].DirectorySeparator, "SharedNamespaces[0].DirectorySeparator");
+
+				await client.DisconnectAsync (true);
+			}
+		}
 	}
 }

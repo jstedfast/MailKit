@@ -1104,7 +1104,7 @@ namespace MailKit.Net.Imap {
 		async Task UpdateNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var namespaces = new List<FolderNamespaceCollection> {
-				PersonalNamespaces, SharedNamespaces, OtherNamespaces
+				PersonalNamespaces, OtherNamespaces, SharedNamespaces
 			};
 			ImapFolder folder;
 			ImapToken token;
