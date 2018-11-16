@@ -367,6 +367,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests-dummy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\logout.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\lsub-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\lsub-personal.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\precise-pangolin-message.txt" />

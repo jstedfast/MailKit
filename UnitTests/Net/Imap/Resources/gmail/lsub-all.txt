@@ -1,0 +1,10 @@
+* LSUB (\HasNoChildren) "/" "INBOX"
+* LSUB (\HasChildren \NonExistent) "/" "[Gmail]"
+* LSUB (\HasNoChildren) "/" "[Gmail]/All Mail"
+* LSUB (\HasNoChildren) "/" "[Gmail]/Drafts"
+* LSUB (\HasNoChildren) "/" "[Gmail]/Important"
+* LSUB (\HasNoChildren) "/" "[Gmail]/Sent Mail"
+* LSUB (\HasNoChildren) "/" "[Gmail]/Spam"
+* LSUB (\HasNoChildren) "/" "[Gmail]/Starred"
+* LSUB (\HasNoChildren) "/" "[Gmail]/Trash"
+A######## OK Success
