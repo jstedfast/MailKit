@@ -128,8 +128,10 @@ namespace UnitTests.Net.Imap {
 				// Open
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Open ((FolderAccess) 500));
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Open ((FolderAccess) 500, 0, 0, UniqueIdRange.All));
+				Assert.Throws<ArgumentNullException> (() => inbox.Open (FolderAccess.ReadOnly, 0, 0, null));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.OpenAsync ((FolderAccess) 500));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.OpenAsync ((FolderAccess) 500, 0, 0, UniqueIdRange.All));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.OpenAsync (FolderAccess.ReadOnly, 0, 0, null));
 
 				// Create
 				Assert.Throws<ArgumentNullException> (() => inbox.Create (null, true));
@@ -206,16 +208,22 @@ namespace UnitTests.Net.Imap {
 				// MultiAppend
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (null, flags));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (null, flags));
+				Assert.Throws<ArgumentException> (() => inbox.Append (new MimeMessage[] { null }, flags));
+				Assert.Throws<ArgumentException> (async () => await inbox.AppendAsync (new MimeMessage[] { null }, flags));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (messages, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (messages, null));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (null, messages, flags));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (null, messages, flags));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (FormatOptions.Default, null, flags));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (FormatOptions.Default, null, flags));
+				Assert.Throws<ArgumentException> (() => inbox.Append (FormatOptions.Default, new MimeMessage[] { null }, flags));
+				Assert.Throws<ArgumentException> (async () => await inbox.AppendAsync (FormatOptions.Default, new MimeMessage[] { null }, flags));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (FormatOptions.Default, messages, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (FormatOptions.Default, messages, null));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (null, flags, dates));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (null, flags, dates));
+				Assert.Throws<ArgumentException> (() => inbox.Append (new MimeMessage[] { null }, flags, dates));
+				Assert.Throws<ArgumentException> (async () => await inbox.AppendAsync (new MimeMessage[] { null }, flags, dates));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (messages, null, dates));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (messages, null, dates));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (messages, flags, null));
@@ -224,6 +232,8 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (null, messages, flags, dates));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (FormatOptions.Default, null, flags, dates));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (FormatOptions.Default, null, flags, dates));
+				Assert.Throws<ArgumentException> (() => inbox.Append (FormatOptions.Default, new MimeMessage[] { null }, flags, dates));
+				Assert.Throws<ArgumentException> (async () => await inbox.AppendAsync (FormatOptions.Default, new MimeMessage[] { null }, flags, dates));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (FormatOptions.Default, messages, null, dates));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.AppendAsync (FormatOptions.Default, messages, null, dates));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (FormatOptions.Default, messages, flags, null));
@@ -248,6 +258,138 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (async () => await inbox.MoveToAsync ((IList<int>) null, inbox));
 				Assert.Throws<ArgumentNullException> (() => inbox.MoveTo (new int [] { 0 }, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.MoveToAsync (new int [] { 0 }, null));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public void TestNotSupportedExceptions ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
+			//commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX\r\n", "common.select-inbox.txt"));
+
+			using (var client = new ImapClient ()) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// disable all features
+				client.Capabilities = ImapCapabilities.None;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var dates = new List<DateTimeOffset> ();
+				var messages = new List<MimeMessage> ();
+				var flags = new List<MessageFlags> ();
+				var now = DateTimeOffset.Now;
+
+				messages.Add (CreateThreadableMessage ("A", "<a@mimekit.net>", null, now.AddMinutes (-7)));
+				messages.Add (CreateThreadableMessage ("B", "<b@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-6)));
+				messages.Add (CreateThreadableMessage ("C", "<c@mimekit.net>", "<a@mimekit.net> <b@mimekit.net>", now.AddMinutes (-5)));
+				messages.Add (CreateThreadableMessage ("D", "<d@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-4)));
+				messages.Add (CreateThreadableMessage ("E", "<e@mimekit.net>", "<c@mimekit.net> <x@mimekit.net> <y@mimekit.net> <z@mimekit.net>", now.AddMinutes (-3)));
+				messages.Add (CreateThreadableMessage ("F", "<f@mimekit.net>", "<b@mimekit.net>", now.AddMinutes (-2)));
+				messages.Add (CreateThreadableMessage ("G", "<g@mimekit.net>", null, now.AddMinutes (-1)));
+				messages.Add (CreateThreadableMessage ("H", "<h@mimekit.net>", null, now));
+
+				for (int i = 0; i < messages.Count; i++) {
+					dates.Add (DateTimeOffset.Now);
+					flags.Add (MessageFlags.Seen);
+				}
+
+				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+
+				var inbox = (ImapFolder) client.Inbox;
+
+				// Open
+				Assert.Throws<NotSupportedException> (() => inbox.Open (FolderAccess.ReadOnly, 0, 0, UniqueIdRange.All));
+				Assert.Throws<NotSupportedException> (async () => await inbox.OpenAsync (FolderAccess.ReadOnly, 0, 0, UniqueIdRange.All));
+
+				// Create
+				Assert.Throws<NotSupportedException> (() => inbox.Create ("Folder", SpecialFolder.All));
+				Assert.Throws<NotSupportedException> (async () => await inbox.CreateAsync ("Folder", SpecialFolder.All));
+
+				// Rename - TODO
+
+				// Append
+				var international = FormatOptions.Default.Clone ();
+				international.International = true;
+				Assert.Throws<NotSupportedException> (() => inbox.Append (international, messages[0]));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AppendAsync (international, messages[0]));
+				Assert.Throws<NotSupportedException> (() => inbox.Append (international, messages[0], flags[0]));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AppendAsync (international, messages[0], flags[0]));
+				Assert.Throws<NotSupportedException> (() => inbox.Append (international, messages[0], flags[0], dates[0]));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AppendAsync (international, messages[0], flags[0], dates[0]));
+
+				// MultiAppend
+				//Assert.Throws<NotSupportedException> (() => inbox.Append (international, messages));
+				//Assert.Throws<NotSupportedException> (async () => await inbox.AppendAsync (international, messages));
+				Assert.Throws<NotSupportedException> (() => inbox.Append (international, messages, flags));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AppendAsync (international, messages, flags));
+				Assert.Throws<NotSupportedException> (() => inbox.Append (international, messages, flags, dates));
+				Assert.Throws<NotSupportedException> (async () => await inbox.AppendAsync (international, messages, flags, dates));
+
+				// Status
+				Assert.Throws<NotSupportedException> (() => inbox.Status (StatusItems.Count));
+				Assert.Throws<NotSupportedException> (async () => await inbox.StatusAsync (StatusItems.Count));
+
+				// GetAccessControlList
+				Assert.Throws<NotSupportedException> (() => inbox.GetAccessControlList ());
+				Assert.Throws<NotSupportedException> (async () => await inbox.GetAccessControlListAsync ());
+
+				// GetAccessRights
+				Assert.Throws<NotSupportedException> (() => inbox.GetAccessRights ("name"));
+				Assert.Throws<NotSupportedException> (async () => await inbox.GetAccessRightsAsync ("name"));
+
+				// GetMyAccessRights
+				Assert.Throws<NotSupportedException> (() => inbox.GetMyAccessRights ());
+				Assert.Throws<NotSupportedException> (async () => await inbox.GetMyAccessRightsAsync ());
+
+				// RemoveAccess
+				Assert.Throws<NotSupportedException> (() => inbox.RemoveAccess ("name"));
+				Assert.Throws<NotSupportedException> (async () => await inbox.RemoveAccessAsync ("name"));
+
+				// GetMetadata
+				Assert.Throws<NotSupportedException> (() => client.GetMetadata (MetadataTag.PrivateComment));
+				Assert.Throws<NotSupportedException> (async () => await client.GetMetadataAsync (MetadataTag.PrivateComment));
+				Assert.Throws<NotSupportedException> (() => inbox.GetMetadata (MetadataTag.PrivateComment));
+				Assert.Throws<NotSupportedException> (async () => await inbox.GetMetadataAsync (MetadataTag.PrivateComment));
+				Assert.Throws<NotSupportedException> (() => client.GetMetadata (new MetadataOptions (), new MetadataTag[] { MetadataTag.PrivateComment }));
+				Assert.Throws<NotSupportedException> (async () => await client.GetMetadataAsync (new MetadataOptions (), new MetadataTag[] { MetadataTag.PrivateComment }));
+				Assert.Throws<NotSupportedException> (() => inbox.GetMetadata (new MetadataOptions (), new MetadataTag[] { MetadataTag.PrivateComment }));
+				Assert.Throws<NotSupportedException> (async () => await inbox.GetMetadataAsync (new MetadataOptions (), new MetadataTag[] { MetadataTag.PrivateComment }));
+
+				// SetMetadata
+				Assert.Throws<NotSupportedException> (() => client.SetMetadata (new MetadataCollection ()));
+				Assert.Throws<NotSupportedException> (async () => await client.SetMetadataAsync (new MetadataCollection ()));
+				Assert.Throws<NotSupportedException> (() => inbox.SetMetadata (new MetadataCollection ()));
+				Assert.Throws<NotSupportedException> (async () => await inbox.SetMetadataAsync (new MetadataCollection ()));
+
+				// GetQuota
+				Assert.Throws<NotSupportedException> (() => inbox.GetQuota ());
+				Assert.Throws<NotSupportedException> (async () => await inbox.GetQuotaAsync ());
+
+				// SetQuota
+				Assert.Throws<NotSupportedException> (() => inbox.SetQuota (5, 10));
+				Assert.Throws<NotSupportedException> (async () => await inbox.SetQuotaAsync (5, 10));
 
 				client.Disconnect (false);
 			}
