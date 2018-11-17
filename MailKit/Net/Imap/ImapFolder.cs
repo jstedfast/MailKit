@@ -184,14 +184,22 @@ namespace MailKit.Net.Imap {
 					UidNext = ((UidNextResponseCode) code).Uid;
 					break;
 				case ImapResponseCodeType.UidValidity:
-					UidValidity = ((UidValidityResponseCode) code).UidValidity;
+					var uidValidity = ((UidValidityResponseCode) code).UidValidity;
+					if (IsOpen)
+						UpdateUidValidity (uidValidity);
+					else
+						UidValidity = uidValidity;
 					break;
 				case ImapResponseCodeType.Unseen:
 					FirstUnread = ((UnseenResponseCode) code).Index;
 					break;
 				case ImapResponseCodeType.HighestModSeq:
-					HighestModSeq = ((HighestModSeqResponseCode) code).HighestModSeq;
+					var highestModSeq = ((HighestModSeqResponseCode) code).HighestModSeq;
 					SupportsModSeq = true;
+					if (IsOpen)
+						UpdateHighestModSeq (highestModSeq);
+					else
+						HighestModSeq = highestModSeq;
 					break;
 				case ImapResponseCodeType.NoModSeq:
 					SupportsModSeq = false;
