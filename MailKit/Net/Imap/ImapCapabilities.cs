@@ -39,7 +39,7 @@ namespace MailKit.Net.Imap {
 	/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 	/// </example>
 	[Flags]
-	public enum ImapCapabilities : long {
+	public enum ImapCapabilities : ulong {
 		/// <summary>
 		/// The server does not support any additional extensions.
 		/// </summary>

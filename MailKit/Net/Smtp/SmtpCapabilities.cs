@@ -38,7 +38,7 @@ namespace MailKit.Net.Smtp {
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
 	/// </example>
 	[Flags]
-	public enum SmtpCapabilities {
+	public enum SmtpCapabilities : uint {
 		/// <summary>
 		/// The server does not support any additional extensions.
 		/// </summary>
@@ -48,59 +48,59 @@ namespace MailKit.Net.Smtp {
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc1870">SIZE</a> extension
 		/// and may have a maximum message size limitation (see <see cref="SmtpClient.MaxSize"/>).
 		/// </summary>
-		Size                = (1 << 0),
+		Size                = 1 << 0,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc1891">DSN</a> extension,
 		/// allowing clients to specify which (if any) recipients they would like to receive delivery
 		/// notifications for.
 		/// </summary>
-		Dsn                 = (1 << 1),
+		Dsn                 = 1 << 1,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc2034">ENHANCEDSTATUSCODES</a>
 		/// extension.
 		/// </summary>
-		EnhancedStatusCodes = (1 << 2),
+		EnhancedStatusCodes = 1 << 2,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc2554">AUTH</a> extension,
 		/// allowing clients to authenticate via supported SASL mechanisms.
 		/// </summary>
-		Authentication      = (1 << 3),
+		Authentication      = 1 << 3,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc2821">8BITMIME</a> extension,
 		/// allowing clients to send messages using the "8bit" Content-Transfer-Encoding.
 		/// </summary>
-		EightBitMime        = (1 << 4),
+		EightBitMime        = 1 << 4,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc2920">PIPELINING</a> extension,
 		/// allowing clients to send multiple commands at once in order to reduce round-trip latency.
 		/// </summary>
-		Pipelining          = (1 << 5),
+		Pipelining          = 1 << 5,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc3030">BINARYMIME</a> extension.
 		/// </summary>
-		BinaryMime          = (1 << 6),
+		BinaryMime          = 1 << 6,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc3030">CHUNKING</a> extension,
 		/// allowing clients to upload messages in chunks.
 		/// </summary>
-		Chunking            = (1 << 7),
+		Chunking            = 1 << 7,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> extension,
 		/// allowing clients to switch to an encrypted SSL/TLS connection after connecting.
 		/// </summary>
-		StartTLS            = (1 << 8),
+		StartTLS            = 1 << 8,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc6531">SMTPUTF8</a> extension.
 		/// </summary>
-		UTF8                = (1 << 9),
+		UTF8                = 1 << 9,
 	}
 }
