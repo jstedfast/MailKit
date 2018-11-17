@@ -310,9 +310,6 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			if (IsOpen && Access == access)
-				return Task.FromResult (access);
-
 			if ((Engine.Capabilities & ImapCapabilities.QuickResync) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
@@ -451,9 +448,6 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentOutOfRangeException (nameof (access));
 
 			CheckState (false, false);
-
-			if (IsOpen && Access == access)
-				return Task.FromResult (access);
 
 			var condstore = (Engine.Capabilities & ImapCapabilities.CondStore) != 0 ? " (CONDSTORE)" : string.Empty;
 			var command = string.Format ("{0} %F{1}\r\n", SelectOrExamine (access), condstore);
