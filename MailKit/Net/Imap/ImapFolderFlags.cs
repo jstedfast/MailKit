@@ -1376,7 +1376,7 @@ namespace MailKit.Net.Imap
 			return ModifyFlagsAsync (indexes, modseq, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
 		}
 
-		static string LabelListToString (IList<string> labels, ICollection<object> args)
+		string LabelListToString (IList<string> labels, ICollection<object> args)
 		{
 			var list = new StringBuilder ("(");
 
@@ -1402,7 +1402,7 @@ namespace MailKit.Net.Imap
 					break;
 				default:
 					list.Append ("%S");
-					args.Add (ImapEncoding.Encode (labels[i]));
+					args.Add (Engine.EncodeMailboxName (labels[i]));
 					break;
 				}
 			}
