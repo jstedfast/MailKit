@@ -1,0 +1,339 @@
+
+
+
+
+
+
+Internet Engineering Task Force (IETF)                      K. Murchison
+Request for Comments: 8440                                   B. Gondwana
+Category: Standards Track                                       FastMail
+ISSN: 2070-1721                                              August 2018
+
+
+  IMAP4 Extension for Returning MYRIGHTS Information in Extended LIST
+
+Abstract
+
+   This document defines an extension to the Internet Message Access
+   Protocol (IMAP) LIST command that allows the client to request the
+   set of rights that the logged-in user has been granted on mailboxes,
+   along with other information typically returned by the LIST command.
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 7841.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   https://www.rfc-editor.org/info/rfc8440.
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+
+
+Murchison & Gondwana         Standards Track                    [Page 1]
+
+RFC 8440                   IMAP LIST-MYRIGHTS                August 2018
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Conventions Used in This Document . . . . . . . . . . . . . .   2
+   3.  MYRIGHTS Return Option to LIST Command  . . . . . . . . . . .   2
+   4.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   5.  Formal Syntax . . . . . . . . . . . . . . . . . . . . . . . .   4
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+   7.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .   4
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
+     8.1.  Registration of IMAP Capability LIST-MYRIGHTS . . . . . .   4
+     8.2.  Registration of LIST-EXTENDED Option MYRIGHTS . . . . . .   4
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .   6
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .   6
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   6
+
+1.  Introduction
+
+   IMAP [RFC3501] clients typically fetch the set of rights granted on
+   mailboxes so they can expose the allowed functionality to the logged-
+   in user.  In order to do that, the client is forced to issue a LIST
+   or LSUB command to list all available mailboxes, followed by a
+   MYRIGHTS command for each mailbox found.  This document defines an
+   extension to the to IMAP LIST command that is identified by the
+   capability string "LIST-MYRIGHTS".  The LIST-MYRIGHTS extension
+   allows the client to request the set of rights that the logged-in
+   user has been granted on mailboxes, along with other information
+   typically returned by the LIST command.
+
+2.  Conventions Used in This Document
+
+   In examples, "C:" indicates lines sent by a client that is connected
+   to a server.  "S:" indicates lines sent by the server to the client.
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  MYRIGHTS Return Option to LIST Command
+
+   [RFC4314] defines the MYRIGHTS command, which is used by an IMAP
+   client to determine the set of rights that the logged-in user has
+   been granted on a given mailbox.  Frequently, a client will have to
+   look up the rights for some or all of the mailboxes returned by the
+
+
+
+Murchison & Gondwana         Standards Track                    [Page 2]
+
+RFC 8440                   IMAP LIST-MYRIGHTS                August 2018
+
+
+   LIST command.  Doing so in multiple MYRIGHTS commands wastes
+   bandwidth and can degrade performance if the client does not pipeline
+   the requests.
+
+   This document extends the LIST command with a new "MYRIGHTS" return
+   option [RFC5258] that allows the client to request all of the desired
+   information in a single command.  For each listable mailbox matching
+   the list pattern and selection options, the server MUST return an
+   untagged LIST response and SHOULD also return an untagged MYRIGHTS
+   response containing the set of rights granted to the logged-in user.
+   The ordering of the responses is significant only in that the server
+   MUST NOT send a MYRIGHTS response for a given mailbox before it sends
+   the LIST response for that mailbox.
+
+   If the server is unable to look up the set of rights for a given
+   mailbox, it does not send the MYRIGHTS reply for that mailbox.
+
+   Client authors ought to note that generating the MYRIGHTS responses
+   for a large number of mailboxes may be an expensive operation for the
+   server.  Clients SHOULD use a suitable match pattern and/or selection
+   option to limit the set of mailboxes returned to only those in whose
+   rights they are interested.
+
+4.  Examples
+
+   In this example, the "bar" mailbox doesn't exist, so it has no
+   MYRIGHTS reply.
+
+   C: A01 LIST "" % RETURN (MYRIGHTS)
+   S: * LIST () "." "INBOX"
+   S: * MYRIGHTS "INBOX" lrswipkxtecda
+   S: * LIST () "." "foo"
+   S: * MYRIGHTS "foo" lrs
+   S: * LIST (\NonExistent) "." "bar"
+   S: A01 OK List completed.
+
+   In this example, the LIST reply for the "foo" mailbox is returned
+   because it has matching children, but no MYRIGHTS reply is returned,
+   because "foo" itself doesn't match the selection criteria.
+
+   C: A02 LIST (SUBSCRIBED RECURSIVEMATCH) "" % RETURN (MYRIGHTS)
+   S: * LIST (\Subscribed) "." "INBOX"
+   S: * MYRIGHTS "INBOX" lrswipkxtecda
+   S: * LIST () "." "foo" (CHILDINFO ("SUBSCRIBED"))
+   S: A02 OK List completed.
+
+
+
+
+
+
+Murchison & Gondwana         Standards Track                    [Page 3]
+
+RFC 8440                   IMAP LIST-MYRIGHTS                August 2018
+
+
+5.  Formal Syntax
+
+   The following syntax specification uses the augmented Backus-Naur
+   Form (BNF) as described in [RFC5234].  Terms not defined here are
+   taken from [RFC5258].
+
+   return-option =/ "MYRIGHTS"
+
+6.  Security Considerations
+
+   In addition to the security considerations described in [RFC4314],
+   this extension makes it a bit easier for clients to overload the
+   server by requesting MYRIGHTS information for a large number of
+   mailboxes.  However, as noted in the introduction, existing clients
+   already try to do that by generating a large number of MYRIGHTS
+   commands for each mailbox in which they are interested.  While
+   performing MYRIGHTS information retrieval for big lists of mailboxes,
+   a server implementation needs to make sure that it can still serve
+   other IMAP connections and yield execution to other connections, when
+   necessary.
+
+7.  Privacy Considerations
+
+   This specification does not introduce any additional privacy concerns
+   beyond those described in [RFC4314].
+
+8.  IANA Considerations
+
+8.1.  Registration of IMAP Capability LIST-MYRIGHTS
+
+   This document defines the "LIST-MYRIGHTS" IMAP capability that has
+   been added to the "IMAP Capabilities" registry [CAPABILITIES].
+
+8.2.  Registration of LIST-EXTENDED Option MYRIGHTS
+
+   This section registers the "MYRIGHTS" option that has been added to
+   the "LIST-EXTENDED options" registry [EXTENDED].
+
+   LIST-EXTENDED option name:  MYRIGHTS
+
+   LIST-EXTENDED option type:  RETURN
+
+   LIST-EXTENDED option description:  Causes the LIST command to return
+      MYRIGHTS responses in addition to LIST responses.
+
+   Published specification:  RFC 8440, Section 3
+
+   Security considerations:  RFC 8440, Section 6
+
+
+
+Murchison & Gondwana         Standards Track                    [Page 4]
+
+RFC 8440                   IMAP LIST-MYRIGHTS                August 2018
+
+
+   Intended usage:  COMMON
+
+   Person and email address to contact for further information:
+      Kenneth Murchison <murch@fastmailteam.com>
+
+   Owner/Change controller:  IESG <iesg@ietf.org>
+
+9.  References
+
+9.1.  Normative References
+
+   [CAPABILITIES]
+              IANA, "Internet Message Access Protocol (IMAP)
+              Capabilities Registry", <https://www.iana.org/assignments/
+              imap-capabilities/imap-capabilities>.
+
+   [EXTENDED]
+              IANA, "Internet Message Access Protocol (IMAP) LIST
+              EXTENDED Registry",
+              <https://www.iana.org/assignments/imap-list-extended>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC3501]  Crispin, M., "INTERNET MESSAGE ACCESS PROTOCOL - VERSION
+              4rev1", RFC 3501, DOI 10.17487/RFC3501, March 2003,
+              <https://www.rfc-editor.org/info/rfc3501>.
+
+   [RFC4314]  Melnikov, A., "IMAP4 Access Control List (ACL) Extension",
+              RFC 4314, DOI 10.17487/RFC4314, December 2005,
+              <https://www.rfc-editor.org/info/rfc4314>.
+
+   [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
+              <https://www.rfc-editor.org/info/rfc5234>.
+
+   [RFC5258]  Leiba, B. and A. Melnikov, "Internet Message Access
+              Protocol version 4 - LIST Command Extensions", RFC 5258,
+              DOI 10.17487/RFC5258, June 2008,
+              <https://www.rfc-editor.org/info/rfc5258>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+
+
+
+Murchison & Gondwana         Standards Track                    [Page 5]
+
+RFC 8440                   IMAP LIST-MYRIGHTS                August 2018
+
+
+9.2.  Informative References
+
+   [RFC5819]  Melnikov, A. and T. Sirainen, "IMAP4 Extension for
+              Returning STATUS Information in Extended LIST", RFC 5819,
+              DOI 10.17487/RFC5819, March 2010,
+              <https://www.rfc-editor.org/info/rfc5819>.
+
+Acknowledgments
+
+   This document is based largely on [RFC5819].  The authors would like
+   to thank the authors of that document for providing both inspiration
+   and some borrowed text for this document.  The authors would also
+   like to thank Barry Leiba for contributing his ideas and support for
+   writing this specification.
+
+Authors' Addresses
+
+   Kenneth Murchison
+   FastMail Pty Ltd.
+   Level 2, 114 William Street
+   Melbourne, VIC  3000
+   Australia
+
+   Email: murch@fastmailteam.com
+
+
+   Bron Gondwana
+   FastMail Pty Ltd.
+   Level 2, 114 William Street
+   Melbourne, VIC  3000
+   Australia
+
+   Email: brong@fastmailteam.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Murchison & Gondwana         Standards Track                    [Page 6]
+
