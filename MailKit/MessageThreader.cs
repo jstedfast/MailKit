@@ -57,32 +57,20 @@ namespace MailKit {
 			}
 
 			public MessageSummaryItems Fields {
-				get { return MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope; }
+				get { return MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.ModSeq | MessageSummaryItems.Size; }
 			}
 
-			public BodyPart Body {
-				get { return null; }
-			}
+			public BodyPart Body => null;
 
-			public BodyPartText TextBody {
-				get { return null; }
-			}
+			public BodyPartText TextBody => null;
 
-			public BodyPartText HtmlBody {
-				get { return null; }
-			}
+			public BodyPartText HtmlBody => null;
 
-			public IEnumerable<BodyPartBasic> BodyParts {
-				get { yield break; }
-			}
+			public IEnumerable<BodyPartBasic> BodyParts => null;
 
-			public IEnumerable<BodyPartBasic> Attachments {
-				get { yield break; }
-			}
+			public IEnumerable<BodyPartBasic> Attachments => null;
 
-			public string PreviewText {
-				get { return string.Empty; }
-			}
+			public string PreviewText => null;
 
 			public Envelope Envelope {
 				get { return Message != null ? Message.Envelope : Children[0].Envelope; }
@@ -100,26 +88,16 @@ namespace MailKit {
 				get { return Message != null && Message.IsReply; }
 			}
 
-			public MessageFlags? Flags {
-				get { return Message != null ? Message.Flags : Children[0].Flags; }
-			}
+			public MessageFlags? Flags => null;
 
-			public HashSet<string> Keywords {
-				get { return Message != null ? Message.Keywords : Children[0].Keywords; }
-			}
+			public HashSet<string> Keywords => null;
 
 			[Obsolete]
-			public HashSet<string> UserFlags {
-				get { return Keywords; }
-			}
+			public HashSet<string> UserFlags => null;
 
-			public HeaderList Headers {
-				get { return Message != null ? Message.Headers : Children[0].Headers; }
-			}
+			public HeaderList Headers => null;
 
-			public DateTimeOffset? InternalDate {
-				get { return Message != null ? Message.InternalDate : Children[0].InternalDate; }
-			}
+			public DateTimeOffset? InternalDate => null;
 
 			public uint? Size {
 				get { return Message != null ? Message.Size : Children[0].Size; }
@@ -133,13 +111,9 @@ namespace MailKit {
 				get { return Message != null ? Message.References : Children[0].References; }
 			}
 
-			public string Id {
-				get { return Message != null ? Message.Id : Children[0].Id; }
-			}
+			public string Id => null;
 
-			public string ThreadId {
-				get { return Message != null ? Message.ThreadId : Children[0].ThreadId; }
-			}
+			public string ThreadId => null;
 
 			public UniqueId UniqueId {
 				get { return Message != null ? Message.UniqueId : Children[0].UniqueId; }
@@ -149,17 +123,11 @@ namespace MailKit {
 				get { return Message != null ? Message.Index : Children[0].Index; }
 			}
 
-			public ulong? GMailMessageId {
-				get { return Message != null ? Message.GMailMessageId : Children[0].GMailMessageId; }
-			}
+			public ulong? GMailMessageId => null;
 
-			public ulong? GMailThreadId {
-				get { return Message != null ? Message.GMailThreadId : Children[0].GMailThreadId; }
-			}
+			public ulong? GMailThreadId => null;
 
-			public IList<string> GMailLabels {
-				get { return Message != null ? Message.GMailLabels : Children[0].GMailLabels; }
-			}
+			public IList<string> GMailLabels => null;
 		}
 
 		static IDictionary<string, ThreadableNode> CreateIdTable (IEnumerable<IMessageSummary> messages)
