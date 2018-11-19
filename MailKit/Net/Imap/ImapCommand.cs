@@ -723,7 +723,7 @@ namespace MailKit.Net.Imap {
 
 						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 						if (token.Type == ImapTokenType.OpenBracket) {
-							var code = await Engine.ParseResponseCodeAsync (doAsync, CancellationToken).ConfigureAwait (false);
+							var code = await Engine.ParseResponseCodeAsync (true, doAsync, CancellationToken).ConfigureAwait (false);
 							RespCodes.Add (code);
 							break;
 						}
@@ -742,7 +742,7 @@ namespace MailKit.Net.Imap {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
 					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
-					var code = await Engine.ParseResponseCodeAsync (doAsync, CancellationToken).ConfigureAwait (false);
+					var code = await Engine.ParseResponseCodeAsync (false, doAsync, CancellationToken).ConfigureAwait (false);
 					RespCodes.Add (code);
 				} else {
 					// no clue what we got...

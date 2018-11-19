@@ -313,6 +313,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.50.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+create-special-use.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+statussize+objectid.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability+login.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability+logindisabled.txt" />

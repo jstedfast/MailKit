@@ -301,6 +301,16 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		StatusSize       = 1L << 50,
 
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc8440">LIST-MYRIGHTS</a> extension.
+		/// </summary>
+		ListMyRights     = 1L << 51,
+
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.
+		/// </summary>
+		ObjectID         = 1L << 52,
+
 		#region GMail Extensions
 
 		/// <summary>

@@ -599,7 +599,7 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
 					if (code.Type == ImapResponseCodeType.Alert)
 						OnAlert (code.Message);
 				} else if (token.Type != ImapTokenType.Eoln) {
@@ -1287,9 +1287,10 @@ namespace MailKit.Net.Imap {
 		/// Parses the response code.
 		/// </summary>
 		/// <returns>The response code.</returns>
+		/// <param name="isTagged">Whether or not the resp-code is tagged vs untagged.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task<ImapResponseCode> ParseResponseCodeAsync (bool doAsync, CancellationToken cancellationToken)
+		public async Task<ImapResponseCode> ParseResponseCodeAsync (bool isTagged, bool doAsync, CancellationToken cancellationToken)
 		{
 			uint validity = Selected != null ? Selected.UidValidity : 0;
 			ImapResponseCode code;
@@ -1316,6 +1317,7 @@ namespace MailKit.Net.Imap {
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			code = ImapResponseCode.Create (GetResponseCodeType (atom));
+			code.IsTagged = isTagged;
 
 			switch (code.Type) {
 			case ImapResponseCodeType.BadCharset:
@@ -1549,6 +1551,7 @@ namespace MailKit.Net.Imap {
 				switch ((string) token.Value) {
 				case "LONGENTRIES":
 					metadata.SubType = MetadataResponseCodeSubType.LongEntries;
+					metadata.IsError = false;
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1797,7 +1800,7 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
 					if (current != null)
 						current.RespCodes.Add (code);
 				}
@@ -1859,7 +1862,7 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
 					if (current != null)
 						current.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {

@@ -172,10 +172,12 @@ namespace MailKit.Net.Imap {
 					PermanentFlags = ((PermanentFlagsResponseCode) code).Flags;
 					break;
 				case ImapResponseCodeType.ReadOnly:
-					Access = FolderAccess.ReadOnly;
+					if (code.IsTagged)
+						Access = FolderAccess.ReadOnly;
 					break;
 				case ImapResponseCodeType.ReadWrite:
-					Access = FolderAccess.ReadWrite;
+					if (code.IsTagged)
+						Access = FolderAccess.ReadWrite;
 					break;
 				case ImapResponseCodeType.TryCreate:
 					tryCreate = true;

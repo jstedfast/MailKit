@@ -124,7 +124,7 @@ namespace MailKit.Net.Imap {
 	class ImapResponseCode
 	{
 		public readonly ImapResponseCodeType Type;
-		public readonly bool IsError;
+		public bool IsTagged, IsError;
 		public string Message;
 
 		internal ImapResponseCode (ImapResponseCodeType type, bool isError)
@@ -318,7 +318,6 @@ namespace MailKit.Net.Imap {
 		public MetadataResponseCodeSubType SubType;
 		public uint Value;
 
-		// FIXME: the LONGENTRIES code is not an error
 		internal MetadataResponseCode (ImapResponseCodeType type) : base (type, true)
 		{
 		}
