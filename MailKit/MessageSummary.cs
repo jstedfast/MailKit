@@ -61,7 +61,7 @@ namespace MailKit {
 			if (index < 0)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			Keywords = new HashSet<string> ();
+			Keywords = new HashSet<string> (StringComparer.Ordinal);
 			Index = index;
 		}
 
@@ -380,13 +380,13 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the threadable subject.
+		/// Gets the normalized subject.
 		/// </summary>
 		/// <remarks>
 		/// A normalized Subject header value where prefixes such as
 		/// "Re:", "Re[#]:", etc have been pruned.
 		/// </remarks>
-		/// <value>The threadable subject.</value>
+		/// <value>The normalized subject.</value>
 		public string NormalizedSubject {
 			get {
 				UpdateThreadableSubject ();

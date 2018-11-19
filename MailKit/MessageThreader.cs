@@ -108,6 +108,7 @@ namespace MailKit {
 				get { return Message != null ? Message.Keywords : Children[0].Keywords; }
 			}
 
+			[Obsolete]
 			public HashSet<string> UserFlags {
 				get { return Keywords; }
 			}
@@ -163,7 +164,7 @@ namespace MailKit {
 
 		static IDictionary<string, ThreadableNode> CreateIdTable (IEnumerable<IMessageSummary> messages)
 		{
-			var ids = new Dictionary<string, ThreadableNode> ();
+			var ids = new Dictionary<string, ThreadableNode> (StringComparer.OrdinalIgnoreCase);
 			ThreadableNode node;
 
 			foreach (var message in messages) {
@@ -618,7 +619,7 @@ namespace MailKit {
 
 			var canonicalized = builder.ToString ();
 
-			if (canonicalized.ToLowerInvariant () == "(no subject)")
+			if (canonicalized.Equals ("(no subject)", StringComparison.OrdinalIgnoreCase))
 				canonicalized = string.Empty;
 
 			return canonicalized;
