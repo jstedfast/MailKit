@@ -192,6 +192,21 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the unique identifier for the folder, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets a unique identifier for the folder, if available. This is useful for clients
+		/// implementing a message cache that want to track the folder after it is renamed by another
+		/// client.</para>
+		/// <note type="note">This property will only be available if the server supports the
+		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
+		/// </remarks>
+		/// <value>The unique folder identifier.</value>
+		public string Id {
+			get; protected set;
+		}
+
+		/// <summary>
 		/// Get a value indicating whether the folder is subscribed.
 		/// </summary>
 		/// <remarks>

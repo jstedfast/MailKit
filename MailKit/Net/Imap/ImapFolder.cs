@@ -207,6 +207,12 @@ namespace MailKit.Net.Imap {
 					SupportsModSeq = false;
 					HighestModSeq = 0;
 					break;
+				case ImapResponseCodeType.MailboxId:
+					// Note: an untagged MAILBOX resp-code is returned on SELECT/EXAMINE while
+					// a *tagged* MAILBOXID resp-code is returned on CREATE.
+					if (!code.IsTagged)
+						Id = ((MailboxIdResponseCode) code).MailboxId;
+					break;
 				}
 			}
 
@@ -647,7 +653,7 @@ namespace MailKit.Net.Imap {
 			return CloseAsync (expunge, true, cancellationToken);
 		}
 
-		async Task<IMailFolder> GetCreatedFolderAsync (string encodedName, bool specialUse, bool doAsync, CancellationToken cancellationToken)
+		async Task<IMailFolder> GetCreatedFolderAsync (string encodedName, string id, bool specialUse, bool doAsync, CancellationToken cancellationToken)
 		{
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
 			var list = new List<ImapFolder> ();
@@ -667,6 +673,7 @@ namespace MailKit.Net.Imap {
 
 			if ((folder = GetFolder (list, encodedName)) != null) {
 				folder.ParentFolder = this;
+				folder.Id = id;
 
 				if (specialUse)
 					Engine.AssignSpecialFolder (folder);
@@ -704,7 +711,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok && GetResponseCode (ic, ImapResponseCodeType.AlreadyExists) == null)
 				throw ImapCommandException.Create ("CREATE", ic);
 
-			return await GetCreatedFolderAsync (encodedName, false, doAsync, cancellationToken).ConfigureAwait (false);
+			var code = (MailboxIdResponseCode) GetResponseCode (ic, ImapResponseCodeType.MailboxId);
+			var id = code?.MailboxId;
+
+			return await GetCreatedFolderAsync (encodedName, id, false, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -866,7 +876,10 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("CREATE", ic);
 			}
 
-			return await GetCreatedFolderAsync (encodedName, true, doAsync, cancellationToken).ConfigureAwait (false);
+			var code = (MailboxIdResponseCode) GetResponseCode (ic, ImapResponseCodeType.MailboxId);
+			var id = code?.MailboxId;
+
+			return await GetCreatedFolderAsync (encodedName, id, true, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -5326,6 +5339,11 @@ namespace MailKit.Net.Imap {
 		internal void UpdateSize (ulong? size)
 		{
 			Size = size;
+		}
+
+		internal void UpdateId (string id)
+		{
+			Id = id;
 		}
 
 		internal void UpdateHighestModSeq (ulong modseq)

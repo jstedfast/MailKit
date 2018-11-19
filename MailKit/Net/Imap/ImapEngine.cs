@@ -1281,6 +1281,7 @@ namespace MailKit.Net.Imap {
 			case "ALREADYEXISTS":        return ImapResponseCodeType.AlreadyExists;
 			case "NONEXISTENT":          return ImapResponseCodeType.NonExistent;
 			case "USEATTR":              return ImapResponseCodeType.UseAttr;
+			case "MAILBOXID":            return ImapResponseCodeType.MailboxId;
 			default:                     return ImapResponseCodeType.Unknown;
 			}
 		}
@@ -1598,6 +1599,26 @@ namespace MailKit.Net.Imap {
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
+			case ImapResponseCodeType.MailboxId:
+				var mailboxid = (MailboxIdResponseCode) code;
+
+				if (token.Type != ImapTokenType.OpenParen)
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				if (token.Type != ImapTokenType.Atom)
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+
+				mailboxid.MailboxId = (string) token.Value;
+
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				if (token.Type != ImapTokenType.CloseParen)
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				break;
 			default:
 				//if (code.Type == ImapResponseCodeType.Unknown)
 				//	Debug.WriteLine (string.Format ("Unknown RESP-CODE encountered: {0}", atom));
@@ -1752,6 +1773,23 @@ namespace MailKit.Net.Imap {
 
 					if (folder != null)
 						folder.UpdateSize (size);
+					break;
+				case "MAILBOXID":
+					if (token.Type != ImapTokenType.OpenParen)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+
+					if (folder != null)
+						folder.UpdateId ((string) token.Value);
+
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (token.Type != ImapTokenType.CloseParen)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 					break;
 				}
 			} while (true);
@@ -2375,6 +2413,11 @@ namespace MailKit.Net.Imap {
 			if ((Capabilities & ImapCapabilities.StatusSize) != 0) {
 				if ((items & StatusItems.Size) != 0)
 					flags += "SIZE ";
+			}
+
+			if ((Capabilities & ImapCapabilities.ObjectID) != 0) {
+				if ((items & StatusItems.MailboxId) != 0)
+					flags += "MAILBOXID ";
 			}
 
 			return flags.TrimEnd ();

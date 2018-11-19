@@ -762,5 +762,105 @@ namespace UnitTests.Net.Imap {
 				await client.DisconnectAsync (false);
 			}
 		}
+
+		List<ImapReplayCommand> CreateFetchObjectIdAttributesCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 FETCH 1:* (UID EMAILID THREADID)\r\n", "gmail.fetch-objectid.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestFetchObjectIdAttributes ()
+		{
+			var commands = CreateFetchObjectIdAttributesCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), "OBJECTID");
+
+				var inbox = client.Inbox;
+				inbox.Open (FolderAccess.ReadOnly);
+
+				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Id | MessageSummaryItems.ThreadId);
+				Assert.AreEqual (4, messages.Count, "Count");
+				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
+				Assert.AreEqual ("M6d99ac3275bb4e", messages[0].Id, "EmailId");
+				Assert.AreEqual ("T64b478a75b7ea9", messages[0].ThreadId, "ThreadId");
+				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
+				Assert.AreEqual ("M288836c4c7a762", messages[1].Id, "EmailId");
+				Assert.AreEqual ("T64b478a75b7ea9", messages[1].ThreadId, "ThreadId");
+				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
+				Assert.AreEqual ("M5fdc09b49ea703", messages[2].Id, "EmailId");
+				Assert.AreEqual ("T11863d02dd95b5", messages[2].ThreadId, "ThreadId");
+				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
+				Assert.AreEqual ("M4fdc09b49ea629", messages[3].Id, "EmailId");
+				Assert.AreEqual (null, messages[3].ThreadId, "ThreadId");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestFetchObjectIdAttributesAsync ()
+		{
+			var commands = CreateFetchObjectIdAttributesCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), "OBJECTID");
+
+				var inbox = client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Id | MessageSummaryItems.ThreadId);
+				Assert.AreEqual (4, messages.Count, "Count");
+				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
+				Assert.AreEqual ("M6d99ac3275bb4e", messages[0].Id, "EmailId");
+				Assert.AreEqual ("T64b478a75b7ea9", messages[0].ThreadId, "ThreadId");
+				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
+				Assert.AreEqual ("M288836c4c7a762", messages[1].Id, "EmailId");
+				Assert.AreEqual ("T64b478a75b7ea9", messages[1].ThreadId, "ThreadId");
+				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
+				Assert.AreEqual ("M5fdc09b49ea703", messages[2].Id, "EmailId");
+				Assert.AreEqual ("T11863d02dd95b5", messages[2].ThreadId, "ThreadId");
+				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
+				Assert.AreEqual ("M4fdc09b49ea629", messages[3].Id, "EmailId");
+				Assert.AreEqual (null, messages[3].ThreadId, "ThreadId");
+
+				await client.DisconnectAsync (true);
+			}
+		}
 	}
 }

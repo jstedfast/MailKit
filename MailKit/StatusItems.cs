@@ -79,5 +79,10 @@ namespace MailKit {
 		/// Updates <see cref="IMailFolder.Size"/>.
 		/// </summary>
 		Size           = 1 << 7,
+
+		/// <summary>
+		/// Updates <see cref="IMailFolder.Id"/>.
+		/// </summary>
+		MailboxId      = 1 << 8,
 	}
 }

@@ -132,6 +132,14 @@ namespace MailKit {
 				get { return Message != null ? Message.References : Children[0].References; }
 			}
 
+			public string Id {
+				get { return Message != null ? Message.Id : Children[0].Id; }
+			}
+
+			public string ThreadId {
+				get { return Message != null ? Message.ThreadId : Children[0].ThreadId; }
+			}
+
 			public UniqueId UniqueId {
 				get { return Message != null ? Message.UniqueId : Children[0].UniqueId; }
 			}

@@ -118,6 +118,9 @@ namespace MailKit.Net.Imap {
 		// RESP-CODES introduced in rfc6154:
 		UseAttr,
 
+		// RESP-CODES introduced in rfc8474:
+		MailboxId,
+
 		Unknown       = 255
 	}
 
@@ -191,6 +194,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.AlreadyExists:        return new ImapResponseCode (type, true);
 			case ImapResponseCodeType.NonExistent:          return new ImapResponseCode (type, true);
 			case ImapResponseCodeType.UseAttr:              return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.MailboxId:            return new MailboxIdResponseCode (type);
 			default:                                        return new ImapResponseCode (type, true);
 			}
 		}
@@ -328,6 +332,15 @@ namespace MailKit.Net.Imap {
 		public string Name;
 
 		internal UndefinedFilterResponseCode (ImapResponseCodeType type) : base (type, true)
+		{
+		}
+	}
+
+	class MailboxIdResponseCode : ImapResponseCode
+	{
+		public string MailboxId;
+
+		internal MailboxIdResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
 		}
 	}

@@ -278,6 +278,32 @@ namespace MailKit {
 		MessageIdList References { get; }
 
 		/// <summary>
+		/// Get the globally unique identifier for the message, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the globally unique identifier of the message, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.Id"/> flag is passed to
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <note type="info">This property maps to the <c>EMAILID</c> value defined in the <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
+		/// </remarks>
+		/// <value>The globally unique message identifier.</value>
+		string Id { get; }
+
+		/// <summary>
+		/// Get the globally unique thread identifier for the message, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the globally unique thread identifier for the message, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.ThreadId"/> flag is passed to
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <note type="info">This property maps to the <c>THREADID</c> value defined in the <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
+		/// </remarks>
+		/// <value>The globally unique thread identifier.</value>
+		string ThreadId { get; }
+
+		/// <summary>
 		/// Gets the unique identifier of the message, if available.
 		/// </summary>
 		/// <remarks>

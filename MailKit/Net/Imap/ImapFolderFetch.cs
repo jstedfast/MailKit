@@ -324,6 +324,48 @@ namespace MailKit.Net.Imap
 					message.UniqueId = new UniqueId (ic.Folder.UidValidity, value);
 					message.Fields |= MessageSummaryItems.UniqueId;
 					break;
+				case "EMAILID":
+					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+					if (token.Type != ImapTokenType.OpenParen)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+					if (token.Type != ImapTokenType.Atom)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					message.Fields |= MessageSummaryItems.Id;
+					message.Id = (string) token.Value;
+
+					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+					if (token.Type != ImapTokenType.CloseParen)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					break;
+				case "THREADID":
+					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.OpenParen) {
+						token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+						if (token.Type != ImapTokenType.Atom)
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+						message.Fields |= MessageSummaryItems.ThreadId;
+						message.ThreadId = (string) token.Value;
+
+						token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+						if (token.Type != ImapTokenType.CloseParen)
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					} else if (token.Type == ImapTokenType.Nil) {
+						message.Fields |= MessageSummaryItems.ThreadId;
+						message.ThreadId = null;
+					} else {
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					}
+					break;
 				case "X-GM-MSGID":
 					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
@@ -430,6 +472,13 @@ namespace MailKit.Net.Imap
 			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0) {
 				if ((items & MessageSummaryItems.ModSeq) != 0)
 					tokens.Add ("MODSEQ");
+			}
+
+			if ((Engine.Capabilities & ImapCapabilities.ObjectID) != 0) {
+				if ((items & MessageSummaryItems.Id) != 0)
+					tokens.Add ("EMAILID");
+				if ((items & MessageSummaryItems.ThreadId) != 0)
+					tokens.Add ("THREADID");
 			}
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {

@@ -101,34 +101,44 @@ namespace MailKit {
 		/// </summary>
 		UniqueId       = 1 << 9,
 
+		/// <summary>
+		/// Fetch the <see cref="IMessageSummary.Id"/>.
+		/// </summary>
+		Id             = 1 << 10,
+
+		/// <summary>
+		/// Fetch the <see cref="IMessageSummary.ThreadId"/>.
+		/// </summary>
+		ThreadId       = 1 << 11,
+
 		#region GMail extension items
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.GMailMessageId"/>.
 		/// </summary>
-		GMailMessageId = 1 << 10,
+		GMailMessageId = 1 << 12,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.GMailThreadId"/>.
 		/// </summary>
-		GMailThreadId  = 1 << 11,
+		GMailThreadId  = 1 << 13,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.GMailLabels"/>.
 		/// </summary>
-		GMailLabels    = 1 << 12,
+		GMailLabels    = 1 << 14,
 
 		#endregion
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.PreviewText"/>.
 		/// </summary>
-		PreviewText    = 1 << 13,
+		PreviewText    = 1 << 15,
 
 		/// <summary>
 		/// Fetch the the complete list of <see cref="IMessageSummary.Headers"/>.
 		/// </summary>
-		Headers        = 1 << 14,
+		Headers        = 1 << 16,
 
 		#region Macros
 
