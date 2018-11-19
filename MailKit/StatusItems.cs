@@ -78,6 +78,6 @@ namespace MailKit {
 		/// <summary>
 		/// Updates <see cref="IMailFolder.Size"/>.
 		/// </summary>
-		Size
+		Size           = 1 << 7,
 	}
 }
