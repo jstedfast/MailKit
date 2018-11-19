@@ -5321,6 +5321,11 @@ namespace MailKit.Net.Imap {
 			AppendLimit = limit;
 		}
 
+		internal void UpdateSize (ulong? size)
+		{
+			Size = size;
+		}
+
 		internal void UpdateHighestModSeq (ulong modseq)
 		{
 			if (HighestModSeq == modseq)

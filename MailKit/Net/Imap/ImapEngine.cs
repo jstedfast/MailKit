@@ -1070,6 +1070,7 @@ namespace MailKit.Net.Imap {
 					case "LITERAL-":           Capabilities |= ImapCapabilities.LiteralMinus; break;
 					case "APPENDLIMIT":        Capabilities |= ImapCapabilities.AppendLimit; break;
 					case "UNAUTHENTICATE":     Capabilities |= ImapCapabilities.Unauthenticate; break;
+					case "STATUS=SIZE":        Capabilities |= ImapCapabilities.StatusSize; break;
 					case "XLIST":              Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; QuirksMode = ImapQuirksMode.GMail; break;
 					case "XSTOP":              QuirksMode = ImapQuirksMode.ProtonMail; break;
@@ -1618,9 +1619,9 @@ namespace MailKit.Net.Imap {
 		async Task UpdateStatusAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
+			ulong modseq, size;
 			ImapFolder folder;
 			uint uid, limit;
-			ulong modseq;
 			string name;
 			int count;
 
@@ -1736,6 +1737,16 @@ namespace MailKit.Net.Imap {
 					} else {
 						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 					}
+					break;
+				case "SIZE":
+					if (token.Type != ImapTokenType.Atom)
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+					if (!ulong.TryParse ((string) token.Value, out size))
+						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+
+					if (folder != null)
+						folder.UpdateSize (size);
 					break;
 				}
 			} while (true);
@@ -2354,6 +2365,11 @@ namespace MailKit.Net.Imap {
 			if ((Capabilities & ImapCapabilities.AppendLimit) != 0 && !AppendLimit.HasValue) {
 				if ((items & StatusItems.AppendLimit) != 0)
 					flags += "APPENDLIMIT ";
+			}
+
+			if ((Capabilities & ImapCapabilities.StatusSize) != 0) {
+				if ((items & StatusItems.Size) != 0)
+					flags += "SIZE ";
 			}
 
 			return flags.TrimEnd ();

@@ -285,6 +285,18 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the size of the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the size of the folder in bytes.</para>
+		/// <note type="note">If the value is not set, then the size is unspecified.</note>
+		/// </remarks>
+		/// <value>The size.</value>
+		public ulong? Size {
+			get; protected set;
+		}
+
+		/// <summary>
 		/// Get the index of the first unread message in the folder.
 		/// </summary>
 		/// <remarks>

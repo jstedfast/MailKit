@@ -296,17 +296,22 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		Unauthenticate   = 1L << 49,
 
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc8438">STATUS=SIZE</a> extension.
+		/// </summary>
+		StatusSize       = 1L << 50,
+
 		#region GMail Extensions
 
 		/// <summary>
 		/// The server supports the <a href="https://developers.google.com/gmail/imap_extensions">XLIST</a> extension (GMail).
 		/// </summary>
-		XList            = 1L << 50,
+		XList            = 1L << 60,
 
 		/// <summary>
 		/// The server supports the <a href="https://developers.google.com/gmail/imap_extensions">X-GM-EXT1</a> extension (GMail).
 		/// </summary>
-		GMailExt1        = 1L << 51
+		GMailExt1        = 1L << 61
 
 		#endregion
 	}

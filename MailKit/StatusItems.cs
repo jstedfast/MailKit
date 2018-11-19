@@ -74,5 +74,10 @@ namespace MailKit {
 		/// Updates <see cref="IMailFolder.AppendLimit"/>.
 		/// </summary>
 		AppendLimit    = 1 << 6,
+
+		/// <summary>
+		/// Updates <see cref="IMailFolder.Size"/>.
+		/// </summary>
+		Size
 	}
 }
