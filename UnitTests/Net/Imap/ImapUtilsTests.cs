@@ -714,6 +714,85 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// This tests the work-around for issue #777
+		[Test]
+		public void TestParseGMailBadlyFormedMultipartBodyStructure2 ()
+		{
+			const string text = "(((\"TEXT\" \"PLAIN\" (\"CHARSET\" \"UTF-8\" \"DELSP\" \"yes\" \"FORMAT\" \"flowed\") NIL NIL \"BASE64\" 10418 133 NIL NIL NIL)(\"TEXT\" \"HTML\" (\"CHARSET\" \"UTF-8\") NIL NIL \"BASE64\" 34544 442 NIL NIL NIL) \"ALTERNATIVE\" (\"BOUNDARY\" \"94eb2c1cd0507723d5054c1ce6cb\") NIL NIL)(\"RELATED\" NIL (\"ATTACHMENT\" NIL) NIL)(\"RELATED\" NIL (\"ATTACHMENT\" NIL) NIL)(\"RELATED\" NIL (\"ATTACHMENT\" NIL) NIL)(\"RELATED\" NIL (\"ATTACHMENT\" NIL) NIL) \"MIXED\" (\"BOUNDARY\" \"94eb2c1cd0507723e6054c1ce6cd\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+						engine.QuirksMode = ImapQuirksMode.GMail;
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						var mixed = (BodyPartMultipart) body;
+
+						Assert.IsTrue (mixed.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("94eb2c1cd0507723e6054c1ce6cd", mixed.ContentType.Parameters["boundary"], "multipart/mixed boundary param did not match");
+						Assert.AreEqual (5, mixed.BodyParts.Count, "multipart/mixed BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[0], "The type of the first child does not match.");
+						var alternative = (BodyPartMultipart) mixed.BodyParts[0];
+						Assert.IsTrue (alternative.ContentType.IsMimeType ("multipart", "alternative"), "multipart/alternative Content-Type did not match.");
+						Assert.AreEqual ("94eb2c1cd0507723d5054c1ce6cb", alternative.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (2, alternative.BodyParts.Count, "multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[0], "The type of the second child does not match.");
+						var plain = (BodyPartText) alternative.BodyParts[0];
+						Assert.IsTrue (plain.ContentType.IsMimeType ("text", "plain"), "text/plain Content-Type did not match.");
+						Assert.AreEqual ("UTF-8", plain.ContentType.Charset, "text/plain charset parameter did not match");
+						Assert.AreEqual ("flowed", plain.ContentType.Format, "text/plain format parameter did not match");
+						Assert.AreEqual ("yes", plain.ContentType.Parameters["delsp"], "text/plain delsp parameter did not match");
+						Assert.AreEqual ("BASE64", plain.ContentTransferEncoding, "text/plain Content-Transfer-Encoding did not match");
+						Assert.AreEqual (10418, plain.Octets, "text/plain Octets do not match");
+						Assert.AreEqual (133, plain.Lines, "text/plain Lines don't match");
+
+						Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[1], "The type of the second child does not match.");
+						var html = (BodyPartText) alternative.BodyParts[1];
+						Assert.IsTrue (html.ContentType.IsMimeType ("text", "html"), "text/html Content-Type did not match.");
+						Assert.AreEqual ("UTF-8", html.ContentType.Charset, "text/html charset parameter did not match");
+						Assert.AreEqual ("BASE64", html.ContentTransferEncoding, "text/phtml Content-Transfer-Encoding did not match");
+						Assert.AreEqual (34544, html.Octets, "text/html Octets do not match");
+						Assert.AreEqual (442, html.Lines, "text/html Lines don't match");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[1], "The type of the second child does not match.");
+						var broken1 = (BodyPartMultipart) mixed.BodyParts[1];
+						Assert.IsTrue (broken1.ContentType.IsMimeType ("multipart", "related"), "multipart/related Content-Type did not match.");
+						Assert.AreEqual (0, broken1.BodyParts.Count, "multipart/related BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[2], "The type of the third child does not match.");
+						var broken2 = (BodyPartMultipart) mixed.BodyParts[2];
+						Assert.IsTrue (broken2.ContentType.IsMimeType ("multipart", "related"), "multipart/related Content-Type did not match.");
+						Assert.AreEqual (0, broken2.BodyParts.Count, "multipart/related BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[3], "The type of the fourth child does not match.");
+						var broken3 = (BodyPartMultipart) mixed.BodyParts[3];
+						Assert.IsTrue (broken3.ContentType.IsMimeType ("multipart", "related"), "multipart/related Content-Type did not match.");
+						Assert.AreEqual (0, broken3.BodyParts.Count, "multipart/related BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[4], "The type of the fifth child does not match.");
+						var broken4 = (BodyPartMultipart) mixed.BodyParts[4];
+						Assert.IsTrue (broken4.ContentType.IsMimeType ("multipart", "related"), "multipart/related Content-Type did not match.");
+						Assert.AreEqual (0, broken4.BodyParts.Count, "multipart/related BodyParts count does not match.");
+					}
+				}
+			}
+		}
+
 		// Note: This tests the work-around for issue #371 (except that the example from issue #371 is also missing body-fld-enc and body-fld-octets)
 		[Test]
 		public void TestParseBadlyFormedBodyStructureWithMissingMediaType ()

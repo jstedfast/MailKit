@@ -592,12 +592,16 @@ namespace MailKit.Net.Imap {
 			ContentType contentType;
 			string subtype;
 
-			if (token.Type == ImapTokenType.OpenParen) {
+			if (token.Type == ImapTokenType.OpenParen || token.Type == ImapTokenType.Nil) {
 				// Note: work around broken IMAP server implementations...
 				if (engine.QuirksMode == ImapQuirksMode.GMail) {
 					// Note: GMail's IMAP server implementation breaks when it encounters
 					// nested multiparts with the same boundary and returns a BODYSTRUCTURE
-					// like the example in https://github.com/jstedfast/MailKit/issues/205
+					// like the example in https://github.com/jstedfast/MailKit/issues/205 or
+					// like the example in https://github.com/jstedfast/MailKit/issues/777
+					//
+					// Note: this token is either '(' to start the Content-Type parameter values
+					// or it is a NIL to specify that there are no parameter values.
 					return type;
 				}
 
@@ -607,8 +611,12 @@ namespace MailKit.Net.Imap {
 				// media-subtype token and completely fail to send a media-type token.
 				subtype = type;
 				type = "application";
+
+				// assume the NIL token is the subtype?
+				if (token.Type == ImapTokenType.Nil)
+					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			} else {
-				subtype = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false) ?? string.Empty;
+				subtype = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
