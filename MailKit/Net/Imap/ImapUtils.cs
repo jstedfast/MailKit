@@ -280,8 +280,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type == ImapTokenType.Nil)
 				return;
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
@@ -354,8 +353,7 @@ namespace MailKit.Net.Imap {
 			char delim;
 
 			// parse the folder attributes list
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
@@ -390,8 +388,7 @@ namespace MailKit.Net.Imap {
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
 
 			// parse the path delimeter
 			token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
@@ -474,8 +471,7 @@ namespace MailKit.Net.Imap {
 
 			var token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			while (token.Type != ImapTokenType.CloseParen) {
 				var tag = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
@@ -536,12 +532,8 @@ namespace MailKit.Net.Imap {
 		static async Task<uint> ReadNumberAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			uint number;
 
-			if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out number))
-				throw ImapEngine.UnexpectedToken (format, token);
-
-			return number;
+			return ImapEngine.ParseNumber (token, false, format, token);
 		}
 
 		static bool NeedsQuoting (string value)
@@ -625,8 +617,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type == ImapTokenType.Nil)
 				return new ContentType (type, subtype);
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			var builder = new StringBuilder ();
 			builder.AppendFormat ("{0}/{1}", type, subtype);
@@ -669,8 +660,7 @@ namespace MailKit.Net.Imap {
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
 
 			ContentDisposition.TryParse (builder.ToString (), out disposition);
 
@@ -788,8 +778,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen) {
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.OpenParen && token.Type != ImapTokenType.Nil)
-					throw ImapEngine.UnexpectedToken (format, token);
+				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapTokenType.Nil, format, token);
 
 				var builder = new StringBuilder ();
 				ContentType contentType;
@@ -849,8 +838,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type == ImapTokenType.Nil)
 				return null;
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1044,8 +1032,7 @@ namespace MailKit.Net.Imap {
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
 
 			return new EnvelopeAddress (values);
 		}
@@ -1057,8 +1044,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type == ImapTokenType.Nil)
 				return;
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			var stack = new List<InternetAddressList> ();
 			int sp = 0;
@@ -1071,8 +1057,7 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
-				if (token.Type != ImapTokenType.OpenParen)
-					throw ImapEngine.UnexpectedToken (format, token);
+				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 				var address = await ParseEnvelopeAddressAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1140,8 +1125,7 @@ namespace MailKit.Net.Imap {
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			string nstring;
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			var envelope = new Envelope ();
 			envelope.Date = await ParseEnvelopeDateAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
@@ -1167,8 +1151,7 @@ namespace MailKit.Net.Imap {
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
 
 			return envelope;
 		}
@@ -1221,10 +1204,7 @@ namespace MailKit.Net.Imap {
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			var flags = MessageFlags.None;
 
-			if (token.Type != ImapTokenType.OpenParen) {
-				//Debug.WriteLine ("Expected '(' at the start of the {0} list, but got: {1}", name, token);
-				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, name, token);
-			}
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, name, token);
 
 			token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1248,10 +1228,7 @@ namespace MailKit.Net.Imap {
 				token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type != ImapTokenType.CloseParen) {
-				//Debug.WriteLine ("Expected to find a ')' token terminating the {0} list, but got: {1}", name, token);
-				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, name, token);
-			}
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, name, token);
 
 			return flags;
 		}
@@ -1268,8 +1245,7 @@ namespace MailKit.Net.Imap {
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			var labels = new List<string> ();
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);
 
 			token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1288,8 +1264,7 @@ namespace MailKit.Net.Imap {
 				token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);
 
 			return new ReadOnlyCollection<string> (labels);
 		}
@@ -1313,9 +1288,7 @@ namespace MailKit.Net.Imap {
 				return thread;
 			}
 
-			if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
-				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
-
+			uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
 			node = thread = new MessageThread (new UniqueId (uidValidity, uid));
 
 			do {
@@ -1328,9 +1301,7 @@ namespace MailKit.Net.Imap {
 					child = await ParseThreadAsync (engine, uidValidity, doAsync, cancellationToken).ConfigureAwait (false);
 					node.Children.Add (child);
 				} else {
-					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
-						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
-
+					uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
 					child = new MessageThread (new UniqueId (uidValidity, uid));
 					node.Children.Add (child);
 					node = child;
@@ -1361,8 +1332,7 @@ namespace MailKit.Net.Imap {
 
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.OpenParen)
-					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
 
 				threads.Add (await ParseThreadAsync (engine, uidValidity, doAsync, cancellationToken).ConfigureAwait (false));
 			} while (true);

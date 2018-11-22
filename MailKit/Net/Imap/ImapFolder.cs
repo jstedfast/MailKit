@@ -3154,8 +3154,7 @@ namespace MailKit.Net.Imap {
 
 			var token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (format, token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			while (token.Type != ImapTokenType.CloseParen) {
 				uint used, limit;
@@ -3163,20 +3162,17 @@ namespace MailKit.Net.Imap {
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (format, token);
+				ImapEngine.AssertToken (token, ImapTokenType.Atom, format, token);
 
 				resource = (string) token.Value;
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out used))
-					throw ImapEngine.UnexpectedToken (format, token);
+				used = ImapEngine.ParseNumber (token, false, format, token);
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out limit))
-					throw ImapEngine.UnexpectedToken (format, token);
+				limit = ImapEngine.ParseNumber (token, false, format, token);
 
 				switch (resource.ToUpperInvariant ()) {
 				case "MESSAGE":
@@ -5169,8 +5165,7 @@ namespace MailKit.Net.Imap {
 			bool labelsChanged = false;
 			bool flagsChanged = false;
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			do {
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -5178,8 +5173,7 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
 					break;
 
-				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+				ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 				var atom = (string) token.Value;
 				ulong modseq;
@@ -5189,18 +5183,15 @@ namespace MailKit.Net.Imap {
 				case "MODSEQ":
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.OpenParen)
-						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq))
-						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					modseq = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.CloseParen)
-						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					if (modseq > HighestModSeq)
 						UpdateHighestModSeq (modseq);
@@ -5213,15 +5204,14 @@ namespace MailKit.Net.Imap {
 				case "UID":
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
-						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					modSeqChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
 					labelsChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
 					flagsChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
 					break;
 				case "FLAGS":
-					flagsChangedEventArgs.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, flagsChangedEventArgs.UserFlags, doAsync, cancellationToken).ConfigureAwait (false);
+					flagsChangedEventArgs.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, flagsChangedEventArgs.Keywords, doAsync, cancellationToken).ConfigureAwait (false);
 					flagsChanged = true;
 					break;
 				case "X-GM-LABELS":
@@ -5238,8 +5228,7 @@ namespace MailKit.Net.Imap {
 				}
 			} while (true);
 
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			if (flagsChanged)
 				OnMessageFlagsChanged (flagsChangedEventArgs);
@@ -5274,8 +5263,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type == ImapTokenType.CloseParen)
 						break;
 
-					if (token.Type != ImapTokenType.Atom)
-						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
 
 					var atom = (string) token.Value;
 
@@ -5286,8 +5274,7 @@ namespace MailKit.Net.Imap {
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, UidValidity, out vanished))
-				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
+			vanished = ImapEngine.ParseUidSet (token, UidValidity, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
 
 			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));
 

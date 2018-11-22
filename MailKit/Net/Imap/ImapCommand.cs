@@ -711,32 +711,29 @@ namespace MailKit.Net.Imap {
 					// the next token should be "OK", "NO", or "BAD"
 					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 
-					if (token.Type == ImapTokenType.Atom) {
-						string atom = (string) token.Value;
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, "Syntax error in tagged response. Unexpected token: {0}", token);
 
-						switch (atom) {
-						case "BAD": result = ImapCommandResponse.Bad; break;
-						case "OK": result = ImapCommandResponse.Ok; break;
-						case "NO": result = ImapCommandResponse.No; break;
-						default: throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. Unexpected token: {0}", token);
-						}
+					string atom = (string) token.Value;
+
+					switch (atom) {
+					case "BAD": result = ImapCommandResponse.Bad; break;
+					case "OK": result = ImapCommandResponse.Ok; break;
+					case "NO": result = ImapCommandResponse.No; break;
+					default: throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. Unexpected token: {0}", token);
+					}
 
 						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
-						if (token.Type == ImapTokenType.OpenBracket) {
-							var code = await Engine.ParseResponseCodeAsync (true, doAsync, CancellationToken).ConfigureAwait (false);
-							RespCodes.Add (code);
-							break;
-						}
+					if (token.Type == ImapTokenType.OpenBracket) {
+						var code = await Engine.ParseResponseCodeAsync (true, doAsync, CancellationToken).ConfigureAwait (false);
+						RespCodes.Add (code);
+						break;
+					}
 
-						if (token.Type != ImapTokenType.Eoln) {
-							// consume the rest of the line...
-							var line = await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false);
-							ResponseText = ((string) (token.Value) + line).TrimEnd ();
-							break;
-						}
-					} else {
-						// looks like we didn't get an "OK", "NO", or "BAD"...
-						throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. Unexpected token: {0}", token);
+					if (token.Type != ImapTokenType.Eoln) {
+						// consume the rest of the line...
+						var line = await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false);
+						ResponseText = ((string) (token.Value) + line).TrimEnd ();
+						break;
 					}
 				} else if (token.Type == ImapTokenType.OpenBracket) {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that

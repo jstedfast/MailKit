@@ -519,19 +519,19 @@ namespace MailKit.Net.Imap {
 			return new ImapProtocolException (string.Format (format, args)) { UnexpectedToken = true };
 		}
 
-		internal void AssertToken (ImapToken token, ImapTokenType type, string format, params object[] args)
+		internal static void AssertToken (ImapToken token, ImapTokenType type, string format, params object[] args)
 		{
 			if (token.Type != type)
 				throw UnexpectedToken (format, args);
 		}
 
-		internal void AssertToken (ImapToken token, ImapTokenType type1, ImapTokenType type2, string format, params object[] args)
+		internal static void AssertToken (ImapToken token, ImapTokenType type1, ImapTokenType type2, string format, params object[] args)
 		{
 			if (token.Type != type1 && token.Type != type2)
 				throw UnexpectedToken (format, args);
 		}
 
-		internal uint ParseNumber (ImapToken token, bool nonZero, string format, params object[] args)
+		internal static uint ParseNumber (ImapToken token, bool nonZero, string format, params object[] args)
 		{
 			uint value;
 
@@ -543,7 +543,7 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
-		internal ulong ParseNumber64 (ImapToken token, bool nonZero, string format, params object[] args)
+		internal static ulong ParseNumber64 (ImapToken token, bool nonZero, string format, params object[] args)
 		{
 			ulong value;
 
@@ -555,7 +555,7 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
-		internal UniqueIdSet ParseUidSet (ImapToken token, uint validity, string format, params object[] args)
+		internal static UniqueIdSet ParseUidSet (ImapToken token, uint validity, string format, params object[] args)
 		{
 			UniqueIdSet uids;
 
@@ -1601,11 +1601,10 @@ namespace MailKit.Net.Imap {
 		async Task UpdateStatusAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
-			ulong modseq, size;
 			ImapFolder folder;
-			uint uid, limit;
+			uint count, uid;
+			ulong modseq;
 			string name;
-			int count;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
@@ -1647,8 +1646,7 @@ namespace MailKit.Net.Imap {
 				case "HIGHESTMODSEQ":
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!ulong.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out modseq))
-						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					modseq = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateHighestModSeq (modseq);
@@ -1656,26 +1654,23 @@ namespace MailKit.Net.Imap {
 				case "MESSAGES":
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out count))
-						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
-						folder.OnExists (count);
+						folder.OnExists ((int) count);
 					break;
 				case "RECENT":
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out count))
-						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
-						folder.OnRecent (count);
+						folder.OnRecent ((int) count);
 					break;
 				case "UIDNEXT":
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out uid))
-						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateUidNext (uid > 0 ? new UniqueId (uid) : UniqueId.Invalid);
@@ -1683,8 +1678,7 @@ namespace MailKit.Net.Imap {
 				case "UIDVALIDITY":
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out uid))
-						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateUidValidity (uid);
@@ -1692,22 +1686,20 @@ namespace MailKit.Net.Imap {
 				case "UNSEEN":
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out count))
-						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
-						folder.UpdateUnread (count);
+						folder.UpdateUnread ((int) count);
 					break;
 				case "APPENDLIMIT":
-					AssertToken (token, ImapTokenType.Atom, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-
 					if (token.Type == ImapTokenType.Atom) {
-						if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out limit))
-							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+						var limit = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 						if (folder != null)
 							folder.UpdateAppendLimit (limit);
 					} else {
+						AssertToken (token, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
 						if (folder != null)
 							folder.UpdateAppendLimit (null);
 					}
@@ -1715,8 +1707,7 @@ namespace MailKit.Net.Imap {
 				case "SIZE":
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!ulong.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out size))
-						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					var size = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateSize (size);
