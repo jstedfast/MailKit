@@ -479,6 +479,7 @@
     <EmbeddedResource Include="Net\Pop3\Resources\lang\setlang.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\lang\stat.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\lang\utf8.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\auth-failed.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-required.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-successful.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-login-password.txt" />

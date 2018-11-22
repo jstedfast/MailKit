@@ -589,7 +589,7 @@ namespace MailKit.Net.Smtp {
 				return;
 			}
 
-			var message = string.Format ("{0}: {1}", response.StatusCode, response.Response);
+			var message = string.Format ("{0}: {1}", (int) response.StatusCode, response.Response);
 
 			if (saslException != null)
 				throw new AuthenticationException (message, saslException);
@@ -720,7 +720,7 @@ namespace MailKit.Net.Smtp {
 					return;
 				}
 
-				var message = string.Format ("{0}: {1}", response.StatusCode, response.Response);
+				var message = string.Format ("{0}: {1}", (int) response.StatusCode, response.Response);
 				Exception inner;
 
 				if (saslException != null)
