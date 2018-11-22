@@ -253,31 +253,9 @@ namespace MailKit.Net.Imap
 
 						message.Fields |= MessageSummaryItems.References;
 					} else {
-						try {
-							format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODY", "{0}");
-							message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, doAsync, ic.CancellationToken).ConfigureAwait (false);
-							message.Fields |= MessageSummaryItems.Body;
-						} catch (ImapProtocolException ex) {
-							if (!ex.UnexpectedToken)
-								throw;
-
-							// Note: GMail's IMAP implementation sometimes replies with completely broken BODY values
-							// (see issue #32 for the `BODY ("ALTERNATIVE")` example), so to work around this nonsense,
-							// we need to drop the remainder of this line.
-							do {
-								token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
-
-								if (token.Type == ImapTokenType.Eoln)
-									break;
-
-								token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
-
-								if (token.Type == ImapTokenType.Literal)
-									await ReadLiteralDataAsync (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
-							} while (true);
-
-							return;
-						}
+						format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODY", "{0}");
+						message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, doAsync, ic.CancellationToken).ConfigureAwait (false);
+						message.Fields |= MessageSummaryItems.Body;
 					}
 					break;
 				case "ENVELOPE":
