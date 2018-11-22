@@ -1136,10 +1136,7 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type != sentinel) {
-				//new ImapReplayStream (commands, true)); ("Expected '{0}' at the end of the CAPABILITIES, but got: {1}", sentinel, token);
-				throw UnexpectedToken (GenericItemSyntaxErrorFormat, "CAPABILITIES", token);
-			}
+			AssertToken (token, sentinel, GenericItemSyntaxErrorFormat, "CAPABILITIES", token);
 
 			// unget the sentinel
 			Stream.UngetToken (token);
