@@ -297,9 +297,6 @@ namespace MailKit.Net.Imap {
 				folder.OnClosed ();
 			}
 
-			if (ic.Bye)
-				return FolderAccess.None;
-
 			Engine.State = ImapEngineState.Selected;
 			Engine.Selected = this;
 

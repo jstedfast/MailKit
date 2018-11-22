@@ -293,7 +293,7 @@ namespace MailKit.Net.Imap {
 
 	class MaxConvertResponseCode : ImapResponseCode
 	{
-		public int MaxConvert;
+		public uint MaxConvert;
 
 		internal MaxConvertResponseCode (ImapResponseCodeType type) : base (type, true)
 		{

@@ -29,6 +29,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -518,6 +519,54 @@ namespace MailKit.Net.Imap {
 			return new ImapProtocolException (string.Format (format, args)) { UnexpectedToken = true };
 		}
 
+		internal void AssertToken (ImapToken token, ImapTokenType type, string format, params object[] args)
+		{
+			if (token.Type != type)
+				throw UnexpectedToken (format, args);
+		}
+
+		internal void AssertToken (ImapToken token, ImapTokenType type1, ImapTokenType type2, string format, params object[] args)
+		{
+			if (token.Type != type1 && token.Type != type2)
+				throw UnexpectedToken (format, args);
+		}
+
+		internal uint ParseNumber (ImapToken token, bool nonZero, string format, params object[] args)
+		{
+			uint value;
+
+			AssertToken (token, ImapTokenType.Atom, format, args);
+
+			if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out value) || (nonZero && value == 0))
+				throw UnexpectedToken (format, args);
+
+			return value;
+		}
+
+		internal ulong ParseNumber64 (ImapToken token, bool nonZero, string format, params object[] args)
+		{
+			ulong value;
+
+			AssertToken (token, ImapTokenType.Atom, format, args);
+
+			if (!ulong.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out value) || (nonZero && value == 0))
+				throw UnexpectedToken (format, args);
+
+			return value;
+		}
+
+		internal UniqueIdSet ParseUidSet (ImapToken token, uint validity, string format, params object[] args)
+		{
+			UniqueIdSet uids;
+
+			AssertToken (token, ImapTokenType.Atom, format, args);
+
+			if (!UniqueIdSet.TryParse ((string) token.Value, validity, out uids))
+				throw UnexpectedToken (format, args);
+
+			return uids;
+		}
+
 		/// <summary>
 		/// Sets the stream - this is only here to be used by the unit tests.
 		/// </summary>
@@ -569,13 +618,11 @@ namespace MailKit.Net.Imap {
 			try {
 				var token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Asterisk)
-					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
+				AssertToken (token, ImapTokenType.Asterisk, GreetingSyntaxErrorFormat, token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Atom)
-					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
+				AssertToken (token, ImapTokenType.Atom, GreetingSyntaxErrorFormat, token);
 
 				var atom = (string) token.Value;
 				var state = State;
@@ -1001,7 +1048,7 @@ namespace MailKit.Net.Imap {
 				} else if (atom.StartsWith ("APPENDLIMIT=", StringComparison.Ordinal)) {
 					uint limit;
 
-					if (uint.TryParse (atom.Substring ("APPENDLIMIT=".Length), out limit))
+					if (uint.TryParse (atom.Substring ("APPENDLIMIT=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out limit))
 					    AppendLimit = limit;
 
 					Capabilities |= ImapCapabilities.AppendLimit;
@@ -1140,20 +1187,14 @@ namespace MailKit.Net.Imap {
 						// parse the namespace pair - first token is the path
 						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-						if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom) {
-							//Debug.WriteLine ("Expected string token as first element in namespace pair, but got: {0}", token);
-							throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
-						}
+						AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 						path = (string) token.Value;
 
 						// second token is the directory separator
 						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-						if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Nil) {
-							//Debug.WriteLine ("Expected string or nil token as second element in namespace pair, but got: {0}", token);
-							throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
-						}
+						AssertToken (token, ImapTokenType.QString, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 						var qstring = token.Type == ImapTokenType.Nil ? string.Empty : (string) token.Value;
 
@@ -1183,13 +1224,11 @@ namespace MailKit.Net.Imap {
 
 							// NAMESPACE extension
 
-							if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom)
-								throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+							AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 							token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-							if (token.Type != ImapTokenType.OpenParen)
-								throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+							AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 							do {
 								token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1197,8 +1236,7 @@ namespace MailKit.Net.Imap {
 								if (token.Type == ImapTokenType.CloseParen)
 									break;
 
-								if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom)
-									throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+								AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 							} while (true);
 						} while (true);
 
@@ -1206,13 +1244,9 @@ namespace MailKit.Net.Imap {
 						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					}
 
-					if (token.Type != ImapTokenType.CloseParen) {
-						//Debug.WriteLine ("Expected ')' to close namespace pair, but got: {0}", token);
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
-					}
-				} else if (token.Type != ImapTokenType.Nil) {
-					//Debug.WriteLine ("Expected '(' or 'NIL' token after untagged 'NAMESPACE' response, but got: {0}", token);
-					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+					AssertToken (token, ImapTokenType.CloseParen, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+				} else {
+					AssertToken (token, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 				}
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1309,8 +1343,6 @@ namespace MailKit.Net.Imap {
 			ImapResponseCode code;
 			ImapToken token;
 			string atom;
-			ulong n64;
-			uint n32;
 
 //			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 //
@@ -1321,10 +1353,7 @@ namespace MailKit.Net.Imap {
 
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.Atom) {
-				//Debug.WriteLine ("Expected an atom token containing a RESP-CODE, but got: {0}", token);
-				throw UnexpectedToken ("Syntax error in response code. Unexpected token: {0}", token);
-			}
+			AssertToken (token, ImapTokenType.Atom, "Syntax error in response code. Unexpected token: {0}", token);
 
 			atom = (string) token.Value;
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1343,10 +1372,7 @@ namespace MailKit.Net.Imap {
 						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					}
 
-					if (token.Type != ImapTokenType.CloseParen) {
-						//Debug.WriteLine ("Expected ')' after list of charsets in 'BADCHARSET' RESP-CODE, but got: {0}", token);
-						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "BADCHARSET", token);
-					}
+					AssertToken (token, ImapTokenType.CloseParen, GenericResponseCodeSyntaxErrorFormat, "BADCHARSET", token);
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				}
@@ -1366,13 +1392,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.UidNext:
 				var next = (UidNextResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
-					//Debug.WriteLine ("Expected nz-number argument to 'UIDNEXT' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UIDNEXT", token);
-				}
-
-				next.Uid = new UniqueId (n32);
-
+				next.Uid = new UniqueId (ParseNumber (token, true, GenericResponseCodeSyntaxErrorFormat, "UIDNEXT", token));
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.UidValidity:
@@ -1384,13 +1404,7 @@ namespace MailKit.Net.Imap {
 				// initialized.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/150 for an example.
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
-					//Debug.WriteLine ("Expected nz-number argument to 'UIDVALIDITY' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
-				}
-
-				uidvalidity.UidValidity = n32;
-
+				uidvalidity.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.Unseen:
@@ -1400,12 +1414,9 @@ namespace MailKit.Net.Imap {
 				// mailbox contains no messages.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/34 for details.
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
-					//Debug.WriteLine ("Expected nz-number argument to 'UNSEEN' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UNSEEN", token);
-				}
+				var n = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UNSEEN", token);
 
-				unseen.Index = n32 > 0 ? (int) (n32 - 1) : 0;
+				unseen.Index = n > 0 ? (int) (n - 1) : 0;
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
@@ -1417,20 +1428,14 @@ namespace MailKit.Net.Imap {
 				// 85) Remove NEWNAME.  It can't work because mailbox names can be
 				// literals and can include "]".  Functionality can be addressed via
 				// referrals.
-				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
-					//Debug.WriteLine ("Expected atom or qstring as first argument to 'NEWNAME' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
-				}
+				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
 
 				rename.OldName = (string) token.Value;
 
 				// the next token should be another atom or qstring token representing the new name of the folder
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
-					//Debug.WriteLine ("Expected atom or qstring as second argument to 'NEWNAME' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
-				}
+				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
 
 				rename.NewName = (string) token.Value;
 
@@ -1439,32 +1444,19 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.AppendUid:
 				var append = (AppendUidResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
-					//Debug.WriteLine ("Expected nz-number as first argument of the 'APPENDUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
-				}
-
-				append.UidValidity = n32;
+				append.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
-				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, n32, out append.UidSet)) {
-					//Debug.WriteLine ("Expected nz-number or uid-set as second argument to 'APPENDUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
-				}
+				append.UidSet = ParseUidSet (token, append.UidValidity, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.CopyUid:
 				var copy = (CopyUidResponseCode) code;
-
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
-					//Debug.WriteLine ("Expected nz-number as first argument of the 'COPYUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
-				}
-
-				copy.UidValidity = n32;
+				
+				copy.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1473,10 +1465,7 @@ namespace MailKit.Net.Imap {
 				// didn't exist or something? See https://github.com/jstedfast/MailKit/issues/555 for details.
 
 				if (token.Type != ImapTokenType.CloseBracket) {
-					if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, validity, out copy.SrcUidSet)) {
-						//Debug.WriteLine ("Expected uid-set as second argument to 'COPYUID' RESP-CODE, but got: {0}", token);
-						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
-					}
+					copy.SrcUidSet = ParseUidSet (token, validity, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.SrcUidSet = new UniqueIdSet ();
 					Stream.UngetToken (token);
@@ -1485,10 +1474,7 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type != ImapTokenType.CloseBracket) {
-					if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, n32, out copy.DestUidSet)) {
-						//Debug.WriteLine ("Expected uid-set as third argument to 'COPYUID' RESP-CODE, but got: {0}", token);
-						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
-					}
+					copy.DestUidSet = ParseUidSet (token, copy.UidValidity, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.DestUidSet = new UniqueIdSet ();
 					Stream.UngetToken (token);
@@ -1499,10 +1485,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.BadUrl:
 				var badurl = (BadUrlResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
-					//Debug.WriteLine ("Expected url-resp-text as argument to the 'BADURL' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "BADURL", token);
-				}
+				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "BADURL", token);
 
 				badurl.BadUrl = (string) token.Value;
 
@@ -1511,22 +1494,14 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.HighestModSeq:
 				var highest = (HighestModSeqResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out n64)) {
-					//Debug.WriteLine ("Expected 64-bit nz-number as first argument of the 'HIGHESTMODSEQ' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "HIGHESTMODSEQ", token);
-				}
-
-				highest.HighestModSeq = n64;
+				highest.HighestModSeq = ParseNumber64 (token, false, GenericResponseCodeSyntaxErrorFormat, "HIGHESTMODSEQ", token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.Modified:
 				var modified = (ModifiedResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, validity, out modified.UidSet)) {
-					//Debug.WriteLine ("Expected uid-set argument to 'MODIFIED' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MODIFIED", token);
-				}
+				modified.UidSet = ParseUidSet (token, validity, GenericResponseCodeSyntaxErrorFormat, "MODIFIED", token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
@@ -1534,20 +1509,14 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.MaxConvertParts:
 				var maxConvert = (MaxConvertResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !int.TryParse ((string) token.Value, out maxConvert.MaxConvert)) {
-					//Debug.WriteLine ("Expected number argument to '{0}' RESP-CODE, but got: {1}", code.Type.ToString ().ToUpperInvariant (), token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, code.Type.ToString ().ToUpperInvariant (), token);
-				}
+				maxConvert.MaxConvert = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, atom, token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.NoUpdate:
 				var noUpdate = (NoUpdateResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
-					//Debug.WriteLine ("Expected string argument to 'NOUPDATE' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "NOUPDATE", token);
-				}
+				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "NOUPDATE", token);
 
 				noUpdate.Tag = (string) token.Value;
 
@@ -1556,10 +1525,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.Metadata:
 				var metadata = (MetadataResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom) {
-					//Debug.WriteLine ("Expected atom argument to 'METADATA' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "METADATA", token);
-				}
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "METADATA", token);
 
 				switch ((string) token.Value) {
 				case "LONGENTRIES":
@@ -1568,24 +1534,14 @@ namespace MailKit.Net.Imap {
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
-						//Debug.WriteLine ("Expected integer argument to 'METADATA LONGENTRIES' RESP-CODE, but got: {0}", token);
-						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "METADATA LONGENTRIES", token);
-					}
-
-					metadata.Value = n32;
+					metadata.Value = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "METADATA LONGENTRIES", token);
 					break;
 				case "MAXSIZE":
 					metadata.SubType = MetadataResponseCodeSubType.MaxSize;
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
-						//Debug.WriteLine ("Expected integer argument to 'METADATA MAXSIZE' RESP-CODE, but got: {0}", token);
-						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "METADATA MAXSIZE", token);
-					}
-
-					metadata.Value = n32;
+					metadata.Value = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "METADATA MAXSIZE", token);
 					break;
 				case "TOOMANY":
 					metadata.SubType = MetadataResponseCodeSubType.TooMany;
@@ -1600,10 +1556,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.UndefinedFilter:
 				var undefined = (UndefinedFilterResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom) {
-					//Debug.WriteLine ("Expected atom argument to 'UNDEFINED-FILTER' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UNDEFINED-FILTER", token);
-				}
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "UNDEFINED-FILTER", token);
 
 				undefined.Name = (string) token.Value;
 
@@ -1612,20 +1565,17 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.MailboxId:
 				var mailboxid = (MailboxIdResponseCode) code;
 
-				if (token.Type != ImapTokenType.OpenParen)
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+				AssertToken (token, ImapTokenType.OpenParen, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Atom)
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
 
 				mailboxid.MailboxId = (string) token.Value;
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.CloseParen)
-					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+				AssertToken (token, ImapTokenType.CloseParen, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
@@ -1644,10 +1594,7 @@ namespace MailKit.Net.Imap {
 				break;
 			}
 
-			if (token.Type != ImapTokenType.CloseBracket) {
-				//Debug.WriteLine ("Expected ']' after '{0}' RESP-CODE, but got: {1}", atom, token);
-				throw UnexpectedToken ("Syntax error in response code. Unexpected token: {0}", token);
-			}
+			AssertToken (token, ImapTokenType.CloseBracket, "Syntax error in response code. Unexpected token: {0}", token);
 
 			code.Message = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).Trim ();
 
@@ -1685,8 +1632,7 @@ namespace MailKit.Net.Imap {
 
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.OpenParen)
-				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+			AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 			do {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1694,8 +1640,7 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
-				if (token.Type != ImapTokenType.Atom)
-					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 				var atom = (string) token.Value;
 
@@ -1703,113 +1648,102 @@ namespace MailKit.Net.Imap {
 
 				switch (atom) {
 				case "HIGHESTMODSEQ":
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!ulong.TryParse ((string) token.Value, out modseq))
+					if (!ulong.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out modseq))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateHighestModSeq (modseq);
 					break;
 				case "MESSAGES":
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string) token.Value, out count))
+					if (!int.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out count))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.OnExists (count);
 					break;
 				case "RECENT":
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string) token.Value, out count))
+					if (!int.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out count))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.OnRecent (count);
 					break;
 				case "UIDNEXT":
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!uint.TryParse ((string) token.Value, out uid))
+					if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out uid))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateUidNext (uid > 0 ? new UniqueId (uid) : UniqueId.Invalid);
 					break;
 				case "UIDVALIDITY":
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!uint.TryParse ((string) token.Value, out uid))
+					if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out uid))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateUidValidity (uid);
 					break;
 				case "UNSEEN":
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!int.TryParse ((string) token.Value, out count))
+					if (!int.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out count))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateUnread (count);
 					break;
 				case "APPENDLIMIT":
+					AssertToken (token, ImapTokenType.Atom, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
 					if (token.Type == ImapTokenType.Atom) {
-						if (!uint.TryParse ((string) token.Value, out limit))
+						if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out limit))
 							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 						if (folder != null)
 							folder.UpdateAppendLimit (limit);
-					} else if (token.Type == ImapTokenType.Nil) {
+					} else {
 						if (folder != null)
 							folder.UpdateAppendLimit (null);
-					} else {
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 					}
 					break;
 				case "SIZE":
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					if (!ulong.TryParse ((string) token.Value, out size))
+					if (!ulong.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out size))
 						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateSize (size);
 					break;
 				case "MAILBOXID":
-					if (token.Type != ImapTokenType.OpenParen)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
+					AssertToken (token, ImapTokenType.Atom, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateId ((string) token.Value);
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.CloseParen)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+					AssertToken (token, ImapTokenType.CloseParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 					break;
 				}
 			} while (true);
 
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.Eoln)
-				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+			AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 		}
 
 		/// <summary>
@@ -1869,8 +1803,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type == ImapTokenType.Eoln)
 						break;
 
-					if (token.Type != ImapTokenType.Atom)
-						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, atom, token);
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 
 					var feature = (string) token.Value;
 					switch (feature) {
@@ -1883,10 +1816,7 @@ namespace MailKit.Net.Imap {
 				folder.UpdateAcceptedFlags (await ImapUtils.ParseFlagsListAsync (this, atom, null, doAsync, cancellationToken).ConfigureAwait (false));
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Eoln) {
-					//Debug.WriteLine ("Expected eoln after untagged FLAGS list, but got: {0}", token);
-					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, atom, token);
-				}
+				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 				break;
 			case "NAMESPACE":
 				await UpdateNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1913,15 +1843,11 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			default:
-				if (uint.TryParse (atom, out number)) {
+				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out number)) {
 					// we probably have something like "* 1 EXISTS"
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (token.Type != ImapTokenType.Atom) {
-						// protocol error
-						//Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
-						throw UnexpectedToken ("Syntax error in untagged response. Unexpected token: {0}", token);
-					}
+					AssertToken (token, ImapTokenType.Atom, "Syntax error in untagged response. Unexpected token: {0}", token);
 
 					atom = (string) token.Value;
 
