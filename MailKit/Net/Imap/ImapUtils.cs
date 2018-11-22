@@ -605,16 +605,17 @@ namespace MailKit.Net.Imap {
 					return type;
 				}
 
-				// Note: In other IMAP server implementations, such as the one found in
-				// https://github.com/jstedfast/MailKit/issues/371, if the server comes
-				// across something like "Content-Type: X-ZIP", it will only send a
-				// media-subtype token and completely fail to send a media-type token.
-				subtype = type;
-				type = "application";
-
-				// assume the NIL token is the subtype?
-				if (token.Type == ImapTokenType.Nil)
+				if (token.Type != ImapTokenType.Nil) {
+					// Note: In other IMAP server implementations, such as the one found in
+					// https://github.com/jstedfast/MailKit/issues/371, if the server comes
+					// across something like "Content-Type: X-ZIP", it will only send a
+					// media-subtype token and completely fail to send a media-type token.
+					subtype = type;
+					type = "application";
+				} else {
 					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					subtype = string.Empty;
+				}
 			} else {
 				subtype = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			}
