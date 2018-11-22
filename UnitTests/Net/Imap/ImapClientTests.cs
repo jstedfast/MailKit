@@ -797,6 +797,144 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestByeGreeting ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					Assert.Fail ("Did not expect to be connected.");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("The IMAP server unexpectedly refused the connection.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async void TestByeGreetingAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					Assert.Fail ("Did not expect to be connected.");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("The IMAP server unexpectedly refused the connection.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public void TestByeGreetingWithAlert ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE [ALERT] Too many connections.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				int alerts = 0;
+
+				client.Alert += (sender, e) => {
+					Assert.AreEqual ("Too many connections.", e.Message);
+					alerts++;
+				};
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					Assert.Fail ("Did not expect to be connected.");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("Too many connections.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				Assert.AreEqual (1, alerts, "Expected 1 alert");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async void TestByeGreetingWithAlertAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE [ALERT] Too many connections.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				int alerts = 0;
+
+				client.Alert += (sender, e) => {
+					Assert.AreEqual ("Too many connections.", e.Message);
+					alerts++;
+				};
+
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					Assert.Fail ("Did not expect to be connected.");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("Too many connections.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				Assert.AreEqual (1, alerts, "Expected 1 alert");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public void TestByeGreetingWithRespText ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE Too many connections.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					Assert.Fail ("Did not expect to be connected.");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("Too many connections.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async void TestByeGreetingWithRespTextAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE Too many connections.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					Assert.Fail ("Did not expect to be connected.");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("Too many connections.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
 		public void TestPreAuthGreeting ()
 		{
 			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;

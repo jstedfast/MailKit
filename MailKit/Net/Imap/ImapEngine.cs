@@ -544,9 +544,6 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public async Task ConnectAsync (ImapStream stream, bool doAsync, CancellationToken cancellationToken)
 		{
-			if (Stream != null)
-				Stream.Dispose ();
-
 			TagPrefix = (char) ('A' + (TagPrefixIndex++ % 26));
 			ProtocolVersion = ImapProtocolVersion.Unknown;
 			Capabilities = ImapCapabilities.None;
@@ -581,11 +578,13 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
 
 				var atom = (string) token.Value;
-				ImapEngineState state;
+				var state = State;
+				var bye = false;
 
 				switch (atom) {
 				case "BYE":
-					throw new ImapProtocolException ("IMAP server unexpectedly disconnected.");
+					bye = true;
+					break;
 				case "PREAUTH":
 					state = ImapEngineState.Authenticated;
 					break;
@@ -600,12 +599,23 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenBracket) {
 					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
-					if (code.Type == ImapResponseCodeType.Alert)
+					if (code.Type == ImapResponseCodeType.Alert) {
 						OnAlert (code.Message);
+
+						if (bye)
+							throw new ImapProtocolException (code.Message);
+					}
 				} else if (token.Type != ImapTokenType.Eoln) {
-					// throw away any remaining text up until the end of the line
-					await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					var text = (string) token.Value; 
+
+					text += await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (bye)
+						throw new ImapProtocolException (text.TrimEnd ());
 				}
+
+				if (bye)
+					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.");
 
 				State = state;
 			} catch {
