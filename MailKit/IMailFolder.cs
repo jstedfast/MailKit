@@ -2709,10 +2709,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void AddFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void AddFlags (UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified message.
@@ -2723,10 +2723,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UIDs of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of flags to the specified messages.
@@ -2761,10 +2761,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -2775,10 +2775,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified message.
@@ -2813,10 +2813,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void RemoveFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void RemoveFlags (UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified message.
@@ -2827,10 +2827,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified messages.
@@ -2865,10 +2865,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -2879,10 +2879,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified message.
@@ -2917,10 +2917,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void SetFlags (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void SetFlags (UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified message.
@@ -2931,10 +2931,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetFlagsAsync (UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified messages.
@@ -2969,10 +2969,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -2983,10 +2983,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -3026,10 +3026,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		IList<UniqueId> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -3041,10 +3041,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3084,10 +3084,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		IList<UniqueId> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3099,10 +3099,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3142,10 +3142,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		IList<UniqueId> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3157,10 +3157,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of flags to the specified message.
@@ -3195,10 +3195,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void AddFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void AddFlags (int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified message.
@@ -3209,10 +3209,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddFlagsAsync (int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of flags to the specified messages.
@@ -3247,10 +3247,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -3261,10 +3261,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified message.
@@ -3299,10 +3299,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void RemoveFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void RemoveFlags (int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified message.
@@ -3313,10 +3313,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveFlagsAsync (int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified messages.
@@ -3351,10 +3351,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -3365,10 +3365,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified message.
@@ -3403,10 +3403,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void SetFlags (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void SetFlags (int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified message.
@@ -3417,10 +3417,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetFlagsAsync (int index, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetFlagsAsync (int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified messages.
@@ -3455,10 +3455,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void SetFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		void SetFlags (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -3469,10 +3469,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -3512,10 +3512,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<int> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		IList<int> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -3527,10 +3527,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3570,10 +3570,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<int> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		IList<int> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3585,10 +3585,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3628,10 +3628,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<int> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		IList<int> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3643,10 +3643,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Add a set of labels to the specified message.

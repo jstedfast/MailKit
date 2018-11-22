@@ -35,7 +35,7 @@ namespace MailKit.Net.Imap
 {
 	public partial class ImapFolder
 	{
-		async Task<IList<UniqueId>> ModifyFlagsAsync (IList<UniqueId> uids, ulong? modseq, MessageFlags flags, HashSet<string> userFlags, string action, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<UniqueId>> ModifyFlagsAsync (IList<UniqueId> uids, ulong? modseq, MessageFlags flags, HashSet<string> keywords, string action, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
@@ -48,8 +48,8 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new UniqueId[0];
 
-			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, userFlags != null ? userFlags.Count : 0);
-			var userFlagList = userFlags != null ? userFlags.ToArray () : new object [0];
+			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, keywords != null ? keywords.Count : 0);
+			var keywordList = keywords != null ? keywords.ToArray () : new object [0];
 			var set = UniqueIdSet.ToString (uids);
 			var @params = string.Empty;
 
@@ -57,7 +57,7 @@ namespace MailKit.Net.Imap
 				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
 
 			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
-			var ic = Engine.QueueCommand (cancellationToken, this, format, userFlagList);
+			var ic = Engine.QueueCommand (cancellationToken, this, format, keywordList);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
@@ -84,7 +84,7 @@ namespace MailKit.Net.Imap
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -119,14 +119,14 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			bool emptyUserFlags = userFlags == null || userFlags.Count == 0;
+			bool emptyUserFlags = keywords == null || keywords.Count == 0;
 
 			if ((flags & SettableFlags) == 0 && emptyUserFlags)
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			ModifyFlagsAsync (uids, null, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			ModifyFlagsAsync (uids, null, flags, keywords, silent ? "+FLAGS.SILENT" : "+FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -138,7 +138,7 @@ namespace MailKit.Net.Imap
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -173,14 +173,14 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			bool emptyUserFlags = userFlags == null || userFlags.Count == 0;
+			bool emptyUserFlags = keywords == null || keywords.Count == 0;
 
 			if ((flags & SettableFlags) == 0 && emptyUserFlags)
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (uids, null, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (uids, null, flags, keywords, silent ? "+FLAGS.SILENT" : "+FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -191,7 +191,7 @@ namespace MailKit.Net.Imap
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -226,12 +226,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			ModifyFlagsAsync (uids, null, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			ModifyFlagsAsync (uids, null, flags, keywords, silent ? "-FLAGS.SILENT" : "-FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -243,7 +243,7 @@ namespace MailKit.Net.Imap
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -278,12 +278,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (uids, null, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (uids, null, flags, keywords, silent ? "-FLAGS.SILENT" : "-FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -294,7 +294,7 @@ namespace MailKit.Net.Imap
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -327,9 +327,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			ModifyFlagsAsync (uids, null, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			ModifyFlagsAsync (uids, null, flags, keywords, silent ? "FLAGS.SILENT" : "FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -341,7 +341,7 @@ namespace MailKit.Net.Imap
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -374,9 +374,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ModifyFlagsAsync (uids, null, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (uids, null, flags, keywords, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -389,7 +389,7 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -427,12 +427,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (uids, modseq, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			return ModifyFlagsAsync (uids, modseq, flags, keywords, silent ? "+FLAGS.SILENT" : "+FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -445,7 +445,7 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -483,12 +483,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (uids, modseq, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (uids, modseq, flags, keywords, silent ? "+FLAGS.SILENT" : "+FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -501,7 +501,7 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -539,12 +539,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (uids, modseq, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			return ModifyFlagsAsync (uids, modseq, flags, keywords, silent ? "-FLAGS.SILENT" : "-FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -557,7 +557,7 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -595,12 +595,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (uids, modseq, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (uids, modseq, flags, keywords, silent ? "-FLAGS.SILENT" : "-FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -613,7 +613,7 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -649,9 +649,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ModifyFlagsAsync (uids, modseq, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			return ModifyFlagsAsync (uids, modseq, flags, keywords, silent ? "FLAGS.SILENT" : "FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -664,7 +664,7 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -700,12 +700,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ModifyFlagsAsync (uids, modseq, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (uids, modseq, flags, keywords, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
 		}
 
-		async Task<IList<int>> ModifyFlagsAsync (IList<int> indexes, ulong? modseq, MessageFlags flags, HashSet<string> userFlags, string action, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<int>> ModifyFlagsAsync (IList<int> indexes, ulong? modseq, MessageFlags flags, HashSet<string> keywords, string action, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -718,8 +718,8 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new int[0];
 
-			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, userFlags != null ? userFlags.Count : 0);
-			var userFlagList = userFlags != null ? userFlags.ToArray () : new object [0];
+			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, keywords != null ? keywords.Count : 0);
+			var keywordList = keywords != null ? keywords.ToArray () : new object [0];
 			var set = ImapUtils.FormatIndexSet (indexes);
 			var @params = string.Empty;
 
@@ -727,7 +727,7 @@ namespace MailKit.Net.Imap
 				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
 
 			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
-			var ic = Engine.QueueCommand (cancellationToken, this, format, userFlagList);
+			var ic = Engine.QueueCommand (cancellationToken, this, format, keywordList);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
@@ -759,7 +759,7 @@ namespace MailKit.Net.Imap
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -794,12 +794,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			ModifyFlagsAsync (indexes, null, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			ModifyFlagsAsync (indexes, null, flags, keywords, silent ? "+FLAGS.SILENT" : "+FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -811,7 +811,7 @@ namespace MailKit.Net.Imap
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -846,12 +846,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (indexes, null, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (indexes, null, flags, keywords, silent ? "+FLAGS.SILENT" : "+FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -862,7 +862,7 @@ namespace MailKit.Net.Imap
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -897,12 +897,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			ModifyFlagsAsync (indexes, null, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			ModifyFlagsAsync (indexes, null, flags, keywords, silent ? "-FLAGS.SILENT" : "-FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -914,7 +914,7 @@ namespace MailKit.Net.Imap
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -949,12 +949,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (indexes, null, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (indexes, null, flags, keywords, silent ? "-FLAGS.SILENT" : "-FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -965,7 +965,7 @@ namespace MailKit.Net.Imap
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -998,9 +998,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void SetFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void SetFlags (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			ModifyFlagsAsync (indexes, null, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			ModifyFlagsAsync (indexes, null, flags, keywords, silent ? "FLAGS.SILENT" : "FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1012,7 +1012,7 @@ namespace MailKit.Net.Imap
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1045,9 +1045,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ModifyFlagsAsync (indexes, null, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (indexes, null, flags, keywords, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -1060,7 +1060,7 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1098,12 +1098,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<int> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<int> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (indexes, modseq, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			return ModifyFlagsAsync (indexes, modseq, flags, keywords, silent ? "+FLAGS.SILENT" : "+FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1116,7 +1116,7 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
+		/// <param name="keywords">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1154,12 +1154,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (indexes, modseq, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (indexes, modseq, flags, keywords, silent ? "+FLAGS.SILENT" : "+FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -1172,7 +1172,7 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1210,12 +1210,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<int> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<int> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (indexes, modseq, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			return ModifyFlagsAsync (indexes, modseq, flags, keywords, silent ? "-FLAGS.SILENT" : "-FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1228,7 +1228,7 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
+		/// <param name="keywords">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1266,12 +1266,12 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
-			return ModifyFlagsAsync (indexes, modseq, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (indexes, modseq, flags, keywords, silent ? "-FLAGS.SILENT" : "-FLAGS", true, cancellationToken);
 		}
 
 		/// <summary>
@@ -1284,7 +1284,7 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1320,9 +1320,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<int> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<int> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ModifyFlagsAsync (indexes, modseq, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
+			return ModifyFlagsAsync (indexes, modseq, flags, keywords, silent ? "FLAGS.SILENT" : "FLAGS", false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1335,7 +1335,7 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
+		/// <param name="keywords">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1371,9 +1371,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ModifyFlagsAsync (indexes, modseq, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
+			return ModifyFlagsAsync (indexes, modseq, flags, keywords, silent ? "FLAGS.SILENT" : "FLAGS", true, cancellationToken);
 		}
 
 		string LabelListToString (IList<string> labels, ICollection<object> args)
