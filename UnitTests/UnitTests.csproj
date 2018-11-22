@@ -498,6 +498,8 @@
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-quit.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rcpt-to.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rset.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\ehlo-failed.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\helo.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\mailbox-unavailable.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\pipelined-mail-from-rcpt-to.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-expn.txt" />
