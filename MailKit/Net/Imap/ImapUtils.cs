@@ -1213,16 +1213,16 @@ namespace MailKit.Net.Imap {
 		/// <returns>The message flags.</returns>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="name">The name of the flags being parsed.</param>
-		/// <param name="userFlags">A hash set of user-defined message flags that will be populated if non-null.</param>
+		/// <param name="keywords">A hash set of user-defined message flags that will be populated if non-null.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async Task<MessageFlags> ParseFlagsListAsync (ImapEngine engine, string name, HashSet<string> userFlags, bool doAsync, CancellationToken cancellationToken)
+		public static async Task<MessageFlags> ParseFlagsListAsync (ImapEngine engine, string name, HashSet<string> keywords, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			var flags = MessageFlags.None;
 
 			if (token.Type != ImapTokenType.OpenParen) {
-				Debug.WriteLine ("Expected '(' at the start of the {0} list, but got: {1}", name, token);
+				//Debug.WriteLine ("Expected '(' at the start of the {0} list, but got: {1}", name, token);
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, name, token);
 			}
 
@@ -1240,8 +1240,8 @@ namespace MailKit.Net.Imap {
 				case "\\Recent":   flags |= MessageFlags.Recent; break;
 				case "\\*":        flags |= MessageFlags.UserDefined; break;
 				default:
-					if (userFlags != null)
-						userFlags.Add (flag);
+					if (keywords != null)
+						keywords.Add (flag);
 					break;
 				}
 
@@ -1249,7 +1249,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (token.Type != ImapTokenType.CloseParen) {
-				Debug.WriteLine ("Expected to find a ')' token terminating the {0} list, but got: {1}", name, token);
+				//Debug.WriteLine ("Expected to find a ')' token terminating the {0} list, but got: {1}", name, token);
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, name, token);
 			}
 
