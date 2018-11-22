@@ -1504,12 +1504,7 @@ namespace MailKit.Net.Smtp {
 			{
 				switch (entity.ContentTransferEncoding) {
 				case ContentEncoding.EightBit:
-					// if the server supports the 8BITMIME extension, use it...
-					if ((Capabilities & SmtpCapabilities.EightBitMime) != 0) {
-						SmtpExtensions |= SmtpExtension.EightBitMime;
-					} else {
-						SmtpExtensions |= SmtpExtension.BinaryMime;
-					}
+					SmtpExtensions |= SmtpExtension.EightBitMime;
 					break;
 				case ContentEncoding.Binary:
 					SmtpExtensions |= SmtpExtension.BinaryMime;
