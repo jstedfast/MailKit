@@ -88,7 +88,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		public Pop3Engine ()
 		{
-			AuthenticationMechanisms = new HashSet<string> ();
+			AuthenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
 			Capabilities = Pop3Capabilities.User;
 			queue = new List<Pop3Command> ();
 			nextId = 1;

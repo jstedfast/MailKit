@@ -80,7 +80,7 @@ namespace MailKit.Net.Smtp {
 			RcptTo
 		}
 
-		readonly HashSet<string> authenticationMechanisms = new HashSet<string> ();
+		readonly HashSet<string> authenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
 		SmtpCapabilities capabilities;
 		int timeout = 2 * 60 * 1000;

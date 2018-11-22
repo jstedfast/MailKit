@@ -409,7 +409,7 @@ namespace MailKit.Net.Imap
 			if (fields == null)
 				return null;
 
-			var names = new HashSet<string> ();
+			var names = new HashSet<string> (StringComparer.Ordinal);
 
 			foreach (var field in fields) {
 				if (field == HeaderId.Unknown)

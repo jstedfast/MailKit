@@ -163,10 +163,10 @@ namespace MailKit.Net.Imap {
 
 			FolderCache = new Dictionary<string, ImapFolder> (cacheComparer);
 			ThreadingAlgorithms = new HashSet<ThreadingAlgorithm> ();
-			AuthenticationMechanisms = new HashSet<string> ();
-			CompressionAlgorithms = new HashSet<string> ();
-			SupportedContexts = new HashSet<string> ();
-			SupportedCharsets = new HashSet<string> ();
+			AuthenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
+			CompressionAlgorithms = new HashSet<string> (StringComparer.Ordinal);
+			SupportedContexts = new HashSet<string> (StringComparer.Ordinal);
+			SupportedCharsets = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 			Rights = new AccessRights ();
 
 			PersonalNamespaces = new FolderNamespaceCollection ();

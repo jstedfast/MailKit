@@ -258,8 +258,8 @@ namespace MailKit.Security {
 
 		DigestChallenge ()
 		{
-			Ciphers = new HashSet<string> ();
-			Qop = new HashSet<string> ();
+			Ciphers = new HashSet<string> (StringComparer.Ordinal);
+			Qop = new HashSet<string> (StringComparer.Ordinal);
 		}
 
 		static bool SkipWhiteSpace (string text, ref int index)
@@ -427,7 +427,7 @@ namespace MailKit.Security {
 				}
 
 				SkipWhiteSpace (token, ref index);
-				if (index < token.Length && token [index] == ',') {
+				if (index < token.Length && token[index] == ',') {
 					index++;
 
 					SkipWhiteSpace (token, ref index);

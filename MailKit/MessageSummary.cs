@@ -61,7 +61,7 @@ namespace MailKit {
 			if (index < 0)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			Keywords = new HashSet<string> (StringComparer.Ordinal);
+			Keywords = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 			Index = index;
 		}
 
