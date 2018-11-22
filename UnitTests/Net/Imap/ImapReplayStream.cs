@@ -368,6 +368,9 @@ namespace UnitTests.Net.Imap {
 			}
 
 			if (state != ImapReplayState.SendResponse) {
+				if (index >= commands.Count)
+					return 0;
+
 				var command = GetSentCommand ();
 
 				Assert.AreEqual (ImapReplayState.SendResponse, state, "Trying to read before command received. Sent so far: {0}", command);

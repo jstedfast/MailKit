@@ -1630,6 +1630,8 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			default:
+				// Note: This code-path handles: [ALERT], [CLOSED], [READ-ONLY], [READ-WRITE], etc.
+
 				//if (code.Type == ImapResponseCodeType.Unknown)
 				//	Debug.WriteLine (string.Format ("Unknown RESP-CODE encountered: {0}", atom));
 
@@ -1819,16 +1821,11 @@ namespace MailKit.Net.Imap {
 		internal async Task<ImapUntaggedResult> ProcessUntaggedResponseAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var folder = current.Folder ?? Selected;
 			var result = ImapUntaggedResult.Handled;
 			ImapUntaggedHandler handler;
-			ImapFolder folder;
 			uint number;
 			string atom;
-
-			if (current != null && current.Folder != null)
-				folder = current.Folder;
-			else
-				folder = Selected;
 
 			// Note: work around broken IMAP servers such as home.pl which sends "* [COPYUID ...]" resp-codes
 			// See https://github.com/jstedfast/MailKit/issues/115#issuecomment-313684616 for details.
@@ -1851,17 +1848,13 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenBracket) {
 					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
-					if (current != null)
-						current.RespCodes.Add (code);
-				}
-
-				await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-				if (current != null) {
-					current.Bye = true;
+					current.RespCodes.Add (code);
 				} else {
-					Disconnect ();
+					var text = token.Value.ToString () + await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					current.ResponseText = text.TrimEnd ();
 				}
+
+				current.Bye = true;
 				break;
 			case "CAPABILITY":
 				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync, cancellationToken);
@@ -1913,13 +1906,10 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenBracket) {
 					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
-					if (current != null)
-						current.RespCodes.Add (code);
+					current.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
 					var text = token.Value.ToString () + await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					if (current != null)
-						current.ResponseText = text.TrimEnd ();
+					current.ResponseText = text.TrimEnd ();
 				}
 				break;
 			default:
@@ -1935,7 +1925,7 @@ namespace MailKit.Net.Imap {
 
 					atom = (string) token.Value;
 
-					if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+					if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 						// the command registered an untagged handler for this atom...
 						await handler (this, current, (int) number - 1, doAsync).ConfigureAwait (false);
 					} else if (folder != null) {
@@ -1969,7 +1959,7 @@ namespace MailKit.Net.Imap {
 					}
 
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				} else if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+				} else if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 					// the command registered an untagged handler for this atom...
 					await handler (this, current, -1, doAsync).ConfigureAwait (false);
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -2022,6 +2012,27 @@ namespace MailKit.Net.Imap {
 
 				if (current.Bye && !current.Logout)
 					Disconnect ();
+			} catch (ImapProtocolException) {
+				var ic = current;
+
+				Disconnect ();
+
+				if (ic.Bye) {
+					if (ic.RespCodes.Count > 0) {
+						var code = ic.RespCodes[ic.RespCodes.Count - 1];
+
+						if (code.Type == ImapResponseCodeType.Alert) {
+							OnAlert (code.Message);
+
+							throw new ImapProtocolException (code.Message);
+						}
+					}
+
+					if (!string.IsNullOrEmpty (ic.ResponseText))
+						throw new ImapProtocolException (ic.ResponseText);
+				}
+
+				throw;
 			} catch {
 				Disconnect ();
 				throw;

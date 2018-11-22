@@ -832,7 +832,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
 				}
 
-				client.Disconnect (false);
+				await client.DisconnectAsync (false);
 			}
 		}
 
@@ -890,7 +890,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (1, alerts, "Expected 1 alert");
 
-				client.Disconnect (false);
+				await client.DisconnectAsync (false);
 			}
 		}
 
@@ -930,7 +930,177 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
 				}
 
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
+		public void TestUnexpectedBye ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE System going down for a reboot.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				try {
+					client.Inbox.Open (FolderAccess.ReadWrite);
+					Assert.Fail ("Did not expect to open the Inbox");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("System going down for a reboot.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Open: {0}", ex);
+				}
+
 				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async void TestUnexpectedByeAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE System going down for a reboot.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				try {
+					await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
+					Assert.Fail ("Did not expect to open the Inbox");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("System going down for a reboot.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Open: {0}", ex);
+				}
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
+		public void TestUnexpectedByeWithAlert ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE [ALERT] System going down for a reboot.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				int alerts = 0;
+
+				client.Alert += (sender, e) => {
+					Assert.AreEqual ("System going down for a reboot.", e.Message);
+					alerts++;
+				};
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				try {
+					client.Inbox.Open (FolderAccess.ReadWrite);
+					Assert.Fail ("Did not expect to open the Inbox");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("System going down for a reboot.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Open: {0}", ex);
+				}
+
+				Assert.AreEqual (1, alerts, "Expected 1 alert");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async void TestUnexpectedByeWithAlertAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE [ALERT] System going down for a reboot.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				int alerts = 0;
+
+				client.Alert += (sender, e) => {
+					Assert.AreEqual ("System going down for a reboot.", e.Message);
+					alerts++;
+				};
+
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				try {
+					await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
+					Assert.Fail ("Did not expect to open the Inbox");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("System going down for a reboot.", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Open: {0}", ex);
+				}
+
+				Assert.AreEqual (1, alerts, "Expected 1 alert");
+
+				await client.DisconnectAsync (false);
 			}
 		}
 
