@@ -489,7 +489,7 @@ namespace MailKit.Net.Imap
 			return new ReadOnlyCollection<IMessageSummary> (array);
 		}
 
-		static string GetPreviewText (MemoryStream memory, string charset)
+		internal static string GetPreviewText (MemoryStream memory, string charset)
 		{
 #if !PORTABLE && !NETSTANDARD && !NETFX_CORE
 			var content = memory.GetBuffer ();
@@ -508,7 +508,7 @@ namespace MailKit.Net.Imap
 
 			if (encoding == null) {
 				try {
-					return Encoding.UTF8.GetString (content, 0, (int) memory.Length);
+					return ImapEngine.UTF8.GetString (content, 0, (int) memory.Length);
 				} catch (DecoderFallbackException) {
 					// fall back to iso-8859-1
 					encoding = ImapEngine.Latin1;

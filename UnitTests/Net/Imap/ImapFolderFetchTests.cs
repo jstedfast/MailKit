@@ -862,5 +862,41 @@ namespace UnitTests.Net.Imap {
 				await client.DisconnectAsync (true);
 			}
 		}
+
+		[Test]
+		public void TestGetPreviewText ()
+		{
+			var encoding = Encoding.GetEncoding ("big5");
+
+			using (var memory = new MemoryStream ()) {
+				var bytes = encoding.GetBytes ("日月星辰");
+				string preview;
+
+				memory.Write (bytes, 0, bytes.Length);
+
+				preview = ImapFolder.GetPreviewText (memory, "x-unknown");
+				Assert.AreEqual ("¤é¤ë¬P¨°", preview, "chinese text x-unknown -> UTF-8 -> iso-8859-1");
+			}
+
+			using (var memory = new MemoryStream ()) {
+				var bytes = Encoding.UTF8.GetBytes ("日月星辰");
+				string preview;
+
+				memory.Write (bytes, 0, bytes.Length);
+
+				preview = ImapFolder.GetPreviewText (memory, "x-unknown");
+				Assert.AreEqual ("日月星辰", preview, "x-unknown -> UTF-8");
+			}
+
+			using (var memory = new MemoryStream ()) {
+				var bytes = Encoding.GetEncoding (28591).GetBytes ("L'encyclopédie libre");
+				string preview;
+
+				memory.Write (bytes, 0, bytes.Length);
+
+				preview = ImapFolder.GetPreviewText (memory, "x-unknown");
+				Assert.AreEqual ("L'encyclopédie libre", preview, "french text x-unknown -> UTF-8 -> iso-8859-1");
+			}
+		}
 	}
 }
