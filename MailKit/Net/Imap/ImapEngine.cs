@@ -700,9 +700,6 @@ namespace MailKit.Net.Imap {
 
 		internal async Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			if (Stream == null)
-				throw new InvalidOperationException ();
-
 			using (var memory = new MemoryStream ()) {
 				bool complete;
 				byte[] buf;
@@ -1907,9 +1904,6 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		async Task IterateAsync (bool doAsync)
 		{
-			if (Stream == null)
-				throw new InvalidOperationException ();
-
 			lock (queue) {
 				if (queue.Count == 0)
 					throw new InvalidOperationException ("The IMAP command queue is empty.");
@@ -2035,9 +2029,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapCommandResponse> QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			if (Stream == null)
-				throw new InvalidOperationException ();
-
 			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
 
 			await RunAsync (ic, doAsync).ConfigureAwait (false);
@@ -2130,9 +2121,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapCommandResponse> QueryNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			if (Stream == null)
-				throw new InvalidOperationException ();
-
 			ImapCommand ic;
 
 			if ((Capabilities & ImapCapabilities.Namespace) != 0) {
@@ -2202,9 +2190,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task QuerySpecialFoldersAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			if (Stream == null)
-				throw new InvalidOperationException ();
-
 			var list = new List<ImapFolder> ();
 			ImapFolder folder;
 			ImapCommand ic;
