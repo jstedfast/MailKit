@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Buffer = System.Buffer;
@@ -690,7 +691,7 @@ namespace MailKit.Net.Imap {
 			// skip over the '\n'
 			inputIndex++;
 
-			if (!int.TryParse (builder.ToString (), out literalDataLeft) || literalDataLeft < 0)
+			if (!int.TryParse (builder.ToString (), NumberStyles.None, CultureInfo.InvariantCulture, out literalDataLeft) || literalDataLeft < 0)
 				return new ImapToken (ImapTokenType.Error, builder.ToString ());
 
 			Mode = ImapStreamMode.Literal;

@@ -503,7 +503,7 @@ namespace MailKit.Net.Smtp {
 						while (index < capability.Length && char.IsWhiteSpace (capability[index]))
 							index++;
 
-						if (uint.TryParse (capability.Substring (index), out size))
+						if (uint.TryParse (capability.Substring (index), NumberStyles.None, CultureInfo.InvariantCulture, out size))
 							MaxSize = size;
 					} else if (capability == "DSN") {
 						capabilities |= SmtpCapabilities.Dsn;

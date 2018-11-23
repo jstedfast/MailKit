@@ -3643,7 +3643,8 @@ namespace MailKit.Net.Imap
 
 						if (expr.Length > 2 && expr[0] == '<' && expr[expr.Length - 1] == '>') {
 							var region = expr.Substring (1, expr.Length - 2);
-							int.TryParse (region, out offset);
+
+							int.TryParse (region, NumberStyles.None, CultureInfo.InvariantCulture, out offset);
 
 							token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 						}

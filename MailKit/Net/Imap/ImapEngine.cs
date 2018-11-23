@@ -1058,7 +1058,7 @@ namespace MailKit.Net.Imap {
 				} else if (atom.StartsWith ("I18NLEVEL=", StringComparison.Ordinal)) {
 					int level;
 
-					int.TryParse (atom.Substring ("I18NLEVEL=".Length), out level);
+					int.TryParse (atom.Substring ("I18NLEVEL=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out level);
 					I18NLevel = level;
 
 					Capabilities |= ImapCapabilities.I18NLevel;

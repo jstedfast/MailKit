@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -575,7 +576,7 @@ namespace MailKit.Net.Pop3 {
 					engine.Capabilities |= Pop3Capabilities.Expire;
 					var tokens = data.Split (' ');
 
-					if (int.TryParse (tokens[0], out value))
+					if (int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out value))
 						engine.ExpirePolicy = value;
 					else if (tokens[0] == "NEVER")
 						engine.ExpirePolicy = -1;
@@ -584,7 +585,7 @@ namespace MailKit.Net.Pop3 {
 					engine.Implementation = data;
 					break;
 				case "LOGIN-DELAY":
-					if (int.TryParse (data, out value)) {
+					if (int.TryParse (data, NumberStyles.None, CultureInfo.InvariantCulture, out value)) {
 						engine.Capabilities |= Pop3Capabilities.LoginDelay;
 						engine.LoginDelay = value;
 					}

@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Globalization;
 using System.Collections.Generic;
 
 #if NETFX_CORE
@@ -404,7 +405,7 @@ namespace MailKit.Security {
 					challenge.Stale = value.ToLowerInvariant () == "true";
 					break;
 				case "maxbuf":
-					if (challenge.MaxBuf.HasValue || !int.TryParse (value, out maxbuf))
+					if (challenge.MaxBuf.HasValue || !int.TryParse (value, NumberStyles.None, CultureInfo.InvariantCulture, out maxbuf))
 						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
 					challenge.MaxBuf = maxbuf;
 					break;

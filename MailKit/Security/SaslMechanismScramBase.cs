@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Globalization;
 using System.Collections.Generic;
 
 #if NETFX_CORE
@@ -314,7 +315,7 @@ namespace MailKit.Security {
 				if (!nonce.StartsWith (cnonce, StringComparison.Ordinal))
 					throw new SaslException (MechanismName, SaslErrorCode.InvalidChallenge, "Challenge contained an invalid nonce.");
 
-				if (!int.TryParse (iterations, out count) || count < 1)
+				if (!int.TryParse (iterations, NumberStyles.None, CultureInfo.InvariantCulture, out count) || count < 1)
 					throw new SaslException (MechanismName, SaslErrorCode.InvalidChallenge, "Challenge contained an invalid iteration count.");
 
 				var password = Encoding.UTF8.GetBytes (SaslPrep (Credentials.Password));
