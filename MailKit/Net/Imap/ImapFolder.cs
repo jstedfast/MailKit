@@ -321,7 +321,7 @@ namespace MailKit.Net.Imap {
 			if (!Engine.QResyncEnabled)
 				throw new InvalidOperationException ("The QRESYNC extension has not been enabled.");
 
-			var qresync = string.Format ("(QRESYNC ({0} {1}", uidValidity, highestModSeq);
+			var qresync = string.Format (CultureInfo.InvariantCulture, "(QRESYNC ({0} {1}", uidValidity, highestModSeq);
 
 			if (uids.Count > 0) {
 				var set = UniqueIdSet.ToString (uids);

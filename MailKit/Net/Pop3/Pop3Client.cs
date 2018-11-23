@@ -30,6 +30,7 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1725,7 +1726,7 @@ namespace MailKit.Net.Pop3 {
 
 			public async Task<string> GetUidAsync (bool doAsync, CancellationToken cancellationToken)
 			{
-				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "UIDL {0}", seqid);
+				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "UIDL {0}", seqid.ToString (CultureInfo.InvariantCulture));
 				int id;
 
 				do {
@@ -1996,7 +1997,7 @@ namespace MailKit.Net.Pop3 {
 
 			public async Task<int> GetSizeAsync (bool doAsync, CancellationToken cancellationToken)
 			{
-				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "LIST {0}", seqid);
+				var pc = Engine.QueueCommand (cancellationToken, OnDataReceived, "LIST {0}", seqid.ToString (CultureInfo.InvariantCulture));
 				int id;
 
 				do {
@@ -2254,9 +2255,9 @@ namespace MailKit.Net.Pop3 {
 			Pop3Command QueueCommand (int seqid, bool headersOnly, CancellationToken cancellationToken)
 			{
 				if (headersOnly)
-					return Engine.QueueCommand (cancellationToken, OnDataReceived, "TOP {0} 0", seqid);
+					return Engine.QueueCommand (cancellationToken, OnDataReceived, "TOP {0} 0", seqid.ToString (CultureInfo.InvariantCulture));
 
-				return Engine.QueueCommand (cancellationToken, OnDataReceived, "RETR {0}", seqid);
+				return Engine.QueueCommand (cancellationToken, OnDataReceived, "RETR {0}", seqid.ToString (CultureInfo.InvariantCulture));
 			}
 
 			async Task DownloadItemAsync (int seqid, bool headersOnly, bool doAsync, CancellationToken cancellationToken)
@@ -3000,7 +3001,9 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			return SendCommandAsync (doAsync, cancellationToken, "DELE {0}", index + 1);
+			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
+
+			return SendCommandAsync (doAsync, cancellationToken, "DELE {0}", seqid);
 		}
 
 		/// <summary>
@@ -3057,13 +3060,13 @@ namespace MailKit.Net.Pop3 {
 			if (indexes.Count == 0)
 				return;
 
-			var seqids = new int[indexes.Count];
+			var seqids = new string[indexes.Count];
 
 			for (int i = 0; i < indexes.Count; i++) {
 				if (indexes[i] < 0 || indexes[i] >= total)
 					throw new ArgumentException ("One or more of the indexes are invalid.", nameof (indexes));
 
-				seqids[i] = indexes[i] + 1;
+				seqids[i] = (indexes[i] + 1).ToString (CultureInfo.InvariantCulture);
 			}
 
 			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
@@ -3153,8 +3156,10 @@ namespace MailKit.Net.Pop3 {
 				return;
 
 			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
-				for (int i = 0; i < count; i++)
-					await SendCommandAsync (doAsync, cancellationToken, "DELE {0}", startIndex + i + 1).ConfigureAwait (false);
+				for (int i = 0; i < count; i++) {
+					var seqid = (startIndex + i + 1).ToString (CultureInfo.InvariantCulture);
+					await SendCommandAsync (doAsync, cancellationToken, "DELE {0}", seqid).ConfigureAwait (false);
+				}
 
 				return;
 			}
@@ -3164,7 +3169,8 @@ namespace MailKit.Net.Pop3 {
 			int id;
 
 			for (int i = 0; i < count; i++) {
-				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", startIndex + i + 1);
+				var seqid = (startIndex + i + 1).ToString (CultureInfo.InvariantCulture);
+				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", seqid);
 				commands[i] = pc;
 			}
 

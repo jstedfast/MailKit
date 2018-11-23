@@ -29,6 +29,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -361,7 +362,10 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	class ImapCommand
 	{
-		static readonly byte[] Nil = new byte[] { (byte) 'N', (byte) 'I', (byte) 'L' };
+		static readonly byte[] UTF8LiteralTokenPrefix = Encoding.ASCII.GetBytes ("UTF8 (~{");
+		static readonly byte[] LiteralTokenSuffix = { (byte) '}', (byte) '\r', (byte) '\n' };
+		static readonly byte[] Nil = { (byte) 'N', (byte) 'I', (byte) 'L' };
+		static readonly byte[] LiteralTokenPrefix = { (byte) '{' };
 
 		public Dictionary<string, ImapUntaggedHandler> UntaggedHandlers { get; private set; }
 		public ImapContinuationHandler ContinuationHandler { get; set; }
@@ -419,12 +423,12 @@ namespace MailKit.Net.Imap {
 							builder.WriteByte ((byte) '%');
 							break;
 						case 'd': // an integer
-							str = ((int) args[argc++]).ToString ();
+							str = ((int) args[argc++]).ToString (CultureInfo.InvariantCulture);
 							buf = Encoding.ASCII.GetBytes (str);
 							builder.Write (buf, 0, buf.Length);
 							break;
 						case 'u': // an unsigned integer
-							str = ((uint) args[argc++]).ToString ();
+							str = ((uint) args[argc++]).ToString (CultureInfo.InvariantCulture);
 							buf = Encoding.ASCII.GetBytes (str);
 							builder.Write (buf, 0, buf.Length);
 							break;
@@ -434,24 +438,22 @@ namespace MailKit.Net.Imap {
 							break;
 						case 'L': // a MimeMessage
 							var literal = new ImapLiteral (options, (MimeMessage) args[argc++], UpdateProgress);
+							var prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
 							var length = literal.Length;
-							var plus = string.Empty;
 							bool wait = true;
 
-							if (CanUseNonSynchronizedLiteral (literal.Length)) {
+							builder.Write (prefix, 0, prefix.Length);
+							buf = Encoding.ASCII.GetBytes (length.ToString (CultureInfo.InvariantCulture));
+							builder.Write (buf, 0, buf.Length);
+
+							if (CanUseNonSynchronizedLiteral (length)) {
+								builder.WriteByte ((byte) '+');
 								wait = false;
-								plus = "+";
 							}
 
+							builder.Write (LiteralTokenSuffix, 0, LiteralTokenSuffix.Length);
+
 							totalSize += length;
-
-							if (options.International)
-								str = "UTF8 (~{" + length + plus + "}\r\n";
-							else
-								str = "{" + length + plus + "}\r\n";
-
-							buf = Encoding.ASCII.GetBytes (str);
-							builder.Write (buf, 0, buf.Length);
 
 							parts.Add (new ImapCommandPart (builder.ToArray (), literal, wait));
 							builder.SetLength (0);
@@ -547,7 +549,7 @@ namespace MailKit.Net.Imap {
 			case ImapStringType.Literal:
 				var literal = Encoding.UTF8.GetBytes (value);
 				var plus = CanUseNonSynchronizedLiteral (literal.Length);
-				var length = literal.Length.ToString ();
+				var length = literal.Length.ToString (CultureInfo.InvariantCulture);
 				buf = Encoding.ASCII.GetBytes (length);
 
 				builder.WriteByte ((byte) '{');
@@ -628,7 +630,7 @@ namespace MailKit.Net.Imap {
 
 			// construct and write the command tag if this is the initial state
 			if (current == 0) {
-				Tag = string.Format ("{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
+				Tag = string.Format (CultureInfo.InvariantCulture, "{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
 
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
 
@@ -722,7 +724,7 @@ namespace MailKit.Net.Imap {
 					default: throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. Unexpected token: {0}", token);
 					}
 
-						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
+					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 					if (token.Type == ImapTokenType.OpenBracket) {
 						var code = await Engine.ParseResponseCodeAsync (true, doAsync, CancellationToken).ConfigureAwait (false);
 						RespCodes.Add (code);

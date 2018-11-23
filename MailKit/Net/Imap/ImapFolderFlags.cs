@@ -28,6 +28,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -54,7 +55,7 @@ namespace MailKit.Net.Imap
 			var @params = string.Empty;
 
 			if (modseq.HasValue)
-				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
+				@params = string.Format (CultureInfo.InvariantCulture, " (UNCHANGEDSINCE {0})", modseq.Value);
 
 			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
 			var ic = Engine.QueueCommand (cancellationToken, this, format, keywordList);
@@ -724,7 +725,7 @@ namespace MailKit.Net.Imap
 			var @params = string.Empty;
 
 			if (modseq.HasValue)
-				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
+				@params = string.Format (CultureInfo.InvariantCulture, " (UNCHANGEDSINCE {0})", modseq.Value);
 
 			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
 			var ic = Engine.QueueCommand (cancellationToken, this, format, keywordList);
@@ -1429,7 +1430,7 @@ namespace MailKit.Net.Imap
 			var @params = string.Empty;
 
 			if (modseq.HasValue)
-				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
+				@params = string.Format (CultureInfo.InvariantCulture, " (UNCHANGEDSINCE {0})", modseq.Value);
 
 			var args = new List<object> ();
 			var list = LabelListToString (labels, args);
@@ -2125,7 +2126,7 @@ namespace MailKit.Net.Imap
 			var @params = string.Empty;
 
 			if (modseq.HasValue)
-				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
+				@params = string.Format (CultureInfo.InvariantCulture, " (UNCHANGEDSINCE {0})", modseq.Value);
 
 			var args = new List<object> ();
 			var list = LabelListToString (labels, args);

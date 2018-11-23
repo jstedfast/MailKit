@@ -50,7 +50,7 @@ namespace MailKit.Net.Imap {
 		const FolderAttributes SpecialUseAttributes = FolderAttributes.All | FolderAttributes.Archive | FolderAttributes.Drafts |
 		    FolderAttributes.Flagged | FolderAttributes.Inbox | FolderAttributes.Junk | FolderAttributes.Sent | FolderAttributes.Trash;
 		const string QuotedSpecials = " \t()<>@,;:\\\"/[]?=";
-		static int InboxLength = "INBOX".Length;
+		static readonly int InboxLength = "INBOX".Length;
 
 		static readonly string[] Months = {
 			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -64,7 +64,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="date">The date.</param>
 		public static string FormatInternalDate (DateTimeOffset date)
 		{
-			return string.Format ("{0:D2}-{1}-{2:D4} {3:D2}:{4:D2}:{5:D2} {6:+00;-00}{7:00}",
+			return string.Format (CultureInfo.InvariantCulture, "{0:D2}-{1}-{2:D4} {3:D2}:{4:D2}:{5:D2} {6:+00;-00}{7:00}",
 				date.Day, Months[date.Month - 1], date.Year, date.Hour, date.Minute, date.Second,
 				date.Offset.Hours, date.Offset.Minutes);
 		}
@@ -254,9 +254,9 @@ namespace MailKit.Net.Imap {
 					builder.Append (',');
 
 				if (begin != end)
-					builder.AppendFormat ("{0}:{1}", begin + 1, end + 1);
+					builder.AppendFormat (CultureInfo.InvariantCulture, "{0}:{1}", begin + 1, end + 1);
 				else
-					builder.Append ((begin + 1).ToString ());
+					builder.Append ((begin + 1).ToString (CultureInfo.InvariantCulture));
 
 				index = i;
 			}

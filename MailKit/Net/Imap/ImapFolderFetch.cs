@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,7 +44,7 @@ namespace MailKit.Net.Imap
 {
 	public partial class ImapFolder
 	{
-		const int PreviewTextLength = 256;
+		const string PreviewTextLength = "256";
 
 		class FetchSummaryContext
 		{
@@ -743,7 +744,8 @@ namespace MailKit.Net.Imap
 			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
-			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
+			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseqValue, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
 			MessageExpunged += ctx.OnMessageExpunged;
@@ -794,7 +796,8 @@ namespace MailKit.Net.Imap
 			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
-			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
+			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseqValue, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
 			MessageExpunged += ctx.OnMessageExpunged;
@@ -1652,7 +1655,8 @@ namespace MailKit.Net.Imap
 
 			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (ref items, null, out previewText);
-			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
+			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseqValue);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
 
@@ -1697,7 +1701,8 @@ namespace MailKit.Net.Imap
 
 			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (ref items, fields, out previewText);
-			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
+			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseqValue);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
 
@@ -2421,12 +2426,14 @@ namespace MailKit.Net.Imap
 
 		static string GetFetchRange (int min, int max)
 		{
+			var minValue = (min + 1).ToString (CultureInfo.InvariantCulture);
+
 			if (min == max)
-				return (min + 1).ToString ();
+				return minValue;
 
-			var maxValue = max != -1 ? (max + 1).ToString () : "*";
+			var maxValue = max != -1 ? (max + 1).ToString (CultureInfo.InvariantCulture) : "*";
 
-			return string.Format ("{0}:{1}", min + 1, maxValue);
+			return string.Format ("{0}:{1}", minValue, maxValue);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
@@ -2533,7 +2540,8 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			var query = FormatSummaryItems (ref items, null, out previewText);
-			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
+			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseqValue);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
 
@@ -2577,7 +2585,8 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			var query = FormatSummaryItems (ref items, fields, out previewText);
-			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
+			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseqValue);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
 
@@ -3850,7 +3859,7 @@ namespace MailKit.Net.Imap
 
 			string[] tags;
 
-			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid.Id, GetBodyPartQuery (partSpecifier, true, out tags));
+			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid, GetBodyPartQuery (partSpecifier, true, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			Section section;
@@ -4220,7 +4229,8 @@ namespace MailKit.Net.Imap
 
 			string[] tags;
 
-			var command = string.Format ("FETCH {0} ({1})\r\n", index + 1, GetBodyPartQuery (partSpecifier, true, out tags));
+			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("FETCH {0} ({1})\r\n", seqid, GetBodyPartQuery (partSpecifier, true, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			Section section;
@@ -4803,7 +4813,7 @@ namespace MailKit.Net.Imap
 
 			string[] tags;
 
-			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid.Id, GetBodyPartQuery (partSpecifier, false, out tags));
+			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid, GetBodyPartQuery (partSpecifier, false, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			ChainedStream chained = null;
@@ -5083,7 +5093,8 @@ namespace MailKit.Net.Imap
 
 			string[] tags;
 
-			var command = string.Format ("FETCH {0} ({1})\r\n", index + 1, GetBodyPartQuery (partSpecifier, false, out tags));
+			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("FETCH {0} ({1})\r\n", seqid, GetBodyPartQuery (partSpecifier, false, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			ChainedStream chained = null;
@@ -5657,7 +5668,7 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}])\r\n", uid.Id, section);
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}])\r\n", uid, section);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			Section s;
@@ -5805,7 +5816,8 @@ namespace MailKit.Net.Imap
 			if (count == 0)
 				return new MemoryStream ();
 
-			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", uid.Id, section, offset, count);
+			var range = string.Format (CultureInfo.InvariantCulture, "{0}.{1}", offset, count);
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}>)\r\n", uid, section, range);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			Section s;
@@ -5964,7 +5976,8 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}])\r\n", index + 1, section);
+			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
+			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}])\r\n", seqid, section);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			Section s;
@@ -6112,7 +6125,9 @@ namespace MailKit.Net.Imap
 			if (count == 0)
 				return new MemoryStream ();
 
-			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", index + 1, section, offset, count);
+			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
+			var range = string.Format (CultureInfo.InvariantCulture, "{0}.{1}", offset, count);
+			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}>)\r\n", seqid, section, range);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			Section s;
