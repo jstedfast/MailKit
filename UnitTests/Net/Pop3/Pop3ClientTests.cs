@@ -31,6 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
@@ -2238,8 +2239,7 @@ namespace UnitTests.Net.Pop3 {
 			}
 		}
 
-		[Test]
-		public void TestGMailPop3Client ()
+		List<Pop3ReplayCommand> CreateGMailCommands ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "gmail.greeting.txt"));
@@ -2276,6 +2276,11 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
 
+			return commands;
+		}
+
+		void TestGMailPop3Client (List<Pop3ReplayCommand> commands, bool disablePipelining)
+		{
 			using (var client = new Pop3Client ()) {
 				try {
 					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
@@ -2301,8 +2306,10 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+
+				if (disablePipelining)
+					client.Capabilities &= ~Pop3Capabilities.Pipelining;
 
 				var uids = client.GetMessageUids ();
 				Assert.AreEqual (3, uids.Count);
@@ -2511,43 +2518,13 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestGMailPop3ClientAsync ()
+		public void TestGMailPop3Client ()
 		{
-			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "gmail.plus.txt"));
-			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.auth.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "gmail.stat.txt"));
-			commands.Add (new Pop3ReplayCommand ("UIDL\r\n", "gmail.uidl.txt"));
-			commands.Add (new Pop3ReplayCommand ("UIDL 1\r\n", "gmail.uidl1.txt"));
-			commands.Add (new Pop3ReplayCommand ("UIDL 2\r\n", "gmail.uidl2.txt"));
-			commands.Add (new Pop3ReplayCommand ("UIDL 3\r\n", "gmail.uidl3.txt"));
-			commands.Add (new Pop3ReplayCommand ("LIST\r\n", "gmail.list.txt"));
-			commands.Add (new Pop3ReplayCommand ("LIST 1\r\n", "gmail.list1.txt"));
-			commands.Add (new Pop3ReplayCommand ("LIST 2\r\n", "gmail.list2.txt"));
-			commands.Add (new Pop3ReplayCommand ("LIST 3\r\n", "gmail.list3.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
-			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\n", "gmail.top.txt"));
-			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\nTOP 2 0\r\nTOP 3 0\r\n", "gmail.top123.txt"));
-			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\nTOP 2 0\r\nTOP 3 0\r\n", "gmail.top123.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
-			commands.Add (new Pop3ReplayCommand ("NOOP\r\n", "gmail.noop.txt"));
-			commands.Add (new Pop3ReplayCommand ("DELE 1\r\n", "gmail.dele.txt"));
-			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
-			commands.Add (new Pop3ReplayCommand ("DELE 1\r\nDELE 2\r\nDELE 3\r\n", "gmail.dele123.txt"));
-			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
-			commands.Add (new Pop3ReplayCommand ("DELE 1\r\nDELE 2\r\nDELE 3\r\n", "gmail.dele123.txt"));
-			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
-			commands.Add (new Pop3ReplayCommand ("DELE 1\r\nDELE 2\r\nDELE 3\r\n", "gmail.dele123.txt"));
-			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
+			TestGMailPop3Client (CreateGMailCommands (), false);
+		}
 
+		async Task TestGMailPop3ClientAsync (List<Pop3ReplayCommand> commands, bool disablePipelining)
+		{
 			using (var client = new Pop3Client ()) {
 				try {
 					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
@@ -2573,8 +2550,10 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+
+				if (disablePipelining)
+					client.Capabilities &= ~Pop3Capabilities.Pipelining;
 
 				var uids = await client.GetMessageUidsAsync ();
 				Assert.AreEqual (3, uids.Count);
@@ -2780,6 +2759,82 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
 			}
+		}
+
+		[Test]
+		public async void TestGMailPop3ClientAsync ()
+		{
+			await TestGMailPop3ClientAsync (CreateGMailCommands (), false);
+		}
+
+		List<Pop3ReplayCommand> CreateGMailCommandsNoPipelining ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "gmail.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "gmail.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL\r\n", "gmail.uidl.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL 1\r\n", "gmail.uidl1.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL 2\r\n", "gmail.uidl2.txt"));
+			commands.Add (new Pop3ReplayCommand ("UIDL 3\r\n", "gmail.uidl3.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST\r\n", "gmail.list.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 1\r\n", "gmail.list1.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 2\r\n", "gmail.list2.txt"));
+			commands.Add (new Pop3ReplayCommand ("LIST 3\r\n", "gmail.list3.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 2\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 3\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 2\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 3\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\n", "gmail.top.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\n", "gmail.top.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 2 0\r\n", "gmail.top.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 3 0\r\n", "gmail.top.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\n", "gmail.top.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 2 0\r\n", "gmail.top.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 3 0\r\n", "gmail.top.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 2\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 3\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 2\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 3\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("NOOP\r\n", "gmail.noop.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 1\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 1\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 2\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 3\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 1\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 2\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 3\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 1\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 2\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("DELE 3\r\n", "gmail.dele.txt"));
+			commands.Add (new Pop3ReplayCommand ("RSET\r\n", "gmail.rset.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestGMailPop3ClientNoPipelining ()
+		{
+			TestGMailPop3Client (CreateGMailCommandsNoPipelining (), true);
+		}
+
+		[Test]
+		public async void TestGMailPop3ClientNoPipeliningAsync ()
+		{
+			await TestGMailPop3ClientAsync (CreateGMailCommandsNoPipelining (), true);
 		}
 
 		[Test]
