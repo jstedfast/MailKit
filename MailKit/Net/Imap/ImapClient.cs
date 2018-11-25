@@ -1445,13 +1445,10 @@ namespace MailKit.Net.Imap {
 		}
 
 #if !NETFX_CORE
-		async Task ConnectAsync (Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+		async Task ConnectAsync (Stream networkStream, Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
 		{
-			if (socket == null)
-				throw new ArgumentNullException (nameof (socket));
-
-			if (!socket.Connected)
-				throw new ArgumentException ("The socket is not connected.", nameof (socket));
+			if (networkStream == null)
+				throw new ArgumentNullException (nameof (networkStream));
 
 			if (host == null)
 				throw new ArgumentNullException (nameof (host));
@@ -1476,7 +1473,7 @@ namespace MailKit.Net.Imap {
 			engine.Uri = uri;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+				var ssl = new SslStream (networkStream, false, ValidateRemoteCertificate);
 
 				try {
 					if (doAsync) {
@@ -1497,7 +1494,7 @@ namespace MailKit.Net.Imap {
 				secure = true;
 				stream = ssl;
 			} else {
-				stream = new NetworkStream (socket, true);
+				stream = networkStream;
 				secure = false;
 			}
 
@@ -1643,7 +1640,80 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			ConnectAsync (socket, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
+			if (socket == null)
+				throw new ArgumentNullException (nameof (socket));
+
+			if (!socket.Connected)
+				throw new ArgumentException ("The socket is not connected.", nameof (socket));
+
+			ConnectAsync (new NetworkStream (socket, true), socket, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Establish a connection to the specified IMAP or IMAP/S server using the provided stream.
+		/// </summary>
+		/// <remarks>
+		/// <para>Establishes a connection to the specified IMAP or IMAP/S server using
+		/// the provided stream.</para>
+		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
+		/// <paramref name="options"/> parameter is used to determine the default port to
+		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
+		/// is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
+		/// <para>If the <paramref name="options"/> has a value of
+		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
+		/// to determine the default security options. If the <paramref name="port"/> has a value
+		/// of <c>993</c>, then the default options used will be
+		/// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
+		/// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
+		/// <para>Once a connection is established, properties such as
+		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
+		/// populated.</para>
+		/// </remarks>
+		/// <param name="stream">The stream to use for the connection.</param>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="stream"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="host"/> is a zero-length string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <paramref name="options"/> was set to
+		/// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
+		/// and the IMAP server does not support the STARTTLS extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// An IMAP command failed.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (stream == null)
+				throw new ArgumentNullException (nameof (stream));
+
+			ConnectAsync (stream, null, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 #endif
 
