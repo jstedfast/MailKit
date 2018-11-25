@@ -148,6 +148,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Socket) null, "host", 143, SecureSocketOptions.None));
 				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync ((Socket) null, "host", 143, SecureSocketOptions.None));
+				Assert.Throws<ArgumentNullException> (() => client.Connect ((Stream) null, "host", 143, SecureSocketOptions.None));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync ((Stream) null, "host", 143, SecureSocketOptions.None));
 
 				using (var socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
 					Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 143, SecureSocketOptions.None));

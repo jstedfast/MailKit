@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2017 Microsoft Corp.
+// Copyright (c) 2013-2018 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -234,10 +234,6 @@ namespace MailKit.Net.Pop3
 		/// <remarks>
 		/// <para>Establishes a connection to the specified POP3 or POP3/S server using
 		/// the provided socket.</para>
-		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
-		/// <paramref name="options"/> parameter is used to determine the default port to
-		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
-		/// is <c>995</c>. All other values will use a default port of <c>110</c>.</para>
 		/// <para>If the <paramref name="options"/> has a value of
 		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
 		/// to determine the default security options. If the <paramref name="port"/> has a value
@@ -247,6 +243,10 @@ namespace MailKit.Net.Pop3
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
+		/// <note type="info">With the exception of using the <paramref name="port"/> to determine the
+		/// default <see cref="SecureSocketOptions"/> to use when the <paramref name="options"/> value
+		/// is <see cref="SecureSocketOptions.Auto"/>, the <paramref name="host"/> and
+		/// <paramref name="port"/> parameters are only used for logging purposes.</note>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="socket">The socket to use for the connection.</param>
@@ -265,7 +265,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="socket"/> is not connected.</para>
 		/// <para>-or-</para>
-		/// The <paramref name="host"/> is a zero-length string.
+		/// <para>The <paramref name="host"/> is a zero-length string.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -296,6 +296,74 @@ namespace MailKit.Net.Pop3
 		public Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ConnectAsync (socket, host, port, options, true, cancellationToken); 
+		}
+
+		/// <summary>
+		/// Asynchronously establish a connection to the specified POP3 or POP3/S server using the provided stream.
+		/// </summary>
+		/// <remarks>
+		/// <para>Establishes a connection to the specified POP3 or POP3/S server using
+		/// the provided stream.</para>
+		/// <para>If the <paramref name="options"/> has a value of
+		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
+		/// to determine the default security options. If the <paramref name="port"/> has a value
+		/// of <c>995</c>, then the default options used will be
+		/// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
+		/// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
+		/// <para>Once a connection is established, properties such as
+		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
+		/// populated.</para>
+		/// <note type="info">With the exception of using the <paramref name="port"/> to determine the
+		/// default <see cref="SecureSocketOptions"/> to use when the <paramref name="options"/> value
+		/// is <see cref="SecureSocketOptions.Auto"/>, the <paramref name="host"/> and
+		/// <paramref name="port"/> parameters are only used for logging purposes.</note>
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="stream">The socket to use for the connection.</param>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="stream"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="host"/> is a zero-length string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <paramref name="options"/> was set to
+		/// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
+		/// and the POP3 server does not support the STLS extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// A POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return ConnectAsync (stream, null, host, port, options, true, cancellationToken);
 		}
 #endif
 

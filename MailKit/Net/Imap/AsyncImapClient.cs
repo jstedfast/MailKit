@@ -408,10 +408,6 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// <para>Establishes a connection to the specified IMAP or IMAP/S server using
 		/// the provided socket.</para>
-		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
-		/// <paramref name="options"/> parameter is used to determine the default port to
-		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
-		/// is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
 		/// <para>If the <paramref name="options"/> has a value of
 		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
 		/// to determine the default security options. If the <paramref name="port"/> has a value
@@ -421,6 +417,10 @@ namespace MailKit.Net.Imap
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
+		/// <note type="info">With the exception of using the <paramref name="port"/> to determine the
+		/// default <see cref="SecureSocketOptions"/> to use when the <paramref name="options"/> value
+		/// is <see cref="SecureSocketOptions.Auto"/>, the <paramref name="host"/> and
+		/// <paramref name="port"/> parameters are only used for logging purposes.</note>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="socket">The socket to use for the connection.</param>
@@ -469,13 +469,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (socket == null)
-				throw new ArgumentNullException (nameof (socket));
-
-			if (!socket.Connected)
-				throw new ArgumentException ("The socket is not connected.", nameof (socket));
-
-			return ConnectAsync (new NetworkStream (socket, true), socket, host, port, options, true, cancellationToken);
+			return ConnectAsync (socket, host, port, options, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -484,10 +478,6 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// <para>Establishes a connection to the specified IMAP or IMAP/S server using
 		/// the provided stream.</para>
-		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
-		/// <paramref name="options"/> parameter is used to determine the default port to
-		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
-		/// is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
 		/// <para>If the <paramref name="options"/> has a value of
 		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
 		/// to determine the default security options. If the <paramref name="port"/> has a value
@@ -497,6 +487,10 @@ namespace MailKit.Net.Imap
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
+		/// <note type="info">With the exception of using the <paramref name="port"/> to determine the
+		/// default <see cref="SecureSocketOptions"/> to use when the <paramref name="options"/> value
+		/// is <see cref="SecureSocketOptions.Auto"/>, the <paramref name="host"/> and
+		/// <paramref name="port"/> parameters are only used for logging purposes.</note>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="stream">The stream to use for the connection.</param>
@@ -543,9 +537,6 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (stream == null)
-				throw new ArgumentNullException (nameof (stream));
-
 			return ConnectAsync (stream, null, host, port, options, true, cancellationToken);
 		}
 #endif

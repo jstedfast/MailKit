@@ -1445,10 +1445,10 @@ namespace MailKit.Net.Imap {
 		}
 
 #if !NETFX_CORE
-		async Task ConnectAsync (Stream networkStream, Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+		async Task ConnectAsync (Stream stream, Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
 		{
-			if (networkStream == null)
-				throw new ArgumentNullException (nameof (networkStream));
+			if (stream == null)
+				throw new ArgumentNullException (nameof (stream));
 
 			if (host == null)
 				throw new ArgumentNullException (nameof (host));
@@ -1463,8 +1463,8 @@ namespace MailKit.Net.Imap {
 
 			if (IsConnected)
 				throw new InvalidOperationException ("The ImapClient is already connected.");
-			
-			Stream stream;
+
+			Stream network;
 			bool starttls;
 			Uri uri;
 
@@ -1473,7 +1473,7 @@ namespace MailKit.Net.Imap {
 			engine.Uri = uri;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (networkStream, false, ValidateRemoteCertificate);
+				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
 					if (doAsync) {
@@ -1491,22 +1491,22 @@ namespace MailKit.Net.Imap {
 					throw SslHandshakeException.Create (ex, false);
 				}
 
+				network = ssl;
 				secure = true;
-				stream = ssl;
 			} else {
-				stream = networkStream;
+				network = stream;
 				secure = false;
 			}
 
-			if (stream.CanTimeout) {
-				stream.WriteTimeout = timeout;
-				stream.ReadTimeout = timeout;
+			if (network.CanTimeout) {
+				network.WriteTimeout = timeout;
+				network.ReadTimeout = timeout;
 			}
 
 			try {
 				ProtocolLogger.LogConnect (uri);
 			} catch {
-				stream.Dispose ();
+				network.Dispose ();
 				secure = false;
 				throw;
 			}
@@ -1514,7 +1514,7 @@ namespace MailKit.Net.Imap {
 			connecting = true;
 
 			try {
-				await engine.ConnectAsync (new ImapStream (stream, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
+				await engine.ConnectAsync (new ImapStream (network, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
 			} catch {
 				connecting = false;
 				throw;
@@ -1536,7 +1536,7 @@ namespace MailKit.Net.Imap {
 					ProcessResponseCodes (ic);
 
 					if (ic.Response == ImapCommandResponse.Ok) {
-						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+						var tls = new SslStream (network, false, ValidateRemoteCertificate);
 						engine.Stream.Stream = tls;
 
 						try {
@@ -1577,16 +1577,23 @@ namespace MailKit.Net.Imap {
 				await OnAuthenticatedAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
+		Task ConnectAsync (Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (socket == null)
+				throw new ArgumentNullException (nameof (socket));
+
+			if (!socket.Connected)
+				throw new ArgumentException ("The socket is not connected.", nameof (socket));
+
+			return ConnectAsync (new NetworkStream (socket, true), socket, host, port, options, doAsync, cancellationToken);
+		}
+
 		/// <summary>
 		/// Establish a connection to the specified IMAP or IMAP/S server using the provided socket.
 		/// </summary>
 		/// <remarks>
 		/// <para>Establishes a connection to the specified IMAP or IMAP/S server using
 		/// the provided socket.</para>
-		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
-		/// <paramref name="options"/> parameter is used to determine the default port to
-		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
-		/// is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
 		/// <para>If the <paramref name="options"/> has a value of
 		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
 		/// to determine the default security options. If the <paramref name="port"/> has a value
@@ -1596,6 +1603,10 @@ namespace MailKit.Net.Imap {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
+		/// <note type="info">With the exception of using the <paramref name="port"/> to determine the
+		/// default <see cref="SecureSocketOptions"/> to use when the <paramref name="options"/> value
+		/// is <see cref="SecureSocketOptions.Auto"/>, the <paramref name="host"/> and
+		/// <paramref name="port"/> parameters are only used for logging purposes.</note>
 		/// </remarks>
 		/// <param name="socket">The socket to use for the connection.</param>
 		/// <param name="host">The host name to connect to.</param>
@@ -1613,7 +1624,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="socket"/> is not connected.</para>
 		/// <para>-or-</para>
-		/// The <paramref name="host"/> is a zero-length string.
+		/// <para>The <paramref name="host"/> is a zero-length string.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1640,13 +1651,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (socket == null)
-				throw new ArgumentNullException (nameof (socket));
-
-			if (!socket.Connected)
-				throw new ArgumentException ("The socket is not connected.", nameof (socket));
-
-			ConnectAsync (new NetworkStream (socket, true), socket, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
+			ConnectAsync (socket, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1655,10 +1660,6 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Establishes a connection to the specified IMAP or IMAP/S server using
 		/// the provided stream.</para>
-		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
-		/// <paramref name="options"/> parameter is used to determine the default port to
-		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
-		/// is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
 		/// <para>If the <paramref name="options"/> has a value of
 		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
 		/// to determine the default security options. If the <paramref name="port"/> has a value
@@ -1668,6 +1669,10 @@ namespace MailKit.Net.Imap {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
+		/// <note type="info">With the exception of using the <paramref name="port"/> to determine the
+		/// default <see cref="SecureSocketOptions"/> to use when the <paramref name="options"/> value
+		/// is <see cref="SecureSocketOptions.Auto"/>, the <paramref name="host"/> and
+		/// <paramref name="port"/> parameters are only used for logging purposes.</note>
 		/// </remarks>
 		/// <param name="stream">The stream to use for the connection.</param>
 		/// <param name="host">The host name to connect to.</param>
@@ -1710,9 +1715,6 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (stream == null)
-				throw new ArgumentNullException (nameof (stream));
-
 			ConnectAsync (stream, null, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 #endif

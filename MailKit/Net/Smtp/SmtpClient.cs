@@ -1135,13 +1135,10 @@ namespace MailKit.Net.Smtp {
 		}
 
 #if !NETFX_CORE
-		async Task ConnectAsync (Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+		async Task ConnectAsync (Stream stream, Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
 		{
-			if (socket == null)
-				throw new ArgumentNullException (nameof (socket));
-
-			if (!socket.Connected)
-				throw new ArgumentException ("The socket is not connected.", nameof (socket));
+			if (stream == null)
+				throw new ArgumentNullException (nameof (stream));
 
 			if (host == null)
 				throw new ArgumentNullException (nameof (host));
@@ -1162,13 +1159,13 @@ namespace MailKit.Net.Smtp {
 			MaxSize = 0;
 
 			SmtpResponse response;
-			Stream stream;
+			Stream network;
 			bool starttls;
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
 					if (doAsync) {
@@ -1186,19 +1183,19 @@ namespace MailKit.Net.Smtp {
 					throw SslHandshakeException.Create (ex, false);
 				}
 
+				network = ssl;
 				secure = true;
-				stream = ssl;
 			} else {
-				stream = new NetworkStream (socket, true);
+				network = stream;
 				secure = false;
 			}
 
-			if (stream.CanTimeout) {
-				stream.WriteTimeout = timeout;
-				stream.ReadTimeout = timeout;
+			if (network.CanTimeout) {
+				network.WriteTimeout = timeout;
+				network.ReadTimeout = timeout;
 			}
 
-			Stream = new SmtpStream (stream, socket, ProtocolLogger);
+			Stream = new SmtpStream (network, socket, ProtocolLogger);
 
 			try {
 				ProtocolLogger.LogConnect (uri);
@@ -1223,7 +1220,7 @@ namespace MailKit.Net.Smtp {
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
-					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+					var tls = new SslStream (network, false, ValidateRemoteCertificate);
 					Stream.Stream = tls;
 
 					try {
@@ -1257,15 +1254,22 @@ namespace MailKit.Net.Smtp {
 			OnConnected (host, port, options);
 		}
 
+		Task ConnectAsync (Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (socket == null)
+				throw new ArgumentNullException (nameof (socket));
+
+			if (!socket.Connected)
+				throw new ArgumentException ("The socket is not connected.", nameof (socket));
+
+			return ConnectAsync (new NetworkStream (socket, true), socket, host, port, options, doAsync, cancellationToken);
+		}
+
 		/// <summary>
 		/// Establish a connection to the specified SMTP or SMTP/S server using the provided socket.
 		/// </summary>
 		/// <remarks>
-		/// <para>Establishes a connection to the specified SMTP or SMTP/S server.</para>
-		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
-		/// <paramref name="options"/> parameter is used to determine the default port to
-		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
-		/// is <c>465</c>. All other values will use a default port of <c>25</c>.</para>
+		/// <para>Establishes a connection to the specified SMTP or SMTP/S server using the provided socket.</para>
 		/// <para>If the <paramref name="options"/> has a value of
 		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
 		/// to determine the default security options. If the <paramref name="port"/> has a value
@@ -1275,13 +1279,10 @@ namespace MailKit.Net.Smtp {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
-		/// <note type="note">The connection established by any of the
-		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
-		/// methods may be re-used if an application wishes to send multiple messages
-		/// to the same SMTP server. Since connecting and authenticating can be expensive
-		/// operations, re-using a connection can significantly improve performance when
-		/// sending a large number of messages to the same SMTP server over a short
-		/// period of time./</note>
+		/// <note type="info">With the exception of using the <paramref name="port"/> to determine the
+		/// default <see cref="SecureSocketOptions"/> to use when the <paramref name="options"/> value
+		/// is <see cref="SecureSocketOptions.Auto"/>, the <paramref name="host"/> and
+		/// <paramref name="port"/> parameters are only used for logging purposes.</note>
 		/// </remarks>
 		/// <param name="socket">The socket to use for the connection.</param>
 		/// <param name="host">The host name to connect to.</param>
@@ -1299,7 +1300,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="socket"/> is not connected.</para>
 		/// <para>-or-</para>
-		/// The <paramref name="host"/> is a zero-length string.
+		/// <para>The <paramref name="host"/> is a zero-length string.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
@@ -1330,6 +1331,72 @@ namespace MailKit.Net.Smtp {
 		public void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ConnectAsync (socket, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Establish a connection to the specified SMTP or SMTP/S server using the provided stream.
+		/// </summary>
+		/// <remarks>
+		/// <para>Establishes a connection to the specified SMTP or SMTP/S server using the provided stream.</para>
+		/// <para>If the <paramref name="options"/> has a value of
+		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
+		/// to determine the default security options. If the <paramref name="port"/> has a value
+		/// of <c>465</c>, then the default options used will be
+		/// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
+		/// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
+		/// <para>Once a connection is established, properties such as
+		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
+		/// populated.</para>
+		/// <note type="info">With the exception of using the <paramref name="port"/> to determine the
+		/// default <see cref="SecureSocketOptions"/> to use when the <paramref name="options"/> value
+		/// is <see cref="SecureSocketOptions.Auto"/>, the <paramref name="host"/> and
+		/// <paramref name="port"/> parameters are only used for logging purposes.</note>
+		/// </remarks>
+		/// <param name="stream">The stream to use for the connection.</param>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="stream"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="host"/> is a zero-length string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="SmtpClient"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <paramref name="options"/> was set to
+		/// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
+		/// and the SMTP server does not support the STARTTLS extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="SslHandshakeException">
+		/// An error occurred during the SSL/TLS negotiations.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// An SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol error occurred.
+		/// </exception>
+		public void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			ConnectAsync (stream, null, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 #endif
 
