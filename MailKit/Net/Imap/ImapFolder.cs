@@ -5134,110 +5134,41 @@ namespace MailKit.Net.Imap {
 			OnCountChanged ();
 		}
 
-		static async Task SkipParenthesizedList (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
-		{
-			do {
-				var token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-				if (token.Type == ImapTokenType.Eoln)
-					return;
-
-				// token is safe to read, so pop it off the queue
-				await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-				if (token.Type == ImapTokenType.CloseParen)
-					break;
-
-				if (token.Type == ImapTokenType.OpenParen) {
-					// skip the inner parenthesized list
-					await SkipParenthesizedList (engine, doAsync, cancellationToken).ConfigureAwait (false);
-				}
-			} while (true);
-		}
-
 		internal async Task OnFetchAsync (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			var labelsChangedEventArgs = new MessageLabelsChangedEventArgs (index);
-			var flagsChangedEventArgs = new MessageFlagsChangedEventArgs (index);
-			var modSeqChangedEventArgs = new ModSeqChangedEventArgs (index);
-			bool modSeqChanged = false;
-			bool labelsChanged = false;
-			bool flagsChanged = false;
+			var message = new MessageSummary (index);
+			UniqueId? uid = null;
 
-			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+			await FetchSummaryItemsAsync (engine, message, doAsync, cancellationToken).ConfigureAwait (false);
 
-			do {
-				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			if ((message.Fields & MessageSummaryItems.UniqueId) != 0)
+				uid = message.UniqueId;
 
-				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
-					break;
+			if ((message.Fields & MessageSummaryItems.Flags) != 0) {
+				var args = new MessageFlagsChangedEventArgs (index, message.Flags.Value, message.Keywords);
+				args.ModSeq = message.ModSeq;
+				args.UniqueId = uid;
 
-				ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+				OnMessageFlagsChanged (args);
+			}
 
-				var atom = (string) token.Value;
-				ulong modseq;
-				uint uid;
+			if ((message.Fields & MessageSummaryItems.GMailLabels) != 0) {
+				var args = new MessageLabelsChangedEventArgs (index, message.GMailLabels);
+				args.ModSeq = message.ModSeq;
+				args.UniqueId = uid;
 
-				switch (atom) {
-				case "MODSEQ":
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				OnMessageLabelsChanged (args);
+			}
 
-					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+			if ((message.Fields & MessageSummaryItems.ModSeq) != 0) {
+				var args = new ModSeqChangedEventArgs (index, message.ModSeq.Value);
+				args.UniqueId = uid;
 
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				OnModSeqChanged (args);
+			}
 
-					modseq = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
-					if (modseq > HighestModSeq)
-						UpdateHighestModSeq (modseq);
-
-					modSeqChangedEventArgs.ModSeq = modseq;
-					labelsChangedEventArgs.ModSeq = modseq;
-					flagsChangedEventArgs.ModSeq = modseq;
-					modSeqChanged = true;
-					break;
-				case "UID":
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
-					modSeqChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
-					labelsChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
-					flagsChangedEventArgs.UniqueId = new UniqueId (UidValidity, uid);
-					break;
-				case "FLAGS":
-					flagsChangedEventArgs.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, flagsChangedEventArgs.Keywords, doAsync, cancellationToken).ConfigureAwait (false);
-					flagsChanged = true;
-					break;
-				case "X-GM-LABELS":
-					labelsChangedEventArgs.Labels = await ImapUtils.ParseLabelsListAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
-					labelsChanged = true;
-					break;
-				default:
-					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					if (token.Type == ImapTokenType.OpenParen)
-						await SkipParenthesizedList (engine, doAsync, cancellationToken).ConfigureAwait (false);
-					break;
-				}
-			} while (true);
-
-			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
-
-			if (flagsChanged)
-				OnMessageFlagsChanged (flagsChangedEventArgs);
-
-			if (labelsChanged)
-				OnMessageLabelsChanged (labelsChangedEventArgs);
-
-			if (modSeqChanged)
-				OnModSeqChanged (modSeqChangedEventArgs);
+			if (message.Fields != MessageSummaryItems.None)
+				OnMessageSummaryFetched (message);
 		}
 
 		internal void OnRecent (int count)
