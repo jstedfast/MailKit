@@ -378,7 +378,7 @@ namespace MailKit.Net.Imap
 			return names;
 		}
 
-		string FormatSummaryItems (ref MessageSummaryItems items, HashSet<string> fields, out bool previewText)
+		internal static string FormatSummaryItems (ImapEngine engine, ref MessageSummaryItems items, HashSet<string> fields, out bool previewText, bool isNotify = false)
 		{
 			if ((items & MessageSummaryItems.PreviewText) != 0) {
 				// if the user wants the preview text, we will also need the UIDs and BODYSTRUCTUREs
@@ -394,7 +394,7 @@ namespace MailKit.Net.Imap
 				items &= ~MessageSummaryItems.Body;
 			}
 
-			if (Engine.QuirksMode != ImapQuirksMode.GMail) {
+			if (engine.QuirksMode != ImapQuirksMode.GMail && !isNotify) {
 				// first, eliminate the aliases...
 				var alias = items & ~MessageSummaryItems.PreviewText;
 
@@ -426,19 +426,19 @@ namespace MailKit.Net.Imap
 			if ((items & MessageSummaryItems.Body) != 0)
 				tokens.Add ("BODY");
 
-			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0) {
+			if ((engine.Capabilities & ImapCapabilities.CondStore) != 0) {
 				if ((items & MessageSummaryItems.ModSeq) != 0)
 					tokens.Add ("MODSEQ");
 			}
 
-			if ((Engine.Capabilities & ImapCapabilities.ObjectID) != 0) {
+			if ((engine.Capabilities & ImapCapabilities.ObjectID) != 0) {
 				if ((items & MessageSummaryItems.Id) != 0)
 					tokens.Add ("EMAILID");
 				if ((items & MessageSummaryItems.ThreadId) != 0)
 					tokens.Add ("THREADID");
 			}
 
-			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {
+			if ((engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {
 				// now for the GMail extension items
 				if ((items & MessageSummaryItems.GMailMessageId) != 0)
 					tokens.Add ("X-GM-MSGID");
@@ -475,10 +475,15 @@ namespace MailKit.Net.Imap
 				tokens.Add (headers.ToString ());
 			}
 
-			if (tokens.Count == 1)
+			if (tokens.Count == 1 && !isNotify)
 				return tokens[0];
 
 			return string.Format ("({0})", string.Join (" ", tokens));
+		}
+
+		string FormatSummaryItems (ref MessageSummaryItems items, HashSet<string> fields, out bool previewText)
+		{
+			return FormatSummaryItems (Engine, ref items, fields, out previewText);
 		}
 
 		static IList<IMessageSummary> AsReadOnly (ICollection<IMessageSummary> collection)
@@ -1565,6 +1570,7 @@ namespace MailKit.Net.Imap
 				throw new ArgumentOutOfRangeException (nameof (items));
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
@@ -1607,6 +1613,7 @@ namespace MailKit.Net.Imap
 				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
@@ -1649,6 +1656,7 @@ namespace MailKit.Net.Imap
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
@@ -1695,6 +1703,7 @@ namespace MailKit.Net.Imap
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
@@ -2450,6 +2459,7 @@ namespace MailKit.Net.Imap
 				throw new ArgumentOutOfRangeException (nameof (items));
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (min == Count)
 				return new IMessageSummary[0];
@@ -2494,6 +2504,7 @@ namespace MailKit.Net.Imap
 				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (min == Count)
 				return new IMessageSummary[0];
@@ -2538,6 +2549,7 @@ namespace MailKit.Net.Imap
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			var query = FormatSummaryItems (ref items, null, out previewText);
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
@@ -2583,6 +2595,7 @@ namespace MailKit.Net.Imap
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			var query = FormatSummaryItems (ref items, fields, out previewText);
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
@@ -6353,6 +6366,7 @@ namespace MailKit.Net.Imap
 				throw new ArgumentNullException (nameof (callback));
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
 				return;
@@ -6391,6 +6405,7 @@ namespace MailKit.Net.Imap
 				throw new ArgumentNullException (nameof (callback));
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (min == Count)
 				return;
