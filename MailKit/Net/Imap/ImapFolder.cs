@@ -136,6 +136,14 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		void CheckAllowIndexes ()
+		{
+			// Indexes ("Message Sequence Numbers" or MSNs in the RFCs) and * are not stable while MessageNew/MessageExpunge is registered for SELECTED and therefore should not be used
+			// https://tools.ietf.org/html/rfc5465#section-5.2
+			if (Engine.NotifySelectedNewExpunge)
+				throw new InvalidOperationException ("Indexes and '*' cannot be used while MessageNew/MessageExpunge is registered with NOTIFY for SELECTED.");
+		}
+
 		/// <summary>
 		/// Notifies the folder that a parent folder has been renamed.
 		/// </summary>
@@ -167,6 +175,9 @@ namespace MailKit.Net.Imap {
 				switch (code.Type) {
 				case ImapResponseCodeType.Alert:
 					Engine.OnAlert (code.Message);
+					break;
+				case ImapResponseCodeType.NotificationOverflow:
+					Engine.OnNotificationOverflow ();
 					break;
 				case ImapResponseCodeType.PermanentFlags:
 					PermanentFlags = ((PermanentFlagsResponseCode) code).Flags;
@@ -4810,6 +4821,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, false);
+			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
 				return;
@@ -4955,6 +4967,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, true);
+			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
 				return;

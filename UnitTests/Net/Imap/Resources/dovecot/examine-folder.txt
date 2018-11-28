@@ -1,0 +1,8 @@
+* FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+* OK [PERMANENTFLAGS ()] Read-only mailbox.
+* 0 EXISTS
+* 0 RECENT
+* OK [UIDVALIDITY 1543354378] UIDs valid
+* OK [UIDNEXT 1] Predicted next UID
+* OK [HIGHESTMODSEQ 1] Highest
+A00000003 OK [READ-ONLY] Examine completed (0.000 + 0.000 secs).

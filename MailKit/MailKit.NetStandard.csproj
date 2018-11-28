@@ -61,6 +61,7 @@
     <Compile Include="Net\Imap\ImapCommandResponse.cs" />
     <Compile Include="Net\Imap\ImapEncoding.cs" />
     <Compile Include="Net\Imap\ImapEngine.cs" />
+    <Compile Include="Net\Imap\ImapEventGroup.cs" />
     <Compile Include="Net\Imap\ImapFolder.cs" />
     <Compile Include="Net\Imap\ImapFolderConstructorArgs.cs" />
     <Compile Include="Net\Imap\ImapFolderFetch.cs" />

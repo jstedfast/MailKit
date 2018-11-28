@@ -191,6 +191,16 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				// Notify
+				Assert.Throws<ArgumentNullException> (() => client.Notify (true, null));
+				Assert.Throws<ArgumentNullException> (async () => await client.NotifyAsync (true, null));
+				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (null, new List<ImapEvent>()));
+				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (ImapMailboxFilter.Selected, null));
+				Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Subtree (null));
+				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree (new List<ImapFolder>()));
+				Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Mailboxes (null));
+				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes (new List<ImapFolder>()));
+
 				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((string) null));
 				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((FolderNamespace) null));
 				Assert.Throws<ArgumentNullException> (async () => await client.GetFolderAsync ((string) null));
@@ -4231,6 +4241,123 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (23, count, "Unexpected number of CountChanged events");
 					Assert.AreEqual (21, flags, "Unexpected number of FlagsChanged events");
 					Assert.AreEqual (1, inbox.Count, "Count");
+				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		List<ImapReplayCommand> CreateNotifyCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting-preauth.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" Folder\r\n", "dovecot.list-folder.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 EXAMINE Folder (CONDSTORE)\r\n", "dovecot.examine-folder.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 NOTIFY SET STATUS (PERSONAL (MessageNew MessageExpunge)) (SELECTED (MessageNew (UID) MessageExpunge))\r\n", "dovecot.notify.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 IDLE\r\n", "dovecot.notify-idle.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005", "DONE\r\n", "dovecot.notify-idle-done.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestNotify ()
+		{
+			var commands = CreateNotifyCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				var inbox = client.Inbox;
+				var folder = client.GetFolder (client.PersonalNamespaces[0]).GetSubfolder ("Folder");
+
+				folder.Open (FolderAccess.ReadOnly);
+
+				client.Notify (true, new List<ImapEventGroup> {
+						new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
+								new ImapEvent.MessageNew (),
+								ImapEvent.MessageExpunge,
+						}),
+						new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
+								new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, null),
+								ImapEvent.MessageExpunge,
+						}),
+				});
+
+				// Passing true to notify will update Count
+				Assert.AreEqual (1, inbox.Count, "Messages in INBOX");
+				Assert.AreEqual (0, folder.Count, "Messages in Folder");
+
+				using (var done = new CancellationTokenSource ()) {
+					folder.CountChanged += (o, e) => {
+						Assert.AreEqual (1, folder.Count, "Messages in Folder");
+						done.Cancel ();
+					};
+
+					client.Idle (done.Token);
+
+					Assert.AreEqual (1, inbox.Count, "Messages in INBOX");
+					Assert.AreEqual (1, folder.Count, "Messages in Folder");
+				}
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async void TestNotifyAsync ()
+		{
+			var commands = CreateNotifyCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				var inbox = client.Inbox;
+
+				var folder = await client.GetFolder (client.PersonalNamespaces[0]).GetSubfolderAsync ("Folder");
+
+				await folder.OpenAsync (FolderAccess.ReadOnly);
+
+				await client.NotifyAsync (true, new List<ImapEventGroup> {
+						new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
+								new ImapEvent.MessageNew (),
+								ImapEvent.MessageExpunge,
+						}),
+						new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
+								new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, null),
+								ImapEvent.MessageExpunge,
+						}),
+				});
+
+				// Passing true to notify will update Count
+				Assert.AreEqual (1, inbox.Count, "Messages in INBOX");
+				Assert.AreEqual (0, folder.Count, "Messages in Folder");
+
+				using (var done = new CancellationTokenSource ()) {
+					folder.CountChanged += (o, e) => {
+						Assert.AreEqual (1, folder.Count, "Messages in Folder");
+						done.Cancel ();
+					};
+
+					await client.IdleAsync (done.Token);
+
+					Assert.AreEqual (1, inbox.Count, "Messages in INBOX");
+					Assert.AreEqual (1, folder.Count, "Messages in Folder");
 				}
 
 				await client.DisconnectAsync (true);

@@ -173,7 +173,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.TempFail:             return new ImapResponseCode (type, true);
 			case ImapResponseCodeType.NoUpdate:             return new NoUpdateResponseCode (type);
 			case ImapResponseCodeType.Metadata:             return new MetadataResponseCode (type);
-			case ImapResponseCodeType.NotificationOverflow: return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.NotificationOverflow: return new ImapResponseCode (type, false);
 			case ImapResponseCodeType.BadEvent:             return new ImapResponseCode (type, true);
 			case ImapResponseCodeType.UndefinedFilter:      return new UndefinedFilterResponseCode (type);
 			case ImapResponseCodeType.Unavailable:          return new ImapResponseCode (type, true);

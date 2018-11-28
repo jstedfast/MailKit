@@ -684,8 +684,12 @@ namespace MailKit.Net.Imap {
 		void ProcessResponseCodes (ImapCommand ic)
 		{
 			for (int i = 0; i < ic.RespCodes.Count; i++) {
-				if (ic.RespCodes[i].Type == ImapResponseCodeType.Alert) {
+				switch (ic.RespCodes[i].Type) {
+				case ImapResponseCodeType.Alert:
 					OnAlert (ic.RespCodes[i].Message);
+					break;
+				case ImapResponseCodeType.NotificationOverflow:
+					engine.OnNotificationOverflow ();
 					break;
 				}
 			}
@@ -1943,6 +1947,55 @@ namespace MailKit.Net.Imap {
 			IdleAsync (doneToken, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
+		async Task NotifyAsync (bool status, IList<ImapEventGroup> eventGroups, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (eventGroups == null)
+				throw new ArgumentNullException (nameof (eventGroups));
+
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			if ((engine.Capabilities & ImapCapabilities.Notify) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the NOTIFY extension.");
+
+			var command = new StringBuilder ("NOTIFY");
+			var args = new List<object> ();
+			bool notifySelectedNewExpunge = false;
+			if (eventGroups.Count == 0) {
+				command.Append (" NONE");
+			} else {
+				command.Append (" SET");
+				if (status)
+					command.Append (" STATUS");
+				foreach (var group in eventGroups) {
+					command.Append (" ");
+					bool notifySelectedNewExpungeOut;
+					group.Format (engine, command, args, out notifySelectedNewExpungeOut);
+					if (notifySelectedNewExpungeOut)
+						notifySelectedNewExpunge = true;
+				}
+			}
+			command.Append ("\r\n");
+
+			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
+
+			engine.QueueCommand (ic);
+
+			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+			ProcessResponseCodes (ic);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("NOTIFY", ic);
+
+			engine.NotifySelectedNewExpunge = notifySelectedNewExpunge;
+		}
+
+		public void Notify (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			NotifyAsync (status, eventGroups, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
 		#endregion
 
 		#region IMailStore implementation

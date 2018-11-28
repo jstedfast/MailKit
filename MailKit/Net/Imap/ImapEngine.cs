@@ -440,6 +440,17 @@ namespace MailKit.Net.Imap {
 			get { return disposed; }
 		}
 
+		/// <summary>
+		/// Gets whether the current NOTIFY status prevents using indexes and * for referencing messages.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether the current NOTIFY status prevents using indexes and * for referencing messages. This is the case when the client has asked for MessageNew or MessageExpunge events on the SELECTED mailbox.
+		/// </remarks>
+		/// <value><c>true</c> if the use of indexes and * is prevented; otherwise, <c>false</c>.</value>
+		internal bool NotifySelectedNewExpunge {
+			get; set;
+		}
+
 		#region Special Folders
 
 		/// <summary>
@@ -1255,8 +1266,12 @@ namespace MailKit.Net.Imap {
 		void ProcessResponseCodes (ImapCommand ic)
 		{
 			foreach (var code in ic.RespCodes) {
-				if (code.Type == ImapResponseCodeType.Alert) {
+				switch (code.Type) {
+				case ImapResponseCodeType.Alert:
 					OnAlert (code.Message);
+					break;
+				case ImapResponseCodeType.NotificationOverflow:
+					OnNotificationOverflow ();
 					break;
 				}
 			}
@@ -2531,6 +2546,21 @@ namespace MailKit.Net.Imap {
 
 			if (handler != null)
 				handler (this, new AlertEventArgs (message));
+		}
+
+		/// <summary>
+		/// Occurs when the engine receives a notification overflow message from the server.
+		/// </summary>
+		public event EventHandler<EventArgs> NotificationOverflow;
+
+		internal void OnNotificationOverflow ()
+		{
+			NotifySelectedNewExpunge = false; // [NOTIFICATIONOVERFLOW] will reset to NOTIFY NONE
+
+			var handler = NotificationOverflow;
+
+			if (handler != null)
+				handler (this, new EventArgs ());
 		}
 
 		public event EventHandler<EventArgs> Disconnected;
