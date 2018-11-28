@@ -201,12 +201,16 @@ namespace MailKit.Net.Imap
 					break;
 				case "BODY":
 					token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					format = ImapEngine.FetchBodySyntaxErrorFormat;
 
 					if (token.Type == ImapTokenType.OpenBracket) {
+						var referencesField = false;
+						var headerFields = false;
+
 						// consume the '['
 						token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-						ImapEngine.AssertToken (token, ImapTokenType.OpenBracket, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+						ImapEngine.AssertToken (token, ImapTokenType.OpenBracket, format, token);
 
 						// References and/or other headers were requested...
 
@@ -224,29 +228,27 @@ namespace MailKit.Net.Imap
 										break;
 
 									// the header field names will generally be atoms or qstrings but may also be literals
-									switch (token.Type) {
-									case ImapTokenType.Literal:
-										await engine.ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
-										break;
-									case ImapTokenType.QString:
-									case ImapTokenType.Atom:
-										break;
-									default:
-										throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-									}
+									engine.Stream.UngetToken (token);
+
+									var field = await ImapUtils.ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+
+									if (headerFields && !referencesField && field.Equals ("REFERENCES", StringComparison.OrdinalIgnoreCase))
+										referencesField = true;
 								} while (true);
 							} else {
-								ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+								ImapEngine.AssertToken (token, ImapTokenType.Atom, format, token);
+
+								atom = (string) token.Value;
+
+								headerFields = atom.Equals ("HEADER.FIELDS", StringComparison.OrdinalIgnoreCase);
 							}
 						} while (true);
 
-						ImapEngine.AssertToken (token, ImapTokenType.CloseBracket, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+						ImapEngine.AssertToken (token, ImapTokenType.CloseBracket, format, token);
 
 						token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-						ImapEngine.AssertToken (token, ImapTokenType.Literal, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
-						message.References = new MessageIdList ();
+						ImapEngine.AssertToken (token, ImapTokenType.Literal, format, token);
 
 						try {
 							message.Headers = await engine.ParseHeadersAsync (engine.Stream, doAsync, cancellationToken).ConfigureAwait (false);
@@ -257,6 +259,8 @@ namespace MailKit.Net.Imap
 						// consume any remaining literal data... (typically extra blank lines)
 						await ReadLiteralDataAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
 
+						message.References = new MessageIdList ();
+
 						if ((idx = message.Headers.IndexOf (HeaderId.References)) != -1) {
 							var references = message.Headers[idx];
 							var rawValue = references.RawValue;
@@ -265,9 +269,11 @@ namespace MailKit.Net.Imap
 								message.References.Add (msgid);
 						}
 
-						message.Fields |= MessageSummaryItems.References;
+						message.Fields |= MessageSummaryItems.Headers;
+
+						if (referencesField)
+							message.Fields |= MessageSummaryItems.References;
 					} else {
-						format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODY", "{0}");
 						message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 						message.Fields |= MessageSummaryItems.Body;
 					}

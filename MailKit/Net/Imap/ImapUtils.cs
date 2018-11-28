@@ -486,7 +486,7 @@ namespace MailKit.Net.Imap {
 			await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 		}
 
-		static async Task<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		internal static async Task<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 

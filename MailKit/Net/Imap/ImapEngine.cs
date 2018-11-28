@@ -129,6 +129,7 @@ namespace MailKit.Net.Imap {
 	{
 		internal const string GenericUntaggedResponseSyntaxErrorFormat = "Syntax error in untagged {0} response. Unexpected token: {1}";
 		internal const string GenericItemSyntaxErrorFormat = "Syntax error in {0}. Unexpected token: {1}";
+		internal const string FetchBodySyntaxErrorFormat = "Syntax error in BODY. Unexpected token: {0}";
 		const string GenericResponseCodeSyntaxErrorFormat = "Syntax error in {0} response code. Unexpected token: {1}";
 		const string GreetingSyntaxErrorFormat = "Syntax error in IMAP server greeting. Unexpected token: {0}";
 
