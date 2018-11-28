@@ -23,41 +23,48 @@ namespace MailKit.Net.Imap {
 
 		internal void Format (ImapEngine engine, StringBuilder command, IList<object> args, out bool notifySelectedNewExpunge)
 		{
-			command.Append ("(");
 			bool isSelectedFilter = MailboxFilter == ImapMailboxFilter.Selected || MailboxFilter == ImapMailboxFilter.SelectedDelayed;
+
+			command.Append ("(");
 			MailboxFilter.Format (engine, command, args);
 			command.Append (" ");
+
 			if (Events.Count == 0) {
 				command.Append ("NONE");
 				notifySelectedNewExpunge = false;
 			} else {
+				var haveAnnotationChange = false;
+				var haveMessageExpunge = false;
+				var haveMessageNew = false;
+				var haveFlagChange = false;
+
 				command.Append ("(");
-				bool haveMessageNew = false;
-				bool haveMessageExpunge = false;
-				bool haveFlagChange = false;
-				bool haveAnnotationChange = false;
-				bool first = true;
-				foreach (var ev in Events) {
-					if (isSelectedFilter && !ev.IsMessageEvent)
-						throw new InvalidOperationException ("For SELECTED or SELECTED-DELAYED only message events may be specified");
-					if (ev is ImapEvent.MessageNew)
+
+				for (int i = 0; i < Events.Count; i++) {
+					var @event = Events[i];
+
+					if (isSelectedFilter && !@event.IsMessageEvent)
+						throw new InvalidOperationException ("Only message events may be specified when SELECTED or SELECTED-DELAYED is used.");
+
+					if (@event is ImapEvent.MessageNew)
 						haveMessageNew = true;
-					if (ev == ImapEvent.MessageExpunge)
+					else if (@event == ImapEvent.MessageExpunge)
 						haveMessageExpunge = true;
-					if (ev == ImapEvent.FlagChange)
+					else if (@event == ImapEvent.FlagChange)
 						haveFlagChange = true;
-					if (ev == ImapEvent.AnnotationChange)
+					else if (@event == ImapEvent.AnnotationChange)
 						haveAnnotationChange = true;
-					if (!first)
+
+					if (i > 0)
 						command.Append (" ");
-					ev.Format (engine, command, args, isSelectedFilter);
-					first = false;
+
+					@event.Format (engine, command, args, isSelectedFilter);
 				}
 				command.Append (")");
 
 				// https://tools.ietf.org/html/rfc5465#section-5
 				if ((haveMessageNew && !haveMessageExpunge) || (!haveMessageNew && haveMessageExpunge))
-					throw new InvalidOperationException ("If one of MessageNew or MessageExpunge is specified, both must be specified.");
+					throw new InvalidOperationException ("If MessageNew or MessageExpunge is specified, both must be specified.");
 
 				if ((haveFlagChange || haveAnnotationChange) && (!haveMessageNew || !haveMessageExpunge))
 					throw new InvalidOperationException ("If FlagChange and/or AnnotationChange are specified, MessageNew and MessageExpunge must also be specified.");
@@ -72,9 +79,9 @@ namespace MailKit.Net.Imap {
 	{
 		sealed class Simple : ImapMailboxFilter
 		{
-			internal string Name { get; private set; }
+			public string Name { get; private set; }
 
-			internal Simple (string name)
+			public Simple (string name)
 			{
 				Name = name;
 			}
@@ -107,7 +114,7 @@ namespace MailKit.Net.Imap {
 					throw new ArgumentNullException (nameof (folders));
 
 				if (folders.Count == 0)
-					throw new ArgumentException ("Must supply at least one folder", nameof (folders));
+					throw new ArgumentException ("Must supply at least one folder.", nameof (folders));
 
 				Folders = folders;
 			}
@@ -121,14 +128,14 @@ namespace MailKit.Net.Imap {
 					args.Add (Folders[0]);
 				} else {
 					command.Append ("(");
-					bool first = true;
-					foreach (var folder in Folders) {
-						if (!first)
+
+					for (int i = 0; i < Folders.Count; i++) {
+						if (i > 0)
 							command.Append (" ");
 						command.Append ("%F");
-						args.Add (folder);
-						first = false;
+						args.Add (Folders[i]);
 					}
+
 					command.Append (")");
 				}
 			}
@@ -144,7 +151,7 @@ namespace MailKit.Net.Imap {
 					throw new ArgumentNullException (nameof (folders));
 
 				if (folders.Count == 0)
-					throw new ArgumentException ("Must supply at least one folder", nameof (folders));
+					throw new ArgumentException ("Must supply at least one folder.", nameof (folders));
 
 				Folders = folders;
 			}
@@ -158,14 +165,14 @@ namespace MailKit.Net.Imap {
 					args.Add (Folders[0]);
 				} else {
 					command.Append ("(");
-					bool first = true;
-					foreach (var folder in Folders) {
-						if (!first)
+
+					for (int i = 0; i < Folders.Count; i++) {
+						if (i > 0)
 							command.Append (" ");
 						command.Append ("%F");
-						args.Add (folder);
-						first = false;
+						args.Add (Folders[i]);
 					}
+
 					command.Append (")");
 				}
 			}
@@ -221,15 +228,17 @@ namespace MailKit.Net.Imap {
 			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter)
 			{
 				command.Append ("MessageNew");
-				if (MessageSummaryItems == MessageSummaryItems.None && Fields == null) {
+
+				if (MessageSummaryItems == MessageSummaryItems.None && Fields == null)
 					return;
-				}
 
 				if (!isSelectedFilter)
-					throw new InvalidOperationException ("For mailbox filters other than SELECTED and SELECTED-DELAYED the MessageNew event must not have any parameters");
-				command.Append (" ");
+					throw new InvalidOperationException ("The MessageNew event cannot have any parameters for mailbox filters other than SELECTED and SELECTED-DELAYED.");
+
 				var items = MessageSummaryItems;
 				bool previewText;
+
+				command.Append (" ");
 				command.Append (ImapFolder.FormatSummaryItems (engine, ref items, Fields, out previewText, isNotify: true));
 			}
 		}
