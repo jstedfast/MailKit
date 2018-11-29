@@ -4258,7 +4258,8 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000004 NOTIFY SET STATUS (PERSONAL (MessageNew MessageExpunge)) (SELECTED (MessageNew (UID) MessageExpunge))\r\n", "dovecot.notify.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 IDLE\r\n", "dovecot.notify-idle.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005", "DONE\r\n", "dovecot.notify-idle-done.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 LOGOUT\r\n", "gmail.logout.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
 
 			return commands;
 		}
@@ -4345,6 +4346,8 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (1, inbox.Count, "Messages in INBOX");
 					Assert.AreEqual (1, folder.Count, "Messages in Folder");
 				}
+
+				client.DisableNotify ();
 
 				client.Disconnect (true);
 			}
@@ -4433,6 +4436,8 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (1, inbox.Count, "Messages in INBOX");
 					Assert.AreEqual (1, folder.Count, "Messages in Folder");
 				}
+
+				await client.DisableNotifyAsync ();
 
 				await client.DisconnectAsync (true);
 			}

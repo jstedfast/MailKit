@@ -97,8 +97,8 @@ namespace MailKit.Net.Imap {
 		/// <param name="command">The IMAP command builder.</param>
 		/// <param name="args">The IMAP command argument builder.</param>
 		/// <param name="notifySelectedNewExpunge">Gets set to <c>true</c> if the NOTIFY command requests the MessageNew or
-		/// MessageExpunged events for a SELECTED or SELECTED-DELAYED mailbox filter.</param>
-		internal void Format (ImapEngine engine, StringBuilder command, IList<object> args, out bool notifySelectedNewExpunge)
+		/// MessageExpunged events for a SELECTED or SELECTED-DELAYED mailbox filter; otherwise it is left unchanged.</param>
+		internal void Format (ImapEngine engine, StringBuilder command, IList<object> args, ref bool notifySelectedNewExpunge)
 		{
 			bool isSelectedFilter = MailboxFilter == ImapMailboxFilter.Selected || MailboxFilter == ImapMailboxFilter.SelectedDelayed;
 
@@ -106,10 +106,7 @@ namespace MailKit.Net.Imap {
 			MailboxFilter.Format (engine, command, args);
 			command.Append (" ");
 
-			if (Events.Count == 0) {
-				command.Append ("NONE");
-				notifySelectedNewExpunge = false;
-			} else {
+			if (Events.Count > 0) {
 				var haveAnnotationChange = false;
 				var haveMessageExpunge = false;
 				var haveMessageNew = false;
@@ -147,7 +144,10 @@ namespace MailKit.Net.Imap {
 					throw new InvalidOperationException ("If FlagChange and/or AnnotationChange are specified, MessageNew and MessageExpunge must also be specified.");
 
 				notifySelectedNewExpunge = (haveMessageNew || haveMessageExpunge) && MailboxFilter == ImapMailboxFilter.Selected;
+			} else {
+				command.Append ("NONE");
 			}
+
 			command.Append (")");
 		}
 	}

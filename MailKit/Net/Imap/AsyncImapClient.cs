@@ -672,6 +672,11 @@ namespace MailKit.Net.Imap
 			return NotifyAsync (status, eventGroups, true, cancellationToken);
 		}
 
+		public Task DisableNotifyAsync (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return DisableNotifyAsync (true, cancellationToken);
+		}
+
 		/// <summary>
 		/// Asynchronously get all of the folders within the specified namespace.
 		/// </summary>
