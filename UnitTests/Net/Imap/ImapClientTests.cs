@@ -194,6 +194,8 @@ namespace UnitTests.Net.Imap {
 				// Notify
 				Assert.Throws<ArgumentNullException> (() => client.Notify (true, null));
 				Assert.Throws<ArgumentNullException> (async () => await client.NotifyAsync (true, null));
+				Assert.Throws<ArgumentException> (() => client.Notify (true, new ImapEventGroup[0]));
+				Assert.Throws<ArgumentException> (async () => await client.NotifyAsync (true, new ImapEventGroup[0]));
 				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (null, new List<ImapEvent> ()));
 				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (ImapMailboxFilter.Selected, null));
 				Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Subtree (null));
@@ -4257,7 +4259,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" Folder\r\n", "dovecot.list-folder.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 EXAMINE Folder (CONDSTORE)\r\n", "dovecot.examine-folder.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 NOTIFY SET STATUS (PERSONAL (MessageNew MessageExpunge)) (SELECTED (MessageNew (UID) MessageExpunge))\r\n", "dovecot.notify.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 NOTIFY SET STATUS (PERSONAL (MessageNew MessageExpunge)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE) MessageExpunge))\r\n", "dovecot.notify.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 IDLE\r\n", "dovecot.notify-idle.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005", "DONE\r\n", "dovecot.notify-idle-done.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK));
@@ -4269,6 +4271,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestNotify ()
 		{
+			const MessageSummaryItems items = MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags;
 			var commands = CreateNotifyCommands ();
 
 			using (var client = new ImapClient ()) {
@@ -4297,14 +4300,14 @@ namespace UnitTests.Net.Imap {
 				// This fires due to having MessageNew, but not MessageExpunged
 				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<HeaderId> ())
+						new ImapEvent.MessageNew (items, new HashSet<HeaderId> ())
 					})
 				}));
 
 				// This fires due to having MessageNew, but not MessageExpunged
 				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<string> ())
+						new ImapEvent.MessageNew (items, new HashSet<string> ())
 					})
 				}));
 
@@ -4318,7 +4321,7 @@ namespace UnitTests.Net.Imap {
 				// This fires due to MessageNew being aded to a non-Selected folder
 				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<string> ())
+						new ImapEvent.MessageNew (items, new HashSet<string> ())
 					})
 				}));
 
@@ -4328,7 +4331,7 @@ namespace UnitTests.Net.Imap {
 						ImapEvent.MessageExpunge,
 					}),
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId),
+						new ImapEvent.MessageNew (items),
 						ImapEvent.MessageExpunge,
 					}),
 				});
@@ -4358,6 +4361,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async void TestNotifyAsync ()
 		{
+			const MessageSummaryItems items = MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags;
 			var commands = CreateNotifyCommands ();
 
 			using (var client = new ImapClient ()) {
@@ -4387,14 +4391,14 @@ namespace UnitTests.Net.Imap {
 				// This fires due to having MessageNew, but not MessageExpunged
 				Assert.Throws<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<HeaderId> ())
+						new ImapEvent.MessageNew (items, new HashSet<HeaderId> ())
 					})
 				}));
 
 				// This fires due to having MessageNew, but not MessageExpunged
 				Assert.Throws<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<string> ())
+						new ImapEvent.MessageNew (items, new HashSet<string> ())
 					})
 				}));
 
@@ -4408,7 +4412,7 @@ namespace UnitTests.Net.Imap {
 				// This fires due to MessageNew being aded to a non-Selected folder
 				Assert.Throws<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<string> ())
+						new ImapEvent.MessageNew (items, new HashSet<string> ())
 					})
 				}));
 
@@ -4418,7 +4422,7 @@ namespace UnitTests.Net.Imap {
 						ImapEvent.MessageExpunge,
 					}),
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId),
+						new ImapEvent.MessageNew (items),
 						ImapEvent.MessageExpunge,
 					}),
 				});

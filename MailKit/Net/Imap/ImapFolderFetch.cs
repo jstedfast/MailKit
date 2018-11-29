@@ -44,6 +44,7 @@ namespace MailKit.Net.Imap
 {
 	public partial class ImapFolder
 	{
+		static readonly HashSet<string> EmptyHeaderFields = new HashSet<string> ();
 		const string PreviewTextLength = "256";
 
 		class FetchSummaryContext
@@ -401,24 +402,7 @@ namespace MailKit.Net.Imap
 			OnMessageSummaryFetched (message);
 		}
 
-		internal static HashSet<string> GetHeaderNames (HashSet<HeaderId> fields)
-		{
-			if (fields == null)
-				return null;
-
-			var names = new HashSet<string> (StringComparer.Ordinal);
-
-			foreach (var field in fields) {
-				if (field == HeaderId.Unknown)
-					continue;
-
-				names.Add (field.ToHeaderName ());
-			}
-
-			return names;
-		}
-
-		internal static string FormatSummaryItems (ImapEngine engine, ref MessageSummaryItems items, HashSet<string> fields, out bool previewText, bool isNotify = false)
+		internal static string FormatSummaryItems (ImapEngine engine, ref MessageSummaryItems items, HashSet<string> headers, out bool previewText, bool isNotify = false)
 		{
 			if ((items & MessageSummaryItems.PreviewText) != 0) {
 				// if the user wants the preview text, we will also need the UIDs and BODYSTRUCTUREs
@@ -490,29 +474,25 @@ namespace MailKit.Net.Imap
 
 			if ((items & MessageSummaryItems.Headers) != 0) {
 				tokens.Add ("BODY.PEEK[HEADER]");
-			} else if ((items & MessageSummaryItems.References) != 0 || (fields != null && fields.Count != 0)) {
-				var headers = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
-				bool references = false;
+			} else if ((items & MessageSummaryItems.References) != 0 || headers.Count > 0) {
+				var headerFields = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
+				var references = false;
 
-				if (fields != null && fields.Count != 0) {
-					foreach (var field in fields) {
-						var name = field.ToUpperInvariant ();
+				foreach (var header in headers) {
+					if (header.Equals ("REFERENCES", StringComparison.OrdinalIgnoreCase))
+						references = true;
 
-						if (name == "REFERENCES")
-							references = true;
-
-						headers.Append (name);
-						headers.Append (' ');
-					}
+					headerFields.Append (header);
+					headerFields.Append (' ');
 				}
 
 				if ((items & MessageSummaryItems.References) != 0 && !references)
-					headers.Append ("REFERENCES ");
+					headerFields.Append ("REFERENCES ");
 
-				headers[headers.Length - 1] = ')';
-				headers.Append (']');
+				headerFields[headerFields.Length - 1] = ')';
+				headerFields.Append (']');
 
-				tokens.Add (headers.ToString ());
+				tokens.Add (headerFields.ToString ());
 			}
 
 			if (tokens.Count == 1 && !isNotify)
@@ -521,9 +501,9 @@ namespace MailKit.Net.Imap
 			return string.Format ("({0})", string.Join (" ", tokens));
 		}
 
-		string FormatSummaryItems (ref MessageSummaryItems items, HashSet<string> fields, out bool previewText)
+		string FormatSummaryItems (ref MessageSummaryItems items, HashSet<string> headers, out bool previewText)
 		{
-			return FormatSummaryItems (Engine, ref items, fields, out previewText);
+			return FormatSummaryItems (Engine, ref items, headers, out previewText);
 		}
 
 		static IList<IMessageSummary> AsReadOnly (ICollection<IMessageSummary> collection)
@@ -693,7 +673,7 @@ namespace MailKit.Net.Imap
 				return new IMessageSummary[0];
 
 			var set = UniqueIdSet.ToString (uids);
-			var query = FormatSummaryItems (ref items, null, out previewText);
+			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
@@ -721,18 +701,14 @@ namespace MailKit.Net.Imap
 			return AsReadOnly (ctx.Messages);
 		}
 
-		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<string> headers, bool doAsync, CancellationToken cancellationToken)
 		{
 			bool previewText;
 
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
+			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
 			CheckState (true, false);
 
@@ -740,7 +716,7 @@ namespace MailKit.Net.Imap
 				return new IMessageSummary[0];
 
 			var set = UniqueIdSet.ToString (uids);
-			var query = FormatSummaryItems (ref items, fields, out previewText);
+			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
@@ -817,18 +793,14 @@ namespace MailKit.Net.Imap
 			return AsReadOnly (ctx.Messages);
 		}
 
-		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, bool doAsync, CancellationToken cancellationToken)
 		{
 			bool previewText;
 
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
+			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -839,7 +811,7 @@ namespace MailKit.Net.Imap
 				return new IMessageSummary[0];
 
 			var set = UniqueIdSet.ToString (uids);
-			var query = FormatSummaryItems (ref items, fields, out previewText);
+			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseqValue, vanished);
@@ -998,17 +970,15 @@ namespace MailKit.Net.Imap
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1034,9 +1004,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Fetch (uids, items, GetHeaderNames (fields), cancellationToken);
+			return Fetch (uids, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -1054,17 +1024,15 @@ namespace MailKit.Net.Imap
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1090,9 +1058,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (uids, items, GetHeaderNames (fields), cancellationToken);
+			return FetchAsync (uids, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -1110,17 +1078,17 @@ namespace MailKit.Net.Imap
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1146,9 +1114,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (uids, items, fields, false, cancellationToken).GetAwaiter ().GetResult ();
+			return FetchAsync (uids, items, headers, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1166,17 +1134,17 @@ namespace MailKit.Net.Imap
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1202,9 +1170,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (uids, items, fields, true, cancellationToken);
+			return FetchAsync (uids, items, headers, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -1357,17 +1325,15 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1396,9 +1362,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Fetch (uids, modseq, items, GetHeaderNames (fields), cancellationToken);
+			return Fetch (uids, modseq, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -1423,17 +1389,15 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1462,9 +1426,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (uids, modseq, items, GetHeaderNames (fields), cancellationToken);
+			return FetchAsync (uids, modseq, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -1489,17 +1453,17 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1528,9 +1492,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (uids, modseq, items, fields, false, cancellationToken).GetAwaiter ().GetResult ();
+			return FetchAsync (uids, modseq, items, headers, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1555,17 +1519,17 @@ namespace MailKit.Net.Imap
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1594,9 +1558,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (uids, modseq, items, fields, true, cancellationToken);
+			return FetchAsync (uids, modseq, items, headers, true, cancellationToken);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
@@ -1639,18 +1603,14 @@ namespace MailKit.Net.Imap
 			return AsReadOnly (ctx.Messages);
 		}
 
-		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, IEnumerable<string> headers, bool doAsync, CancellationToken cancellationToken)
 		{
 			bool previewText;
 
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
+			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
 			CheckState (true, false);
 			CheckAllowIndexes ();
@@ -1659,7 +1619,7 @@ namespace MailKit.Net.Imap
 				return new IMessageSummary[0];
 
 			var set = ImapUtils.FormatIndexSet (indexes);
-			var query = FormatSummaryItems (ref items, fields, out previewText);
+			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
@@ -1726,18 +1686,14 @@ namespace MailKit.Net.Imap
 			return AsReadOnly (ctx.Messages);
 		}
 
-		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, bool doAsync, CancellationToken cancellationToken)
 		{
 			bool previewText;
 
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
+			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -1749,7 +1705,7 @@ namespace MailKit.Net.Imap
 				return new IMessageSummary[0];
 
 			var set = ImapUtils.FormatIndexSet (indexes);
-			var query = FormatSummaryItems (ref items, fields, out previewText);
+			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseqValue);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -1896,17 +1852,15 @@ namespace MailKit.Net.Imap
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1932,9 +1886,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Fetch (indexes, items, GetHeaderNames (fields), cancellationToken);
+			return Fetch (indexes, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -1952,17 +1906,15 @@ namespace MailKit.Net.Imap
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1988,9 +1940,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (indexes, items, GetHeaderNames (fields), cancellationToken);
+			return FetchAsync (indexes, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -2008,17 +1960,17 @@ namespace MailKit.Net.Imap
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2044,9 +1996,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (indexes, items, fields, false, cancellationToken).GetAwaiter ().GetResult ();
+			return FetchAsync (indexes, items, headers, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -2064,17 +2016,17 @@ namespace MailKit.Net.Imap
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2100,9 +2052,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (indexes, items, fields, true, cancellationToken);
+			return FetchAsync (indexes, items, headers, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -2243,17 +2195,15 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2282,9 +2232,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Fetch (indexes, modseq, items, GetHeaderNames (fields), cancellationToken);
+			return Fetch (indexes, modseq, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -2305,17 +2255,15 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2344,9 +2292,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (indexes, modseq, items, GetHeaderNames (fields), cancellationToken);
+			return FetchAsync (indexes, modseq, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -2367,17 +2315,17 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2406,9 +2354,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (indexes, modseq, items, fields, false, cancellationToken).GetAwaiter ().GetResult ();
+			return FetchAsync (indexes, modseq, items, headers, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -2429,17 +2377,17 @@ namespace MailKit.Net.Imap
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
+		/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2468,9 +2416,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (indexes, modseq, items, fields, true, cancellationToken);
+			return FetchAsync (indexes, modseq, items, headers, true, cancellationToken);
 		}
 
 		static string GetFetchRange (int min, int max)
@@ -2527,7 +2475,7 @@ namespace MailKit.Net.Imap
 			return AsReadOnly (ctx.Messages);
 		}
 
-		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, IEnumerable<string> headers, bool doAsync, CancellationToken cancellationToken)
 		{
 			bool previewText;
 
@@ -2537,11 +2485,7 @@ namespace MailKit.Net.Imap
 			if (max != -1 && max < min)
 				throw new ArgumentOutOfRangeException (nameof (max));
 
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
+			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
 			CheckState (true, false);
 			CheckAllowIndexes ();
@@ -2549,7 +2493,7 @@ namespace MailKit.Net.Imap
 			if (min == Count)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (ref items, fields, out previewText);
+			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
@@ -2615,7 +2559,7 @@ namespace MailKit.Net.Imap
 			return AsReadOnly (ctx.Messages);
 		}
 
-		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, bool doAsync, CancellationToken cancellationToken)
 		{
 			bool previewText;
 
@@ -2625,11 +2569,7 @@ namespace MailKit.Net.Imap
 			if (max != -1 && max < min)
 				throw new ArgumentOutOfRangeException (nameof (max));
 
-			if (fields == null)
-				throw new ArgumentNullException (nameof (fields));
-
-			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
+			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -2637,7 +2577,7 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 			CheckAllowIndexes ();
 
-			var query = FormatSummaryItems (ref items, fields, out previewText);
+			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseqValue);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -2786,7 +2726,7 @@ namespace MailKit.Net.Imap
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="min"/> is out of range.</para>
@@ -2794,10 +2734,7 @@ namespace MailKit.Net.Imap
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
+		/// <paramref name="headers"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2823,9 +2760,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Fetch (min, max, items, GetHeaderNames (fields), cancellationToken);
+			return Fetch (min, max, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -2845,7 +2782,7 @@ namespace MailKit.Net.Imap
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="min"/> is out of range.</para>
@@ -2853,10 +2790,7 @@ namespace MailKit.Net.Imap
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
+		/// <paramref name="headers"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2882,9 +2816,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (min, max, items, GetHeaderNames (fields), cancellationToken);
+			return FetchAsync (min, max, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -2904,7 +2838,7 @@ namespace MailKit.Net.Imap
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="min"/> is out of range.</para>
@@ -2912,10 +2846,10 @@ namespace MailKit.Net.Imap
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
+		/// One or more of the specified <paramref name="headers"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2941,9 +2875,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (min, max, items, fields, false, cancellationToken).GetAwaiter ().GetResult ();
+			return FetchAsync (min, max, items, headers, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -2963,7 +2897,7 @@ namespace MailKit.Net.Imap
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="min"/> is out of range.</para>
@@ -2971,10 +2905,10 @@ namespace MailKit.Net.Imap
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
+		/// One or more of the specified <paramref name="headers"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3000,9 +2934,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (min, max, items, fields, true, cancellationToken);
+			return FetchAsync (min, max, items, headers, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -3145,7 +3079,7 @@ namespace MailKit.Net.Imap
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="min"/> is out of range.</para>
@@ -3153,10 +3087,7 @@ namespace MailKit.Net.Imap
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
+		/// <paramref name="headers"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3185,9 +3116,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Fetch (min, max, modseq, items, GetHeaderNames (fields), cancellationToken);
+			return Fetch (min, max, modseq, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -3210,7 +3141,7 @@ namespace MailKit.Net.Imap
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="min"/> is out of range.</para>
@@ -3218,10 +3149,7 @@ namespace MailKit.Net.Imap
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
+		/// <paramref name="headers"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3250,9 +3178,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (min, max, modseq, items, GetHeaderNames (fields), cancellationToken);
+			return FetchAsync (min, max, modseq, items, ImapUtils.GetUniqueHeaders (headers), cancellationToken);
 		}
 
 		/// <summary>
@@ -3275,7 +3203,7 @@ namespace MailKit.Net.Imap
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="min"/> is out of range.</para>
@@ -3283,10 +3211,10 @@ namespace MailKit.Net.Imap
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
+		/// One or more of the specified <paramref name="headers"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3315,9 +3243,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (min, max, modseq, items, fields, false, cancellationToken).GetAwaiter ().GetResult ();
+			return FetchAsync (min, max, modseq, items, headers, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -3340,7 +3268,7 @@ namespace MailKit.Net.Imap
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
+		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="min"/> is out of range.</para>
@@ -3348,10 +3276,10 @@ namespace MailKit.Net.Imap
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
+		/// One or more of the specified <paramref name="headers"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3380,9 +3308,9 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return FetchAsync (min, max, modseq, items, fields, true, cancellationToken);
+			return FetchAsync (min, max, modseq, items, headers, true, cancellationToken);
 		}
 
 		/// <summary>

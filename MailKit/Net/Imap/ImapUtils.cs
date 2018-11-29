@@ -69,6 +69,58 @@ namespace MailKit.Net.Imap {
 				date.Offset.Hours, date.Offset.Minutes);
 		}
 
+		class UniqueHeaderSet : HashSet<string>
+		{
+			public UniqueHeaderSet () : base (StringComparer.Ordinal)
+			{
+			}
+		}
+
+		public static HashSet<string> GetUniqueHeaders (IEnumerable<string> headers)
+		{
+			if (headers == null)
+				throw new ArgumentNullException (nameof (headers));
+
+			// check if this list of headers is already unique (e.g. created by GetUniqueHeaders (IEnumerable<HeaderId>))
+			if (headers is UniqueHeaderSet unique)
+				return unique;
+
+			var hash = new UniqueHeaderSet ();
+
+			foreach (var header in headers) {
+				if (header.Length == 0)
+					throw new ArgumentException ($"Invalid header field: {header}", nameof (headers));
+
+				for (int i = 0; i < header.Length; i++) {
+					char c = header[i];
+
+					if (!(c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '-')
+						throw new ArgumentException ($"Illegal characters in header field: {header}", nameof (headers));
+				}
+
+				hash.Add (header.ToUpperInvariant ());
+			}
+
+			return hash;
+		}
+
+		public static HashSet<string> GetUniqueHeaders (IEnumerable<HeaderId> headers)
+		{
+			if (headers == null)
+				throw new ArgumentNullException (nameof (headers));
+
+			var hash = new UniqueHeaderSet ();
+
+			foreach (var header in headers) {
+				if (header == HeaderId.Unknown)
+					continue;
+
+				hash.Add (header.ToHeaderName ().ToUpperInvariant ());
+			}
+
+			return hash;
+		}
+
 		static bool TryGetInt32 (string text, ref int index, out int value)
 		{
 			int startIndex = index;

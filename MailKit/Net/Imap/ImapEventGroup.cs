@@ -217,16 +217,73 @@ namespace MailKit.Net.Imap {
 		public static readonly ImapMailboxFilter Subscribed = new ImapMailboxFilter ("SUBSCRIBED");
 
 		/// <summary>
-		/// An IMAP mailbox filter that specifies a custom list of folders.
+		/// An IMAP mailbox filter that specifies a list of folders to receive notifications about.
 		/// </summary>
 		/// <remarks>
-		/// An IMAP mailbox filter that specifies a custom list of folders.
+		/// An IMAP mailbox filter that specifies a list of folders to receive notifications about.
 		/// </remarks>
-		public abstract class MultiMailboxFilter : ImapMailboxFilter
+		public class Mailboxes : ImapMailboxFilter
 		{
 			readonly ImapFolder[] folders;
 
-			protected MultiMailboxFilter (string name, IList<IMailFolder> folders) : base (name)
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Mailboxes"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Mailboxes"/> class.
+			/// </remarks>
+			/// <param name="folders">The list of folders to watch for events.</param>
+			/// <exception cref="System.ArgumentNullException">
+			/// <paramref name="folders"/> is <c>null</c>.
+			/// </exception>
+			/// <exception cref="System.ArgumentException">
+			/// <para>The list of <paramref name="folders"/> is empty.</para>
+			/// <para>-or-</para>
+			/// <para>The list of <paramref name="folders"/> contains folders that are not of
+			/// type <see cref="ImapFolder"/>.</para>
+			/// </exception>
+			public Mailboxes (IList<IMailFolder> folders) : this ("MAILBOXES", folders)
+			{
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Mailboxes"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Mailboxes"/> class.
+			/// </remarks>
+			/// <param name="folders">The list of folders to watch for events.</param>
+			/// <exception cref="System.ArgumentNullException">
+			/// <paramref name="folders"/> is <c>null</c>.
+			/// </exception>
+			/// <exception cref="System.ArgumentException">
+			/// <para>The list of <paramref name="folders"/> is empty.</para>
+			/// <para>-or-</para>
+			/// <para>The list of <paramref name="folders"/> contains folders that are not of
+			/// type <see cref="ImapFolder"/>.</para>
+			/// </exception>
+			public Mailboxes (params IMailFolder[] folders) : this ("MAILBOXES", folders)
+			{
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Mailboxes"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Mailboxes"/> class.
+			/// </remarks>
+			/// <param name="name">The name of the mailbox filter.</param>
+			/// <param name="folders">The list of folders to watch for events.</param>
+			/// <exception cref="System.ArgumentNullException">
+			/// <paramref name="folders"/> is <c>null</c>.
+			/// </exception>
+			/// <exception cref="System.ArgumentException">
+			/// <para>The list of <paramref name="folders"/> is empty.</para>
+			/// <para>-or-</para>
+			/// <para>The list of <paramref name="folders"/> contains folders that are not of
+			/// type <see cref="ImapFolder"/>.</para>
+			/// </exception>
+			internal Mailboxes (string name, IList<IMailFolder> folders) : base (name)
 			{
 				if (folders == null)
 					throw new ArgumentNullException (nameof (folders));
@@ -243,6 +300,15 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
+			/// <summary>
+			/// Format the IMAP NOTIFY command for this particular IMAP mailbox filter.
+			/// </summary>
+			/// <remarks>
+			/// Formats the IMAP NOTIFY command for this particular IMAP mailbox filter.
+			/// </remarks>
+			/// <param name="engine">The IMAP engine.</param>
+			/// <param name="command">The IMAP command builder.</param>
+			/// <param name="args">The IMAP command argument builder.</param>
 			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args)
 			{
 				command.Append (Name);
@@ -269,35 +335,50 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// An IMAP mailbox filter that specifies a list of folders to receive notifications about.
-		/// </summary>
-		/// <remarks>
-		/// An IMAP mailbox filter that specifies a list of folders to receive notifications about.
-		/// </remarks>
-		public sealed class Mailboxes : MultiMailboxFilter
-		{
-			public Mailboxes (IList<IMailFolder> folders) : base ("MAILBOXES", folders)
-			{
-			}
-
-			public Mailboxes (params IMailFolder[] folders) : base ("MAILBOXES", folders)
-			{
-			}
-		}
-
-		/// <summary>
 		/// An IMAP mailbox filter that specifies a list of folder subtrees to get notifications about.
 		/// </summary>
 		/// <remarks>
 		/// <para>The client will receive notifications for each specified folder plus all selectable
 		/// folders that are subordinate to any of the specified folders.</para>
 		/// </remarks>
-		public sealed class Subtree : MultiMailboxFilter
+		public class Subtree : Mailboxes
 		{
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Subtree"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Subtree"/> class.
+			/// </remarks>
+			/// <param name="folders">The list of folders to watch for events.</param>
+			/// <exception cref="System.ArgumentNullException">
+			/// <paramref name="folders"/> is <c>null</c>.
+			/// </exception>
+			/// <exception cref="System.ArgumentException">
+			/// <para>The list of <paramref name="folders"/> is empty.</para>
+			/// <para>-or-</para>
+			/// <para>The list of <paramref name="folders"/> contains folders that are not of
+			/// type <see cref="ImapFolder"/>.</para>
+			/// </exception>
 			public Subtree (IList<IMailFolder> folders) : base ("SUBTREE", folders)
 			{
 			}
 
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Subtree"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapMailboxFilter.Subtree"/> class.
+			/// </remarks>
+			/// <param name="folders">The list of folders to watch for events.</param>
+			/// <exception cref="System.ArgumentNullException">
+			/// <paramref name="folders"/> is <c>null</c>.
+			/// </exception>
+			/// <exception cref="System.ArgumentException">
+			/// <para>The list of <paramref name="folders"/> is empty.</para>
+			/// <para>-or-</para>
+			/// <para>The list of <paramref name="folders"/> contains folders that are not of
+			/// type <see cref="ImapFolder"/>.</para>
+			/// </exception>
 			public Subtree (params IMailFolder[] folders) : base ("SUBTREE", folders)
 			{
 			}
@@ -339,64 +420,217 @@ namespace MailKit.Net.Imap {
 		}
 	}
 
+	/// <summary>
+	/// An IMAP notification event.
+	/// </summary>
+	/// <remarks>
+	/// An IMAP notification event.
+	/// </remarks>
 	public class ImapEvent
 	{
+		/// <summary>
+		/// An IMAP event notification for expunged messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the expunged message or messages are in the selected mailbox, the server notifies the client
+		/// using <see cref="IMailFolder.MessageExpunged"/> (or <see cref="IMailFolder.MessagesVanished"/> if
+		/// the <a href="https://tools.ietf.org/html/rfc5162">QRESYNC</a> extension has been enabled via
+		/// <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/> or
+		/// <see cref="ImapClient.EnableQuickResyncAsync(System.Threading.CancellationToken)"/>).</para>
+		/// <para>If the expunged message or messages are in another mailbox, the <see cref="IMailFolder.UidNext"/>
+		/// and <see cref="IMailFolder.Count"/> properties will be updated and <see cref="IMailFolder.CountChanged"/>
+		/// will be emitted for the relevant folder. If the <a href="https://tools.ietf.org/html/rfc5162">QRESYNC</a>
+		/// extension is enabled, the <see cref="IMailFolder.HighestModSeq"/> property will also be updated and
+		/// the <see cref="IMailFolder.HighestModSeqChanged"/> event will also be emitted.</para>
+		/// <note type="note">if a client requests <see cref="MessageExpunge"/> with the <see cref="ImapMailboxFilter.Selected"/>
+		/// mailbox specifier, the meaning of a message index can change at any time, so the client cannot use
+		/// message indexes in commands anymore. The client MUST use API variants that take <see cref="UniqueId"/> or
+		/// a <see cref="IList{UniqueId}"/>. The meaning of <c>*</c>* can also change when messages are added or expunged.
+		/// A client wishing to keep using message indexes can either use the <see cref="ImapMailboxFilter.SelectedDelayed"/>
+		/// mailbox specifier or can avoid using the <see cref="MessageExpunge"/> event entirely.</note>
+		/// </remarks>
 		public static readonly ImapEvent MessageExpunge = new ImapEvent ("MessageExpunge", true);
+
+
 		public static readonly ImapEvent FlagChange = new ImapEvent ("FlagChange", true);
 		public static readonly ImapEvent AnnotationChange = new ImapEvent ("AnnotationChange", true);
 
+		/// <summary>
+		/// AN IMAP event notification for folders that have been created, deleted, or renamed.
+		/// </summary>
+		/// <remarks>
+		/// <para>These notifications are sent if an affected mailbox name was created, deleted, or renamed. If the server
+		/// supports <see cref="ImapCapabilities.Acl"/>, granting or revocation of the <see cref="AccessRight.LookupFolder"/>
+		/// right to the current user on the affected folder will also be considered folder creation or deletion, respectively.
+		/// If a folder is created or deleted, the folder itself and its direct parent (whether it is an existing folder or not)
+		/// are considered to be affected.</para>
+		/// </remarks>
 		public static readonly ImapEvent MailboxName = new ImapEvent ("MailboxName", false);
-		public static readonly ImapEvent SubscriptionChange = new ImapEvent ("SubscriptionChange", false);
+
+		/// <summary>
+		/// An IMAP event notification for folders who have had their subscription status changed.
+		/// </summary>
+		/// <remarks>
+		/// <para>This event requests that the server notifies the client of subscription status changes,
+		/// causing the <see cref="IMailFolder.Subscribed"/> or <see cref="IMailFolder.Unsubscribed"/>
+		/// events to be emitted accordingly.</para>
+		/// </remarks>
+		public static readonly ImapEvent SubscriptionChange = new ImapEvent ("SubscriptionChange", false); // TODO: make this work
+
+		/// <summary>
+		/// An IMAP event notification for changes to folder metadata.
+		/// </summary>
+		/// <remarks>
+		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapabilities.Metadata"/> is supported by the server,
+		/// in which case support for this event type is REQUIRED.</para>
+		/// </remarks>
 		public static readonly ImapEvent MailboxMetadataChange = new ImapEvent ("MailboxMetadataChange", false);
+
+		/// <summary>
+		/// An IMAP event notification for changes to server metadata.
+		/// </summary>
+		/// <remarks>
+		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapabilities.Metadata"/> is supported by the server,
+		/// in which case support for this event type is REQUIRED.</para>
+		/// </remarks>
 		public static readonly ImapEvent ServerMetadataChange = new ImapEvent ("ServerMetadataChange", false);
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent"/> class.
+		/// </remarks>
+		/// <param name="name">The name of the IMAP event.</param>
+		/// <param name="isMessageEvent"><c>true</c> if the event is a message event; otherwise, <c>false</c>.</param>
 		internal ImapEvent (string name, bool isMessageEvent)
 		{
 			IsMessageEvent = isMessageEvent;
 			Name = name;
 		}
 
-		public string Name { get; private set; }
+		/// <summary>
+		/// Get whether or not this <see cref="T:MailKit.Net.Imap.ImapEvent"/> is a message event.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not this <see cref="T:MailKit.Net.Imap.ImapEvent"/> is a message event.
+		/// </remarks>
+		/// <value><c>true</c> if is message event; otherwise, <c>false</c>.</value>
+		internal bool IsMessageEvent {
+			get; private set;
+		}
 
-		internal bool IsMessageEvent { get; private set; }
+		/// <summary>
+		/// Get the name of the IMAP event.
+		/// </summary>
+		/// <remarks>
+		/// Gets the name of the IMAP event.
+		/// </remarks>
+		/// <value>The name of the IMAP event.</value>
+		public string Name {
+			get; private set;
+		}
 
+		/// <summary>
+		/// Format the IMAP NOTIFY command for this particular IMAP mailbox filter.
+		/// </summary>
+		/// <remarks>
+		/// Formats the IMAP NOTIFY command for this particular IMAP mailbox filter.
+		/// </remarks>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="command">The IMAP command builder.</param>
+		/// <param name="args">The IMAP command argument builder.</param>
+		/// <param name="isSelectedFilter"><c>true</c> if the event is being registered for a
+		/// <see cref="ImapMailboxFilter.Selected"/> or <see cref="ImapMailboxFilter.SelectedDelayed"/>
+		/// mailbox filter.</param>
 		internal virtual void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter)
 		{
 			command.Append (Name);
 		}
 
-		public sealed class MessageNew : ImapEvent
+		/// <summary>
+		/// An IMAP event notification for new or appended messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>An IMAP event notification for new or appended messages.</para>
+		/// <para>If the new or appended message is in the selected folder, the folder will emit the
+		/// <see cref="IMailFolder.CountChanged"/> event, followed by a
+		/// <see cref="IMailFolder.MessageSummaryFetched"/> event containing the information requested by the client.</para>
+		/// <note type="note">These events will not be emitted for any message created by the client on this particular folder
+		/// as a result of, for example, a call to
+		/// <see cref="IMailFolder.Append(MimeMessage, MessageFlags, System.Threading.CancellationToken, ITransferProgress)"/>
+		/// or <see cref="IMailFolder.CopyTo(IList{UniqueId}, IMailFolder, System.Threading.CancellationToken)"/>.</note>
+		/// </remarks>
+		public class MessageNew : ImapEvent
 		{
-			public MessageSummaryItems MessageSummaryItems { get; private set; }
-			public HashSet<string> Headers { get; private set; }
+			readonly MessageSummaryItems items;
+			readonly HashSet<string> headers;
 
-			public MessageNew (MessageSummaryItems messageSummaryItems = MessageSummaryItems.None, HashSet<string> fields = null) : base ("MessageNew", true)
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
+			/// </remarks>
+			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
+			public MessageNew (MessageSummaryItems items = MessageSummaryItems.None) : base ("MessageNew", true)
 			{
-				MessageSummaryItems = messageSummaryItems;
-				Headers = fields;
+				this.items = items;
 			}
 
-			public MessageNew (MessageSummaryItems messageSummaryItems, HashSet<HeaderId> fields) : base ("MessageNew", true)
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
+			/// </remarks>
+			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
+			/// <param name="headers">Additional message headers to retrieve for new messages.</param>
+			public MessageNew (MessageSummaryItems items, HashSet<HeaderId> headers) : this (items)
 			{
-				MessageSummaryItems = messageSummaryItems;
-				Headers = ImapFolder.GetHeaderNames (fields);
+				this.headers = ImapUtils.GetUniqueHeaders (headers);
 			}
 
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
+			/// </remarks>
+			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
+			/// <param name="headers">Additional message headers to retrieve for new messages.</param>
+			public MessageNew (MessageSummaryItems items, HashSet<string> headers) : this (items)
+			{
+				this.headers = ImapUtils.GetUniqueHeaders (headers);
+			}
+
+			/// <summary>
+			/// Format the IMAP NOTIFY command for this particular IMAP mailbox filter.
+			/// </summary>
+			/// <remarks>
+			/// Formats the IMAP NOTIFY command for this particular IMAP mailbox filter.
+			/// </remarks>
+			/// <param name="engine">The IMAP engine.</param>
+			/// <param name="command">The IMAP command builder.</param>
+			/// <param name="args">The IMAP command argument builder.</param>
+			/// <param name="isSelectedFilter"><c>true</c> if the event is being registered for a
+			/// <see cref="ImapMailboxFilter.Selected"/> or <see cref="ImapMailboxFilter.SelectedDelayed"/>
+			/// mailbox filter.</param>
 			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter)
 			{
 				command.Append (Name);
 
-				if (MessageSummaryItems == MessageSummaryItems.None && (Headers == null || Headers.Count == 0))
+				if (items == MessageSummaryItems.None && headers.Count == 0)
 					return;
 
 				if (!isSelectedFilter)
 					throw new InvalidOperationException ("The MessageNew event cannot have any parameters for mailbox filters other than SELECTED and SELECTED-DELAYED.");
 
-				var items = MessageSummaryItems;
+				var xitems = items;
 				bool previewText;
 
 				command.Append (" ");
-				command.Append (ImapFolder.FormatSummaryItems (engine, ref items, Headers, out previewText, isNotify: true));
+				command.Append (ImapFolder.FormatSummaryItems (engine, ref xitems, headers, out previewText, isNotify: true));
 			}
 		}
 	}
