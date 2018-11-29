@@ -4260,7 +4260,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" Folder\r\n", "dovecot.list-folder.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 EXAMINE Folder (CONDSTORE)\r\n", "dovecot.examine-folder.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 NOTIFY SET STATUS (PERSONAL (MailboxName SubscriptionChange)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ) MessageExpunge FlagChange)) (SUBTREE Folder (MessageNew MessageExpunge))\r\n", "dovecot.notify.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 NOTIFY SET STATUS (PERSONAL (MailboxName SubscriptionChange)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ) MessageExpunge FlagChange)) (SUBTREE (INBOX Folder) (MessageNew MessageExpunge))\r\n", "dovecot.notify.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 IDLE\r\n", "dovecot.notify-idle.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006", "DONE\r\n", "dovecot.notify-idle-done.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK));
@@ -4344,7 +4344,7 @@ namespace UnitTests.Net.Imap {
 						ImapEvent.MessageExpunge,
 						ImapEvent.FlagChange
 					}),
-					new ImapEventGroup (new ImapMailboxFilter.Subtree (folder), new List<ImapEvent> {
+					new ImapEventGroup (new ImapMailboxFilter.Subtree (inbox, folder), new List<ImapEvent> {
 						new ImapEvent.MessageNew (),
 						ImapEvent.MessageExpunge
 					}),
@@ -4507,7 +4507,7 @@ namespace UnitTests.Net.Imap {
 						ImapEvent.MessageExpunge,
 						ImapEvent.FlagChange
 					}),
-					new ImapEventGroup (new ImapMailboxFilter.Subtree (folder), new List<ImapEvent> {
+					new ImapEventGroup (new ImapMailboxFilter.Subtree (inbox, folder), new List<ImapEvent> {
 						new ImapEvent.MessageNew (),
 						ImapEvent.MessageExpunge
 					}),
