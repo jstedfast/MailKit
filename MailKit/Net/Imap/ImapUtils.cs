@@ -94,7 +94,7 @@ namespace MailKit.Net.Imap {
 				for (int i = 0; i < header.Length; i++) {
 					char c = header[i];
 
-					if (!(c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '-')
+					if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-'))
 						throw new ArgumentException ($"Illegal characters in header field: {header}", nameof (headers));
 				}
 
