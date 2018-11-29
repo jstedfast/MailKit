@@ -44,7 +44,7 @@ namespace MailKit.Net.Imap
 {
 	public partial class ImapFolder
 	{
-		static readonly HashSet<string> EmptyHeaderFields = new HashSet<string> ();
+		internal static readonly HashSet<string> EmptyHeaderFields = new HashSet<string> ();
 		const string PreviewTextLength = "256";
 
 		class FetchSummaryContext
@@ -763,7 +763,7 @@ namespace MailKit.Net.Imap
 				return new IMessageSummary[0];
 
 			var set = UniqueIdSet.ToString (uids);
-			var query = FormatSummaryItems (ref items, null, out previewText);
+			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseqValue, vanished);
@@ -1580,7 +1580,7 @@ namespace MailKit.Net.Imap
 				return new IMessageSummary[0];
 
 			var set = ImapUtils.FormatIndexSet (indexes);
-			var query = FormatSummaryItems (ref items, null, out previewText);
+			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
@@ -1662,7 +1662,7 @@ namespace MailKit.Net.Imap
 				return new IMessageSummary[0];
 
 			var set = ImapUtils.FormatIndexSet (indexes);
-			var query = FormatSummaryItems (ref items, null, out previewText);
+			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseqValue);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -2452,7 +2452,7 @@ namespace MailKit.Net.Imap
 			if (min == Count)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (ref items, null, out previewText);
+			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext ();
@@ -2535,7 +2535,7 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 			CheckAllowIndexes ();
 
-			var query = FormatSummaryItems (ref items, null, out previewText);
+			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseqValue);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);

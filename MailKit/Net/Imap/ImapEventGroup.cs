@@ -575,6 +575,7 @@ namespace MailKit.Net.Imap {
 			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
 			public MessageNew (MessageSummaryItems items = MessageSummaryItems.None) : base ("MessageNew", true)
 			{
+				headers = ImapFolder.EmptyHeaderFields;
 				this.items = items;
 			}
 
