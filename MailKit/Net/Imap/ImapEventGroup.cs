@@ -226,7 +226,7 @@ namespace MailKit.Net.Imap {
 		{
 			readonly ImapFolder[] folders;
 
-			protected MultiMailboxFilter (string name, IList<ImapFolder> folders) : base (name)
+			protected MultiMailboxFilter (string name, IList<IMailFolder> folders) : base (name)
 			{
 				if (folders == null)
 					throw new ArgumentNullException (nameof (folders));
@@ -236,10 +236,10 @@ namespace MailKit.Net.Imap {
 
 				this.folders = new ImapFolder[folders.Count];
 				for (int i = 0; i < folders.Count; i++) {
-					if (folders[i] == null)
-						throw new ArgumentException ("The list of folders cannot contain null.", nameof (folders));
+					if (!(folders[i] is ImapFolder folder))
+						throw new ArgumentException ("All folders must be ImapFolders.", nameof (folders));
 
-					this.folders[i] = folders[i];
+					this.folders[i] = folder;
 				}
 			}
 
@@ -247,6 +247,8 @@ namespace MailKit.Net.Imap {
 			{
 				command.Append (Name);
 				command.Append (' ');
+
+				// FIXME: should we verify that each ImapFolder belongs to this ImapEngine?
 
 				if (folders.Length == 1) {
 					command.Append ("%F");
@@ -274,11 +276,11 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		public sealed class Mailboxes : MultiMailboxFilter
 		{
-			public Mailboxes (IList<ImapFolder> folders) : base ("MAILBOXES", folders)
+			public Mailboxes (IList<IMailFolder> folders) : base ("MAILBOXES", folders)
 			{
 			}
 
-			public Mailboxes (params ImapFolder[] folders) : base ("MAILBOXES", folders)
+			public Mailboxes (params IMailFolder[] folders) : base ("MAILBOXES", folders)
 			{
 			}
 		}
@@ -292,11 +294,11 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		public sealed class Subtree : MultiMailboxFilter
 		{
-			public Subtree (IList<ImapFolder> folders) : base ("SUBTREE", folders)
+			public Subtree (IList<IMailFolder> folders) : base ("SUBTREE", folders)
 			{
 			}
 
-			public Subtree (params ImapFolder[] folders) : base ("SUBTREE", folders)
+			public Subtree (params IMailFolder[] folders) : base ("SUBTREE", folders)
 			{
 			}
 		}

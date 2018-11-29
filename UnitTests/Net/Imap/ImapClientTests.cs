@@ -197,9 +197,11 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (null, new List<ImapEvent> ()));
 				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (ImapMailboxFilter.Selected, null));
 				Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Subtree (null));
-				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree (new List<ImapFolder> ()));
+				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree (new List<IMailFolder> ()));
+				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree (client.Inbox, null));
 				Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Mailboxes (null));
-				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes (new List<ImapFolder> ()));
+				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes (new List<IMailFolder> ()));
+				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes (client.Inbox, null));
 
 				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((string) null));
 				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((FolderNamespace) null));
