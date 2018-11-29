@@ -401,7 +401,7 @@ namespace MailKit.Net.Imap
 			OnMessageSummaryFetched (message);
 		}
 
-		static HashSet<string> GetHeaderNames (HashSet<HeaderId> fields)
+		internal static HashSet<string> GetHeaderNames (HashSet<HeaderId> fields)
 		{
 			if (fields == null)
 				return null;
@@ -490,11 +490,11 @@ namespace MailKit.Net.Imap
 
 			if ((items & MessageSummaryItems.Headers) != 0) {
 				tokens.Add ("BODY.PEEK[HEADER]");
-			} else if ((items & MessageSummaryItems.References) != 0 || fields != null) {
+			} else if ((items & MessageSummaryItems.References) != 0 || (fields != null && fields.Count != 0)) {
 				var headers = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
 				bool references = false;
 
-				if (fields != null) {
+				if (fields != null && fields.Count != 0) {
 					foreach (var field in fields) {
 						var name = field.ToUpperInvariant ();
 

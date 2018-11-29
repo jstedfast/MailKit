@@ -2,6 +2,8 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 
+using MimeKit;
+
 namespace MailKit.Net.Imap {
 	public sealed class ImapEventGroup
 	{
@@ -75,53 +77,33 @@ namespace MailKit.Net.Imap {
 		}
 	}
 
-	public abstract class ImapMailboxFilter
+	public class ImapMailboxFilter
 	{
-		sealed class Simple : ImapMailboxFilter
-		{
-			public string Name { get; private set; }
+		public static readonly ImapMailboxFilter Selected = new ImapMailboxFilter ("SELECTED");
+		public static readonly ImapMailboxFilter SelectedDelayed = new ImapMailboxFilter ("SELECTED-DELAYED");
+		public static readonly ImapMailboxFilter Inboxes = new ImapMailboxFilter ("INBOXES");
+		public static readonly ImapMailboxFilter Personal = new ImapMailboxFilter ("PERSONAL");
+		public static readonly ImapMailboxFilter Subscribed = new ImapMailboxFilter ("SUBSCRIBED");
 
-			public Simple (string name)
+		public abstract class MultiMailboxFilter : ImapMailboxFilter
+		{
+			protected MultiMailboxFilter (string name, IEnumerable<ImapFolder> folders) : base (name)
 			{
-				Name = name;
+				if (folders == null)
+					throw new ArgumentNullException (nameof (folders));
+
+				Folders = new List<ImapFolder> (folders);
+
+				if (Folders.Count == 0)
+					throw new ArgumentException ("Must supply at least one folder.", nameof (folders));
 			}
+
+			public List<ImapFolder> Folders { get; private set; }
 
 			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args)
 			{
 				command.Append (Name);
-			}
-		}
-
-		internal ImapMailboxFilter ()
-		{
-		}
-
-		internal abstract void Format (ImapEngine engine, StringBuilder command, IList<object> args);
-
-		public static readonly ImapMailboxFilter Selected = new Simple ("SELECTED");
-		public static readonly ImapMailboxFilter SelectedDelayed = new Simple ("SELECTED-DELAYED");
-		public static readonly ImapMailboxFilter Inboxes = new Simple ("INBOXES");
-		public static readonly ImapMailboxFilter Personal = new Simple ("PERSONAL");
-		public static readonly ImapMailboxFilter Subscribed = new Simple ("SUBSCRIBED");
-
-		public sealed class Subtree : ImapMailboxFilter
-		{
-			public IList<ImapFolder> Folders { get; private set; }
-
-			public Subtree (IList<ImapFolder> folders)
-			{
-				if (folders == null)
-					throw new ArgumentNullException (nameof (folders));
-
-				if (folders.Count == 0)
-					throw new ArgumentException ("Must supply at least one folder.", nameof (folders));
-
-				Folders = folders;
-			}
-
-			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args)
-			{
-				command.Append ("SUBTREE ");
+				command.Append (' ');
 
 				if (Folders.Count == 1) {
 					command.Append ("%F");
@@ -141,95 +123,81 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		public sealed class Mailboxes : ImapMailboxFilter
+		public sealed class Subtree : MultiMailboxFilter
 		{
-			public IList<ImapFolder> Folders { get; private set; }
-
-			public Mailboxes (IList<ImapFolder> folders)
+			public Subtree (IList<ImapFolder> folders) : base ("SUBTREE", folders)
 			{
-				if (folders == null)
-					throw new ArgumentNullException (nameof (folders));
-
-				if (folders.Count == 0)
-					throw new ArgumentException ("Must supply at least one folder.", nameof (folders));
-
-				Folders = folders;
 			}
+		}
 
-			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args)
+		public sealed class Mailboxes : MultiMailboxFilter
+		{
+			public Mailboxes (IList<ImapFolder> folders) : base ("MAILBOXES", folders)
 			{
-				command.Append ("MAILBOXES ");
-
-				if (Folders.Count == 1) {
-					command.Append ("%F");
-					args.Add (Folders[0]);
-				} else {
-					command.Append ("(");
-
-					for (int i = 0; i < Folders.Count; i++) {
-						if (i > 0)
-							command.Append (" ");
-						command.Append ("%F");
-						args.Add (Folders[i]);
-					}
-
-					command.Append (")");
-				}
 			}
+		}
+
+		internal ImapMailboxFilter (string name)
+		{
+			Name = name;
+		}
+
+		public string Name { get; private set; }
+
+		internal virtual void Format (ImapEngine engine, StringBuilder command, IList<object> args)
+		{
+			command.Append (Name);
 		}
 	}
 
-	public abstract class ImapEvent
+	public class ImapEvent
 	{
-		sealed class Simple : ImapEvent
-		{
-			internal string Name { get; private set; }
+		public static readonly ImapEvent MessageExpunge = new ImapEvent ("MessageExpunge", true);
+		public static readonly ImapEvent FlagChange = new ImapEvent ("FlagChange", true);
+		public static readonly ImapEvent AnnotationChange = new ImapEvent ("AnnotationChange", true);
 
-			internal Simple (string name, bool isMessageEvent) : base (isMessageEvent)
-			{
-				Name = name;
-			}
+		public static readonly ImapEvent MailboxName = new ImapEvent ("MailboxName", false);
+		public static readonly ImapEvent SubscriptionChange = new ImapEvent ("SubscriptionChange", false);
+		public static readonly ImapEvent MailboxMetadataChange = new ImapEvent ("MailboxMetadataChange", false);
+		public static readonly ImapEvent ServerMetadataChange = new ImapEvent ("ServerMetadataChange", false);
 
-			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter)
-			{
-				command.Append (Name);
-			}
-		}
-
-		internal ImapEvent (bool isMessageEvent)
+		internal ImapEvent (string name, bool isMessageEvent)
 		{
 			IsMessageEvent = isMessageEvent;
+			Name = name;
 		}
+
+		public string Name { get; private set; }
 
 		internal bool IsMessageEvent { get; private set; }
 
-		internal abstract void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter);
-
-		public static readonly ImapEvent MessageExpunge = new Simple ("MessageExpunge", true);
-		public static readonly ImapEvent FlagChange = new Simple ("FlagChange", true);
-		public static readonly ImapEvent AnnotationChange = new Simple ("AnnotationChange", true);
-
-		public static readonly ImapEvent MailboxName = new Simple ("MailboxName", false);
-		public static readonly ImapEvent SubscriptionChange = new Simple ("SubscriptionChange", false);
-		public static readonly ImapEvent MailboxMetadataChange = new Simple ("MailboxMetadataChange", false);
-		public static readonly ImapEvent ServerMetadataChange = new Simple ("ServerMetadataChange", false);
+		internal virtual void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter)
+		{
+			command.Append (Name);
+		}
 
 		public sealed class MessageNew : ImapEvent
 		{
 			public MessageSummaryItems MessageSummaryItems { get; private set; }
-			public HashSet<string> Fields { get; private set; }
+			public HashSet<string> Headers { get; private set; }
 
-			public MessageNew (MessageSummaryItems messageSummaryItems = MessageSummaryItems.None, HashSet<string> fields = null) : base (true)
+			public MessageNew (MessageSummaryItems messageSummaryItems = MessageSummaryItems.None, HashSet<string> fields = null) : base ("MessageNew", true)
 			{
 				MessageSummaryItems = messageSummaryItems;
-				Fields = fields;
+				Headers = fields;
+			}
+
+			public MessageNew (MessageSummaryItems messageSummaryItems, HashSet<HeaderId> fields) : base ("MessageNew", true)
+			{
+				MessageSummaryItems = messageSummaryItems;
+				Headers = ImapFolder.GetHeaderNames (fields);
 			}
 
 			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter)
 			{
-				command.Append ("MessageNew");
+				command.Append (Name);
 
-				if (MessageSummaryItems == MessageSummaryItems.None && Fields == null)
+				if (MessageSummaryItems == MessageSummaryItems.None && (Headers == null || Headers.Count == 0))
 					return;
 
 				if (!isSelectedFilter)
@@ -239,7 +207,7 @@ namespace MailKit.Net.Imap {
 				bool previewText;
 
 				command.Append (" ");
-				command.Append (ImapFolder.FormatSummaryItems (engine, ref items, Fields, out previewText, isNotify: true));
+				command.Append (ImapFolder.FormatSummaryItems (engine, ref items, Headers, out previewText, isNotify: true));
 			}
 		}
 	}

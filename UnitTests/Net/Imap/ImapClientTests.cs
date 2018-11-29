@@ -4294,7 +4294,14 @@ namespace UnitTests.Net.Imap {
 				// This fires due to having MessageNew, but not MessageExpunged
 				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, null)
+						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<HeaderId> ())
+					})
+				}));
+
+				// This fires due to having MessageNew, but not MessageExpunged
+				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
+					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
+						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<string> ())
 					})
 				}));
 
@@ -4305,13 +4312,20 @@ namespace UnitTests.Net.Imap {
 					})
 				}));
 
+				// This fires due to MessageNew being aded to a non-Selected folder
+				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
+					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
+						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<string> ())
+					})
+				}));
+
 				client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
 						new ImapEvent.MessageNew (),
 						ImapEvent.MessageExpunge,
 					}),
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, null),
+						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId),
 						ImapEvent.MessageExpunge,
 					}),
 				});
@@ -4359,23 +4373,37 @@ namespace UnitTests.Net.Imap {
 				// Test some InvalidOperationExceptions
 
 				// This fires due to non-message events for a Selected mailbox filter
-				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
+				Assert.Throws<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
 						ImapEvent.MailboxName,
 					})
 				}));
 
 				// This fires due to having MessageNew, but not MessageExpunged
-				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
+				Assert.Throws<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, null)
+						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<HeaderId> ())
+					})
+				}));
+
+				// This fires due to having MessageNew, but not MessageExpunged
+				Assert.Throws<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
+					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
+						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<string> ())
 					})
 				}));
 
 				// This fires due to having FlagsChanged but not MessageNew and MessageExpunged
-				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
+				Assert.Throws<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
 						ImapEvent.AnnotationChange, ImapEvent.FlagChange
+					})
+				}));
+
+				// This fires due to MessageNew being aded to a non-Selected folder
+				Assert.Throws<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
+					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
+						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, new HashSet<string> ())
 					})
 				}));
 
@@ -4385,7 +4413,7 @@ namespace UnitTests.Net.Imap {
 						ImapEvent.MessageExpunge,
 					}),
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId, null),
+						new ImapEvent.MessageNew (MessageSummaryItems.UniqueId),
 						ImapEvent.MessageExpunge,
 					}),
 				});
