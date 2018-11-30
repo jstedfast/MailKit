@@ -74,6 +74,11 @@ namespace MailKit.Net.Imap {
 			if (args == null)
 				throw new ArgumentNullException (nameof (args));
 
+			InitializeProperties (args);
+		}
+
+		void InitializeProperties (ImapFolderConstructorArgs args)
+		{
 			DirectorySeparator = args.DirectorySeparator;
 			EncodedName = args.EncodedName;
 			Attributes = args.Attributes;
@@ -5322,12 +5327,7 @@ namespace MailKit.Net.Imap {
 		{
 			var oldFullName = FullName;
 
-			DirectorySeparator = args.DirectorySeparator;
-			EncodedName = args.EncodedName;
-			Attributes = args.Attributes;
-			FullName = args.FullName;
-			Engine = args.Engine;
-			Name = args.Name;
+			InitializeProperties (args);
 
 			OnRenamed (oldFullName, FullName);
 		}

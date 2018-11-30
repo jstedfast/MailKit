@@ -500,7 +500,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type == ImapTokenType.CloseParen)
 						break;
 
-					// LIST extension
+					// a LIST extension
 
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
 
