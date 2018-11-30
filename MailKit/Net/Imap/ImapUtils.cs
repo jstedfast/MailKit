@@ -425,8 +425,8 @@ namespace MailKit.Net.Imap {
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, isLsub ? "LSUB" : "LIST", "{0}");
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			var attrs = FolderAttributes.None;
+			ImapFolder folder = null;
 			string encodedName;
-			ImapFolder folder;
 			char delim;
 
 			// parse the folder attributes list
@@ -485,7 +485,62 @@ namespace MailKit.Net.Imap {
 			if (IsInbox (encodedName))
 				attrs |= FolderAttributes.Inbox;
 
-			if (engine.GetCachedFolder (encodedName, out folder)) {
+			// peek at the next token to see if we have a LIST extension
+			token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+			if (token.Type == ImapTokenType.OpenParen) {
+				var renamed = false;
+
+				// read the '(' token
+				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				do {
+					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.CloseParen)
+						break;
+
+					// LIST extension
+
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
+
+					var atom = (string) token.Value;
+
+					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+
+					do {
+						token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+						if (token.Type == ImapTokenType.CloseParen)
+							break;
+
+						engine.Stream.UngetToken (token);
+
+						if (!renamed && atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
+							var oldEncodedName = await ReadFolderNameAsync (engine, delim, format, doAsync, cancellationToken).ConfigureAwait (false);
+
+							if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
+								var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
+
+								engine.FolderCache.Remove (oldEncodedName);
+								engine.FolderCache[encodedName] = oldFolder;
+								oldFolder.OnRenamed (args);
+								folder = oldFolder;
+							}
+
+							renamed = true;
+						} else {
+							await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
+						}
+					} while (true);
+				} while (true);
+			} else {
+				ImapEngine.AssertToken (token, ImapTokenType.Eoln, format, token);
+			}
+
+			if (folder != null || engine.GetCachedFolder (encodedName, out folder)) {
 				if ((attrs & FolderAttributes.NonExistent) != 0) {
 					folder.UpdatePermanentFlags (MessageFlags.None);
 					folder.UpdateAcceptedFlags (MessageFlags.None);
@@ -510,65 +565,6 @@ namespace MailKit.Net.Imap {
 			}
 
 			list.Add (folder);
-
-			token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-			if (token.Type == ImapTokenType.Eoln)
-				return;
-
-			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-			// LIST extension, probably something like: * LIST () "NewFolderName" ("OLDNAME" ("OldFolderName"))
-			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
-
-			do {
-				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-				if (token.Type == ImapTokenType.CloseParen)
-					break;
-
-				// LIST extension
-
-				ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
-
-				var atom = (string) token.Value;
-
-				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
-
-				do {
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					if (token.Type == ImapTokenType.CloseParen)
-						break;
-
-					engine.Stream.UngetToken (token);
-
-					if (atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
-						var oldEncodedName = await ReadFolderNameAsync (engine, delim, format, doAsync, cancellationToken).ConfigureAwait (false);
-
-						if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
-							var oldFullName = oldFolder.FullName;
-
-							engine.FolderCache.Remove (oldEncodedName);
-
-							oldFolder.ParentFolder = folder.ParentFolder;
-							oldFolder.EncodedName = folder.EncodedName;
-							oldFolder.FullName = folder.FullName;
-							oldFolder.Name = folder.Name;
-
-							engine.FolderCache[encodedName] = oldFolder;
-							list[list.Count - 1] = oldFolder;
-
-							oldFolder.OnRenamed (oldFullName, folder.FullName);
-							oldFolder.UpdateAttributes (folder.Attributes);
-						}
-					} else {
-						await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
-					}
-				} while (true);
-			} while (true);
 		}
 
 		/// <summary>

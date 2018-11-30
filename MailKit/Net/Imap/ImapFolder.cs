@@ -5318,6 +5318,20 @@ namespace MailKit.Net.Imap {
 			OnUidValidityChanged ();
 		}
 
+		internal void OnRenamed (ImapFolderConstructorArgs args)
+		{
+			var oldFullName = FullName;
+
+			DirectorySeparator = args.DirectorySeparator;
+			EncodedName = args.EncodedName;
+			Attributes = args.Attributes;
+			FullName = args.FullName;
+			Engine = args.Engine;
+			Name = args.Name;
+
+			OnRenamed (oldFullName, FullName);
+		}
+
 		#endregion
 
 		#endregion

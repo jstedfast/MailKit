@@ -177,7 +177,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The full name of the folder.</value>
 		public string FullName {
-			get; internal protected set;
+			get; protected set;
 		}
 
 		/// <summary>
@@ -188,7 +188,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The name of the folder.</value>
 		public string Name {
-			get; internal protected set;
+			get; protected set;
 		}
 
 		/// <summary>
@@ -14290,7 +14290,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="oldName">The old name of the folder.</param>
 		/// <param name="newName">The new name of the folder.</param>
-		internal protected virtual void OnRenamed (string oldName, string newName)
+		protected virtual void OnRenamed (string oldName, string newName)
 		{
 			var handler = Renamed;
 
