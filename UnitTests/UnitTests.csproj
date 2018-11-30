@@ -242,6 +242,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\notify.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\notify-idle.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\notify-idle-done.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\notify-list-personal.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\optimized-search.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\search-changed-since.txt" />

@@ -1890,6 +1890,15 @@ namespace MailKit.Net.Imap {
 					// the command registered an untagged handler for this atom...
 					await handler (this, current, -1, doAsync).ConfigureAwait (false);
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				} else if (atom == "LIST") {
+					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
+					var list = new List<ImapFolder> ();
+
+					await ImapUtils.ParseFolderListAsync (this, list, false, doAsync, cancellationToken).ConfigureAwait (false);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
+
+					// TODO: check for new folders and emit some sort of "created" event?
 				} else if (atom == "VANISHED" && folder != null) {
 					await folder.OnVanishedAsync (this, doAsync, cancellationToken).ConfigureAwait (false);
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -2424,16 +2433,11 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern + "*");
 			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderListAsync);
 			ic.UserData = list;
+			ic.Lsub = lsub;
 
 			QueueCommand (ic);
 
 			await RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			if (lsub) {
-				// the LSUB command does not send \Subscribed flags so we need to add them ourselves
-				for (int i = 0; i < list.Count; i++)
-					list[i].Attributes |= FolderAttributes.Subscribed;
-			}
 
 			ProcessResponseCodes (ic);
 

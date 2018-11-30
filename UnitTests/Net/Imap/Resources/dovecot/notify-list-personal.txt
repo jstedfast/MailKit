@@ -1,0 +1,12 @@
+* LIST (\HasNoChildren) "." Archives
+* LIST (\HasNoChildren) "." Drafts
+* LIST (\HasNoChildren) "." Junk
+* LIST (\HasNoChildren) "." "Sent Messages"
+* LIST (\HasNoChildren) "." Trash
+* LIST (\HasNoChildren) "." INBOX
+* LIST (\HasChildren) "." Folder
+* LIST (\HasNoChildren) "." DeleteMe
+* LIST (\HasNoChildren) "." RenameMe
+* LIST (\HasNoChildren) "." SubscribeMe
+* LIST (\HasNoChildren \Subscribed) "." UnsubscribeMe
+A######## OK List completed (0.000 + 0.000 secs).

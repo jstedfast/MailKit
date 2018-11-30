@@ -101,7 +101,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value>The encoded name.</value>
 		internal string EncodedName {
-			get; private set;
+			get; set;
 		}
 
 		/// <summary>
@@ -1263,9 +1263,11 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SUBSCRIBE", ic);
 
-			Attributes |= FolderAttributes.Subscribed;
+			if ((Attributes & FolderAttributes.Subscribed) == 0) {
+				Attributes |= FolderAttributes.Subscribed;
 
-			OnSubscribed ();
+				OnSubscribed ();
+			}
 		}
 
 		/// <summary>
@@ -1347,9 +1349,11 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("UNSUBSCRIBE", ic);
 
-			Attributes &= ~FolderAttributes.Subscribed;
+			if ((Attributes & FolderAttributes.Subscribed) != 0) {
+				Attributes &= ~FolderAttributes.Subscribed;
 
-			OnUnsubscribed ();
+				OnUnsubscribed ();
+			}
 		}
 
 		/// <summary>
@@ -5231,7 +5235,27 @@ namespace MailKit.Net.Imap {
 
 		internal void UpdateAttributes (FolderAttributes attrs)
 		{
+			var unsubscribed = false;
+			var subscribed = false;
+
+			if ((attrs & FolderAttributes.Subscribed) == 0)
+				unsubscribed = (Attributes & FolderAttributes.Subscribed) != 0;
+			else
+				subscribed = (Attributes & FolderAttributes.Subscribed) == 0;
+
+			var deleted = ((attrs & FolderAttributes.NonExistent) != 0) &&
+				(Attributes & FolderAttributes.NonExistent) == 0;
+
 			Attributes = attrs;
+
+			if (unsubscribed)
+				OnUnsubscribed ();
+
+			if (subscribed)
+				OnSubscribed ();
+
+			if (deleted)
+				OnDeleted ();
 		}
 
 		internal void UpdateAcceptedFlags (MessageFlags flags)

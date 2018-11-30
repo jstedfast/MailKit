@@ -4258,7 +4258,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000000 NAMESPACE\r\n", "dovecot.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" Folder\r\n", "dovecot.list-folder.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.notify-list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 EXAMINE Folder (CONDSTORE)\r\n", "dovecot.examine-folder.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 NOTIFY SET STATUS (PERSONAL (MailboxName SubscriptionChange)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ) MessageExpunge FlagChange)) (SUBTREE (INBOX Folder) (MessageNew MessageExpunge))\r\n", "dovecot.notify.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 IDLE\r\n", "dovecot.notify-idle.txt"));
@@ -4291,9 +4291,15 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = personal.GetSubfolders ();
 				var inbox = client.Inbox;
-				var junk = client.GetFolder (SpecialFolder.Junk);
-				var folder = client.GetFolder (client.PersonalNamespaces[0]).GetSubfolder ("Folder");
+
+				var folder = folders.FirstOrDefault (x => x.Name == "Folder");
+				var deleteMe = folders.FirstOrDefault (x => x.Name == "DeleteMe");
+				var renameMe = folders.FirstOrDefault (x => x.Name == "RenameMe");
+				var subscribeMe = folders.FirstOrDefault (x => x.Name == "SubscribeMe");
+				var unsubscribeMe = folders.FirstOrDefault (x => x.Name == "UnsubscribeMe");
 
 				folder.Open (FolderAccess.ReadOnly);
 
@@ -4361,13 +4367,26 @@ namespace UnitTests.Net.Imap {
 
 				var inboxHighestModSeqChanged = 0;
 				var inboxCountChanged = 0;
-				var inboxUnsubscribed = 0;
-				var inboxSubscribed = 0;
-				var junkRenamed = 0;
+				var unsubscribed = 0;
+				var subscribed = 0;
+				var deleted = 0;
+				var renamed = 0;
 
-				junk.Renamed += (sender, e) => {
-					Assert.AreEqual ("Spam", junk.FullName, "junk.FullName");
-					junkRenamed++;
+				deleteMe.Deleted += (sender, e) => {
+					deleted++;
+				};
+
+				renameMe.Renamed += (sender, e) => {
+					Assert.AreEqual ("RenamedFolder", renameMe.FullName, "renameMe.FullName");
+					renamed++;
+				};
+
+				subscribeMe.Subscribed += (sender, e) => {
+					subscribed++;
+				};
+
+				unsubscribeMe.Unsubscribed += (sender, e) => {
+					unsubscribed++;
 				};
 
 				inbox.HighestModSeqChanged += (sender, e) => {
@@ -4376,14 +4395,6 @@ namespace UnitTests.Net.Imap {
 
 				inbox.CountChanged += (sender, e) => {
 					inboxCountChanged++;
-				};
-
-				inbox.Unsubscribed += (sender, e) => {
-					inboxUnsubscribed++;
-				};
-
-				inbox.Subscribed += (sender, e) => {
-					inboxSubscribed++;
 				};
 
 				folder.MessageSummaryFetched += (sender, e) => {
@@ -4401,7 +4412,6 @@ namespace UnitTests.Net.Imap {
 
 				using (var done = new CancellationTokenSource ()) {
 					folder.CountChanged += (o, e) => {
-						Assert.AreEqual (1, folder.Count, "Messages in Folder");
 						done.Cancel ();
 					};
 
@@ -4415,10 +4425,11 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (1, inboxHighestModSeqChanged, "Inbox.HighestModSeqChanged");
 				Assert.AreEqual (1, inboxCountChanged, "Inbox.CountChanged");
-				//Assert.AreEqual (1, inboxUnsubscribed, "Inbox.Unsubscribed");
-				//Assert.AreEqual (1, inboxSubscribed, "Inbox.Subscribed");
 
-				//Assert.AreEqual (1, junkRenamed, "junk.Renamed");
+				Assert.AreEqual (1, deleted, "deleteMe.Deleted");
+				Assert.AreEqual (1, renamed, "renameMe.Renamed");
+				//Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
+				//Assert.AreEqual (1, unsubscribed, "unsubscribeMe.Renamed");
 
 				Assert.AreEqual (1, folder.Count, "Folder.Count");
 				Assert.AreEqual (1, folderCountChanged, "Folder.CountChanged");
@@ -4454,9 +4465,15 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = await personal.GetSubfoldersAsync ();
 				var inbox = client.Inbox;
-				var junk = client.GetFolder (SpecialFolder.Junk);
-				var folder = await client.GetFolder (client.PersonalNamespaces[0]).GetSubfolderAsync ("Folder");
+
+				var folder = folders.FirstOrDefault (x => x.Name == "Folder");
+				var deleteMe = folders.FirstOrDefault (x => x.Name == "DeleteMe");
+				var renameMe = folders.FirstOrDefault (x => x.Name == "RenameMe");
+				var subscribeMe = folders.FirstOrDefault (x => x.Name == "SubscribeMe");
+				var unsubscribeMe = folders.FirstOrDefault (x => x.Name == "UnsubscribeMe");
 
 				await folder.OpenAsync (FolderAccess.ReadOnly);
 
@@ -4524,13 +4541,26 @@ namespace UnitTests.Net.Imap {
 
 				var inboxHighestModSeqChanged = 0;
 				var inboxCountChanged = 0;
-				var inboxUnsubscribed = 0;
-				var inboxSubscribed = 0;
-				var junkRenamed = 0;
+				var unsubscribed = 0;
+				var subscribed = 0;
+				var deleted = 0;
+				var renamed = 0;
 
-				junk.Renamed += (sender, e) => {
-					Assert.AreEqual ("Spam", junk.FullName, "junk.FullName");
-					junkRenamed++;
+				deleteMe.Deleted += (sender, e) => {
+					deleted++;
+				};
+
+				renameMe.Renamed += (sender, e) => {
+					Assert.AreEqual ("RenamedFolder", renameMe.FullName, "renameMe.FullName");
+					renamed++;
+				};
+
+				subscribeMe.Subscribed += (sender, e) => {
+					subscribed++;
+				};
+
+				unsubscribeMe.Unsubscribed += (sender, e) => {
+					unsubscribed++;
 				};
 
 				inbox.HighestModSeqChanged += (sender, e) => {
@@ -4539,14 +4569,6 @@ namespace UnitTests.Net.Imap {
 
 				inbox.CountChanged += (sender, e) => {
 					inboxCountChanged++;
-				};
-
-				inbox.Unsubscribed += (sender, e) => {
-					inboxUnsubscribed++;
-				};
-
-				inbox.Subscribed += (sender, e) => {
-					inboxSubscribed++;
 				};
 
 				folder.MessageSummaryFetched += (sender, e) => {
@@ -4564,7 +4586,6 @@ namespace UnitTests.Net.Imap {
 
 				using (var done = new CancellationTokenSource ()) {
 					folder.CountChanged += (o, e) => {
-						Assert.AreEqual (1, folder.Count, "Messages in Folder");
 						done.Cancel ();
 					};
 
@@ -4578,10 +4599,11 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (1, inboxHighestModSeqChanged, "Inbox.HighestModSeqChanged");
 				Assert.AreEqual (1, inboxCountChanged, "Inbox.CountChanged");
-				//Assert.AreEqual (1, inboxUnsubscribed, "Inbox.Unsubscribed");
-				//Assert.AreEqual (1, inboxSubscribed, "Inbox.Subscribed");
 
-				//Assert.AreEqual (1, junkRenamed, "junk.Renamed");
+				Assert.AreEqual (1, deleted, "deleteMe.Deleted");
+				Assert.AreEqual (1, renamed, "renameMe.Renamed");
+				//Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
+				//Assert.AreEqual (1, unsubscribed, "unsubscribeMe.Renamed");
 
 				Assert.AreEqual (1, folder.Count, "Folder.Count");
 				Assert.AreEqual (1, folderCountChanged, "Folder.CountChanged");
