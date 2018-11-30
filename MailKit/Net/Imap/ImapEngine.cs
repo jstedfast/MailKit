@@ -1894,7 +1894,7 @@ namespace MailKit.Net.Imap {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
 					var list = new List<ImapFolder> ();
 
-					await ImapUtils.ParseFolderListAsync (this, list, false, doAsync, cancellationToken).ConfigureAwait (false);
+					await ImapUtils.ParseFolderListAsync (this, list, false, true, doAsync, cancellationToken).ConfigureAwait (false);
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
 
@@ -2225,11 +2225,24 @@ namespace MailKit.Net.Imap {
 				// back to just issuing a standard LIST command and hope we get back some SPECIAL-USE attributes.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/674 for dertails.
+				var command = new StringBuilder ("LIST ");
+				var returnsSubscribed = false;
+
 				if (QuirksMode != ImapQuirksMode.ProtonMail)
-					ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
+					command.Append ("(SPECIAL-USE) \"\" \"*\"");
 				else
-					ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"%%\"\r\n");
+					command.Append ("\"\" \"%%\"");
+
+				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+					command.Append (" RETURN (SUBSCRIBED)");
+					returnsSubscribed = true;
+				}
+
+				command.Append ("\r\n");
+
+				ic = new ImapCommand (this, cancellationToken, null, command.ToString ());
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+				ic.ListReturnsSubscribed = returnsSubscribed;
 				ic.UserData = list;
 
 				QueueCommand (ic);

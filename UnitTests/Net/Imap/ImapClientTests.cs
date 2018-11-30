@@ -115,7 +115,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
 			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED)\r\n", "dovecot.list-special-use.txt"));
 
 			using (var client = new ImapClient ()) {
 				var credentials = new NetworkCredential ("username", "password");
@@ -2240,7 +2240,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate.txt"));
 			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED)\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 ENABLE QRESYNC CONDSTORE\r\n", "dovecot.enable-qresync.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ))\r\n", "dovecot.list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 CREATE UnitTests.\r\n", ImapReplayCommandResponse.OK));
@@ -4257,7 +4257,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting-preauth.txt"));
 			commands.Add (new ImapReplayCommand ("A00000000 NAMESPACE\r\n", "dovecot.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED)\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.notify-list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 EXAMINE Folder (CONDSTORE)\r\n", "dovecot.examine-folder.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 NOTIFY SET STATUS (PERSONAL (MailboxName SubscriptionChange)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ) MessageExpunge FlagChange)) (SUBTREE (INBOX Folder) (MessageNew MessageExpunge))\r\n", "dovecot.notify.txt"));
@@ -4428,8 +4428,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (1, deleted, "deleteMe.Deleted");
 				Assert.AreEqual (1, renamed, "renameMe.Renamed");
-				//Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
-				//Assert.AreEqual (1, unsubscribed, "unsubscribeMe.Renamed");
+				Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
+				Assert.AreEqual (1, unsubscribed, "unsubscribeMe.Renamed");
 
 				Assert.AreEqual (1, folder.Count, "Folder.Count");
 				Assert.AreEqual (1, folderCountChanged, "Folder.CountChanged");
@@ -4602,8 +4602,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (1, deleted, "deleteMe.Deleted");
 				Assert.AreEqual (1, renamed, "renameMe.Renamed");
-				//Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
-				//Assert.AreEqual (1, unsubscribed, "unsubscribeMe.Renamed");
+				Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
+				Assert.AreEqual (1, unsubscribed, "unsubscribeMe.Renamed");
 
 				Assert.AreEqual (1, folder.Count, "Folder.Count");
 				Assert.AreEqual (1, folderCountChanged, "Folder.CountChanged");

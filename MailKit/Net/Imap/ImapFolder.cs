@@ -1436,11 +1436,13 @@ namespace MailKit.Net.Imap {
 			var status = items != StatusItems.None;
 			var list = new List<ImapFolder> ();
 			var command = new StringBuilder ();
+			var returnsSubscribed = false;
 			var lsub = subscribedOnly;
 
 			if (subscribedOnly) {
 				if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
 					command.Append ("LIST (SUBSCRIBED)");
+					returnsSubscribed = true;
 					lsub = false;
 				} else {
 					command.Append ("LSUB");
@@ -1456,8 +1458,10 @@ namespace MailKit.Net.Imap {
 					command.Append (" RETURN (");
 
 					if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
-						if (!subscribedOnly)
+						if (!subscribedOnly) {
 							command.Append ("SUBSCRIBED ");
+							returnsSubscribed = true;
+						}
 						command.Append ("CHILDREN ");
 					}
 
@@ -1466,8 +1470,10 @@ namespace MailKit.Net.Imap {
 					status = false;
 				} else if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
 					command.Append (" RETURN (");
-					if (!subscribedOnly)
+					if (!subscribedOnly) {
 						command.Append ("SUBSCRIBED ");
+						returnsSubscribed = true;
+					}
 					command.Append ("CHILDREN");
 					command.Append (')');
 				}
@@ -1477,6 +1483,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), pattern + "%");
 			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderListAsync);
+			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 			ic.Lsub = lsub;
 

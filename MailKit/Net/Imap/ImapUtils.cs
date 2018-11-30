@@ -420,7 +420,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="list">The list of folders to be populated.</param>
 		/// <param name="isLsub"><c>true</c> if it is an LSUB response; otherwise, <c>false</c>.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		public static async Task ParseFolderListAsync (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool doAsync, CancellationToken cancellationToken)
+		public static async Task ParseFolderListAsync (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, bool doAsync, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, isLsub ? "LSUB" : "LIST", "{0}");
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -555,7 +555,11 @@ namespace MailKit.Net.Imap {
 					attrs |= folder.Attributes | FolderAttributes.Subscribed;
 				} else {
 					// Note: only merge the SPECIAL-USE and \Subscribed attributes for a LIST command
-					attrs |= (folder.Attributes & (SpecialUseAttributes | FolderAttributes.Subscribed));
+					attrs |= folder.Attributes & SpecialUseAttributes;
+
+					// Note: only merge \Subscribed if the LIST command isn't expected to include it
+					if (!returnsSubscribed)
+						attrs |= folder.Attributes & FolderAttributes.Subscribed;
 				}
 
 				folder.UpdateAttributes (attrs);
@@ -578,7 +582,7 @@ namespace MailKit.Net.Imap {
 		{
 			var list = (List<ImapFolder>) ic.UserData;
 
-			return ParseFolderListAsync (engine, list, ic.Lsub, doAsync, ic.CancellationToken);
+			return ParseFolderListAsync (engine, list, ic.Lsub, ic.ListReturnsSubscribed, doAsync, ic.CancellationToken);
 		}
 
 		/// <summary>
