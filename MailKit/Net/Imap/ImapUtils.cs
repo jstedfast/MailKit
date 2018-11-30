@@ -566,9 +566,12 @@ namespace MailKit.Net.Imap {
 			} else {
 				folder = engine.CreateImapFolder (encodedName, attrs, delim);
 				engine.CacheFolder (folder);
+
+				// TODO: if list is null, emit FolderCreated event?
 			}
 
-			list.Add (folder);
+			// Note: list will be null if this is an unsolicited LIST response due to an active NOTIFY request
+			list?.Add (folder);
 		}
 
 		/// <summary>

@@ -1,5 +1,5 @@
-* LIST (\Drafts) "." Drafts
-* LIST (\Junk) "." Junk
-* LIST (\Sent) "." "Sent Messages"
-* LIST (\Trash) "." Trash
+* LIST (\Drafts \Subscribed) "." Drafts
+* LIST (\Junk \Subscribed) "." Junk
+* LIST (\Sent \Subscribed) "." "Sent Messages"
+* LIST (\Trash \Subscribed) "." Trash
 A######## OK List completed (0.000 + 0.000 secs).

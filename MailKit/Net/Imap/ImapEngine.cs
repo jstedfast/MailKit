@@ -1892,13 +1892,9 @@ namespace MailKit.Net.Imap {
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				} else if (atom == "LIST") {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
-					var list = new List<ImapFolder> ();
-
-					await ImapUtils.ParseFolderListAsync (this, list, false, true, doAsync, cancellationToken).ConfigureAwait (false);
+					await ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync, cancellationToken).ConfigureAwait (false);
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
-
-					// TODO: check for new folders and emit some sort of "created" event?
 				} else if (atom == "VANISHED" && folder != null) {
 					await folder.OnVanishedAsync (this, doAsync, cancellationToken).ConfigureAwait (false);
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -2107,8 +2103,20 @@ namespace MailKit.Net.Imap {
 					continue;
 				}
 
-				var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
+				var command = new StringBuilder ("LIST \"\" %S");
+				var returnsSubscribed = false;
+
+				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+					// Try to get the \Subscribed and \HasChildren or \HasNoChildren attributes
+					command.Append (" RETURN (SUBSCRIBED CHILDREN)");
+					returnsSubscribed = true;
+				}
+
+				command.Append ("\r\n");
+
+				var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), encodedName);
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+				ic.ListReturnsSubscribed = returnsSubscribed;
 				ic.UserData = new List<ImapFolder> ();
 
 				QueueCommand (ic);
@@ -2203,12 +2211,22 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task QuerySpecialFoldersAsync (bool doAsync, CancellationToken cancellationToken)
 		{
+			var command = new StringBuilder ("LIST \"\" \"INBOX\"");
 			var list = new List<ImapFolder> ();
+			var returnsSubscribed = false;
 			ImapFolder folder;
 			ImapCommand ic;
 
-			ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
+			if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+				command.Append (" RETURN (SUBSCRIBED CHILDREN)");
+				returnsSubscribed = true;
+			}
+
+			command.Append ("\r\n");
+
+			ic = new ImapCommand (this, cancellationToken, null, command.ToString ());
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 
 			QueueCommand (ic);
@@ -2225,8 +2243,10 @@ namespace MailKit.Net.Imap {
 				// back to just issuing a standard LIST command and hope we get back some SPECIAL-USE attributes.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/674 for dertails.
-				var command = new StringBuilder ("LIST ");
-				var returnsSubscribed = false;
+				returnsSubscribed = false;
+				command.Clear ();
+
+				command.Append ("LIST ");
 
 				if (QuirksMode != ImapQuirksMode.ProtonMail)
 					command.Append ("(SPECIAL-USE) \"\" \"*\"");
@@ -2234,7 +2254,7 @@ namespace MailKit.Net.Imap {
 					command.Append ("\"\" \"%%\"");
 
 				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
-					command.Append (" RETURN (SUBSCRIBED)");
+					command.Append (" RETURN (SUBSCRIBED CHILDREN)");
 					returnsSubscribed = true;
 				}
 
@@ -2274,14 +2294,25 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapFolder> GetQuotaRootFolderAsync (string quotaRoot, bool doAsync, CancellationToken cancellationToken)
 		{
-			var list = new List<ImapFolder> ();
 			ImapFolder folder;
 
 			if (GetCachedFolder (quotaRoot, out folder))
 				return folder;
 
-			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", quotaRoot);
+			var command = new StringBuilder ("LIST \"\" %S");
+			var list = new List<ImapFolder> ();
+			var returnsSubscribed = false;
+
+			if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+				command.Append (" RETURN (SUBSCRIBED CHILDREN)");
+				returnsSubscribed = true;
+			}
+
+			command.Append ("\r\n");
+
+			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), quotaRoot);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 
 			QueueCommand (ic);
@@ -2314,14 +2345,25 @@ namespace MailKit.Net.Imap {
 		public async Task<ImapFolder> GetFolderAsync (string path, bool doAsync, CancellationToken cancellationToken)
 		{
 			var encodedName = EncodeMailboxName (path);
-			var list = new List<ImapFolder> ();
 			ImapFolder folder;
 
 			if (GetCachedFolder (encodedName, out folder))
 				return folder;
 
-			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
+			var command = new StringBuilder ("LIST \"\" %S");
+			var list = new List<ImapFolder> ();
+			var returnsSubscribed = false;
+
+			if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+				command.Append (" RETURN (SUBSCRIBED CHILDREN)");
+				returnsSubscribed = true;
+			}
+
+			command.Append ("\r\n");
+
+			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), encodedName);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 
 			QueueCommand (ic);
@@ -2400,6 +2442,7 @@ namespace MailKit.Net.Imap {
 			var status = items != StatusItems.None;
 			var list = new List<ImapFolder> ();
 			var command = new StringBuilder ();
+			var returnsSubscribed = false;
 			var lsub = subscribedOnly;
 			ImapFolder folder;
 
@@ -2409,6 +2452,7 @@ namespace MailKit.Net.Imap {
 			if (subscribedOnly) {
 				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
 					command.Append ("LIST (SUBSCRIBED)");
+					returnsSubscribed = true;
 					lsub = false;
 				} else {
 					command.Append ("LSUB");
@@ -2424,8 +2468,10 @@ namespace MailKit.Net.Imap {
 					command.Append (" RETURN (");
 
 					if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
-						if (!subscribedOnly)
+						if (!subscribedOnly) {
 							command.Append ("SUBSCRIBED ");
+							returnsSubscribed = true;
+						}
 						command.Append ("CHILDREN ");
 					}
 
@@ -2434,8 +2480,10 @@ namespace MailKit.Net.Imap {
 					status = false;
 				} else if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
 					command.Append (" RETURN (");
-					if (!subscribedOnly)
+					if (!subscribedOnly) {
 						command.Append ("SUBSCRIBED ");
+						returnsSubscribed = true;
+					}
 					command.Append ("CHILDREN");
 					command.Append (')');
 				}
@@ -2445,6 +2493,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern + "*");
 			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderListAsync);
+			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 			ic.Lsub = lsub;
 
