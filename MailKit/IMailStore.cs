@@ -515,5 +515,13 @@ namespace MailKit {
 		/// will emit Alert events when they receive alert messages from the server.
 		/// </remarks>
 		event EventHandler<AlertEventArgs> Alert;
+
+		/// <summary>
+		/// Occurs when a folder is created.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="FolderCreated"/> event is emitted when a new folder is created.
+		/// </remarks>
+		event EventHandler<FolderCreatedEventArgs> FolderCreated;
 	}
 }

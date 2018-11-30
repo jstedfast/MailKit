@@ -727,7 +727,11 @@ namespace MailKit.Net.Imap {
 			var code = (MailboxIdResponseCode) GetResponseCode (ic, ImapResponseCodeType.MailboxId);
 			var id = code?.MailboxId;
 
-			return await GetCreatedFolderAsync (encodedName, id, false, doAsync, cancellationToken).ConfigureAwait (false);
+			var created = await GetCreatedFolderAsync (encodedName, id, false, doAsync, cancellationToken).ConfigureAwait (false);
+
+			Engine.OnFolderCreated (created);
+
+			return created;
 		}
 
 		/// <summary>
@@ -892,7 +896,11 @@ namespace MailKit.Net.Imap {
 			var code = (MailboxIdResponseCode) GetResponseCode (ic, ImapResponseCodeType.MailboxId);
 			var id = code?.MailboxId;
 
-			return await GetCreatedFolderAsync (encodedName, id, true, doAsync, cancellationToken).ConfigureAwait (false);
+			var created = await GetCreatedFolderAsync (encodedName, id, true, doAsync, cancellationToken).ConfigureAwait (false);
+
+			Engine.OnFolderCreated (created);
+
+			return created;
 		}
 
 		/// <summary>

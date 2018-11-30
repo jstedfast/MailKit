@@ -459,11 +459,14 @@ namespace MailKit.Net.Imap {
 		/// AN IMAP event notification for folders that have been created, deleted, or renamed.
 		/// </summary>
 		/// <remarks>
-		/// <para>These notifications are sent if an affected mailbox name was created, deleted, or renamed. If the server
-		/// supports <see cref="ImapCapabilities.Acl"/>, granting or revocation of the <see cref="AccessRight.LookupFolder"/>
-		/// right to the current user on the affected folder will also be considered folder creation or deletion, respectively.
-		/// If a folder is created or deleted, the folder itself and its direct parent (whether it is an existing folder or not)
-		/// are considered to be affected.</para>
+		/// <para>These notifications are sent if an affected mailbox name was created, deleted, or renamed.</para>
+		/// <para>As these notifications are received by the client, the apropriate will be emitted:
+		/// <see cref="ImapClient.FolderCreated"/>, <see cref="IMailFolder.Deleted"/>, or
+		/// <see cref="IMailFolder.Renamed"/>, respectively.</para>
+		/// <note type="info">If the server supports <see cref="ImapCapabilities.Acl"/>, granting or revocation of the
+		/// <see cref="AccessRight.LookupFolder"/> right to the current user on the affected folder will also be
+		/// considered folder creation or deletion, respectively. If a folder is created or deleted, the folder itself
+		/// and its direct parent (whether it is an existing folder or not) are considered to be affected.</note>
 		/// </remarks>
 		public static readonly ImapEvent MailboxName = new ImapEvent ("MailboxName", false);
 
@@ -471,11 +474,11 @@ namespace MailKit.Net.Imap {
 		/// An IMAP event notification for folders who have had their subscription status changed.
 		/// </summary>
 		/// <remarks>
-		/// <para>This event requests that the server notifies the client of subscription status changes,
+		/// <para>This event requests that the server notifies the client of any subscription changes,
 		/// causing the <see cref="IMailFolder.Subscribed"/> or <see cref="IMailFolder.Unsubscribed"/>
-		/// events to be emitted accordingly.</para>
+		/// events to be emitted accordingly on the affected <see cref="IMailFolder"/>.</para>
 		/// </remarks>
-		public static readonly ImapEvent SubscriptionChange = new ImapEvent ("SubscriptionChange", false); // TODO: make this work
+		public static readonly ImapEvent SubscriptionChange = new ImapEvent ("SubscriptionChange", false);
 
 		/// <summary>
 		/// An IMAP event notification for changes to folder metadata.

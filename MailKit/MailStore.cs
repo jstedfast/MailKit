@@ -806,5 +806,28 @@ namespace MailKit {
 			if (handler != null)
 				handler (this, new AlertEventArgs (message));
 		}
+
+		/// <summary>
+		/// Occurs when a folder is created.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="FolderCreated"/> event is emitted when a new folder is created.
+		/// </remarks>
+		public event EventHandler<FolderCreatedEventArgs> FolderCreated;
+
+		/// <summary>
+		/// Raise the folder created event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the folder created event.
+		/// </remarks>
+		/// <param name="folder">The folder that was just created.</param>
+		internal protected virtual void OnFolderCreated (IMailFolder folder)
+		{
+			var handler = FolderCreated;
+
+			if (handler != null)
+				handler (this, new FolderCreatedEventArgs (folder));
+		}
 	}
 }

@@ -4266,12 +4266,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000007 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt"));
 
-			// TODO: test MessageNew w/ headers, folder creates/deletes/renames, folder subscription changes, metadata changes, 
-			//
-			// Created: * LIST () "/" "NewMailbox"
-			// Deleted: * LIST (\NonExistent) "." "INBOX.DeletedMailbox"
-			// Renamed: * LIST () "/" "NewMailbox" ("OLDNAME" ("OldMailbox"))
-			// Subscribed: * LIST (\Subscribed) "/" "SubscribedMailbox"
+			// TODO: test MessageNew w/ headers and metadata changes
 
 			return commands;
 		}
@@ -4369,8 +4364,15 @@ namespace UnitTests.Net.Imap {
 				var inboxCountChanged = 0;
 				var unsubscribed = 0;
 				var subscribed = 0;
+				var created = 0;
 				var deleted = 0;
 				var renamed = 0;
+
+				client.FolderCreated += (sender, e) => {
+					Assert.AreEqual ("NewFolder", e.Folder.FullName, "e.Folder.FullName");
+					Assert.AreEqual (FolderAttributes.HasNoChildren, e.Folder.Attributes, "e.Folder.Attributes");
+					created++;
+				};
 
 				deleteMe.Deleted += (sender, e) => {
 					deleted++;
@@ -4426,6 +4428,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (1, inboxHighestModSeqChanged, "Inbox.HighestModSeqChanged");
 				Assert.AreEqual (1, inboxCountChanged, "Inbox.CountChanged");
 
+				Assert.AreEqual (1, created, "FolderCreated");
 				Assert.AreEqual (1, deleted, "deleteMe.Deleted");
 				Assert.AreEqual (1, renamed, "renameMe.Renamed");
 				Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
@@ -4543,8 +4546,15 @@ namespace UnitTests.Net.Imap {
 				var inboxCountChanged = 0;
 				var unsubscribed = 0;
 				var subscribed = 0;
+				var created = 0;
 				var deleted = 0;
 				var renamed = 0;
+
+				client.FolderCreated += (sender, e) => {
+					Assert.AreEqual ("NewFolder", e.Folder.FullName, "e.Folder.FullName");
+					Assert.AreEqual (FolderAttributes.HasNoChildren, e.Folder.Attributes, "e.Folder.Attributes");
+					created++;
+				};
 
 				deleteMe.Deleted += (sender, e) => {
 					deleted++;
@@ -4600,6 +4610,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (1, inboxHighestModSeqChanged, "Inbox.HighestModSeqChanged");
 				Assert.AreEqual (1, inboxCountChanged, "Inbox.CountChanged");
 
+				Assert.AreEqual (1, created, "FolderCreated");
 				Assert.AreEqual (1, deleted, "deleteMe.Deleted");
 				Assert.AreEqual (1, renamed, "renameMe.Renamed");
 				Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");

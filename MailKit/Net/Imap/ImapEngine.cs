@@ -2615,6 +2615,19 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Occurs when the engine receives a notification that a folder has been created.
+		/// </summary>
+		public event EventHandler<FolderCreatedEventArgs> FolderCreated;
+
+		internal void OnFolderCreated (IMailFolder folder)
+		{
+			var handler = FolderCreated;
+
+			if (handler != null)
+				handler (this, new FolderCreatedEventArgs (folder));
+		}
+
+		/// <summary>
 		/// Occurs when the engine receives a notification overflow message from the server.
 		/// </summary>
 		public event EventHandler<EventArgs> NotificationOverflow;

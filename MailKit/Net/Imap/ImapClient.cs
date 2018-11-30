@@ -116,6 +116,7 @@ namespace MailKit.Net.Imap {
 		{
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine (CreateImapFolder);
+			engine.FolderCreated += OnEngineFolderCreated;
 			engine.Disconnected += OnEngineDisconnected;
 			engine.Alert += OnEngineAlert;
 		}
@@ -2569,6 +2570,11 @@ namespace MailKit.Net.Imap {
 
 		#endregion
 
+		void OnEngineFolderCreated (object sender, FolderCreatedEventArgs e)
+		{
+			OnFolderCreated (e.Folder);
+		}
+
 		void OnEngineAlert (object sender, AlertEventArgs e)
 		{
 			OnAlert (e.Message);
@@ -2601,6 +2607,7 @@ namespace MailKit.Net.Imap {
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
+				engine.FolderCreated -= OnEngineFolderCreated;
 				engine.Disconnected -= OnEngineDisconnected;
 				engine.Alert -= OnEngineAlert;
 				engine.Dispose ();

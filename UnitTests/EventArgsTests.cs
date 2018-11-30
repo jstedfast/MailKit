@@ -58,6 +58,12 @@ namespace UnitTests {
 		}
 
 		[Test]
+		public void TestFolderCreatedEventArgs ()
+		{
+			Assert.Throws<ArgumentNullException> (() => new FolderCreatedEventArgs (null));
+		}
+
+		[Test]
 		public void TestFolderRenamedEventArgs ()
 		{
 			var args = new FolderRenamedEventArgs ("Istanbul", "Constantinople");
