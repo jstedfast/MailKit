@@ -438,10 +438,11 @@ namespace MailKit.Net.Imap {
 		/// <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/> or
 		/// <see cref="ImapClient.EnableQuickResyncAsync(System.Threading.CancellationToken)"/>).</para>
 		/// <para>If the expunged message or messages are in another mailbox, the <see cref="IMailFolder.UidNext"/>
-		/// and <see cref="IMailFolder.Count"/> properties will be updated and <see cref="IMailFolder.CountChanged"/>
-		/// will be emitted for the relevant folder. If the <a href="https://tools.ietf.org/html/rfc5162">QRESYNC</a>
+		/// and <see cref="IMailFolder.Count"/> properties will be updated and the appropriate
+		/// <see cref="IMailFolder.UidNextChanged"/> and <see cref="IMailFolder.CountChanged"/> events will be
+		/// emitted for the relevant folder. If the <a href="https://tools.ietf.org/html/rfc5162">QRESYNC</a>
 		/// extension is enabled, the <see cref="IMailFolder.HighestModSeq"/> property will also be updated and
-		/// the <see cref="IMailFolder.HighestModSeqChanged"/> event will also be emitted.</para>
+		/// the <see cref="IMailFolder.HighestModSeqChanged"/> event will be emitted.</para>
 		/// <note type="note">if a client requests <see cref="MessageExpunge"/> with the <see cref="ImapMailboxFilter.Selected"/>
 		/// mailbox specifier, the meaning of a message index can change at any time, so the client cannot use
 		/// message indexes in commands anymore. The client MUST use API variants that take <see cref="UniqueId"/> or
@@ -451,8 +452,37 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		public static readonly ImapEvent MessageExpunge = new ImapEvent ("MessageExpunge", true);
 
-
+		/// <summary>
+		/// An IMAP event notification for message flag changes.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the <see cref="FlagChange"/> notification arrives for a message located in the currently selected
+		/// folder, then that folder will emit a <see cref="IMailFolder.MessageFlagsChanged"/> event as well as a
+		/// <see cref="IMailFolder.MessageSummaryFetched"/> event with an appropriately populated
+		/// <see cref="IMessageSummary"/>.</para>
+		/// <para>On the other hand, if the <see cref="FlagChange"/> notification arrives for a message that is not
+		/// located in the currently selected folder, then the events that are emitted will depend on the
+		/// <see cref="ImapCapabilities"/> of the IMAP server.</para>
+		/// <para>If the server supports the <see cref="ImapCapabilities.CondStore"/> capability (or the
+		/// <see cref="ImapCapabilities.QuickResync"/> capability and the client has enabled it via
+		/// <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/>), then the
+		/// <see cref="IMailFolder.HighestModSeqChanged"/> event will be emitted as well as the
+		/// <see cref="IMailFolder.UidValidityChanged"/> event (if the latter has changed). If the number of
+		/// seen messages has changed, then the <see cref="IMailFolder.UnreadChanged"/> event may also be emitted.</para>
+		/// <para>If the server does not support either the <see cref="ImapCapabilities.CondStore"/> capability nor
+		/// the <see cref="ImapCapabilities.QuickResync"/> capability and the client has not enabled the later capability
+		/// via <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/>, then the server may choose
+		/// only to notify the client of <see cref="IMailFolder.UidValidity"/> changes by emitting the
+		/// <see cref="IMailFolder.UidValidityChanged"/> event.</para>
+		/// </remarks>
 		public static readonly ImapEvent FlagChange = new ImapEvent ("FlagChange", true);
+
+		/// <summary>
+		/// An IMAP event notification for message annotation changes.
+		/// </summary>
+		/// <remarks>
+		/// Annotations are currently not supported by MailKit.
+		/// </remarks>
 		public static readonly ImapEvent AnnotationChange = new ImapEvent ("AnnotationChange", true);
 
 		/// <summary>
@@ -461,7 +491,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>These notifications are sent if an affected mailbox name was created, deleted, or renamed.</para>
 		/// <para>As these notifications are received by the client, the apropriate will be emitted:
-		/// <see cref="ImapClient.FolderCreated"/>, <see cref="IMailFolder.Deleted"/>, or
+		/// <see cref="MailStore.FolderCreated"/>, <see cref="IMailFolder.Deleted"/>, or
 		/// <see cref="IMailFolder.Renamed"/>, respectively.</para>
 		/// <note type="info">If the server supports <see cref="ImapCapabilities.Acl"/>, granting or revocation of the
 		/// <see cref="AccessRight.LookupFolder"/> right to the current user on the affected folder will also be

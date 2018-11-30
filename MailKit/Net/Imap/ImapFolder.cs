@@ -5295,12 +5295,22 @@ namespace MailKit.Net.Imap {
 
 		internal void UpdateUnread (int count)
 		{
+			if (Unread == count)
+				return;
+
 			Unread = count;
+
+			OnUnreadChanged ();
 		}
 
 		internal void UpdateUidNext (UniqueId uid)
 		{
+			if (UidNext.HasValue && UidNext.Value == uid)
+				return;
+
 			UidNext = uid;
+
+			OnUidNextChanged ();
 		}
 
 		internal void UpdateAppendLimit (uint? limit)
@@ -5310,12 +5320,22 @@ namespace MailKit.Net.Imap {
 
 		internal void UpdateSize (ulong? size)
 		{
+			if (Size == size)
+				return;
+
 			Size = size;
+
+			OnSizeChanged ();
 		}
 
 		internal void UpdateId (string id)
 		{
+			if (Id == id)
+				return;
+
 			Id = id;
+
+			OnIdChanged ();
 		}
 
 		internal void UpdateHighestModSeq (ulong modseq)

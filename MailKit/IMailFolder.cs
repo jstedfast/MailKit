@@ -4500,18 +4500,42 @@ namespace MailKit {
 		event EventHandler<EventArgs> HighestModSeqChanged;
 
 		/// <summary>
+		/// Occurs when the next UID changes.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when the <see cref="UidNext"/> property changes.
+		/// </remarks>
+		event EventHandler<EventArgs> UidNextChanged;
+
+		/// <summary>
 		/// Occurs when the UID validity changes.
 		/// </summary>
 		/// <remarks>
-		/// Emitted when the UID validity changes.
+		/// Emitted when the <see cref="UidValidity"/> property changes.
 		/// </remarks>
 		event EventHandler<EventArgs> UidValidityChanged;
+
+		/// <summary>
+		/// Occurs when the ID changes.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when the <see cref="Id"/> property changes.
+		/// </remarks>
+		event EventHandler<EventArgs> IdChanged;
+
+		/// <summary>
+		/// Occurs when the size of the folder changes.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when the <see cref="Size"/> property changes.
+		/// </remarks>
+		event EventHandler<EventArgs> SizeChanged;
 
 		/// <summary>
 		/// Occurs when the message count changes.
 		/// </summary>
 		/// <remarks>
-		/// Emitted when the message count changes.
+		/// Emitted when the <see cref="Count"/> property changes.
 		/// </remarks>
 		event EventHandler<EventArgs> CountChanged;
 
@@ -4519,8 +4543,16 @@ namespace MailKit {
 		/// Occurs when the recent message count changes.
 		/// </summary>
 		/// <remarks>
-		/// Emitted when the recent message count changes.
+		/// Emitted when the <see cref="Recent"/> property changes.
 		/// </remarks>
 		event EventHandler<EventArgs> RecentChanged;
+
+		/// <summary>
+		/// Occurs when the message unread count changes.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when the <see cref="Unread"/> property changes.
+		/// </remarks>
+		event EventHandler<EventArgs> UnreadChanged;
 	}
 }

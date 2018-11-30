@@ -14561,6 +14561,28 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Occurs when the next UID changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="UidNextChanged"/> event is emitted whenever the <see cref="UidNext"/> value changes.
+		/// </remarks>
+		public event EventHandler<EventArgs> UidNextChanged;
+
+		/// <summary>
+		/// Raise the next UID changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the next UID changed event.
+		/// </remarks>
+		protected virtual void OnUidNextChanged ()
+		{
+			var handler = UidNextChanged;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
 		/// Occurs when the UID validity changes.
 		/// </summary>
 		/// <remarks>
@@ -14583,6 +14605,50 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Occurs when the folder ID changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="IdChanged"/> event is emitted whenever the <see cref="Id"/> value changes.
+		/// </remarks>
+		public event EventHandler<EventArgs> IdChanged;
+
+		/// <summary>
+		/// Raise the ID changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the ID changed event.
+		/// </remarks>
+		protected virtual void OnIdChanged ()
+		{
+			var handler = IdChanged;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Occurs when the folder size changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="SizeChanged"/> event is emitted whenever the <see cref="Size"/> value changes.
+		/// </remarks>
+		public event EventHandler<EventArgs> SizeChanged;
+
+		/// <summary>
+		/// Raise the size changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the size changed event.
+		/// </remarks>
+		protected virtual void OnSizeChanged ()
+		{
+			var handler = SizeChanged;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
 		/// Occurs when the message count changes.
 		/// </summary>
 		/// <remarks>
@@ -14594,10 +14660,10 @@ namespace MailKit {
 		public event EventHandler<EventArgs> CountChanged;
 
 		/// <summary>
-		/// Raise the count changed event.
+		/// Raise the message count changed event.
 		/// </summary>
 		/// <remarks>
-		/// Raises the count changed event.
+		/// Raises the message count changed event.
 		/// </remarks>
 		protected virtual void OnCountChanged ()
 		{
@@ -14616,14 +14682,36 @@ namespace MailKit {
 		public event EventHandler<EventArgs> RecentChanged;
 
 		/// <summary>
-		/// Raise the recent changed event.
+		/// Raise the recent message count changed event.
 		/// </summary>
 		/// <remarks>
-		/// Raises the recent changed event.
+		/// Raises the recent message count changed event.
 		/// </remarks>
 		protected virtual void OnRecentChanged ()
 		{
 			var handler = RecentChanged;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Occurs when the unread message count changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="UnreadChanged"/> event is emitted whenever the <see cref="Unread"/> value changes.
+		/// </remarks>
+		public event EventHandler<EventArgs> UnreadChanged;
+
+		/// <summary>
+		/// Raise the unread message count changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the unread message count changed event.
+		/// </remarks>
+		protected virtual void OnUnreadChanged ()
+		{
+			var handler = UnreadChanged;
 
 			if (handler != null)
 				handler (this, EventArgs.Empty);
