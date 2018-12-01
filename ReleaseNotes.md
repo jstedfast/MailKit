@@ -1,6 +1,6 @@
 # Release Notes
 
-### MailKit 2.5.0
+### MailKit 2.1.0
 
 * A number of fixes to bugs exposed in new unit tests for NTLM authentication.
 * Made SmtpClient, Pop3Client, and ImapClient's Connect() methods truly cancellable as well
@@ -29,7 +29,7 @@
 * Fixed adding/removing/setting of GMail labels to use UTF-8 when enabled.
 * Added support for the IMAP STATUS=SIZE extension which now provides a ImapFolder.Size property
   that specifies how large a folder is (in bytes). Clients can request this information using the
-  StatusItems.Size enum with either ImapFolder.GetSubfolders() or ImapFOlder.Status().
+  StatusItems.Size enum with either ImapFolder.GetSubfolders() or ImapFolder.Status().
 * Added support for the IMAP OBJECTID extension. ImapFolder and IMessageSummary now both have
   an Id property which is a globally unique identifier. IMessageSummary also now has a ThreadId
   property which is a unique identifier for the message thread/conversation that the message
