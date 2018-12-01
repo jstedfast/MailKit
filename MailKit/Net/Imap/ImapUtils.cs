@@ -598,7 +598,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="metadata">The metadata collection to be populated.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async Task<string> ParseMetadataAsync (ImapEngine engine, MetadataCollection metadata, bool doAsync, CancellationToken cancellationToken)
+		public static async Task ParseMetadataAsync (ImapEngine engine, MetadataCollection metadata, bool doAsync, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
 			var encodedName = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
@@ -618,8 +618,6 @@ namespace MailKit.Net.Imap {
 
 			// read the closing paren
 			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-			return encodedName;
 		}
 
 		/// <summary>
