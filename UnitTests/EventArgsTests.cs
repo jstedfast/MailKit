@@ -265,6 +265,17 @@ namespace UnitTests {
 		}
 
 		[Test]
+		public void TestMetadataChangedEventArgs ()
+		{
+			var args = new MetadataChangedEventArgs (new Metadata (MetadataTag.PrivateComment, "this is a comment"));
+
+			Assert.AreEqual (MetadataTag.PrivateComment, args.Metadata.Tag, "Tag");
+			Assert.AreEqual ("this is a comment", args.Metadata.Value, "Value");
+
+			Assert.Throws<ArgumentNullException> (() => new MetadataChangedEventArgs (null));
+		}
+
+		[Test]
 		public void TestModSeqChangedEventArgs ()
 		{
 			ModSeqChangedEventArgs args;
