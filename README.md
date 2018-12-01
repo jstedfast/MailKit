@@ -27,14 +27,14 @@ motivate me to continue working on the project.
 * SASL Authentication
   * [CRAM-MD5](https://tools.ietf.org/html/rfc2195)
   * [DIGEST-MD5](https://tools.ietf.org/html/rfc2831)
-  * LOGIN
-  * NTLM
+  * [LOGIN](https://tools.ietf.org/html/draft-murchison-sasl-login-00)
+  * [NTLM](http://davenport.sourceforge.net/ntlm.html)
   * [PLAIN](https://tools.ietf.org/html/rfc2595)
   * [SCRAM-SHA-1](https://tools.ietf.org/html/rfc5802)
   * [SCRAM-SHA-256](https://tools.ietf.org/html/rfc5802)
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
 * Proxy Support
-  * SOCKS4/4a
+  * [SOCKS4/4a](http://www.openssh.com/txt/socks4.protocol)
   * [SOCKS5](https://tools.ietf.org/html/rfc1928)
 * SMTP Client
   * Supports all of the SASL mechanisms listed above.
