@@ -450,7 +450,7 @@ come up with your own heuristics for getting the Sent, Drafts, Trash, etc folder
 might use logic similar to this:
 
 ```csharp
-static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", /* maybe add some translated names */ };
+static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", "Sent Messages", /* maybe add some translated names */ };
 
 static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
 {
@@ -470,7 +470,7 @@ static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationT
 Using LINQ, you could simplify this down to something more like this:
 
 ```csharp
-static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", /* maybe add some translated names */ };
+static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", "Sent Messages", /* maybe add some translated names */ };
 
 static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
 {
