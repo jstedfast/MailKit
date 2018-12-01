@@ -10,7 +10,7 @@
   when trying to emit the Authenticated event if the server did not supply any resp-code-text in
   the OK response to the AUTHENTICATE command. (issue [#774](https://github.com/jstedfast/MailKit/issues/774))
 * Modified ImapFolder.Create() to handle [ALREADYEXISTS] resp-codes.
-* Fixed ImapFolder.Create() for GMail when the isMessageFolder is false (GMail doesn't handle
+* Fixed ImapFolder.Create() for GMail when the isMessageFolder parameter is false (GMail doesn't handle
   it when the client attempts to create a folder ending with a directory separator).
 * Optimized ImapFolder's fallback for UID COPY command when UIDPLUS is not supported.
 * Reduced string allocations in the Connect(Uri) wrapper.
