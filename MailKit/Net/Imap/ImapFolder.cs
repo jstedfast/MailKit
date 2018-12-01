@@ -246,16 +246,6 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
-		static ImapFolder GetFolder (List<ImapFolder> folders, string encodedName)
-		{
-			for (int i = 0; i < folders.Count; i++) {
-				if (folders[i].EncodedName == encodedName)
-					return folders[i];
-			}
-
-			return null;
-		}
-
 		#region IMailFolder implementation
 
 		/// <summary>
@@ -684,7 +674,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
-			if ((folder = GetFolder (list, encodedName)) != null) {
+			if ((folder = ImapEngine.GetFolder (list, encodedName)) != null) {
 				folder.ParentFolder = this;
 				folder.Id = id;
 
@@ -1439,7 +1429,18 @@ namespace MailKit.Net.Imap {
 		{
 			CheckState (false, false);
 
-			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator : string.Empty;
+			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
+			// in order to reduce the list of folders returned by our LIST command.
+			var pattern = new StringBuilder (EncodedName.Length + 2);
+			pattern.Append (EncodedName);
+			for (int i = 0; i < EncodedName.Length; i++) {
+				if (pattern[i] == '*')
+					pattern[i] = '%';
+			}
+			if (pattern.Length > 0)
+				pattern.Append (DirectorySeparator);
+			pattern.Append ('%');
+
 			var children = new List<IMailFolder> ();
 			var status = items != StatusItems.None;
 			var list = new List<ImapFolder> ();
@@ -1489,7 +1490,7 @@ namespace MailKit.Net.Imap {
 
 			command.Append ("\r\n");
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), pattern + "%");
+			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), pattern.ToString ());
 			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderListAsync);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
@@ -1499,24 +1500,19 @@ namespace MailKit.Net.Imap {
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			// Note: Some broken IMAP servers (*cough* SmarterMail 13.0 *cough*) return folders
-			// that are not children of the folder we requested, so we need to filter those
-			// folders out of the list that we'll be returning to our caller.
-			//
-			// See https://github.com/jstedfast/MailKit/issues/149 for more details.
+			// Note: Due to the fact that folders can contain wildcards in them, we'll need to
+			// filter out any folders that are not children of this folder.
 			var prefix = FullName.Length > 0 ? FullName + DirectorySeparator : string.Empty;
 			prefix = ImapUtils.CanonicalizeMailboxName (prefix, DirectorySeparator);
 			foreach (var folder in list) {
 				var canonicalFullName = ImapUtils.CanonicalizeMailboxName (folder.FullName, folder.DirectorySeparator);
 				var canonicalName = ImapUtils.IsInbox (folder.FullName) ? "INBOX" : folder.Name;
 
-				if (canonicalFullName != prefix + canonicalName)
+				if (!canonicalFullName.StartsWith (prefix, StringComparison.Ordinal))
 					continue;
 
-				if (lsub) {
-					// the LSUB command does not send \Subscribed flags so we need to add them ourselves
-					folder.Attributes |= FolderAttributes.Subscribed;
-				}
+				if (string.Compare (canonicalFullName, prefix.Length, canonicalName, 0, canonicalName.Length, StringComparison.Ordinal) != 0)
+					continue;
 
 				folder.ParentFolder = this;
 				children.Add (folder);
@@ -1619,15 +1615,18 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
+			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
+			// in order to reduce the list of folders returned by our LIST command.
 			var fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
 			var encodedName = Engine.EncodeMailboxName (fullName);
+			var pattern = encodedName.Replace ('*', '%');
 			List<ImapFolder> list;
 			ImapFolder folder;
 
 			if (Engine.GetCachedFolder (encodedName, out folder))
 				return folder;
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
+			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", pattern);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 			ic.UserData = list = new List<ImapFolder> ();
 
@@ -1640,7 +1639,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
-			if ((folder = GetFolder (list, encodedName)) != null)
+			if ((folder = ImapEngine.GetFolder (list, encodedName)) != null)
 				return folder;
 
 			throw new FolderNotFoundException (fullName);

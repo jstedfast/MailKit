@@ -2118,7 +2118,7 @@ namespace MailKit.Net.Imap {
 		async Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, bool doAsync, CancellationToken cancellationToken)
 		{
 			var list = new List<ImapFolder> (folders);
-			string encodedName;
+			string encodedName, pattern;
 			ImapFolder parent;
 			int index;
 
@@ -2144,6 +2144,10 @@ namespace MailKit.Net.Imap {
 					continue;
 				}
 
+				// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
+				// in order to reduce the list of folders returned by our LIST command.
+				pattern = encodedName.Replace ('*', '%');
+
 				var command = new StringBuilder ("LIST \"\" %S");
 				var returnsSubscribed = false;
 
@@ -2155,7 +2159,7 @@ namespace MailKit.Net.Imap {
 
 				command.Append ("\r\n");
 
-				var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), encodedName);
+				var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern);
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 				ic.ListReturnsSubscribed = returnsSubscribed;
 				ic.UserData = new List<ImapFolder> ();
@@ -2211,6 +2215,16 @@ namespace MailKit.Net.Imap {
 			}
 
 			return ic.Response;
+		}
+
+		internal static ImapFolder GetFolder (List<ImapFolder> folders, string encodedName)
+		{
+			for (int i = 0; i < folders.Count; i++) {
+				if (folders[i].EncodedName == encodedName)
+					return folders[i];
+			}
+
+			return null;
 		}
 
 		/// <summary>
@@ -2365,7 +2379,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
-			if (list.Count == 0) {
+			if ((folder = GetFolder (list, quotaRoot)) == null) {
 				folder = CreateImapFolder (quotaRoot, FolderAttributes.NonExistent, '.');
 				CacheFolder (folder);
 				return folder;
@@ -2373,7 +2387,7 @@ namespace MailKit.Net.Imap {
 
 			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return list[0];
+			return folder;
 		}
 
 		/// <summary>
@@ -2416,12 +2430,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
-			if (list.Count == 0)
+			if ((folder = GetFolder (list, encodedName)) == null)
 				throw new FolderNotFoundException (path);
 
 			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return list[0];
+			return folder;
 		}
 
 		internal string GetStatusQuery (StatusItems items)
@@ -2688,12 +2702,13 @@ namespace MailKit.Net.Imap {
 
 		internal void OnNotificationOverflow ()
 		{
-			NotifySelectedNewExpunge = false; // [NOTIFICATIONOVERFLOW] will reset to NOTIFY NONE
+			// [NOTIFICATIONOVERFLOW] will reset to NOTIFY NONE
+			NotifySelectedNewExpunge = false;
 
 			var handler = NotificationOverflow;
 
 			if (handler != null)
-				handler (this, new EventArgs ());
+				handler (this, EventArgs.Empty);
 		}
 
 		public event EventHandler<EventArgs> Disconnected;
