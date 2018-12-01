@@ -45,7 +45,7 @@ namespace MailKit.Net.Proxy
 	{
 #if SERIALIZABLE
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.ProxyProtocolException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Proxy.ProxyProtocolException"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Creates a new <see cref="ProxyProtocolException"/> from the serialized data.
@@ -62,7 +62,7 @@ namespace MailKit.Net.Proxy
 #endif
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.ProxyProtocolException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Proxy.ProxyProtocolException"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Creates a new <see cref="ProxyProtocolException"/>.
@@ -74,7 +74,7 @@ namespace MailKit.Net.Proxy
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.ProxyProtocolException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Proxy.ProxyProtocolException"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Creates a new <see cref="ProxyProtocolException"/>.
@@ -85,7 +85,7 @@ namespace MailKit.Net.Proxy
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.ProxyProtocolException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Proxy.ProxyProtocolException"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Creates a new <see cref="ProxyProtocolException"/>.

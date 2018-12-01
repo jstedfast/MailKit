@@ -222,9 +222,9 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the list of headers, if available.</para>
-		/// <para>This property will only be set if the
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Collections.Generic.HashSet&lt;MimeKit.HeaderId&gt;,System.Threading.CancellationToken)"/>.
-		/// method is used.</para>
+		/// <para>This property will only be set if <see cref="MessageSummaryItems.Headers"/> is specified or specific headers are requested via a method such as
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Collections.Generic.IEnumerable&lt;MimeKit.HeaderId&gt;,System.Threading.CancellationToken)"/>.
+		/// that takes a list of specific headers to request for each message.</para>
 		/// </remarks>
 		/// <value>The list of headers.</value>
 		HeaderList Headers { get; }
