@@ -25,17 +25,17 @@ motivate me to continue working on the project.
 ## Features
 
 * SASL Authentication
-  * CRAM-MD5
-  * DIGEST-MD5
+  * [CRAM-MD5](https://tools.ietf.org/html/rfc2195)
+  * [DIGEST-MD5](https://tools.ietf.org/html/rfc2831)
   * LOGIN
   * NTLM
-  * PLAIN
-  * SCRAM-SHA-1
-  * SCRAM-SHA-256
+  * [PLAIN](https://tools.ietf.org/html/rfc2595)
+  * [SCRAM-SHA-1](https://tools.ietf.org/html/rfc5802)
+  * [SCRAM-SHA-256](https://tools.ietf.org/html/rfc5802)
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
 * Proxy Support
   * SOCKS4/4a
-  * SOCKS5
+  * [SOCKS5](https://tools.ietf.org/html/rfc1928)
 * SMTP Client
   * Supports all of the SASL mechanisms listed above.
   * Supports SSL-wrapped connections via the "smtps" protocol.
@@ -98,16 +98,15 @@ motivate me to continue working on the project.
     * [THREAD](https://tools.ietf.org/html/rfc5256)
     * [LIST-EXTENDED](https://tools.ietf.org/html/rfc5258)
     * [ESORT](https://tools.ietf.org/html/rfc5267)
-    * [METADATA](https://tools.ietf.org/html/rfc5464)
+    * [METADATA / METADATA-SERVER](https://tools.ietf.org/html/rfc5464)
+    * [NOTIFY](https://tools.ietf.org/html/rfc5465)
     * [FILTERS](https://tools.ietf.org/html/rfc5466)
     * [LIST-STATUS](https://tools.ietf.org/html/rfc5819)
     * [SORT=DISPLAY](https://tools.ietf.org/html/rfc5957)
-    * [SPECIAL-USE](https://tools.ietf.org/html/rfc6154)
-    * [CREATE-SPECIAL-USE](https://tools.ietf.org/html/rfc6154)
+    * [SPECIAL-USE / CREATE-SPECIAL-USE](https://tools.ietf.org/html/rfc6154)
     * [SEARCH=FUZZY](https://tools.ietf.org/html/rfc6203)
     * [MOVE](https://tools.ietf.org/html/rfc6851)
-    * [UTF8=ACCEPT](https://tools.ietf.org/html/rfc6855)
-    * [UTF8=ONLY](https://tools.ietf.org/html/rfc6855)
+    * [UTF8=ACCEPT / UTF8=ONLY](https://tools.ietf.org/html/rfc6855)
     * [LITERAL-](https://tools.ietf.org/html/rfc7888)
     * [APPENDLIMIT](https://tools.ietf.org/html/rfc7889)
     * [STATUS=SIZE](https://tools.ietf.org/html/rfc8438)
