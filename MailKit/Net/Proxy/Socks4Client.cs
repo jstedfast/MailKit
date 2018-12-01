@@ -222,8 +222,10 @@ namespace MailKit.Net.Proxy
 
 				return socket;
 			} catch {
+#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 				if (socket.Connected)
 					socket.Disconnect (false);
+#endif
 				socket.Dispose ();
 				throw;
 			}

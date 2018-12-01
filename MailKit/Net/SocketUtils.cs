@@ -35,6 +35,7 @@ namespace MailKit.Net
 {
 	static class SocketUtils
 	{
+#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 		class AsyncSocketState
 		{
 			public readonly CancellationToken CancellationToken;
@@ -54,6 +55,7 @@ namespace MailKit.Net
 			if (!state.CancellationToken.IsCancellationRequested)
 				state.Socket.EndConnect (ar);
 		}
+#endif
 
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -79,6 +81,7 @@ namespace MailKit.Net
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
 
+#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 					if (cancellationToken.CanBeCanceled) {
 						var state = new AsyncSocketState (socket, cancellationToken);
 						var ar = socket.BeginConnect (ipAddresses[i], port, SocketConnected, state);
@@ -90,10 +93,15 @@ namespace MailKit.Net
 					} else {
 						socket.Connect (ipAddresses[i], port);
 					}
+#else
+					socket.Connect (ipAddresses[i], port);
+#endif
 					break;
 				} catch (OperationCanceledException) {
+#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 					if (socket.Connected)
 						socket.Disconnect (false);
+#endif
 					socket.Dispose ();
 					socket = null;
 					throw;
