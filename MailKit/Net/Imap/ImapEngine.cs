@@ -2115,7 +2115,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="folders">The IMAP folders.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		async Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, bool doAsync, CancellationToken cancellationToken)
+		internal async Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, bool doAsync, CancellationToken cancellationToken)
 		{
 			var list = new List<ImapFolder> (folders);
 			string encodedName, pattern;
@@ -2129,6 +2129,7 @@ namespace MailKit.Net.Imap {
 				if (folder.ParentFolder != null)
 					continue;
 
+				// FIXME: should this search EncodedName instead of FullName?
 				if ((index = folder.FullName.LastIndexOf (folder.DirectorySeparator)) != -1) {
 					if (index == 0)
 						continue;

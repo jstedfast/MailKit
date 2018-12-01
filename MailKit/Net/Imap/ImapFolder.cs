@@ -1504,15 +1504,21 @@ namespace MailKit.Net.Imap {
 			// filter out any folders that are not children of this folder.
 			var prefix = FullName.Length > 0 ? FullName + DirectorySeparator : string.Empty;
 			prefix = ImapUtils.CanonicalizeMailboxName (prefix, DirectorySeparator);
+			var unparented = false;
+
 			foreach (var folder in list) {
 				var canonicalFullName = ImapUtils.CanonicalizeMailboxName (folder.FullName, folder.DirectorySeparator);
 				var canonicalName = ImapUtils.IsInbox (folder.FullName) ? "INBOX" : folder.Name;
 
-				if (!canonicalFullName.StartsWith (prefix, StringComparison.Ordinal))
+				if (!canonicalFullName.StartsWith (prefix, StringComparison.Ordinal)) {
+					unparented |= folder.ParentFolder == null;
 					continue;
+				}
 
-				if (string.Compare (canonicalFullName, prefix.Length, canonicalName, 0, canonicalName.Length, StringComparison.Ordinal) != 0)
+				if (string.Compare (canonicalFullName, prefix.Length, canonicalName, 0, canonicalName.Length, StringComparison.Ordinal) != 0) {
+					unparented |= folder.ParentFolder == null;
 					continue;
+				}
 
 				folder.ParentFolder = this;
 				children.Add (folder);
@@ -1522,6 +1528,11 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create (lsub ? "LSUB" : "LIST", ic);
+
+			// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
+			// parent folders now so that they are not left in an inconsistent state.
+			if (unparented)
+				await Engine.LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (status) {
 				for (int i = 0; i < children.Count; i++) {
@@ -1615,16 +1626,17 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
-			// in order to reduce the list of folders returned by our LIST command.
 			var fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
 			var encodedName = Engine.EncodeMailboxName (fullName);
-			var pattern = encodedName.Replace ('*', '%');
 			List<ImapFolder> list;
 			ImapFolder folder;
 
 			if (Engine.GetCachedFolder (encodedName, out folder))
 				return folder;
+
+			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
+			// in order to reduce the list of folders returned by our LIST command.
+			var pattern = encodedName.Replace ('*', '%');
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", pattern);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
@@ -1640,9 +1652,18 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("LIST", ic);
 
 			if ((folder = ImapEngine.GetFolder (list, encodedName)) != null)
-				return folder;
+				folder.ParentFolder = this;
 
-			throw new FolderNotFoundException (fullName);
+			if (list.Count > 1 || folder == null) {
+				// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
+				// parent folders now so that they are not left in an inconsistent state.
+				await Engine.LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
+			}
+
+			if (folder == null)
+				throw new FolderNotFoundException (fullName);
+
+			return folder;
 		}
 
 		/// <summary>
