@@ -116,6 +116,7 @@ namespace MailKit.Net.Imap {
 		{
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine (CreateImapFolder);
+			engine.MetadataChanged += OnEngineMetadataChanged;
 			engine.FolderCreated += OnEngineFolderCreated;
 			engine.Disconnected += OnEngineDisconnected;
 			engine.Alert += OnEngineAlert;
@@ -2306,7 +2307,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & ImapCapabilities.Metadata) == 0)
+			if ((engine.Capabilities & (ImapCapabilities.Metadata | ImapCapabilities.MetadataServer)) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			var ic = new ImapCommand (engine, cancellationToken, null, "GETMETADATA \"\" %S\r\n", tag.Id);
@@ -2323,12 +2324,19 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
 
+			string value = null;
+
 			for (int i = 0; i < metadata.Count; i++) {
-				if (metadata [i].Tag.Id == tag.Id)
-					return metadata [i].Value;
+				if (metadata[i].EncodedName.Length == 0 && metadata[i].Tag.Id == tag.Id) {
+					value = metadata[i].Value;
+					metadata.RemoveAt (i);
+					break;
+				}
 			}
 
-			return null;
+			engine.ProcessMetadataChanges (metadata);
+
+			return value;
 		}
 
 		/// <summary>
@@ -2350,7 +2358,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the METADATA extension.
+		/// The IMAP server does not support the METADATA or METADATA-SERVER extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2381,8 +2389,8 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & ImapCapabilities.Metadata) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
+			if ((engine.Capabilities & (ImapCapabilities.Metadata | ImapCapabilities.MetadataServer)) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the METADATA or METADATA-SERVER extension.");
 
 			var command = new StringBuilder ("GETMETADATA \"\"");
 			var args = new List<object> ();
@@ -2436,7 +2444,7 @@ namespace MailKit.Net.Imap {
 					options.LongEntries = metadata.Value;
 			}
 
-			return (MetadataCollection) ic.UserData;
+			return engine.FilterMetadata ((MetadataCollection) ic.UserData, string.Empty);
 		}
 
 		/// <summary>
@@ -2464,7 +2472,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the METADATA extension.
+		/// The IMAP server does not support the METADATA or METADATA-SERVER extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2492,8 +2500,8 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & ImapCapabilities.Metadata) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
+			if ((engine.Capabilities & (ImapCapabilities.Metadata | ImapCapabilities.MetadataServer)) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the METADATA or METADATA-SERVER extension.");
 
 			if (metadata.Count == 0)
 				return;
@@ -2549,7 +2557,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the METADATA extension.
+		/// The IMAP server does not support the METADATA or METADATA-SERVER extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2569,6 +2577,11 @@ namespace MailKit.Net.Imap {
 		}
 
 		#endregion
+
+		void OnEngineMetadataChanged (object sender, MetadataChangedEventArgs e)
+		{
+			OnMetadataChanged (e.Metadata);
+		}
 
 		void OnEngineFolderCreated (object sender, FolderCreatedEventArgs e)
 		{
@@ -2607,6 +2620,7 @@ namespace MailKit.Net.Imap {
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
+				engine.MetadataChanged -= OnEngineMetadataChanged;
 				engine.FolderCreated -= OnEngineFolderCreated;
 				engine.Disconnected -= OnEngineDisconnected;
 				engine.Alert -= OnEngineAlert;

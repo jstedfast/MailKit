@@ -787,7 +787,7 @@ namespace MailKit.Net.Imap
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the METADATA extension.
+		/// The IMAP server does not support the METADATA or METADATA-SERVER extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -831,7 +831,7 @@ namespace MailKit.Net.Imap
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the METADATA extension.
+		/// The IMAP server does not support the METADATA or METADATA-SERVER extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -872,7 +872,7 @@ namespace MailKit.Net.Imap
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the METADATA extension.
+		/// The IMAP server does not support the METADATA or METADATA-SERVER extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.

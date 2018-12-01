@@ -1,2 +1,2 @@
-* METADATA "" (/private/comment "this is a private comment")
+* METADATA "INBOX" (/private/comment "this is a private comment")
 A######## OK [METADATA LONGENTRIES 2199] GETMETADATA complete

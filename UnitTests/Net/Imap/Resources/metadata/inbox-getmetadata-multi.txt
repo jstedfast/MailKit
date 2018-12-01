@@ -1,2 +1,2 @@
-* METADATA "" (/private/comment "this is a private comment" /shared/comment "this is a shared comment")
+* METADATA "INBOX" (/private/comment "this is a private comment" /shared/comment "this is a shared comment")
 A######## OK GETMETADATA complete

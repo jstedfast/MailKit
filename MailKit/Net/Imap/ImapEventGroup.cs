@@ -514,8 +514,10 @@ namespace MailKit.Net.Imap {
 		/// An IMAP event notification for changes to folder metadata.
 		/// </summary>
 		/// <remarks>
-		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapabilities.Metadata"/> is supported by the server,
-		/// in which case support for this event type is REQUIRED.</para>
+		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapabilities.Metadata"/> is supported
+		/// by the server, in which case support for this event type is REQUIRED.</para>
+		/// <para>If the server does support this event, then the <see cref="IMailFolder.MetadataChanged"/> event
+		/// will be emitted whenever metadata changes for any folder included in the <see cref="ImapMailboxFilter"/>.</para>
 		/// </remarks>
 		public static readonly ImapEvent MailboxMetadataChange = new ImapEvent ("MailboxMetadataChange", false);
 
@@ -523,8 +525,10 @@ namespace MailKit.Net.Imap {
 		/// An IMAP event notification for changes to server metadata.
 		/// </summary>
 		/// <remarks>
-		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapabilities.Metadata"/> is supported by the server,
-		/// in which case support for this event type is REQUIRED.</para>
+		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapabilities.Metadata"/> is supported
+		/// by the server, in which case support for this event type is REQUIRED.</para>
+		/// <para>If the server does support this event, then the <see cref="IMailStore.MetadataChanged"/> event
+		/// will be emitted whenever metadata changes.</para>
 		/// </remarks>
 		public static readonly ImapEvent ServerMetadataChange = new ImapEvent ("ServerMetadataChange", false);
 

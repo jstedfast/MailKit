@@ -822,12 +822,35 @@ namespace MailKit {
 		/// Raises the folder created event.
 		/// </remarks>
 		/// <param name="folder">The folder that was just created.</param>
-		internal protected virtual void OnFolderCreated (IMailFolder folder)
+		protected virtual void OnFolderCreated (IMailFolder folder)
 		{
 			var handler = FolderCreated;
 
 			if (handler != null)
 				handler (this, new FolderCreatedEventArgs (folder));
+		}
+
+		/// <summary>
+		/// Occurs when metadata changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MetadataChanged"/> event is emitted when metadata changes.
+		/// </remarks>
+		public event EventHandler<MetadataChangedEventArgs> MetadataChanged;
+
+		/// <summary>
+		/// Raise the metadata changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the metadata changed event.
+		/// </remarks>
+		/// <param name="metadata">The metadata that changed.</param>
+		protected virtual void OnMetadataChanged (Metadata metadata)
+		{
+			var handler = MetadataChanged;
+
+			if (handler != null)
+				handler (this, new MetadataChangedEventArgs (metadata));
 		}
 	}
 }

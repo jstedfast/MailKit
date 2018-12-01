@@ -523,5 +523,13 @@ namespace MailKit {
 		/// The <see cref="FolderCreated"/> event is emitted when a new folder is created.
 		/// </remarks>
 		event EventHandler<FolderCreatedEventArgs> FolderCreated;
+
+		/// <summary>
+		/// Occurs when metadata changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MetadataChanged"/> event is emitted when metadata changes.
+		/// </remarks>
+		event EventHandler<MetadataChangedEventArgs> MetadataChanged;
 	}
 }

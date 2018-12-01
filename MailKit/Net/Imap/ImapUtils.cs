@@ -420,6 +420,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="list">The list of folders to be populated.</param>
 		/// <param name="isLsub"><c>true</c> if it is an LSUB response; otherwise, <c>false</c>.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public static async Task ParseFolderListAsync (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, bool doAsync, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, isLsub ? "LSUB" : "LIST", "{0}");
@@ -592,34 +593,47 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Parses an untagged METADATA response.
 		/// </summary>
+		/// <returns>The encoded name of the folder that the metadata belongs to.</returns>
 		/// <param name="engine">The IMAP engine.</param>
-		/// <param name="ic">The IMAP command.</param>
-		/// <param name="index">The index.</param>
+		/// <param name="metadata">The metadata collection to be populated.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		public static async Task ParseMetadataAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static async Task<string> ParseMetadataAsync (ImapEngine engine, MetadataCollection metadata, bool doAsync, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
-			var encodedName = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
-			var metadata = (MetadataCollection)ic.UserData;
-			ImapFolder folder;
+			var encodedName = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
-			engine.GetCachedFolder (encodedName, out folder);
-
-			var token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			while (token.Type != ImapTokenType.CloseParen) {
-				var tag = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
-				var value = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+				var tag = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+				var value = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
-				metadata.Add (new Metadata (MetadataTag.Create (tag), value));
+				metadata.Add (new Metadata (MetadataTag.Create (tag), value) { EncodedName = encodedName });
 
-				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
 			// read the closing paren
-			await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+			return encodedName;
+		}
+
+		/// <summary>
+		/// Parses an untagged METADATA response.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="index">The index.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		public static Task ParseMetadataAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			var metadata = (MetadataCollection) ic.UserData;
+
+			return ParseMetadataAsync (engine, metadata, doAsync, ic.CancellationToken);
 		}
 
 		internal static async Task<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)

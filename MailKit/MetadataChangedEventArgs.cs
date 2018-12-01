@@ -1,5 +1,5 @@
 ﻿//
-// Metadata.cs
+// MetadataChangedEventArgs.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,50 +24,43 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit {
 	/// <summary>
-	/// A metadata tag and value.
+	/// Event args used when a metadata changes.
 	/// </summary>
 	/// <remarks>
-	/// A metadata tag and value.
+	/// Event args used when a metadata changes.
 	/// </remarks>
-	public class Metadata
+	public class MetadataChangedEventArgs : EventArgs
 	{
-		internal string EncodedName;
-
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Metadata"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.MetadataChangedEventArgs"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="Metadata"/>.
+		/// Creates a new <see cref="MetadataChangedEventArgs"/>.
 		/// </remarks>
-		/// <param name="tag">The metadata tag.</param>
-		/// <param name="value">The meatdata value.</param>
-		public Metadata (MetadataTag tag, string value)
+		/// <param name="metadata">The metadata that changed.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="metadata"/> is <c>null</c>.
+		/// </exception>
+		public MetadataChangedEventArgs (Metadata metadata)
 		{
-			Value = value;
-			Tag = tag;
+			if (metadata == null)
+				throw new ArgumentNullException (nameof (metadata));
+
+			Metadata = metadata;
 		}
 
 		/// <summary>
-		/// Gets the metadata tag.
+		/// Get the metadata that changed.
 		/// </summary>
 		/// <remarks>
-		/// Gets the metadata tag.
+		/// Gets the metadata that changed.
 		/// </remarks>
-		/// <value>The metadata tag.</value>
-		public MetadataTag Tag {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the metadata value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the metadata value.
-		/// </remarks>
-		/// <value>The metadata value.</value>
-		public string Value {
+		/// <value>The metadata.</value>
+		public Metadata Metadata {
 			get; private set;
 		}
 	}

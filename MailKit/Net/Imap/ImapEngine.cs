@@ -1123,6 +1123,7 @@ namespace MailKit.Net.Imap {
 					case "LANGUAGE":           Capabilities |= ImapCapabilities.Language; break;
 					case "ESORT":              Capabilities |= ImapCapabilities.ESort; break;
 					case "METADATA":           Capabilities |= ImapCapabilities.Metadata; break;
+					case "METADATA-SERVER":    Capabilities |= ImapCapabilities.MetadataServer; break;
 					case "NOTIFY":             Capabilities |= ImapCapabilities.Notify; break;
 					case "LIST-STATUS":        Capabilities |= ImapCapabilities.ListStatus; break;
 					case "SORT=DISPLAY":       Capabilities |= ImapCapabilities.SortDisplay; break;
@@ -1275,6 +1276,38 @@ namespace MailKit.Net.Imap {
 					break;
 				}
 			}
+		}
+
+		void EmitMetadataChanged (Metadata metadata)
+		{
+			var encodedName = metadata.EncodedName;
+			ImapFolder folder;
+
+			if (encodedName.Length == 0) {
+				OnMetadataChanged (metadata);
+			} else if (FolderCache.TryGetValue (encodedName, out folder)) {
+				folder.OnMetadataChanged (metadata);
+			}
+		}
+
+		internal MetadataCollection FilterMetadata (MetadataCollection metadata, string encodedName)
+		{
+			for (int i = 0; i < metadata.Count; i++) {
+				if (metadata[i].EncodedName == encodedName)
+					continue;
+
+				EmitMetadataChanged (metadata[i]);
+				metadata.RemoveAt (i);
+				i--;
+			}
+
+			return metadata;
+		}
+
+		internal void ProcessMetadataChanges (MetadataCollection metadata)
+		{
+			for (int i = 0; i < metadata.Count; i++)
+				EmitMetadataChanged (metadata[i]);
 		}
 
 		internal static ImapResponseCodeType GetResponseCodeType (string atom)
@@ -1893,6 +1926,14 @@ namespace MailKit.Net.Imap {
 				} else if (atom == "LIST") {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
 					await ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync, cancellationToken).ConfigureAwait (false);
+					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
+				} else if (atom == "METADATA") {
+					// unsolicited METADATA response - probably due to NOTIFY MailboxMetadataChange or ServerMetadataChange
+					var metadata = new MetadataCollection ();
+					await ImapUtils.ParseMetadataAsync (this, metadata, doAsync, cancellationToken).ConfigureAwait (false);
+					ProcessMetadataChanges (metadata);
+
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
 				} else if (atom == "VANISHED" && folder != null) {
@@ -2625,6 +2666,19 @@ namespace MailKit.Net.Imap {
 
 			if (handler != null)
 				handler (this, new FolderCreatedEventArgs (folder));
+		}
+
+		/// <summary>
+		/// Occurs when the engine receives a notification that metadata has changed.
+		/// </summary>
+		public event EventHandler<MetadataChangedEventArgs> MetadataChanged;
+
+		internal void OnMetadataChanged (Metadata metadata)
+		{
+			var handler = MetadataChanged;
+
+			if (handler != null)
+				handler (this, new MetadataChangedEventArgs (metadata));
 		}
 
 		/// <summary>

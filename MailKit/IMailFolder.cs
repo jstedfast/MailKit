@@ -4484,6 +4484,14 @@ namespace MailKit {
 		event EventHandler<MessageSummaryFetchedEventArgs> MessageSummaryFetched;
 
 		/// <summary>
+		/// Occurs when metadata changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MetadataChanged"/> event is emitted when metadata changes.
+		/// </remarks>
+		event EventHandler<MetadataChangedEventArgs> MetadataChanged;
+
+		/// <summary>
 		/// Occurs when the mod-sequence changed on a message.
 		/// </summary>
 		/// <remarks>

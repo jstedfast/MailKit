@@ -2771,12 +2771,19 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
 
+			string value = null;
+
 			for (int i = 0; i < metadata.Count; i++) {
-				if (metadata[i].Tag.Id == tag.Id)
-					return metadata[i].Value;
+				if (metadata[i].EncodedName == EncodedName && metadata[i].Tag.Id == tag.Id) {
+					value = metadata[i].Value;
+					metadata.RemoveAt (i);
+					break;
+				}
 			}
 
-			return null;
+			Engine.ProcessMetadataChanges (metadata);
+
+			return value;
 		}
 
 		/// <summary>
@@ -2919,7 +2926,7 @@ namespace MailKit.Net.Imap {
 			if (metadata != null && metadata.SubType == MetadataResponseCodeSubType.LongEntries)
 				options.LongEntries = metadata.Value;
 
-			return (MetadataCollection) ic.UserData;
+			return Engine.FilterMetadata ((MetadataCollection) ic.UserData, EncodedName);
 		}
 
 		/// <summary>

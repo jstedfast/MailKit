@@ -208,6 +208,7 @@
     <Compile Include="MessageThread.cs" />
     <Compile Include="MessageThreader.cs" />
     <Compile Include="Metadata.cs" />
+    <Compile Include="MetadataChangedEventArgs.cs" />
     <Compile Include="MetadataCollection.cs" />
     <Compile Include="MetadataOptions.cs" />
     <Compile Include="MetadataTag.cs" />

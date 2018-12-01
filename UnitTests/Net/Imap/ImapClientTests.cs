@@ -4260,13 +4260,13 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.notify-list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 EXAMINE Folder (CONDSTORE)\r\n", "dovecot.examine-folder.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 NOTIFY SET STATUS (PERSONAL (MailboxName SubscriptionChange)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ) MessageExpunge FlagChange)) (SUBTREE (INBOX Folder) (MessageNew MessageExpunge))\r\n", "dovecot.notify.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 NOTIFY SET STATUS (PERSONAL (MailboxName SubscriptionChange)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ) MessageExpunge FlagChange)) (SUBTREE (INBOX Folder) (MessageNew MessageExpunge MailboxMetadataChange ServerMetadataChange))\r\n", "dovecot.notify.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 IDLE\r\n", "dovecot.notify-idle.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006", "DONE\r\n", "dovecot.notify-idle-done.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt"));
 
-			// TODO: test MessageNew w/ headers and metadata changes
+			// TODO: test MessageNew w/ headers
 
 			return commands;
 		}
@@ -4347,7 +4347,9 @@ namespace UnitTests.Net.Imap {
 					}),
 					new ImapEventGroup (new ImapMailboxFilter.Subtree (inbox, folder), new List<ImapEvent> {
 						new ImapEvent.MessageNew (),
-						ImapEvent.MessageExpunge
+						ImapEvent.MessageExpunge,
+						ImapEvent.MailboxMetadataChange,
+						ImapEvent.ServerMetadataChange
 					}),
 				});
 
@@ -4361,7 +4363,9 @@ namespace UnitTests.Net.Imap {
 				var folderFlagsChanged = 0;
 
 				var inboxHighestModSeqChanged = 0;
+				var inboxMetadataChanged = 0;
 				var inboxCountChanged = 0;
+				var metadataChanged = 0;
 				var unsubscribed = 0;
 				var subscribed = 0;
 				var created = 0;
@@ -4372,6 +4376,18 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual ("NewFolder", e.Folder.FullName, "e.Folder.FullName");
 					Assert.AreEqual (FolderAttributes.HasNoChildren, e.Folder.Attributes, "e.Folder.Attributes");
 					created++;
+				};
+
+				client.MetadataChanged += (sender, e) => {
+					Assert.AreEqual ("/private/comment", e.Metadata.Tag.Id, "Metadata.Tag");
+					Assert.AreEqual ("this is a comment", e.Metadata.Value, "Metadata.Value");
+					metadataChanged++;
+				};
+
+				inbox.MetadataChanged += (sender, e) => {
+					Assert.AreEqual ("/private/comment", e.Metadata.Tag.Id, "Metadata.Tag");
+					Assert.AreEqual ("this is a comment", e.Metadata.Value, "Metadata.Value");
+					inboxMetadataChanged++;
 				};
 
 				deleteMe.Deleted += (sender, e) => {
@@ -4426,6 +4442,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (3, inbox.HighestModSeq, "Inbox.HighestModSeq");
 
 				Assert.AreEqual (1, inboxHighestModSeqChanged, "Inbox.HighestModSeqChanged");
+				Assert.AreEqual (1, inboxMetadataChanged, "Inbox.MetadataChanged");
 				Assert.AreEqual (1, inboxCountChanged, "Inbox.CountChanged");
 
 				Assert.AreEqual (1, created, "FolderCreated");
@@ -4433,6 +4450,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (1, renamed, "renameMe.Renamed");
 				Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
 				Assert.AreEqual (1, unsubscribed, "unsubscribeMe.Renamed");
+				Assert.AreEqual (1, metadataChanged, "metadataChanged");
 
 				Assert.AreEqual (1, folder.Count, "Folder.Count");
 				Assert.AreEqual (1, folderCountChanged, "Folder.CountChanged");
@@ -4529,7 +4547,9 @@ namespace UnitTests.Net.Imap {
 					}),
 					new ImapEventGroup (new ImapMailboxFilter.Subtree (inbox, folder), new List<ImapEvent> {
 						new ImapEvent.MessageNew (),
-						ImapEvent.MessageExpunge
+						ImapEvent.MessageExpunge,
+						ImapEvent.MailboxMetadataChange,
+						ImapEvent.ServerMetadataChange
 					}),
 				});
 
@@ -4543,7 +4563,9 @@ namespace UnitTests.Net.Imap {
 				var folderFlagsChanged = 0;
 
 				var inboxHighestModSeqChanged = 0;
+				var inboxMetadataChanged = 0;
 				var inboxCountChanged = 0;
+				var metadataChanged = 0;
 				var unsubscribed = 0;
 				var subscribed = 0;
 				var created = 0;
@@ -4554,6 +4576,18 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual ("NewFolder", e.Folder.FullName, "e.Folder.FullName");
 					Assert.AreEqual (FolderAttributes.HasNoChildren, e.Folder.Attributes, "e.Folder.Attributes");
 					created++;
+				};
+
+				client.MetadataChanged += (sender, e) => {
+					Assert.AreEqual ("/private/comment", e.Metadata.Tag.Id, "Metadata.Tag");
+					Assert.AreEqual ("this is a comment", e.Metadata.Value, "Metadata.Value");
+					metadataChanged++;
+				};
+
+				inbox.MetadataChanged += (sender, e) => {
+					Assert.AreEqual ("/private/comment", e.Metadata.Tag.Id, "Metadata.Tag");
+					Assert.AreEqual ("this is a comment", e.Metadata.Value, "Metadata.Value");
+					inboxMetadataChanged++;
 				};
 
 				deleteMe.Deleted += (sender, e) => {
@@ -4608,6 +4642,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (3, inbox.HighestModSeq, "Inbox.HighestModSeq");
 
 				Assert.AreEqual (1, inboxHighestModSeqChanged, "Inbox.HighestModSeqChanged");
+				Assert.AreEqual (1, inboxMetadataChanged, "Inbbox.MetadataChanged");
 				Assert.AreEqual (1, inboxCountChanged, "Inbox.CountChanged");
 
 				Assert.AreEqual (1, created, "FolderCreated");
@@ -4615,6 +4650,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (1, renamed, "renameMe.Renamed");
 				Assert.AreEqual (1, subscribed, "subscribeMe.Deleted");
 				Assert.AreEqual (1, unsubscribed, "unsubscribeMe.Renamed");
+				Assert.AreEqual (1, metadataChanged, "metadataChanged");
 
 				Assert.AreEqual (1, folder.Count, "Folder.Count");
 				Assert.AreEqual (1, folderCountChanged, "Folder.CountChanged");
