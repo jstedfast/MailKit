@@ -2,8 +2,13 @@
 
 [![Join the chat at https://gitter.im/jstedfast/MailKit](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jstedfast/MailKit?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-|             |Build Status|Code Coverage|Static Analysis|
-|-------------|:----------:|:-----------:|:-------------:|
+|  Package  | Download |
+|:----------|:--------:|
+|**MimeKit**|[![NuGet Badge MimeKit](https://buildstats.info/nuget/MimeKit)](https://www.nuget.org/packages/MimeKit)|
+|**MailKit**|[![NuGet Badge MailKit](https://buildstats.info/nuget/MailKit)](https://www.nuget.org/packages/MailKit)|
+
+|  Platform   |Build Status|Code Coverage|Static Analysis|
+|:------------|:----------:|:-----------:|:-------------:|
 |**Linux/Mac**|[![Build Status](https://travis-ci.org/jstedfast/MailKit.svg)](https://travis-ci.org/jstedfast/MailKit)|[![Code Coverage](https://coveralls.io/repos/jstedfast/MailKit/badge.svg?branch=master)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://scan.coverity.com/projects/3202/badge.svg)](https://scan.coverity.com/projects/3202)|
 |**Windows**  |[![Build Status](https://ci.appveyor.com/api/projects/status/fd38t1ri3cmujnpq/branch/master?svg=true)](https://ci.appveyor.com/project/jstedfast/mailkit/branch/master)|[![Code Coverage](https://coveralls.io/repos/jstedfast/MailKit/badge.svg?branch=master)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://scan.coverity.com/projects/3202/badge.svg)](https://scan.coverity.com/projects/3202)|
 
