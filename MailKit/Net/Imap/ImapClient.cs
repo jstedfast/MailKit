@@ -1993,6 +1993,54 @@ namespace MailKit.Net.Imap {
 			engine.NotifySelectedNewExpunge = notifySelectedNewExpunge;
 		}
 
+		/// <summary>
+		/// Request the specified notification events from the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// <para>The <a href="https://tools.ietf.org/html/rfc5465">NOTIFY</a> command is used to expand
+		/// which notifications the client wishes to be notified about, including status notifications
+		/// about folders other than the currently selected folder. It can also be used to automatically
+		/// FETCH information about new messages that have arrived in the currently selected folder.</para>
+		/// <para>This, combined with <see cref="Idle(CancellationToken, CancellationToken)"/>,
+		/// can be used to get instant notifications for changes to any of the specified folders.</para>
+		/// </remarks>
+		/// <param name="status"><c>true</c> if the server should immediately notify the client of the
+		/// selected folder's status; otherwise, <c>false</c>.</param>
+		/// <param name="eventGroups">The specific event groups that the client would like to receive notifications for.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="eventGroups"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="eventGroups"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// One or more <see cref="ImapEventGroup"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the NOTIFY extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the NOTIFY command with a NO or BAD response.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server responded with an unexpected token.
+		/// </exception>
 		public void Notify (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			NotifyAsync (status, eventGroups, false, cancellationToken).GetAwaiter ().GetResult ();
@@ -2021,6 +2069,39 @@ namespace MailKit.Net.Imap {
 			engine.NotifySelectedNewExpunge = false;
 		}
 
+		/// <summary>
+		/// Disable any previously requested notification events from the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// Disables any notification events requested in a prior call to 
+		/// <see cref="Notify(bool, IList{ImapEventGroup}, CancellationToken)"/>.
+		/// request.
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the NOTIFY extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the NOTIFY command with a NO or BAD response.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server responded with an unexpected token.
+		/// </exception>
 		public void DisableNotify (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			DisableNotifyAsync (false, cancellationToken).GetAwaiter ().GetResult ();
