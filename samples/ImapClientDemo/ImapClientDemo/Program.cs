@@ -15,11 +15,8 @@ namespace ImapClientDemo
 	static class Program
 	{
 		public static readonly ImapClient Client = new ImapClient (new ProtocolLogger ("imap.txt"));
-		public static SecureSocketOptions SslOptions;
 		public static ICredentials Credentials;
 		public static MainWindow MainWindow;
-		public static string HostName;
-		public static int Port;
 
 		static TaskScheduler GuiTaskScheduler;
 		static Task CurrentTask = Task.FromResult (true);
@@ -79,17 +76,20 @@ namespace ImapClientDemo
 			CurrentTask = CurrentTask.ContinueWith (action, state, GuiTaskScheduler);
 		}
 
-		static async void OnClientDisconnected (object sender, EventArgs e)
+		static async void OnClientDisconnected (object sender, DisconnectedEventArgs e)
 		{
-			await ReconnectAsync ();
+			if (e.IsRequested)
+				return;
+
+			await ReconnectAsync (e.Host, e.Port, e.Options);
 		}
 
-		public static async Task ReconnectAsync ()
+		public static async Task ReconnectAsync (string host, int port, SecureSocketOptions options)
 		{
 			// Note: for demo purposes, we're ignoring SSL validation errors (don't do this in production code)
 			Client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
 
-			await Client.ConnectAsync (HostName, Port, SslOptions);
+			await Client.ConnectAsync (host, port, options);
 
 			try {
 				await Client.AuthenticateAsync (Credentials);

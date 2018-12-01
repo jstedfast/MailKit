@@ -77,24 +77,23 @@ namespace ImapClientDemo
 
 		async void SignInClicked (object sender, EventArgs e)
 		{
+			var options = SecureSocketOptions.StartTlsWhenAvailable;
+			var host = serverCombo.Text.Trim ();
 			var passwd = passwordTextBox.Text;
 			var user = loginTextBox.Text;
-
-			Program.HostName = serverCombo.Text.Trim ();
+			int port;
 
 			if (!string.IsNullOrEmpty (portCombo.Text))
-				Program.Port = int.Parse (portCombo.Text);
+				port = int.Parse (portCombo.Text);
 			else
-				Program.Port = 0; // default
+				port = 0; // default
 
 			Program.Credentials = new NetworkCredential (user, passwd);
 
 			if (sslCheckbox.Checked)
-				Program.SslOptions = SecureSocketOptions.SslOnConnect;
-			else
-				Program.SslOptions = SecureSocketOptions.StartTlsWhenAvailable;
+				options = SecureSocketOptions.SslOnConnect;
 
-			await Program.ReconnectAsync ();
+			await Program.ReconnectAsync (host, port, options);
 
 			Program.Queue (Program.MainWindow.LoadContentAsync);
 

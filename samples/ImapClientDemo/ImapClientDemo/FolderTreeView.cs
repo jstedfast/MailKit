@@ -134,7 +134,7 @@ namespace ImapClientDemo
 		{
 			var subfolders = await folder.GetSubfoldersAsync ();
 			var sorted = new List<IMailFolder> (subfolders);
-
+			
 			sorted.Sort (new FolderComparer ());
 
 			await LoadSubfoldersAsync (folder, sorted);

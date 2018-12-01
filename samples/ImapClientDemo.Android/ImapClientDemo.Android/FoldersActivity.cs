@@ -69,8 +69,7 @@ namespace ImapClientDemo
             
         async Task Reload ()
         {
-            var personal = Mail.Client.GetFolder (Mail.Client.PersonalNamespaces[0]); 
-
+            var personal = Mail.Client.GetFolder (Mail.Client.PersonalNamespaces[0]);
             var folders = new List<IMailFolder> ();
 
             // Recursively load all folders and subfolders
@@ -81,7 +80,7 @@ namespace ImapClientDemo
         }
 
         // Recursive function to load all folders and their subfolders
-		async Task LoadChildFolders (ICollection<IMailFolder> folders, IMailFolder folder)
+		async Task LoadChildFolders (List<IMailFolder> folders, IMailFolder folder)
         {
 			if (!folder.IsNamespace)
                 folders.Add (folder);
