@@ -1,5 +1,63 @@
 # Release Notes
 
+### MailKit 2.5.0
+
+* A number of fixes to bugs exposed in new unit tests for NTLM authentication.
+* Made SmtpClient, Pop3Client, and ImapClient's Connect() methods truly cancellable as well
+  as made the underlying socket.Connect() call adhere to any specified client.Timeout value.
+* Added support for connecting via a SOCKS4, SOCKS4a, or SOCKS5 proxy server.
+* Fixed ImapClient's OnAuthenticated() method to protect aganst throwing an ArgumentNullException
+  when trying to emit the Authenticated event if the server did not supply any resp-code-text in
+  the OK response to the AUTHENTICATE command. (issue [#774](https://github.com/jstedfast/MailKit/issues/774))
+* Modified ImapFolder.Create() to handle [ALREADYEXISTS] resp-codes.
+* Fixed ImapFolder.Create() for GMail when the isMessageFolder is false (GMail doesn't handle
+  it when the client attempts to create a folder ending with a directory separator).
+* Optimized ImapFolder's fallback for UID COPY command when UIDPLUS is not supported.
+* Reduced string allocations in the Connect(Uri) wrapper.
+* Added new ConnectedEventArgs and DisconnectedEventArgs that are used with the Connected and
+  Disconnected events to provide developers with even more useful information about what
+  server, port and SecureSocketOptions were used when connecting the client.
+* Fixed SmtpClient to immediately throw stream reading exceptions instead of ignoring them.
+  (issue [#776](https://github.com/jstedfast/MailKit/issues/776))
+* Fixed ImapClient.GetFoldersAsync() to call ImapFolder.StatusAsync() instead of Status()
+  when StatusItems are specified.
+* Changed ImapFolder.GetSubfolders() to return IList<IMailFolder> instead of IEnumerable<IMailFolder>.
+* Fixed ImapClient's NAMESPACE parser - it had Shared and Other namespace ordering reversed.
+* Fixed ImapFolder.Create() (for special-use) to only use unique uses if any were specified multiple times.
+* Modified ImapFolder.Open() to allow devs to re-Open() a folder with the same access in case they
+  need to do this to work around an IMAP server bug(?).
+* Fixed adding/removing/setting of GMail labels to use UTF-8 when enabled.
+* Added support for the IMAP STATUS=SIZE extension which now provides a ImapFolder.Size property
+  that specifies how large a folder is (in bytes). Clients can request this information using the
+  StatusItems.Size enum with either ImapFolder.GetSubfolders() or ImapFOlder.Status().
+* Added support for the IMAP OBJECTID extension. ImapFolder and IMessageSummary now both have
+  an Id property which is a globally unique identifier. IMessageSummary also now has a ThreadId
+  property which is a unique identifier for the message thread/conversation that the message
+  belongs to. This information can be retrieved for ImapFolders using ImapFolder.Status() with the
+  new StatusItems.MailboxId enum value. The IMessageSummary.Id and ThreadId properties have
+  the corresponding MessageSummaryItems enum values of Id and ThreadId, respectively.
+* Added another work-around for bad GMail IMAP BODYSTRUCTURE responses.
+  (issue [#777](https://github.com/jstedfast/MailKit/issues/777))
+* Fixed all integer TryParse methods to use NumberStyles.None and CultureInfo.InvariantCulture.
+* Added Connect() and ConnectAsync() overloads which accept a Stream instead of a Socket.
+* All ImapFolder.MessageFlagsChanged, ModSeqChanged, and LabelsChanged events will now also be
+  followed by a MessageSummaryFetched event containing the combined information of those events.
+* Added support for IMAP's NOTIFY extension. Many thanks to [Steffen Kieß](https://github.com/steffen-kiess)
+  for getting the ball rolling on this feature by implementing the neccessary ImapEvent, ImapEventGroup,
+  and ImapMailboxFilter classes as well as the initial support.
+
+API Changes Since 2.0.x:
+
+* Obsoleted SearchQuery.HasCustomFlags() and SearchQuery.DoesNotHaveCustomFlags(). These are
+  now SearchQuery.HasKeywords() and SearchQuery.NotKeywords(), respectively.
+* Obsoleted SearchQuery.DoesNotHaveFlags() in favor of SearchQuery.NotFlags().
+* Obsoleted the IMessageSummary.UserFlags property in favor of IMessageSummary.Keywords.
+* Obsoleted the MessageFlagsChangedEventArgs.UserFlags property in favor of
+  MessageFlagsChangedEventArgs.Keywords.
+* All IMailFolder.Fetch and IMailFolder.FetchAsync methods that took a HashSet<string> userFlags
+  argument now take an IEnumerable<string> keywords argument. Note: this only affects you if your
+  code used named method parameters (e.g. userFlags: myUserFlags).
+
 ### MailKit 2.0.7
 
 * Added a work-around for Exchange IMAP servers that send broken multipart BODYSTRUCTURE responses
