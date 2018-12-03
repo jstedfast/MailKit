@@ -36,7 +36,7 @@ namespace MailKit.Net
 	static class SocketUtils
 	{
 #if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
-		class AsyncSocketState
+		class AsyncSocketState : TaskCompletionSource<bool>
 		{
 			public readonly CancellationToken CancellationToken;
 			public readonly Socket Socket;
@@ -52,8 +52,17 @@ namespace MailKit.Net
 		{
 			var state = (AsyncSocketState) ar.AsyncState;
 
-			if (!state.CancellationToken.IsCancellationRequested)
+			if (state.CancellationToken.IsCancellationRequested) {
+				state.SetCanceled ();
+				return;
+			}
+
+			try {
 				state.Socket.EndConnect (ar);
+				state.SetResult (true);
+			} catch (Exception ex) {
+				state.SetException (ex);
+			}
 		}
 
 		static void Wait (IAsyncResult ar, CancellationToken cancellationToken)
@@ -80,13 +89,15 @@ namespace MailKit.Net
 					var ar = socket.BeginConnect (host, port, SocketConnected, state);
 
 					if (doAsync)
-						await Task.Run (() => Wait (ar, cancellationToken), cancellationToken);
+						await Task.Run (() => Wait (ar, cancellationToken), cancellationToken).ConfigureAwait (false);
 					else
 						Wait (ar, cancellationToken);
+
+					await state.Task;
 				} else if (doAsync) {
 					await Task.Run (() => {
 						socket.Connect (host, port);
-					}, cancellationToken);
+					}, cancellationToken).ConfigureAwait (false);
 				} else {
 					socket.Connect (host, port);
 				}
@@ -127,7 +138,7 @@ namespace MailKit.Net
 					if (doAsync) {
 						await Task.Run (() => {
 							socket.Connect (ipAddresses[i], port);
-						}, cancellationToken);
+						}, cancellationToken).ConfigureAwait (false);
 					} else {
 						socket.Connect (ipAddresses[i], port);
 					}
