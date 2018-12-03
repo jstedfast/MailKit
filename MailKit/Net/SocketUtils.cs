@@ -77,7 +77,13 @@ namespace MailKit.Net
 
 				if (cancellationToken.CanBeCanceled) {
 					var state = new AsyncSocketState (socket, cancellationToken);
-					socket.BeginConnect (host, port, SocketConnected, state);
+					var ar = socket.BeginConnect (host, port, SocketConnected, state);
+					var waitHandles = new WaitHandle[] { ar.AsyncWaitHandle, cancellationToken.WaitHandle };
+
+					WaitHandle.WaitAny (waitHandles);
+
+					cancellationToken.ThrowIfCancellationRequested ();
+
 					await state.Task;
 				} else {
 					socket.Connect (host, port);
