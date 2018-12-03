@@ -36,7 +36,7 @@ namespace MailKit.Net
 	static class SocketUtils
 	{
 #if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
-		class AsyncSocketState
+		class AsyncSocketState : TaskCompletionSource<bool>
 		{
 			public readonly CancellationToken CancellationToken;
 			public readonly Socket Socket;
@@ -52,24 +52,60 @@ namespace MailKit.Net
 		{
 			var state = (AsyncSocketState) ar.AsyncState;
 
-			if (!state.CancellationToken.IsCancellationRequested)
+			if (state.CancellationToken.IsCancellationRequested) {
+				state.SetCanceled ();
+				return;
+			}
+
+			try {
 				state.Socket.EndConnect (ar);
+				state.SetResult (true);
+			} catch (Exception ex) {
+				state.SetException (ex);
+			}
 		}
-#endif
 
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
 		{
-			IPAddress [] ipAddresses;
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var socket = new Socket (SocketType.Stream, ProtocolType.Tcp);
+
+			try {
+				if (localEndPoint != null)
+					socket.Bind (localEndPoint);
+
+				if (cancellationToken.CanBeCanceled) {
+					var state = new AsyncSocketState (socket, cancellationToken);
+					socket.BeginConnect (host, port, SocketConnected, state);
+					await state.Task;
+				} else {
+					socket.Connect (host, port);
+				}
+			} catch (OperationCanceledException) {
+				if (socket.Connected)
+					socket.Disconnect (false);
+
+				socket.Dispose ();
+				throw;
+			} catch {
+				socket.Dispose ();
+				throw;
+			}
+
+			return socket;
+		}
+#else // .NETStandard [1.3,1.6] and UniversalWindows8.1 do not have Socket.BeginConnect()
+		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
+		{
+			IPAddress[] ipAddresses;
+			Exception last = null;
 			Socket socket = null;
 
 			if (doAsync) {
 				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
 			} else {
-#if NETSTANDARD
 				ipAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
-#else
-				ipAddresses = Dns.GetHostAddresses (host);
-#endif
 			}
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
@@ -81,33 +117,13 @@ namespace MailKit.Net
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
 
-#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
-					if (cancellationToken.CanBeCanceled) {
-						var state = new AsyncSocketState (socket, cancellationToken);
-						var ar = socket.BeginConnect (ipAddresses[i], port, SocketConnected, state);
-						var waitHandles = new WaitHandle [] { ar.AsyncWaitHandle, cancellationToken.WaitHandle };
-
-						WaitHandle.WaitAny (waitHandles);
-
-						cancellationToken.ThrowIfCancellationRequested ();
-					} else {
-						socket.Connect (ipAddresses[i], port);
-					}
-#else
 					socket.Connect (ipAddresses[i], port);
-#endif
-					break;
 				} catch (OperationCanceledException) {
-#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
-					if (socket.Connected)
-						socket.Disconnect (false);
-#endif
 					socket.Dispose ();
 					socket = null;
 					throw;
 				} catch {
 					socket.Dispose ();
-					socket = null;
 
 					if (i + 1 == ipAddresses.Length)
 						throw;
@@ -119,6 +135,7 @@ namespace MailKit.Net
 
 			return socket;
 		}
+#endif
 
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, int timeout, bool doAsync, CancellationToken cancellationToken)
 		{
