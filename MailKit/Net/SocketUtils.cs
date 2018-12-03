@@ -36,7 +36,7 @@ namespace MailKit.Net
 	static class SocketUtils
 	{
 #if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
-		class AsyncSocketState : TaskCompletionSource<bool>
+		class AsyncSocketState
 		{
 			public readonly CancellationToken CancellationToken;
 			public readonly Socket Socket;
@@ -52,17 +52,17 @@ namespace MailKit.Net
 		{
 			var state = (AsyncSocketState) ar.AsyncState;
 
-			if (state.CancellationToken.IsCancellationRequested) {
-				state.SetCanceled ();
-				return;
-			}
-
-			try {
+			if (!state.CancellationToken.IsCancellationRequested)
 				state.Socket.EndConnect (ar);
-				state.SetResult (true);
-			} catch (Exception ex) {
-				state.SetException (ex);
-			}
+		}
+
+		static void Wait (IAsyncResult ar, CancellationToken cancellationToken)
+		{
+			var waitHandles = new WaitHandle[] { ar.AsyncWaitHandle, cancellationToken.WaitHandle };
+
+			WaitHandle.WaitAny (waitHandles);
+
+			cancellationToken.ThrowIfCancellationRequested ();
 		}
 
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
@@ -78,13 +78,15 @@ namespace MailKit.Net
 				if (cancellationToken.CanBeCanceled) {
 					var state = new AsyncSocketState (socket, cancellationToken);
 					var ar = socket.BeginConnect (host, port, SocketConnected, state);
-					var waitHandles = new WaitHandle[] { ar.AsyncWaitHandle, cancellationToken.WaitHandle };
 
-					WaitHandle.WaitAny (waitHandles);
-
-					cancellationToken.ThrowIfCancellationRequested ();
-
-					await state.Task;
+					if (doAsync)
+						await Task.Run (() => Wait (ar, cancellationToken), cancellationToken);
+					else
+						Wait (ar, cancellationToken);
+				} else if (doAsync) {
+					await Task.Run (() => {
+						socket.Connect (host, port);
+					}, cancellationToken);
 				} else {
 					socket.Connect (host, port);
 				}
@@ -105,7 +107,6 @@ namespace MailKit.Net
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
 		{
 			IPAddress[] ipAddresses;
-			Exception last = null;
 			Socket socket = null;
 
 			if (doAsync) {
@@ -123,7 +124,13 @@ namespace MailKit.Net
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
 
-					socket.Connect (ipAddresses[i], port);
+					if (doAsync) {
+						await Task.Run (() => {
+							socket.Connect (ipAddresses[i], port);
+						}, cancellationToken);
+					} else {
+						socket.Connect (ipAddresses[i], port);
+					}
 				} catch (OperationCanceledException) {
 					socket.Dispose ();
 					socket = null;
