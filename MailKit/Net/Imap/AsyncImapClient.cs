@@ -678,6 +678,7 @@ namespace MailKit.Net.Imap
 		/// <para>This, combined with <see cref="IdleAsync(CancellationToken, CancellationToken)"/>,
 		/// can be used to get instant notifications for changes to any of the specified folders.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="status"><c>true</c> if the server should immediately notify the client of the
 		/// selected folder's status; otherwise, <c>false</c>.</param>
 		/// <param name="eventGroups">The specific event groups that the client would like to receive notifications for.</param>
@@ -728,6 +729,7 @@ namespace MailKit.Net.Imap
 		/// <see cref="NotifyAsync(bool, IList{ImapEventGroup}, CancellationToken)"/>.
 		/// request.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
