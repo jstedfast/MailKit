@@ -77,6 +77,7 @@
     <Compile Include="Net\Proxy\Socks4ClientTests.cs" />
     <Compile Include="Net\Proxy\Socks4ProxyListener.cs" />
     <Compile Include="Net\Proxy\Socks5ClientTests.cs" />
+    <Compile Include="Net\Proxy\Socks5ProxyListener.cs" />
     <Compile Include="Net\Smtp\SmtpClientTests.cs" />
     <Compile Include="Net\Smtp\SmtpCommandExceptionTests.cs" />
     <Compile Include="Net\Smtp\SmtpDataFilterTests.cs" />

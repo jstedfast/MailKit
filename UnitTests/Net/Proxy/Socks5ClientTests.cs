@@ -128,182 +128,270 @@ namespace UnitTests.Net.Proxy {
 		[Test]
 		public void TestConnectAnonymous ()
 		{
-			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0]);
-			Socket socket = null;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			try {
-				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
+				Socket socket = null;
+
+				try {
+					socket = socks.Connect ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectAnonymousAsync ()
 		{
-			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0]);
-			Socket socket = null;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			try {
-				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
+				Socket socket = null;
+
+				try {
+					socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public void TestConnectWithCredentials ()
 		{
-			var credentials = new NetworkCredential ("username", "password");
-			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0], credentials);
-			Socket socket = null;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			try {
-				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (AuthenticationException) {
-				// this is what we expect to get
-				Assert.Pass ("Got an AuthenticationException just as expected");
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				var credentials = new NetworkCredential ("username", "password");
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port, credentials);
+				Socket socket = null;
+
+				try {
+					socket = socks.Connect ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (AuthenticationException) {
+					// this is what we expect to get
+					Assert.Pass ("Got an AuthenticationException just as expected");
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectWithCredentialsAsync ()
 		{
-			var credentials = new NetworkCredential ("username", "password");
-			var socks = new Socks5Client (Socks5ProxyList[0], Socks5ProxyPorts[0], credentials);
-			Socket socket = null;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			try {
-				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (AuthenticationException) {
-				// this is what we expect to get
-				Assert.Pass ("Got an AuthenticationException just as expected");
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				var credentials = new NetworkCredential ("username", "password");
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port, credentials);
+				Socket socket = null;
+
+				try {
+					socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (AuthenticationException) {
+					// this is what we expect to get
+					Assert.Pass ("Got an AuthenticationException just as expected");
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
+			}
+		}
+
+		[Test]
+		public void TestConnectWithBadCredentials ()
+		{
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
+
+				var credentials = new NetworkCredential ("username", "bad");
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port, credentials);
+				Socket socket = null;
+
+				try {
+					socket = socks.Connect ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+					Assert.Fail ("Expected AuthenticationException");
+				} catch (AuthenticationException) {
+					// this is what we expect to get
+					Assert.Pass ("Got an AuthenticationException just as expected");
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
+			}
+		}
+
+		[Test]
+		public async void TestConnectWithBadCredentialsAsync ()
+		{
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
+
+				var credentials = new NetworkCredential ("username", "bad");
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port, credentials);
+				Socket socket = null;
+
+				try {
+					socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+					Assert.Fail ("Expected AuthenticationException");
+				} catch (AuthenticationException) {
+					// this is what we expect to get
+					Assert.Pass ("Got an AuthenticationException just as expected");
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public void TestConnectByIPv4 ()
 		{
-			var socks = new Socks5Client (Socks5ProxyList[1], Socks5ProxyPorts[1]);
-			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
-			Socket socket = null;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			if (host == null)
-				return;
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
+				var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
+				Socket socket = null;
 
-			try {
-				socket = socks.Connect (host, 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				if (host == null)
+					return;
+
+				try {
+					socket = socks.Connect (host, 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectByIPv4Async ()
 		{
-			var socks = new Socks5Client (Socks5ProxyList[1], Socks5ProxyPorts[1]);
-			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
-			Socket socket = null;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			if (host == null)
-				return;
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
+				var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
+				Socket socket = null;
 
-			try {
-				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				if (host == null)
+					return;
+
+				try {
+					socket = await socks.ConnectAsync (host, 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public void TestConnectByIPv6 ()
 		{
-			var socks = new Socks5Client (Socks5ProxyList[2], Socks5ProxyPorts[2]);
-			var host = "2607:f8b0:400e:c03::69"; // ResolveIPv6 ("www.google.com");
-			Socket socket = null;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			if (host == null)
-				return;
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
+				var host = "2607:f8b0:400e:c03::69"; // ResolveIPv6 ("www.google.com");
+				Socket socket = null;
 
-			try {
-				socket = socks.Connect (host, 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (ProxyProtocolException) {
-				// This is the expected outcome since this Socks5 server does not support IPv6 address types
-				Assert.Pass ($"{socks.ProxyHost} does not support IPv4 addresses, just as expected.");
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				if (host == null)
+					return;
+
+				try {
+					socket = socks.Connect (host, 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (ProxyProtocolException ex) {
+					Assert.AreEqual ($"Failed to connect to {host}:80: Host unreachable.", ex.Message);
+					Assert.Inconclusive (ex.Message);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectByIPv6Async ()
 		{
-			var socks = new Socks5Client (Socks5ProxyList[2], Socks5ProxyPorts[2]);
-			var host = "2607:f8b0:400e:c03::69"; // ResolveIPv6 ("www.google.com");
-			Socket socket = null;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			if (host == null)
-				return;
+				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
+				var host = "2607:f8b0:400e:c03::69"; // ResolveIPv6 ("www.google.com");
+				Socket socket = null;
 
-			try {
-				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (ProxyProtocolException) {
-				// This is the expected outcome since this Socks5 server does not support IPv6 address types
-				Assert.Pass ($"{socks.ProxyHost} does not support IPv4 addresses, just as expected.");
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				if (host == null)
+					return;
+
+				try {
+					socket = await socks.ConnectAsync (host, 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (ProxyProtocolException ex) {
+					Assert.AreEqual ($"Failed to connect to {host}:80: Host unreachable.", ex.Message);
+					Assert.Inconclusive (ex.Message);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 	}
