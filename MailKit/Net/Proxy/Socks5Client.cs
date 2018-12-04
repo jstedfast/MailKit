@@ -249,20 +249,10 @@ namespace MailKit.Net.Proxy
 
 			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
 			byte[] domain = null, addr = null;
-			int bufferSize = 6;
+			const int bufferSize = 6 + 257;
 
-			switch (addrType) {
-			case Socks5AddressType.Domain:
+			if (addrType == Socks5AddressType.Domain)
 				domain = Encoding.UTF8.GetBytes (host);
-				bufferSize += 1 + domain.Length;
-				break;
-			case Socks5AddressType.IPv6:
-				bufferSize += 16;
-				break;
-			case Socks5AddressType.IPv4:
-				bufferSize += 4;
-				break;
-			}
 
 			try {
 				Socks5AuthMethod method;
