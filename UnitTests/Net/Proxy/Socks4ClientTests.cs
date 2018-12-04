@@ -88,84 +88,100 @@ namespace UnitTests.Net.Proxy {
 		[Test]
 		public void TestConnectByIPv4 ()
 		{
-			var socks = new Socks4Client ("100.39.36.100", 58288);
-			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
-			Socket socket = null;
+			using (var proxy = new Socks4ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			if (host == null)
-				return;
+				var socks = new Socks4Client (proxy.IPAddress.ToString (), proxy.Port);
+				var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
+				Socket socket = null;
 
-			try {
-				socket = socks.Connect (host, 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				if (host == null)
+					return;
+
+				try {
+					socket = socks.Connect (host, 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectByIPv4Async ()
 		{
-			var socks = new Socks4Client ("100.39.36.100", 58288);
-			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
-			Socket socket = null;
+			using (var proxy = new Socks4ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			if (host == null)
-				return;
+				var socks = new Socks4Client (proxy.IPAddress.ToString (), proxy.Port);
+				var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
+				Socket socket = null;
 
-			try {
-				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				if (host == null)
+					return;
+
+				try {
+					socket = await socks.ConnectAsync (host, 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public void TestConnectByDomain ()
 		{
-			var socks = new Socks4Client ("100.39.36.100", 58288);
-			Socket socket = null;
+			using (var proxy = new Socks4ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			try {
-				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				var socks = new Socks4Client (proxy.IPAddress.ToString (), proxy.Port);
+				Socket socket = null;
+
+				try {
+					socket = socks.Connect ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectByDomainAsync ()
 		{
-			var socks = new Socks4Client ("100.39.36.100", 58288);
-			Socket socket = null;
+			using (var proxy = new Socks4ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			try {
-				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				var socks = new Socks4Client (proxy.IPAddress.ToString (), proxy.Port);
+				Socket socket = null;
+
+				try {
+					socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 	}

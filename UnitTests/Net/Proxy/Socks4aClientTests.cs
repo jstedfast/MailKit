@@ -88,92 +88,154 @@ namespace UnitTests.Net.Proxy {
 		[Test]
 		public void TestConnectByIPv4 ()
 		{
-			var socks = new Socks4aClient ("100.39.36.100", 58288);
-			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
-			Socket socket = null;
+			using (var proxy = new Socks4aProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			if (host == null)
-				return;
+				var socks = new Socks4aClient (proxy.IPAddress.ToString (), proxy.Port);
+				var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
+				Socket socket = null;
 
-			try {
-				socket = socks.Connect (host, 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				if (host == null)
+					return;
+
+				try {
+					socket = socks.Connect (host, 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectByIPv4Async ()
 		{
-			var socks = new Socks4aClient ("100.39.36.100", 58288);
-			var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
-			Socket socket = null;
+			using (var proxy = new Socks4aProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			if (host == null)
-				return;
+				var socks = new Socks4aClient (proxy.IPAddress.ToString (), proxy.Port);
+				var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
+				Socket socket = null;
 
-			try {
-				socket = await socks.ConnectAsync (host, 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				if (host == null)
+					return;
+
+				try {
+					socket = await socks.ConnectAsync (host, 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public void TestConnectByDomain ()
 		{
-			// Note: this Socks4 proxy does not support the Socks4a protocol
-			var socks = new Socks4aClient ("100.39.36.100", 58288);
-			Socket socket = null;
+			using (var proxy = new Socks4aProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			try {
-				socket = socks.Connect ("www.google.com", 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (ProxyProtocolException) {
-				// This is expected since this proxy does not support Socks4a
-				Assert.Pass ($"{socks.ProxyHost} does not support Socks4a, just as predicted.");
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				var socks = new Socks4aClient (proxy.IPAddress.ToString (), proxy.Port);
+				Socket socket = null;
+
+				try {
+					socket = socks.Connect ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 
 		[Test]
 		public async void TestConnectByDomainAsync ()
 		{
-			// Note: this Socks4 proxy does not support the Socks4a protocol
-			var socks = new Socks4aClient ("100.39.36.100", 58288);
-			Socket socket = null;
+			using (var proxy = new Socks4aProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-			try {
-				socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
-				socket.Disconnect (false);
-			} catch (ProxyProtocolException) {
-				// This is expected since this proxy does not support Socks4a
-				Assert.Pass ($"{socks.ProxyHost} does not support Socks4a, just as predicted.");
-			} catch (TimeoutException) {
-				Assert.Inconclusive ("Timed out.");
-			} catch (Exception ex) {
-				Assert.Fail (ex.Message);
-			} finally {
-				if (socket != null)
-					socket.Dispose ();
+				var socks = new Socks4aClient (proxy.IPAddress.ToString (), proxy.Port);
+				Socket socket = null;
+
+				try {
+					socket = await socks.ConnectAsync ("www.google.com", 80, 10 * 1000);
+					socket.Disconnect (false);
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
+			}
+		}
+
+		[Test]
+		public void TestConnectSocks4ByDomain ()
+		{
+			using (var proxy = new Socks4ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
+
+				var socks = new Socks4aClient (proxy.IPAddress.ToString (), proxy.Port);
+				Socket socket = null;
+
+				try {
+					socket = socks.Connect ("www.google.com", 80);
+					socket.Disconnect (false);
+					Assert.Fail ("Sending a domain to a SOCKS4-only proxy server should have failed.");
+				} catch (ProxyProtocolException) {
+					// This is expected since this proxy does not support Socks4a
+					Assert.Pass ($"{socks.ProxyHost} does not support Socks4a.");
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
+			}
+		}
+
+		[Test]
+		public async void TestConnectSocks4ByDomainAsync ()
+		{
+			using (var proxy = new Socks4ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
+
+				var socks = new Socks4aClient (proxy.IPAddress.ToString (), proxy.Port);
+				Socket socket = null;
+
+				try {
+					socket = await socks.ConnectAsync ("www.google.com", 80);
+					socket.Disconnect (false);
+					Assert.Fail ("Sending a domain to a SOCKS4-only proxy server should have failed.");
+				} catch (ProxyProtocolException) {
+					// This is expected since this proxy does not support Socks4a
+					Assert.Pass ($"{socks.ProxyHost} does not support Socks4a.");
+				} catch (TimeoutException) {
+					Assert.Inconclusive ("Timed out.");
+				} catch (Exception ex) {
+					Assert.Fail (ex.Message);
+				} finally {
+					if (socket != null)
+						socket.Dispose ();
+				}
 			}
 		}
 	}
