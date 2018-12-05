@@ -52,16 +52,14 @@ namespace MailKit.Net
 		{
 			var state = (AsyncSocketState) ar.AsyncState;
 
-			if (state.CancellationToken.IsCancellationRequested) {
-				state.SetCanceled ();
-				return;
-			}
-
 			try {
 				state.Socket.EndConnect (ar);
 				state.SetResult (true);
 			} catch (Exception ex) {
-				state.SetException (ex);
+				if (!state.CancellationToken.IsCancellationRequested)
+					state.SetException (ex);
+				else
+					state.SetCanceled ();
 			}
 		}
 
