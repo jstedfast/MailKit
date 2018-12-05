@@ -352,7 +352,7 @@ namespace UnitTests.Net.Proxy {
 					socket = socks.Connect (host, 80, 10 * 1000);
 					socket.Disconnect (false);
 				} catch (ProxyProtocolException ex) {
-					Assert.AreEqual ($"Failed to connect to {host}:80: Host unreachable.", ex.Message);
+					Assert.IsTrue (ex.Message.StartsWith ($"Failed to connect to {host}:80: ", StringComparison.Ordinal), ex.Message);
 					Assert.Inconclusive (ex.Message);
 				} catch (TimeoutException) {
 					Assert.Inconclusive ("Timed out.");
@@ -382,7 +382,7 @@ namespace UnitTests.Net.Proxy {
 					socket = await socks.ConnectAsync (host, 80, 10 * 1000);
 					socket.Disconnect (false);
 				} catch (ProxyProtocolException ex) {
-					Assert.AreEqual ($"Failed to connect to {host}:80: Host unreachable.", ex.Message);
+					Assert.IsTrue (ex.Message.StartsWith ($"Failed to connect to {host}:80: ", StringComparison.Ordinal), ex.Message);
 					Assert.Inconclusive (ex.Message);
 				} catch (TimeoutException) {
 					Assert.Inconclusive ("Timed out.");
