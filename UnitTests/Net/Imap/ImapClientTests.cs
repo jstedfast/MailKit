@@ -3730,6 +3730,14 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.AppendLimit.HasValue, "Expected AppendLimit to have a value");
 				Assert.AreEqual (35651584, client.AppendLimit.Value, "Expected AppendLimit value to match");
 
+				Assert.Throws<NotSupportedException> (() => client.EnableQuickResync ());
+				Assert.Throws<NotSupportedException> (() => client.Notify (true, new List<ImapEventGroup> {
+					new ImapEventGroup (ImapMailboxFilter.Inboxes, new List<ImapEvent> {
+						ImapEvent.FlagChange
+					})
+				}));
+				Assert.Throws<NotSupportedException> (() => client.DisableNotify ());
+
 				var inbox = client.Inbox;
 				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
 				Assert.AreEqual (FolderAttributes.Inbox | FolderAttributes.HasNoChildren | FolderAttributes.Subscribed, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
@@ -3886,6 +3894,14 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.AppendLimit.HasValue, "Expected AppendLimit to have a value");
 				Assert.AreEqual (35651584, client.AppendLimit.Value, "Expected AppendLimit value to match");
+
+				Assert.Throws<NotSupportedException> (async () => await client.EnableQuickResyncAsync ());
+				Assert.Throws<NotSupportedException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
+					new ImapEventGroup (ImapMailboxFilter.Inboxes, new List<ImapEvent> {
+						ImapEvent.FlagChange
+					})
+				}));
+				Assert.Throws<NotSupportedException> (async () => await client.DisableNotifyAsync ());
 
 				var inbox = client.Inbox;
 				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
