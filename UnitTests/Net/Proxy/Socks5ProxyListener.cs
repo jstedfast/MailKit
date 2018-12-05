@@ -98,26 +98,26 @@ namespace UnitTests.Net.Proxy {
 
 		static Socks5ParseResult Parse (byte[] request, int requestLength, out Socks5AuthMethod[] methods)
 		{
+			methods = new Socks5AuthMethod[0];
+
 			// +-----+----------+----------+
 			// | VER | NMETHODS | METHODS  |
 			// +-----+----------+----------+
 			// |  1  |    1     | 1 to 255 |
 			// +-----+----------+----------+
-			if (requestLength < 3) {
-				methods = new Socks5AuthMethod[0];
+			if (requestLength < 1) 
 				return Socks5ParseResult.NotEnoughData;
-			}
 
-			if (request[0] != 0x05) {
-				methods = new Socks5AuthMethod[0];
+			if (request[0] != 0x05)
 				return Socks5ParseResult.InvalidRequest;
-			}
+
+			if (requestLength < 2)
+				return Socks5ParseResult.NotEnoughData;
 
 			int n = request[1];
-			if (requestLength < 2 + n) {
-				methods = new Socks5AuthMethod[0];
+
+			if (requestLength < 2 + n)
 				return Socks5ParseResult.NotEnoughData;
-			}
 
 			methods = new Socks5AuthMethod[n];
 			for (int i = 0; i < n; i++)
@@ -173,18 +173,21 @@ namespace UnitTests.Net.Proxy {
 
 		static Socks5ParseResult Parse (byte[] request, int requestLength, out string user, out string passwd)
 		{
+			user = passwd = null;
+
 			// +-----+-------------+----------+-------------+----------+
 			// | VER | USER.LENGTH | USERNAME | PASS.LENGTH | PASSWORD |
 			// +-----+-------------+----------+-------------+----------+
 			// |  1  |      1      | 1 to 255 |       1     | 1 to 255 |
 			// +-----+-------------+----------+-------------+----------+
-			user = passwd = null;
-
-			if (requestLength < 3)
+			if (requestLength < 1)
 				return Socks5ParseResult.NotEnoughData;
 
 			if (request[0] != 0x05)
 				return Socks5ParseResult.InvalidRequest;
+
+			if (requestLength < 2)
+				return Socks5ParseResult.NotEnoughData;
 
 			int userLength = request[1];
 
@@ -338,6 +341,25 @@ namespace UnitTests.Net.Proxy {
 			return response;
 		}
 
+		static Socks5Reply GetReply (SocketError error)
+		{
+			switch (error) {
+			case SocketError.AddressFamilyNotSupported: return Socks5Reply.AddressTypeNotSupported;
+			case SocketError.ConnectionRefused: return Socks5Reply.ConnectionRefused;
+			case SocketError.HostUnreachable: return Socks5Reply.HostUnreachable;
+			case SocketError.NetworkUnreachable: return Socks5Reply.NetworkUnreachable;
+			case SocketError.TimedOut: return Socks5Reply.TTLExpired;
+			default: return Socks5Reply.ConnectionNotAllowed;
+			}
+		}
+
+		static byte[] GetCommandResponse (SocketError error)
+		{
+			var reply = GetReply (error);
+
+			return GetCommandResponse (reply, null);
+		}
+
 		protected override async Task<Socket> ClientCommandReceived (NetworkStream client, byte[] buffer, int length, CancellationToken cancellationToken)
 		{
 			byte[] response = null;
@@ -364,18 +386,24 @@ namespace UnitTests.Net.Proxy {
 						response = GetCommandResponse (Socks5Reply.Success, remote);
 					} catch (OperationCanceledException) {
 						throw;
+					} catch (SocketException ex) {
+						response = GetCommandResponse (ex.SocketErrorCode);
 					} catch {
-						response = GetCommandResponse (Socks5Reply.HostUnreachable, null);
+						response = GetCommandResponse (Socks5Reply.GeneralServerFailure, null);
 					}
 					break;
-				case Socks5ParseResult.InvalidRequest:
-					response = GetCommandResponse (Socks5Reply.GeneralServerFailure, null);
+				case Socks5ParseResult.InvalidAddrType:
+					response = GetCommandResponse (Socks5Reply.AddressTypeNotSupported, null);
 					break;
 				case Socks5ParseResult.InvalidCommand:
 					response = GetCommandResponse (Socks5Reply.CommandNotSupported, null);
 					break;
-				case Socks5ParseResult.InvalidAddrType:
-					response = GetCommandResponse (Socks5Reply.AddressTypeNotSupported, null);
+				case Socks5ParseResult.NotEnoughData:
+					response = null;
+					break;
+				case Socks5ParseResult.InvalidRequest:
+				default:
+					response = GetCommandResponse (Socks5Reply.GeneralServerFailure, null);
 					break;
 				}
 				break;
