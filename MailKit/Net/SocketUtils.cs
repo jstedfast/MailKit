@@ -42,6 +42,8 @@ namespace MailKit.Net
 			public readonly Socket Socket;
 			public readonly string Host;
 			public readonly int Port;
+			public bool IsConnected;
+			Exception ex;
 
 			public AsyncConnectState (Socket socket, string host, int port, CancellationToken cancellationToken)
 			{
@@ -49,6 +51,22 @@ namespace MailKit.Net
 				Socket = socket;
 				Host = host;
 				Port = port;
+			}
+
+			public void SetCanceled ()
+			{
+				ex = ex ?? new OperationCanceledException ();
+			}
+
+			public void SetException (Exception ex)
+			{
+				this.ex = this.ex ?? ex;
+			}
+
+			public void Throw ()
+			{
+				if (ex != null)
+					throw ex;
 			}
 		}
 
@@ -65,6 +83,25 @@ namespace MailKit.Net
 
 			connect.CancellationToken.ThrowIfCancellationRequested ();
 			connect.Socket.EndConnect (ar);
+			connect.IsConnected = true;
+		}
+
+		// Note: EndConnect needs to catch all exceptions
+		static void EndConnect (IAsyncResult ar)
+		{
+			var connect = (AsyncConnectState) ar.AsyncState;
+
+			if (connect.CancellationToken.IsCancellationRequested) {
+				connect.SetCanceled ();
+				return;
+			}
+
+			try {
+				connect.Socket.EndConnect (ar);
+				connect.IsConnected = true;
+			} catch (Exception ex) {
+				connect.SetException (ex);
+			}
 		}
 
 		static void Wait (IAsyncResult ar, CancellationToken cancellationToken)
@@ -92,8 +129,9 @@ namespace MailKit.Net
 					if (doAsync) {
 						await Task.Factory.FromAsync (BeginConnectAsync, EndConnectAsync, state).ConfigureAwait (false);
 					} else {
-						var ar = socket.BeginConnect (host, port, EndConnectAsync, state);
+						var ar = socket.BeginConnect (host, port, EndConnect, state);
 						Wait (ar, cancellationToken);
+						state.Throw ();
 					}
 				} else {
 					socket.Connect (host, port);
