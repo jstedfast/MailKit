@@ -36,31 +36,35 @@ namespace MailKit.Net
 	static class SocketUtils
 	{
 #if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
-		class AsyncSocketState : TaskCompletionSource<bool>
+		class AsyncConnectState
 		{
 			public readonly CancellationToken CancellationToken;
 			public readonly Socket Socket;
+			public readonly string Host;
+			public readonly int Port;
 
-			public AsyncSocketState (Socket socket, CancellationToken cancellationToken)
+			public AsyncConnectState (Socket socket, string host, int port, CancellationToken cancellationToken)
 			{
 				CancellationToken = cancellationToken;
 				Socket = socket;
+				Host = host;
+				Port = port;
 			}
 		}
 
-		static void SocketConnected (IAsyncResult ar)
+		static IAsyncResult BeginConnectAsync (AsyncCallback callback, object state)
 		{
-			var state = (AsyncSocketState) ar.AsyncState;
+			var connect = (AsyncConnectState) state;
 
-			try {
-				state.Socket.EndConnect (ar);
-				state.SetResult (true);
-			} catch (Exception ex) {
-				if (!state.CancellationToken.IsCancellationRequested)
-					state.SetException (ex);
-				else
-					state.SetCanceled ();
-			}
+			return connect.Socket.BeginConnect (connect.Host, connect.Port, callback, state);
+		}
+
+		static void EndConnectAsync (IAsyncResult ar)
+		{
+			var connect = (AsyncConnectState) ar.AsyncState;
+
+			connect.CancellationToken.ThrowIfCancellationRequested ();
+			connect.Socket.EndConnect (ar);
 		}
 
 		static void Wait (IAsyncResult ar, CancellationToken cancellationToken)
@@ -82,20 +86,15 @@ namespace MailKit.Net
 				if (localEndPoint != null)
 					socket.Bind (localEndPoint);
 
-				if (cancellationToken.CanBeCanceled) {
-					var state = new AsyncSocketState (socket, cancellationToken);
-					var ar = socket.BeginConnect (host, port, SocketConnected, state);
+				if (doAsync || cancellationToken.CanBeCanceled) {
+					var state = new AsyncConnectState (socket, host, port, cancellationToken);
 
-					if (doAsync)
-						await Task.Run (() => Wait (ar, cancellationToken), cancellationToken).ConfigureAwait (false);
-					else
+					if (doAsync) {
+						await Task.Factory.FromAsync (BeginConnectAsync, EndConnectAsync, state).ConfigureAwait (false);
+					} else {
+						var ar = socket.BeginConnect (host, port, EndConnectAsync, state);
 						Wait (ar, cancellationToken);
-
-					await state.Task;
-				} else if (doAsync) {
-					await Task.Run (() => {
-						socket.Connect (host, port);
-					}, cancellationToken).ConfigureAwait (false);
+					}
 				} else {
 					socket.Connect (host, port);
 				}
@@ -112,7 +111,7 @@ namespace MailKit.Net
 
 			return socket;
 		}
-#else // .NETStandard [1.3,1.6] and UniversalWindows8.1 do not have Socket.BeginConnect()
+#else // .NETStandard 1.3 and 1.6 do not have Socket.BeginConnect()
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
 		{
 			IPAddress[] ipAddresses;
