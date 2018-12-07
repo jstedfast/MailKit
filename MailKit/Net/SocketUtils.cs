@@ -170,13 +170,7 @@ namespace MailKit.Net
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
 
-					if (doAsync) {
-						await Task.Run (() => {
-							socket.Connect (ipAddresses[i], port);
-						}, cancellationToken).ConfigureAwait (false);
-					} else {
-						socket.Connect (ipAddresses[i], port);
-					}
+					socket.Connect (ipAddresses[i], port);
 				} catch (OperationCanceledException) {
 					socket.Dispose ();
 					socket = null;
