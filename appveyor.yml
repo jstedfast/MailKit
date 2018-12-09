@@ -22,6 +22,8 @@ build:
   project: MailKit.Net45.sln
   verbosity: minimal
 
-test_script: 
-  - cmd: packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[MailKit]* -[UnitTests]* -[submodules]*" -target:"packages\NUnit.Runners.2.6.4\tools\nunit-console.exe" -targetargs:"/framework:net-4.5 /noshadow /domain:single UnitTests\bin\Debug\UnitTests.dll" -output:opencover.xml
-  - cmd: packages\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencover.xml --repoToken %COVERALLS_REPO_TOKEN% --useRelativePaths --basePath .\UnitTests\bin\Debug --commitId %APPVEYOR_REPO_COMMIT% --commitBranch %APPVEYOR_REPO_BRANCH% --commitAuthor %APPVEYOR_REPO_COMMIT_AUTHOR% --commitEmail %APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL% --commitMessage %APPVEYOR_REPO_COMMIT_MESSAGE% --jobId %APPVEYOR_BUILD_NUMBER% --serviceName appveyor
+test_script:
+- ps: >-
+    .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[MailKit]* -[UnitTests]* -[submodules]*" -target:"packages\NUnit.Runners.2.6.4\tools\nunit-console.exe" -targetargs:"/framework:net-4.5 /noshadow /domain:single UnitTests\bin\Debug\UnitTests.dll" -output:opencover.xml
+
+    .\packages\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencover.xml --repoToken $Env:COVERALLS_REPO_TOKEN --useRelativePaths --basePath .\UnitTests\bin\Debug --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_BUILD_NUMBER --serviceName appveyor
