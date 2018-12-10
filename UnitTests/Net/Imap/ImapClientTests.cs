@@ -1131,6 +1131,11 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
 
 			using (var client = new ImapClient ()) {
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
@@ -1139,6 +1144,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 				Assert.IsTrue (client.IsAuthenticated, "Client should be authenticated.");
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (capabilities, client.Capabilities, "Capabilities");
@@ -1164,6 +1170,11 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
 
 			using (var client = new ImapClient ()) {
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
 				} catch (Exception ex) {
@@ -1172,6 +1183,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 				Assert.IsTrue (client.IsAuthenticated, "Client should be authenticated.");
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (capabilities, client.Capabilities, "Capabilities");
@@ -1196,6 +1208,11 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
 
 			using (var client = new ImapClient ()) {
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
@@ -1204,6 +1221,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 				Assert.IsTrue (client.IsAuthenticated, "Client should be authenticated.");
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (capabilities, client.Capabilities, "Capabilities");
@@ -1228,6 +1246,11 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
 
 			using (var client = new ImapClient ()) {
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
 				} catch (Exception ex) {
@@ -1236,6 +1259,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 				Assert.IsTrue (client.IsAuthenticated, "Client should be authenticated.");
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (capabilities, client.Capabilities, "Capabilities");
@@ -1285,12 +1309,18 @@ namespace UnitTests.Net.Imap {
 				// Note: Do not try to use any SASL mechanisms
 				client.AuthenticationMechanisms.Clear ();
 
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					client.Authenticate (new NetworkCredential ("Indiana \"Han Solo\" Jones", "p@ss\\word"));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
@@ -1333,12 +1363,18 @@ namespace UnitTests.Net.Imap {
 				// Note: Do not try to use any SASL mechanisms
 				client.AuthenticationMechanisms.Clear ();
 
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("Indiana \"Han Solo\" Jones", "p@ss\\word"));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
@@ -1486,12 +1522,18 @@ namespace UnitTests.Net.Imap {
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 				client.AuthenticationMechanisms.Remove ("PLAIN");
 
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					client.Authenticate (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
@@ -1578,12 +1620,18 @@ namespace UnitTests.Net.Imap {
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 				client.AuthenticationMechanisms.Remove ("PLAIN");
 
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
@@ -1762,6 +1810,11 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (120000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					var credentials = new NetworkCredential ("username", "password");
 					var sasl = new SaslMechanismLogin (credentials);
@@ -1771,6 +1824,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
@@ -1813,6 +1867,11 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (120000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
+				int authenticated = 0;
+				client.Authenticated += (sender, e) => {
+					authenticated++;
+				};
+
 				try {
 					var credentials = new NetworkCredential ("username", "password");
 					var sasl = new SaslMechanismLogin (credentials);
@@ -1822,6 +1881,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
