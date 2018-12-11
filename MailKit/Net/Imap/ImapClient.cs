@@ -1147,9 +1147,12 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilitiesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 
+			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
+			var authenticated = engine.State == ImapEngineState.Authenticated;
+
 			OnConnected (host, 143, SecureSocketOptions.None);
 
-			if (engine.State == ImapEngineState.Authenticated)
+			if (authenticated)
 				OnAuthenticatedAsync (string.Empty, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
@@ -1171,9 +1174,12 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				await engine.QueryCapabilitiesAsync (true, cancellationToken).ConfigureAwait (false);
 
+			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
+			var authenticated = engine.State == ImapEngineState.Authenticated;
+
 			OnConnected (host, 143, SecureSocketOptions.None);
 
-			if (engine.State == ImapEngineState.Authenticated)
+			if (authenticated)
 				await OnAuthenticatedAsync (string.Empty, true, cancellationToken).ConfigureAwait (false);
 		}
 
@@ -1378,9 +1384,12 @@ namespace MailKit.Net.Imap {
 				connecting = false;
 			}
 
+			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
+			var authenticated = engine.State == ImapEngineState.Authenticated;
+
 			OnConnected (host, port, options);
 
-			if (engine.State == ImapEngineState.Authenticated)
+			if (authenticated)
 				await OnAuthenticatedAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
@@ -1577,9 +1586,12 @@ namespace MailKit.Net.Imap {
 				connecting = false;
 			}
 
+			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
+			var authenticated = engine.State == ImapEngineState.Authenticated;
+
 			OnConnected (host, port, options);
 
-			if (engine.State == ImapEngineState.Authenticated)
+			if (authenticated)
 				await OnAuthenticatedAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
