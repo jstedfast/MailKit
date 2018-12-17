@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-	<metadata minClientVersion="2.12">
-		<id>MailKit</id>
-		<version>2.1.0.3</version>
-		<title>MailKit</title>
-		<authors>Jeffrey Stedfast</authors>
-		<owners>Jeffrey Stedfast</owners>
-		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
-		<projectUrl>http://github.com/jstedfast/MailKit</projectUrl>
-		<iconUrl>https://raw.github.com/jstedfast/MailKit/master/nuget/mailkit-50.png</iconUrl>
-		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>MailKit is an Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.
+  <metadata minClientVersion="2.12">
+    <id>MailKit</id>
+    <version>2.1.1</version>
+    <title>MailKit</title>
+    <authors>Jeffrey Stedfast</authors>
+    <owners>Jeffrey Stedfast</owners>
+    <license type="expression">MIT</license>
+    <projectUrl>http://www.mimekit.net</projectUrl>
+    <repository type="git" url="https://github.com/jstedfast/MailKit" />
+    <iconUrl>https://raw.github.com/jstedfast/MailKit/master/nuget/mailkit-50.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>MailKit is an Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.
 
 Features include:
 * Socks4, Socks4a and Socks5 proxy support.
@@ -22,46 +23,11 @@ Features include:
 * Asynchronous versions of all methods that hit the network.
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.
-</description>
-		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>
-Changes for 2.1.0.3:
-
-* Really fixed the bug in Connect() and ConnectAsync() this time. (issue #782)
-
-Changes for 2.1.0.2:
-      
-* Fixed a bug in Connect() and ConnectAsync(). (issue #782)
-
-Changes for 2.1.0.1:
-
-* Fixed MailKit 2.1.0 to depend on MimeKit 2.1.0
-
-Changes for 2.1.0:
-
-* A number of fixes to bugs exposed in new unit tests for NTLM authentication.
-* Made SmtpClient, Pop3Client, and ImapClient's Connect() methods truly cancellable as well as made the underlying socket.Connect() call adhere to any specified client.Timeout value.
-* Added support for connecting via a SOCKS4, SOCKS4a, or SOCKS5 proxy server.
-* Fixed ImapClient's OnAuthenticated() method to protect aganst throwing an ArgumentNullException when trying to emit the Authenticated event if the server did not supply any resp-code-text in the OK response to the AUTHENTICATE command. (issue #774)
-* Modified ImapFolder.Create() to handle [ALREADYEXISTS] resp-codes.
-* Fixed ImapFolder.Create() for GMail when the isMessageFolder is false (GMail doesn't handle it when the client attempts to create a folder ending with a directory separator).
-* Optimized ImapFolder's fallback for UID COPY command when UIDPLUS is not supported.
-* Reduced string allocations in the Connect(Uri) wrapper.
-* Added new ConnectedEventArgs and DisconnectedEventArgs that are used with the Connected and Disconnected events to provide developers with even more useful information about what server, port and SecureSocketOptions were used when connecting the client.
-* Fixed SmtpClient to immediately throw stream reading exceptions instead of ignoring them. (issue #776)
-* Fixed ImapClient.GetFoldersAsync() to call ImapFolder.StatusAsync() instead of Status() when StatusItems are specified.
-* Changed ImapFolder.GetSubfolders() to return IList&lt;IMailFolder&gt; instead of IEnumerable&lt;IMailFolder&gt;.
-* Fixed ImapClient's NAMESPACE parser - it had Shared and Other namespace ordering reversed.
-* Fixed ImapFolder.Create() (for special-use) to only use unique uses if any were specified multiple times.
-* Modified ImapFolder.Open() to allow devs to re-Open() a folder with the same access in case they need to do this to work around an IMAP server bug(?).
-* Fixed adding/removing/setting of GMail labels to use UTF-8 when enabled.
-* Added support for the IMAP STATUS=SIZE extension which now provides a ImapFolder.Size property that specifies how large a folder is (in bytes). Clients can request this information using the StatusItems.Size enum with either ImapFolder.GetSubfolders() or ImapFolder.Status().
-* Added support for the IMAP OBJECTID extension. ImapFolder and IMessageSummary now both have an Id property which is a globally unique identifier. IMessageSummary also now has a ThreadId property which is a unique identifier for the message thread/conversation that the message belongs to. This information can be retrieved for ImapFolders using ImapFolder.Status() with the new StatusItems.MailboxId enum value. The IMessageSummary.Id and ThreadId properties have the corresponding MessageSummaryItems enum values of Id and ThreadId, respectively.
-* Added another work-around for bad GMail IMAP BODYSTRUCTURE responses. (issue #777)
-* Fixed all integer TryParse methods to use NumberStyles.None and CultureInfo.InvariantCulture.
-* Added Connect() and ConnectAsync() overloads which accept a Stream instead of a Socket.
-* All ImapFolder.MessageFlagsChanged, ModSeqChanged, and LabelsChanged events will now also be followed by a MessageSummaryFetched event containing the combined information of those events.
-* Added support for IMAP's NOTIFY extension. Many thanks to Steffen Kieß for getting the ball rolling on this feature by implementing the neccessary ImapEvent, ImapEventGroup, and ImapMailboxFilter classes as well as the initial support.
+    </description>
+    <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
+    <releaseNotes>
+* Fixed ImapFolder.CopyTo() and ImapFolder.MoveTo() for IMAP servers that do not support UIDPLUS. (issue #787)
+* Fixed ImapClient.Connect() to capture authenticated state *before* calling OnConnected() so that developers that call Authenticate() inside of the Connected event handler do not receive 2 Authenticated events. (issue #784)
 
 API Changes Since 2.0.x:
 
@@ -76,97 +42,97 @@ Note to users upgrading from MailKit 1.x:
 In order to authenticate using the XOAUTH2 SASL mechanism, you must now use the following approach:
 
 client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
-		</releaseNotes>
-		<copyright>Xamarin Inc.</copyright>
-		<language>en-US</language>
-		<tags>smtp pop3 imap mime security dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 netstandard netstandard1.3 netstandard1.6 netstandard2.0 xamarin android ios monodroid monoandroid wpa81</tags>
-		<frameworkAssemblies>
-			<frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
-			<frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
-			<frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5" />
-			<frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5" />
-			<frameworkAssembly assemblyName="System" targetFramework="monoandroid" />
-			<frameworkAssembly assemblyName="System.Core" targetFramework="monoandroid" />
-			<frameworkAssembly assemblyName="System.Data" targetFramework="monoandroid" />
-			<frameworkAssembly assemblyName="System.Net.Http" targetFramework="monoandroid" />
-			<frameworkAssembly assemblyName="System" targetFramework="xamarinios" />
-			<frameworkAssembly assemblyName="System.Core" targetFramework="xamarinios" />
-			<frameworkAssembly assemblyName="System.Data" targetFramework="xamarinios" />
-			<frameworkAssembly assemblyName="System.Net.Http" targetFramework="xamarinios" />
-		</frameworkAssemblies>
-		<dependencies>
-			<group targetFramework="net45">
-				<dependency id="BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.1.0" />
-			</group>
-			<group targetFramework="monoandroid">
-				<dependency id="MimeKit" version="2.1.0" />
-			</group>
-			<group targetFramework="xamarinios">
-				<dependency id="MimeKit" version="2.1.0" />
-			</group>
-			<group targetFramework="netstandard1.3">
-				<dependency id="NETStandard.Library" version="1.6.1" />
-				<dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-				<dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
-				<dependency id="System.Globalization.Extensions" version="4.3.0" />
-				<dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
-				<dependency id="System.Net.NetworkInformation" version="4.3.0" />
-				<dependency id="System.Net.NameResolution" version="4.3.0" />
-				<dependency id="System.Net.Security" version="4.3.0" />
-				<dependency id="System.Data.Common" version="4.3.0" />
-				<dependency id="System.Net.Http" version="4.3.0" />
-				<dependency id="Portable.BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.1.0" />
-			</group>
-			<group targetFramework="netstandard1.6">
-				<dependency id="NETStandard.Library" version="1.6.1" />
-				<dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-				<dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
-				<dependency id="System.Globalization.Extensions" version="4.3.0" />
-				<dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
-				<dependency id="System.Net.NetworkInformation" version="4.3.0" />
-				<dependency id="System.Net.NameResolution" version="4.3.0" />
-				<dependency id="System.Net.Security" version="4.3.0" />
-				<dependency id="System.Data.Common" version="4.3.0" />
-				<dependency id="System.Net.Http" version="4.3.0" />
-				<dependency id="Portable.BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.1.0" />
-			</group>
-			<group targetFramework="netstandard2.0">
-				<dependency id="NETStandard.Library" version="1.6.1" />
-				<dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-				<dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
-				<dependency id="System.Globalization.Extensions" version="4.3.0" />
-				<dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
-				<dependency id="System.Net.NetworkInformation" version="4.3.0" />
-				<dependency id="System.Net.NameResolution" version="4.3.0" />
-				<dependency id="System.Net.Security" version="4.3.0" />
-				<dependency id="System.Data.Common" version="4.3.0" />
-				<dependency id="System.Net.Http" version="4.3.0" />
-				<dependency id="Portable.BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.1.0" />
-			</group>
-			<group targetFramework="portable-win81+wpa81">
-				<dependency id="Portable.BouncyCastle" version="1.8.2" />
-				<dependency id="MimeKit" version="2.1.0" />
-			</group>
-		</dependencies>
-	</metadata>
-	<files>
-		<file src="..\MailKit\bin\Release\netstandard1.3\MailKit.dll" target="lib\netstandard1.3\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\netstandard1.3\MailKit.xml" target="lib\netstandard1.3\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\netstandard1.6\MailKit.dll" target="lib\netstandard1.6\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\netstandard1.6\MailKit.xml" target="lib\netstandard1.6\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\MonoAndroid\MailKit.dll" target="lib\monoandroid\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\MonoAndroid\MailKit.xml" target="lib\monoandroid\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.dll" target="lib\xamarinios\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.xml" target="lib\xamarinios\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
-		<file src="..\MailKit\bin\Release\wpa81\MailKit.dll" target="lib\portable-win81+wpa81\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\wpa81\MailKit.xml" target="lib\portable-win81+wpa81\MailKit.xml" />
-	</files>
+    </releaseNotes>
+    <copyright>Xamarin Inc.</copyright>
+    <language>en-US</language>
+    <tags>smtp pop3 imap mime security dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 netstandard netstandard1.3 netstandard1.6 netstandard2.0 xamarin android ios monodroid monoandroid wpa81</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System" targetFramework="monoandroid" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="monoandroid" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="monoandroid" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="monoandroid" />
+      <frameworkAssembly assemblyName="System" targetFramework="xamarinios" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="xamarinios" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="xamarinios" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="xamarinios" />
+    </frameworkAssemblies>
+    <dependencies>
+      <group targetFramework="net45">
+        <dependency id="BouncyCastle" version="1.8.2" />
+        <dependency id="MimeKit" version="2.1.1" />
+      </group>
+      <group targetFramework="monoandroid">
+        <dependency id="MimeKit" version="2.1.1" />
+      </group>
+      <group targetFramework="xamarinios">
+        <dependency id="MimeKit" version="2.1.1" />
+      </group>
+      <group targetFramework="netstandard1.3">
+        <dependency id="NETStandard.Library" version="1.6.1" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
+        <dependency id="System.Globalization.Extensions" version="4.3.0" />
+        <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
+        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
+        <dependency id="System.Net.NameResolution" version="4.3.0" />
+        <dependency id="System.Net.Security" version="4.3.0" />
+        <dependency id="System.Data.Common" version="4.3.0" />
+        <dependency id="System.Net.Http" version="4.3.0" />
+        <dependency id="Portable.BouncyCastle" version="1.8.2" />
+        <dependency id="MimeKit" version="2.1.1" />
+      </group>
+      <group targetFramework="netstandard1.6">
+        <dependency id="NETStandard.Library" version="1.6.1" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
+        <dependency id="System.Globalization.Extensions" version="4.3.0" />
+        <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
+        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
+        <dependency id="System.Net.NameResolution" version="4.3.0" />
+        <dependency id="System.Net.Security" version="4.3.0" />
+        <dependency id="System.Data.Common" version="4.3.0" />
+        <dependency id="System.Net.Http" version="4.3.0" />
+        <dependency id="Portable.BouncyCastle" version="1.8.2" />
+        <dependency id="MimeKit" version="2.1.1" />
+      </group>
+      <group targetFramework="netstandard2.0">
+        <dependency id="NETStandard.Library" version="1.6.1" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
+        <dependency id="System.Globalization.Extensions" version="4.3.0" />
+        <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
+        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
+        <dependency id="System.Net.NameResolution" version="4.3.0" />
+        <dependency id="System.Net.Security" version="4.3.0" />
+        <dependency id="System.Data.Common" version="4.3.0" />
+        <dependency id="System.Net.Http" version="4.3.0" />
+        <dependency id="Portable.BouncyCastle" version="1.8.2" />
+        <dependency id="MimeKit" version="2.1.1" />
+      </group>
+      <group targetFramework="portable-win81+wpa81">
+        <dependency id="Portable.BouncyCastle" version="1.8.2" />
+        <dependency id="MimeKit" version="2.1.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\MailKit\bin\Release\netstandard1.3\MailKit.dll" target="lib\netstandard1.3\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard1.3\MailKit.xml" target="lib\netstandard1.3\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\netstandard1.6\MailKit.dll" target="lib\netstandard1.6\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard1.6\MailKit.xml" target="lib\netstandard1.6\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\MonoAndroid\MailKit.dll" target="lib\monoandroid\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\MonoAndroid\MailKit.xml" target="lib\monoandroid\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.dll" target="lib\xamarinios\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.xml" target="lib\xamarinios\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\wpa81\MailKit.dll" target="lib\portable-win81+wpa81\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\wpa81\MailKit.xml" target="lib\portable-win81+wpa81\MailKit.xml" />
+  </files>
 </package>

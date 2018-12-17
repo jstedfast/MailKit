@@ -1,5 +1,13 @@
 # Release Notes
 
+### MailKit 2.1.1
+
+* Fixed ImapFolder.CopyTo() and ImapFolder.MoveTo() for IMAP servers that do not support UIDPLUS.
+  (issue [#787](https://github.com/jstedfast/MailKit/issues/787))
+* Fixed ImapClient.Connect() to capture authenticated state *before* calling OnConnected() so that
+  developers that call Authenticate() inside of the Connected event handler do not receive 2 Authenticated
+  events. (issue [#784](https://github.com/jstedfast/MailKit/issues/784))
+
 ### MailKit 2.1.0
 
 * A number of fixes to bugs exposed in new unit tests for NTLM authentication.
