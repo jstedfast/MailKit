@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MimeKit" Version="2.1.0" />
+    <PackageReference Include="MimeKit" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' Or '$(TargetFramework)' == 'netstandard1.6' Or '$(TargetFramework)' == 'netstandard2.0' ">
