@@ -4506,7 +4506,7 @@ namespace MailKit.Net.Imap {
 
 		async Task<IList<int>> GetIndexesAsync (IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)
 		{
-			var command = string.Format ("SEARCH UID {0}\r\n", uids);
+			var command = string.Format ("SEARCH UID {0}\r\n", UniqueIdSet.ToString (uids));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SearchResults ();
 
