@@ -4508,7 +4508,7 @@ namespace MailKit.Net.Imap {
 		{
 			var command = string.Format ("SEARCH UID {0}\r\n", UniqueIdSet.ToString (uids));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SearchResults ();
+			var results = new SearchResults (SortOrder.Ascending);
 
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);

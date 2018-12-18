@@ -337,8 +337,8 @@ namespace MailKit.Net.Imap
 
 		static async Task SearchMatchesAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
-			var uids = new UniqueIdSet (SortOrder.Ascending);
 			var results = (SearchResults) ic.UserData;
+			var uids = results.UniqueIds;
 			ImapToken token;
 			uint uid;
 
@@ -387,7 +387,6 @@ namespace MailKit.Net.Imap
 		{
 			var token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 			var results = (SearchResults) ic.UserData;
-			UniqueIdSet uids = null;
 			int parenDepth = 0;
 			//bool uid = false;
 			string atom;
@@ -500,9 +499,10 @@ namespace MailKit.Net.Imap
 				case "ALL":
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
-					uids = ImapEngine.ParseUidSet (token, ic.Folder.UidValidity, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					var uids = ImapEngine.ParseUidSet (token, ic.Folder.UidValidity, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Count = uids.Count;
+					results.UniqueIds = uids;
 					break;
 				default:
 					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
@@ -510,8 +510,6 @@ namespace MailKit.Net.Imap
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 			} while (true);
-
-			results.UniqueIds = uids ?? new UniqueIdSet ();
 		}
 
 		async Task<SearchResults> SearchAsync (string query, bool doAsync, CancellationToken cancellationToken)
@@ -531,7 +529,7 @@ namespace MailKit.Net.Imap
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
 			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
-			ic.UserData = new SearchResults ();
+			ic.UserData = new SearchResults (SortOrder.Ascending);
 
 			Engine.QueueCommand (ic);
 
@@ -669,7 +667,7 @@ namespace MailKit.Net.Imap
 			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
 			// search syntax.
 			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
-			ic.UserData = new SearchResults ();
+			ic.UserData = new SearchResults (SortOrder.Ascending);
 
 			Engine.QueueCommand (ic);
 

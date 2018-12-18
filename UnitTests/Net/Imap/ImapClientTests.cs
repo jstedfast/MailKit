@@ -3008,8 +3008,9 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (matches.Min.HasValue, "MIN should not be set");
 				Assert.AreEqual (0, matches.Count, "COUNT should not be set");
 				Assert.AreEqual (14, matches.UniqueIds.Count);
+				var expectedSortByReverseArrivalResults = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
-					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+					Assert.AreEqual (expectedSortByReverseArrivalResults[i], matches.UniqueIds[i].Id);
 
 				destination.GetStreams (UniqueIdRange.All, GetStreamsCallback);
 				destination.GetStreams (new int[] { 0, 1, 2 }, GetStreamsCallback);
@@ -3632,8 +3633,9 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (matches.Min.HasValue, "MIN should not be set");
 				Assert.AreEqual (0, matches.Count, "COUNT should not be set");
 				Assert.AreEqual (14, matches.UniqueIds.Count);
+				var expectedSortByReverseArrivalResults = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
-					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+					Assert.AreEqual (expectedSortByReverseArrivalResults[i], matches.UniqueIds[i].Id);
 
 				await destination.GetStreamsAsync (UniqueIdRange.All, GetStreamsCallback);
 				await destination.GetStreamsAsync (new int[] { 0, 1, 2 }, GetStreamsCallback);

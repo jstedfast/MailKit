@@ -41,9 +41,10 @@ namespace MailKit.Search {
 		/// <remarks>
 		/// Creates a new <see cref="SearchResults"/>.
 		/// </remarks>
-		public SearchResults ()
+		/// <param name="order">The expected sort-order of the results.</param>
+		public SearchResults (SortOrder order = SortOrder.None)
 		{
-			UniqueIds = new UniqueId[0];
+			UniqueIds = new UniqueIdSet (order);
 		}
 
 		/// <summary>
