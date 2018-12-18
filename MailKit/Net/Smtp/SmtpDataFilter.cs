@@ -65,6 +65,7 @@ namespace MailKit.Net.Smtp {
 			if (ndots == 0) {
 				outputIndex = startIndex;
 				outputLength = length;
+				bol = escape;
 				return input;
 			}
 
