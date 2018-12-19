@@ -1,4 +1,5 @@
 ## Getting Started
+
 ### Sending Messages
 
 One of the more common operations that MailKit is meant for is sending email messages.
@@ -34,10 +35,6 @@ I just wanted to let you know that Monica and I were going to go play some paint
 
 				client.Connect ("smtp.friends.com", 587, false);
 
-				// Note: since we don't have an OAuth2 token, disable
-				// the XOAUTH2 authentication mechanism.
-				client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
 				// Note: only needed if the SMTP server requires authentication
 				client.Authenticate ("joey", "password");
 
@@ -70,10 +67,6 @@ namespace TestClient {
 				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
 
 				client.Connect ("pop.friends.com", 110, false);
-
-				// Note: since we don't have an OAuth2 token, disable
-				// the XOAUTH2 authentication mechanism.
-				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
 				client.Authenticate ("joey", "password");
 
@@ -111,10 +104,6 @@ namespace TestClient {
 				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
 
 				client.Connect ("imap.friends.com", 993, true);
-
-				// Note: since we don't have an OAuth2 token, disable
-				// the XOAUTH2 authentication mechanism.
-				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
 				client.Authenticate ("joey", "password");
 
@@ -231,7 +220,7 @@ come up with your own heuristics for getting the Sent, Drafts, Trash, etc folder
 might use logic similar to this:
 
 ```csharp
-static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", /* maybe add some translated names */ };
+static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", "Sent Messages", /* maybe add some translated names */ };
 
 static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
 {
@@ -251,7 +240,7 @@ static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationT
 Using LINQ, you could simplify this down to something more like this:
 
 ```csharp
-static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", /* maybe add some translated names */ };
+static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", "Sent Messages", /* maybe add some translated names */ };
 
 static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
 {
@@ -268,14 +257,13 @@ How you handle this is up to you.
 ## Donate
 
 MailKit is a personal open source project that I have put thousands of hours into perfecting with the
-goal of making it not only the very best email framework for .NET, but the best email framework for
-any programming language. I need your help to achieve this.
+goal of making it the very best email framework for .NET. I need your help to achieve this.
 
-<a href="http://www.pledgie.com/campaigns/29300" target="_blank">
-  <img src="http://www.pledgie.com/campaigns/29300.png?skin_name=chrome"
-       alt="Click here to lend your support to MimeKit and MailKit by making a donation via pledgie.com!"
-       border="0" />
-</a>
+Donating helps pay for things such as web hosting, domain registration and licenses for developer tools
+such as a performance profiler, memory profiler, a static code analysis tool, and more. It also helps
+motivate me to continue working on the project.
+
+<a href="https://paypal.me/pools/c/857bGigSJE" _target="blank"><img alt="Click here to lend your support to MailKit by making a donation!" src="https://www.paypal.com/en_US/i/btn/x-click-but21.gif"></a>
 
 ## Reporting Bugs
 
