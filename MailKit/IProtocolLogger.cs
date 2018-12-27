@@ -60,7 +60,10 @@ namespace MailKit {
 		/// Logs a sequence of bytes sent by the client.
 		/// </summary>
 		/// <remarks>
-		/// Logs a sequence of bytes sent by the client.
+		/// <para>Logs a sequence of bytes sent by the client.</para>
+		/// <para><see cref="LogClient(byte[], int, int)"/> is called by the <see cref="IMailService"/> upon every successful
+		/// write operation to its underlying network stream, passing the exact same <paramref name="buffer"/>,
+		/// <paramref name="offset"/>, and <paramref name="count"/> arguments to the logging function.</para>
 		/// </remarks>
 		/// <param name='buffer'>The buffer to log.</param>
 		/// <param name='offset'>The offset of the first byte to log.</param>
@@ -86,7 +89,9 @@ namespace MailKit {
 		/// Logs a sequence of bytes sent by the server.
 		/// </summary>
 		/// <remarks>
-		/// Logs a sequence of bytes sent by the server.
+		/// <para>Logs a sequence of bytes sent by the server.</para>
+		/// <para><see cref="LogServer(byte[], int, int)"/> is called by the <see cref="IMailService"/> upon every successful
+		/// read of its underlying network stream with the exact buffer that was read.</para>
 		/// </remarks>
 		/// <param name='buffer'>The buffer to log.</param>
 		/// <param name='offset'>The offset of the first byte to log.</param>
