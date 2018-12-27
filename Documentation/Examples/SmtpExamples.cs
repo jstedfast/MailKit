@@ -47,6 +47,52 @@ namespace MailKit.Examples {
 
 				client.Disconnect (true);
 			}
+
+			// Example log:
+			//
+			// Connected to smtps://smtp.gmail.com:465/
+			// S: 220 smtp.gmail.com ESMTP w81sm22057166qkg.43 - gsmtp
+			// C: EHLO [192.168.1.220]
+			// S: 250-smtp.gmail.com at your service, [192.168.1.220]
+			// S: 250-SIZE 35882577
+			// S: 250-8BITMIME
+			// S: 250-AUTH LOGIN PLAIN XOAUTH2 PLAIN-CLIENTTOKEN OAUTHBEARER XOAUTH
+			// S: 250-ENHANCEDSTATUSCODES
+			// S: 250-PIPELINING
+			// S: 250-CHUNKING
+			// S: 250 SMTPUTF8
+			// C: AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk
+			// S: 235 2.7.0 Accepted
+			// C: MAIL FROM:<from.addr@gmail.com>
+			// C: RCPT TO:<to.addr@gmail.com>
+			// S: 250 2.1.0 OK w81sm22057166qkg.43 - gsmtp
+			// S: 250 2.1.5 OK w81sm22057166qkg.43 - gsmtp
+			// C: DATA
+			// S: 354  Go ahead w81sm22057166qkg.43 - gsmtp
+			// C: From: "LastName, FirstName" <from.addr@gmail.com>
+			// C: Date: Thu, 27 Dec 2018 10:55:18 -0500
+			// C: Subject: This is a test message
+			// C: Message-Id: <C7GVXWE3C6U4.7ZQ0K9OUHTDP1@MADUNLA-SP4.northamerica.corp.microsoft.com>
+			// C: To: "LastName, FirstName" <to.addr@gmail.com>
+			// C: MIME-Version: 1.0
+			// C: Content-Type: multipart/alternative; boundary="=-CToJI+AD2gS6z+fFlzDvhg=="
+			// C: 
+			// C: --=-CToJI+AD2gS6z+fFlzDvhg==
+			// C: Content-Type: text/plain; charset=utf-8
+			// C: Content-Transfer-Encoding: quoted-printable
+			// C: 
+			// C: This is the text/plain message body.
+			// C: --=-CToJI+AD2gS6z+fFlzDvhg==
+			// C: Content-Type: text/html; charset=utf-8
+			// C: Content-Transfer-Encoding: quoted-printable
+			// C: 
+			// C: <html><body><center>This is the <b>text/html</b> message body.</center></body></html>
+			// C: --=-CToJI+AD2gS6z+fFlzDvhg==--
+			// C: 
+			// C: .
+			// S: 250 2.0.0 OK 1545926120 w81sm22057166qkg.43 - gsmtp
+			// C: QUIT
+			// S: 221 2.0.0 closing connection w81sm22057166qkg.43 - gsmtp
 		}
 		#endregion
 

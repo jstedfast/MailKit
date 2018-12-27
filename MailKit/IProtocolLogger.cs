@@ -28,10 +28,10 @@ using System;
 
 namespace MailKit {
 	/// <summary>
-	/// An interface for logging protocols.
+	/// An interface for logging the communication between a client and server.
 	/// </summary>
 	/// <remarks>
-	/// An interface for logging protocols.
+	/// An interface for logging the communication between a client and server.
 	/// </remarks>
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger" />
