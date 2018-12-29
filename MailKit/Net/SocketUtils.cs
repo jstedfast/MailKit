@@ -73,28 +73,52 @@ namespace MailKit.Net
 		// Note: EndConnect needs to catch all exceptions
 		static void EndConnect (IAsyncResult ar)
 		{
-			var connect = (AsyncConnectState) ar.AsyncState;
+			var connection = (AsyncConnectState) ar.AsyncState;
 
-			if (connect.CancellationToken.IsCancellationRequested) {
-				connect.SetCanceled ();
+			if (connection.CancellationToken.IsCancellationRequested) {
+				try {
+					connection.Socket.Close ();
+				} catch (SocketException) {
+				}
+				connection.SetCanceled ();
 				return;
 			}
 
 			try {
-				connect.Socket.EndConnect (ar);
-				connect.IsConnected = true;
+				connection.Socket.EndConnect (ar);
+				connection.IsConnected = true;
 			} catch (Exception ex) {
-				connect.SetException (ex);
+				connection.SetException (ex);
 			}
 		}
 
-		static void Wait (IAsyncResult ar, CancellationToken cancellationToken)
+		static void Connect (Socket socket, string host, int port, AsyncConnectState connection, CancellationToken cancellationToken)
 		{
+			var ar = socket.BeginConnect (host, port, EndConnect, connection);
 			var waitHandles = new WaitHandle[] { ar.AsyncWaitHandle, cancellationToken.WaitHandle };
 
 			WaitHandle.WaitAny (waitHandles);
 
-			cancellationToken.ThrowIfCancellationRequested ();
+			try {
+				cancellationToken.ThrowIfCancellationRequested ();
+			} catch (OperationCanceledException) {
+				socket.Close ();
+				throw;
+			}
+
+			connection.Throw ();
+
+			if (!socket.Connected) {
+				// MONO BUG: If the AddressFamily is not supported (e.g. IPv6), then we could get into this situation...
+				throw new SocketException ((int) SocketError.AddressFamilyNotSupported);
+			}
+		}
+
+		static void ConnectAsync (object state)
+		{
+			var connection = (AsyncConnectState) state;
+
+			Connect (connection.Socket, connection.Host, connection.Port, connection, connection.CancellationToken);
 		}
 
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
@@ -108,18 +132,12 @@ namespace MailKit.Net
 					socket.Bind (localEndPoint);
 
 				if (doAsync || cancellationToken.CanBeCanceled) {
-					var state = new AsyncConnectState (socket, host, port, cancellationToken);
+					var connection = new AsyncConnectState (socket, host, port, cancellationToken);
 
 					if (doAsync) {
-						await Task.Factory.StartNew (() => {
-							var ar = socket.BeginConnect (host, port, EndConnect, state);
-							Wait (ar, cancellationToken);
-							state.Throw ();
-						}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default).ConfigureAwait (false);
+						await Task.Factory.StartNew (ConnectAsync, connection, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default).ConfigureAwait (false);
 					} else {
-						var ar = socket.BeginConnect (host, port, EndConnect, state);
-						Wait (ar, cancellationToken);
-						state.Throw ();
+						Connect (socket, host, port, connection, cancellationToken);
 					}
 				} else {
 					socket.Connect (host, port);
