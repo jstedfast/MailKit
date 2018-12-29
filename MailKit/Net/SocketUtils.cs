@@ -70,22 +70,6 @@ namespace MailKit.Net
 			}
 		}
 
-		static IAsyncResult BeginConnectAsync (AsyncCallback callback, object state)
-		{
-			var connect = (AsyncConnectState) state;
-
-			return connect.Socket.BeginConnect (connect.Host, connect.Port, callback, state);
-		}
-
-		static void EndConnectAsync (IAsyncResult ar)
-		{
-			var connect = (AsyncConnectState) ar.AsyncState;
-
-			connect.CancellationToken.ThrowIfCancellationRequested ();
-			connect.Socket.EndConnect (ar);
-			connect.IsConnected = true;
-		}
-
 		// Note: EndConnect needs to catch all exceptions
 		static void EndConnect (IAsyncResult ar)
 		{
@@ -127,7 +111,11 @@ namespace MailKit.Net
 					var state = new AsyncConnectState (socket, host, port, cancellationToken);
 
 					if (doAsync) {
-						await Task.Factory.FromAsync (BeginConnectAsync, EndConnectAsync, state).ConfigureAwait (false);
+						await Task.Run (() => {
+							var ar = socket.BeginConnect (host, port, EndConnect, state);
+							Wait (ar, cancellationToken);
+							state.Throw ();
+						}, cancellationToken).ConfigureAwait (false);
 					} else {
 						var ar = socket.BeginConnect (host, port, EndConnect, state);
 						Wait (ar, cancellationToken);
