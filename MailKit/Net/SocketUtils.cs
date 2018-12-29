@@ -102,12 +102,9 @@ namespace MailKit.Net
 						socket.Bind (localEndPoint);
 
 					socket.Connect (ipAddresses[i], port);
-				} catch (OperationCanceledException) {
-					socket.Dispose ();
-					socket = null;
-					throw;
 				} catch {
 					socket.Dispose ();
+					socket = null;
 
 					if (i + 1 == ipAddresses.Length)
 						throw;
