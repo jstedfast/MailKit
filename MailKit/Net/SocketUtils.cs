@@ -111,11 +111,11 @@ namespace MailKit.Net
 					var state = new AsyncConnectState (socket, host, port, cancellationToken);
 
 					if (doAsync) {
-						await Task.Run (() => {
+						await Task.Factory.StartNew (() => {
 							var ar = socket.BeginConnect (host, port, EndConnect, state);
 							Wait (ar, cancellationToken);
 							state.Throw ();
-						}, cancellationToken).ConfigureAwait (false);
+						}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default).ConfigureAwait (false);
 					} else {
 						var ar = socket.BeginConnect (host, port, EndConnect, state);
 						Wait (ar, cancellationToken);
