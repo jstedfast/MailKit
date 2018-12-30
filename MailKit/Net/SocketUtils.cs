@@ -46,11 +46,13 @@ namespace MailKit.Net
 				if (localEndPoint != null)
 					socket.Bind (localEndPoint);
 
+				cancellationToken.ThrowIfCancellationRequested ();
+
 				if (doAsync || cancellationToken.CanBeCanceled) {
 					var tcs = new TaskCompletionSource<bool> ();
 
-					using (var registration = cancellationToken.Register (() => tcs.SetCanceled (), false)) {
-						var ar = socket.BeginConnect (host, port, e => tcs.SetResult (true), null);
+					using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
+						var ar = socket.BeginConnect (host, port, e => tcs.TrySetResult (true), null);
 
 						try {
 							if (doAsync)
