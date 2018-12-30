@@ -56,10 +56,16 @@ namespace MailKit.Net
 							if (doAsync)
 								await tcs.Task.ConfigureAwait (false);
 							else
-								tcs.Task.Wait ();
+								tcs.Task.GetAwaiter ().GetResult ();
 
 							socket.EndConnect (ar);
-						} catch (Exception) {
+						} catch (OperationCanceledException) {
+							if (socket.Connected)
+								socket.Shutdown (SocketShutdown.Both);
+
+							socket.Close ();
+							throw;
+						} catch {
 							socket.Close ();
 							throw;
 						}
@@ -67,12 +73,6 @@ namespace MailKit.Net
 				} else {
 					socket.Connect (host, port);
 				}
-			} catch (OperationCanceledException) {
-				if (socket.Connected)
-					socket.Disconnect (false);
-
-				socket.Dispose ();
-				throw;
 			} catch {
 				socket.Dispose ();
 				throw;
