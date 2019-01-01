@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("Xamarin Inc.")]
 [assembly: AssemblyProduct ("MailKit")]
-[assembly: AssemblyCopyright ("Copyright © 2013-2018 Xamarin Inc. (www.xamarin.com)")]
+[assembly: AssemblyCopyright ("Copyright © 2013-2019 Xamarin Inc. (www.xamarin.com)")]
 [assembly: AssemblyTrademark ("Xamarin Inc.")]
 [assembly: AssemblyCulture ("")]
 
