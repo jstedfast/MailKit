@@ -2221,7 +2221,7 @@ namespace MailKit.Net.Imap {
 		internal static ImapFolder GetFolder (List<ImapFolder> folders, string encodedName)
 		{
 			for (int i = 0; i < folders.Count; i++) {
-				if (folders[i].EncodedName == encodedName)
+				if (encodedName.Equals (folders[i].EncodedName, StringComparison.OrdinalIgnoreCase))
 					return folders[i];
 			}
 
