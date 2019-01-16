@@ -97,7 +97,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets whether connecting via SSL/TLS should check certificate revocation.
 		/// </remarks>
-		/// <value><c>true</c> certificate revocation should be checked; otherwise, <c>false</c>.</value>
+		/// <value><c>true</c> if certificate revocation should be checked; otherwise, <c>false</c>.</value>
 		bool CheckCertificateRevocation { get; set; }
 
 		/// <summary>
