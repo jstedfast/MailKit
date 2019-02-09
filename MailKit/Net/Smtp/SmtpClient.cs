@@ -434,8 +434,13 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if (ip != null) {
-				if (ip.IsIPv4MappedToIPv6)
-					ip = ip.MapToIPv4 ();
+				if (ip.IsIPv4MappedToIPv6) {
+					try {
+						ip = ip.MapToIPv4 ();
+					} catch (ArgumentOutOfRangeException) {
+						// .NET 4.5.2 bug on Windows 7 SP1 (issue #814)
+					}
+				}
 
 				if (ip.AddressFamily == AddressFamily.InterNetworkV6)
 					domain = "[IPv6:" + ip + "]";
