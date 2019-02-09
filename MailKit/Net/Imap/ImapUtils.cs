@@ -1122,7 +1122,7 @@ namespace MailKit.Net.Imap {
 				// Note: When parsing mailbox addresses w/o a domain, Dovecot will
 				// use "MISSING_DOMAIN" as the domain string to prevent it from
 				// appearing as a group address in the IMAP ENVELOPE response.
-				if (domain == "MISSING_DOMAIN")
+				if (domain == "MISSING_DOMAIN" || domain == ".MISSING-HOST-NAME.")
 					domain = null;
 				else if (domain != null)
 					domain = domain.TrimEnd ('>');
