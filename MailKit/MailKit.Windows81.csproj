@@ -240,6 +240,7 @@
     <Compile Include="CompressedStream.cs" />
     <Compile Include="ConnectedEventArgs.cs" />
     <Compile Include="DeliveryStatusNotification.cs" />
+    <Compile Include="DeliveryStatusNotificationType.cs" />
     <Compile Include="DisconnectedEventArgs.cs" />
     <Compile Include="DuplexStream.cs" />
     <Compile Include="Envelope.cs" />

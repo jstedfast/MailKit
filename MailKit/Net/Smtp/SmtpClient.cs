@@ -1645,6 +1645,17 @@ namespace MailKit.Net.Smtp {
 			return null;
 		}
 
+		/// <summary>
+		/// Get or set how much of the message to include in any failed delivery status notifications.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets how much of the message to include in any failed delivery status notifications.
+		/// </remarks>
+		/// <value>A value indicating how much of the message to include in a failure delivery status notification.</value>
+		public DeliveryStatusNotificationType DeliveryStatusNotificationType {
+			get; set;
+		}
+
 		static string GetAddrspec (FormatOptions options, MailboxAddress mailbox)
 		{
 			if (options.International)
@@ -1671,7 +1682,14 @@ namespace MailKit.Net.Smtp {
 				if (!string.IsNullOrEmpty (envid))
 					command += " ENVID=" + envid;
 
-				// TODO: RET parameter?
+				switch (DeliveryStatusNotificationType) {
+				case DeliveryStatusNotificationType.HeadersOnly:
+					command += " RET=HDRS";
+					break;
+				case DeliveryStatusNotificationType.Full:
+					command += " RET=FULL";
+					break;
+				}
 			}
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
