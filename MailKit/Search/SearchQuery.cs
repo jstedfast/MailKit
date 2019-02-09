@@ -211,7 +211,8 @@ namespace MailKit.Search {
 		/// Match messages that were delivered after the specified date.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that were delivered after the specified date.
+		/// <para>Matches messages that were delivered after the specified date.</para>
+		/// <para>The resolution of this search query does not include the time.</para>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -224,7 +225,8 @@ namespace MailKit.Search {
 		/// Match messages that were delivered before the specified date.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that were delivered before the specified date.
+		/// <para>Matches messages that were delivered before the specified date.</para>
+		/// <para>The resolution of this search query does not include the time.</para>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -237,7 +239,8 @@ namespace MailKit.Search {
 		/// Match messages that were delivered on the specified date.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that were delivered on the specified date.
+		/// <para>Matches messages that were delivered on the specified date.</para>
+		/// <para>The resolution of this search query does not include the time.</para>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -873,7 +876,8 @@ namespace MailKit.Search {
 		/// Match messages that were sent after the specified date.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that were sent after the specified date.
+		/// <para>Matches messages that were sent after the specified date.</para>
+		/// <para>The resolution of this search query does not include the time.</para>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -886,7 +890,8 @@ namespace MailKit.Search {
 		/// Match messages that were sent before the specified date.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that were sent before the specified date.
+		/// <para>Matches messages that were sent before the specified date.</para>
+		/// <para>The resolution of this search query does not include the time.</para>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -899,7 +904,8 @@ namespace MailKit.Search {
 		/// Match messages that were sent on the specified date.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that were sent on the specified date.
+		/// <para>Matches messages that were sent on the specified date.</para>
+		/// <para>The resolution of this search query does not include the time.</para>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
