@@ -206,8 +206,10 @@ namespace MailKit.Net.Proxy
 
 			var passwd = Encoding.UTF8.GetBytes (ProxyCredentials.Password);
 
-			if (passwd.Length > 255)
+			if (passwd.Length > 255) {
+				Array.Clear (passwd, 0, passwd.Length);
 				throw new AuthenticationException ("Password too long.");
+			}
 
 			var buffer = new byte[user.Length + passwd.Length + 3];
 			int nread, n = 0;
@@ -219,6 +221,8 @@ namespace MailKit.Net.Proxy
 			buffer[n++] = (byte) passwd.Length;
 			Buffer.BlockCopy (passwd, 0, buffer, n, passwd.Length);
 			n += passwd.Length;
+
+			Array.Clear (passwd, 0, passwd.Length);
 
 			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
 
