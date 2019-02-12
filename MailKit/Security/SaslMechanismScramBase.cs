@@ -320,6 +320,7 @@ namespace MailKit.Security {
 
 				var password = Encoding.UTF8.GetBytes (SaslPrep (Credentials.Password));
 				salted = Hi (password, Convert.FromBase64String (salt), count);
+				Array.Clear (password, 0, password.Length);
 
 				var withoutProof = "c=" + Convert.ToBase64String (Encoding.ASCII.GetBytes ("n,,")) + ",r=" + nonce;
 				auth = Encoding.UTF8.GetBytes (client + "," + server + "," + withoutProof);

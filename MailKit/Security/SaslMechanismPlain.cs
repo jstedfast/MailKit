@@ -287,6 +287,8 @@ namespace MailKit.Security {
 			for (int i = 0; i < passwd.Length; i++)
 				buffer[offset++] = passwd[i];
 
+			Array.Clear (passwd, 0, passwd.Length);
+
 			IsAuthenticated = true;
 
 			return buffer;

@@ -178,7 +178,6 @@ namespace MailKit.Security {
 			if (IsAuthenticated)
 				throw new InvalidOperationException ();
 
-			string password = Credentials.Password ?? string.Empty;
 			string userName = Credentials.UserName;
 			string domain = Credentials.Domain;
 			MessageBase message;
@@ -200,6 +199,7 @@ namespace MailKit.Security {
 				state = LoginState.Challenge;
 				break;
 			case LoginState.Challenge:
+				var password = Credentials.Password ?? string.Empty;
 				message = GetChallengeResponse (userName, password, token, startIndex, length);
 				IsAuthenticated = true;
 				break;

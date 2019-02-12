@@ -175,6 +175,8 @@ namespace MailKit.Security {
 				Array.Copy (password, opad, password.Length);
 			}
 
+			Array.Clear (password, 0, password.Length);
+
 			for (int i = 0; i < 64; i++) {
 				ipad[i] ^= 0x36;
 				opad[i] ^= 0x5c;
