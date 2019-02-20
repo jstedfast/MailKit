@@ -415,49 +415,53 @@ namespace UnitTests.Net.Imap {
 			var host = "imap.gmail.com";
 			int port = 993;
 
-			using (var client = new ImapClient ()) {
-				int connected = 0, disconnected = 0;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
-					connected++;
-				};
+				using (var client = new ImapClient ()) {
+					int connected = 0, disconnected = 0;
 
-				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
-					disconnected++;
-				};
+					client.Connected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						connected++;
+					};
 
-				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[0], Socks5ClientTests.Socks5ProxyPorts[0]);
-				client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-				client.ClientCertificates = null;
-				client.LocalEndPoint = null;
-				client.Timeout = 20000;
+					client.Disconnected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						disconnected++;
+					};
 
-				try {
-					client.Connect (host, 0, options);
-				} catch (TimeoutException) {
-					Assert.Inconclusive ("Timed out.");
-					return;
-				} catch (Exception ex) {
-					Assert.Fail (ex.Message);
+					client.ProxyClient = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
+					client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+					client.ClientCertificates = null;
+					client.LocalEndPoint = null;
+					client.Timeout = 20000;
+
+					try {
+						client.Connect (host, 0, options);
+					} catch (TimeoutException) {
+						Assert.Inconclusive ("Timed out.");
+						return;
+					} catch (Exception ex) {
+						Assert.Fail (ex.Message);
+					}
+					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					Assert.AreEqual (1, connected, "ConnectedEvent");
+
+					Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
+
+					client.Disconnect (true);
+					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				Assert.AreEqual (1, connected, "ConnectedEvent");
-
-				Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
-
-				client.Disconnect (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
 
@@ -468,49 +472,54 @@ namespace UnitTests.Net.Imap {
 			var host = "imap.gmail.com";
 			int port = 993;
 
-			using (var client = new ImapClient ()) {
-				int connected = 0, disconnected = 0;
+			using (var proxy = new Socks5ProxyListener ()) {
+				proxy.Start (IPAddress.Loopback, 0);
 
-				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
-					connected++;
-				};
+				using (var client = new ImapClient ()) {
+					int connected = 0, disconnected = 0;
 
-				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
-					disconnected++;
-				};
+					client.Connected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						connected++;
+					};
 
-				client.ProxyClient = new Socks5Client (Socks5ClientTests.Socks5ProxyList[1], Socks5ClientTests.Socks5ProxyPorts[1]);
-				client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-				client.ClientCertificates = null;
-				client.LocalEndPoint = null;
-				client.Timeout = 20000;
+					client.Disconnected += (sender, e) => {
+						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
+						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
+						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
+						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						disconnected++;
+					};
 
-				try {
-					await client.ConnectAsync (host, 0, options);
-				} catch (TimeoutException) {
-					Assert.Inconclusive ("Timed out.");
-					return;
-				} catch (Exception ex) {
-					Assert.Fail (ex.Message);
+
+					client.ProxyClient = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
+					client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+					client.ClientCertificates = null;
+					client.LocalEndPoint = null;
+					client.Timeout = 20000;
+
+					try {
+						await client.ConnectAsync (host, 0, options);
+					} catch (TimeoutException) {
+						Assert.Inconclusive ("Timed out.");
+						return;
+					} catch (Exception ex) {
+						Assert.Fail (ex.Message);
+					}
+					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					Assert.AreEqual (1, connected, "ConnectedEvent");
+
+					Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
+
+					await client.DisconnectAsync (true);
+					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-				Assert.AreEqual (1, connected, "ConnectedEvent");
-
-				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
-
-				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
 
