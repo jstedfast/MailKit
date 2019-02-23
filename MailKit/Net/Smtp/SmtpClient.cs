@@ -1961,7 +1961,7 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
-			var format = format.Clone ();
+			var format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
 			format.EnsureNewLine = true;
 
