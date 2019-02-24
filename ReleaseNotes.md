@@ -1,5 +1,21 @@
 # Release Notes
 
+### MailKit 2.1.3 (2019-02-24)
+
+* Fixed IMAP GetFolder() methods to match LIST responses case-insensitively.
+  (issue [#803](https://github.com/jstedfast/MailKit/issues/803))
+* Added a work-around to SmtpClient for a .NET 4.5.2 bug on Windows 7 SP1.
+  (issue [#814](https://github.com/jstedfast/MailKit/issues/814))
+* Added DeliveryStatusNotificationType and a property to SmtpClient to allow
+  developers to specify the `RET` parameter value to the `MAIL FROM` command.
+* Fixed a number of locations in the code to clear password buffers after using
+  them.
+* SmtpClient.Send[Async]() methods that accept a FormatOptions argument will no
+  longer hide Bcc, Resent-Bcc, nor Content-Length headers when uploading the
+  raw message to the SMTP server. It is now up to callers to add these values
+  to their custom FormatOptions.HiddenHeaders property.
+  (issue [#360](https://github.com/jstedfast/MailKit/issues/360))
+
 ### MailKit 2.1.2 (2018-12-30)
 
 * Fixed a bug in SmtpDataFilter. (issue [#788](https://github.com/jstedfast/MailKit/issues/788))
