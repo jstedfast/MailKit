@@ -13,9 +13,9 @@ variables:
   solution: 'MailKit.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  majorVersion: 2
-  minorVersion: 1
-  patchVersion: 3
+  Major: 2
+  Minor: 1
+  Patch: 3
 
 steps:
 - script: git submodule update --init --recursive
@@ -44,16 +44,13 @@ steps:
   displayName: 'Publish Unit Test Results'
 
 - task: NuGetCommand@2
-  displayName: 'Package MailKit'
+  displayName: 'Package MailKit-$(Major).$(Minor).$(Patch).$(Build.BuildId)'
   inputs:
     command: pack
     packagesToPack: nuget/MailKit.nuspec
     versioningScheme: byBuildNumber
-    majorVersion: '$(majorVersion)'
-    minorVersion: '$(minorVersion)'
-    patchVersion: '$(patchVersion)'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish MailKit NuGet package'
   inputs:
-    ArtifactName: 'MailKit-$(majorVersion).$(minorVersion).$(patchVersion)'
+    ArtifactName: 'MailKit-$(Major).$(Minor).$(Patch).$(BuildId)'
