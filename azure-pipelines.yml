@@ -9,13 +9,12 @@ trigger:
 pool:
   vmImage: 'VS2017-Win2016'
 
+name: 2.1.3$(Rev:.r)
+
 variables:
   solution: 'MailKit.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  Major: 2
-  Minor: 1
-  Patch: 3
 
 steps:
 - script: git submodule update --init --recursive
@@ -44,7 +43,7 @@ steps:
   displayName: 'Publish Unit Test Results'
 
 - task: NuGetCommand@2
-  displayName: 'Package MailKit-$(Major).$(Minor).$(Patch).$(Build.BuildId)'
+  displayName: 'Package MailKit-$(Build.BuildNumber)'
   inputs:
     command: pack
     packagesToPack: nuget/MailKit.nuspec
@@ -53,4 +52,4 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish MailKit NuGet package'
   inputs:
-    ArtifactName: 'MailKit-$(Major).$(Minor).$(Patch).$(BuildId)'
+    ArtifactName: 'MailKit-$(Build.BuildNumber)'
