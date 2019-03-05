@@ -1857,8 +1857,13 @@ namespace MailKit.Net.Imap {
 			if (ctx.Engine.State == ImapEngineState.Idle) {
 				var buf = Encoding.ASCII.GetBytes ("DONE\r\n");
 
-				ctx.Engine.Stream.Write (buf, 0, buf.Length, ctx.CancellationToken);
-				ctx.Engine.Stream.Flush (ctx.CancellationToken);
+				try {
+					ctx.Engine.Stream.Write (buf, 0, buf.Length, ctx.CancellationToken);
+					ctx.Engine.Stream.Flush (ctx.CancellationToken);
+				} catch {
+					return;
+				}
+
 				ctx.Engine.State = ImapEngineState.Selected;
 			}
 		}
