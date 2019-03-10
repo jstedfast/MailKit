@@ -240,6 +240,17 @@ namespace MailKit.Net.Smtp {
 			get { return Stream.Length; }
 		}
 
+		void DropConnection ()
+		{
+			if (Socket != null) {
+#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
+				Socket.Disconnect (false);
+#else
+				Socket.Dispose ();
+#endif
+			}
+		}
+
 		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
 #if NETFX_CORE
@@ -627,51 +638,57 @@ namespace MailKit.Net.Smtp {
 
 			ValidateArguments (buffer, offset, count);
 
-			try {
-				int index = offset;
-				int left = count;
+			using (var registration = cancellationToken.Register (DropConnection)) {
+				try {
+					int index = offset;
+					int left = count;
 
-				while (left > 0) {
-					int n = Math.Min (BlockSize - outputIndex, left);
+					while (left > 0) {
+						int n = Math.Min (BlockSize - outputIndex, left);
 
-					if (outputIndex > 0 || n < BlockSize) {
-						// append the data to the output buffer
-						Buffer.BlockCopy (buffer, index, output, outputIndex, n);
-						outputIndex += n;
-						index += n;
-						left -= n;
-					}
-
-					if (outputIndex == BlockSize) {
-						// flush the output buffer
-						if (doAsync) {
-							await Stream.WriteAsync (output, 0, BlockSize, cancellationToken).ConfigureAwait (false);
-						} else {
-							Poll (SelectMode.SelectWrite, cancellationToken);
-							Stream.Write (output, 0, BlockSize);
+						if (outputIndex > 0 || n < BlockSize) {
+							// append the data to the output buffer
+							Buffer.BlockCopy (buffer, index, output, outputIndex, n);
+							outputIndex += n;
+							index += n;
+							left -= n;
 						}
-						logger.LogClient (output, 0, BlockSize);
-						outputIndex = 0;
-					}
 
-					if (outputIndex == 0) {
-						// write blocks of data to the stream without buffering
-						while (left >= BlockSize) {
+						if (outputIndex == BlockSize) {
+							// flush the output buffer
 							if (doAsync) {
-								await Stream.WriteAsync (buffer, index, BlockSize, cancellationToken).ConfigureAwait (false);
+								await Stream.WriteAsync (output, 0, BlockSize, cancellationToken).ConfigureAwait (false);
 							} else {
 								Poll (SelectMode.SelectWrite, cancellationToken);
-								Stream.Write (buffer, index, BlockSize);
+								Stream.Write (output, 0, BlockSize);
 							}
-							logger.LogClient (buffer, index, BlockSize);
-							index += BlockSize;
-							left -= BlockSize;
+							logger.LogClient (output, 0, BlockSize);
+							outputIndex = 0;
+						}
+
+						if (outputIndex == 0) {
+							// write blocks of data to the stream without buffering
+							while (left >= BlockSize) {
+								if (doAsync) {
+									await Stream.WriteAsync (buffer, index, BlockSize, cancellationToken).ConfigureAwait (false);
+								} else {
+									Poll (SelectMode.SelectWrite, cancellationToken);
+									Stream.Write (buffer, index, BlockSize);
+								}
+								logger.LogClient (buffer, index, BlockSize);
+								index += BlockSize;
+								left -= BlockSize;
+							}
 						}
 					}
+				} catch (OperationCanceledException) {
+					IsConnected = false;
+					throw;
+				} catch {
+					IsConnected = false;
+					cancellationToken.ThrowIfCancellationRequested ();
+					throw;
 				}
-			} catch {
-				IsConnected = false;
-				throw;
 			}
 		}
 
@@ -793,20 +810,26 @@ namespace MailKit.Net.Smtp {
 			if (outputIndex == 0)
 				return;
 
-			try {
-				if (doAsync) {
-					await Stream.WriteAsync (output, 0, outputIndex, cancellationToken).ConfigureAwait (false);
-					await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
-				} else {
-					Poll (SelectMode.SelectWrite, cancellationToken);
-					Stream.Write (output, 0, outputIndex);
-					Stream.Flush ();
+			using (var registration = cancellationToken.Register (DropConnection)) {
+				try {
+					if (doAsync) {
+						await Stream.WriteAsync (output, 0, outputIndex, cancellationToken).ConfigureAwait (false);
+						await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+					} else {
+						Poll (SelectMode.SelectWrite, cancellationToken);
+						Stream.Write (output, 0, outputIndex);
+						Stream.Flush ();
+					}
+					logger.LogClient (output, 0, outputIndex);
+					outputIndex = 0;
+				} catch (OperationCanceledException) {
+					IsConnected = false;
+					throw;
+				} catch {
+					IsConnected = false;
+					cancellationToken.ThrowIfCancellationRequested ();
+					throw;
 				}
-				logger.LogClient (output, 0, outputIndex);
-				outputIndex = 0;
-			} catch {
-				IsConnected = false;
-				throw;
 			}
 		}
 
