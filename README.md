@@ -4,8 +4,8 @@
 
 |  Package  |Latest Release|Latest Build|
 |:----------|:------------:|:----------:|
-|**MimeKit**|[![NuGet Badge MimeKit](https://buildstats.info/nuget/MimeKit)](https://www.nuget.org/packages/MimeKit)|[![MyGet Badge MimeKit](https://buildstats.info/myget/mimekit/MimeKit)](https://www.myget.org/feed/Packages/mimekit)|
-|**MailKit**|[![NuGet Badge MailKit](https://buildstats.info/nuget/MailKit)](https://www.nuget.org/packages/MailKit)|[![MyGet Badge MailKit](https://buildstats.info/myget/mimekit/MailKit)](https://www.myget.org/feed/Packages/mimekit)|
+|**MimeKit**|[![NuGet Badge MimeKit](https://buildstats.info/nuget/MimeKit)](https://www.nuget.org/packages/MimeKit)|[![MyGet Badge MimeKit](https://buildstats.info/myget/mimekit/MimeKit)](https://www.myget.org/feed/mimekit/package/nuget/MimeKit)|
+|**MailKit**|[![NuGet Badge MailKit](https://buildstats.info/nuget/MailKit)](https://www.nuget.org/packages/MailKit)|[![MyGet Badge MailKit](https://buildstats.info/myget/mimekit/MailKit)](https://www.myget.org/feed/mimekit/package/nuget/MailKit)|
 
 |  Platform   |Build Status|Code Coverage|Static Analysis|
 |:------------|:----------:|:-----------:|:-------------:|
