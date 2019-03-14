@@ -49,6 +49,14 @@ steps:
     packagesToPack: nuget/MailKit.nuspec
     versioningScheme: byBuildNumber
 
+- task: NuGetCommand@2
+  displayName: 'Publish MailKit NuGet package to MyGet Feed'
+  inputs:
+    command: push
+    nuGetFeedType: external
+    publishFeedCredentials: 'MyGet'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+
 - task: PublishBuildArtifacts@1
   displayName: 'Publish MailKit NuGet package'
   inputs:
