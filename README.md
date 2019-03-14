@@ -2,10 +2,10 @@
 
 [![Join the chat at https://gitter.im/jstedfast/MailKit](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jstedfast/MailKit?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-|  Package  | Download |
-|:----------|:--------:|
-|**MimeKit**|[![NuGet Badge MimeKit](https://buildstats.info/nuget/MimeKit)](https://www.nuget.org/packages/MimeKit)|
-|**MailKit**|[![NuGet Badge MailKit](https://buildstats.info/nuget/MailKit)](https://www.nuget.org/packages/MailKit)|
+|  Package  |Latest Release|Latest Build|
+|:----------|:------------:|:----------:|
+|**MimeKit**|[![NuGet Badge MimeKit](https://buildstats.info/nuget/MimeKit)](https://www.nuget.org/packages/MimeKit)|[![MyGet Badge MimeKit](https://buildstats.info/myget/mimekit/MimeKit)](https://www.myget.org/feed/Packages/mimekit)|
+|**MailKit**|[![NuGet Badge MailKit](https://buildstats.info/nuget/MailKit)](https://www.nuget.org/packages/MailKit)|[![MyGet Badge MailKit](https://buildstats.info/myget/mimekit/MailKit)](https://www.myget.org/feed/Packages/mimekit)|
 
 |  Platform   |Build Status|Code Coverage|Static Analysis|
 |:------------|:----------:|:-----------:|:-------------:|
