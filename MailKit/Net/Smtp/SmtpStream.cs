@@ -243,11 +243,15 @@ namespace MailKit.Net.Smtp {
 		void DropConnection ()
 		{
 			if (Socket != null) {
+				try {
 #if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
-				Socket.Disconnect (false);
+					Socket.Disconnect (false);
 #else
-				Socket.Dispose ();
+					Socket.Dispose ();
 #endif
+				} catch {
+					return;
+				}
 			}
 		}
 
@@ -681,12 +685,10 @@ namespace MailKit.Net.Smtp {
 							}
 						}
 					}
-				} catch (OperationCanceledException) {
+				} catch (Exception ex) {
 					IsConnected = false;
-					throw;
-				} catch {
-					IsConnected = false;
-					cancellationToken.ThrowIfCancellationRequested ();
+					if (!(ex is OperationCanceledException))
+						cancellationToken.ThrowIfCancellationRequested ();
 					throw;
 				}
 			}
@@ -822,12 +824,10 @@ namespace MailKit.Net.Smtp {
 					}
 					logger.LogClient (output, 0, outputIndex);
 					outputIndex = 0;
-				} catch (OperationCanceledException) {
+				} catch (Exception ex) {
 					IsConnected = false;
-					throw;
-				} catch {
-					IsConnected = false;
-					cancellationToken.ThrowIfCancellationRequested ();
+					if (!(ex is OperationCanceledException))
+						cancellationToken.ThrowIfCancellationRequested ();
 					throw;
 				}
 			}
