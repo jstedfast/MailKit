@@ -31,8 +31,10 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Collections;
 
+using NetworkStream = MailKit.Net.NetworkStream;
+
 namespace UnitTests.Net.Proxy {
-	public abstract class ProxyListener : IDisposable
+	abstract class ProxyListener : IDisposable
 	{
 		CancellationTokenSource cancellationTokenSource;
 		TcpListener listener;

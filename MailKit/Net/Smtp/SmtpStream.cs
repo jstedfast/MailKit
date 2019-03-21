@@ -43,6 +43,8 @@ using DecoderFallbackException = Portable.Text.DecoderFallbackException;
 #else
 using System.Net.Security;
 using System.Net.Sockets;
+
+using NetworkStream = MailKit.Net.NetworkStream;
 #endif
 
 using MimeKit.IO;

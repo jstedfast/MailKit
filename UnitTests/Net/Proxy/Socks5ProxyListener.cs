@@ -33,8 +33,10 @@ using System.Threading.Tasks;
 
 using MailKit.Net;
 
+using NetworkStream = MailKit.Net.NetworkStream;
+
 namespace UnitTests.Net.Proxy {
-	public class Socks5ProxyListener : ProxyListener
+	class Socks5ProxyListener : ProxyListener
 	{
 		enum Socks5ListenerState
 		{
