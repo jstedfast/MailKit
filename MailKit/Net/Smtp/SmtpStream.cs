@@ -244,11 +244,7 @@ namespace MailKit.Net.Smtp {
 		{
 			if (Socket != null) {
 				try {
-#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
-					Socket.Disconnect (false);
-#else
 					Socket.Dispose ();
-#endif
 				} catch {
 					return;
 				}
