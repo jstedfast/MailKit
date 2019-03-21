@@ -34,12 +34,17 @@ namespace MailKit.Net
 {
 	class NetworkStream : Stream
 	{
+		readonly SocketAsyncEventArgs args;
 		readonly Socket socket;
 		bool ownsSocket;
 		bool closed;
 
 		public NetworkStream (Socket socket, bool ownsSocket)
 		{
+			args = new SocketAsyncEventArgs ();
+			args.Completed += AsyncOperationCompleted;
+			args.AcceptSocket = socket;
+
 			this.ownsSocket = ownsSocket;
 			this.socket = socket;
 		}
@@ -88,6 +93,25 @@ namespace MailKit.Net
 			set { socket.SendTimeout = value; }
 		}
 
+		void AsyncOperationCompleted (object sender, SocketAsyncEventArgs args)
+		{
+			var tcs = (TaskCompletionSource<bool>) args.UserToken;
+
+			if (args.SocketError == SocketError.Success) {
+				tcs.TrySetResult (true);
+				return;
+			}
+
+			tcs.TrySetException (new SocketException ((int) args.SocketError));
+		}
+
+		void Disconnect ()
+		{
+			socket.Dispose ();
+			args.Dispose ();
+			closed = true;
+		}
+
 		public override int Read (byte[] buffer, int offset, int count)
 		{
 			return socket.Receive (buffer, offset, count, SocketFlags.None);
@@ -100,21 +124,23 @@ namespace MailKit.Net
 			var tcs = new TaskCompletionSource<bool> ();
 
 			using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-				var ar = socket.BeginReceive (buffer, offset, count, SocketFlags.None, e => tcs.TrySetResult (true), null);
+				args.SetBuffer (buffer, offset, count);
+				args.UserToken = tcs;
+
+				if (!socket.ReceiveAsync (args))
+					AsyncOperationCompleted (null, args);
 
 				try {
 					await tcs.Task.ConfigureAwait (false);
-					return socket.EndReceive (ar);
+					return args.BytesTransferred;
 				} catch (OperationCanceledException) {
 					if (socket.Connected)
 						socket.Shutdown (SocketShutdown.Both);
 
-					socket.Dispose ();
-					closed = true;
+					Disconnect ();
 					throw;
 				} catch {
-					socket.Dispose ();
-					closed = true;
+					Disconnect ();
 					throw;
 				}
 			}
@@ -132,21 +158,22 @@ namespace MailKit.Net
 			var tcs = new TaskCompletionSource<bool> ();
 
 			using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-				var ar = socket.BeginSend (buffer, offset, count, SocketFlags.None, e => tcs.TrySetResult (true), null);
+				args.SetBuffer (buffer, offset, count);
+				args.UserToken = tcs;
+
+				if (!socket.SendAsync (args))
+					AsyncOperationCompleted (null, args);
 
 				try {
 					await tcs.Task.ConfigureAwait (false);
-					socket.EndSend (ar);
 				} catch (OperationCanceledException) {
 					if (socket.Connected)
 						socket.Shutdown (SocketShutdown.Both);
 
-					socket.Dispose ();
-					closed = true;
+					Disconnect ();
 					throw;
 				} catch {
-					socket.Dispose ();
-					closed = true;
+					Disconnect ();
 					throw;
 				}
 			}
@@ -170,10 +197,8 @@ namespace MailKit.Net
 		{
 			if (disposing && ownsSocket && !closed) {
 				ownsSocket = false;
-				socket.Dispose ();
+				Disconnect ();
 			}
-
-			closed = true;
 
 			base.Dispose (disposing);
 		}
