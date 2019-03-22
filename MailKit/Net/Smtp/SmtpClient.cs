@@ -1419,6 +1419,7 @@ namespace MailKit.Net.Smtp {
 				} catch (OperationCanceledException) {
 				} catch (SmtpProtocolException) {
 				} catch (SmtpCommandException) {
+				} catch (SocketException) {
 				} catch (IOException) {
 				}
 			}
