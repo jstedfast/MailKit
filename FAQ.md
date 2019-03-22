@@ -60,7 +60,7 @@ The first way is to enable SSL/TLS encryption immediately upon connecting to the
 SMTP, POP3 or IMAP server. This method requires an "SSL port" because the standard
 port defined for the protocol is meant for plain-text communication.
 
-The second way is via a `STARTTLS` command (`aka `STLS` for POP3) that is *optionally*
+The second way is via a `STARTTLS` command (aka `STLS` for POP3) that is *optionally*
 supported by the server.
 
 Below is a table of the protocols supported by MailKit and the standard plain-text ports
