@@ -49,14 +49,46 @@ Yes. MimeKit and MailKit are both completely free and open source. They are both
 
 ### <a name="InvalidSslCertificate">Q: Why do I get `The remote certificate is invalid according to the validation procedure` when I try to Connect?</a>
 
-When you get an exception with that error message, it means that the IMAP, POP3 or SMTP
-server that you are connecting to is using an SSL certificate that is either expired
-or untrusted by your system.
+When you get an exception with that error message, it usually means that you are encountering
+one of the following scenarios:
 
-Often times, mail servers will use self-signed certificates instead of using a certificate
-that has been signed by a trusted Certificate Authority. Another potential pitfall is when
-locally installed anti-virus software replaces the certificate in order to scan web traffic
-for viruses.
+#### 1. The mail server does not support SSL on the specified port.
+
+There are 2 different ways to use SSL/TLS encryption with mail servers.
+
+The first way is to enable SSL/TLS encryption immediately upon connecting to the
+SMTP, POP3 or IMAP server. This method requires an "SSL port" because the standard
+port defined for the protocol is meant for plain-text communication.
+
+The second way is via a `STARTTLS` command (`aka `STLS` for POP3) that is *optionally*
+supported by the server.
+
+Below is a table of the protocols supported by MailKit and the standard plain-text ports
+(which either do not support any SSL/TLS encryption at all or only via the `STARTTLS`
+command extension) and the SSL ports which require SSL/TLS encryption immediately upon a
+successful connection to the remote host.
+
+|Protocol|Standard Port|SSL Port|
+|:------:|:-----------:|:------:|
+| SMTP   | 25 or 587   | 465    |
+| POP3   | 110         | 995    |
+| IMAP   | 143         | 993    |
+
+It is important to use the correct `SecureSocketOptions` for the port that you are connecting to.
+
+If you are connecting to one of the standard ports above, you will need to use `SecureSocketOptions.None`,
+`SecureSocketOptions.StartTls` or `SecureSocketOptions.StartTlsWhenAvailable`.
+
+If you are connecting to one of the SSL ports, you will need to use `SecureSocketOptions.SslOnConnect`.
+
+You could also try using `SecureSocketOptions.Auto` which works by choosing the appropriate option to use
+by comparing the specified port to the ports in the above table.
+
+#### 2. The mail server that you are connecting to is using an expired (or otherwise untrusted) SSL certificate.
+
+Often times, mail servers will use self-signed certificates instead of using a certificate that
+has been signed by a trusted Certificate Authority. Another potential pitfall is when locally
+installed anti-virus software replaces the certificate in order to scan web traffic for viruses.
 
 When your system is unable to validate the mail server's certificate because it is not signed
 by a known and trusted Certificate Authority, the above error will occur.
