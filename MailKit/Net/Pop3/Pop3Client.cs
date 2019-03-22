@@ -1363,7 +1363,6 @@ namespace MailKit.Net.Pop3 {
 				} catch (OperationCanceledException) {
 				} catch (Pop3ProtocolException) {
 				} catch (Pop3CommandException) {
-				} catch (SocketException) {
 				} catch (IOException) {
 				}
 			}

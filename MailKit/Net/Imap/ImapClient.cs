@@ -1755,7 +1755,6 @@ namespace MailKit.Net.Imap {
 				} catch (OperationCanceledException) {
 				} catch (ImapProtocolException) {
 				} catch (ImapCommandException) {
-				} catch (SocketException) {
 				} catch (IOException) {
 				}
 			}

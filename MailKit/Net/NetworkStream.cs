@@ -84,13 +84,31 @@ namespace MailKit.Net
 		}
 
 		public override int ReadTimeout {
-			get { return socket.ReceiveTimeout; }
-			set { socket.ReceiveTimeout = value; }
+			get {
+				int timeout = socket.ReceiveTimeout;
+
+				return timeout == 0 ? Timeout.Infinite : timeout;
+			}
+			set {
+				if (value <= 0 && value != Timeout.Infinite)
+					throw new ArgumentOutOfRangeException (nameof (value));
+
+				socket.ReceiveTimeout = value;
+			}
 		}
 
 		public override int WriteTimeout {
-			get { return socket.SendTimeout; }
-			set { socket.SendTimeout = value; }
+			get {
+				int timeout = socket.SendTimeout;
+
+				return timeout == 0 ? Timeout.Infinite : timeout;
+			}
+			set {
+				if (value <= 0 && value != Timeout.Infinite)
+					throw new ArgumentOutOfRangeException (nameof (value));
+
+				socket.SendTimeout = value;
+			}
 		}
 
 		void AsyncOperationCompleted (object sender, SocketAsyncEventArgs args)
@@ -107,14 +125,23 @@ namespace MailKit.Net
 
 		void Disconnect ()
 		{
-			socket.Dispose ();
-			args.Dispose ();
-			closed = true;
+			try {
+				socket.Dispose ();
+			} catch {
+				return;
+			} finally {
+				args.Dispose ();
+				closed = true;
+			}
 		}
 
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-			return socket.Receive (buffer, offset, count, SocketFlags.None);
+			try {
+				return socket.Receive (buffer, offset, count, SocketFlags.None);
+			} catch (SocketException ex) {
+				throw new IOException (ex.Message, ex);
+			}
 		}
 
 		public override async Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
@@ -139,8 +166,10 @@ namespace MailKit.Net
 
 					Disconnect ();
 					throw;
-				} catch {
+				} catch (Exception ex) {
 					Disconnect ();
+					if (ex is SocketException)
+						throw new IOException (ex.Message, ex);
 					throw;
 				}
 			}
@@ -148,7 +177,11 @@ namespace MailKit.Net
 
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			socket.Send (buffer, offset, count, SocketFlags.None);
+			try {
+				socket.Send (buffer, offset, count, SocketFlags.None);
+			} catch (SocketException ex) {
+				throw new IOException (ex.Message, ex);
+			}
 		}
 
 		public override async Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
@@ -172,8 +205,10 @@ namespace MailKit.Net
 
 					Disconnect ();
 					throw;
-				} catch {
+				} catch (Exception ex) {
 					Disconnect ();
+					if (ex is SocketException)
+						throw new IOException (ex.Message, ex);
 					throw;
 				}
 			}
