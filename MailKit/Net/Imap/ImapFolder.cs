@@ -3643,16 +3643,14 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			var set = UniqueIdSet.ToString (uids);
-			var command = string.Format ("UID EXPUNGE {0}\r\n", set);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID EXPUNGE %s\r\n", uids)) {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+				ProcessResponseCodes (ic, null);
 
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("EXPUNGE", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("EXPUNGE", ic);
+			}
 		}
 
 		/// <summary>
@@ -4554,23 +4552,34 @@ namespace MailKit.Net.Imap {
 				return UniqueIdMap.Empty;
 			}
 
-			var set = UniqueIdSet.ToString (uids);
-			var command = string.Format ("UID COPY {0} %F\r\n", set);
-			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
+			UniqueIdSet dest = null;
+			UniqueIdSet src = null;
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, destination);
+				ProcessResponseCodes (ic, destination);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("COPY", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("COPY", ic);
 
-			var copy = (CopyUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.CopyUid);
+				var copy = (CopyUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.CopyUid);
 
-			if (copy != null)
-				return new UniqueIdMap (copy.SrcUidSet, copy.DestUidSet);
+				if (copy != null) {
+					if (dest == null) {
+						dest = copy.DestUidSet;
+						src = copy.SrcUidSet;
+					} else {
+						dest.AddRange (copy.DestUidSet);
+						src.AddRange (copy.SrcUidSet);
+					}
+				}
+			}
 
-			return UniqueIdMap.Empty;
+			if (dest == null)
+				return UniqueIdMap.Empty;
+
+			return new UniqueIdMap (src, dest);
 		}
 
 		/// <summary>
@@ -4715,23 +4724,34 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			var set = UniqueIdSet.ToString (uids);
-			var command = string.Format ("UID MOVE {0} %F\r\n", set);
-			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
+			UniqueIdSet dest = null;
+			UniqueIdSet src = null;
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, destination);
+				ProcessResponseCodes (ic, destination);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("MOVE", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("MOVE", ic);
 
-			var copy = (CopyUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.CopyUid);
+				var copy = (CopyUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.CopyUid);
 
-			if (copy != null)
-				return new UniqueIdMap (copy.SrcUidSet, copy.DestUidSet);
+				if (copy != null) {
+					if (dest == null) {
+						dest = copy.DestUidSet;
+						src = copy.SrcUidSet;
+					} else {
+						dest.AddRange (copy.DestUidSet);
+						src.AddRange (copy.SrcUidSet);
+					}
+				}
+			}
 
-			return UniqueIdMap.Empty;
+			if (dest == null)
+				return UniqueIdMap.Empty;
+
+			return new UniqueIdMap (src, dest);
 		}
 
 		/// <summary>

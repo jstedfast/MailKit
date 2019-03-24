@@ -733,16 +733,10 @@ namespace MailKit {
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="UniqueIdSet"/>.</returns>
 		public override string ToString ()
 		{
-			var builder = new StringBuilder ();
+			foreach (var subset in EnumerateSerializedSubsets (int.MaxValue))
+				return subset;
 
-			for (int i = 0; i < ranges.Count; i++) {
-				if (i > 0)
-					builder.Append (',');
-
-				builder.Append (ranges[i]);
-			}
-
-			return builder.ToString ();
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -761,19 +755,91 @@ namespace MailKit {
 		/// </exception>
 		public static string ToString (IList<UniqueId> uids)
 		{
+			foreach (var subset in EnumerateSerializedSubsets (uids, int.MaxValue))
+				return subset;
+
+			return string.Empty;
+		}
+
+		/// <summary>
+		/// Format the set of unique identifiers as multiple strings that fit within the maximum defined character length.
+		/// </summary>
+		/// <remarks>
+		/// Formats the set of unique identifiers as multiple strings that fit within the maximum defined character length.
+		/// </remarks>
+		/// <returns>A list of strings representing the collection of unique identifiers.</returns>
+		/// <param name="maxLength">The maximum length of any returned string of UIDs.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="maxLength"/> is negative.
+		/// </exception>
+		IEnumerable<string> EnumerateSerializedSubsets (int maxLength)
+		{
+			if (maxLength < 0)
+				throw new ArgumentOutOfRangeException (nameof (maxLength));
+
+			var builder = new StringBuilder ();
+
+			for (int i = 0; i < ranges.Count; i++) {
+				var range = ranges[i].ToString ();
+
+				if (builder.Length > 0) {
+					if (builder.Length + 1 + range.Length > maxLength) {
+						yield return builder.ToString ();
+						builder.Clear ();
+					} else {
+						builder.Append (',');
+					}
+				}
+
+				builder.Append (range);
+			}
+
+			yield return builder.ToString ();
+		}
+
+		/// <summary>
+		/// Format a generic list of unique identifiers as multiple strings that fit within the maximum defined character length.
+		/// </summary>
+		/// <remarks>
+		/// Formats a generic list of unique identifiers as multiple strings that fit within the maximum defined character length.
+		/// </remarks>
+		/// <returns>A list of strings representing the collection of unique identifiers.</returns>
+		/// <param name="uids">The unique identifiers.</param>
+		/// <param name="maxLength">The maximum length of any returned string of UIDs.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the unique identifiers is invalid (has a value of <c>0</c>).
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="maxLength"/> is negative.
+		/// </exception>
+		internal static IEnumerable<string> EnumerateSerializedSubsets (IList<UniqueId> uids, int maxLength)
+		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
-			if (uids.Count == 0)
-				return string.Empty;
+			if (maxLength < 0)
+				throw new ArgumentOutOfRangeException (nameof (maxLength));
+
+			if (uids.Count == 0) {
+				yield return string.Empty;
+				yield break;
+			}
 
 			var range = uids as UniqueIdRange;
-			if (range != null)
-				return range.ToString ();
+			if (range != null) {
+				yield return range.ToString ();
+				yield break;
+			}
 
 			var set = uids as UniqueIdSet;
-			if (set != null)
-				return set.ToString ();
+			if (set != null) {
+				foreach (var subset in set.EnumerateSerializedSubsets (maxLength))
+					yield return subset;
+				yield break;
+			}
 
 			var builder = new StringBuilder ();
 			int index = 0;
@@ -804,18 +870,26 @@ namespace MailKit {
 					}
 				}
 
-				if (builder.Length > 0)
-					builder.Append (',');
-
+				string next;
 				if (start != end)
-					builder.AppendFormat ("{0}:{1}", start, end);
+					next = string.Format ("{0}:{1}", start, end);
 				else
-					builder.Append (start.ToString ());
+					next = start.ToString ();
 
+				if (builder.Length > 0) {
+					if (builder.Length + 1 + next.Length > maxLength) {
+						yield return builder.ToString ();
+						builder.Clear ();
+					} else {
+						builder.Append (',');
+					}
+				}
+
+				builder.Append (next);
 				index = i;
 			}
 
-			return builder.ToString ();
+			yield return builder.ToString ();
 		}
 
 		/// <summary>

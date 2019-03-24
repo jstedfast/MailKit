@@ -50,31 +50,39 @@ namespace MailKit.Net.Imap
 				return new UniqueId[0];
 
 			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, keywords != null ? keywords.Count : 0);
-			var keywordList = keywords != null ? keywords.ToArray () : new object [0];
-			var set = UniqueIdSet.ToString (uids);
+			var keywordList = keywords != null ? keywords.ToArray () : new object[0];
+			UniqueIdSet modified = null;
 			var @params = string.Empty;
 
 			if (modseq.HasValue)
 				@params = string.Format (CultureInfo.InvariantCulture, " (UNCHANGEDSINCE {0})", modseq.Value);
 
-			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
-			var ic = Engine.QueueCommand (cancellationToken, this, format, keywordList);
+			var command = string.Format ("UID STORE %s{0} {1} {2}\r\n", @params, action, flaglist);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, command, uids, keywordList)) {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("STORE", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("STORE", ic);
 
-			if (modseq.HasValue) {
-				var modified = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
+				if (modseq.HasValue) {
+					var rc = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
 
-				if (modified != null)
-					return modified.UidSet;
+					if (rc != null) {
+						if (modified != null)
+							modified.AddRange (rc.UidSet);
+						else
+							modified = rc.UidSet;
+					}
+				}
 			}
 
-			return new UniqueId[0];
+			if (modified == null)
+				return new UniqueId[0];
+
+			return modified;
 		}
 
 		/// <summary>
@@ -1426,7 +1434,6 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new UniqueId[0];
 
-			var set = UniqueIdSet.ToString (uids);
 			var @params = string.Empty;
 
 			if (modseq.HasValue)
@@ -1434,24 +1441,33 @@ namespace MailKit.Net.Imap
 
 			var args = new List<object> ();
 			var list = LabelListToString (labels, args);
-			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, list);
-			var ic = Engine.QueueCommand (cancellationToken, this, format, args.ToArray ());
+			var command = string.Format ("UID STORE %s{0} {1} {2}\r\n", @params, action, list);
+			UniqueIdSet modified = null;
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, command, uids, args.ToArray ())) {
+				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("STORE", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create ("STORE", ic);
 
-			if (modseq.HasValue) {
-				var modified = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
+				if (modseq.HasValue) {
+					var rc = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
 
-				if (modified != null)
-					return modified.UidSet;
+					if (rc != null) {
+						if (modified != null)
+							modified.AddRange (rc.UidSet);
+						else
+							modified = rc.UidSet;
+					}
+				}
 			}
 
-			return new UniqueId[0];
+			if (modified == null)
+				return new UniqueId[0];
+
+			return modified;
 		}
 
 		/// <summary>

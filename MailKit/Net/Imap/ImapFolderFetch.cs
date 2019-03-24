@@ -672,25 +672,26 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
-			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
-			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var command = string.Format ("UID FETCH %s {0}\r\n", query);
 			var ctx = new FetchSummaryContext ();
+
 			MessageExpunged += ctx.OnMessageExpunged;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
-			ic.UserData = ctx;
-
-			Engine.QueueCommand (ic);
-
 			try {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
+					ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
+					ic.UserData = ctx;
 
-				ProcessResponseCodes (ic, null);
+					Engine.QueueCommand (ic);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("FETCH", ic);
+					await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+					ProcessResponseCodes (ic, null);
+
+					if (ic.Response != ImapCommandResponse.Ok)
+						throw ImapCommandException.Create ("FETCH", ic);
+				}
 			} finally {
 				MessageExpunged -= ctx.OnMessageExpunged;
 			}
@@ -715,25 +716,26 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
-			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, headerFields, out previewText);
-			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var command = string.Format ("UID FETCH %s {0}\r\n", query);
 			var ctx = new FetchSummaryContext ();
+
 			MessageExpunged += ctx.OnMessageExpunged;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
-			ic.UserData = ctx;
-
-			Engine.QueueCommand (ic);
-
 			try {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
+					ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
+					ic.UserData = ctx;
 
-				ProcessResponseCodes (ic, null);
+					Engine.QueueCommand (ic);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("FETCH", ic);
+					await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+					ProcessResponseCodes (ic, null);
+
+					if (ic.Response != ImapCommandResponse.Ok)
+						throw ImapCommandException.Create ("FETCH", ic);
+				}
 			} finally {
 				MessageExpunged -= ctx.OnMessageExpunged;
 			}
@@ -762,27 +764,28 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
-			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
-			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseqValue, vanished);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var command = string.Format ("UID FETCH %s {0} (CHANGEDSINCE {1}{2})\r\n", query, modseqValue, vanished);
 			var ctx = new FetchSummaryContext ();
+
 			MessageExpunged += ctx.OnMessageExpunged;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
-			ic.UserData = ctx;
-
-			Engine.QueueCommand (ic);
-
 			try {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
+					ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
+					ic.UserData = ctx;
 
-				ProcessResponseCodes (ic, null);
+					Engine.QueueCommand (ic);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("FETCH", ic);
+					await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+					ProcessResponseCodes (ic, null);
+
+					if (ic.Response != ImapCommandResponse.Ok)
+						throw ImapCommandException.Create ("FETCH", ic);
+				}
 			} finally {
 				MessageExpunged -= ctx.OnMessageExpunged;
 			}
@@ -810,27 +813,28 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
-			var set = UniqueIdSet.ToString (uids);
 			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
-			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseqValue, vanished);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var command = string.Format ("UID FETCH %s {0} (CHANGEDSINCE {1}{2})\r\n", query, modseqValue, vanished);
 			var ctx = new FetchSummaryContext ();
+
 			MessageExpunged += ctx.OnMessageExpunged;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
-			ic.UserData = ctx;
-
-			Engine.QueueCommand (ic);
-
 			try {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
+					ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
+					ic.UserData = ctx;
 
-				ProcessResponseCodes (ic, null);
+					Engine.QueueCommand (ic);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("FETCH", ic);
+					await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+					ProcessResponseCodes (ic, null);
+
+					if (ic.Response != ImapCommandResponse.Ok)
+						throw ImapCommandException.Create ("FETCH", ic);
+				}
 			} finally {
 				MessageExpunged -= ctx.OnMessageExpunged;
 			}
@@ -6303,23 +6307,23 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return;
 
-			var set = UniqueIdSet.ToString (uids);
-			var command = string.Format ("UID FETCH {0} (BODY.PEEK[])\r\n", set);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamCallbackContext (this, callback, progress);
-
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
-			ic.UserData = ctx;
-
-			Engine.QueueCommand (ic);
+			var command = "UID FETCH %s (BODY.PEEK[])\r\n";
 
 			try {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
+					ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+					ic.UserData = ctx;
 
-				ProcessResponseCodes (ic, null);
+					Engine.QueueCommand (ic);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("FETCH", ic);
+					await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+					ProcessResponseCodes (ic, null);
+
+					if (ic.Response != ImapCommandResponse.Ok)
+						throw ImapCommandException.Create ("FETCH", ic);
+				}
 			} finally {
 				ctx.Dispose ();
 			}

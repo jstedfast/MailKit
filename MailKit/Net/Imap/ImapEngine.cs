@@ -95,8 +95,12 @@ namespace MailKit.Net.Imap {
 
 	enum ImapQuirksMode {
 		None,
+		Courier,
+		Dovecot,
+		Exchange,
 		GMail,
-		ProtonMail
+		ProtonMail,
+		UW,
 	}
 
 	class ImapFolderNameComparer : IEqualityComparer<string>
@@ -668,9 +672,23 @@ namespace MailKit.Net.Imap {
 					var text = (string) token.Value; 
 
 					text += await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					text = text.TrimEnd ();
 
 					if (bye)
-						throw new ImapProtocolException (text.TrimEnd ());
+						throw new ImapProtocolException (text);
+
+					if (text.StartsWith ("Courier IMAP", StringComparison.Ordinal))
+						QuirksMode = ImapQuirksMode.Courier;
+					else if (text.StartsWith ("Dovecot ready.", StringComparison.Ordinal))
+						QuirksMode = ImapQuirksMode.Dovecot;
+					else if (text.StartsWith ("Microsoft Exchange Server 2007 IMAP4 service is ready", StringComparison.Ordinal))
+						QuirksMode = ImapQuirksMode.Exchange;
+					else if (text.StartsWith ("The Microsoft Exchange IMAP4 service is ready.", StringComparison.Ordinal))
+						QuirksMode = ImapQuirksMode.Exchange;
+					else if (text.StartsWith ("Gimap ready ", StringComparison.Ordinal))
+						QuirksMode = ImapQuirksMode.GMail;
+					else if (text.Contains ("UW.IMAPd"))
+						QuirksMode = ImapQuirksMode.UW;
 				}
 
 				if (bye)
@@ -2027,6 +2045,51 @@ namespace MailKit.Net.Imap {
 			while (ic.Status < ImapCommandStatus.Complete) {
 				// continue processing commands...
 				await IterateAsync (doAsync).ConfigureAwait (false);
+			}
+		}
+
+		public IEnumerable<ImapCommand> CreateCommands (CancellationToken cancellationToken, ImapFolder folder, string format, IList<UniqueId> uids, params object[] args)
+		{
+			var vargs = new List<object> ();
+			int maxLength;
+
+			// we assume that uids is the first formatter (with a %s)
+			vargs.Add ("1");
+
+			for (int i = 0; i < args.Length; i++)
+				vargs.Add (args[i]);
+
+			args = vargs.ToArray ();
+
+			if (QuirksMode == ImapQuirksMode.Courier) {
+				// Courier IMAP's command parser allows each token to be up to 16k in size.
+				maxLength = 16 * 1024;
+			} else {
+				int estimated = ImapCommand.EstimateCommandLength (this, format, args);
+
+				if (QuirksMode == ImapQuirksMode.UW) {
+					// Follow the IMAP4 Implementation Recommendations which states that clients
+					// *SHOULD* limit their command lengths to 1000 octets.
+					maxLength = Math.Max (1000 - estimated, 24);
+				} else {
+					// Push the boundaries of the IMAP4 Implementation Recommendations which states
+					// that servers *SHOULD* accept command lengths of up to 8000 octets.
+					maxLength = Math.Max (8000 - estimated, 24);
+				}
+			}
+
+			foreach (var subset in UniqueIdSet.EnumerateSerializedSubsets (uids, maxLength)) {
+				args[0] = subset;
+
+				yield return new ImapCommand (this, cancellationToken, folder, format, args);
+			}
+		}
+
+		public IEnumerable<ImapCommand> QueueCommands (CancellationToken cancellationToken, ImapFolder folder, string format, IList<UniqueId> uids, params object[] args)
+		{
+			foreach (var ic in CreateCommands (cancellationToken, folder, format, uids, args)) {
+				QueueCommand (ic);
+				yield return ic;
 			}
 		}
 

@@ -433,6 +433,11 @@ namespace MailKit.Net.Imap {
 							buf = Encoding.ASCII.GetBytes (str);
 							builder.Write (buf, 0, buf.Length);
 							break;
+						case 's':
+							str = (string) args[argc++];
+							buf = Encoding.ASCII.GetBytes (str);
+							builder.Write (buf, 0, buf.Length);
+							break;
 						case 'F': // an ImapFolder
 							var utf7 = ((ImapFolder) args[argc++]).EncodedName;
 							AppendString (options, true, builder, utf7);
@@ -447,7 +452,7 @@ namespace MailKit.Net.Imap {
 							buf = Encoding.ASCII.GetBytes (length.ToString (CultureInfo.InvariantCulture));
 							builder.Write (buf, 0, buf.Length);
 
-							if (CanUseNonSynchronizedLiteral (length)) {
+							if (CanUseNonSynchronizedLiteral (Engine, length)) {
 								builder.WriteByte ((byte) '+');
 								wait = false;
 							}
@@ -496,6 +501,78 @@ namespace MailKit.Net.Imap {
 		{
 		}
 
+		internal static int EstimateCommandLength (ImapEngine engine, FormatOptions options, string format, params object[] args)
+		{
+			var eoln = false;
+			int length = 0;
+			int argc = 0;
+			string str;
+
+			for (int i = 0; i < format.Length; i++) {
+				if (format[i] == '%') {
+					switch (format[++i]) {
+					case '%': // a literal %
+						length++;
+						break;
+					case 'd': // an integer
+						str = ((int) args[argc++]).ToString (CultureInfo.InvariantCulture);
+						length += str.Length;
+						break;
+					case 'u': // an unsigned integer
+						str = ((uint) args[argc++]).ToString (CultureInfo.InvariantCulture);
+						length += str.Length;
+						break;
+					case 's':
+						str = (string) args[argc++];
+						length += str.Length;
+						break;
+					case 'F': // an ImapFolder
+						var utf7 = ((ImapFolder) args[argc++]).EncodedName;
+						length += EstimateStringLength (engine, options, true, utf7, out eoln);
+						break;
+					case 'L': // a MimeMessage
+						var literal = new ImapLiteral (options, (MimeMessage) args[argc++], null);
+						var prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
+						var len = literal.Length;
+
+						length += prefix.Length;
+						length += Encoding.ASCII.GetByteCount (len.ToString (CultureInfo.InvariantCulture));
+
+						if (CanUseNonSynchronizedLiteral (engine, len))
+							length++;
+
+						length += LiteralTokenSuffix.Length;
+
+						if (options.International)
+							length++;
+
+						eoln = true;
+						break;
+					case 'S': // a string which may need to be quoted or made into a literal
+						length += EstimateStringLength (engine, options, true, (string) args[argc++], out eoln);
+						break;
+					case 'Q': // similar to %S but string must be quoted at a minimum
+						length += EstimateStringLength (engine, options, false, (string) args[argc++], out eoln);
+						break;
+					default:
+						throw new FormatException ();
+					}
+
+					if (eoln)
+						break;
+				} else {
+					length++;
+				}
+			}
+
+			return length;
+		}
+
+		internal static int EstimateCommandLength (ImapEngine engine, string format, params object[] args)
+		{
+			return EstimateCommandLength (engine, FormatOptions.Default, format, args);
+		}
+
 		void UpdateProgress (int n)
 		{
 			nwritten += n;
@@ -509,12 +586,12 @@ namespace MailKit.Net.Imap {
 			return c < 128 && !char.IsControl (c) && "(){ \t%*\\\"]".IndexOf (c) == -1;
 		}
 
-		bool IsQuotedSafe (char c)
+		static bool IsQuotedSafe (ImapEngine engine, char c)
 		{
-			return (c < 128 || Engine.UTF8Enabled) && !char.IsControl (c);
+			return (c < 128 || engine.UTF8Enabled) && !char.IsControl (c);
 		}
 
-		ImapStringType GetStringType (string value, bool allowAtom)
+		internal static ImapStringType GetStringType (ImapEngine engine, string value, bool allowAtom)
 		{
 			var type = allowAtom ? ImapStringType.Atom : ImapStringType.QString;
 
@@ -526,7 +603,7 @@ namespace MailKit.Net.Imap {
 
 			for (int i = 0; i < value.Length; i++) {
 				if (!IsAtom (value[i])) {
-					if (!IsQuotedSafe (value[i]))
+					if (!IsQuotedSafe (engine, value[i]))
 						return ImapStringType.Literal;
 
 					type = ImapStringType.QString;
@@ -536,20 +613,46 @@ namespace MailKit.Net.Imap {
 			return type;
 		}
 
-		bool CanUseNonSynchronizedLiteral (long length)
+		static bool CanUseNonSynchronizedLiteral (ImapEngine engine, long length)
 		{
-			return (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0 ||
-				(length <= 4096 && (Engine.Capabilities & ImapCapabilities.LiteralMinus) != 0);
+			return (engine.Capabilities & ImapCapabilities.LiteralPlus) != 0 ||
+				(length <= 4096 && (engine.Capabilities & ImapCapabilities.LiteralMinus) != 0);
+		}
+
+		static int EstimateStringLength (ImapEngine engine, FormatOptions options, bool allowAtom, string value, out bool eoln)
+		{
+			eoln = false;
+
+			switch (GetStringType (engine, value, allowAtom)) {
+			case ImapStringType.Literal:
+				var literal = Encoding.UTF8.GetByteCount (value);
+				var plus = CanUseNonSynchronizedLiteral (engine, literal);
+				int length = "{}\r\n".Length;
+
+				length += literal.ToString (CultureInfo.InvariantCulture).Length;
+				if (plus)
+					length++;
+
+				eoln = true;
+
+				return length++;
+			case ImapStringType.QString:
+				return Encoding.UTF8.GetByteCount (MimeUtils.Quote (value));
+			case ImapStringType.Nil:
+				return Nil.Length;
+			default:
+				return value.Length;
+			}
 		}
 
 		void AppendString (FormatOptions options, bool allowAtom, MemoryStream builder, string value)
 		{
 			byte[] buf;
 
-			switch (GetStringType (value, allowAtom)) {
+			switch (GetStringType (Engine, value, allowAtom)) {
 			case ImapStringType.Literal:
 				var literal = Encoding.UTF8.GetBytes (value);
-				var plus = CanUseNonSynchronizedLiteral (literal.Length);
+				var plus = CanUseNonSynchronizedLiteral (Engine, literal.Length);
 				var length = literal.Length.ToString (CultureInfo.InvariantCulture);
 				buf = Encoding.ASCII.GetBytes (length);
 
