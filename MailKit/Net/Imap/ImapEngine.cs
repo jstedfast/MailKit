@@ -96,6 +96,8 @@ namespace MailKit.Net.Imap {
 	enum ImapQuirksMode {
 		None,
 		Courier,
+		Cyrus,
+		Domino,
 		Dovecot,
 		Exchange,
 		GMail,
@@ -641,6 +643,7 @@ namespace MailKit.Net.Imap {
 				AssertToken (token, ImapTokenType.Atom, GreetingSyntaxErrorFormat, token);
 
 				var atom = (string) token.Value;
+				var text = string.Empty;
 				var state = State;
 				var bye = false;
 
@@ -667,32 +670,36 @@ namespace MailKit.Net.Imap {
 
 						if (bye)
 							throw new ImapProtocolException (code.Message);
+					} else {
+						text = code.Message;
 					}
 				} else if (token.Type != ImapTokenType.Eoln) {
-					var text = (string) token.Value; 
-
+					text = (string) token.Value;
 					text += await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					text = text.TrimEnd ();
 
 					if (bye)
 						throw new ImapProtocolException (text);
-
-					if (text.StartsWith ("Courier IMAP", StringComparison.Ordinal))
-						QuirksMode = ImapQuirksMode.Courier;
-					else if (text.StartsWith ("Dovecot ready.", StringComparison.Ordinal))
-						QuirksMode = ImapQuirksMode.Dovecot;
-					else if (text.StartsWith ("Microsoft Exchange Server 2007 IMAP4 service is ready", StringComparison.Ordinal))
-						QuirksMode = ImapQuirksMode.Exchange;
-					else if (text.StartsWith ("The Microsoft Exchange IMAP4 service is ready.", StringComparison.Ordinal))
-						QuirksMode = ImapQuirksMode.Exchange;
-					else if (text.StartsWith ("Gimap ready ", StringComparison.Ordinal))
-						QuirksMode = ImapQuirksMode.GMail;
-					else if (text.Contains ("UW.IMAPd"))
-						QuirksMode = ImapQuirksMode.UW;
+				} else if (bye) {
+					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.");
 				}
 
-				if (bye)
-					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.");
+				if (text.StartsWith ("Courier-IMAP ready.", StringComparison.Ordinal))
+					QuirksMode = ImapQuirksMode.Courier;
+				else if (text.Contains (" Cyrus IMAP "))
+					QuirksMode = ImapQuirksMode.Cyrus;
+				else if (text.StartsWith ("Domino IMAP4 Server", StringComparison.Ordinal))
+					QuirksMode = ImapQuirksMode.Domino;
+				else if (text.StartsWith ("Dovecot ready.", StringComparison.Ordinal))
+					QuirksMode = ImapQuirksMode.Dovecot;
+				else if (text.StartsWith ("Microsoft Exchange Server 2007 IMAP4 service is ready", StringComparison.Ordinal))
+					QuirksMode = ImapQuirksMode.Exchange;
+				else if (text.StartsWith ("The Microsoft Exchange IMAP4 service is ready.", StringComparison.Ordinal))
+					QuirksMode = ImapQuirksMode.Exchange;
+				else if (text.StartsWith ("Gimap ready", StringComparison.Ordinal))
+					QuirksMode = ImapQuirksMode.GMail;
+				else if (text.Contains (" IMAP4rev1 2007f."))
+					QuirksMode = ImapQuirksMode.UW;
 
 				State = state;
 			} catch {
