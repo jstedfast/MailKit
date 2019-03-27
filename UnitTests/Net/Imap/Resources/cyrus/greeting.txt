@@ -1,0 +1,1 @@
+* OK [CAPABILITY IMAP4 IMAP4rev1 LITERAL+ ID STARTTLS AUTH=PLAIN SASL-IR] imap.ecs.soton.ac.uk Cyrus IMAP v2.3.13-Invoca-RPM-2.3.13-1.0.JKF server ready

@@ -190,6 +190,13 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-no-modseq.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\setquota.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\courier\capability.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\courier\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\cyrus\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\cyrus\capability.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\cyrus\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\domino\capability.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\domino\greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.3.txt" />
@@ -271,6 +278,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\thread-orderedsubject.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\thread-references.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\uid-expunge.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\exchange\capability-postauth.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\exchange\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\exchange\capability-preauth.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\add-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\add-labels.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.1.txt" />
@@ -428,6 +438,8 @@
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-maxsize.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-noprivate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-toomany.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\uw\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\uw\preauth-greeting.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa2.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\err.txt" />

@@ -1,0 +1,1 @@
+* OK Domino IMAP4 Server Release 9.0.1FP9 ready Fri, 14 Dec 2018 08:38:25 +0100
