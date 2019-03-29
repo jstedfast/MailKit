@@ -38,46 +38,53 @@ namespace MailKit.Net
 #if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
 		{
+			IPAddress[] ipAddresses;
+			Socket socket = null;
+
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			var socket = new Socket (SocketType.Stream, ProtocolType.Tcp);
+			if (doAsync) {
+				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
+			} else {
+				ipAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
+			}
 
-			try {
-				if (localEndPoint != null)
-					socket.Bind (localEndPoint);
-
+			for (int i = 0; i < ipAddresses.Length; i++) {
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				if (doAsync || cancellationToken.CanBeCanceled) {
-					var tcs = new TaskCompletionSource<bool> ();
+				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-					using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-						var ar = socket.BeginConnect (host, port, e => tcs.TrySetResult (true), null);
+				try {
+					if (localEndPoint != null)
+						socket.Bind (localEndPoint);
 
-						try {
+					if (doAsync || cancellationToken.CanBeCanceled) {
+						var tcs = new TaskCompletionSource<bool> ();
+
+						using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
+							var ar = socket.BeginConnect (ipAddresses[i], port, e => tcs.TrySetResult (true), null);
+
 							if (doAsync)
 								await tcs.Task.ConfigureAwait (false);
 							else
 								tcs.Task.GetAwaiter ().GetResult ();
 
 							socket.EndConnect (ar);
-						} catch (OperationCanceledException) {
-							if (socket.Connected)
-								socket.Shutdown (SocketShutdown.Both);
-
-							socket.Close ();
-							throw;
-						} catch {
-							socket.Close ();
-							throw;
 						}
+					} else {
+						socket.Connect (ipAddresses[i], port);
 					}
-				} else {
-					socket.Connect (host, port);
+					break;
+				} catch (OperationCanceledException) {
+					socket.Dispose ();
+					throw;
+				} catch {
+					socket.Dispose ();
+					socket = null;
+
+					if (i + 1 == ipAddresses.Length)
+						throw;
 				}
-			} catch {
-				socket.Dispose ();
-				throw;
 			}
 
 			return socket;
@@ -87,6 +94,8 @@ namespace MailKit.Net
 		{
 			IPAddress[] ipAddresses;
 			Socket socket = null;
+
+			cancellationToken.ThrowIfCancellationRequested ();
 
 			if (doAsync) {
 				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
@@ -104,6 +113,7 @@ namespace MailKit.Net
 						socket.Bind (localEndPoint);
 
 					socket.Connect (ipAddresses[i], port);
+					break;
 				} catch {
 					socket.Dispose ();
 					socket = null;
