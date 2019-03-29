@@ -35,11 +35,9 @@ namespace MailKit.Net
 {
 	static class SocketUtils
 	{
-#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
 		{
 			IPAddress[] ipAddresses;
-			Socket socket = null;
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
@@ -52,12 +50,13 @@ namespace MailKit.Net
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+				var socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
 				try {
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
 
+#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 					if (doAsync || cancellationToken.CanBeCanceled) {
 						var tcs = new TaskCompletionSource<bool> ();
 
@@ -74,61 +73,24 @@ namespace MailKit.Net
 					} else {
 						socket.Connect (ipAddresses[i], port);
 					}
-					break;
+#else
+					socket.Connect (ipAddresses[i], port);
+#endif
+
+					return socket;
 				} catch (OperationCanceledException) {
 					socket.Dispose ();
 					throw;
 				} catch {
 					socket.Dispose ();
-					socket = null;
 
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}
 			}
 
-			return socket;
+			throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 		}
-#else // .NETStandard 1.3 and 1.6 do not have Socket.BeginConnect()
-		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
-		{
-			IPAddress[] ipAddresses;
-			Socket socket = null;
-
-			cancellationToken.ThrowIfCancellationRequested ();
-
-			if (doAsync) {
-				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
-			} else {
-				ipAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
-			}
-
-			for (int i = 0; i < ipAddresses.Length; i++) {
-				cancellationToken.ThrowIfCancellationRequested ();
-
-				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-				try {
-					if (localEndPoint != null)
-						socket.Bind (localEndPoint);
-
-					socket.Connect (ipAddresses[i], port);
-					break;
-				} catch {
-					socket.Dispose ();
-					socket = null;
-
-					if (i + 1 == ipAddresses.Length)
-						throw;
-				}
-			}
-
-			if (socket == null)
-				throw new IOException (string.Format ("Failed to resolve host: {0}", host));
-
-			return socket;
-		}
-#endif
 
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, int timeout, bool doAsync, CancellationToken cancellationToken)
 		{
