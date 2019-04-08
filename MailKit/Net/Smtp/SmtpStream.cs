@@ -274,10 +274,23 @@ namespace MailKit.Net.Smtp {
 
 		async Task<int> ReadAheadAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			int nread;
+			int left = inputEnd - inputIndex;
+			int index, nread;
 
-			inputIndex = 0;
-			inputEnd = 0;
+			if (left > 0) {
+				if (inputIndex > 0) {
+					// move all of the remaining input to the beginning of the buffer
+					Buffer.BlockCopy (input, inputIndex, input, 0, left);
+					inputEnd = left;
+					inputIndex = 0;
+				}
+			} else {
+				inputIndex = 0;
+				inputEnd = 0;
+			}
+
+			left = input.Length - inputEnd;
+			index = inputEnd;
 
 			try {
 #if !NETFX_CORE
@@ -290,20 +303,20 @@ namespace MailKit.Net.Smtp {
 					cancellationToken.ThrowIfCancellationRequested ();
 
 					if (doAsync)
-						nread = await Stream.ReadAsync (input, 0, input.Length, cancellationToken).ConfigureAwait (false);
+						nread = await Stream.ReadAsync (input, index, left, cancellationToken).ConfigureAwait (false);
 					else
-						nread = Stream.Read (input, 0, input.Length);
+						nread = Stream.Read (input, index, left);
 				} else {
 					if (doAsync) {
-						nread = await Stream.ReadAsync (input, 0, input.Length, cancellationToken).ConfigureAwait (false);
+						nread = await Stream.ReadAsync (input, index, left, cancellationToken).ConfigureAwait (false);
 					} else {
 						Poll (SelectMode.SelectRead, cancellationToken);
-						nread = Stream.Read (input, 0, input.Length);
+						nread = Stream.Read (input, index, left);
 					}
 				}
 
 				if (nread > 0) {
-					logger.LogServer (input, 0, nread);
+					logger.LogServer (input, index, nread);
 					inputEnd += nread;
 				} else {
 					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
