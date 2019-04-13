@@ -698,7 +698,7 @@ namespace MailKit.Net.Imap {
 					QuirksMode = ImapQuirksMode.Exchange;
 				else if (text.StartsWith ("Gimap ready", StringComparison.Ordinal))
 					QuirksMode = ImapQuirksMode.GMail;
-				else if (text.Contains (" IMAP4rev1 2007f."))
+				else if (text.Contains (" IMAP4rev1 2007f.") || text.Contains (" Panda IMAP "))
 					QuirksMode = ImapQuirksMode.UW;
 
 				State = state;
