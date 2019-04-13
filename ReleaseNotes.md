@@ -1,5 +1,20 @@
 # Release Notes
 
+### MailKit 2.1.4 (2019-04-13)
+
+* Fixed ImapUtils.GetUniqueHeaders() to accept all valid header field name characters.
+  (issue [#806](https://github.com/jstedfast/MailKit/issues/806))
+* Catch all exceptions thrown in IdleComplete().
+  (issue [#825](https://github.com/jstedfast/MailKit/issues/825))
+* Improved cancellability of IMAP, POP3 and SMTP clients when sending commands to the server.
+  (issue [#827](https://github.com/jstedfast/MailKit/issues/827))
+* Break apart IMAP commands with really long uid-sets.
+  (issue [#834](https://github.com/jstedfast/MailKit/issues/834))
+* Rewrote Connect logic to use Socket.Connect (IPAddress, int) instead of Connect (string, int)
+  in an attempt to fix https://stackoverflow.com/q/55382267/87117
+* Fixed SmtpStream.ReadAheadAsync() to preserve remaining input.
+  (issue [#842](https://github.com/jstedfast/MailKit/issues/842))
+
 ### MailKit 2.1.3 (2019-02-24)
 
 * Fixed IMAP GetFolder() methods to match LIST responses case-insensitively.

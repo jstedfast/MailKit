@@ -9,7 +9,7 @@ trigger:
 pool:
   vmImage: 'VS2017-Win2016'
 
-name: 2.1.3$(Rev:.r)
+name: 2.1.4$(Rev:.r)
 
 variables:
   solution: 'MailKit.sln'
