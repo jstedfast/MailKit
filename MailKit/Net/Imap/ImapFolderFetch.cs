@@ -107,6 +107,9 @@ namespace MailKit.Net.Imap
 			{
 				int index = BinarySearch (args.Index, true);
 
+				if (index >= Messages.Count)
+					return;
+
 				if (Messages[index].Index == args.Index)
 					Messages.RemoveAt (index);
 
