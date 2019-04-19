@@ -70,6 +70,7 @@
     <Compile Include="Net\Pop3\Pop3CommandExceptionTests.cs" />
     <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
     <Compile Include="Net\Pop3\Pop3StreamTests.cs" />
+    <Compile Include="Net\Proxy\HttpProxyClientTests.cs" />
     <Compile Include="Net\Proxy\ProxyListener.cs" />
     <Compile Include="Net\Proxy\ProxyProtocolExceptionTests.cs" />
     <Compile Include="Net\Proxy\Socks4aClientTests.cs" />

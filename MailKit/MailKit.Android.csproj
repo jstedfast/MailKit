@@ -94,6 +94,7 @@
     <Compile Include="Net\Pop3\Pop3Language.cs" />
     <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
     <Compile Include="Net\Pop3\Pop3Stream.cs" />
+    <Compile Include="Net\Proxy\HttpProxyClient.cs" />
     <Compile Include="Net\Proxy\IProxyClient.cs" />
     <Compile Include="Net\Proxy\ProxyClient.cs" />
     <Compile Include="Net\Proxy\ProxyProtocolException.cs" />
