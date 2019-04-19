@@ -161,7 +161,7 @@ namespace MailKit.Net.Proxy
 				throw new ProxyProtocolException (string.Format ("Proxy server responded with unknown SOCKS version: {0}", (int) version));
 		}
 
-		Socks5AuthMethod NegotiateAuthMethod (Socket socket, CancellationToken cancellationToken, params Socks5AuthMethod[] methods)
+		async Task<Socks5AuthMethod> NegotiateAuthMethodAsync (Socket socket, bool doAsync, CancellationToken cancellationToken, params Socks5AuthMethod[] methods)
 		{
 			// +-----+----------+----------+
 			// | VER | NMETHODS | METHODS  |
@@ -176,9 +176,7 @@ namespace MailKit.Net.Proxy
 			for (int i = 0; i < methods.Length; i++)
 				buffer[n++] = (byte) methods[i];
 
-			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
-
-			socket.Send (buffer, 0, n, SocketFlags.None);
+			await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
 
 			// +-----+--------+
 			// | VER | METHOD |
@@ -187,8 +185,7 @@ namespace MailKit.Net.Proxy
 			// +-----+--------+
 			n = 0;
 			do {
-				SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
-				if ((nread = socket.Receive (buffer, 0 + n, 2 - n, SocketFlags.None)) > 0)
+				if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
 					n += nread;
 			} while (n < 2);
 
@@ -197,7 +194,7 @@ namespace MailKit.Net.Proxy
 			return (Socks5AuthMethod) buffer[1];
 		}
 
-		void Authenticate (Socket socket, CancellationToken cancellationToken)
+		async Task AuthenticateAsync (Socket socket, bool doAsync, CancellationToken cancellationToken)
 		{
 			var user = Encoding.UTF8.GetBytes (ProxyCredentials.UserName);
 
@@ -224,14 +221,11 @@ namespace MailKit.Net.Proxy
 
 			Array.Clear (passwd, 0, passwd.Length);
 
-			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
-
-			socket.Send (buffer, 0, n, SocketFlags.None);
+			await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
 
 			n = 0;
 			do {
-				SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
-				if ((nread = socket.Receive (buffer, 0 + n, 2 - n, SocketFlags.None)) > 0)
+				if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
 					n += nread;
 			} while (n < 2);
 
@@ -263,13 +257,13 @@ namespace MailKit.Net.Proxy
 				Socks5AuthMethod method;
 
 				if (ProxyCredentials != null)
-					method = NegotiateAuthMethod (socket, cancellationToken, Socks5AuthMethod.UserPassword, Socks5AuthMethod.Anonymous);
+					method = await NegotiateAuthMethodAsync (socket, doAsync, cancellationToken, Socks5AuthMethod.UserPassword, Socks5AuthMethod.Anonymous).ConfigureAwait (false);
 				else
-					method = NegotiateAuthMethod (socket, cancellationToken, Socks5AuthMethod.Anonymous);
+					method = await NegotiateAuthMethodAsync (socket, doAsync, cancellationToken, Socks5AuthMethod.Anonymous).ConfigureAwait (false);
 
 				switch (method) {
 				case Socks5AuthMethod.UserPassword:
-					Authenticate (socket, cancellationToken);
+					await AuthenticateAsync (socket, doAsync, cancellationToken).ConfigureAwait (false);
 					break;
 				case Socks5AuthMethod.Anonymous:
 					break;
@@ -309,8 +303,7 @@ namespace MailKit.Net.Proxy
 				buffer[n++] = (byte)(port >> 8);
 				buffer[n++] = (byte) port;
 
-				SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
-				socket.Send (buffer, 0, n, SocketFlags.None);
+				await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
 
 				// +-----+-----+-------+------+----------+----------+
 				// | VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
@@ -324,8 +317,7 @@ namespace MailKit.Net.Proxy
 				n = 0;
 
 				do {
-					SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
-					if ((nread = socket.Receive (buffer, 0 + n, need - n, SocketFlags.None)) > 0)
+					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, need - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
 						n += nread;
 				} while (n < need);
 
@@ -344,8 +336,7 @@ namespace MailKit.Net.Proxy
 				}
 
 				do {
-					SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
-					if ((nread = socket.Receive (buffer, 0 + n, need - n, SocketFlags.None)) > 0)
+					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, need - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
 						n += nread;
 				} while (n < need);
 

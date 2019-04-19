@@ -125,7 +125,7 @@ namespace MailKit.Net.Proxy
 			}
 		}
 
-		async Task<IPAddress> Resolve (string host, bool doAsync, CancellationToken cancellationToken)
+		async Task<IPAddress> ResolveAsync (string host, bool doAsync, CancellationToken cancellationToken)
 		{
 			IPAddress[] ipAddresses;
 
@@ -159,7 +159,7 @@ namespace MailKit.Net.Proxy
 					domain = Encoding.UTF8.GetBytes (host);
 					addr = InvalidIPAddress;
 				} else {
-					ip = await Resolve (host, doAsync, cancellationToken);
+					ip = await ResolveAsync (host, doAsync, cancellationToken).ConfigureAwait (false);
 					addr = ip.GetAddressBytes ();
 				}
 			} else {
@@ -199,8 +199,7 @@ namespace MailKit.Net.Proxy
 					buffer[n++] = 0x00;
 				}
 
-				SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
-				socket.Send (buffer, 0, n, SocketFlags.None);
+				await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
 
 				// +-----+-----+----------+----------+
 				// | VER | REP | BND.PORT | BND.ADDR |
@@ -210,8 +209,7 @@ namespace MailKit.Net.Proxy
 				n = 0;
 
 				do {
-					SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
-					if ((nread = socket.Receive (buffer, 0 + n, 8 - n, SocketFlags.None)) > 0)
+					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 8 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
 						n += nread;
 				} while (n < 8);
 

@@ -169,6 +169,56 @@ namespace MailKit.Net.Proxy
 				throw new ArgumentOutOfRangeException (nameof (timeout));
 		}
 
+		internal static async Task SendAsync (Socket socket, byte[] buffer, int offset, int length, bool doAsync, CancellationToken cancellationToken)
+		{
+#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
+			if (doAsync || cancellationToken.CanBeCanceled) {
+				var tcs = new TaskCompletionSource<bool> ();
+
+				using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
+					var ar = socket.BeginSend (buffer, offset, length, SocketFlags.None, e => tcs.TrySetResult (true), null);
+
+					if (doAsync)
+						await tcs.Task.ConfigureAwait (false);
+					else
+						tcs.Task.GetAwaiter ().GetResult ();
+
+					socket.EndSend (ar);
+				}
+			} else {
+				SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
+				socket.Send (buffer, offset, length, SocketFlags.None);
+			}
+#else
+			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
+			socket.Send (buffer, offset, length, SocketFlags.None);
+#endif
+		}
+
+		internal static async Task<int> ReceiveAsync (Socket socket, byte[] buffer, int offset, int length, bool doAsync, CancellationToken cancellationToken)
+		{
+#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
+			if (doAsync || cancellationToken.CanBeCanceled) {
+				var tcs = new TaskCompletionSource<bool> ();
+
+				using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
+					var ar = socket.BeginReceive (buffer, offset, length, SocketFlags.None, e => tcs.TrySetResult (true), null);
+
+					if (doAsync)
+						await tcs.Task.ConfigureAwait (false);
+					else
+						tcs.Task.GetAwaiter ().GetResult ();
+
+					return socket.EndReceive (ar);
+				}
+			}
+#endif
+
+			SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
+
+			return socket.Receive (buffer, offset, length, SocketFlags.None);
+		}
+
 		/// <summary>
 		/// Connect to the target host.
 		/// </summary>
