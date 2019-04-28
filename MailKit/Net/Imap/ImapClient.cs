@@ -1020,6 +1020,8 @@ namespace MailKit.Net.Imap {
 
 				if (ic.Response != ImapCommandResponse.Ok) {
 					EmitAndThrowOnAlert (ic);
+					if (ic.Bye)
+						throw new ImapProtocolException (ic.ResponseText);
 					continue;
 				}
 
