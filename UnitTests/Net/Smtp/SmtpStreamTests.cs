@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Security.Cryptography;
 
 using NUnit.Framework;
@@ -244,7 +245,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestWriteAsync ()
+		public async Task TestWriteAsync ()
 		{
 			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
 				var memory = (MemoryStream) stream.Stream;

@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -106,7 +107,7 @@ namespace UnitTests {
 		}
 
 		[Test]
-		public async void TestReadAsync ()
+		public async Task TestReadAsync ()
 		{
 			using (var stream = new ProgressStream (new DummyNetworkStream (), Update)) {
 				var buffer = new byte[1024];
@@ -166,7 +167,7 @@ namespace UnitTests {
 		}
 
 		[Test]
-		public async void TestWriteAsync ()
+		public async Task TestWriteAsync ()
 		{
 			using (var stream = new ProgressStream (new DummyNetworkStream (), Update)) {
 				var buffer = new byte[1024];

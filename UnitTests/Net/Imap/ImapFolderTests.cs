@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -503,7 +504,7 @@ namespace UnitTests.Net.Imap {
 
 		[TestCase (true, TestName = "TestAppendWithInternalDatesAsync")]
 		[TestCase (false, TestName = "TestAppendWithoutInternalDatesAsync")]
-		public async void TestAppendAsync (bool withInternalDates)
+		public async Task TestAppendAsync (bool withInternalDates)
 		{
 			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
 			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
@@ -694,7 +695,7 @@ namespace UnitTests.Net.Imap {
 
 		[TestCase (true, TestName = "TestMultiAppendWithInternalDatesAsync")]
 		[TestCase (false, TestName = "TestMultiAppendWithoutInternalDatesAsync")]
-		public async void TestMultiAppendAsync (bool withInternalDates)
+		public async Task TestMultiAppendAsync (bool withInternalDates)
 		{
 			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
 			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
@@ -854,7 +855,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestCreateRenameDeleteAsync ()
+		public async Task TestCreateRenameDeleteAsync ()
 		{
 			var commands = CreateCreateRenameDeleteCommands ();
 
@@ -976,7 +977,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestCreateMailboxIdAsync ()
+		public async Task TestCreateMailboxIdAsync ()
 		{
 			var commands = CreateCreateMailboxIdCommands ();
 
@@ -1057,7 +1058,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestCreateSpecialUseAsync ()
+		public async Task TestCreateSpecialUseAsync ()
 		{
 			var commands = CreateCreateSpecialUseCommands ();
 
@@ -1154,7 +1155,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestCreateSpecialUseMultipleAsync ()
+		public async Task TestCreateSpecialUseMultipleAsync ()
 		{
 			var commands = CreateCreateSpecialUseMultipleCommands ();
 
@@ -1266,7 +1267,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestCopyToAsync ()
+		public async Task TestCopyToAsync ()
 		{
 			var commands = CreateCopyToCommands ();
 
@@ -1398,7 +1399,7 @@ namespace UnitTests.Net.Imap {
 
 		[TestCase (true, TestName = "TestUidMoveToDisableMoveAsync")]
 		[TestCase (false, TestName = "TestUidMoveToDisableUidPlusAsync")]
-		public async void TestUidMoveToAsync (bool disableMove)
+		public async Task TestUidMoveToAsync (bool disableMove)
 		{
 			var commands = CreateMoveToCommands (disableMove);
 
@@ -1529,7 +1530,7 @@ namespace UnitTests.Net.Imap {
 
 		[TestCase (false, TestName = "TestUidExpungeAsync")]
 		[TestCase (true, TestName = "TestUidExpungeDisableUidPlusAsync")]
-		public async void TestUidExpungeAsync (bool disableUidPlus)
+		public async Task TestUidExpungeAsync (bool disableUidPlus)
 		{
 			var commands = CreateUidExpungeCommands (disableUidPlus);
 
@@ -1621,7 +1622,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestCountChangedAsync ()
+		public async Task TestCountChangedAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1775,7 +1776,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestGetSuboldersWithStatusItemsAsync ()
+		public async Task TestGetSuboldersWithStatusItemsAsync ()
 		{
 			var commands = CreateGetSubfoldersWithStatusItemsCommands ();
 

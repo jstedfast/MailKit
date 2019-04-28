@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -96,7 +97,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestMethodNotAllowedAsync ()
+		public async Task TestMethodNotAllowedAsync ()
 		{
 			var proxy = new HttpProxyClient ("www.google.com", 80);
 			Socket socket = null;

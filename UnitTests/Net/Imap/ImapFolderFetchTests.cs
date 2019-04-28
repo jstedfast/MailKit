@@ -29,6 +29,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
@@ -536,7 +537,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestFetchPreviewTextAsync ()
+		public async Task TestFetchPreviewTextAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -674,7 +675,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestExtractingPrecisePangolinAttachmentAsync ()
+		public async Task TestExtractingPrecisePangolinAttachmentAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -809,7 +810,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestFetchObjectIdAttributesAsync ()
+		public async Task TestFetchObjectIdAttributesAsync ()
 		{
 			var commands = CreateFetchObjectIdAttributesCommands ();
 

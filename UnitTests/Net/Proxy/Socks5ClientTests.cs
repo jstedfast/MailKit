@@ -29,6 +29,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -150,7 +151,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestConnectAnonymousAsync ()
+		public async Task TestConnectAnonymousAsync ()
 		{
 			using (var proxy = new Socks5ProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);
@@ -200,7 +201,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestConnectWithCredentialsAsync ()
+		public async Task TestConnectWithCredentialsAsync ()
 		{
 			using (var proxy = new Socks5ProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);
@@ -255,7 +256,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestConnectWithBadCredentialsAsync ()
+		public async Task TestConnectWithBadCredentialsAsync ()
 		{
 			using (var proxy = new Socks5ProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);
@@ -310,7 +311,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestConnectByIPv4Async ()
+		public async Task TestConnectByIPv4Async ()
 		{
 			using (var proxy = new Socks5ProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);
@@ -367,7 +368,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestConnectByIPv6Async ()
+		public async Task TestConnectByIPv6Async ()
 		{
 			using (var proxy = new Socks5ProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);
@@ -397,7 +398,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestTimeoutException ()
+		public async Task TestTimeoutException ()
 		{
 			using (var proxy = new Socks5ProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);

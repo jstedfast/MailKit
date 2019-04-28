@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Security.Cryptography;
 
 using NUnit.Framework;
@@ -91,7 +92,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestReadAsync ()
+		public async Task TestReadAsync ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
 				var data = Encoding.ASCII.GetBytes ("This is some random text...\r\n");
@@ -156,7 +157,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestReadLineAsync ()
+		public async Task TestReadLineAsync ()
 		{
 			var line1 = "This is a really long line..." + new string ('.', 4096) + "\r\n";
 			var line2 = "And this is another line...\r\n";
@@ -251,7 +252,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestReadTokenAsync ()
+		public async Task TestReadTokenAsync ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
 				var data = Encoding.ASCII.GetBytes ("* atom (\\flag \"qstring\" NIL) [] \r\n");
@@ -324,7 +325,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestReadBrokenLiteralTokenAsync ()
+		public async Task TestReadBrokenLiteralTokenAsync ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
 				var data = Encoding.ASCII.GetBytes ("{4096+" + new string (' ', 4096) + "}" + new string (' ', 4096) + "\r\n");
@@ -424,7 +425,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestWriteAsync ()
+		public async Task TestWriteAsync ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
 				var memory = (MemoryStream) stream.Stream;

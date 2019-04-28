@@ -31,6 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -369,7 +370,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestConnectGMailAsync ()
+		public async Task TestConnectGMailAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "imap.gmail.com";
@@ -466,7 +467,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestConnectGMailViaProxyAsync ()
+		public async Task TestConnectGMailViaProxyAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "imap.gmail.com";
@@ -570,7 +571,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestConnectGMailSocketAsync ()
+		public async Task TestConnectGMailSocketAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "imap.gmail.com";
@@ -657,7 +658,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestConnectGmxDeAsync ()
+		public async Task TestConnectGmxDeAsync ()
 		{
 			var options = SecureSocketOptions.StartTls;
 			var host = "imap.gmx.de";
@@ -739,7 +740,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestConnectGmxDeSocketAsync ()
+		public async Task TestConnectGmxDeSocketAsync ()
 		{
 			var options = SecureSocketOptions.StartTls;
 			var host = "imap.gmx.de";
@@ -801,7 +802,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestGreetingCapabilitiesAsync ()
+		public async Task TestGreetingCapabilitiesAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "common.capability-greeting.txt"));
@@ -842,7 +843,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestByeGreetingAsync ()
+		public async Task TestByeGreetingAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE\r\n")));
@@ -891,7 +892,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestByeGreetingWithAlertAsync ()
+		public async Task TestByeGreetingWithAlertAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE [ALERT] Too many connections.\r\n")));
@@ -940,7 +941,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestByeGreetingWithRespTextAsync ()
+		public async Task TestByeGreetingWithRespTextAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE Too many connections.\r\n")));
@@ -998,7 +999,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestUnexpectedByeAsync ()
+		public async Task TestUnexpectedByeAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1083,7 +1084,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestUnexpectedByeWithAlertAsync ()
+		public async Task TestUnexpectedByeWithAlertAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1158,7 +1159,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestUnexpectedByInSaslAuthenticateAsync ()
+		public async Task TestUnexpectedByInSaslAuthenticateAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1225,7 +1226,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestPreAuthGreetingAsync ()
+		public async Task TestPreAuthGreetingAsync ()
 		{
 			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
 			var commands = new List<ImapReplayCommand> ();
@@ -1302,7 +1303,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestPreAuthCapabilityGreetingAsync ()
+		public async Task TestPreAuthCapabilityGreetingAsync ()
 		{
 			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
 			var commands = new List<ImapReplayCommand> ();
@@ -1394,7 +1395,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestLoginAsync ()
+		public async Task TestLoginAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1498,7 +1499,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestLoginDisabledAsync ()
+		public async Task TestLoginDisabledAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1643,7 +1644,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestAdvancedFeaturesAsync ()
+		public async Task TestAdvancedFeaturesAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1791,7 +1792,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestSendingStringsAsLiteralsAsync ()
+		public async Task TestSendingStringsAsLiteralsAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1898,7 +1899,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestSaslAuthenticationAsync ()
+		public async Task TestSaslAuthenticationAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -2114,7 +2115,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestGetFoldersAsync ()
+		public async Task TestGetFoldersAsync ()
 		{
 			var commands = CreateGetFoldersCommands ();
 
@@ -2281,7 +2282,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestGetQuotaNonexistantQuotaRootAsync ()
+		public async Task TestGetQuotaNonexistantQuotaRootAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -3105,7 +3106,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestDovecotAsync ()
+		public async Task TestDovecotAsync ()
 		{
 			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
 			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
@@ -3988,7 +3989,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestGMailAsync ()
+		public async Task TestGMailAsync ()
 		{
 			var commands = CreateGMailCommands ();
 
@@ -4217,7 +4218,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestGetFolderAsync ()
+		public async Task TestGetFolderAsync ()
 		{
 			var commands = CreateGetFolderCommands ();
 
@@ -4338,7 +4339,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestIdleAsync ()
+		public async Task TestIdleAsync ()
 		{
 			var commands = CreateIdleCommands ();
 
@@ -4615,7 +4616,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestNotifyAsync ()
+		public async Task TestNotifyAsync ()
 		{
 			const MessageSummaryItems items = MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq;
 			var commands = CreateNotifyCommands ();
@@ -4881,7 +4882,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestCompressAsync ()
+		public async Task TestCompressAsync ()
 		{
 			var commands = CreateCompressCommands ();
 
@@ -5039,7 +5040,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestAccessControlListsAsync ()
+		public async Task TestAccessControlListsAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -5291,7 +5292,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestMetadataAsync ()
+		public async Task TestMetadataAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -5481,7 +5482,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async void TestNamespaceExtensionsAsync ()
+		public async Task TestNamespaceExtensionsAsync ()
 		{
 			var commands = CreateNamespaceExtensionCommands ();
 

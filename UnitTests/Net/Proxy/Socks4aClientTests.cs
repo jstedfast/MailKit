@@ -29,6 +29,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -115,7 +116,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestConnectByIPv4Async ()
+		public async Task TestConnectByIPv4Async ()
 		{
 			using (var proxy = new Socks4aProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);
@@ -165,7 +166,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestConnectByDomainAsync ()
+		public async Task TestConnectByDomainAsync ()
 		{
 			using (var proxy = new Socks4aProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);
@@ -215,7 +216,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestConnectSocks4ByDomainAsync ()
+		public async Task TestConnectSocks4ByDomainAsync ()
 		{
 			using (var proxy = new Socks4ProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);
@@ -242,7 +243,7 @@ namespace UnitTests.Net.Proxy {
 		}
 
 		[Test]
-		public async void TestTimeoutException ()
+		public async Task TestTimeoutException ()
 		{
 			using (var proxy = new Socks4aProxyListener ()) {
 				proxy.Start (IPAddress.Loopback, 0);

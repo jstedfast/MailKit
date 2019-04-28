@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Security.Cryptography;
 
 using NUnit.Framework;
@@ -87,7 +88,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestReadAsync ()
+		public async Task TestReadAsync ()
 		{
 			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
 				var data = Encoding.ASCII.GetBytes ("+OK\r\n");
@@ -196,7 +197,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestWriteAsync ()
+		public async Task TestWriteAsync ()
 		{
 			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
 				var memory = (MemoryStream) stream.Stream;

@@ -366,7 +366,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestInvalidStateExceptionsAsync ()
+		public async Task TestInvalidStateExceptionsAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
@@ -535,7 +535,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestConnectGMailAsync ()
+		public async Task TestConnectGMailAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "pop.gmail.com";
@@ -632,7 +632,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestConnectGMailViaProxyAsync ()
+		public async Task TestConnectGMailViaProxyAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "pop.gmail.com";
@@ -735,7 +735,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestConnectGMailSocketAsync ()
+		public async Task TestConnectGMailSocketAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "pop.gmail.com";
@@ -822,7 +822,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestConnectGmxDeAsync ()
+		public async Task TestConnectGmxDeAsync ()
 		{
 			var options = SecureSocketOptions.StartTls;
 			var host = "pop.gmx.de";
@@ -904,7 +904,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestConnectGmxDeSocketAsync ()
+		public async Task TestConnectGmxDeSocketAsync ()
 		{
 			var options = SecureSocketOptions.StartTls;
 			var host = "pop.gmx.de";
@@ -1032,7 +1032,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestBasicPop3ClientAsync ()
+		public async Task TestBasicPop3ClientAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
@@ -1203,7 +1203,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestBasicPop3ClientUnixLineEndingsAsync ()
+		public async Task TestBasicPop3ClientUnixLineEndingsAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
@@ -1335,7 +1335,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestProbedUidlSupportAsync ()
+		public async Task TestProbedUidlSupportAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
@@ -1445,7 +1445,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestGetMessageCountParseExceptionsAsync ()
+		public async Task TestGetMessageCountParseExceptionsAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
@@ -1569,7 +1569,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestGetMessageSizeParseExceptionsAsync ()
+		public async Task TestGetMessageSizeParseExceptionsAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
@@ -1693,7 +1693,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestGetMessageSizesParseExceptionsAsync ()
+		public async Task TestGetMessageSizesParseExceptionsAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
@@ -1810,7 +1810,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestGetMessageUidParseExceptionsAsync ()
+		public async Task TestGetMessageUidParseExceptionsAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "gmail.greeting.txt"));
@@ -1920,7 +1920,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestGetMessageUidsParseExceptionsAsync ()
+		public async Task TestGetMessageUidsParseExceptionsAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "gmail.greeting.txt"));
@@ -2032,7 +2032,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestSaslAuthenticationAsync ()
+		public async Task TestSaslAuthenticationAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
@@ -2164,7 +2164,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestExchangePop3ClientAsync ()
+		public async Task TestExchangePop3ClientAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
@@ -2755,7 +2755,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestGMailPop3ClientAsync ()
+		public async Task TestGMailPop3ClientAsync ()
 		{
 			await TestGMailPop3ClientAsync (CreateGMailCommands (), false);
 		}
@@ -2825,7 +2825,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestGMailPop3ClientNoPipeliningAsync ()
+		public async Task TestGMailPop3ClientNoPipeliningAsync ()
 		{
 			await TestGMailPop3ClientAsync (CreateGMailCommandsNoPipelining (), true);
 		}
@@ -2965,7 +2965,7 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async void TestLangExtensionAsync ()
+		public async Task TestLangExtensionAsync ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
 			commands.Add (new Pop3ReplayCommand ("", "lang.greeting.txt"));

@@ -31,6 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -347,7 +348,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestSendWithoutSenderOrRecipientsAsync ()
+		public async Task TestSendWithoutSenderOrRecipientsAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -446,7 +447,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestInvalidStateExceptionsAsync ()
+		public async Task TestInvalidStateExceptionsAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -554,7 +555,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestConnectGMailAsync ()
+		public async Task TestConnectGMailAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "smtp.gmail.com";
@@ -651,7 +652,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestConnectGMailViaProxyAsync ()
+		public async Task TestConnectGMailViaProxyAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "smtp.gmail.com";
@@ -754,7 +755,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestConnectGMailSocketAsync ()
+		public async Task TestConnectGMailSocketAsync ()
 		{
 			var options = SecureSocketOptions.SslOnConnect;
 			var host = "smtp.gmail.com";
@@ -841,7 +842,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestConnectYahooAsync ()
+		public async Task TestConnectYahooAsync ()
 		{
 			var options = SecureSocketOptions.StartTls;
 			var host = "smtp.mail.yahoo.com";
@@ -923,7 +924,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestConnectYahooSocketAsync ()
+		public async Task TestConnectYahooSocketAsync ()
 		{
 			var options = SecureSocketOptions.StartTls;
 			var host = "smtp.mail.yahoo.com";
@@ -1005,7 +1006,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestSaslInitialResponseAsync ()
+		public async Task TestSaslInitialResponseAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -1103,7 +1104,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestAuthenticationFailedAsync ()
+		public async Task TestAuthenticationFailedAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -1192,7 +1193,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestHeloFallbackAsync ()
+		public async Task TestHeloFallbackAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -1348,7 +1349,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestBasicFunctionalityAsync ()
+		public async Task TestBasicFunctionalityAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -1532,7 +1533,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestSaslAuthenticationAsync ()
+		public async Task TestSaslAuthenticationAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -1646,7 +1647,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestEightBitMimeAsync ()
+		public async Task TestEightBitMimeAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -1796,7 +1797,7 @@ namespace UnitTests.Net.Smtp {
 
 		[TestCase (false, TestName = "TestBinaryMimeAsyncNoProgress")]
 		[TestCase (true, TestName = "TestBinaryMimeAsyncWithProgress")]
-		public async void TestBinaryMimeAsync (bool showProgress)
+		public async Task TestBinaryMimeAsync (bool showProgress)
 		{
 			var message = CreateBinaryMessage ();
 			var size = Measure (message);
@@ -1944,7 +1945,7 @@ namespace UnitTests.Net.Smtp {
 
 		[TestCase (false, TestName = "TestPipeliningAsyncNoProgress")]
 		[TestCase (true, TestName = "TestPipeliningAsyncWithProgress")]
-		public async void TestPipeliningAsync (bool showProgress)
+		public async Task TestPipeliningAsync (bool showProgress)
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -2065,7 +2066,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestMailFromMailboxUnavailableAsync ()
+		public async Task TestMailFromMailboxUnavailableAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -2180,7 +2181,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestRcptToMailboxUnavailableAsync ()
+		public async Task TestRcptToMailboxUnavailableAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -2287,7 +2288,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestUnauthorizedAccessExceptionAsync ()
+		public async Task TestUnauthorizedAccessExceptionAsync ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -2421,7 +2422,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public async void TestDeliveryStatusNotificationAsync ()
+		public async Task TestDeliveryStatusNotificationAsync ()
 		{
 			var message = CreateEightBitMessage ();
 			message.MessageId = MimeUtils.GenerateMessageId ();

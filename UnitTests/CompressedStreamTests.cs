@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -113,7 +114,7 @@ namespace UnitTests {
 		}
 
 		[Test]
-		public async void TestReadWriteAsync ()
+		public async Task TestReadWriteAsync ()
 		{
 			using (var stream = new CompressedStream (new DummyNetworkStream ())) {
 				string command = "A00000001 APPEND INBOX (\\Seen \\Draft) {4096+}\r\nFrom: Sample Sender <sender@sample.com>\r\nTo: Sample Recipient <recipient@sample.com>\r\nSubject: This is a test message...\r\nDate: Mon, 22 Oct 2018 18:22:56 EDT\r\nMessage-Id: <msgid@localhost.com>\r\n\r\nTesting... 1. 2. 3.\r\nTesting.\r\nOver and out.\r\n";
