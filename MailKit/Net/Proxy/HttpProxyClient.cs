@@ -103,7 +103,7 @@ namespace MailKit.Net.Proxy
 			builder.AppendFormat ("Host: {0}:{1}\r\n", host, port);
 			if (ProxyCredentials != null) {
 				var token = Encoding.UTF8.GetBytes (string.Format ("{0}:{1}", ProxyCredentials.UserName, ProxyCredentials.Password));
-				var base64 = Convert.ToBase64String (token, Base64FormattingOptions.None);
+				var base64 = Convert.ToBase64String (token);
 				builder.AppendFormat ("Proxy-Authorization: Basic {0}\r\n", base64);
 			}
 			builder.Append ("\r\n");
