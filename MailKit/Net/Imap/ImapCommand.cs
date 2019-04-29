@@ -811,10 +811,10 @@ namespace MailKit.Net.Imap {
 					if (ContinuationHandler != null) {
 						await ContinuationHandler (Engine, this, text, doAsync).ConfigureAwait (false);
 					} else if (doAsync) {
-						await Engine.Stream.WriteAsync (NewLine, 0, 2, CancellationToken).ConfigureAwait (false);
+						await Engine.Stream.WriteAsync (NewLine, 0, NewLine.Length, CancellationToken).ConfigureAwait (false);
 						await Engine.Stream.FlushAsync (CancellationToken).ConfigureAwait (false);
 					} else {
-						Engine.Stream.Write (NewLine, 0, 2, CancellationToken);
+						Engine.Stream.Write (NewLine, 0, NewLine.Length, CancellationToken);
 						Engine.Stream.Flush (CancellationToken);
 					}
 				} else if (token.Type == ImapTokenType.Asterisk) {
