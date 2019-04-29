@@ -365,6 +365,7 @@ namespace MailKit.Net.Imap {
 		static readonly byte[] UTF8LiteralTokenPrefix = Encoding.ASCII.GetBytes ("UTF8 (~{");
 		static readonly byte[] LiteralTokenSuffix = { (byte) '}', (byte) '\r', (byte) '\n' };
 		static readonly byte[] Nil = { (byte) 'N', (byte) 'I', (byte) 'L' };
+		static readonly byte[] NewLine = { (byte) '\r', (byte) '\n' };
 		static readonly byte[] LiteralTokenPrefix = { (byte) '{' };
 
 		public Dictionary<string, ImapUntaggedHandler> UntaggedHandlers { get; private set; }
@@ -809,7 +810,15 @@ namespace MailKit.Net.Imap {
 
 					Debug.Assert (ContinuationHandler != null, "The ImapCommand's ContinuationHandler is null");
 
-					await ContinuationHandler (Engine, this, text, doAsync).ConfigureAwait (false);
+					if (ContinuationHandler != null) {
+						await ContinuationHandler (Engine, this, text, doAsync).ConfigureAwait (false);
+					} else if (doAsync) {
+						await Engine.Stream.WriteAsync (NewLine, 0, 2, CancellationToken).ConfigureAwait (false);
+						await Engine.Stream.FlushAsync (CancellationToken).ConfigureAwait (false);
+					} else {
+						Engine.Stream.Write (NewLine, 0, 2, CancellationToken);
+						Engine.Stream.Flush (CancellationToken);
+					}
 				} else if (token.Type == ImapTokenType.Asterisk) {
 					// we got an untagged response, let the engine handle this...
 					await Engine.ProcessUntaggedResponseAsync (doAsync, CancellationToken).ConfigureAwait (false);
