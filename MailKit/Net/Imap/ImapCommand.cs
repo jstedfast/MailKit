@@ -808,8 +808,6 @@ namespace MailKit.Net.Imap {
 						break;
 					}
 
-					Debug.Assert (ContinuationHandler != null, "The ImapCommand's ContinuationHandler is null");
-
 					if (ContinuationHandler != null) {
 						await ContinuationHandler (Engine, this, text, doAsync).ConfigureAwait (false);
 					} else if (doAsync) {
