@@ -413,7 +413,7 @@ foreach (var uid in inbox.Search (query)) {
 
 // let's do the same search, but this time sort them in reverse arrival order
 var orderBy = new [] { OrderBy.ReverseArrival };
-foreach (var uid in inbox.Search (query, orderBy)) {
+foreach (var uid in inbox.Sort (query, orderBy)) {
 	var message = inbox.GetMessage (uid);
 	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
@@ -421,7 +421,7 @@ foreach (var uid in inbox.Search (query, orderBy)) {
 // you'll notice that the orderBy argument is an array... this is because you
 // can actually sort the search results based on multiple columns:
 orderBy = new [] { OrderBy.ReverseArrival, OrderBy.Subject };
-foreach (var uid in inbox.Search (query, orderBy)) {
+foreach (var uid in inbox.Sort (query, orderBy)) {
 	var message = inbox.GetMessage (uid);
 	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
