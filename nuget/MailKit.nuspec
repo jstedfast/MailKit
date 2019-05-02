@@ -83,7 +83,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
         <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
-        <dependency id="System.Net.Security" version="4.3.0" />
+        <dependency id="System.Net.Security" version="4.3.2" />
         <dependency id="System.Data.Common" version="4.3.0" />
         <dependency id="System.Net.Http" version="4.3.0" />
         <dependency id="Portable.BouncyCastle" version="1.8.2" />
@@ -97,7 +97,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
         <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
-        <dependency id="System.Net.Security" version="4.3.0" />
+        <dependency id="System.Net.Security" version="4.3.2" />
         <dependency id="System.Data.Common" version="4.3.0" />
         <dependency id="System.Net.Http" version="4.3.0" />
         <dependency id="Portable.BouncyCastle" version="1.8.2" />
@@ -111,7 +111,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
         <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
-        <dependency id="System.Net.Security" version="4.3.0" />
+        <dependency id="System.Net.Security" version="4.3.2" />
         <dependency id="System.Data.Common" version="4.3.0" />
         <dependency id="Portable.BouncyCastle" version="1.8.2" />
         <dependency id="MimeKit" version="2.1.4" />
