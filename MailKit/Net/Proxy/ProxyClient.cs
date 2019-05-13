@@ -184,10 +184,12 @@ namespace MailKit.Net.Proxy
 						tcs.Task.GetAwaiter ().GetResult ();
 
 					socket.EndSend (ar);
+					return;
 				}
 			}
 #endif
-			await Task.Yield ();
+			if (doAsync)
+				await Task.Yield ();
 
 			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
 
@@ -212,7 +214,8 @@ namespace MailKit.Net.Proxy
 				}
 			}
 #endif
-			await Task.Yield ();
+			if (doAsync)
+				await Task.Yield ();
 
 			SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
 
