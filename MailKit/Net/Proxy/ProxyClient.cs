@@ -187,10 +187,10 @@ namespace MailKit.Net.Proxy
 					return;
 				}
 			}
-#endif
+#else
 			if (doAsync)
 				await Task.Yield ();
-
+#endif
 			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
 
 			socket.Send (buffer, offset, length, SocketFlags.None);
@@ -213,10 +213,10 @@ namespace MailKit.Net.Proxy
 					return socket.EndReceive (ar);
 				}
 			}
-#endif
+#else
 			if (doAsync)
 				await Task.Yield ();
-
+#endif
 			SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
 
 			return socket.Receive (buffer, offset, length, SocketFlags.None);
