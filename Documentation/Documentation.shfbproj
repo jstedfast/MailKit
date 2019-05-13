@@ -24,8 +24,11 @@
       <Argument Key="logoAltText" Value="MimeKit" />
       <Argument Key="logoPlacement" Value="left" />
       <Argument Key="logoAlignment" Value="left" />
-      <Argument Key="maxVersionParts" Value="" />
+      <Argument Key="maxVersionParts" Value="3" />
       <Argument Key="defaultLanguage" Value="cs" />
+      <Argument Key="includeEnumValues" Value="true" />
+      <Argument Key="baseSourceCodeUrl" Value="" />
+      <Argument Key="requestExampleUrl" Value="https://github.com/jstedfast/MailKit/issues/new" />
     </TransformComponentArguments>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>Website</HelpFileFormat>
