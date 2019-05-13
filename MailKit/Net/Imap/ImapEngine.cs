@@ -2077,6 +2077,7 @@ namespace MailKit.Net.Imap {
 				switch (QuirksMode) {
 				case ImapQuirksMode.Dovecot:
 					// Dovecot, by default, allows commands up to 64k.
+					// See https://github.com/dovecot/core/blob/master/src/imap/imap-settings.c#L94
 					maxLength = Math.Max ((64 * 1042) - estimated, 24);
 					break;
 				case ImapQuirksMode.GMail:
