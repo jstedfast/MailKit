@@ -504,6 +504,7 @@ namespace MailKit.Net.Imap {
 
 		internal static int EstimateCommandLength (ImapEngine engine, FormatOptions options, string format, params object[] args)
 		{
+			const int EstimatedTagLength = 10;
 			var eoln = false;
 			int length = 0;
 			int argc = 0;
@@ -566,7 +567,7 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			return length;
+			return length + EstimatedTagLength;
 		}
 
 		internal static int EstimateCommandLength (ImapEngine engine, string format, params object[] args)

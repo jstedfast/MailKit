@@ -2074,14 +2074,25 @@ namespace MailKit.Net.Imap {
 			} else {
 				int estimated = ImapCommand.EstimateCommandLength (this, format, args);
 
-				if (QuirksMode == ImapQuirksMode.UW) {
+				switch (QuirksMode) {
+				case ImapQuirksMode.Dovecot:
+					// Dovecot, by default, allows commands up to 64k.
+					maxLength = Math.Max ((64 * 1042) - estimated, 24);
+					break;
+				case ImapQuirksMode.GMail:
+					// GMail seems to support command-lines up to at least 16k.
+					maxLength = Math.Max ((16 * 1042) - estimated, 24);
+					break;
+				case ImapQuirksMode.UW:
 					// Follow the IMAP4 Implementation Recommendations which states that clients
 					// *SHOULD* limit their command lengths to 1000 octets.
 					maxLength = Math.Max (1000 - estimated, 24);
-				} else {
+					break;
+				default:
 					// Push the boundaries of the IMAP4 Implementation Recommendations which states
 					// that servers *SHOULD* accept command lengths of up to 8000 octets.
 					maxLength = Math.Max (8000 - estimated, 24);
+					break;
 				}
 			}
 
