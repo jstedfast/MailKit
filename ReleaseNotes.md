@@ -1,5 +1,18 @@
 # Release Notes
 
+### MailKit 2.1.5 (2019-05-13)
+
+* Bumped the System.Net.Security dependency for security fixes (CVE-2017-0249).
+* Reduced explicit nuget dependencies.
+* Added a work-around for Microsoft Exchange IMAP servers that sometimes erroneously
+  respond with unneeded continuation responses.
+  (issue [#852]((https://github.com/jstedfast/MailKit/issues/852))
+* Fixed the ImapClient to Stop looping over SASL mechanisms if the server disconnects us.
+  (issue [#851]((https://github.com/jstedfast/MailKit/issues/851))
+* Added support for HTTP proxies. (issue [#847]((https://github.com/jstedfast/MailKit/issues/847))
+* Fixed IMAP to properly handle EXPUNGE notifications during a FETCH request.
+  (issue [#850]((https://github.com/jstedfast/MailKit/issues/850))
+
 ### MailKit 2.1.4 (2019-04-13)
 
 * Fixed ImapUtils.GetUniqueHeaders() to accept all valid header field name characters.

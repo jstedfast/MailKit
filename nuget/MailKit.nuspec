@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.1.4</version>
+    <version>2.1.5</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,12 +26,12 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Fixed ImapUtils.GetUniqueHeaders() to accept all valid header field name characters. (issue #806)
-* Catch all exceptions thrown in IdleComplete(). (issue #825)
-* Improved cancellability of IMAP, POP3 and SMTP clients when sending commands to the server. (issue #827)
-* Break apart IMAP commands with really long uid-sets. (issue #834)
-* Rewrote Connect logic to use Socket.Connect (IPAddress, int) instead of Connect (string, int) in an attempt to fix https://stackoverflow.com/q/55382267/87117
-* Fixed SmtpStream.ReadAheadAsync() to preserve remaining input. (issue #842)
+* Bumped the System.Net.Security dependency for security fixes (CVE-2017-0249).
+* Reduced explicit nuget dependencies.
+* Added a work-around for Microsoft Exchange IMAP servers that sometimes erroneously respond with unneeded continuation responses. (issue #852)
+* Fixed the ImapClient to Stop looping over SASL mechanisms if the server disconnects us. (issue #851)
+* Added support for HTTP proxies. (issue #847)
+* Fixed IMAP to properly handle EXPUNGE notifications during a FETCH request. (issue #850)
 
 API Changes Since 2.0.x:
 
