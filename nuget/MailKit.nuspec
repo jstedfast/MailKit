@@ -66,7 +66,6 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="BouncyCastle" version="1.8.2" />
         <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="monoandroid">
@@ -76,48 +75,24 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
         <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="netstandard1.3">
-        <dependency id="NETStandard.Library" version="1.6.1" />
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-        <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
-        <dependency id="System.Globalization.Extensions" version="4.3.0" />
-        <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
-        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="System.Data.Common" version="4.3.0" />
-        <dependency id="System.Net.Http" version="4.3.0" />
-        <dependency id="Portable.BouncyCastle" version="1.8.2" />
         <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="netstandard1.6">
-        <dependency id="NETStandard.Library" version="2.0.0" />
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-        <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
-        <dependency id="System.Globalization.Extensions" version="4.3.0" />
-        <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
-        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="System.Data.Common" version="4.3.0" />
-        <dependency id="System.Net.Http" version="4.3.0" />
-        <dependency id="Portable.BouncyCastle" version="1.8.2" />
         <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="NETStandard.Library" version="2.0.0" />
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-        <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
-        <dependency id="System.Globalization.Extensions" version="4.3.0" />
-        <dependency id="System.Text.Encoding.CodePages" version="4.3.0" />
-        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="System.Data.Common" version="4.3.0" />
-        <dependency id="Portable.BouncyCastle" version="1.8.2" />
         <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="portable-win81+wpa81">
-        <dependency id="Portable.BouncyCastle" version="1.8.2" />
         <dependency id="MimeKit" version="2.1.5" />
       </group>
     </dependencies>
