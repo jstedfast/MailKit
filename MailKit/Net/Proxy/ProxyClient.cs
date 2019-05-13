@@ -185,14 +185,13 @@ namespace MailKit.Net.Proxy
 
 					socket.EndSend (ar);
 				}
-			} else {
-				SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
-				socket.Send (buffer, offset, length, SocketFlags.None);
 			}
-#else
-			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
-			socket.Send (buffer, offset, length, SocketFlags.None);
 #endif
+			await Task.Yield ();
+
+			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
+
+			socket.Send (buffer, offset, length, SocketFlags.None);
 		}
 
 		internal static async Task<int> ReceiveAsync (Socket socket, byte[] buffer, int offset, int length, bool doAsync, CancellationToken cancellationToken)
@@ -213,6 +212,7 @@ namespace MailKit.Net.Proxy
 				}
 			}
 #endif
+			await Task.Yield ();
 
 			SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
 
