@@ -67,13 +67,13 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     <dependencies>
       <group targetFramework="net45">
         <dependency id="BouncyCastle" version="1.8.2" />
-        <dependency id="MimeKit" version="2.1.4" />
+        <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="monoandroid">
-        <dependency id="MimeKit" version="2.1.4" />
+        <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="xamarinios">
-        <dependency id="MimeKit" version="2.1.4" />
+        <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="netstandard1.3">
         <dependency id="NETStandard.Library" version="1.6.1" />
@@ -87,7 +87,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
         <dependency id="System.Data.Common" version="4.3.0" />
         <dependency id="System.Net.Http" version="4.3.0" />
         <dependency id="Portable.BouncyCastle" version="1.8.2" />
-        <dependency id="MimeKit" version="2.1.4" />
+        <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="netstandard1.6">
         <dependency id="NETStandard.Library" version="2.0.0" />
@@ -101,7 +101,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
         <dependency id="System.Data.Common" version="4.3.0" />
         <dependency id="System.Net.Http" version="4.3.0" />
         <dependency id="Portable.BouncyCastle" version="1.8.2" />
-        <dependency id="MimeKit" version="2.1.4" />
+        <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="NETStandard.Library" version="2.0.0" />
@@ -114,11 +114,11 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
         <dependency id="System.Net.Security" version="4.3.2" />
         <dependency id="System.Data.Common" version="4.3.0" />
         <dependency id="Portable.BouncyCastle" version="1.8.2" />
-        <dependency id="MimeKit" version="2.1.4" />
+        <dependency id="MimeKit" version="2.1.5" />
       </group>
       <group targetFramework="portable-win81+wpa81">
         <dependency id="Portable.BouncyCastle" version="1.8.2" />
-        <dependency id="MimeKit" version="2.1.4" />
+        <dependency id="MimeKit" version="2.1.5" />
       </group>
     </dependencies>
   </metadata>
