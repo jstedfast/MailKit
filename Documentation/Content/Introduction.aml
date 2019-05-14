@@ -72,7 +72,7 @@
             <para>Proxy Support</para>
             <list class="bullet">
               <listitem>
-                <para>Supports SOCKS4, SOCKS4a, and SOCKS5</para>
+                <para>Supports HTTP, SOCKS4, SOCKS4a, and SOCKS5</para>
               </listitem>
               <listitem>
                 <para>Fully cancellable and asynchronous Connect methods.</para>

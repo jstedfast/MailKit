@@ -41,6 +41,7 @@ motivate me to continue working on the project.
 * Proxy Support
   * [SOCKS4/4a](http://www.openssh.com/txt/socks4.protocol)
   * [SOCKS5](https://tools.ietf.org/html/rfc1928)
+  * [HTTP](https://tools.ietf.org/html/rfc2616)
 * SMTP Client
   * Supports all of the SASL mechanisms listed above.
   * Supports SSL-wrapped connections via the "smtps" protocol.
