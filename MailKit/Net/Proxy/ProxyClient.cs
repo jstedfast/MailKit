@@ -169,28 +169,43 @@ namespace MailKit.Net.Proxy
 				throw new ArgumentOutOfRangeException (nameof (timeout));
 		}
 
+		static void AsyncOperationCompleted (object sender, SocketAsyncEventArgs args)
+		{
+			var tcs = (TaskCompletionSource<bool>) args.UserToken;
+
+			if (args.SocketError == SocketError.Success) {
+				tcs.TrySetResult (true);
+				return;
+			}
+
+			tcs.TrySetException (new SocketException ((int) args.SocketError));
+		}
+
 		internal static async Task SendAsync (Socket socket, byte[] buffer, int offset, int length, bool doAsync, CancellationToken cancellationToken)
 		{
-#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 			if (doAsync || cancellationToken.CanBeCanceled) {
 				var tcs = new TaskCompletionSource<bool> ();
 
 				using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-					var ar = socket.BeginSend (buffer, offset, length, SocketFlags.None, e => tcs.TrySetResult (true), null);
+					using (var args = new SocketAsyncEventArgs ()) {
+						args.Completed += AsyncOperationCompleted;
+						args.SetBuffer (buffer, offset, length);
+						args.AcceptSocket = socket;
+						args.UserToken = tcs;
 
-					if (doAsync)
-						await tcs.Task.ConfigureAwait (false);
-					else
-						tcs.Task.GetAwaiter ().GetResult ();
+						if (!socket.SendAsync (args))
+							AsyncOperationCompleted (null, args);
 
-					socket.EndSend (ar);
-					return;
+						if (doAsync)
+							await tcs.Task.ConfigureAwait (false);
+						else
+							tcs.Task.GetAwaiter ().GetResult ();
+
+						return;
+					}
 				}
 			}
-#else
-			if (doAsync)
-				await Task.Yield ();
-#endif
+
 			SocketUtils.Poll (socket, SelectMode.SelectWrite, cancellationToken);
 
 			socket.Send (buffer, offset, length, SocketFlags.None);
@@ -198,25 +213,29 @@ namespace MailKit.Net.Proxy
 
 		internal static async Task<int> ReceiveAsync (Socket socket, byte[] buffer, int offset, int length, bool doAsync, CancellationToken cancellationToken)
 		{
-#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
 			if (doAsync || cancellationToken.CanBeCanceled) {
 				var tcs = new TaskCompletionSource<bool> ();
 
 				using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-					var ar = socket.BeginReceive (buffer, offset, length, SocketFlags.None, e => tcs.TrySetResult (true), null);
+					using (var args = new SocketAsyncEventArgs ()) {
+						args.Completed += AsyncOperationCompleted;
+						args.SetBuffer (buffer, offset, length);
+						args.AcceptSocket = socket;
+						args.UserToken = tcs;
 
-					if (doAsync)
-						await tcs.Task.ConfigureAwait (false);
-					else
-						tcs.Task.GetAwaiter ().GetResult ();
+						if (!socket.ReceiveAsync (args))
+							AsyncOperationCompleted (null, args);
 
-					return socket.EndReceive (ar);
+						if (doAsync)
+							await tcs.Task.ConfigureAwait (false);
+						else
+							tcs.Task.GetAwaiter ().GetResult ();
+
+						return args.BytesTransferred;
+					}
 				}
 			}
-#else
-			if (doAsync)
-				await Task.Yield ();
-#endif
+
 			SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
 
 			return socket.Receive (buffer, offset, length, SocketFlags.None);
