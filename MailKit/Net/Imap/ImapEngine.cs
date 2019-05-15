@@ -103,6 +103,7 @@ namespace MailKit.Net.Imap {
 		GMail,
 		ProtonMail,
 		UW,
+		Yahoo
 	}
 
 	class ImapFolderNameComparer : IEqualityComparer<string>
@@ -1168,6 +1169,7 @@ namespace MailKit.Net.Imap {
 					case "XLIST":              Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; QuirksMode = ImapQuirksMode.GMail; break;
 					case "XSTOP":              QuirksMode = ImapQuirksMode.ProtonMail; break;
+					case "XYMHIGHESTMODSEQ":   QuirksMode = ImapCapabilities.Yahoo; break;
 					}
 				}
 
@@ -2084,6 +2086,7 @@ namespace MailKit.Net.Imap {
 					// GMail seems to support command-lines up to at least 16k.
 					maxLength = Math.Max ((16 * 1042) - estimated, 24);
 					break;
+				case ImapQuirksMode.Yahoo:
 				case ImapQuirksMode.UW:
 					// Follow the IMAP4 Implementation Recommendations which states that clients
 					// *SHOULD* limit their command lengths to 1000 octets.
