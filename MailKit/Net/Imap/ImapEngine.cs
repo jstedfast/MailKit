@@ -1169,7 +1169,7 @@ namespace MailKit.Net.Imap {
 					case "XLIST":              Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; QuirksMode = ImapQuirksMode.GMail; break;
 					case "XSTOP":              QuirksMode = ImapQuirksMode.ProtonMail; break;
-					case "XYMHIGHESTMODSEQ":   QuirksMode = ImapCapabilities.Yahoo; break;
+					case "XYMHIGHESTMODSEQ":   QuirksMode = ImapQuirksMode.Yahoo; break;
 					}
 				}
 
