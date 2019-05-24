@@ -37,6 +37,11 @@ using Buffer = System.Buffer;
 using Windows.Storage.Streams;
 using Windows.Networking.Sockets;
 using Socket = Windows.Networking.Sockets.StreamSocket;
+
+using Encoding = Portable.Text.Encoding;
+using EncoderExceptionFallback = Portable.Text.EncoderExceptionFallback;
+using DecoderExceptionFallback = Portable.Text.DecoderExceptionFallback;
+using DecoderFallbackException = Portable.Text.DecoderFallbackException;
 #else
 using System.Net.Security;
 using System.Net.Sockets;
