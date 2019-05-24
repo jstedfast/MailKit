@@ -846,7 +846,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Eoln) {
 						// consume the rest of the line...
 						var line = await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false);
-						ResponseText = ((string) (token.Value) + line).TrimEnd ();
+						ResponseText = (((string) token.Value) + line).TrimEnd ();
 						break;
 					}
 				} else if (token.Type == ImapTokenType.OpenBracket) {

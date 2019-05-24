@@ -75,6 +75,9 @@ namespace MailKit.Net.Imap {
 		const int BlockSize = 4096;
 		const int PadSize = 4;
 
+		static readonly Encoding Latin1;
+		static readonly Encoding UTF8;
+
 		// I/O buffering
 		readonly byte[] input = new byte[ReadAheadSize + BlockSize + PadSize];
 		const int inputStart = ReadAheadSize;
@@ -88,6 +91,17 @@ namespace MailKit.Net.Imap {
 		int literalDataLeft;
 		ImapToken nextToken;
 		bool disposed;
+
+		static ImapStream ()
+		{
+			UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
+
+			try {
+				Latin1 = Encoding.GetEncoding (28591);
+			} catch (NotSupportedException) {
+				Latin1 = Encoding.GetEncoding (1252);
+			}
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
@@ -541,7 +555,7 @@ namespace MailKit.Net.Imap {
 
 		static bool IsCtrl (byte c)
 		{
-			return c <= 0x1f || c >= 0x7f;
+			return c <= 0x1f || c == 0x7f;
 		}
 
 		static bool IsWhiteSpace (byte c)
@@ -606,27 +620,38 @@ namespace MailKit.Net.Imap {
 
 		async Task<string> ReadAtomStringAsync (bool flag, string specials, bool doAsync, CancellationToken cancellationToken)
 		{
-			var builder = new StringBuilder ();
+			using (var memory = new MemoryStream ()) {
+				do {
+					input[inputEnd] = (byte) '\n';
 
-			do {
-				input[inputEnd] = (byte) '\n';
+					if (flag && memory.Length == 0 && input[inputIndex] == (byte) '*') {
+						// this is a special wildcard flag
+						inputIndex++;
+						return "*";
+					}
 
-				if (flag && builder.Length == 0 && input[inputIndex] == (byte) '*') {
-					// this is a special wildcard flag
-					inputIndex++;
-					return "*";
+					while (IsAtom (input[inputIndex], specials))
+						memory.WriteByte (input[inputIndex++]);
+
+					if (inputIndex < inputEnd)
+						break;
+
+					await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
+				} while (true);
+
+				var count = (int) memory.Length;
+#if !NETFX_CORE && !NETSTANDARD
+				var buf = memory.GetBuffer ();
+#else
+				var buf = memory.ToArray ();
+#endif
+
+				try {
+					return UTF8.GetString (buf, 0, count);
+				} catch (DecoderFallbackException) {
+					return Latin1.GetString (buf, 0, count);
 				}
-
-				while (IsAtom (input[inputIndex], specials))
-					builder.Append ((char) input[inputIndex++]);
-
-				if (inputIndex < inputEnd)
-					break;
-
-				await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
-			} while (true);
-
-			return builder.ToString ();
+			}
 		}
 
 		async Task<ImapToken> ReadAtomTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)

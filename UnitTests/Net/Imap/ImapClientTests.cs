@@ -1131,7 +1131,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestUnexpectedByInSaslAuthenticate ()
+		public void TestUnexpectedByeInSaslAuthenticate ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1159,7 +1159,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async Task TestUnexpectedByInSaslAuthenticateAsync ()
+		public async Task TestUnexpectedByeInSaslAuthenticateAsync ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1337,6 +1337,37 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (FolderAttributes.Inbox, inbox.Attributes, "Expected Inbox attributes to be empty.");
 
 				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
+		public void TestUnicodeRespText ()
+		{
+			const string respText = "╟ы╩╣╙├╩┌╚и┬ы╡╟┬╝бг╧ъ╟щ╟ы┐┤";
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000001 NO " + respText + "\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+					Assert.Fail ("Did not expect Authenticate to work.");
+				} catch (AuthenticationException ax) {
+					Assert.AreEqual (respText, ax.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				client.Disconnect (false);
 			}
 		}
 
