@@ -286,8 +286,6 @@ namespace MailKit.Net.Imap {
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic);
-
 			if (ic.Response != ImapCommandResponse.Ok) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
 					if (ic.RespCodes[i].Type == ImapResponseCodeType.CompressionActive)
@@ -357,8 +355,6 @@ namespace MailKit.Net.Imap {
 			var ic = engine.QueueCommand (cancellationToken, null, "ENABLE QRESYNC CONDSTORE\r\n");
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
@@ -430,8 +426,6 @@ namespace MailKit.Net.Imap {
 			var ic = engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
@@ -512,8 +506,6 @@ namespace MailKit.Net.Imap {
 			engine.QueueCommand (ic);
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ID", ic);
@@ -683,20 +675,6 @@ namespace MailKit.Net.Imap {
 		/// <value><c>true</c> if an IDLE command is active; otherwise, <c>false</c>.</value>
 		public bool IsIdle {
 			get { return engine.State == ImapEngineState.Idle; }
-		}
-
-		void ProcessResponseCodes (ImapCommand ic)
-		{
-			for (int i = 0; i < ic.RespCodes.Count; i++) {
-				switch (ic.RespCodes[i].Type) {
-				case ImapResponseCodeType.Alert:
-					OnAlert (ic.RespCodes[i].Message);
-					break;
-				case ImapResponseCodeType.NotificationOverflow:
-					engine.OnNotificationOverflow ();
-					break;
-				}
-			}
 		}
 
 		static AuthenticationException CreateAuthenticationException (ImapCommand ic)
@@ -1057,8 +1035,6 @@ namespace MailKit.Net.Imap {
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic);
-
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw CreateAuthenticationException (ic);
 
@@ -1343,8 +1319,6 @@ namespace MailKit.Net.Imap {
 
 					await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-					ProcessResponseCodes (ic);
-
 					if (ic.Response == ImapCommandResponse.Ok) {
 						try {
 #if !NETFX_CORE
@@ -1552,8 +1526,6 @@ namespace MailKit.Net.Imap {
 
 					await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-					ProcessResponseCodes (ic);
-
 					if (ic.Response == ImapCommandResponse.Ok) {
 						var tls = new SslStream (network, false, ValidateRemoteCertificate);
 						engine.Stream.Stream = tls;
@@ -1752,8 +1724,6 @@ namespace MailKit.Net.Imap {
 				try {
 					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
 					await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-					ProcessResponseCodes (ic);
 				} catch (OperationCanceledException) {
 				} catch (ImapProtocolException) {
 				} catch (ImapCommandException) {
@@ -1799,8 +1769,6 @@ namespace MailKit.Net.Imap {
 			var ic = engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOOP", ic);
@@ -1904,8 +1872,6 @@ namespace MailKit.Net.Imap {
 
 				await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-				ProcessResponseCodes (ic);
-
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("IDLE", ic);
 			}
@@ -2006,8 +1972,6 @@ namespace MailKit.Net.Imap {
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic);
-
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOTIFY", ic);
 
@@ -2081,8 +2045,6 @@ namespace MailKit.Net.Imap {
 			engine.QueueCommand (ic);
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOTIFY", ic);
@@ -2421,8 +2383,6 @@ namespace MailKit.Net.Imap {
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic);
-
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
 
@@ -2534,8 +2494,6 @@ namespace MailKit.Net.Imap {
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic);
-
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
 
@@ -2631,8 +2589,6 @@ namespace MailKit.Net.Imap {
 			engine.QueueCommand (ic);
 
 			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SETMETADATA", ic);

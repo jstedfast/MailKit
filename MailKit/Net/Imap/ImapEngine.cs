@@ -2055,6 +2055,8 @@ namespace MailKit.Net.Imap {
 				// continue processing commands...
 				await IterateAsync (doAsync).ConfigureAwait (false);
 			}
+
+			ProcessResponseCodes (ic);
 		}
 
 		public IEnumerable<ImapCommand> CreateCommands (CancellationToken cancellationToken, ImapFolder folder, string format, IList<UniqueId> uids, params object[] args)
@@ -2460,8 +2462,6 @@ namespace MailKit.Net.Imap {
 
 			await RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			ProcessResponseCodes (ic);
-
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
@@ -2510,8 +2510,6 @@ namespace MailKit.Net.Imap {
 			QueueCommand (ic);
 
 			await RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
@@ -2641,8 +2639,6 @@ namespace MailKit.Net.Imap {
 			QueueCommand (ic);
 
 			await RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create (lsub ? "LSUB" : "LIST", ic);

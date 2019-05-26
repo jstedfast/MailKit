@@ -178,12 +178,6 @@ namespace MailKit.Net.Imap {
 
 			foreach (var code in ic.RespCodes) {
 				switch (code.Type) {
-				case ImapResponseCodeType.Alert:
-					Engine.OnAlert (code.Message);
-					break;
-				case ImapResponseCodeType.NotificationOverflow:
-					Engine.OnNotificationOverflow ();
-					break;
 				case ImapResponseCodeType.PermanentFlags:
 					PermanentFlags = ((PermanentFlagsResponseCode) code).Flags;
 					break;
