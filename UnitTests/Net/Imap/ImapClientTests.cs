@@ -1372,6 +1372,37 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public async Task TestUnicodeRespTextAsync ()
+		{
+			const string respText = "╟ы╩╣╙├╩┌╚и┬ы╡╟┬╝бг╧ъ╟щ╟ы┐┤";
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000001 NO " + respText + "\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+					Assert.Fail ("Did not expect Authenticate to work.");
+				} catch (AuthenticationException ax) {
+					Assert.AreEqual (respText, ax.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
 		public void TestLogin ()
 		{
 			var commands = new List<ImapReplayCommand> ();
