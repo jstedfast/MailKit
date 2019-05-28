@@ -1403,6 +1403,88 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestInvalidUntaggedBadResponse ()
+		{
+			const string alertText = "Please enable IMAP access in your account settings first.";
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "common.capability-greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000000 OK [ALERT] " + alertText + "\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", Encoding.UTF8.GetBytes ("A00000001 NO [ALERT] " + alertText + "\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", Encoding.UTF8.GetBytes ("A00000002 NO [ALERT] " + alertText + "\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", Encoding.UTF8.GetBytes ("* BAD [ALERT] " + alertText + "\r\nA00000003 NO [ALERT] " + alertText + "\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				int alerts = 0;
+				client.Alert += (sender, e) => {
+					Assert.AreEqual (alertText, e.Message);
+					alerts++;
+				};
+
+				try {
+					client.Authenticate ("username", "password");
+					Assert.Fail ("Did not expect Authenticate to work.");
+				} catch (AuthenticationException ax) {
+					Assert.AreEqual (alertText, ax.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (5, alerts, "Unexpected number of alerts: {0}", alerts);
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestInvalidUntaggedBadResponseAsync ()
+		{
+			const string alertText = "Please enable IMAP access in your account settings first.";
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "common.capability-greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000000 OK [ALERT] " + alertText + "\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", Encoding.UTF8.GetBytes ("A00000001 NO [ALERT] " + alertText + "\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", Encoding.UTF8.GetBytes ("A00000002 NO [ALERT] " + alertText + "\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" INBOX\r\n", Encoding.UTF8.GetBytes ("* BAD [ALERT] " + alertText + "\r\nA00000003 NO [ALERT] " + alertText + "\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				int alerts = 0;
+				client.Alert += (sender, e) => {
+					Assert.AreEqual (alertText, e.Message);
+					alerts++;
+				};
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+					Assert.Fail ("Did not expect Authenticate to work.");
+				} catch (AuthenticationException ax) {
+					Assert.AreEqual (alertText, ax.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (5, alerts, "Unexpected number of alerts: {0}", alerts);
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
 		public void TestLogin ()
 		{
 			var commands = new List<ImapReplayCommand> ();
