@@ -1452,7 +1452,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000000 OK [ALERT] " + alertText + "\r\n")));
 			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", Encoding.UTF8.GetBytes ("A00000001 NO [ALERT] " + alertText + "\r\n")));
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", Encoding.UTF8.GetBytes ("A00000002 NO [ALERT] " + alertText + "\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" INBOX\r\n", Encoding.UTF8.GetBytes ("* BAD [ALERT] " + alertText + "\r\nA00000003 NO [ALERT] " + alertText + "\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", Encoding.UTF8.GetBytes ("* BAD [ALERT] " + alertText + "\r\nA00000003 NO [ALERT] " + alertText + "\r\n")));
 
 			using (var client = new ImapClient ()) {
 				try {
