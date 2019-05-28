@@ -1899,7 +1899,7 @@ namespace MailKit.Net.Imap {
 					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
 					current.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
-					var text = token.Value.ToString () + await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					var text = ((string) token.Value) + await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					current.ResponseText = text.TrimEnd ();
 				}
 				break;
