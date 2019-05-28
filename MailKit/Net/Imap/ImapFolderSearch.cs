@@ -528,6 +528,10 @@ namespace MailKit.Net.Imap
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
+
+			// Note: always register the untagged SEARCH handler because some servers will brokenly
+			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
+			// search syntax.
 			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
 			ic.UserData = new SearchResults (SortOrder.Ascending);
 
@@ -810,6 +814,11 @@ namespace MailKit.Net.Imap
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
+
+			// Note: always register the untagged SEARCH handler because some servers will brokenly
+			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
+			// search syntax.
+			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
