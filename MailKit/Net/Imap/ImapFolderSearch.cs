@@ -815,10 +815,10 @@ namespace MailKit.Net.Imap
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
 
-            // Note: always register the untagged SEARCH handler because some servers will brokenly
-            // respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
-            // search syntax.
-            ic.RegisterUntaggedHandler("SEARCH", SearchMatchesAsync);
+			// Note: always register the untagged SEARCH handler because some servers will brokenly
+			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
+			// search syntax.
+			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
