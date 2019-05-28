@@ -1430,7 +1430,6 @@ namespace UnitTests.Net.Imap {
 
 				try {
 					client.Authenticate ("username", "password");
-					Assert.Fail ("Did not expect Authenticate to work.");
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual (alertText, ax.Message);
 				} catch (Exception ex) {
@@ -1471,7 +1470,6 @@ namespace UnitTests.Net.Imap {
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
-					Assert.Fail ("Did not expect Authenticate to work.");
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual (alertText, ax.Message);
 				} catch (Exception ex) {
