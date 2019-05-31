@@ -197,129 +197,134 @@ namespace MailKit.Net.Imap {
 		Thread           = 1L << 29,
 
 		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc5257">ANNOTATE</a> extension.
+		/// </summary>
+		Annotate         = 1L << 30,
+
+		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5258">LIST-EXTENDED</a> extension.
 		/// </summary>
-		ListExtended     = 1L << 30,
+		ListExtended     = 1L << 31,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5259">CONVERT</a> extension.
 		/// </summary>
-		Convert          = 1L << 31,
+		Convert          = 1L << 32,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5255">LANGUAGE</a> extension.
 		/// </summary>
-		Language         = 1L << 32,
+		Language         = 1L << 33,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5255">I18NLEVEL</a> extension.
 		/// </summary>
-		I18NLevel        = 1L << 33,
+		I18NLevel        = 1L << 34,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5267">ESORT</a> extension.
 		/// </summary>
-		ESort            = 1L << 34,
+		ESort            = 1L << 35,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5267">CONTEXT</a> extension.
 		/// </summary>
-		Context          = 1L << 35,
+		Context          = 1L << 36,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5464">METADATA</a> extension.
 		/// </summary>
-		Metadata         = 1L << 36,
+		Metadata         = 1L << 37,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5464">METADATA-SERVER</a> extension.
 		/// </summary>
-		MetadataServer   = 1L << 37,
+		MetadataServer   = 1L << 38,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5465">NOTIFY</a> extension.
 		/// </summary>
-		Notify           = 1L << 38,
+		Notify           = 1L << 39,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5466">FILTERS</a> extension.
 		/// </summary>
-		Filters          = 1L << 39,
+		Filters          = 1L << 40,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5819">LIST-STATUS</a> extension.
 		/// </summary>
-		ListStatus       = 1L << 40,
+		ListStatus       = 1L << 41,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc5957">SORT=DISPLAY</a> extension.
 		/// </summary>
-		SortDisplay      = 1L << 41,
+		SortDisplay      = 1L << 42,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc6154">CREATE-SPECIAL-USE</a> extension.
 		/// </summary>
-		CreateSpecialUse = 1L << 42,
+		CreateSpecialUse = 1L << 43,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc6154">SPECIAL-USE</a> extension.
 		/// </summary>
-		SpecialUse       = 1L << 43,
+		SpecialUse       = 1L << 44,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc6203">SEARCH=FUZZY</a> extension.
 		/// </summary>
-		FuzzySearch      = 1L << 44,
+		FuzzySearch      = 1L << 45,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc6237">MULTISEARCH</a> extension.
 		/// </summary>
-		MultiSearch      = 1L << 45,
+		MultiSearch      = 1L << 46,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc6851">MOVE</a> extension.
 		/// </summary>
-		Move             = 1L << 46,
+		Move             = 1L << 47,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc6855">UTF8=ACCEPT</a> extension.
 		/// </summary>
-		UTF8Accept       = 1L << 47,
+		UTF8Accept       = 1L << 48,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc6855">UTF8=ONLY</a> extension.
 		/// </summary>
-		UTF8Only         = 1L << 48,
+		UTF8Only         = 1L << 49,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc7888">LITERAL-</a> extension.
 		/// </summary>
-		LiteralMinus     = 1L << 49,
+		LiteralMinus     = 1L << 50,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc7889">APPENDLIMIT</a> extension.
 		/// </summary>
-		AppendLimit      = 1L << 50,
+		AppendLimit      = 1L << 51,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc8437">UNAUTHENTICATE</a> extension.
 		/// </summary>
-		Unauthenticate   = 1L << 51,
+		Unauthenticate   = 1L << 52,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc8438">STATUS=SIZE</a> extension.
 		/// </summary>
-		StatusSize       = 1L << 52,
+		StatusSize       = 1L << 53,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc8440">LIST-MYRIGHTS</a> extension.
 		/// </summary>
-		ListMyRights     = 1L << 53,
+		ListMyRights     = 1L << 54,
 
 		/// <summary>
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.
 		/// </summary>
-		ObjectID         = 1L << 54,
+		ObjectID         = 1L << 55,
 
 		#region GMail Extensions
 
