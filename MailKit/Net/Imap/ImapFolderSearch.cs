@@ -218,10 +218,6 @@ namespace MailKit.Net.Imap
 			case SearchTerm.Seen:
 				builder.Append ("SEEN");
 				break;
-			case SearchTerm.SentAfter:
-				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SENTSINCE {0}", FormatDateTime (date.Date));
-				break;
 			case SearchTerm.SentBefore:
 				date = (DateSearchQuery) query;
 				builder.AppendFormat ("SENTBEFORE {0}", FormatDateTime (date.Date));
@@ -229,6 +225,10 @@ namespace MailKit.Net.Imap
 			case SearchTerm.SentOn:
 				date = (DateSearchQuery) query;
 				builder.AppendFormat ("SENTON {0}", FormatDateTime (date.Date));
+				break;
+			case SearchTerm.SentSince:
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("SENTSINCE {0}", FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SmallerThan:
 				numeric = (NumericSearchQuery) query;

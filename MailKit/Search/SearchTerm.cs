@@ -214,11 +214,6 @@ namespace MailKit.Search {
 		Seen,
 
 		/// <summary>
-		/// A search term that matches messages that were sent after a specified date.
-		/// </summary>
-		SentAfter,
-
-		/// <summary>
 		/// A search term that matches messages that were sent before a specified date.
 		/// </summary>
 		SentBefore,
@@ -227,6 +222,11 @@ namespace MailKit.Search {
 		/// A search term that matches messages that were sent on a specified date.
 		/// </summary>
 		SentOn,
+
+		/// <summary>
+		/// A search term that matches messages that were sent since a specified date.
+		/// </summary>
+		SentSince,
 
 		/// <summary>
 		/// A search term that matches messages that are smaller than a
