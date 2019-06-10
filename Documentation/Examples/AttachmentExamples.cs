@@ -27,11 +27,14 @@ namespace MimeKit.Examples
 			#region SaveAttachments
 			foreach (var attachment in message.Attachments) {
 				if (attachment is MessagePart) {
-					var fileName = attachment.ContentDisposition?.FileName :
-						(attachment.ContentType.Name ?? "attached.eml");
+					var fileName = attachment.ContentDisposition?.FileName;
 					var rfc822 = (MessagePart) attachment;
 
-					rfc822.Message.WriteTo (stream);
+					if (string.IsNullOrEmoty (fileName))
+						fileName = "attached-message.eml";
+
+					using (var stream = File.Create (fileName))
+						rfc822.Message.WriteTo (stream);
 				} else {
 					var part = (MimePart) attachment;
 					var fileName = part.FileName;
@@ -51,11 +54,14 @@ namespace MimeKit.Examples
 					continue;
 
 				if (bodyPart is MessagePart) {
-					var fileName = bodyPart.ContentDisposition?.FileName :
-						(bodyPart.ContentType.Name ?? "attached.eml");
-					var rfc822 = (MessagePart) bodyPart;
+					var fileName = attachment.ContentDisposition?.FileName;
+					var rfc822 = (MessagePart) attachment;
 
-					rfc822.Message.WriteTo (stream);
+					if (string.IsNullOrEmoty (fileName))
+						fileName = "attached-message.eml";
+
+					using (var stream = File.Create (fileName))
+						rfc822.Message.WriteTo (stream);
 				} else {
 					var part = (MimePart) attachment;
 					var fileName = part.FileName;
