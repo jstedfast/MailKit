@@ -12,11 +12,11 @@ using Org.BouncyCastle.Crypto;
 using MimeKit;
 using MimeKit.Cryptography;
 
-namespace DkimVerifier
+namespace ArcVerifier
 {
     // Note: By using the DkimPublicKeyLocatorBase, we avoid having to parse the DNS TXT records
     // in order to get the public key ourselves.
-    class DkimPublicKeyLocator : DkimPublicKeyLocatorBase
+    class ArcPublicKeyLocator : DkimPublicKeyLocatorBase
     {
         readonly Dictionary<string, AsymmetricKeyParameter> cache;
         readonly Resolver resolver;
@@ -92,8 +92,8 @@ namespace DkimVerifier
                 }
             }
 
-            var locator = new DkimPublicKeyLocator ();
-            var verifier = new DkimVerifier (locator);
+            var locator = new ArcPublicKeyLocator ();
+            var verifier = new ArcVerifier (locator);
 
             for (int i = 0; i < args.Length; i++) {
                 if (!File.Exists (args[i])) {
@@ -104,32 +104,29 @@ namespace DkimVerifier
                 Console.Write ("{0} -> ", args[i]);
 
                 var message = MimeMessage.Load (args[i]);
-                var index = message.Headers.IndexOf (HeaderId.DkimSignature);
+                var result = verifier.Verify (message);
 
-                if (index == -1) {
-                    Console.WriteLine ("NO SIGNATURE");
-                    continue;
-                }
-
-                var dkim = message.Headers[index];
-
-                if (verifier.Verify (message, dkim)) {
-                    // the DKIM-Signature header is valid!
+                switch (result.Chain) {
+                case ArcSignatureValidationResult.None:
+                    Console.WriteLine ("No ARC signatures to verify.");
+                    break;
+                case ArcSignatureValidationResult.Pass:
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine ("VALID");
+                    Console.WriteLine ("PASS");
                     Console.ResetColor ();
-                } else {
-                    // the DKIM-Signature is invalid!
+                    break;
+                case ArcSignatureValidationResult.Fail:
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine ("INVALID");
+                    Console.WriteLine ("FAIL");
                     Console.ResetColor ();
+                    break;
                 }
             }
         }
 
         static void Help ()
         {
-            Console.WriteLine ("Usage is: DkimVerifier [options] [messages]");
+            Console.WriteLine ("Usage is: ArcVerifier [options] [messages]");
             Console.WriteLine ();
             Console.WriteLine ("Options:");
             Console.WriteLine ("  --help               This help menu.");
