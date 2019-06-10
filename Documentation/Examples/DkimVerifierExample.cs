@@ -12,16 +12,16 @@ using Org.BouncyCastle.Crypto;
 using MimeKit;
 using MimeKit.Cryptography;
 
-namespace DkimVerifier
+namespace DkimVerifierExample
 {
     // Note: By using the DkimPublicKeyLocatorBase, we avoid having to parse the DNS TXT records
     // in order to get the public key ourselves.
-    class DkimPublicKeyLocator : DkimPublicKeyLocatorBase
+    class ExamplePublicKeyLocator : DkimPublicKeyLocatorBase
     {
         readonly Dictionary<string, AsymmetricKeyParameter> cache;
         readonly Resolver resolver;
 
-        public DkimPublicKeyLocator ()
+        public ExamplePublicKeyLocator ()
         {
             cache = new Dictionary<string, AsymmetricKeyParameter> ();
 
@@ -54,7 +54,11 @@ namespace DkimVerifier
             var txt = builder.ToString ();
 
             // DkimPublicKeyLocatorBase provides us with this helpful method.
-            return GetPublicKey (txt);
+            pubkey = GetPublicKey (txt);
+
+            cache.Add (query, pubkey);
+
+            return pubkey;
         }
 
         public AsymmetricKeyParameter LocatePublicKey (string methods, string domain, string selector, CancellationToken cancellationToken = default (CancellationToken))
@@ -78,7 +82,7 @@ namespace DkimVerifier
 
     class Program
     {
-        public static void Main(string[] args)
+        public static void Main (string[] args)
         {
             if (args.Length == 0) {
                 Help ();
@@ -92,7 +96,7 @@ namespace DkimVerifier
                 }
             }
 
-            var locator = new DkimPublicKeyLocator ();
+            var locator = new ExamplePublicKeyLocator ();
             var verifier = new DkimVerifier (locator);
 
             for (int i = 0; i < args.Length; i++) {

@@ -122,6 +122,7 @@
     <None Include="Examples\OpeningContent.cs" />
     <None Include="Examples\OpenPGPExamples.cs" />
     <None Include="Examples\Pop3Examples.cs" />
+    <None Include="Examples\ArcSignerExample.cs" />
     <None Include="Examples\ArcVerifierExample.cs" />
     <None Include="Examples\DkimVerifierExample.cs" />
     <None Include="Examples\RecursivelyTraverse.cs" />

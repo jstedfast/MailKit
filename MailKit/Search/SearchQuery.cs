@@ -892,7 +892,7 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were sent before the specified date.</para>
-		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">The resolution of this search query does not include the time.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -906,7 +906,7 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were sent on the specified date.</para>
-		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">The resolution of this search query does not include the time.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -920,7 +920,7 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were sent since the specified date.</para>
-		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">The resolution of this search query does not include the time.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
