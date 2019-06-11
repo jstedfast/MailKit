@@ -29,13 +29,16 @@
               <listItem>
                 <para>Supports DKIM-Signatures.</para>
               </listItem>
+	      <listItem>
+		<para>Supports ARC signatures.</para>
+	      </listItem>
             </list>
           </listItem>
           <listItem>
             <para>SMTP Client</para>
             <list class="bullet">
               <listItem>
-                <para>Supports SSL and TLS</para>
+                <para>Supports SSL and TLS.</para>
               </listItem>
               <listItem>
                 <para>Supports the STARTTLS, SIZE, DSN, 8BITMIME, PIPELINING, BINARYMIME, and SMTPUTF8 extensions.</para>
@@ -46,7 +49,7 @@
             <para>POP3 Client</para>
             <list class="bullet">
               <listItem>
-                <para>Supports SSL and TLS</para>
+                <para>Supports SSL and TLS.</para>
               </listItem>
               <listItem>
                 <para>Supports the STLS, UIDL, PIPELINING, UTF8, and LANG extensions.</para>
@@ -57,7 +60,7 @@
             <para>IMAP Client</para>
             <list class="bullet">
               <listItem>
-                <para>Supports SSL and TLS</para>
+                <para>Supports SSL and TLS.</para>
               </listItem>
               <listItem>
                 <para>Supports the ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS,
@@ -72,7 +75,7 @@
             <para>Proxy Support</para>
             <list class="bullet">
               <listitem>
-                <para>Supports HTTP, SOCKS4, SOCKS4a, and SOCKS5</para>
+                <para>Supports HTTP, SOCKS4, SOCKS4a, and SOCKS5.</para>
               </listitem>
               <listitem>
                 <para>Fully cancellable and asynchronous Connect methods.</para>

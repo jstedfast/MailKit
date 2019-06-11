@@ -7,6 +7,6 @@
     "win": {}
   },
   "dependencies": {
-    "BouncyCastle": "1.8.2"
+    "BouncyCastle": "1.8.5"
   }
 }

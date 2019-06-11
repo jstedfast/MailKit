@@ -1,5 +1,17 @@
 # Release Notes
 
+### MailKit 2.2.0 (2019-06-11)
+
+* Optimized MailKit's logic for breaking apart long IMAP commands for
+  GMail, Dovecot, and Yahoo! Mail.
+* Fixed the IMAP stream tokenizer to properly handle UTF8 atom tokens.
+  (issue [#859]((https://github.com/jstedfast/MailKit/issues/859))
+* Fixed IMAP search code to always handle untagged SEARCH responses even when
+  the response SHOULD be an untagged ESEARCH response.
+  (issue [#863]((https://github.com/jstedfast/MailKit/issues/863))
+* Replaced SearchQuery.SentAfter with SentSince to be more consistent with IMAP
+  terminology.
+
 ### MailKit 2.1.5 (2019-05-13)
 
 * Bumped the System.Net.Security dependency for security fixes (CVE-2017-0249).

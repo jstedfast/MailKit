@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.1.5.1</version>
+    <version>2.2.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,12 +26,10 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Bumped the System.Net.Security dependency for security fixes (CVE-2017-0249).
-* Reduced explicit nuget dependencies.
-* Added a work-around for Microsoft Exchange IMAP servers that sometimes erroneously respond with unneeded continuation responses. (issue #852)
-* Fixed the ImapClient to Stop looping over SASL mechanisms if the server disconnects us. (issue #851)
-* Added support for HTTP proxies. (issue #847)
-* Fixed IMAP to properly handle EXPUNGE notifications during a FETCH request. (issue #850)
+* Optimized MailKit's logic for breaking apart long IMAP commands for GMail, Dovecot, and Yahoo! Mail.
+* Fixed the IMAP stream tokenizer to properly handle UTF8 atom tokens. (issue #859)
+* Fixed IMAP search code to always handle untagged SEARCH responses even when the response SHOULD be an untagged ESEARCH response. (issue #863)
+* Replaced SearchQuery.SentAfter with SentSince to be more consistent with IMAP terminology.
 
 API Changes Since 2.0.x:
 
@@ -49,7 +47,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </releaseNotes>
     <copyright>Xamarin Inc.</copyright>
     <language>en-US</language>
-    <tags>smtp pop3 imap mime security dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 netstandard netstandard1.3 netstandard1.6 netstandard2.0 xamarin android ios monodroid monoandroid wpa81</tags>
+    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 netstandard netstandard1.3 netstandard1.6 netstandard2.0 xamarin android ios monodroid monoandroid wpa81</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
@@ -66,34 +64,34 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.1.5.1" />
+        <dependency id="MimeKit" version="2.2.0" />
       </group>
       <group targetFramework="monoandroid">
-        <dependency id="MimeKit" version="2.1.5.1" />
+        <dependency id="MimeKit" version="2.2.0" />
       </group>
       <group targetFramework="xamarinios">
-        <dependency id="MimeKit" version="2.1.5.1" />
+        <dependency id="MimeKit" version="2.2.0" />
       </group>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.1.5.1" />
+        <dependency id="MimeKit" version="2.2.0" />
       </group>
       <group targetFramework="netstandard1.6">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.1.5.1" />
+        <dependency id="MimeKit" version="2.2.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.1.5.1" />
+        <dependency id="MimeKit" version="2.2.0" />
       </group>
       <group targetFramework="portable-win81+wpa81">
-        <dependency id="MimeKit" version="2.1.5.1" />
+        <dependency id="MimeKit" version="2.2.0" />
       </group>
     </dependencies>
   </metadata>
