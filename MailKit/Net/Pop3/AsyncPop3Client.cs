@@ -1474,6 +1474,7 @@ namespace MailKit.Net.Pop3
 		/// is cleanly disconnected
 		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.

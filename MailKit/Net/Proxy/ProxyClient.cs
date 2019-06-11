@@ -42,10 +42,10 @@ namespace MailKit.Net.Proxy
 	public abstract class ProxyClient : IProxyClient
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MailKit.Net.ProxyClient"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.ProxyClient"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Initializes a new instance of the <see cref="T:MailKit.Net.ProxyClient"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.ProxyClient"/> class.
 		/// </remarks>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
@@ -76,10 +76,10 @@ namespace MailKit.Net.Proxy
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MailKit.Net.ProxyClient"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.ProxyClient"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Initializes a new instance of the <see cref="T:MailKit.Net.ProxyClient"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.ProxyClient"/> class.
 		/// </remarks>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>

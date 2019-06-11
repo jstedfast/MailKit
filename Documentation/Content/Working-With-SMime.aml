@@ -96,7 +96,7 @@
         <para>
           The first thing you must do is find the
           <codeEntityReference>T:MimeKit.Cryptography.ApplicationPkcs7Mime</codeEntityReference>
-          part (see the section on <link xlink:href="WorkingWithMessages#TraversingMessages"/>).
+          part (see the section on <link xlink:href="Working-With-Messages#TraversingMessages"/>).
         </para>
         <code language="c#" source="Examples\SMimeExamples.cs" region="Decrypt"/>
       </content>
@@ -112,7 +112,7 @@
         <para>
           To digitally sign a <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference>
           using a <literal>multipart/signed</literal> MIME part, it works exactly the same
-          as it does for <link xlink:href="WorkingWithPGP#Sign">OpenPGP</link> using
+          as it does for <link xlink:href="Working-With-OpenPGP#Sign">OpenPGP</link> using
           <codeEntityReference autoUpgrade="true" qualifyHint="true">
             Overload:MimeKit.Cryptography.MultipartSigned.Create
           </codeEntityReference>

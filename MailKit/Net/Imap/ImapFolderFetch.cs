@@ -6459,6 +6459,7 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// <para>Asynchronously gets the streams for the specified messages.</para>
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="uids">The uids of the messages.</param>
 		/// <param name="callback"></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -6553,6 +6554,7 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// <para>Asynchronously gets the streams for the specified messages.</para>
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="callback"></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -6648,6 +6650,7 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// <para>Asynchronously gets the streams for the specified messages.</para>
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="callback"></param>

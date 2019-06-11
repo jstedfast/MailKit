@@ -126,9 +126,14 @@ namespace Examples
 		{
 			var text = message.TextBody;
 
-			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+			using (var encrypted = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var ctx = new MyGnuPGContext ()) {
-					return ctx.GetDecryptedStream (memory);
+					var decrypted = new MemoryStream ();
+
+					ctx.DecryptTo (encrypted, decrypted);
+					decrypted.Position = 0;
+
+					return decrypted;
 				}
 			}
 		}

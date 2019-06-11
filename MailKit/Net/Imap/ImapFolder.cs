@@ -1100,6 +1100,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Renames the folder to exist with a new name under a new parent folder.
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="parent">The new parent folder.</param>
 		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1217,6 +1218,7 @@ namespace MailKit.Net.Imap {
 		/// <para>Deletes the folder on the IMAP server.</para>
 		/// <note type="note">This method will not delete any child folders.</note>
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1306,6 +1308,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Subscribes the folder.
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1392,6 +1395,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Unsubscribes the folder.
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1810,6 +1814,7 @@ namespace MailKit.Net.Imap {
 		/// <para>For more information about the <c>CHECK</c> command, see
 		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.1">rfc350101</a>.</para>
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1914,6 +1919,7 @@ namespace MailKit.Net.Imap {
 		/// Asynchronously update the values of the specified items.
 		/// </summary>
 		/// <remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <para>Updates the values of the specified items.</para>
 		/// <para>The <see cref="Status(StatusItems, System.Threading.CancellationToken)"/> method
 		/// MUST NOT be used on a folder that is already in the opened state. Instead, other ways
@@ -2621,6 +2627,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Sets the access rights for the specified identity.
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="name">The identity name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2730,6 +2737,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Removes all access rights for the given identity.
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="name">The identity name.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -4963,6 +4971,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Copies the specified messages to the destination folder.
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -5114,6 +5123,7 @@ namespace MailKit.Net.Imap {
 		/// may be advisable to implement your own logic for moving messages in this case in order to better
 		/// handle spontanious server disconnects and other error conditions.</para>
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="indexes">The indexes of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

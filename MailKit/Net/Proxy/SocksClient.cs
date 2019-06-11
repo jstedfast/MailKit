@@ -38,10 +38,10 @@ namespace MailKit.Net.Proxy
 	public abstract class SocksClient : ProxyClient
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MailKit.Net.SocksClient"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.SocksClient"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Initializes a new instance of the <see cref="T:MailKit.Net.SocksClient"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.SocksClient"/> class.
 		/// </remarks>
 		/// <param name="version">The SOCKS protocol version.</param>
 		/// <param name="host">The host name of the proxy server.</param>
@@ -61,10 +61,10 @@ namespace MailKit.Net.Proxy
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:MailKit.Net.SocksClient"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.SocksClient"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Initializes a new instance of the <see cref="T:MailKit.Net.SocksClient"/> class.
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.SocksClient"/> class.
 		/// </remarks>
 		/// <param name="version">The SOCKS protocol version.</param>
 		/// <param name="host">The host name of the proxy server.</param>

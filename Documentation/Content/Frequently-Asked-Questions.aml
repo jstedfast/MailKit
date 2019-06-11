@@ -206,7 +206,7 @@ client.Authenticate (oauth2);
         </para>
         <code language="c#" source="Examples\BodyBuilder.cs" region="Simple"/>
         <para>
-          For more information, see <link xlink:href="CreatingMessages">Creating Messages</link>.
+          For more information, see <link xlink:href="Creating-Messages">Creating Messages</link>.
         </para>
       </content>
     </section>
@@ -265,8 +265,8 @@ multipart/mixed
           <listItem address="MessageBodyExample5">
             <para>
               The same as above, but with the first part replaced with either
-              <link xlink:href="FrequentlyAskedQuestions#MessageBodyExample2">#2</link> or
-              <link xlink:href="FrequentlyAskedQuestions#MessageBodyExample3">#3</link>
+              <link xlink:href="Frequently-Asked-Questions#MessageBodyExample2">#2</link> or
+              <link xlink:href="Frequently-Asked-Questions#MessageBodyExample3">#3</link>
               To illustrate:<markup><pre>
 multipart/mixed
   multipart/alternative
@@ -296,7 +296,7 @@ multipart/mixed
           <codeEntityReference>P:MimeKit.MimeMessage.HtmlBody</codeEntityReference>.
         </para>
         <para>
-          For more information, see <link xlink:href="WorkingWithMessages"/>.
+          For more information, see <link xlink:href="Working-With-Messages"/>.
         </para>
       </content>
     </section>
@@ -579,7 +579,7 @@ message.WriteTo (options, stream);
           <codeEntityReference>T:MimeKit.Cryptography.OpenPgpContext</codeEntityReference>
           includes a
           <codeEntityReference>
-            Overload:MimeKit.Cryptography.OpenPgpContext.GetDecryptedStream
+            M:MimeKit.Cryptography.OpenPgpContext.DecryptTo(System.IO.Stream,System.IO.Stream,System.Threading.CancellationToken)
           </codeEntityReference>
           method which can be used to get the raw decrypted stream.
         </para>
