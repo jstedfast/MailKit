@@ -1919,7 +1919,6 @@ namespace MailKit.Net.Imap {
 		/// Asynchronously update the values of the specified items.
 		/// </summary>
 		/// <remarks>
-		/// <returns>An awaitable task.</returns>
 		/// <para>Updates the values of the specified items.</para>
 		/// <para>The <see cref="Status(StatusItems, System.Threading.CancellationToken)"/> method
 		/// MUST NOT be used on a folder that is already in the opened state. Instead, other ways
@@ -1931,6 +1930,7 @@ namespace MailKit.Net.Imap {
 		/// <para>For more information about the <c>STATUS</c> command, see
 		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.3.10">rfc3501</a>.</para>
 		/// </remarks>
+		/// <returns>An awaitable task.</returns>
 		/// <param name="items">The items to update.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
