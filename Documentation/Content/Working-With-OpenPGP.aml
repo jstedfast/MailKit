@@ -50,8 +50,8 @@
           to encapsulate encrypted data. To encrypt any
           <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference>,
           use the
-          <codeEntityReference autoUpgrade="true" linkText="MultipartEncrypted.Create">
-            Overload:MimeKit.Cryptography.MultipartEncrypted.Create
+          <codeEntityReference autoUpgrade="true" linkText="MultipartEncrypted.Encrypt">
+            Overload:MimeKit.Cryptography.MultipartEncrypted.Encrypt
           </codeEntityReference>
           method:
         </para>
