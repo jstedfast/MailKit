@@ -67,7 +67,7 @@ namespace MailKit.Net.Imap {
 	/// </example>
 	public partial class ImapClient : MailStore
 	{
-		static readonly char[] ReservedUriCharacters = new [] { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '%' };
+		static readonly char[] ReservedUriCharacters = { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '%' };
 		const string HexAlphabet = "0123456789ABCDEF";
 		readonly ImapEngine engine;
 #if NETFX_CORE
@@ -266,7 +266,7 @@ namespace MailKit.Net.Imap {
 				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 #endif
 
-			return DefaultServerCertificateValidationCallback (sender, certificate, chain, sslPolicyErrors);
+			return DefaultServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 		}
 #endif
 

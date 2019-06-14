@@ -310,11 +310,26 @@ namespace MailKit {
 			if (sslPolicyErrors == SslPolicyErrors.None)
 				return true;
 
-			// if there are errors in the certificate chain, look at each error to determine the cause
-			if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateChainErrors) != 0) {
-				if (chain != null && chain.ChainStatus != null) {
-					foreach (var status in chain.ChainStatus) {
-						if ((certificate.Subject == certificate.Issuer) && (status.Status == X509ChainStatusFlags.UntrustedRoot)) {
+			// If no remote certificate is available, we have no choice but to abort.
+			if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0)
+				return false;
+
+			// If there was a name mismatch, then it *may* be that the host name used in the certificate
+			// does not match the host name used by the client to connect. Unfortunately, we have no way
+			// of verifying if that is indeed the case or not. The user will have to do that themselves.
+			if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0)
+				return false;
+
+			// If we've gotten this far, then there were *only* errors in the certificate chain. Look at each error to determine the cause.
+			if (chain != null) {
+				foreach (var element in chain.ChainElements) {
+					if (element.Certificate != certificate)
+						continue;
+
+					var selfSigned = !string.IsNullOrEmpty (element.Certificate.Subject) && element.Certificate.Subject == certificate.Issuer;
+
+					foreach (var status in element.ChainElementStatus) {
+						if (selfSigned && status.Status == X509ChainStatusFlags.UntrustedRoot) {
 							// treat self-signed certificates with an untrusted root as valid since they are so
 							// common among mail server installations
 							continue;
@@ -326,12 +341,12 @@ namespace MailKit {
 							return false;
 						}
 					}
-				}
 
-				// Note: If we get this far, then the only errors in the certificate chain are untrusted root errors for
-				// self-signed certificates. Since self-signed certificates are so common for mail server installations,
-				// treat the certificate as valid.
-				return true;
+					// Note: If we get this far, then the only errors in the certificate chain are untrusted root errors for
+					// self-signed certificates. Since self-signed certificates are so common for mail server installations,
+					// treat the certificate as valid.
+					return true;
+				}
 			}
 
 			return false;
