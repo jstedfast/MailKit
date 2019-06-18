@@ -419,17 +419,17 @@ namespace MailKit.Net.Pop3 {
 				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 				if (tokens.Length < 2) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the STAT command.");
+					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the STAT command: {0}", text);
 					return Task.FromResult (false);
 				}
 
 				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out total) || total < 0) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command.");
+					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command: {0}", text);
 					return Task.FromResult (false);
 				}
 
 				if (!long.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out octets) || octets < 0) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command.");
+					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command: {0}", text);
 					return Task.FromResult (false);
 				}
 
@@ -2055,17 +2055,17 @@ namespace MailKit.Net.Pop3 {
 				int id;
 
 				if (tokens.Length < 2) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command.");
+					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", text);
 					return Task.FromResult (true);
 				}
 
 				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out id) || id != seqid) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the LIST command.");
+					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected sequence-id token to the LIST command: {0}", tokens[0]);
 					return Task.FromResult (true);
 				}
 
 				if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out size) || size < 0) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command.");
+					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
 					return Task.FromResult (true);
 				}
 
@@ -2184,17 +2184,17 @@ namespace MailKit.Net.Pop3 {
 					int seqid, size;
 
 					if (tokens.Length < 2) {
-						pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command.");
+						pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", response);
 						continue;
 					}
 
 					if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out seqid) || seqid != sizes.Count + 1) {
-						pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the LIST command.");
+						pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected sequence-id token to the LIST command: {0}", tokens[0]);
 						continue;
 					}
 
 					if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out size) || size < 0) {
-						pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command.");
+						pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
 						continue;
 					}
 
