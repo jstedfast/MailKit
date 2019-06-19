@@ -428,7 +428,7 @@ namespace MailKit.Net.Pop3 {
 					return Task.FromResult (false);
 				}
 
-				if (!long.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out octets) || octets < 0) {
+				if (!long.TryParse (tokens[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out octets)) {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command: {0}", text);
 					return Task.FromResult (false);
 				}
