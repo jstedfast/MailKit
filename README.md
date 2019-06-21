@@ -320,7 +320,7 @@ namespace TestClient {
 
 ## Using IMAP
 
-More important than POP3 support is the IMAP support. Here's a simple use-case of retreiving messages from an IMAP server:
+More important than POP3 support is the IMAP support. Here's a simple use-case of retrieving messages from an IMAP server:
 
 ```csharp
 using System;
