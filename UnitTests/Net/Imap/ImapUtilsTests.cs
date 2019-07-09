@@ -492,6 +492,49 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// This tests the work-around for issue #878
+		[Test]
+		public void TestParseBrokenMultipartRelatedBodyStructure ()
+		{
+			const string text = "((\"multipart\" \"related\" (\"boundary\" \"----=_@@@@BeautyqueenS87@_@147836_6893840099.85426606923635\") NIL NIL \"7BIT\" 400 (\"boundary\" \"----=_@@@@BeautyqueenS87@_@147836_6893840099.85426606923635\") NIL NIL NIL)(\"TEXT\" \"html\" (\"charset\" \"UTF8\") NIL NIL \"7BIT\" 1115 70 NIL NIL NIL NIL)(\"TEXT\" \"html\" (\"charset\" \"UTF8\") NIL NIL \"QUOTED-PRINTABLE\" 16 2 NIL NIL NIL NIL) \"mixed\" (\"boundary\" \"----=--_DRYORTABLE@@@_@@@8957836_03253840099.78526606923635\") NIL NIL NIL)\r\n";
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						var multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("----=--_DRYORTABLE@@@_@@@8957836_03253840099.78526606923635", multipart.ContentType.Parameters["boundary"], "boundary param did not match");
+						Assert.AreEqual (3, multipart.BodyParts.Count, "BodyParts count did not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child did not match.");
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child did not match.");
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[2], "The type of the third child did not match.");
+
+						var related = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.IsTrue (related.ContentType.IsMimeType ("multipart", "related"), "multipart/related Content-Type did not match.");
+						Assert.AreEqual ("----=_@@@@BeautyqueenS87@_@147836_6893840099.85426606923635", related.ContentType.Parameters["boundary"], "multipart/related boundary param did not match");
+						Assert.AreEqual ("7BIT", related.ContentTransferEncoding, "multipart/related Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (400, related.Octets, "multipart/related octets do not match.");
+					}
+				}
+			}
+		}
+
 		[Test]
 		public void TestParseBodyStructureWithContentMd5DspLanguageAndLocation ()
 		{

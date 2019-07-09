@@ -1008,6 +1008,7 @@ namespace MailKit.Net.Imap {
 			var enc = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
 			var octets = await ReadNumberAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			var type = (ContentType) result;
+			var isMultipart = false;
 			BodyPartBasic body;
 
 			if (type.IsMimeType ("message", "rfc822")) {
@@ -1040,6 +1041,7 @@ namespace MailKit.Net.Imap {
 				text.Lines = await ReadNumberAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 				body = text;
 			} else {
+				isMultipart = type.IsMimeType ("multipart", "*");
 				body = new BodyPartBasic ();
 			}
 
@@ -1053,24 +1055,26 @@ namespace MailKit.Net.Imap {
 			// if we are parsing a BODYSTRUCTURE, we may get some more tokens before the ')'
 			token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentMd5 = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
-				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			}
+			if (!isMultipart) {
+				if (token.Type != ImapTokenType.CloseParen) {
+					body.ContentMd5 = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
+					token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				}
 
-			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentDisposition = await ParseContentDispositionAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
-				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			}
+				if (token.Type != ImapTokenType.CloseParen) {
+					body.ContentDisposition = await ParseContentDispositionAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+					token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				}
 
-			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentLanguage = await ParseContentLanguageAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
-				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			}
+				if (token.Type != ImapTokenType.CloseParen) {
+					body.ContentLanguage = await ParseContentLanguageAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+					token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				}
 
-			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentLocation = await ParseContentLocationAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
-				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				if (token.Type != ImapTokenType.CloseParen) {
+					body.ContentLocation = await ParseContentLocationAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+					token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				}
 			}
 
 			while (token.Type != ImapTokenType.CloseParen) {
