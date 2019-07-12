@@ -34,6 +34,10 @@ using Encoding = Portable.Text.Encoding;
 using System.Security.Cryptography;
 #endif
 
+#if NETFX_CORE || NETSTANDARD
+using MD5 = MimeKit.Cryptography.MD5;
+#endif
+
 namespace MailKit.Security {
 	/// <summary>
 	/// A SASL authentication mechanism.
