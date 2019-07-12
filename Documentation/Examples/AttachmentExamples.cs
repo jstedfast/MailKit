@@ -30,7 +30,7 @@ namespace MimeKit.Examples
 					var fileName = attachment.ContentDisposition?.FileName;
 					var rfc822 = (MessagePart) attachment;
 
-					if (string.IsNullOrEmoty (fileName))
+					if (string.IsNullOrEmpty (fileName))
 						fileName = "attached-message.eml";
 
 					using (var stream = File.Create (fileName))
@@ -57,7 +57,7 @@ namespace MimeKit.Examples
 					var fileName = attachment.ContentDisposition?.FileName;
 					var rfc822 = (MessagePart) attachment;
 
-					if (string.IsNullOrEmoty (fileName))
+					if (string.IsNullOrEmpty (fileName))
 						fileName = "attached-message.eml";
 
 					using (var stream = File.Create (fileName))
