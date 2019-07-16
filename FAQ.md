@@ -6,7 +6,6 @@
 * [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#CompletelyFree)
 * [Why do I get `The remote certificate is invalid according to the validation procedure` when I try to Connect?](#InvalidSslCertificate)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
-* [How can I cancel the Connect() or ConnectAsync() methods or override the timeout?](#CancelConnect)
 * [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
 * [How can I access GMail using MailKit?](#GMailAccess)
 * [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
@@ -139,43 +138,6 @@ information including your authentication credentials. This information will gen
 encoded blob immediately following an `AUTHENTICATE` or `AUTH` command (depending on the type of server).
 The only exception to this case is if you are authenticating with `NTLM` in which case I *may* need this
 information, but *only if* the bug/error is in the authentication step.
-
-### <a name="CancelConnect">Q: How can I cancel the Connect() or ConnectAsync() methods or override the timeout?</a>
-
-One of the limitations in MailKit is that the `SmtpClient`, `Pop3Client` and `ImapClient` `Connect()`/`ConnectAsync()`
-methods cannot be interrupted while the underlying socket is connecting. Cancelling the `CancellationToken` and/or
-overriding the client `Timeout` property will not work.
-
-Sadly, this is because `System.Net.Sockets.Socket`'s `Connect()` method does not respect the timeout values and there
-is no `ConnectAsync()` method that takes a `CancellationToken` argument.
-
-Luckily, each of MailKit's client implementations *does* provide `Connect()` and `ConnectAsync()` methods that take
-an existing `Socket` argument that has already been connected.
-
-To interrupt a socket connecting to a remote host using a `CancellationToken`, you could do this:
-
-```csharp
-static Task ConnectAsync (Socket socket, string host, int port, CancellationToken cancellationToken)
-{
-	var completion = new TaskCompletionSource<bool> ();
-	
-	socket.BeginConnect (host, port, result => {
-		try {
-			socket.EndConnect (result);
-			completion.TrySetResult (true);
-		} catch (Exception ex) {
-			completion.TrySetException (ex);
-		}
-	}, null);
-
-	cancellationToken.Register (() => {
-		completion.SetException (new OperationCanceledException ());
-		socket.Close ();
-	});
-	
-	return completion.Task;
-}
-```
 
 ### <a name="GMailHiddenMessages">Q: Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</a>
 
