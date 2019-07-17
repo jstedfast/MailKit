@@ -100,6 +100,17 @@ namespace MailKit {
 			Dispose (false);
 		}
 
+		/// <summary>
+		/// Get the log stream.
+		/// </summary>
+		/// <remarks>
+		/// Gets the log stream.
+		/// </remarks>
+		/// <value>The log sstream.</value>
+		public Stream Stream {
+			get { return stream; }
+		}
+
 		#region IProtocolLogger implementation
 
 		static void ValidateArguments (byte[] buffer, int offset, int count)
