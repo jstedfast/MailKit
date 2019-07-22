@@ -354,18 +354,24 @@ namespace MailKit.Net.Smtp {
 		async Task FlushCommandQueueAsync (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, bool doAsync, CancellationToken cancellationToken)
 		{
 			try {
-				var responses = new List<SmtpResponse> ();
-				int accepted = 0;
-				int rcpt = 0;
-
-				// Note: queued commands are buffered by the stream
+				// Note: Queued commands are buffered by the stream
 				if (doAsync)
 					await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 				else
 					Stream.Flush (cancellationToken);
+			} catch {
+				queued.Clear ();
+				throw;
+			}
 
-				// Note: we need to read all responses from the server before we can process
-				// them in case any of them have any errors so that we can RSET the state.
+			var responses = new List<SmtpResponse> ();
+			Exception rex = null;
+			int accepted = 0;
+			int rcpt = 0;
+
+			// Note: We need to read all responses from the server before we can process
+			// them in case any of them have any errors so that we can RSET the state.
+			try {
 				for (int i = 0; i < queued.Count; i++) {
 					SmtpResponse response;
 
@@ -376,7 +382,17 @@ namespace MailKit.Net.Smtp {
 
 					responses.Add (response);
 				}
+			} catch (Exception ex) {
+				// Note: Most likely this exception is due to an unexpected disconnect.
+				// Usually, before an SMTP server disconnects the client, it will send an
+				// error code response that will be more useful to the user than an error
+				// stating that the server has unexpected disconnected. Save this exception
+				// in case the server didn't give us a response with an error code.
+				rex = ex;
+			}
 
+			try {
+				// process the responses
 				for (int i = 0; i < responses.Count; i++) {
 					switch (queued[i]) {
 					case SmtpCommand.MailFrom:
@@ -388,12 +404,16 @@ namespace MailKit.Net.Smtp {
 						break;
 					}
 				}
-
-				if (accepted == 0)
-					OnNoRecipientsAccepted (message);
 			} finally {
 				queued.Clear ();
 			}
+
+			// throw the saved exception
+			if (rex != null)
+				throw rex;
+
+			if (accepted == 0)
+				OnNoRecipientsAccepted (message);
 		}
 
 		async Task<SmtpResponse> SendCommandAsync (string command, bool doAsync, CancellationToken cancellationToken)
