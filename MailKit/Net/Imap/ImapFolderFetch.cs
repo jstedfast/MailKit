@@ -573,7 +573,10 @@ namespace MailKit.Net.Imap
 				var charset = body.ContentType.Charset;
 				ContentEncoding encoding;
 
-				MimeUtils.TryParse (body.ContentTransferEncoding, out encoding);
+				if (!string.IsNullOrEmpty (body.ContentTransferEncoding))
+					MimeUtils.TryParse (body.ContentTransferEncoding, out encoding);
+				else
+					encoding = ContentEncoding.Default;
 
 				using (var memory = new MemoryStream ()) {
 					var content = new MimeContent (section.Stream, encoding);
