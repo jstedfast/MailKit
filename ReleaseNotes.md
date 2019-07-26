@@ -5,10 +5,10 @@
 * Optimized MailKit's logic for breaking apart long IMAP commands for
   GMail, Dovecot, and Yahoo! Mail.
 * Fixed the IMAP stream tokenizer to properly handle UTF8 atom tokens.
-  (issue [#859]((https://github.com/jstedfast/MailKit/issues/859))
+  (issue [#859](https://github.com/jstedfast/MailKit/issues/859))
 * Fixed IMAP search code to always handle untagged SEARCH responses even when
   the response SHOULD be an untagged ESEARCH response.
-  (issue [#863]((https://github.com/jstedfast/MailKit/issues/863))
+  (issue [#863](https://github.com/jstedfast/MailKit/issues/863))
 * Replaced SearchQuery.SentAfter with SentSince to be more consistent with IMAP
   terminology.
 
@@ -18,12 +18,12 @@
 * Reduced explicit nuget dependencies.
 * Added a work-around for Microsoft Exchange IMAP servers that sometimes erroneously
   respond with unneeded continuation responses.
-  (issue [#852]((https://github.com/jstedfast/MailKit/issues/852))
+  (issue [#852](https://github.com/jstedfast/MailKit/issues/852))
 * Fixed the ImapClient to Stop looping over SASL mechanisms if the server disconnects us.
-  (issue [#851]((https://github.com/jstedfast/MailKit/issues/851))
-* Added support for HTTP proxies. (issue [#847]((https://github.com/jstedfast/MailKit/issues/847))
+  (issue [#851](https://github.com/jstedfast/MailKit/issues/851))
+* Added support for HTTP proxies. (issue [#847](https://github.com/jstedfast/MailKit/issues/847))
 * Fixed IMAP to properly handle EXPUNGE notifications during a FETCH request.
-  (issue [#850]((https://github.com/jstedfast/MailKit/issues/850))
+  (issue [#850](https://github.com/jstedfast/MailKit/issues/850))
 
 ### MailKit 2.1.4 (2019-04-13)
 
