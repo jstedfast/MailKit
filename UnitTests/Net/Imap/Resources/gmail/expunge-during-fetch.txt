@@ -1,0 +1,9 @@
+* 1 FETCH (UID 1 INTERNALDATE "19-Jul-2019 06:00:17 +0000" ENVELOPE ("Fri, 19 Jul 2019 06:00:17 +0000" "subject 1" (("From" NIL "from" "example.com")) NIL NIL ((NIL NIL "to" "example.com")) NIL NIL "in-reply-to@localhost.localdomain" "<msg-id@localhost.localdomain>"))
+* 2 FETCH (UID 2 INTERNALDATE "19-Jul-2019 06:00:17 +0000" ENVELOPE ("Fri, 19 Jul 2019 06:00:17 +0000" "subject 2" (("From" NIL "from" "example.com")) NIL NIL ((NIL NIL "to" "example.com")) NIL NIL "in-reply-to@localhost.localdomain" "<msg-id@localhost.localdomain>"))
+* 3 FETCH (UID 3 INTERNALDATE "19-Jul-2019 06:00:17 +0000" ENVELOPE ("Fri, 19 Jul 2019 06:00:17 +0000" "subject 3" (("From" NIL "from" "example.com")) NIL NIL ((NIL NIL "to" "example.com")) NIL NIL "in-reply-to@localhost.localdomain" "<msg-id@localhost.localdomain>"))
+* 4 FETCH (UID 4 INTERNALDATE "19-Jul-2019 06:00:17 +0000" ENVELOPE ("Fri, 19 Jul 2019 06:00:17 +0000" "subject 4" (("From" NIL "from" "example.com")) NIL NIL ((NIL NIL "to" "example.com")) NIL NIL "in-reply-to@localhost.localdomain" "<msg-id@localhost.localdomain>"))
+* 5 FETCH (UID 5 INTERNALDATE "19-Jul-2019 06:00:17 +0000" ENVELOPE ("Fri, 19 Jul 2019 06:00:17 +0000" "subject 5" (("From" NIL "from" "example.com")) NIL NIL ((NIL NIL "to" "example.com")) NIL NIL "in-reply-to@localhost.localdomain" "<msg-id@localhost.localdomain>"))
+* 2 EXPUNGE
+* 5 EXPUNGE
+* 4 EXISTS
+A######## OK FETCH completed.

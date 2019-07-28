@@ -373,6 +373,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext10.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext11.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext12.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\expunge-during-fetch.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\get-indexes.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\go-ahead.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\greeting.txt" />
