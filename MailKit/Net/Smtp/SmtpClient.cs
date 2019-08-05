@@ -1996,6 +1996,10 @@ namespace MailKit.Net.Smtp {
 					message.Prepare (EncodingConstraint.EightBit, MaxLineLength);
 				else
 					message.Prepare (EncodingConstraint.SevenBit, MaxLineLength);
+			} else {
+				// Note: we do not want to risk reformatting of headers to the international
+				// UTF-8 encoding, so disable it.
+				format.International = false;
 			}
 
 			// figure out which SMTP extensions we need to use
