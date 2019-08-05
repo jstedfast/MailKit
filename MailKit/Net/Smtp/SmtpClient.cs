@@ -1577,13 +1577,6 @@ namespace MailKit.Net.Smtp {
 
 		class ContentTransferEncodingVisitor : MimeVisitor
 		{
-			readonly SmtpCapabilities Capabilities;
-
-			public ContentTransferEncodingVisitor (SmtpCapabilities capabilities)
-			{
-				Capabilities = capabilities;
-			}
-
 			public SmtpExtension SmtpExtensions {
 				get; private set;
 			}
@@ -1993,16 +1986,20 @@ namespace MailKit.Net.Smtp {
 			if (format.International && (Capabilities & SmtpCapabilities.EightBitMime) == 0)
 				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
 
-			// prepare the message
-			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
-				message.Prepare (EncodingConstraint.None, MaxLineLength);
-			else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
-				message.Prepare (EncodingConstraint.EightBit, MaxLineLength);
-			else
-				message.Prepare (EncodingConstraint.SevenBit, MaxLineLength);
+			if (!message.Headers.Contains (HeaderId.DomainKeySignature) &&
+				!message.Headers.Contains (HeaderId.DkimSignature) &&
+				!message.Headers.Contains (HeaderId.ArcSeal)) {
+				// prepare the message
+				if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
+					message.Prepare (EncodingConstraint.None, MaxLineLength);
+				else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+					message.Prepare (EncodingConstraint.EightBit, MaxLineLength);
+				else
+					message.Prepare (EncodingConstraint.SevenBit, MaxLineLength);
+			}
 
 			// figure out which SMTP extensions we need to use
-			var visitor = new ContentTransferEncodingVisitor (capabilities);
+			var visitor = new ContentTransferEncodingVisitor ();
 			visitor.Visit (message);
 
 			var extensions = visitor.SmtpExtensions;
