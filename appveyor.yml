@@ -25,6 +25,7 @@ build:
 test_script:
 - ps: >-
     regsvr32 .\packages\OpenCover.4.6.519\tools\x86\OpenCover.Profiler.dll
+
     regsvr32 .\packages\OpenCover.4.6.519\tools\x64\OpenCover.Profiler.dll
 
     .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -filter:"+[MailKit]* -[UnitTests]* -[submodules]*" -target:"packages\NUnit.Runners.2.6.4\tools\nunit-console.exe" -targetargs:"/framework:net-4.5 /noshadow /domain:single UnitTests\bin\Debug\UnitTests.dll" -output:opencover.xml
