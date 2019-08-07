@@ -1621,23 +1621,27 @@ namespace MailKit.Net.Smtp {
 
 		class ContentTransferEncodingVisitor : MimeVisitor
 		{
-			public SmtpExtension SmtpExtensions {
-				get; private set;
+			readonly SmtpCapabilities capabilities;
+
+			public ContentTransferEncodingVisitor (SmtpCapabilities capabilities)
+			{
+				this.capabilities = capabilities;
 			}
 
-			protected override void VisitMultipartSigned (MultipartSigned signed)
-			{
-				// do not modify children of a multipart/signed
+			public SmtpExtension SmtpExtensions {
+				get; private set;
 			}
 
 			protected override void VisitMimePart (MimePart entity)
 			{
 				switch (entity.ContentTransferEncoding) {
 				case ContentEncoding.EightBit:
-					SmtpExtensions |= SmtpExtension.EightBitMime;
+					if ((capabilities & SmtpCapabilities.EightBitMime) != 0)
+						SmtpExtensions |= SmtpExtension.EightBitMime;
 					break;
 				case ContentEncoding.Binary:
-					SmtpExtensions |= SmtpExtension.BinaryMime;
+					if ((capabilities & SmtpCapabilities.BinaryMime) != 0)
+						SmtpExtensions |= SmtpExtension.BinaryMime;
 					break;
 				}
 			}
@@ -2013,6 +2017,32 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		/// <summary>
+		/// Prepare the message for transport with the specified constraints.
+		/// </summary>
+		/// <remarks>
+		/// <para>Prepares the message for transport with the specified constraints.</para>
+		/// <para>Typically, this involves calling <see cref="MimeMessage.Prepare(EncodingConstraint, int)"/> on
+		/// the message with the provided constraints.</para>
+		/// </remarks>
+		/// <param name="options">The format options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="constraint">The encoding constraint.</param>
+		/// <param name="maxLineLength">The max line length supported by the server.</param>
+		protected virtual void Prepare (FormatOptions options, MimeMessage message, EncodingConstraint constraint, int maxLineLength)
+		{
+			if (!message.Headers.Contains (HeaderId.DomainKeySignature) &&
+				!message.Headers.Contains (HeaderId.DkimSignature) &&
+				!message.Headers.Contains (HeaderId.ArcSeal)) {
+				// prepare the message
+				message.Prepare (constraint, maxLineLength);
+			} else {
+				// Note: we do not want to risk reformatting of headers to the international
+				// UTF-8 encoding, so disable it.
+				options.International = false;
+			}
+		}
+
 		async Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			CheckDisposed ();
@@ -2030,24 +2060,19 @@ namespace MailKit.Net.Smtp {
 			if (format.International && (Capabilities & SmtpCapabilities.EightBitMime) == 0)
 				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
 
-			if (!message.Headers.Contains (HeaderId.DomainKeySignature) &&
-				!message.Headers.Contains (HeaderId.DkimSignature) &&
-				!message.Headers.Contains (HeaderId.ArcSeal)) {
-				// prepare the message
-				if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
-					message.Prepare (EncodingConstraint.None, MaxLineLength);
-				else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
-					message.Prepare (EncodingConstraint.EightBit, MaxLineLength);
-				else
-					message.Prepare (EncodingConstraint.SevenBit, MaxLineLength);
-			} else {
-				// Note: we do not want to risk reformatting of headers to the international
-				// UTF-8 encoding, so disable it.
-				format.International = false;
-			}
+			EncodingConstraint constraint;
+
+			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
+				constraint = EncodingConstraint.None;
+			else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+				constraint = EncodingConstraint.EightBit;
+			else
+				constraint = EncodingConstraint.SevenBit;
+
+			Prepare (options, message, constraint, MaxLineLength);
 
 			// figure out which SMTP extensions we need to use
-			var visitor = new ContentTransferEncodingVisitor ();
+			var visitor = new ContentTransferEncodingVisitor (capabilities);
 			visitor.Visit (message);
 
 			var extensions = visitor.SmtpExtensions;
