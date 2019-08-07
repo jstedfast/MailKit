@@ -49,6 +49,50 @@ namespace MailKit.Net.Smtp
 	public partial class SmtpClient
 	{
 		/// <summary>
+		/// Asynchronously send a custom command to the SMTP server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously sends a custom command to the SMTP server.</para>
+		/// <note type="note">The command string should not include the terminating <c>\r\n</c> sequence.</note>
+		/// </remarks>
+		/// <returns>The command response.</returns>
+		/// <param name="command">The command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="command"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol exception occurred.
+		/// </exception>
+		protected Task<SmtpResponse> SendCommandAsync (string command, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (command == null)
+				throw new ArgumentNullException (nameof (command));
+
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new ServiceNotConnectedException ("The SmtpClient must be connected before you can send commands.");
+
+			return SendCommandAsync (command, true, cancellationToken);
+		}
+
+		/// <summary>
 		/// Asynchronously authenticate using the specified SASL mechanism.
 		/// </summary>
 		/// <remarks>
