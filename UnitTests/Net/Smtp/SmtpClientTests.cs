@@ -2386,6 +2386,11 @@ namespace UnitTests.Net.Smtp {
 
 		class DsnSmtpClient : SmtpClient
 		{
+			public DsnSmtpClient ()
+			{
+				DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
+			}
+
 			protected override string GetEnvelopeId (MimeMessage message)
 			{
 				var id = base.GetEnvelopeId (message);
@@ -2411,7 +2416,7 @@ namespace UnitTests.Net.Smtp {
 			var message = CreateEightBitMessage ();
 			message.MessageId = MimeUtils.GenerateMessageId ();
 
-			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0}\r\n", message.MessageId);
+			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
 
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -2475,7 +2480,7 @@ namespace UnitTests.Net.Smtp {
 			var message = CreateEightBitMessage ();
 			message.MessageId = MimeUtils.GenerateMessageId ();
 
-			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0}\r\n", message.MessageId);
+			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
 
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -2587,7 +2592,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (120000, client.Timeout, "Timeout");
 				client.Timeout *= 2;
 
-				Assert.Throws<ArgumentNullException> (() => client.SendCommandAsync (null));
+				Assert.Throws<ArgumentNullException> (() => client.SendCommand (null));
 
 				SmtpResponse response = null;
 
