@@ -1293,17 +1293,41 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				MailboxAddress vrfy = null;
+
 				try {
-					client.Verify ("Smith");
+					vrfy = client.Verify ("Smith");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Verify: {0}", ex);
 				}
 
+				Assert.NotNull (vrfy, "VRFY result");
+				Assert.AreEqual ("Fred Smith", vrfy.Name, "VRFY name");
+				Assert.AreEqual ("Smith@USC-ISIF.ARPA", vrfy.Address, "VRFY address");
+
+				InternetAddressList expn = null;
+
 				try {
-					client.Expand ("Example-People");
+					expn = client.Expand ("Example-People");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Expand: {0}", ex);
 				}
+
+				Assert.NotNull (expn, "EXPN result");
+				Assert.AreEqual (6, expn.Count, "EXPN count");
+				Assert.AreEqual ("Jon Postel", expn[0].Name, "expn[0].Name");
+				Assert.AreEqual ("Postel@USC-ISIF.ARPA", ((MailboxAddress) expn[0]).Address, "expn[0].Address");
+				Assert.AreEqual ("Fred Fonebone", expn[1].Name, "expn[1].Name");
+				Assert.AreEqual ("Fonebone@USC-ISIQ.ARPA", ((MailboxAddress) expn[1]).Address, "expn[1].Address");
+				Assert.AreEqual ("Sam Q. Smith", expn[2].Name, "expn[2].Name");
+				Assert.AreEqual ("SQSmith@USC-ISIQ.ARPA", ((MailboxAddress) expn[2]).Address, "expn[2].Address");
+				Assert.AreEqual ("Quincy Smith", expn[3].Name, "expn[3].Name");
+				Assert.AreEqual ("USC-ISIF.ARPA", ((MailboxAddress) expn[3]).Route[0], "expn[3].Route");
+				Assert.AreEqual ("Q-Smith@ISI-VAXA.ARPA", ((MailboxAddress) expn[3]).Address, "expn[3].Address");
+				Assert.AreEqual ("", expn[4].Name, "expn[4].Name");
+				Assert.AreEqual ("joe@foo-unix.ARPA", ((MailboxAddress) expn[4]).Address, "expn[4].Address");
+				Assert.AreEqual ("", expn[5].Name, "expn[5].Name");
+				Assert.AreEqual ("xyz@bar-unix.ARPA", ((MailboxAddress) expn[5]).Address, "expn[5].Address");
 
 				try {
 					client.NoOp ();
@@ -1417,17 +1441,41 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
+				MailboxAddress vrfy = null;
+
 				try {
-					await client.VerifyAsync ("Smith");
+					vrfy = await client.VerifyAsync ("Smith");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Verify: {0}", ex);
 				}
 
+				Assert.NotNull (vrfy, "VRFY result");
+				Assert.AreEqual ("Fred Smith", vrfy.Name, "VRFY name");
+				Assert.AreEqual ("Smith@USC-ISIF.ARPA", vrfy.Address, "VRFY address");
+
+				InternetAddressList expn = null;
+
 				try {
-					await client.ExpandAsync ("Example-People");
+					expn = await client.ExpandAsync ("Example-People");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Expand: {0}", ex);
 				}
+
+				Assert.NotNull (expn, "EXPN result");
+				Assert.AreEqual (6, expn.Count, "EXPN count");
+				Assert.AreEqual ("Jon Postel", expn[0].Name, "expn[0].Name");
+				Assert.AreEqual ("Postel@USC-ISIF.ARPA", ((MailboxAddress) expn[0]).Address, "expn[0].Address");
+				Assert.AreEqual ("Fred Fonebone", expn[1].Name, "expn[1].Name");
+				Assert.AreEqual ("Fonebone@USC-ISIQ.ARPA", ((MailboxAddress) expn[1]).Address, "expn[1].Address");
+				Assert.AreEqual ("Sam Q. Smith", expn[2].Name, "expn[2].Name");
+				Assert.AreEqual ("SQSmith@USC-ISIQ.ARPA", ((MailboxAddress) expn[2]).Address, "expn[2].Address");
+				Assert.AreEqual ("Quincy Smith", expn[3].Name, "expn[3].Name");
+				Assert.AreEqual ("USC-ISIF.ARPA", ((MailboxAddress) expn[3]).Route[0], "expn[3].Route");
+				Assert.AreEqual ("Q-Smith@ISI-VAXA.ARPA", ((MailboxAddress) expn[3]).Address, "expn[3].Address");
+				Assert.AreEqual ("", expn[4].Name, "expn[4].Name");
+				Assert.AreEqual ("joe@foo-unix.ARPA", ((MailboxAddress) expn[4]).Address, "expn[4].Address");
+				Assert.AreEqual ("", expn[5].Name, "expn[5].Name");
+				Assert.AreEqual ("xyz@bar-unix.ARPA", ((MailboxAddress) expn[5]).Address, "expn[5].Address");
 
 				try {
 					await client.NoOpAsync ();
