@@ -42,7 +42,7 @@ namespace MailKit {
 		/// Creates a new <see cref="Metadata"/>.
 		/// </remarks>
 		/// <param name="tag">The metadata tag.</param>
-		/// <param name="value">The meatdata value.</param>
+		/// <param name="value">The metadata value.</param>
 		public Metadata (MetadataTag tag, string value)
 		{
 			Value = value;

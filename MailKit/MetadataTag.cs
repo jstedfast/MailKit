@@ -36,7 +36,7 @@ namespace MailKit {
 	public struct MetadataTag
 	{
 		/// <summary>
-		/// Indicates a method for contacting the server administrator.
+		/// A metadata tag for specifying the contact information for the server administrator.
 		/// </summary>
 		/// <remarks>
 		/// Used to get the contact information of the administrator on a
@@ -45,7 +45,7 @@ namespace MailKit {
 		public static readonly MetadataTag SharedAdmin = new MetadataTag ("/shared/admin");
 
 		/// <summary>
-		/// Indicates a private comment.
+		/// A metadata tag for private comments.
 		/// </summary>
 		/// <remarks>
 		/// Used to get or set a private comment on a <see cref="IMailFolder"/>.
@@ -53,7 +53,7 @@ namespace MailKit {
 		public static readonly MetadataTag PrivateComment = new MetadataTag ("/private/comment");
 
 		/// <summary>
-		/// Indicates a shared comment.
+		/// A metadata tag for shared comments.
 		/// </summary>
 		/// <remarks>
 		/// Used to get or set a shared comment on a <see cref="IMailStore"/>
@@ -62,14 +62,12 @@ namespace MailKit {
 		public static readonly MetadataTag SharedComment = new MetadataTag ("/shared/comment");
 
 		/// <summary>
-		/// Indicates a method for specifying the special use for a particular folder.
+		/// A metadata tag for specifying the special use of a folder.
 		/// </summary>
 		/// <remarks>
 		/// Used to get or set the special use of a <see cref="IMailFolder"/>.
 		/// </remarks>
 		public static readonly MetadataTag PrivateSpecialUse = new MetadataTag ("/private/specialuse");
-
-		readonly string id;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MetadataTag"/> struct.
@@ -92,22 +90,22 @@ namespace MailKit {
 			if (id.Length == 0)
 				throw new ArgumentException ("A metadata tag identifier cannot be empty.");
 
-			this.id = id;
+			Id = id;
 		}
 
 		/// <summary>
-		/// Gets the metadata tag identifier.
+		/// Get the metadata tag identifier.
 		/// </summary>
 		/// <remarks>
 		/// Gets the metadata tag identifier.
 		/// </remarks>
 		/// <value>The metadata tag identifier.</value>
 		public string Id {
-			get { return id; }
+			get; private set;
 		}
 
 		/// <summary>
-		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.MetadataTag"/>.
+		/// Determine whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.MetadataTag"/>.
 		/// </summary>
 		/// <remarks>
 		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.MetadataTag"/>.
