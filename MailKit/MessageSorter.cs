@@ -99,6 +99,17 @@ namespace MailKit {
 
 				for (int i = 0; i < orderBy.Count; i++) {
 					switch (orderBy[i].Type) {
+					case OrderByType.Annotation:
+						var annotation = (OrderByAnnotation) orderBy[i];
+
+						var xannotation = x.Annotations?.FirstOrDefault (a => a.Entry == annotation.Entry);
+						var yannotation = y.Annotations?.FirstOrDefault (a => a.Entry == annotation.Entry);
+
+						var xvalue = xannotation?.Properties[annotation.Attribute] ?? string.Empty;
+						var yvalue = yannotation?.Properties[annotation.Attribute] ?? string.Empty;
+
+						cmp = string.Compare (xvalue, yvalue, StringComparison.OrdinalIgnoreCase);
+						break;
 					case OrderByType.Arrival:
 						cmp = x.Index.CompareTo (y.Index);
 						break;
@@ -113,6 +124,12 @@ namespace MailKit {
 						break;
 					case OrderByType.From:
 						cmp = CompareMailboxAddresses (x.Envelope.From, y.Envelope.From);
+						break;
+					case OrderByType.ModSeq:
+						var xmodseq = x.ModSeq ?? 0;
+						var ymodseq = y.ModSeq ?? 0;
+
+						cmp = xmodseq.CompareTo (ymodseq);
 						break;
 					case OrderByType.Size:
 						var xsize = x.Size ?? 0;
@@ -131,12 +148,6 @@ namespace MailKit {
 						break;
 					case OrderByType.To:
 						cmp = CompareMailboxAddresses (x.Envelope.To, y.Envelope.To);
-						break;
-					case OrderByType.ModSeq:
-						var xmodseq = x.ModSeq ?? 0;
-						var ymodseq = y.ModSeq ?? 0;
-
-						cmp = xmodseq.CompareTo (ymodseq);
 						break;
 					}
 
@@ -158,6 +169,9 @@ namespace MailKit {
 
 			for (int i = 0; i < orderBy.Count; i++) {
 				switch (orderBy[i].Type) {
+				case OrderByType.Annotation:
+					items |= MessageSummaryItems.Annotations;
+					break;
 				case OrderByType.Arrival:
 					break;
 				case OrderByType.Cc:

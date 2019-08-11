@@ -1,5 +1,5 @@
 ﻿//
-// OrderByType.cs
+// Annotation.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,67 +24,56 @@
 // THE SOFTWARE.
 //
 
-namespace MailKit.Search {
+using System;
+using System.Collections.Generic;
+
+namespace MailKit {
 	/// <summary>
-	/// The field to sort by.
+	/// An annotation.
 	/// </summary>
 	/// <remarks>
-	/// The field to sort by.
+	/// An annotation.
 	/// </remarks>
-	public enum OrderByType {
+	public class Annotation
+	{
 		/// <summary>
-		/// Sort by an annotation value.
+		/// Initializes a new instance of the <see cref="MailKit.Annotation"/> class.
 		/// </summary>
-		Annotation,
+		/// <remarks>
+		/// Creates a new <see cref="Annotation"/>.
+		/// </remarks>
+		/// <param name="entry">The annotation entry.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="entry"/> is <c>null</c>.
+		/// </exception>
+		public Annotation (AnnotationEntry entry)
+		{
+			if (entry == null)
+				throw new ArgumentNullException (nameof (entry));
+
+			Properties = new Dictionary<AnnotationAttribute, string> ();
+			Entry = entry;
+		}
 
 		/// <summary>
-		/// Sort by the arrival date.
+		/// Get the annotation tag.
 		/// </summary>
-		Arrival,
+		/// <remarks>
+		/// Gets the annotation tag.
+		/// </remarks>
+		/// <value>The annotation tag.</value>
+		public AnnotationEntry Entry {
+			get; private set;
+		}
 
 		/// <summary>
-		/// Sort by the Cc header.
+		/// Get the annotation properties.
 		/// </summary>
-		Cc,
-
-		/// <summary>
-		/// Sort by the Date header.
-		/// </summary>
-		Date,
-
-		/// <summary>
-		/// Sort by the Display Name of the From header.
-		/// </summary>
-		DisplayFrom,
-
-		/// <summary>
-		/// Sort by the Display Name of the To header.
-		/// </summary>
-		DisplayTo,
-
-		/// <summary>
-		/// Sort by the From header.
-		/// </summary>
-		From,
-
-		/// <summary>
-		/// Sort by the mod-sequence.
-		/// </summary>
-		ModSeq,
-
-		/// <summary>
-		/// Sort by the message size.
-		/// </summary>
-		Size,
-
-		/// <summary>
-		/// Sort by the message subject.
-		/// </summary>
-		Subject,
-
-		/// <summary>
-		/// Sort by the To header.
-		/// </summary>
-		To
+		/// <remarks>
+		/// Gets the annotation properties.
+		/// </remarks>
+		public Dictionary<AnnotationAttribute, string> Properties {
+			get; private set;
+		}
 	}
 }

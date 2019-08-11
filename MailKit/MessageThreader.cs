@@ -95,6 +95,10 @@ namespace MailKit {
 			[Obsolete]
 			public HashSet<string> UserFlags => null;
 
+			public IList<Annotation> Annotations {
+				get { return Message != null ? Message.Annotations : Children[0].Annotations; }
+			}
+
 			public HeaderList Headers => null;
 
 			public DateTimeOffset? InternalDate => null;

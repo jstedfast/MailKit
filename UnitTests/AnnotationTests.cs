@@ -1,5 +1,5 @@
 ﻿//
-// OrderByType.cs
+// AnnotationTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,67 +24,30 @@
 // THE SOFTWARE.
 //
 
-namespace MailKit.Search {
-	/// <summary>
-	/// The field to sort by.
-	/// </summary>
-	/// <remarks>
-	/// The field to sort by.
-	/// </remarks>
-	public enum OrderByType {
-		/// <summary>
-		/// Sort by an annotation value.
-		/// </summary>
-		Annotation,
+using System;
 
-		/// <summary>
-		/// Sort by the arrival date.
-		/// </summary>
-		Arrival,
+using NUnit.Framework;
 
-		/// <summary>
-		/// Sort by the Cc header.
-		/// </summary>
-		Cc,
+using MailKit;
 
-		/// <summary>
-		/// Sort by the Date header.
-		/// </summary>
-		Date,
+namespace UnitTests {
+	[TestFixture]
+	public class AnnotationTests
+	{
+		[Test]
+		public void TestArgumentExceptions ()
+		{
+			Assert.Throws<ArgumentNullException> (() => new Annotation (null));
+		}
 
-		/// <summary>
-		/// Sort by the Display Name of the From header.
-		/// </summary>
-		DisplayFrom,
-
-		/// <summary>
-		/// Sort by the Display Name of the To header.
-		/// </summary>
-		DisplayTo,
-
-		/// <summary>
-		/// Sort by the From header.
-		/// </summary>
-		From,
-
-		/// <summary>
-		/// Sort by the mod-sequence.
-		/// </summary>
-		ModSeq,
-
-		/// <summary>
-		/// Sort by the message size.
-		/// </summary>
-		Size,
-
-		/// <summary>
-		/// Sort by the message subject.
-		/// </summary>
-		Subject,
-
-		/// <summary>
-		/// Sort by the To header.
-		/// </summary>
-		To
+		[Test]
+		public void TestBasicFunctionality ()
+		{
+			var annotation = new Annotation (AnnotationEntry.AltSubject);
+			annotation.Properties.Add (AnnotationAttribute.SharedValue, "Shared altsubject");
+			annotation.Properties.Add (AnnotationAttribute.PrivateValue, "Private altsubject");
+			Assert.AreEqual (AnnotationEntry.AltSubject, annotation.Entry, "Entry");
+			Assert.AreEqual (2, annotation.Properties.Count, "Count");
+		}
 	}
 }

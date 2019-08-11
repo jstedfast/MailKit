@@ -218,6 +218,18 @@ namespace MailKit {
 		HashSet<string> UserFlags { get; }
 
 		/// <summary>
+		/// Gets the message annotations, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the message annotations, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.Annotations"/> flag is passed to
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
+		/// <value>The message annotations.</value>
+		IList<Annotation> Annotations { get; }
+
+		/// <summary>
 		/// Gets the list of headers, if available.
 		/// </summary>
 		/// <remarks>

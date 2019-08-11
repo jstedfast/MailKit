@@ -1178,5 +1178,132 @@ namespace UnitTests.Net.Imap {
 				}
 			}
 		}
+
+		[Test]
+		public void TestFormatAnnotations ()
+		{
+			var annotations = new List<Annotation> ();
+			var command = new StringBuilder ("STORE ");
+			var args = new List<object> ();
+
+			ImapUtils.FormatAnnotations (command, annotations, args, false);
+			Assert.AreEqual ("STORE ", command.ToString (), "empty collection");
+
+			annotations.Add (new Annotation (AnnotationEntry.AltSubject));
+
+			ImapUtils.FormatAnnotations (command, annotations, args, false);
+			Assert.AreEqual ("STORE ", command.ToString (), "annotation w/o properties");
+			Assert.Throws<ArgumentException> (() => ImapUtils.FormatAnnotations (command, annotations, args, true));
+
+			command.Clear ();
+			command.Append ("STORE ");
+			annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "This is an alternate subject.");
+			ImapUtils.FormatAnnotations (command, annotations, args, true);
+			Assert.AreEqual ("STORE ANNOTATION (/altsubject (value.shared %S))", command.ToString ());
+			Assert.AreEqual (1, args.Count, "args");
+			Assert.AreEqual ("This is an alternate subject.", args[0], "args[0]");
+		}
+
+		[Test]
+		public void TestParseAnnotationsExample1 ()
+		{
+			const string text = "(/comment (value.priv \"My comment\" value.shared NIL))\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						IList<Annotation> annotations;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.AreEqual (1, annotations.Count, "Count");
+						Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "Entry");
+						Assert.AreEqual (2, annotations[0].Properties.Count, "Properties.Count");
+						Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "value.priv");
+						Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "value.shared");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseAnnotationsExample2 ()
+		{
+			const string text = "(/comment (value.priv \"My comment\" value.shared NIL) /altsubject (value.priv \"My subject\" value.shared NIL))\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						IList<Annotation> annotations;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.AreEqual (2, annotations.Count, "Count");
+						Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
+						Assert.AreEqual (2, annotations[0].Properties.Count, "annotations[0].Properties.Count");
+						Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
+						Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
+						Assert.AreEqual (AnnotationEntry.AltSubject, annotations[1].Entry, "annotations[1].Entry");
+						Assert.AreEqual (2, annotations[1].Properties.Count, "annotations[1].Properties.Count");
+						Assert.AreEqual ("My subject", annotations[1].Properties[AnnotationAttribute.PrivateValue], "annotations[1] value.priv");
+						Assert.AreEqual (null, annotations[1].Properties[AnnotationAttribute.SharedValue], "annotations[1] value.shared");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseAnnotationsExample3 ()
+		{
+			const string text = "(/comment (value.priv \"My comment\" value.shared NIL size.priv \"10\" size.shared \"0\"))\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						IList<Annotation> annotations;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.AreEqual (1, annotations.Count, "Count");
+						Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
+						Assert.AreEqual (4, annotations[0].Properties.Count, "annotations[0].Properties.Count");
+						Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
+						Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
+						Assert.AreEqual ("10", annotations[0].Properties[AnnotationAttribute.PrivateSize], "annotations[0] size.priv");
+						Assert.AreEqual ("0", annotations[0].Properties[AnnotationAttribute.SharedSize], "annotations[0] size.shared");
+					}
+				}
+			}
+		}
 	}
 }

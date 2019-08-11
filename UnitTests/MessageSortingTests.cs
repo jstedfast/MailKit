@@ -62,7 +62,11 @@ namespace UnitTests {
 			MessageSummary summary;
 
 			summary = new MessageSummary (0);
-			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.Size | MessageSummaryItems.ModSeq;
+			summary.Fields = MessageSummaryItems.Annotations | MessageSummaryItems.Envelope | MessageSummaryItems.Size | MessageSummaryItems.ModSeq;
+			summary.Annotations = new List<Annotation> (new [] {
+				new Annotation (AnnotationEntry.AltSubject)
+			});
+			summary.Annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "aaaa");
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now.AddSeconds (-2);
 			summary.Envelope.Subject = "aaaa";
@@ -74,7 +78,11 @@ namespace UnitTests {
 			messages.Add (summary);
 
 			summary = new MessageSummary (1);
-			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.Size | MessageSummaryItems.ModSeq;
+			summary.Fields = MessageSummaryItems.Annotations | MessageSummaryItems.Envelope | MessageSummaryItems.Size | MessageSummaryItems.ModSeq;
+			summary.Annotations = new List<Annotation> (new [] {
+				new Annotation (AnnotationEntry.AltSubject)
+			});
+			summary.Annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "bbbb");
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now.AddSeconds (-1);
 			summary.Envelope.Subject = "bbbb";
@@ -86,7 +94,11 @@ namespace UnitTests {
 			messages.Add (summary);
 
 			summary = new MessageSummary (2);
-			summary.Fields = MessageSummaryItems.Envelope | MessageSummaryItems.Size | MessageSummaryItems.ModSeq;
+			summary.Fields = MessageSummaryItems.Annotations | MessageSummaryItems.Envelope | MessageSummaryItems.Size | MessageSummaryItems.ModSeq;
+			summary.Annotations = new List<Annotation> (new [] {
+				new Annotation (AnnotationEntry.AltSubject)
+			});
+			summary.Annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "cccc");
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "cccc";
@@ -174,6 +186,16 @@ namespace UnitTests {
 			Assert.AreEqual (1, messages[0].Index, "Sorting by modseq failed.");
 			Assert.AreEqual (0, messages[1].Index, "Sorting by modseq failed.");
 			Assert.AreEqual (2, messages[2].Index, "Sorting by modseq failed.");
+
+			messages.Sort (new[] { new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending) });
+			Assert.AreEqual (0, messages[0].Index, "Sorting by altsubject failed.");
+			Assert.AreEqual (1, messages[1].Index, "Sorting by altsubject failed.");
+			Assert.AreEqual (2, messages[2].Index, "Sorting by altsubject failed.");
+
+			messages.Sort (new[] { new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Descending) });
+			Assert.AreEqual (2, messages[0].Index, "Sorting by reverse altsubject failed.");
+			Assert.AreEqual (1, messages[1].Index, "Sorting by reverse altsubject failed.");
+			Assert.AreEqual (0, messages[2].Index, "Sorting by reverse altsubject failed.");
 		}
 
 		[Test]
@@ -252,6 +274,16 @@ namespace UnitTests {
 			Assert.AreEqual (1, sorted[0].Index, "Sorting by modseq failed.");
 			Assert.AreEqual (0, sorted[1].Index, "Sorting by modseq failed.");
 			Assert.AreEqual (2, sorted[2].Index, "Sorting by modseq failed.");
+
+			sorted = enumerable.Sort (new[] { new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending) });
+			Assert.AreEqual (0, sorted[0].Index, "Sorting by subject failed.");
+			Assert.AreEqual (1, sorted[1].Index, "Sorting by subject failed.");
+			Assert.AreEqual (2, sorted[2].Index, "Sorting by subject failed.");
+
+			sorted = enumerable.Sort (new[] { new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Descending) });
+			Assert.AreEqual (2, sorted[0].Index, "Sorting by reverse subject failed.");
+			Assert.AreEqual (1, sorted[1].Index, "Sorting by reverse subject failed.");
+			Assert.AreEqual (0, sorted[2].Index, "Sorting by reverse subject failed.");
 		}
 	}
 }

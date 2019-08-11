@@ -1,0 +1,4 @@
+* 1 FETCH (UID 1 ANNOTATION (/comment (value.priv "My comment" value.shared NIL)))
+* 2 FETCH (UID 2 ANNOTATION (/comment (value.priv "My comment" value.shared NIL) /altsubject (value.priv "My subject" value.shared NIL)))
+* 3 FETCH (UID 3 ANNOTATION (/comment (value.priv "My comment" value.shared NIL size.priv "10" size.shared "0")))
+A######## OK Success

@@ -148,6 +148,7 @@
     <Compile Include="Net\Imap\ImapEngine.cs" />
     <Compile Include="Net\Imap\ImapEventGroup.cs" />
     <Compile Include="Net\Imap\ImapFolder.cs" />
+    <Compile Include="Net\Imap\ImapFolderAnnotations.cs" />
     <Compile Include="Net\Imap\ImapFolderConstructorArgs.cs" />
     <Compile Include="Net\Imap\ImapFolderFetch.cs" />
     <Compile Include="Net\Imap\ImapFolderFlags.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="Net\Smtp\SmtpStream.cs" />
     <Compile Include="Net\SelectMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\AnnotationSearchQuery.cs" />
     <Compile Include="Search\BinarySearchQuery.cs" />
     <Compile Include="Search\DateSearchQuery.cs" />
     <Compile Include="Search\FilterSearchQuery.cs" />
@@ -186,6 +188,7 @@
     <Compile Include="Search\ISearchQueryOptimizer.cs" />
     <Compile Include="Search\NumericSearchQuery.cs" />
     <Compile Include="Search\OrderBy.cs" />
+    <Compile Include="Search\OrderByAnnotation.cs" />
     <Compile Include="Search\OrderByType.cs" />
     <Compile Include="Search\SearchOptions.cs" />
     <Compile Include="Search\SearchQuery.cs" />
@@ -228,6 +231,12 @@
     <Compile Include="AccessRight.cs" />
     <Compile Include="AccessRights.cs" />
     <Compile Include="AlertEventArgs.cs" />
+    <Compile Include="Annotation.cs" />
+    <Compile Include="AnnotationAccess.cs" />
+    <Compile Include="AnnotationAttribute.cs" />
+    <Compile Include="AnnotationEntry.cs" />
+    <Compile Include="AnnotationsChangedEventArgs.cs" />
+    <Compile Include="AnnotationScope.cs" />
     <Compile Include="AuthenticatedEventArgs.cs" />
     <Compile Include="BodyPart.cs" />
     <Compile Include="BodyPartBasic.cs" />
