@@ -54,6 +54,26 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.MessageEventArgs"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MessageEventArgs"/>.
+		/// </remarks>
+		/// <param name="index">The message index.</param>
+		/// <param name="uid">The unique id of the message.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		public MessageEventArgs (int index, UniqueId uid)
+		{
+			if (index < 0)
+				throw new ArgumentOutOfRangeException (nameof (index));
+
+			Index = index;
+			UniqueId = uid;
+		}
+
+		/// <summary>
 		/// Gets the index of the message that changed.
 		/// </summary>
 		/// <remarks>
@@ -62,6 +82,17 @@ namespace MailKit {
 		/// <value>The index of the message.</value>
 		public int Index {
 			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the unique ID of the message that changed, if available.
+		/// </summary>
+		/// <remarks>
+		/// Gets the unique ID of the message that changed, if available.
+		/// </remarks>
+		/// <value>The unique ID of the message.</value>
+		public UniqueId? UniqueId {
+			get; internal set;
 		}
 	}
 }

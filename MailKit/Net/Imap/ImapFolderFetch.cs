@@ -3717,6 +3717,7 @@ namespace MailKit.Net.Imap
 
 					ctx.SetUniqueId (index, uid.Value);
 
+					modSeq.UniqueId = uid.Value;
 					labels.UniqueId = uid.Value;
 					flags.UniqueId = uid.Value;
 					break;

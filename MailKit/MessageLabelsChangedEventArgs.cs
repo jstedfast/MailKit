@@ -112,13 +112,12 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
-		public MessageLabelsChangedEventArgs (int index, UniqueId uid, IList<string> labels) : base (index)
+		public MessageLabelsChangedEventArgs (int index, UniqueId uid, IList<string> labels) : base (index, uid)
 		{
 			if (labels == null)
 				throw new ArgumentNullException (nameof (labels));
 
 			Labels = new ReadOnlyCollection<string> (labels);
-			UniqueId = uid;
 		}
 
 		/// <summary>
@@ -137,25 +136,13 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
-		public MessageLabelsChangedEventArgs (int index, UniqueId uid, IList<string> labels, ulong modseq) : base (index)
+		public MessageLabelsChangedEventArgs (int index, UniqueId uid, IList<string> labels, ulong modseq) : base (index, uid)
 		{
 			if (labels == null)
 				throw new ArgumentNullException (nameof (labels));
 
 			Labels = new ReadOnlyCollection<string> (labels);
-			UniqueId = uid;
 			ModSeq = modseq;
-		}
-
-		/// <summary>
-		/// Gets the unique ID of the message that changed, if available.
-		/// </summary>
-		/// <remarks>
-		/// Gets the unique ID of the message that changed, if available.
-		/// </remarks>
-		/// <value>The unique ID of the message.</value>
-		public UniqueId? UniqueId {
-			get; internal set;
 		}
 
 		/// <summary>
