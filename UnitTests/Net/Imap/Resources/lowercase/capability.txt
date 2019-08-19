@@ -1,0 +1,2 @@
+* capability imap4rev1 starttls login special-use
+A######## OK CAPABILITY completed

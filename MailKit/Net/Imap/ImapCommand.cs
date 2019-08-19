@@ -404,7 +404,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="args">The command arguments.</param>
 		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
 		{
-			UntaggedHandlers = new Dictionary<string, ImapUntaggedHandler> ();
+			UntaggedHandlers = new Dictionary<string, ImapUntaggedHandler> (StringComparer.OrdinalIgnoreCase);
 			Logout = format.Equals ("LOGOUT\r\n", StringComparison.Ordinal);
 			RespCodes = new List<ImapResponseCode> ();
 			CancellationToken = cancellationToken;

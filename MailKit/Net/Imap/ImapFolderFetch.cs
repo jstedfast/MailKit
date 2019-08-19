@@ -174,7 +174,7 @@ namespace MailKit.Net.Imap
 				uint value;
 				int idx;
 
-				switch (atom) {
+				switch (atom.ToUpperInvariant ()) {
 				case "INTERNALDATE":
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -3574,7 +3574,7 @@ namespace MailKit.Net.Imap
 				ulong modseq;
 				uint value;
 
-				switch (atom) {
+				switch (atom.ToUpperInvariant ()) {
 				case "BODY":
 					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 

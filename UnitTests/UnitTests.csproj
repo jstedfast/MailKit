@@ -426,6 +426,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\uid-move.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\utf8accept.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\xlist.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\lowercase\capability.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\lowercase\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\lowercase\list.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\metadata\getmetadata.txt" />

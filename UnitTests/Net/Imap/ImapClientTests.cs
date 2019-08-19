@@ -5658,5 +5658,41 @@ namespace UnitTests.Net.Imap {
 				await client.DisconnectAsync (true);
 			}
 		}
+
+		[Test]
+		public void TestLowercaseImapResponses ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "lowercase.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", "lowercase.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"\"\r\n", "lowercase.list.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "lowercase.list.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "lowercase.list.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (1, client.PersonalNamespaces.Count, "PersonalNamespaces.Count");
+				Assert.AreEqual (string.Empty, client.PersonalNamespaces[0].Path, "PersonalNamespaces[0].Path");
+				Assert.AreEqual ('/', client.PersonalNamespaces[0].DirectorySeparator, "PersonalNamespaces[0].DirectorySeparator");
+				Assert.AreEqual (0, client.OtherNamespaces.Count, "OtherNamespaces.Count");
+				Assert.AreEqual (0, client.SharedNamespaces.Count, "SharedNamespaces.Count");
+
+				Assert.IsNotNull (client.Inbox, "Inbox");
+			}
+		}
 	}
 }

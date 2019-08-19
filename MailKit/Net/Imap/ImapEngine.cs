@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
@@ -648,7 +649,7 @@ namespace MailKit.Net.Imap {
 				var state = State;
 				var bye = false;
 
-				switch (atom) {
+				switch (atom.ToUpperInvariant ()) {
 				case "BYE":
 					bye = true;
 					break;
@@ -1078,34 +1079,34 @@ namespace MailKit.Net.Imap {
 			while (token.Type == ImapTokenType.Atom) {
 				var atom = (string) token.Value;
 
-				if (atom.StartsWith ("AUTH=", StringComparison.Ordinal)) {
+				if (atom.StartsWith ("AUTH=", StringComparison.OrdinalIgnoreCase)) {
 					AuthenticationMechanisms.Add (atom.Substring ("AUTH=".Length));
-				} else if (atom.StartsWith ("APPENDLIMIT=", StringComparison.Ordinal)) {
+				} else if (atom.StartsWith ("APPENDLIMIT=", StringComparison.OrdinalIgnoreCase)) {
 					uint limit;
 
 					if (uint.TryParse (atom.Substring ("APPENDLIMIT=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out limit))
 					    AppendLimit = limit;
 
 					Capabilities |= ImapCapabilities.AppendLimit;
-				} else if (atom.StartsWith ("COMPRESS=", StringComparison.Ordinal)) {
+				} else if (atom.StartsWith ("COMPRESS=", StringComparison.OrdinalIgnoreCase)) {
 					CompressionAlgorithms.Add (atom.Substring ("COMPRESS=".Length));
 					Capabilities |= ImapCapabilities.Compress;
-				} else if (atom.StartsWith ("CONTEXT=", StringComparison.Ordinal)) {
+				} else if (atom.StartsWith ("CONTEXT=", StringComparison.OrdinalIgnoreCase)) {
 					SupportedContexts.Add (atom.Substring ("CONTEXT=".Length));
 					Capabilities |= ImapCapabilities.Context;
-				} else if (atom.StartsWith ("I18NLEVEL=", StringComparison.Ordinal)) {
+				} else if (atom.StartsWith ("I18NLEVEL=", StringComparison.OrdinalIgnoreCase)) {
 					int level;
 
 					int.TryParse (atom.Substring ("I18NLEVEL=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out level);
 					I18NLevel = level;
 
 					Capabilities |= ImapCapabilities.I18NLevel;
-				} else if (atom.StartsWith ("RIGHTS=", StringComparison.Ordinal)) {
+				} else if (atom.StartsWith ("RIGHTS=", StringComparison.OrdinalIgnoreCase)) {
 					var rights = atom.Substring ("RIGHTS=".Length);
 					Rights.AddRange (rights);
-				} else if (atom.StartsWith ("THREAD=", StringComparison.Ordinal)) {
+				} else if (atom.StartsWith ("THREAD=", StringComparison.OrdinalIgnoreCase)) {
 					var algorithm = atom.Substring ("THREAD=".Length);
-					switch (algorithm) {
+					switch (algorithm.ToUpperInvariant ()) {
 					case "ORDEREDSUBJECT":
 						ThreadingAlgorithms.Add (ThreadingAlgorithm.OrderedSubject);
 						break;
@@ -1340,7 +1341,7 @@ namespace MailKit.Net.Imap {
 
 		internal static ImapResponseCodeType GetResponseCodeType (string atom)
 		{
-			switch (atom) {
+			switch (atom.ToUpperInvariant ()) {
 			case "ALERT":                return ImapResponseCodeType.Alert;
 			case "BADCHARSET":           return ImapResponseCodeType.BadCharset;
 			case "CAPABILITY":           return ImapResponseCodeType.Capability;
@@ -1598,7 +1599,7 @@ namespace MailKit.Net.Imap {
 
 				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "METADATA", token);
 
-				switch ((string) token.Value) {
+				switch (((string) token.Value).ToUpperInvariant ()) {
 				case "LONGENTRIES":
 					metadata.SubType = MetadataResponseCodeSubType.LongEntries;
 					metadata.IsError = false;
@@ -1716,7 +1717,7 @@ namespace MailKit.Net.Imap {
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				switch (atom) {
+				switch (atom.ToUpperInvariant ()) {
 				case "HIGHESTMODSEQ":
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
@@ -1835,7 +1836,7 @@ namespace MailKit.Net.Imap {
 				await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				return result;
 			} else {
-				atom = (string) token.Value;
+				atom = ((string) token.Value).ToUpperInvariant ();
 			}
 
 			switch (atom) {
@@ -1868,7 +1869,7 @@ namespace MailKit.Net.Imap {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 
 					var feature = (string) token.Value;
-					switch (feature) {
+					switch (feature.ToUpperInvariant ()) {
 					case "UTF8=ACCEPT": UTF8Enabled = true; break;
 					case "QRESYNC": QResyncEnabled = true; break;
 					}
@@ -1917,7 +1918,7 @@ namespace MailKit.Net.Imap {
 						// the command registered an untagged handler for this atom...
 						await handler (this, current, (int) number - 1, doAsync).ConfigureAwait (false);
 					} else if (folder != null) {
-						switch (atom) {
+						switch (atom.ToUpperInvariant ()) {
 						case "EXISTS":
 							folder.OnExists ((int) number);
 							break;
@@ -2296,8 +2297,15 @@ namespace MailKit.Net.Imap {
 				OtherNamespaces.Clear ();
 
 				if (list.Count > 0) {
-					PersonalNamespaces.Add (new FolderNamespace (list[0].DirectorySeparator, ""));
-					list[0].UpdateIsNamespace (true);
+					var empty = list.FirstOrDefault (x => x.EncodedName.Length == 0);
+
+					if (empty == null) {
+						empty = CreateImapFolder (string.Empty, FolderAttributes.None, list[0].DirectorySeparator);
+						CacheFolder (empty);
+					}
+
+					PersonalNamespaces.Add (new FolderNamespace (empty.DirectorySeparator, empty.FullName));
+					empty.UpdateIsNamespace (true);
 				}
 
 				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);

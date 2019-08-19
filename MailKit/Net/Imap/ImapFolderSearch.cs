@@ -368,7 +368,7 @@ namespace MailKit.Net.Imap
 
 					var atom = (string) token.Value;
 
-					switch (atom) {
+					switch (atom.ToUpperInvariant ()) {
 					case "MODSEQ":
 						token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
@@ -450,7 +450,7 @@ namespace MailKit.Net.Imap
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-				switch (atom) {
+				switch (atom.ToUpperInvariant ()) {
 				case "RELEVANCY":
 					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
