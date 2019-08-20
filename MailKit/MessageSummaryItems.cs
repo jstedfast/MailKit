@@ -140,6 +140,11 @@ namespace MailKit {
 		/// </summary>
 		Headers        = 1 << 16,
 
+		/// <summary>
+		/// Fetch the <see cref="IMessageSummary.Annotations"/>.
+		/// </summary>
+		Annotations    = 1 << 17,
+
 		#region Macros
 
 		/// <summary>

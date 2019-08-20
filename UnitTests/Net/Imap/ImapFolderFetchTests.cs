@@ -967,6 +967,158 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		List<ImapReplayCommand> CreateFetchAnnotationsCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+annotate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate-readonly.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 FETCH 1:* (UID ANNOTATION (/* (value size)))\r\n", "common.fetch-annotations.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestFetchAnnotations ()
+		{
+			var commands = CreateFetchAnnotationsCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Annotate), "ANNOTATE-EXPERIMENT-1");
+
+				var inbox = client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				Assert.AreEqual (AnnotationAccess.ReadOnly, inbox.AnnotationAccess, "AnnotationAccess");
+				//Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
+				//Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+
+				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Annotations);
+				Assert.AreEqual (3, messages.Count, "Count");
+
+				IList<Annotation> annotations;
+
+				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
+				annotations = messages[0].Annotations;
+				Assert.AreEqual (1, annotations.Count, "Count");
+				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "Entry");
+				Assert.AreEqual (2, annotations[0].Properties.Count, "Properties.Count");
+				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "value.priv");
+				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "value.shared");
+
+				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
+				annotations = messages[1].Annotations;
+				Assert.AreEqual (2, annotations.Count, "Count");
+				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
+				Assert.AreEqual (2, annotations[0].Properties.Count, "annotations[0].Properties.Count");
+				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
+				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
+				Assert.AreEqual (AnnotationEntry.AltSubject, annotations[1].Entry, "annotations[1].Entry");
+				Assert.AreEqual (2, annotations[1].Properties.Count, "annotations[1].Properties.Count");
+				Assert.AreEqual ("My subject", annotations[1].Properties[AnnotationAttribute.PrivateValue], "annotations[1] value.priv");
+				Assert.AreEqual (null, annotations[1].Properties[AnnotationAttribute.SharedValue], "annotations[1] value.shared");
+
+				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
+				annotations = messages[2].Annotations;
+				Assert.AreEqual (1, annotations.Count, "Count");
+				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
+				Assert.AreEqual (4, annotations[0].Properties.Count, "annotations[0].Properties.Count");
+				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
+				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
+				Assert.AreEqual ("10", annotations[0].Properties[AnnotationAttribute.PrivateSize], "annotations[0] size.priv");
+				Assert.AreEqual ("0", annotations[0].Properties[AnnotationAttribute.SharedSize], "annotations[0] size.shared");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchAnnotationsAsync ()
+		{
+			var commands = CreateFetchAnnotationsCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Annotate), "ANNOTATE-EXPERIMENT-1");
+
+				var inbox = client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				Assert.AreEqual (AnnotationAccess.ReadOnly, inbox.AnnotationAccess, "AnnotationAccess");
+				//Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
+				//Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+
+				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Annotations);
+				Assert.AreEqual (3, messages.Count, "Count");
+
+				IList<Annotation> annotations;
+
+				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
+				annotations = messages[0].Annotations;
+				Assert.AreEqual (1, annotations.Count, "Count");
+				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "Entry");
+				Assert.AreEqual (2, annotations[0].Properties.Count, "Properties.Count");
+				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "value.priv");
+				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "value.shared");
+
+				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
+				annotations = messages[1].Annotations;
+				Assert.AreEqual (2, annotations.Count, "Count");
+				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
+				Assert.AreEqual (2, annotations[0].Properties.Count, "annotations[0].Properties.Count");
+				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
+				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
+				Assert.AreEqual (AnnotationEntry.AltSubject, annotations[1].Entry, "annotations[1].Entry");
+				Assert.AreEqual (2, annotations[1].Properties.Count, "annotations[1].Properties.Count");
+				Assert.AreEqual ("My subject", annotations[1].Properties[AnnotationAttribute.PrivateValue], "annotations[1] value.priv");
+				Assert.AreEqual (null, annotations[1].Properties[AnnotationAttribute.SharedValue], "annotations[1] value.shared");
+
+				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
+				annotations = messages[2].Annotations;
+				Assert.AreEqual (1, annotations.Count, "Count");
+				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
+				Assert.AreEqual (4, annotations[0].Properties.Count, "annotations[0].Properties.Count");
+				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
+				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
+				Assert.AreEqual ("10", annotations[0].Properties[AnnotationAttribute.PrivateSize], "annotations[0] size.priv");
+				Assert.AreEqual ("0", annotations[0].Properties[AnnotationAttribute.SharedSize], "annotations[0] size.shared");
+
+				client.Disconnect (false);
+			}
+		}
+
 		[Test]
 		public void TestGetPreviewText ()
 		{

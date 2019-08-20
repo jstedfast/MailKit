@@ -62,6 +62,7 @@ namespace MailKit.Net.Imap
 		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args, bool parens, ref bool ascii)
 		{
 			TextSearchQuery text = null;
+			AnnotationSearchQuery annotation;
 			NumericSearchQuery numeric;
 			FilterSearchQuery filter;
 			HeaderSearchQuery header;
@@ -83,6 +84,14 @@ namespace MailKit.Net.Imap
 				BuildQuery (builder, binary.Right, args, false, ref ascii);
 				if (parens)
 					builder.Append (')');
+				break;
+			case SearchTerm.Annotation:
+				if ((Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+					throw new NotSupportedException ("The ANNOTATION search term is not supported by the IMAP server.");
+
+				annotation = (AnnotationSearchQuery) query;
+				builder.AppendFormat ("ANNOTATION {0} {1} %S", annotation.Entry, annotation.Attribute);
+				args.Add (annotation.Value);
 				break;
 			case SearchTerm.Answered:
 				builder.Append ("ANSWERED");
@@ -305,7 +314,7 @@ namespace MailKit.Net.Imap
 			return builder.ToString ();
 		}
 
-		static string BuildSortOrder (IList<OrderBy> orderBy)
+		string BuildSortOrder (IList<OrderBy> orderBy)
 		{
 			var builder = new StringBuilder ();
 
@@ -318,11 +327,28 @@ namespace MailKit.Net.Imap
 					builder.Append ("REVERSE ");
 
 				switch (orderBy[i].Type) {
+				case OrderByType.Annotation:
+					if ((Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+						throw new NotSupportedException ("The ANNOTATION search term is not supported by the IMAP server.");
+
+					var annotation = (OrderByAnnotation) orderBy[i];
+					builder.AppendFormat ("ANNOTATION {0} {1}", annotation.Entry, annotation.Attribute);
+					break;
 				case OrderByType.Arrival:     builder.Append ("ARRIVAL"); break;
 				case OrderByType.Cc:          builder.Append ("CC"); break;
 				case OrderByType.Date:        builder.Append ("DATE"); break;
-				case OrderByType.DisplayFrom: builder.Append ("DISPLAYFROM"); break;
-				case OrderByType.DisplayTo:   builder.Append ("DISPLAYTO"); break;
+				case OrderByType.DisplayFrom:
+					if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0)
+						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
+
+					builder.Append ("DISPLAYFROM");
+					break;
+				case OrderByType.DisplayTo:
+					if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0)
+						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
+
+					builder.Append ("DISPLAYTO");
+					break;
 				case OrderByType.From:        builder.Append ("FROM"); break;
 				case OrderByType.Size:        builder.Append ("SIZE"); break;
 				case OrderByType.Subject:     builder.Append ("SUBJECT"); break;
@@ -1082,13 +1108,6 @@ namespace MailKit.Net.Imap
 			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
 
-			if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0) {
-				for (int i = 0; i < orderBy.Count; i++) {
-					if (orderBy[i].Type == OrderByType.DisplayFrom || orderBy[i].Type == OrderByType.DisplayTo)
-						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
-				}
-			}
-
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
@@ -1242,13 +1261,6 @@ namespace MailKit.Net.Imap
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ESORT extension.");
-
-			if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0) {
-				for (int i = 0; i < orderBy.Count; i++) {
-					if (orderBy[i].Type == OrderByType.DisplayFrom || orderBy[i].Type == OrderByType.DisplayTo)
-						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
-				}
-			}
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);

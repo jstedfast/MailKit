@@ -41,6 +41,9 @@ namespace UnitTests.Search
 		{
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.And (null, SearchQuery.All));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.And (SearchQuery.All, null));
+			Assert.Throws<ArgumentNullException> (() => SearchQuery.AnnotationsContain (null, AnnotationAttribute.Value, "value"));
+			Assert.Throws<ArgumentNullException> (() => SearchQuery.AnnotationsContain (AnnotationEntry.AltSubject, null, "value"));
+			Assert.Throws<ArgumentException> (() => SearchQuery.AnnotationsContain (AnnotationEntry.AltSubject, AnnotationAttribute.Size, "value"));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.BccContains (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.BccContains (string.Empty));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.BodyContains (null));

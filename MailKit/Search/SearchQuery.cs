@@ -122,6 +122,30 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
+		/// Match messages with the specified annotation.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages with the specified annotation.</para>
+		/// <note type="warning">This feature is not supported by all IMAP servers.</note>
+		/// </remarks>
+		/// <param name="entry">The annotation entry.</param>
+		/// <param name="attribute">The annotation attribute.</param>
+		/// <param name="value">The annotation attribute value.</param>
+		/// <returns>A <see cref="AnnotationSearchQuery"/>.</returns>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="entry"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="attribute"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="attribute"/> is not a valid attribute for searching.
+		/// </exception>
+		public static AnnotationSearchQuery AnnotationsContain (AnnotationEntry entry, AnnotationAttribute attribute, string value)
+		{
+			return new AnnotationSearchQuery (entry, attribute, value);
+		}
+
+		/// <summary>
 		/// Match messages with the <see cref="MessageFlags.Answered"/> flag set.
 		/// </summary>
 		/// <remarks>

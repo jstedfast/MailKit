@@ -57,6 +57,7 @@
     <Compile Include="Net\Imap\ImapCommandExceptionTests.cs" />
     <Compile Include="Net\Imap\ImapEncodingTests.cs" />
     <Compile Include="Net\Imap\ImapEngineTests.cs" />
+    <Compile Include="Net\Imap\ImapFolderAnnotationsTests.cs" />
     <Compile Include="Net\Imap\ImapFolderFetchTests.cs" />
     <Compile Include="Net\Imap\ImapFolderFlagsTests.cs" />
     <Compile Include="Net\Imap\ImapFolderTests.cs" />
@@ -102,6 +103,9 @@
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="Security\SslHandshakeExceptionTests.cs" />
     <Compile Include="AccessControlListTests.cs" />
+    <Compile Include="AnnotationAttributeTests.cs" />
+    <Compile Include="AnnotationEntryTests.cs" />
+    <Compile Include="AnnotationTests.cs" />
     <Compile Include="ArgumentExceptionTests.cs" />
     <Compile Include="BodyPartTests.cs" />
     <Compile Include="CompressedStreamTests.cs" />
@@ -130,6 +134,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\acl\myrights.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\fetch-annotations.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\getquota.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\getquota-no-root.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\id.txt" />
@@ -189,6 +194,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\preauth-capability-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\preauth-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-annotate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-annotate-none.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-annotate-readonly.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-no-modseq.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\setquota.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\courier\capability.txt" />
@@ -207,6 +215,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.7.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.8.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+annotate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+gmail-capabilities.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\copy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />

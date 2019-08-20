@@ -1,5 +1,5 @@
 ﻿//
-// OrderByType.cs
+// AnnotationScope.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,67 +24,36 @@
 // THE SOFTWARE.
 //
 
-namespace MailKit.Search {
+using System;
+
+namespace MailKit {
 	/// <summary>
-	/// The field to sort by.
+	/// The scope of an annotation.
 	/// </summary>
 	/// <remarks>
-	/// The field to sort by.
+	/// Represents the scope of an annotation.
 	/// </remarks>
-	public enum OrderByType {
+	[Flags]
+	public enum AnnotationScope
+	{
 		/// <summary>
-		/// Sort by an annotation value.
+		/// No scopes.
 		/// </summary>
-		Annotation,
+		None,
 
 		/// <summary>
-		/// Sort by the arrival date.
+		/// The private annotation scope.
 		/// </summary>
-		Arrival,
+		Private,
 
 		/// <summary>
-		/// Sort by the Cc header.
+		/// The shared annotation scope.
 		/// </summary>
-		Cc,
+		Shared,
 
 		/// <summary>
-		/// Sort by the Date header.
+		/// Both private and shared scopes.
 		/// </summary>
-		Date,
-
-		/// <summary>
-		/// Sort by the Display Name of the From header.
-		/// </summary>
-		DisplayFrom,
-
-		/// <summary>
-		/// Sort by the Display Name of the To header.
-		/// </summary>
-		DisplayTo,
-
-		/// <summary>
-		/// Sort by the From header.
-		/// </summary>
-		From,
-
-		/// <summary>
-		/// Sort by the mod-sequence.
-		/// </summary>
-		ModSeq,
-
-		/// <summary>
-		/// Sort by the message size.
-		/// </summary>
-		Size,
-
-		/// <summary>
-		/// Sort by the message subject.
-		/// </summary>
-		Subject,
-
-		/// <summary>
-		/// Sort by the To header.
-		/// </summary>
-		To
+		Both = Private | Shared
 	}
 }

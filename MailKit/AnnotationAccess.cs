@@ -1,5 +1,5 @@
 ﻿//
-// OrderByType.cs
+// AnnotationAccess.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,67 +24,28 @@
 // THE SOFTWARE.
 //
 
-namespace MailKit.Search {
+namespace MailKit {
 	/// <summary>
-	/// The field to sort by.
+	/// An annotation access level.
 	/// </summary>
 	/// <remarks>
-	/// The field to sort by.
+	/// An annotation access level.
 	/// </remarks>
-	public enum OrderByType {
+	public enum AnnotationAccess
+	{
 		/// <summary>
-		/// Sort by an annotation value.
+		/// Annotations are not supported.
 		/// </summary>
-		Annotation,
+		None,
 
 		/// <summary>
-		/// Sort by the arrival date.
+		/// Annotations are read-only.
 		/// </summary>
-		Arrival,
+		ReadOnly,
 
 		/// <summary>
-		/// Sort by the Cc header.
+		/// Annotations are read-write.
 		/// </summary>
-		Cc,
-
-		/// <summary>
-		/// Sort by the Date header.
-		/// </summary>
-		Date,
-
-		/// <summary>
-		/// Sort by the Display Name of the From header.
-		/// </summary>
-		DisplayFrom,
-
-		/// <summary>
-		/// Sort by the Display Name of the To header.
-		/// </summary>
-		DisplayTo,
-
-		/// <summary>
-		/// Sort by the From header.
-		/// </summary>
-		From,
-
-		/// <summary>
-		/// Sort by the mod-sequence.
-		/// </summary>
-		ModSeq,
-
-		/// <summary>
-		/// Sort by the message size.
-		/// </summary>
-		Size,
-
-		/// <summary>
-		/// Sort by the message subject.
-		/// </summary>
-		Subject,
-
-		/// <summary>
-		/// Sort by the To header.
-		/// </summary>
-		To
+		ReadWrite
 	}
 }

@@ -45,6 +45,11 @@ namespace MailKit.Search {
 		And,
 
 		/// <summary>
+		/// A search term that matches messages that have the specified annotation.
+		/// </summary>
+		Annotation,
+
+		/// <summary>
 		/// A search term that matches answered messages.
 		/// </summary>
 		Answered,

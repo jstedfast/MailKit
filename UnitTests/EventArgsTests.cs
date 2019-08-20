@@ -48,6 +48,19 @@ namespace UnitTests {
 		}
 
 		[Test]
+		public void TestAnnotationsChangedEventArgs ()
+		{
+			var annotations = new List<Annotation> ();
+			var args = new AnnotationsChangedEventArgs (0, annotations);
+			Assert.AreEqual (0, args.Annotations.Count);
+			Assert.IsFalse (args.UniqueId.HasValue);
+			Assert.IsFalse (args.ModSeq.HasValue);
+			Assert.AreEqual (0, args.Index);
+
+			Assert.Throws<ArgumentNullException> (() => new AnnotationsChangedEventArgs (0, null));
+		}
+
+		[Test]
 		public void TestAuthenticatedEventArgs ()
 		{
 			var args = new AuthenticatedEventArgs ("Access Granted.");
@@ -88,7 +101,7 @@ namespace UnitTests {
 		[Test]
 		public void TestMessageFlagsChangedEventArgs ()
 		{
-			var userFlags = new HashSet<string> (new [] { "custom1", "custom2" });
+			var keywords = new HashSet<string> (new [] { "custom1", "custom2" });
 			MessageFlagsChangedEventArgs args;
 			var uid = new UniqueId (5);
 			ulong modseq = 724;
@@ -114,15 +127,15 @@ namespace UnitTests {
 			Assert.AreEqual (modseq, args.ModSeq);
 			Assert.AreEqual (0, args.Index);
 
-			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, userFlags);
-			Assert.AreEqual (userFlags.Count, args.UserFlags.Count);
+			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, keywords);
+			Assert.AreEqual (keywords.Count, args.UserFlags.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.IsFalse (args.UniqueId.HasValue);
 			Assert.IsFalse (args.ModSeq.HasValue);
 			Assert.AreEqual (0, args.Index);
 
-			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, userFlags, modseq);
-			Assert.AreEqual (userFlags.Count, args.UserFlags.Count);
+			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, keywords, modseq);
+			Assert.AreEqual (keywords.Count, args.UserFlags.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.IsFalse (args.UniqueId.HasValue);
 			Assert.AreEqual (modseq, args.ModSeq);
@@ -142,15 +155,15 @@ namespace UnitTests {
 			Assert.AreEqual (modseq, args.ModSeq);
 			Assert.AreEqual (0, args.Index);
 
-			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, userFlags);
-			Assert.AreEqual (userFlags.Count, args.UserFlags.Count);
+			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, keywords);
+			Assert.AreEqual (keywords.Count, args.UserFlags.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.AreEqual (uid, args.UniqueId);
 			Assert.IsFalse (args.ModSeq.HasValue);
 			Assert.AreEqual (0, args.Index);
 
-			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, userFlags, modseq);
-			Assert.AreEqual (userFlags.Count, args.UserFlags.Count);
+			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, keywords, modseq);
+			Assert.AreEqual (keywords.Count, args.UserFlags.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.AreEqual (uid, args.UniqueId);
 			Assert.AreEqual (modseq, args.ModSeq);
@@ -159,12 +172,12 @@ namespace UnitTests {
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, MessageFlags.Answered));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, MessageFlags.Answered, modseq));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, MessageFlags.Answered, userFlags));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, MessageFlags.Answered, userFlags, modseq));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, MessageFlags.Answered, keywords));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, MessageFlags.Answered, keywords, modseq));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, uid, MessageFlags.Answered));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, uid, MessageFlags.Answered, modseq));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, uid, MessageFlags.Answered, userFlags));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, uid, MessageFlags.Answered, userFlags, modseq));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, uid, MessageFlags.Answered, keywords));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageFlagsChangedEventArgs (-1, uid, MessageFlags.Answered, keywords, modseq));
 
 			Assert.Throws<ArgumentNullException> (() => new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, null));
 			Assert.Throws<ArgumentNullException> (() => new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, null, modseq));

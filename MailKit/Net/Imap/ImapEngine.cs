@@ -720,6 +720,9 @@ namespace MailKit.Net.Imap {
 		{
 			if (Selected != null) {
 				Selected.Access = FolderAccess.None;
+				Selected.AnnotationAccess = AnnotationAccess.None;
+				Selected.AnnotationScopes = AnnotationScope.None;
+				Selected.MaxAnnotationSize = 0;
 				Selected.OnClosed ();
 				Selected = null;
 			}
@@ -1085,7 +1088,7 @@ namespace MailKit.Net.Imap {
 					uint limit;
 
 					if (uint.TryParse (atom.Substring ("APPENDLIMIT=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out limit))
-					    AppendLimit = limit;
+						AppendLimit = limit;
 
 					Capabilities |= ImapCapabilities.AppendLimit;
 				} else if (atom.StartsWith ("COMPRESS=", StringComparison.OrdinalIgnoreCase)) {
@@ -1527,7 +1530,7 @@ namespace MailKit.Net.Imap {
 				break;
 			case ImapResponseCodeType.CopyUid:
 				var copy = (CopyUidResponseCode) code;
-				
+
 				copy.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1593,6 +1596,54 @@ namespace MailKit.Net.Imap {
 				noUpdate.Tag = (string) token.Value;
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.Annotate:
+				var annotate = (AnnotateResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATE", token);
+
+				switch ((string) token.Value) {
+				case "TOOBIG":
+					annotate.SubType = AnnotateResponseCodeSubType.TooBig;
+					break;
+				case "TOOMANY":
+					annotate.SubType = AnnotateResponseCodeSubType.TooMany;
+					break;
+				}
+
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.Annotations:
+				var annotations = (AnnotationsResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
+
+				switch ((string) token.Value) {
+				case "NONE": break;
+				case "READ-ONLY":
+					annotations.Access = AnnotationAccess.ReadOnly;
+					break;
+				default:
+					annotations.Access = AnnotationAccess.ReadWrite;
+					annotations.MaxSize = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
+					break;
+				}
+
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				if (annotations.Access != AnnotationAccess.None) {
+					annotations.Scopes = AnnotationScope.Both;
+
+					if (token.Type != ImapTokenType.CloseBracket) {
+						AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
+
+						if (((string) token.Value) == "NOPRIVATE")
+							annotations.Scopes = AnnotationScope.Shared;
+
+						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					}
+				}
+
 				break;
 			case ImapResponseCodeType.Metadata:
 				var metadata = (MetadataResponseCode) code;
