@@ -2100,7 +2100,7 @@ namespace MailKit.Net.Smtp {
 					OnNoRecipientsAccepted (message);
 				}
 
-				if ((extensions & SmtpExtension.BinaryMime) != 0)
+				if ((Capabilities & SmtpCapabilities.Chunking) != 0)
 					await BdatAsync (format, message, doAsync, cancellationToken, progress).ConfigureAwait (false);
 				else
 					await DataAsync (format, message, doAsync, cancellationToken, progress).ConfigureAwait (false);

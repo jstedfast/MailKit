@@ -5,9 +5,6 @@
   * ANONYMOUS
   * GSSAPI
 * SMTP Client
-  * CHUNKING (the BDAT command is already implemented and used by BINARYMIME but
-    perhaps the BDAT command could be used always when the server supports the
-    CHUNKING extension to avoid needing to byte-stuff the message?)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
 * IMAP4 Client
   * Consolidate MessageFlagsChanged, MessageLabelsChanged, and ModSeqChanged events into a single event?
