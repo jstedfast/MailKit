@@ -1602,7 +1602,7 @@ namespace MailKit.Net.Imap {
 
 				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATE", token);
 
-				switch ((string) token.Value) {
+				switch (((string) token.Value).ToUpperInvariant ()) {
 				case "TOOBIG":
 					annotate.SubType = AnnotateResponseCodeSubType.TooBig;
 					break;
@@ -1618,7 +1618,7 @@ namespace MailKit.Net.Imap {
 
 				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
 
-				switch ((string) token.Value) {
+				switch (((string) token.Value).ToUpperInvariant ()) {
 				case "NONE": break;
 				case "READ-ONLY":
 					annotations.Access = AnnotationAccess.ReadOnly;
@@ -1637,7 +1637,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.CloseBracket) {
 						AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
 
-						if (((string) token.Value) == "NOPRIVATE")
+						if (((string) token.Value).Equals ("NOPRIVATE", StringComparison.OrdinalIgnoreCase))
 							annotations.Scopes = AnnotationScope.Shared;
 
 						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1887,10 +1887,10 @@ namespace MailKit.Net.Imap {
 				await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				return result;
 			} else {
-				atom = ((string) token.Value).ToUpperInvariant ();
+				atom = (string) token.Value;
 			}
 
-			switch (atom) {
+			switch (atom.ToUpperInvariant ()) {
 			case "BYE":
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1939,9 +1939,9 @@ namespace MailKit.Net.Imap {
 				await UpdateStatusAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case "OK": case "NO": case "BAD":
-				if (atom == "OK")
+				if (atom.Equals ("OK", StringComparison.OrdinalIgnoreCase))
 					result = ImapUntaggedResult.Ok;
-				else if (atom == "NO")
+				else if (atom.Equals ("NO", StringComparison.OrdinalIgnoreCase))
 					result = ImapUntaggedResult.No;
 				else
 					result = ImapUntaggedResult.Bad;
@@ -2003,12 +2003,12 @@ namespace MailKit.Net.Imap {
 					// the command registered an untagged handler for this atom...
 					await handler (this, current, -1, doAsync).ConfigureAwait (false);
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				} else if (atom == "LIST") {
+				} else if (atom.Equals ("LIST", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
 					await ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync, cancellationToken).ConfigureAwait (false);
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
-				} else if (atom == "METADATA") {
+				} else if (atom.Equals ("METADATA", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited METADATA response - probably due to NOTIFY MailboxMetadataChange or ServerMetadataChange
 					var metadata = new MetadataCollection ();
 					await ImapUtils.ParseMetadataAsync (this, metadata, doAsync, cancellationToken).ConfigureAwait (false);
@@ -2016,7 +2016,7 @@ namespace MailKit.Net.Imap {
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
-				} else if (atom == "VANISHED" && folder != null) {
+				} else if (atom.Equals ("VANISHED", StringComparison.OrdinalIgnoreCase) && folder != null) {
 					await folder.OnVanishedAsync (this, doAsync, cancellationToken).ConfigureAwait (false);
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				} else {
