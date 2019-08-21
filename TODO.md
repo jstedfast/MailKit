@@ -12,12 +12,10 @@
 * IMAP4 Client
   * Consolidate MessageFlagsChanged, MessageLabelsChanged, and ModSeqChanged events into a single event?
   * Extensions:
-    * ANNOTATE-EXPERIMENT-1 (not widely supported)
     * BINARY
     * CATENATE
     * LIST-EXTENDED (Note: partially implemented already)
     * CONVERT (Note: none of the mainstream IMAP servers seem to support this)
-    * ANNOTATE
     * MULTISEARCH (Note: none of the mainstream IMAP servers seem to support this)
     * UNAUTHENTICATE
   * Reduce API bloat for Fetch(), [Add,Remove,Set]Flags() and [Add,Remove,Set]Labels().
