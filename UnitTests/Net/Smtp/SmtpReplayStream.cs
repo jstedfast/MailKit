@@ -174,6 +174,19 @@ namespace UnitTests.Net.Smtp {
 				var command = Encoding.UTF8.GetString (sent.GetBuffer (), 0, (int) sent.Length);
 
 				if (state == SmtpReplayState.WaitForCommand) {
+					if (command.StartsWith ("MAIL FROM:", StringComparison.Ordinal)) {
+						var startIndex = command.IndexOf (" SIZE=", StringComparison.Ordinal);
+
+						if (index != -1) {
+							int endIndex = startIndex + " SIZE=".Length;
+
+							while (command[endIndex] != ' ' && command[endIndex] != '\r')
+								endIndex++;
+
+							command = command.Remove (startIndex, endIndex - startIndex);
+						}
+					}
+
 					Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
 
 					stream = GetResourceStream (commands[index].Resource);

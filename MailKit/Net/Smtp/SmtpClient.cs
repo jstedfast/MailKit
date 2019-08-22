@@ -1727,33 +1727,44 @@ namespace MailKit.Net.Smtp {
 			return MailboxAddress.EncodeAddrspec (mailbox.Address);
 		}
 
-		async Task MailFromAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, bool doAsync, CancellationToken cancellationToken)
+		async Task MailFromAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, long size, bool doAsync, CancellationToken cancellationToken)
 		{
-			var utf8 = (extensions & SmtpExtension.UTF8) != 0 ? " SMTPUTF8" : string.Empty;
-			var addrspec = GetAddrspec (options, mailbox);
+			var builder = new StringBuilder ("MAIL FROM:<");
 
-			var command = string.Format ("MAIL FROM:<{0}>{1}", addrspec, utf8);
+			var addrspec = GetAddrspec (options, mailbox);
+			builder.Append (addrspec);
+			builder.Append ('>');
+
+			if ((extensions & SmtpExtension.UTF8) != 0)
+				builder.Append (" SMTPUTF8");
+
+			if ((Capabilities & SmtpCapabilities.Size) != 0 && size != -1)
+				builder.AppendFormat (CultureInfo.InvariantCulture, " SIZE={0}", size);
 
 			if ((extensions & SmtpExtension.BinaryMime) != 0)
-				command += " BODY=BINARYMIME";
+				builder.Append (" BODY=BINARYMIME");
 			else if ((extensions & SmtpExtension.EightBitMime) != 0)
-				command += " BODY=8BITMIME";
+				builder.Append (" BODY=8BITMIME");
 
 			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
 				var envid = GetEnvelopeId (message);
 
-				if (!string.IsNullOrEmpty (envid))
-					command += " ENVID=" + envid;
+				if (!string.IsNullOrEmpty (envid)) {
+					builder.Append (" ENVID=");
+					builder.Append (envid);
+				}
 
 				switch (DeliveryStatusNotificationType) {
 				case DeliveryStatusNotificationType.HeadersOnly:
-					command += " RET=HDRS";
+					builder.Append (" RET=HDRS");
 					break;
 				case DeliveryStatusNotificationType.Full:
-					command += " RET=FULL";
+					builder.Append (" RET=FULL");
 					break;
 				}
 			}
+
+			var command = builder.ToString ();
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
 				await QueueCommandAsync (SmtpCommand.MailFrom, command, doAsync, cancellationToken).ConfigureAwait (false);
@@ -1867,10 +1878,10 @@ namespace MailKit.Net.Smtp {
 		class SendContext
 		{
 			readonly ITransferProgress progress;
-			readonly long? size;
+			readonly long size;
 			long nwritten;
 
-			public SendContext (ITransferProgress progress, long? size)
+			public SendContext (ITransferProgress progress, long size)
 			{
 				this.progress = progress;
 				this.size = size;
@@ -1880,28 +1891,19 @@ namespace MailKit.Net.Smtp {
 			{
 				nwritten += n;
 
-				if (size.HasValue)
-					progress.Report (nwritten, size.Value);
+				if (size != -1)
+					progress.Report (nwritten, size);
 				else
 					progress.Report (nwritten);
 			}
 		}
 
-		async Task BdatAsync (FormatOptions options, MimeMessage message, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		async Task BdatAsync (FormatOptions options, MimeMessage message, long size, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			SmtpResponse response;
 			byte[] bytes;
-			long size;
 
-			using (var measure = new MeasuringStream ()) {
-				if (doAsync)
-					await message.WriteToAsync (options, measure, cancellationToken).ConfigureAwait (false);
-				else
-					message.WriteTo (options, measure, cancellationToken);
-				size = measure.Length;
-			}
-
-			bytes = Encoding.UTF8.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
+			bytes = Encoding.UTF8.GetBytes (string.Format (CultureInfo.InvariantCulture, "BDAT {0} LAST\r\n", size));
 
 			if (doAsync)
 				await Stream.WriteAsync (bytes, 0, bytes.Length, cancellationToken).ConfigureAwait (false);
@@ -1944,7 +1946,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		async Task DataAsync (FormatOptions options, MimeMessage message, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		async Task DataAsync (FormatOptions options, MimeMessage message, long size, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			var response = await SendCommandAsync ("DATA", doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1952,7 +1954,7 @@ namespace MailKit.Net.Smtp {
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 			if (progress != null) {
-				var ctx = new SendContext (progress, null);
+				var ctx = new SendContext (progress, size);
 
 				using (var stream = new ProgressStream (Stream, ctx.Update)) {
 					using (var filtered = new FilteredStream (stream)) {
@@ -2043,6 +2045,62 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		static async Task<long> GetSizeAsync (FormatOptions options, MimeMessage message, bool doAsync, CancellationToken cancellationToken)
+		{
+			using (var measure = new MeasuringStream ()) {
+				if (doAsync)
+					await message.WriteToAsync (options, measure, cancellationToken).ConfigureAwait (false);
+				else
+					message.WriteTo (options, measure, cancellationToken);
+
+				return measure.Length;
+			}
+		}
+
+		/// <summary>
+		/// Get the size of the message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Calculates the size of the message in bytes.</para>
+		/// <para>This method is called by <a href="Overload_MailKit_MailTransport_Send.htm">Send</a>
+		/// methods in the following conditions:</para>
+		/// <list type="bullet">
+		/// <item>The SMTP server supports the <c>SIZE=</c> parameter in the <c>MAIL FROM</c> command.</item>
+		/// <item>The <see cref="ITransferProgress"/> parameter is non-null.</item>
+		/// <item>The SMTP server supports the <c>CHUNKING</c> extension.</item>
+		/// </list>
+		/// </remarks>
+		/// <returns>The size of the message, in bytes.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		protected virtual long GetSize (FormatOptions options, MimeMessage message, CancellationToken cancellationToken)
+		{
+			return GetSizeAsync (options, message, false, cancellationToken).GetAwaiter ().GetResult ();
+		}
+
+		/// <summary>
+		/// Asynchronously get the size of the message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously calculates the size of the message in bytes.</para>
+		/// <para>This method is called by <a href="Overload_MailKit_MailTransport_SendAsync.htm">SendAsync</a>
+		/// methods in the following conditions:</para>
+		/// <list type="bullet">
+		/// <item>The SMTP server supports the <c>SIZE=</c> parameter in the <c>MAIL FROM</c> command.</item>
+		/// <item>The <see cref="ITransferProgress"/> parameter is non-null.</item>
+		/// <item>The SMTP server supports the <c>CHUNKING</c> extension.</item>
+		/// </list>
+		/// </remarks>
+		/// <returns>The size of the message, in bytes.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		protected virtual Task<long> GetSizeAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken)
+		{
+			return GetSizeAsync (options, message, true, cancellationToken);
+		}
+
 		async Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			CheckDisposed ();
@@ -2061,6 +2119,7 @@ namespace MailKit.Net.Smtp {
 				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
 
 			EncodingConstraint constraint;
+			long size;
 
 			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
 				constraint = EncodingConstraint.None;
@@ -2069,7 +2128,7 @@ namespace MailKit.Net.Smtp {
 			else
 				constraint = EncodingConstraint.SevenBit;
 
-			Prepare (options, message, constraint, MaxLineLength);
+			Prepare (format, message, constraint, MaxLineLength);
 
 			// figure out which SMTP extensions we need to use
 			var visitor = new ContentTransferEncodingVisitor (capabilities);
@@ -2080,10 +2139,19 @@ namespace MailKit.Net.Smtp {
 			if (format.International)
 				extensions |= SmtpExtension.UTF8;
 
+			if ((Capabilities & (SmtpCapabilities.Chunking | SmtpCapabilities.Size)) != 0 || progress != null) {
+				if (doAsync)
+					size = await GetSizeAsync (format, message, cancellationToken);
+				else
+					size = GetSize (format, message, cancellationToken);
+			} else {
+				size = -1;
+			}
+
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
 				// queue their commands instead of sending them immediately.
-				await MailFromAsync (format, message, sender, extensions, doAsync, cancellationToken).ConfigureAwait (false);
+				await MailFromAsync (format, message, sender, extensions, size, doAsync, cancellationToken).ConfigureAwait (false);
 
 				int accepted = 0;
 				for (int i = 0; i < recipients.Count; i++) {
@@ -2101,9 +2169,9 @@ namespace MailKit.Net.Smtp {
 				}
 
 				if ((Capabilities & SmtpCapabilities.Chunking) != 0)
-					await BdatAsync (format, message, doAsync, cancellationToken, progress).ConfigureAwait (false);
+					await BdatAsync (format, message, size, doAsync, cancellationToken, progress).ConfigureAwait (false);
 				else
-					await DataAsync (format, message, doAsync, cancellationToken, progress).ConfigureAwait (false);
+					await DataAsync (format, message, size, doAsync, cancellationToken, progress).ConfigureAwait (false);
 			} catch (ServiceNotAuthenticatedException) {
 				// do not disconnect
 				throw;
