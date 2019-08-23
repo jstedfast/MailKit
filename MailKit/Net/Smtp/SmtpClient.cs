@@ -2109,8 +2109,8 @@ namespace MailKit.Net.Smtp {
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
 			var format = options.Clone ();
-			format.EnsureNewLine |= (Capabilities & SmtpCapabilities.Chunking) == 0;
 			format.NewLineFormat = NewLineFormat.Dos;
+			format.EnsureNewLine = true;
 
 			if (format.International && (Capabilities & SmtpCapabilities.UTF8) == 0)
 				format.International = false;
