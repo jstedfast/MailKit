@@ -171,9 +171,9 @@ namespace UnitTests.Net.Smtp {
 			sent.Write (buffer, offset, count);
 
 			if (sent.Length >= commands[index].Command.Length) {
-				var command = Encoding.UTF8.GetString (sent.GetBuffer (), 0, (int) sent.Length);
-
 				if (state == SmtpReplayState.WaitForCommand) {
+					var command = Encoding.UTF8.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+
 					if (command.StartsWith ("MAIL FROM:", StringComparison.Ordinal)) {
 						var startIndex = command.IndexOf (" SIZE=", StringComparison.Ordinal);
 
@@ -191,12 +191,16 @@ namespace UnitTests.Net.Smtp {
 
 					stream = GetResourceStream (commands[index].Resource);
 					state = SmtpReplayState.SendResponse;
-				} else if (command == "\r\n.\r\n") {
-					stream = GetResourceStream (commands[index].Resource);
-					state = SmtpReplayState.SendResponse;
-				}
+					sent.SetLength (0);
+				} else if (sent.Length > 5) {
+					var command = Encoding.ASCII.GetString (sent.GetBuffer (), (int) sent.Length - 5, 5);
 
-				sent.SetLength (0);
+					if (command == "\r\n.\r\n") {
+						stream = GetResourceStream (commands[index].Resource);
+						state = SmtpReplayState.SendResponse;
+						sent.SetLength (0);
+					}
+				}
 			}
 		}
 
