@@ -1437,7 +1437,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async Task<IList<Annotation>> ParseAnnotationsAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		public static async Task<ReadOnlyCollection<Annotation>> ParseAnnotationsAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ANNOTATION", "{0}");
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1486,7 +1486,7 @@ namespace MailKit.Net.Imap {
 			// consume the ')'
 			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			return annotations;
+			return new ReadOnlyCollection<Annotation> (annotations);
 		}
 
 		/// <summary>

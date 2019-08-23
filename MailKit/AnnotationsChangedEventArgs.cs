@@ -25,7 +25,9 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MailKit {
 	/// <summary>
@@ -63,7 +65,7 @@ namespace MailKit {
 			if (annotations == null)
 				throw new ArgumentNullException (nameof (annotations));
 
-			Annotations = new List<Annotation> (annotations).AsReadOnly ();
+			Annotations = new ReadOnlyCollection<Annotation> (annotations.ToArray ());
 		}
 
 		/// <summary>
