@@ -74,6 +74,38 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
+		public void TestSmtpDataFilterEnsureNewLine ()
+		{
+			var inputs = new string[] { SimpleDataInput.TrimEnd (), ComplexDataInput.TrimEnd () };
+			var outputs = new string[] { SimpleDataInput, ComplexDataOutput };
+			var filter = new SmtpDataFilter ();
+
+			for (int i = 0; i < inputs.Length; i++) {
+				using (var memory = new MemoryStream ()) {
+					byte[] buffer;
+					int n;
+
+					using (var filtered = new FilteredStream (memory)) {
+						filtered.Add (filter);
+
+						buffer = Encoding.ASCII.GetBytes (inputs[i]);
+						filtered.Write (buffer, 0, buffer.Length);
+						filtered.Flush ();
+					}
+
+					buffer = memory.GetBuffer ();
+					n = (int) memory.Length;
+
+					var text = Encoding.ASCII.GetString (buffer, 0, n);
+
+					Assert.AreEqual (outputs[i], text);
+
+					filter.Reset ();
+				}
+			}
+		}
+
+		[Test]
 		public void TestSmtpDataFilterBufferBoundaryNewLine ()
 		{
 			string output = new string ('x', 78) + "\r\n..hello\r\n";
@@ -105,6 +137,37 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
+		public void TestSmtpDataFilterBufferBoundaryNewLineEnsureNewLine ()
+		{
+			string output = new string ('x', 78) + "\r\n..hello\r\n";
+			var filter = new SmtpDataFilter ();
+
+			using (var memory = new MemoryStream ()) {
+				byte[] buffer;
+				int n;
+
+				using (var filtered = new FilteredStream (memory)) {
+					filtered.Add (filter);
+
+					buffer = Encoding.ASCII.GetBytes (new string ('x', 78) + "\r\n");
+					filtered.Write (buffer, 0, buffer.Length);
+
+					buffer = Encoding.ASCII.GetBytes (".hello");
+					filtered.Write (buffer, 0, buffer.Length);
+
+					filtered.Flush ();
+				}
+
+				buffer = memory.GetBuffer ();
+				n = (int) memory.Length;
+
+				var text = Encoding.ASCII.GetString (buffer, 0, n);
+
+				Assert.AreEqual (output, text);
+			}
+		}
+
+		[Test]
 		public void TestSmtpDataFilterBufferBoundaryNonNewLine ()
 		{
 			string output = new string ('x', 72) + ".hello\r\n";
@@ -121,6 +184,37 @@ namespace UnitTests.Net.Smtp {
 					filtered.Write (buffer, 0, buffer.Length);
 
 					buffer = Encoding.ASCII.GetBytes (".hello\r\n");
+					filtered.Write (buffer, 0, buffer.Length);
+
+					filtered.Flush ();
+				}
+
+				buffer = memory.GetBuffer ();
+				n = (int) memory.Length;
+
+				var text = Encoding.ASCII.GetString (buffer, 0, n);
+
+				Assert.AreEqual (output, text);
+			}
+		}
+
+		[Test]
+		public void TestSmtpDataFilterBufferBoundaryNonNewLineEnsureNewLine ()
+		{
+			string output = new string ('x', 72) + ".hello\r\n";
+			var filter = new SmtpDataFilter ();
+
+			using (var memory = new MemoryStream ()) {
+				byte[] buffer;
+				int n;
+
+				using (var filtered = new FilteredStream (memory)) {
+					filtered.Add (filter);
+
+					buffer = Encoding.ASCII.GetBytes (new string ('x', 72));
+					filtered.Write (buffer, 0, buffer.Length);
+
+					buffer = Encoding.ASCII.GetBytes (".hello");
 					filtered.Write (buffer, 0, buffer.Length);
 
 					filtered.Flush ();

@@ -74,7 +74,7 @@ namespace MailKit.Net.Smtp {
 	/// </example>
 	public partial class SmtpClient : MailTransport
 	{
-		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
+		static readonly byte[] EndData = Encoding.ASCII.GetBytes (".\r\n");
 		const int MaxLineLength = 998;
 
 		enum SmtpCommand {

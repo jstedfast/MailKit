@@ -50,6 +50,7 @@ namespace MailKit.Net.Smtp {
 			int inputEnd = startIndex + length;
 			bool escape = bol;
 			int ndots = 0;
+			int crlf = 0;
 
 			for (int i = startIndex; i < inputEnd; i++) {
 				byte c = input[i];
@@ -62,14 +63,17 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
-			if (ndots == 0) {
+			if (flush && !escape)
+				crlf = 2;
+
+			if (ndots + crlf == 0) {
 				outputIndex = startIndex;
 				outputLength = length;
 				bol = escape;
 				return input;
 			}
 
-			EnsureOutputSize (length + ndots, false);
+			EnsureOutputSize (length + ndots + crlf, false);
 			int index = 0;
 
 			for (int i = startIndex; i < inputEnd; i++) {
@@ -83,6 +87,11 @@ namespace MailKit.Net.Smtp {
 				}
 
 				OutputBuffer[index++] = c;
+			}
+
+			if (crlf > 0) {
+				OutputBuffer[index++] = (byte) '\r';
+				OutputBuffer[index++] = (byte) '\n';
 			}
 
 			outputLength = index;
