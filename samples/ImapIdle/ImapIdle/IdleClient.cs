@@ -111,6 +111,7 @@ namespace ImapIdle
 						await Task.Delay (new TimeSpan (0, 1, 0), cancel.Token);
 						await client.NoOpAsync (cancel.Token);
 					}
+					break;
 				} catch (ImapProtocolException) {
 					// protocol exceptions often result in the client getting disconnected
 					await ReconnectAsync ();
