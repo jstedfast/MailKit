@@ -103,6 +103,7 @@ namespace ImapIdle
 
 								// throw OperationCanceledException if the cancel token has been canceled.
 								cancel.Token.ThrowIfCancellationRequested ();
+								break;
 							}
 						}
 					} else {
@@ -110,6 +111,7 @@ namespace ImapIdle
 						// between each NOOP command.
 						await Task.Delay (new TimeSpan (0, 1, 0), cancel.Token);
 						await client.NoOpAsync (cancel.Token);
+						break;
 					}
 				} catch (ImapProtocolException) {
 					// protocol exceptions often result in the client getting disconnected
