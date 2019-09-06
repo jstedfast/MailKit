@@ -65,6 +65,14 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="System" targetFramework="monoandroid" />
       <frameworkAssembly assemblyName="System.Core" targetFramework="monoandroid" />
       <frameworkAssembly assemblyName="System.Data" targetFramework="monoandroid" />
@@ -76,6 +84,12 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
+        <dependency id="MimeKit" version="2.3.0" />
+      </group>
+      <group targetFramework="net46">
+        <dependency id="MimeKit" version="2.3.0" />
+      </group>
+      <group targetFramework="net47">
         <dependency id="MimeKit" version="2.3.0" />
       </group>
       <group targetFramework="monoandroid">
@@ -120,6 +134,10 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.xml" target="lib\xamarinios\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net46\MailKit.dll" target="lib\net46\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net46\MailKit.xml" target="lib\net46\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net47\MailKit.dll" target="lib\net47\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net47\MailKit.xml" target="lib\net47\MailKit.xml" />
     <file src="..\MailKit\bin\Release\wpa81\MailKit.dll" target="lib\portable-win81+wpa81\MailKit.dll" />
     <file src="..\MailKit\bin\Release\wpa81\MailKit.xml" target="lib\portable-win81+wpa81\MailKit.xml" />
   </files>
