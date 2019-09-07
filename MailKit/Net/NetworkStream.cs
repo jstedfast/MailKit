@@ -218,6 +218,11 @@ namespace MailKit.Net
 		{
 		}
 
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			return Task.FromResult (true);
+		}
+
 		public override long Seek (long offset, SeekOrigin origin)
 		{
 			throw new NotSupportedException ();
