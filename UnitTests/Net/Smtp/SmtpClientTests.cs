@@ -1753,6 +1753,7 @@ namespace UnitTests.Net.Smtp {
 			var options = FormatOptions.Default.Clone ();
 
 			options.NewLineFormat = NewLineFormat.Dos;
+			options.EnsureNewLine = true;
 
 			using (var measure = new MeasuringStream ()) {
 				message.WriteTo (options, measure);
@@ -1772,6 +1773,7 @@ namespace UnitTests.Net.Smtp {
 				var options = FormatOptions.Default.Clone ();
 
 				options.NewLineFormat = NewLineFormat.Dos;
+				options.EnsureNewLine = true;
 
 				var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
 				memory.Write (bytes, 0, bytes.Length);
@@ -1855,6 +1857,7 @@ namespace UnitTests.Net.Smtp {
 				var options = FormatOptions.Default.Clone ();
 
 				options.NewLineFormat = NewLineFormat.Dos;
+				options.EnsureNewLine = true;
 
 				var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
 				memory.Write (bytes, 0, bytes.Length);
@@ -1862,7 +1865,7 @@ namespace UnitTests.Net.Smtp {
 
 				bytes = memory.GetBuffer ();
 
-				bdat = Encoding.UTF8.GetString (bytes, 0, (int)memory.Length);
+				bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
 			}
 
 			var commands = new List<SmtpReplayCommand> ();
