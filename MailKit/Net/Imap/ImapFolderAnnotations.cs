@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Globalization;
@@ -57,7 +56,7 @@ namespace MailKit.Net.Imap
 
 			var builder = new StringBuilder ("UID STORE %s ");
 			var values = new List<object> ();
-			UniqueIdSet modified = null;
+			UniqueIdSet unmodified = null;
 
 			if (modseq.HasValue)
 				builder.AppendFormat (CultureInfo.InvariantCulture, "(UNCHANGEDSINCE {0}) ", modseq.Value);
@@ -76,22 +75,13 @@ namespace MailKit.Net.Imap
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("STORE", ic);
 
-				if (modseq.HasValue) {
-					var rc = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
-
-					if (rc != null) {
-						if (modified != null)
-							modified.AddRange (rc.UidSet);
-						else
-							modified = rc.UidSet;
-					}
-				}
+				ProcessUnmodified (ic, ref unmodified, modseq);
 			}
 
-			if (modified == null)
+			if (unmodified == null)
 				return new UniqueId[0];
 
-			return modified;
+			return unmodified;
 		}
 
 		/// <summary>
@@ -354,19 +344,7 @@ namespace MailKit.Net.Imap
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("STORE", ic);
 
-			if (modseq.HasValue) {
-				var modified = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
-
-				if (modified != null) {
-					var unmodified = new int[modified.UidSet.Count];
-					for (int i = 0; i < unmodified.Length; i++)
-						unmodified[i] = (int) (modified.UidSet[i].Id - 1);
-
-					return unmodified;
-				}
-			}
-
-			return new int[0];
+			return GetUnmodified (ic, modseq);
 		}
 
 		/// <summary>
