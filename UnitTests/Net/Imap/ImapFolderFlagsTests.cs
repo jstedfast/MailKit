@@ -325,5 +325,93 @@ namespace UnitTests.Net.Imap {
 				client.Disconnect (false);
 			}
 		}
+
+		[Test]
+		public void TestChangingFlagsOnEmptyListOfMessages ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
+
+			using (var client = new ImapClient ()) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				ulong modseq = 409601020304;
+				var uids = new UniqueId[0];
+				var indexes = new int[0];
+				IList<UniqueId> unmodifiedUids;
+				IList<int> unmodifiedIndexes;
+
+				// AddFlags
+				unmodifiedIndexes = inbox.AddFlags (indexes, modseq, MessageFlags.Seen, true);
+				Assert.AreEqual (0, unmodifiedIndexes.Count);
+
+				unmodifiedUids = inbox.AddFlags (uids, modseq, MessageFlags.Seen, true);
+				Assert.AreEqual (0, unmodifiedUids.Count);
+
+				// RemoveFlags
+				unmodifiedIndexes = inbox.RemoveFlags (indexes, modseq, MessageFlags.Seen, true);
+				Assert.AreEqual (0, unmodifiedIndexes.Count);
+
+				unmodifiedUids = inbox.RemoveFlags (uids, modseq, MessageFlags.Seen, true);
+				Assert.AreEqual (0, unmodifiedUids.Count);
+
+				// SetFlags
+				unmodifiedIndexes = inbox.SetFlags (indexes, modseq, MessageFlags.Seen, true);
+				Assert.AreEqual (0, unmodifiedIndexes.Count);
+
+				unmodifiedUids = inbox.SetFlags (uids, modseq, MessageFlags.Seen, true);
+				Assert.AreEqual (0, unmodifiedUids.Count);
+
+				var labels = new string[] { "Label1", "Label2" };
+
+				// AddLabels
+				unmodifiedIndexes = inbox.AddLabels (indexes, modseq, labels, true);
+				Assert.AreEqual (0, unmodifiedIndexes.Count);
+
+				unmodifiedUids = inbox.AddLabels (uids, modseq, labels, true);
+				Assert.AreEqual (0, unmodifiedUids.Count);
+
+				// RemoveLabels
+				unmodifiedIndexes = inbox.RemoveLabels (indexes, modseq, labels, true);
+				Assert.AreEqual (0, unmodifiedIndexes.Count);
+
+				unmodifiedUids = inbox.RemoveLabels (uids, modseq, labels, true);
+				Assert.AreEqual (0, unmodifiedUids.Count);
+
+				// SetLabels
+				unmodifiedIndexes = inbox.SetLabels (indexes, modseq, labels, true);
+				Assert.AreEqual (0, unmodifiedIndexes.Count);
+
+				unmodifiedUids = inbox.SetLabels (uids, modseq, labels, true);
+				Assert.AreEqual (0, unmodifiedUids.Count);
+
+				client.Disconnect (false);
+			}
+		}
 	}
 }

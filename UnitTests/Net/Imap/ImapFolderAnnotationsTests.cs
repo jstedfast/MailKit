@@ -201,6 +201,65 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		[Test]
+		public void TestChangingAnnotationsOnEmptyListOfMessages ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+annotate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate.txt"));
+
+			using (var client = new ImapClient ()) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
+				Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
+				Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+
+				var annotations = new List<Annotation> (new[] {
+					new Annotation (AnnotationEntry.AltSubject)
+				});
+				annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "value");
+
+				ulong modseq = 409601020304;
+				var uids = new UniqueId[0];
+				var indexes = new int[0];
+				IList<UniqueId> unmodifiedUids;
+				IList<int> unmodifiedIndexes;
+
+				unmodifiedIndexes = inbox.Store (indexes, modseq, annotations);
+				Assert.AreEqual (0, unmodifiedIndexes.Count);
+
+				unmodifiedUids = inbox.Store (uids, modseq, annotations);
+				Assert.AreEqual (0, unmodifiedUids.Count);
+
+				client.Disconnect (false);
+			}
+		}
+
 		IList<ImapReplayCommand> CreateAppendWithAnnotationsCommands (bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates, out List<Annotation> annotations)
 		{
 			var commands = new List<ImapReplayCommand> ();
