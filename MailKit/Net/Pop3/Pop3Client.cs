@@ -668,7 +668,7 @@ namespace MailKit.Net.Pop3 {
 					await QueryCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					await UpdateMessageCountAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					await ProbeCapabilitiesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					OnAuthenticated (message);
+					OnAuthenticated (message ?? string.Empty);
 					return;
 				}
 			}
