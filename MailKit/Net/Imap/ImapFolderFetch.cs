@@ -579,6 +579,9 @@ namespace MailKit.Net.Imap
 					return;
 
 				var body = message.TextBody ?? message.HtmlBody;
+				if (body == null)
+					return;
+
 				var charset = body.ContentType.Charset;
 				ContentEncoding encoding;
 
