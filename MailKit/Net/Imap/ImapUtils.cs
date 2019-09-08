@@ -439,22 +439,19 @@ namespace MailKit.Net.Imap {
 			switch (token.Type) {
 			case ImapTokenType.Literal:
 				encodedName = await engine.ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				encodedName.TrimEnd (delim);
 				break;
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
 				encodedName = (string) token.Value;
-				encodedName.TrimEnd (delim);
 				break;
 			case ImapTokenType.Nil:
 				// Note: according to rfc3501, section 4.5, NIL is acceptable as a mailbox name.
-				encodedName = "NIL";
-				break;
+				return "NIL";
 			default:
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			return encodedName;
+			return encodedName.TrimEnd (delim);
 		}
 
 		/// <summary>
