@@ -195,6 +195,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\common\preauth-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-annotate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-annotate-no-modseq.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-annotate-none.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-annotate-readonly.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\select-inbox-no-modseq.txt" />

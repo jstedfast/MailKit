@@ -99,6 +99,104 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (() => inbox.Store (0, (IList<Annotation>) null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync (0, (IList<Annotation>) null));
 
+				Assert.Throws<ArgumentException> (() => inbox.Store (UniqueId.Invalid, annotations));
+				Assert.Throws<ArgumentException> (async () => await inbox.StoreAsync (UniqueId.Invalid, annotations));
+				Assert.Throws<ArgumentNullException> (() => inbox.Store (UniqueId.MinValue, (IList<Annotation>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync (UniqueId.MinValue, (IList<Annotation>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Store ((IList<int>) null, annotations));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync ((IList<int>) null, annotations));
+				Assert.Throws<ArgumentNullException> (() => inbox.Store (new int[] { 0 }, (IList<Annotation>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync (new int[] { 0 }, (IList<Annotation>) null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Store ((IList<int>) null, 1, annotations));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync ((IList<int>) null, 1, annotations));
+				Assert.Throws<ArgumentNullException> (() => inbox.Store (new int[] { 0 }, 1, (IList<Annotation>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync (new int[] { 0 }, 1, (IList<Annotation>) null));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Store ((IList<UniqueId>) null, annotations));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync ((IList<UniqueId>) null, annotations));
+				Assert.Throws<ArgumentNullException> (() => inbox.Store (UniqueIdRange.All, (IList<Annotation>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync (UniqueIdRange.All, (IList<Annotation>) null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Store ((IList<UniqueId>) null, 1, annotations));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync ((IList<UniqueId>) null, 1, annotations));
+				Assert.Throws<ArgumentNullException> (() => inbox.Store (UniqueIdRange.All, 1, (IList<Annotation>) null));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.StoreAsync (UniqueIdRange.All, 1, (IList<Annotation>) null));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public void TestNotSupportedExceptions ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+annotate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (ANNOTATE)\r\n", "common.select-inbox-annotate-no-modseq.txt"));
+
+			using (var client = new ImapClient ()) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				Assert.AreEqual (AnnotationAccess.None, inbox.AnnotationAccess, "AnnotationAccess");
+				Assert.AreEqual (AnnotationScope.None, inbox.AnnotationScopes, "AnnotationScopes");
+				Assert.AreEqual (0, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+
+				var annotations = new List<Annotation> (new[] {
+					new Annotation (AnnotationEntry.AltSubject)
+				});
+				annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "value");
+
+				// verify NotSupportedException for storing annotations
+				Assert.Throws<NotSupportedException> (() => inbox.Store (0, annotations));
+				Assert.Throws<NotSupportedException> (async () => await inbox.StoreAsync (0, annotations));
+
+				Assert.Throws<NotSupportedException> (() => inbox.Store (UniqueId.MinValue, annotations));
+				Assert.Throws<NotSupportedException> (async () => await inbox.StoreAsync (UniqueId.MinValue, annotations));
+
+				Assert.Throws<NotSupportedException> (() => inbox.Store (new int[] { 0 }, 1, annotations));
+				Assert.Throws<NotSupportedException> (async () => await inbox.StoreAsync (new int[] { 0 }, 1, annotations));
+
+				Assert.Throws<NotSupportedException> (() => inbox.Store (UniqueIdRange.All, 1, annotations));
+				Assert.Throws<NotSupportedException> (async () => await inbox.StoreAsync (UniqueIdRange.All, 1, annotations));
+
+				// disable CONDSTORE and verify that we get NotSupportedException when we send modseq
+				client.Capabilities &= ~ImapCapabilities.CondStore;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
+				Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
+				Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+
+				Assert.Throws<NotSupportedException> (() => inbox.Store (new int[] { 0 }, 1, annotations));
+				Assert.Throws<NotSupportedException> (async () => await inbox.StoreAsync (new int[] { 0 }, 1, annotations));
+
+				Assert.Throws<NotSupportedException> (() => inbox.Store (UniqueIdRange.All, 1, annotations));
+				Assert.Throws<NotSupportedException> (async () => await inbox.StoreAsync (UniqueIdRange.All, 1, annotations));
+
 				client.Disconnect (false);
 			}
 		}

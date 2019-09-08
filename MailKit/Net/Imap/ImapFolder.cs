@@ -149,6 +149,23 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("Indexes and '*' cannot be used while MessageNew/MessageExpunge is registered with NOTIFY for SELECTED.");
 		}
 
+		void Reset ()
+		{
+			// basic state
+			PermanentFlags = MessageFlags.None;
+			AcceptedFlags = MessageFlags.None;
+			Access = FolderAccess.None;
+
+			// annotate state
+			AnnotationAccess = AnnotationAccess.None;
+			AnnotationScopes = AnnotationScope.None;
+			MaxAnnotationSize = 0;
+
+			// condstore state
+			SupportsModSeq = false;
+			HighestModSeq = 0;
+		}
+
 		/// <summary>
 		/// Notifies the folder that a parent folder has been renamed.
 		/// </summary>
@@ -163,10 +180,7 @@ namespace MailKit.Net.Imap {
 			EncodedName = Engine.EncodeMailboxName (FullName);
 			Engine.FolderCache.Remove (oldEncodedName);
 			Engine.FolderCache[EncodedName] = this;
-			Access = FolderAccess.None;
-			AnnotationAccess = AnnotationAccess.None;
-			AnnotationScopes = AnnotationScope.None;
-			MaxAnnotationSize = 0;
+			Reset ();
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
@@ -274,6 +288,8 @@ namespace MailKit.Net.Imap {
 
 		async Task<FolderAccess> OpenAsync (ImapCommand ic, FolderAccess access, bool doAsync, CancellationToken cancellationToken)
 		{
+			Reset ();
+
 			if (access == FolderAccess.ReadWrite) {
 				// Note: if the server does not respond with a PERMANENTFLAGS response,
 				// then we need to assume all flags are permanent.
@@ -299,12 +315,7 @@ namespace MailKit.Net.Imap {
 			if (Engine.Selected != null && Engine.Selected != this) {
 				var folder = Engine.Selected;
 
-				folder.PermanentFlags = MessageFlags.None;
-				folder.AcceptedFlags = MessageFlags.None;
-				folder.Access = FolderAccess.None;
-				folder.AnnotationAccess = AnnotationAccess.None;
-				folder.AnnotationScopes = AnnotationScope.None;
-				folder.MaxAnnotationSize = 0;
+				folder.Reset ();
 
 				folder.OnClosed ();
 			}
@@ -592,10 +603,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create (expunge ? "CLOSE" : "UNSELECT", ic);
 			}
 
-			Access = FolderAccess.None;
-			AnnotationAccess = AnnotationAccess.None;
-			AnnotationScopes = AnnotationScope.None;
-			MaxAnnotationSize = 0;
+			Reset ();
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
@@ -1059,12 +1067,10 @@ namespace MailKit.Net.Imap {
 			ParentFolder = parent;
 
 			FullName = Engine.DecodeMailboxName (encodedName);
-			Access = FolderAccess.None;
-			AnnotationAccess = AnnotationAccess.None;
-			AnnotationScopes = AnnotationScope.None;
-			MaxAnnotationSize = 0;
 			EncodedName = encodedName;
 			Name = name;
+
+			Reset ();
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
@@ -1194,10 +1200,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("DELETE", ic);
 
-			Access = FolderAccess.None;
-			AnnotationAccess = AnnotationAccess.None;
-			AnnotationScopes = AnnotationScope.None;
-			MaxAnnotationSize = 0;
+			Reset ();
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
