@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
     <AssemblyTitle>MailKit</AssemblyTitle>
-    <VersionPrefix>2.3.0</VersionPrefix>
+    <VersionPrefix>2.3.1</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
     <TargetFrameworks>netstandard1.3;netstandard1.6;netstandard2.0;net46;net47</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -53,7 +53,7 @@
   </ItemGroup-->
 
   <ItemGroup>
-    <PackageReference Include="MimeKit" Version="2.3.0" />
+    <PackageReference Include="MimeKit" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>

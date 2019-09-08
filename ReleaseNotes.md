@@ -1,5 +1,12 @@
 # Release Notes
 
+### MailKit 2.3.1 (2019-09-08)
+
+* Fixed SmtpClient.Send*() to make sure never to add an extra CRLF sequence to the end of
+  messages when sending via the DATA command.
+  (issue [#895](https://github.com/jstedfast/MailKit/issues/895))
+* Added assemblies for net46 and net47 to the NuGet package.
+
 ### MailKit 2.3.0 (2019-08-24)
 
 * Improved the default SSL/TLS certificate validation logic.

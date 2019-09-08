@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.3.0</version>
+    <version>2.3.1</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,22 +26,8 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Improved the default SSL/TLS certificate validation logic.
-* Improved exception messages for the POP3 LIST and STAT commands.
-* Modified Pop3Client to accept negative values for the 'octets' value in the STAT response. (issue #872)
-* Added work-around for IMAP BODYSTRUCTURE responses that treat multiparts as basic parts. (issue #878)
-* Added check to make sure that MD5 is supported by the runtime and automatically disable support for CRAM-MD5 and DIGEST-MD5 SASL mechanisms when MD5 is not supported.
-* Added a Stream property to ProtocolLogger.
-* Fixed fetching of PreviewText items if the body's ContentTransferEncoding is NIL. (issue #881)
-* Improved processing of pipelined SMTP commands to provide better exception messages. (issue #883)
-* Modified SmtpClient.Send() and SendAsync() methods to not call MimeMessage.Prepare() if any DKIM or ARC headers are present in order to avoid the potential risk of altering the message and breaking the signatures within those headers.
-* Added protected SmtpClient.SendCommand() and SendCommandAsync() methods to allow custom subclasses the ability to send custom commands to the SMTP server. (issue #891)
-* Allow SmtpClient subclasses to override message preparation by overriding a new SmtpClient.Prepare() method. (issue #891)
-* Improved ImapFolder's ModSeqChanged event to set the UniqueId property if available in unsolicited FETCH notifications including a MODSEQ and UID value.
-* Fixed the IMAP client logic to properly handle lower or mixed case IMAP tokens. (issue #893)
-* Added support for IMAP's ANNOTATE-EXPERIMENT-1 extension. (issue #818)
-* Always use the SMTP BDAT command instead of DATA if CHUNKING is supported. (issue #896)
-* Improved SmtpClient to include a SIZE= parameter in the MAIL FROM command if the SIZE extension is supported. Progress reporting will now always have the expected message size available as well.
+* Fixed SmtpClient.Send*() to make sure never to add an extra CRLF sequence to the end of messages when sending via the DATA command. (issue #895)
+* Added assemblies for net46 and net47 to the NuGet package.
 
 API Changes Since 2.0.x:
 
@@ -84,40 +70,40 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
       <group targetFramework="monoandroid">
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
       <group targetFramework="xamarinios">
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
       <group targetFramework="netstandard1.6">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
       <group targetFramework="portable-win81+wpa81">
-        <dependency id="MimeKit" version="2.3.0" />
+        <dependency id="MimeKit" version="2.3.1" />
       </group>
     </dependencies>
   </metadata>
