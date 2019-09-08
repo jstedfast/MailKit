@@ -719,10 +719,7 @@ namespace MailKit.Net.Imap {
 		public void Disconnect ()
 		{
 			if (Selected != null) {
-				Selected.Access = FolderAccess.None;
-				Selected.AnnotationAccess = AnnotationAccess.None;
-				Selected.AnnotationScopes = AnnotationScope.None;
-				Selected.MaxAnnotationSize = 0;
+				Selected.Reset ();
 				Selected.OnClosed ();
 				Selected = null;
 			}

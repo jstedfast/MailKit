@@ -149,7 +149,7 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("Indexes and '*' cannot be used while MessageNew/MessageExpunge is registered with NOTIFY for SELECTED.");
 		}
 
-		void Reset ()
+		internal void Reset ()
 		{
 			// basic state
 			PermanentFlags = MessageFlags.None;
