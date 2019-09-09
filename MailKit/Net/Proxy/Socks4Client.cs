@@ -220,7 +220,7 @@ namespace MailKit.Net.Proxy
 
 				return socket;
 			} catch {
-#if NETSTANDARD_2_0 || NET_4_5 || __MOBILE__
+#if NETSTANDARD_2_0 || NET_4_5 || NET_4_6 || NET_4_7 || __MOBILE__
 				if (socket.Connected)
 					socket.Disconnect (false);
 #endif
