@@ -414,8 +414,8 @@ namespace MailKit.Net.Imap {
 			Folder = folder;
 
 			using (var builder = new MemoryStream ()) {
+				byte[] buf, utf8 = new byte[8];
 				int argc = 0;
-				byte[] buf;
 				string str;
 
 				for (int i = 0; i < format.Length; i++) {
@@ -477,8 +477,13 @@ namespace MailKit.Net.Imap {
 						default:
 							throw new FormatException ();
 						}
-					} else {
+					} else if (format[i] < 128) {
 						builder.WriteByte ((byte) format[i]);
+					} else {
+						int nchars = char.IsSurrogate (format[i]) ? 2 : 1;
+						int nbytes = Encoding.UTF8.GetBytes (format, i, nchars, utf8, 0);
+						builder.Write (utf8, 0, nbytes);
+						i += nchars - 1;
 					}
 				}
 

@@ -26,6 +26,7 @@
 
 using System;
 using System.Net;
+using System.Text;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -142,6 +143,53 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.ThreadAsync (UniqueIdRange.All, (ThreadingAlgorithm) 500, SearchQuery.All));
 				Assert.Throws<ArgumentNullException> (() => inbox.Thread (UniqueIdRange.All, ThreadingAlgorithm.References, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.ThreadAsync (UniqueIdRange.All, ThreadingAlgorithm.References, null));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public void TestRawUnicodeSearch ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
+			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH SUBJECT {13+}\r\nComunicação\r\n", "dovecot.search-raw.txt"));
+
+			using (var client = new ImapClient ()) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var matches = inbox.Search ("SUBJECT {13+}\r\nComunicação");
+				Assert.IsFalse (matches.Max.HasValue, "MAX should not be set");
+				Assert.IsFalse (matches.Min.HasValue, "MIN should not be set");
+				Assert.AreEqual (0, matches.Count, "COUNT should not be set");
+				Assert.AreEqual (14, matches.UniqueIds.Count);
+				for (int i = 0; i < matches.UniqueIds.Count; i++)
+					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
 
 				client.Disconnect (false);
 			}

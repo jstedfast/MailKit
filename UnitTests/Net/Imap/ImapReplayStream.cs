@@ -144,17 +144,23 @@ namespace UnitTests.Net.Imap {
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 
+		public Encoding Encoding { get; private set; }
 		public byte[] CommandBuffer { get; private set; }
 		public string Command { get; private set; }
 		public byte[] Response { get; private set; }
 		public bool Compressed { get; private set; }
 
-		public ImapReplayCommand (string command, byte[] response, bool compressed = false)
+		public ImapReplayCommand (string command, byte[] response, bool compressed = false) : this (Latin1, command, response, compressed)
 		{
-			Command = command;
-			Response = response;
+		}
+
+		public ImapReplayCommand (Encoding encoding, string command, byte[] response, bool compressed = false)
+		{
+			CommandBuffer = encoding.GetBytes (command);
 			Compressed = compressed;
-			CommandBuffer = Latin1.GetBytes (command);
+			Response = response;
+			Encoding = encoding;
+			Command = command;
 
 			if (compressed) {
 				using (var memory = new MemoryStream ()) {
@@ -168,12 +174,17 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		public ImapReplayCommand (string command, string resource, bool compressed = false)
+		public ImapReplayCommand (string command, string resource, bool compressed = false) : this (Latin1, command, resource, compressed)
+		{
+		}
+
+		public ImapReplayCommand (Encoding encoding, string command, string resource, bool compressed = false)
 		{
 			string tag = null;
 
-			CommandBuffer = Latin1.GetBytes (command);
+			CommandBuffer = encoding.GetBytes (command);
 			Compressed = compressed;
+			Encoding = encoding;
 			Command = command;
 
 			if (command.StartsWith ("A00000", StringComparison.Ordinal))
@@ -208,10 +219,15 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		public ImapReplayCommand (string tag, string command, string resource, bool compressed = false)
+		public ImapReplayCommand (string tag, string command, string resource, bool compressed = false) : this (Latin1, tag, command, resource, compressed)
 		{
-			CommandBuffer = Latin1.GetBytes (command);
+		}
+
+		public ImapReplayCommand (Encoding encoding, string tag, string command, string resource, bool compressed = false)
+		{
+			CommandBuffer = encoding.GetBytes (command);
 			Compressed = compressed;
+			Encoding = encoding;
 			Command = command;
 
 			using (var stream = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + resource)) {
@@ -241,10 +257,15 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		public ImapReplayCommand (string command, ImapReplayCommandResponse response, bool compressed = false)
+		public ImapReplayCommand (string command, ImapReplayCommandResponse response, bool compressed = false) : this (Latin1, command, response, compressed)
 		{
-			CommandBuffer = Latin1.GetBytes (command);
+		}
+
+		public ImapReplayCommand (Encoding encoding, string command, ImapReplayCommandResponse response, bool compressed = false)
+		{
+			CommandBuffer = encoding.GetBytes (command);
 			Compressed = compressed;
+			Encoding = encoding;
 			Command = command;
 
 			string text;
@@ -262,7 +283,7 @@ namespace UnitTests.Net.Imap {
 			if (compressed) {
 				using (var memory = new MemoryStream ()) {
 					using (var compress = new CompressedStream (memory)) {
-						var buffer = Encoding.ASCII.GetBytes (text);
+						var buffer = encoding.GetBytes (text);
 
 						compress.Write (buffer, 0, buffer.Length);
 						compress.Flush ();
@@ -280,7 +301,7 @@ namespace UnitTests.Net.Imap {
 					}
 				}
 			} else {
-				Response = Encoding.ASCII.GetBytes (text);
+				Response = encoding.GetBytes (text);
 			}
 		}
 	}
@@ -292,7 +313,6 @@ namespace UnitTests.Net.Imap {
 
 	class ImapReplayStream : Stream
 	{
-		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		readonly MemoryStream sent = new MemoryStream ();
 		readonly IList<ImapReplayCommand> commands;
 		readonly bool testUnixFormat;
@@ -422,14 +442,14 @@ namespace UnitTests.Net.Imap {
 		string GetSentCommand ()
 		{
 			if (!commands[index].Compressed)
-				return Latin1.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+				return commands[index].Encoding.GetString (sent.GetBuffer (), 0, (int) sent.Length);
 
 			using (var memory = new MemoryStream (sent.GetBuffer (), 0, (int) sent.Length)) {
 				using (var compressed = new CompressedStream (memory)) {
 					using (var decompressed = new MemoryStream ()) {
 						compressed.CopyTo (decompressed, 4096);
 
-						return Latin1.GetString (decompressed.GetBuffer (), 0, (int) decompressed.Length);
+						return commands[index].Encoding.GetString (decompressed.GetBuffer (), 0, (int) decompressed.Length);
 					}
 				}
 			}
