@@ -56,7 +56,7 @@ namespace MailKit {
 	public abstract class MailService : IMailService
 	{
 #if NET_4_5 || NET_4_6 || NET_4_7 || __MOBILE__ || NETSTANDARD
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;
 #elif !NETFX_CORE
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
 #endif
