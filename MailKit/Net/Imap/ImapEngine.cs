@@ -625,6 +625,7 @@ namespace MailKit.Net.Imap {
 
 			State = ImapEngineState.Connecting;
 			QuirksMode = ImapQuirksMode.None;
+			SupportedCharsets.Add ("US-ASCII");
 			SupportedCharsets.Add ("UTF-8");
 			CapabilitiesVersion = 0;
 			QResyncEnabled = false;

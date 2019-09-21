@@ -3659,7 +3659,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				// get the list of messages marked for deletion that should not be expunged
 				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
-				var unmark = await SearchAsync (query, doAsync, cancellationToken).ConfigureAwait (false);
+				var unmark = await SearchAsync (query, doAsync, false, cancellationToken).ConfigureAwait (false);
 
 				if (unmark.Count > 0) {
 					// clear the \Deleted flag on all messages except the ones that are to be expunged

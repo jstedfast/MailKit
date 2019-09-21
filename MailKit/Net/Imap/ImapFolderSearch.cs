@@ -59,9 +59,40 @@ namespace MailKit.Net.Imap
 			return date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture);
 		}
 
-		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args, bool parens, ref bool ascii)
+		bool IsBadCharset (ImapCommand ic, string charset)
 		{
-			TextSearchQuery text = null;
+			// Note: if `charset` is null, then the charset is actually US-ASCII...
+			return ic.Response == ImapCommandResponse.No &&
+				ic.RespCodes.Any (rc => rc.Type == ImapResponseCodeType.BadCharset) &&
+				charset != null && !Engine.SupportedCharsets.Contains (charset);
+		}
+
+		void AddTextArgument (StringBuilder builder, List<object> args, string text, ref string charset)
+		{
+			if (IsAscii (text)) {
+				builder.Append ("%S");
+				args.Add (text);
+				return;
+			}
+
+			if (Engine.SupportedCharsets.Contains ("UTF-8")) {
+				builder.Append ("%S");
+				charset = "UTF-8";
+				args.Add (text);
+				return;
+			}
+
+			// force the text into US-ASCII...
+			var buffer = new byte[text.Length];
+			for (int i = 0; i < text.Length; i++)
+				buffer[i] = (byte) text[i];
+
+			builder.Append ("%L");
+			args.Add (buffer);
+		}
+
+		void BuildQuery (StringBuilder builder, SearchQuery query, List<object> args, bool parens, ref string charset)
+		{
 			AnnotationSearchQuery annotation;
 			NumericSearchQuery numeric;
 			FilterSearchQuery filter;
@@ -69,6 +100,7 @@ namespace MailKit.Net.Imap
 			BinarySearchQuery binary;
 			UnarySearchQuery unary;
 			DateSearchQuery date;
+			TextSearchQuery text;
 			UidSearchQuery uid;
 
 			switch (query.Term) {
@@ -79,9 +111,9 @@ namespace MailKit.Net.Imap
 				binary = (BinarySearchQuery) query;
 				if (parens)
 					builder.Append ('(');
-				BuildQuery (builder, binary.Left, args, false, ref ascii);
+				BuildQuery (builder, binary.Left, args, false, ref charset);
 				builder.Append (' ');
-				BuildQuery (builder, binary.Right, args, false, ref ascii);
+				BuildQuery (builder, binary.Right, args, false, ref charset);
 				if (parens)
 					builder.Append (')');
 				break;
@@ -98,18 +130,18 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.BccContains:
 				text = (TextSearchQuery) query;
-				builder.Append ("BCC %S");
-				args.Add (text.Text);
+				builder.Append ("BCC ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.BodyContains:
 				text = (TextSearchQuery) query;
-				builder.Append ("BODY %S");
-				args.Add (text.Text);
+				builder.Append ("BODY ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.CcContains:
 				text = (TextSearchQuery) query;
-				builder.Append ("CC %S");
-				args.Add (text.Text);
+				builder.Append ("CC ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.Deleted:
 				builder.Append ("DELETED");
@@ -142,8 +174,8 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.FromContains:
 				text = (TextSearchQuery) query;
-				builder.Append ("FROM %S");
-				args.Add (text.Text);
+				builder.Append ("FROM ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.Fuzzy:
 				if ((Engine.Capabilities & ImapCapabilities.FuzzySearch) == 0)
@@ -151,17 +183,17 @@ namespace MailKit.Net.Imap
 
 				builder.Append ("FUZZY ");
 				unary = (UnarySearchQuery) query;
-				BuildQuery (builder, unary.Operand, args, true, ref ascii);
+				BuildQuery (builder, unary.Operand, args, true, ref charset);
 				break;
 			case SearchTerm.HeaderContains:
 				header = (HeaderSearchQuery) query;
-				builder.AppendFormat ("HEADER {0} %S", header.Field);
-				args.Add (header.Value);
+				builder.AppendFormat ("HEADER {0} ", header.Field);
+				AddTextArgument (builder, args, header.Value, ref charset);
 				break;
 			case SearchTerm.Keyword:
 				text = (TextSearchQuery) query;
-				builder.Append ("KEYWORD %S");
-				args.Add (text.Text);
+				builder.Append ("KEYWORD ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.LargerThan:
 				numeric = (NumericSearchQuery) query;
@@ -169,8 +201,8 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.MessageContains:
 				text = (TextSearchQuery) query;
-				builder.Append ("TEXT %S");
-				args.Add (text.Text);
+				builder.Append ("TEXT ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.ModSeq:
 				numeric = (NumericSearchQuery) query;
@@ -182,7 +214,7 @@ namespace MailKit.Net.Imap
 			case SearchTerm.Not:
 				builder.Append ("NOT ");
 				unary = (UnarySearchQuery) query;
-				BuildQuery (builder, unary.Operand, args, true, ref ascii);
+				BuildQuery (builder, unary.Operand, args, true, ref charset);
 				break;
 			case SearchTerm.NotAnswered:
 				builder.Append ("UNANSWERED");
@@ -198,8 +230,8 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.NotKeyword:
 				text = (TextSearchQuery) query;
-				builder.Append ("UNKEYWORD %S");
-				args.Add (text.Text);
+				builder.Append ("UNKEYWORD ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.NotRecent:
 				builder.Append ("OLD");
@@ -217,9 +249,9 @@ namespace MailKit.Net.Imap
 			case SearchTerm.Or:
 				builder.Append ("OR ");
 				binary = (BinarySearchQuery) query;
-				BuildQuery (builder, binary.Left, args, true, ref ascii);
+				BuildQuery (builder, binary.Left, args, true, ref charset);
 				builder.Append (' ');
-				BuildQuery (builder, binary.Right, args, true, ref ascii);
+				BuildQuery (builder, binary.Right, args, true, ref charset);
 				break;
 			case SearchTerm.Recent:
 				builder.Append ("RECENT");
@@ -245,13 +277,13 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.SubjectContains:
 				text = (TextSearchQuery) query;
-				builder.Append ("SUBJECT %S");
-				args.Add (text.Text);
+				builder.Append ("SUBJECT ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.ToContains:
 				text = (TextSearchQuery) query;
-				builder.Append ("TO %S");
-				args.Add (text.Text);
+				builder.Append ("TO ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.Uid:
 				uid = (UidSearchQuery) query;
@@ -283,33 +315,29 @@ namespace MailKit.Net.Imap
 					throw new NotSupportedException ("The X-GM-LABELS search term is not supported by the IMAP server.");
 
 				text = (TextSearchQuery) query;
-				builder.Append ("X-GM-LABELS %S");
-				args.Add (text.Text);
+				builder.Append ("X-GM-LABELS ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.GMailRaw:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 					throw new NotSupportedException ("The X-GM-RAW search term is not supported by the IMAP server.");
 
 				text = (TextSearchQuery) query;
-				builder.Append ("X-GM-RAW %S");
-				args.Add (text.Text);
+				builder.Append ("X-GM-RAW ");
+				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			default:
 				throw new ArgumentOutOfRangeException ();
 			}
-
-			if (text != null && !IsAscii (text.Text))
-				ascii = false;
 		}
 
-		string BuildQueryExpression (SearchQuery query, List<string> args, out string charset)
+		string BuildQueryExpression (SearchQuery query, List<object> args, out string charset)
 		{
 			var builder = new StringBuilder ();
-			bool ascii = true;
 
-			BuildQuery (builder, query, args, false, ref ascii);
+			charset = null;
 
-			charset = ascii ? null : "UTF-8";
+			BuildQuery (builder, query, args, false, ref charset);
 
 			return builder.ToString ();
 		}
@@ -667,9 +695,9 @@ namespace MailKit.Net.Imap
 			return SearchAsync (query, true, cancellationToken);
 		}
 
-		async Task<IList<UniqueId>> SearchAsync (SearchQuery query, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<UniqueId>> SearchAsync (SearchQuery query, bool doAsync, bool retry, CancellationToken cancellationToken)
 		{
-			var args = new List<string> ();
+			var args = new List<object> ();
 			string charset;
 
 			if (query == null)
@@ -705,8 +733,12 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok) {
+				if (retry && IsBadCharset (ic, charset))
+					return await SearchAsync (query, doAsync, false, cancellationToken).ConfigureAwait (false);
+
 				throw ImapCommandException.Create ("SEARCH", ic);
+			}
 
 			return ((SearchResults) ic.UserData).UniqueIds;
 		}
@@ -753,7 +785,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<UniqueId> Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SearchAsync (query, false, cancellationToken).GetAwaiter ().GetResult ();
+			return SearchAsync (query, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -798,12 +830,12 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<IList<UniqueId>> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SearchAsync (query, true, cancellationToken);
+			return SearchAsync (query, true, true, cancellationToken);
 		}
 
-		async Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, bool doAsync, CancellationToken cancellationToken)
+		async Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, bool doAsync, bool retry, CancellationToken cancellationToken)
 		{
-			var args = new List<string> ();
+			var args = new List<object> ();
 			string charset;
 
 			if (query == null)
@@ -853,8 +885,12 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok) {
+				if (retry && IsBadCharset (ic, charset))
+					return await SearchAsync (options, query, doAsync, false, cancellationToken).ConfigureAwait (false);
+
 				throw ImapCommandException.Create ("SEARCH", ic);
+			}
 
 			return (SearchResults) ic.UserData;
 		}
@@ -904,7 +940,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SearchAsync (options, query, false, cancellationToken).GetAwaiter ().GetResult ();
+			return SearchAsync (options, query, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -952,7 +988,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SearchAsync (options, query, true, cancellationToken);
+			return SearchAsync (options, query, true, true, cancellationToken);
 		}
 
 		async Task<SearchResults> SortAsync (string query, bool doAsync, CancellationToken cancellationToken)
@@ -1089,9 +1125,9 @@ namespace MailKit.Net.Imap
 			return SortAsync (query, true, cancellationToken);
 		}
 
-		async Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, bool doAsync, bool retry, CancellationToken cancellationToken)
 		{
-			var args = new List<string> ();
+			var args = new List<object> ();
 			string charset;
 
 			if (query == null)
@@ -1131,8 +1167,12 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok) {
+				if (retry && IsBadCharset (ic, charset))
+					return await SortAsync (query, orderBy, doAsync, false, cancellationToken).ConfigureAwait (false);
+
 				throw ImapCommandException.Create ("SORT", ic);
+			}
 
 			return ((SearchResults) ic.UserData).UniqueIds;
 		}
@@ -1187,7 +1227,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SortAsync (query, orderBy, false, cancellationToken).GetAwaiter ().GetResult ();
+			return SortAsync (query, orderBy, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1240,12 +1280,12 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SortAsync (query, orderBy, true, cancellationToken);
+			return SortAsync (query, orderBy, true, true, cancellationToken);
 		}
 
-		async Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, bool doAsync, CancellationToken cancellationToken)
+		async Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, bool doAsync, bool retry, CancellationToken cancellationToken)
 		{
-			var args = new List<string> ();
+			var args = new List<object> ();
 			string charset;
 
 			if (query == null)
@@ -1294,8 +1334,12 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok) {
+				if (retry && IsBadCharset (ic, charset))
+					return await SortAsync (options, query, orderBy, doAsync, false, cancellationToken).ConfigureAwait (false);
+
 				throw ImapCommandException.Create ("SORT", ic);
+			}
 
 			return (SearchResults) ic.UserData;
 		}
@@ -1350,7 +1394,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SortAsync (options, query, orderBy, false, cancellationToken).GetAwaiter ().GetResult ();
+			return SortAsync (options, query, orderBy, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1403,7 +1447,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SortAsync (options, query, orderBy, true, cancellationToken);
+			return SortAsync (options, query, orderBy, true, true, cancellationToken);
 		}
 
 		static async Task ThreadMatchesAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
@@ -1411,10 +1455,10 @@ namespace MailKit.Net.Imap
 			ic.UserData = await ImapUtils.ParseThreadsAsync (engine, ic.Folder.UidValidity, doAsync, ic.CancellationToken).ConfigureAwait (false);
 		}
 
-		async Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, bool doAsync, bool retry, CancellationToken cancellationToken)
 		{
 			var method = algorithm.ToString ().ToUpperInvariant ();
-			var args = new List<string> ();
+			var args = new List<object> ();
 			string charset;
 
 			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
@@ -1443,8 +1487,12 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok) {
+				if (retry && IsBadCharset (ic, charset))
+					return await ThreadAsync (algorithm, query, doAsync, false, cancellationToken).ConfigureAwait (false);
+
 				throw ImapCommandException.Create ("THREAD", ic);
+			}
 
 			var threads = (IList<MessageThread>) ic.UserData;
 
@@ -1502,7 +1550,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<MessageThread> Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ThreadAsync (algorithm, query, false, cancellationToken).GetAwaiter ().GetResult ();
+			return ThreadAsync (algorithm, query, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1553,10 +1601,10 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ThreadAsync (algorithm, query, true, cancellationToken);
+			return ThreadAsync (algorithm, query, true, true, cancellationToken);
 		}
 
-		async Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, bool doAsync, CancellationToken cancellationToken)
+		async Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, bool doAsync, bool retry, CancellationToken cancellationToken)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
@@ -1577,7 +1625,7 @@ namespace MailKit.Net.Imap
 
 			var method = algorithm.ToString ().ToUpperInvariant ();
 			var set = UniqueIdSet.ToString (uids);
-			var args = new List<string> ();
+			var args = new List<object> ();
 			string charset;
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
@@ -1595,8 +1643,12 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok) {
+				if (retry && IsBadCharset (ic, charset))
+					return await ThreadAsync (uids, algorithm, query, doAsync, false, cancellationToken).ConfigureAwait (false);
+
 				throw ImapCommandException.Create ("THREAD", ic);
+			}
 
 			var threads = (IList<MessageThread>) ic.UserData;
 
@@ -1662,7 +1714,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<MessageThread> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ThreadAsync (uids, algorithm, query, false, cancellationToken).GetAwaiter ().GetResult ();
+			return ThreadAsync (uids, algorithm, query, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -1721,7 +1773,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ThreadAsync (uids, algorithm, query, true, cancellationToken);
+			return ThreadAsync (uids, algorithm, query, true, true, cancellationToken);
 		}
 	}
 }

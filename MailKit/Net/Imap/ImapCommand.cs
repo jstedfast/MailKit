@@ -220,9 +220,9 @@ namespace MailKit.Net.Imap {
 		/// Creates a new <see cref="MailKit.Net.Imap.ImapLiteral"/>.
 		/// </remarks>
 		/// <param name="options">The formatting options.</param>
-		/// <param name="literal">The literal.</param>
+		/// <param name="message">The message.</param>
 		/// <param name="action">The progress update action.</param>
-		public ImapLiteral (FormatOptions options, MimeMessage literal, Action<int> action = null)
+		public ImapLiteral (FormatOptions options, MimeMessage message, Action<int> action = null)
 		{
 			format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
@@ -230,7 +230,7 @@ namespace MailKit.Net.Imap {
 			update = action;
 
 			Type = ImapLiteralType.MimeMessage;
-			Literal = literal;
+			Literal = message;
 		}
 
 		/// <summary>
@@ -443,8 +443,15 @@ namespace MailKit.Net.Imap {
 							var utf7 = ((ImapFolder) args[argc++]).EncodedName;
 							AppendString (options, true, builder, utf7);
 							break;
-						case 'L': // a MimeMessage
-							var literal = new ImapLiteral (options, (MimeMessage) args[argc++], UpdateProgress);
+						case 'L': // a MimeMessage or a byte[]
+							var arg = args[argc++];
+							ImapLiteral literal;
+
+							if (arg is MimeMessage message)
+								literal = new ImapLiteral (options, message, UpdateProgress);
+							else
+								literal = new ImapLiteral (options, (byte[]) arg);
+
 							var prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
 							var length = literal.Length;
 							bool wait = true;
@@ -537,10 +544,17 @@ namespace MailKit.Net.Imap {
 						var utf7 = ((ImapFolder) args[argc++]).EncodedName;
 						length += EstimateStringLength (engine, options, true, utf7, out eoln);
 						break;
-					case 'L': // a MimeMessage
-						var literal = new ImapLiteral (options, (MimeMessage) args[argc++], null);
+					case 'L': // a MimeMessage or a byte[]
 						var prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
-						var len = literal.Length;
+						long len;
+
+						if (args[argc] is MimeMessage message) {
+							var literal = new ImapLiteral (options, message, null);
+							len = literal.Length;
+							argc++;
+						} else {
+							len = ((byte[]) args[argc++]).Length;
+						}
 
 						length += prefix.Length;
 						length += Encoding.ASCII.GetByteCount (len.ToString (CultureInfo.InvariantCulture));
