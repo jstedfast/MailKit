@@ -1,5 +1,5 @@
 ﻿//
-// Utf7Encoding.cs
+// ImapEncoding.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
