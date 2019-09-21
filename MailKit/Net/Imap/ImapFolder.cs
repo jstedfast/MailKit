@@ -25,19 +25,14 @@
 //
 
 using System;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 using MimeKit;
-using MimeKit.IO;
-using MimeKit.Utils;
+
 using MailKit.Search;
 
 namespace MailKit.Net.Imap {
