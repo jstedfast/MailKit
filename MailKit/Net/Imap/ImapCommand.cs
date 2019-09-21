@@ -28,7 +28,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -446,13 +445,16 @@ namespace MailKit.Net.Imap {
 						case 'L': // a MimeMessage or a byte[]
 							var arg = args[argc++];
 							ImapLiteral literal;
+							byte[] prefix;
 
-							if (arg is MimeMessage message)
+							if (arg is MimeMessage message) {
+								prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
 								literal = new ImapLiteral (options, message, UpdateProgress);
-							else
+							} else {
 								literal = new ImapLiteral (options, (byte[]) arg);
+								prefix = LiteralTokenPrefix;
+							}
 
-							var prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
 							var length = literal.Length;
 							bool wait = true;
 
@@ -472,7 +474,7 @@ namespace MailKit.Net.Imap {
 							parts.Add (new ImapCommandPart (builder.ToArray (), literal, wait));
 							builder.SetLength (0);
 
-							if (options.International)
+							if (prefix == UTF8LiteralTokenPrefix)
 								builder.WriteByte ((byte) ')');
 							break;
 						case 'S': // a string which may need to be quoted or made into a literal
@@ -545,15 +547,17 @@ namespace MailKit.Net.Imap {
 						length += EstimateStringLength (engine, options, true, utf7, out eoln);
 						break;
 					case 'L': // a MimeMessage or a byte[]
-						var prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
+						var arg = args[argc++];
+						byte[] prefix;
 						long len;
 
-						if (args[argc] is MimeMessage message) {
+						if (arg is MimeMessage message) {
+							prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
 							var literal = new ImapLiteral (options, message, null);
 							len = literal.Length;
-							argc++;
 						} else {
-							len = ((byte[]) args[argc++]).Length;
+							len = ((byte[]) arg).Length;
+							prefix = LiteralTokenPrefix;
 						}
 
 						length += prefix.Length;
@@ -564,7 +568,7 @@ namespace MailKit.Net.Imap {
 
 						length += LiteralTokenSuffix.Length;
 
-						if (options.International)
+						if (prefix == UTF8LiteralTokenPrefix)
 							length++;
 
 						eoln = true;
