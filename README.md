@@ -464,7 +464,7 @@ static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationT
 
     foreach (var folder in personal.GetSubfolders (false, cancellationToken)) {
         foreach (var name in CommonSentFolderNames) {
-            if (folder.Name == commonName)
+            if (folder.Name == name)
                 return folder;
         }
     }
