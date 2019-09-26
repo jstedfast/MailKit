@@ -822,10 +822,19 @@ namespace MailKit.Net.Imap {
 
 		static async Task<ContentDisposition> ParseContentDispositionAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
+			// body-fld-dsp    = "(" string SP body-fld-param ")" / nil
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			if (token.Type == ImapTokenType.Nil)
 				return null;
+
+			if (token.Type != ImapTokenType.OpenParen) {
+				// Note: this is a work-around for issue #919 where Exchange sends `"inline"` instead of `("inline" NIL)`
+				if (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString)
+					return new ContentDisposition ((string) token.Value);
+
+				throw ImapEngine.UnexpectedToken (format, token);
+			}
 
 			var dsp = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 

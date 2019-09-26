@@ -1054,6 +1054,59 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseBodyStructureWithNonParenthesizedBodyFldDsp ()
+		{
+			const string text = "((\"text\" \"plain\" (\"charset\" \"ISO-8859-1\") NIL NIL \"QUOTED-PRINTABLE\" 850 31 NIL \"inline\" NIL NIL)(\"text\" \"html\" (\"charset\" \"ISO-8859-1\") NIL NIL \"QUOTED-PRINTABLE\" 14692 502 NIL \"inline\" NIL NIL) \"alternative\" (\"boundary\" \"----=_Part_45280395_786508794.1562673197246\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartText plain, html;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (body.ContentType.IsMimeType ("multipart", "alternative"), "Content-Type did not match.");
+						Assert.AreEqual ("----=_Part_45280395_786508794.1562673197246", body.ContentType.Parameters["boundary"], "boundary param did not match");
+						Assert.AreEqual (2, multipart.BodyParts.Count, "BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						plain = (BodyPartText) multipart.BodyParts[0];
+						Assert.AreEqual ("text/plain", plain.ContentType.MimeType, "Content-Type did not match.");
+						Assert.AreEqual ("ISO-8859-1", plain.ContentType.Charset, "Content-Type charset parameter did not match.");
+						Assert.AreEqual ("QUOTED-PRINTABLE", plain.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (850, plain.Octets, "Octets did not match.");
+						Assert.AreEqual (31, plain.Lines, "Lines did not match.");
+						Assert.AreEqual ("inline", plain.ContentDisposition.Disposition, "Content-Disposition did not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						html = (BodyPartText) multipart.BodyParts[1];
+						Assert.AreEqual ("text/html", html.ContentType.MimeType, "Content-Type did not match.");
+						Assert.AreEqual ("ISO-8859-1", html.ContentType.Charset, "Content-Type charset parameter did not match.");
+						Assert.AreEqual ("QUOTED-PRINTABLE", html.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (14692, html.Octets, "Octets did not match.");
+						Assert.AreEqual (502, html.Lines, "Lines did not match.");
+						Assert.AreEqual ("inline", html.ContentDisposition.Disposition, "Content-Disposition did not match.");
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestParseExampleThreads ()
 		{
 			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
