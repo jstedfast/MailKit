@@ -836,19 +836,20 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			var dsp = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+			// Exchange bug: ... (NIL NIL) ...
+			var dsp = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
+			var builder = new StringBuilder ();
+			ContentDisposition disposition;
+			bool isNil = false;
 
 			// Note: These are work-arounds for some bugs in some mail clients that
 			// either leave out the disposition value or quote it.
 			//
 			// See https://github.com/jstedfast/MailKit/issues/486 for details.
 			if (string.IsNullOrEmpty (dsp))
-				dsp = ContentDisposition.Attachment;
+				builder.Append (ContentDisposition.Attachment);
 			else
-				dsp = dsp.Trim ('"');
-
-			var builder = new StringBuilder (dsp);
-			ContentDisposition disposition;
+				builder.Append (dsp.Trim ('"'));
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -856,10 +857,15 @@ namespace MailKit.Net.Imap {
 				await ParseParameterListAsync (builder, engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			else if (token.Type != ImapTokenType.Nil)
 				throw ImapEngine.UnexpectedToken (format, token);
+			else
+				isNil = true;
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
+
+			if (dsp == null && isNil)
+				return null;
 
 			ContentDisposition.TryParse (builder.ToString (), out disposition);
 

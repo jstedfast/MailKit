@@ -1053,6 +1053,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// Note: This tests the work-around for issue #919
 		[Test]
 		public void TestParseBodyStructureWithNonParenthesizedBodyFldDsp ()
 		{
@@ -1101,6 +1102,68 @@ namespace UnitTests.Net.Imap {
 						Assert.AreEqual (14692, html.Octets, "Octets did not match.");
 						Assert.AreEqual (502, html.Lines, "Lines did not match.");
 						Assert.AreEqual ("inline", html.ContentDisposition.Disposition, "Content-Disposition did not match.");
+					}
+				}
+			}
+		}
+
+		// Note: This tests the work-around for an Exchange bug
+		[Test]
+		public void TestParseBodyStructureWithNilNilBodyFldDsp ()
+		{
+			const string text = "((\"text\" \"plain\" (\"charset\" \"iso-8859-1\") NIL \"Mail message body\" \"quoted-printable\" 2201 34 NIL NIL NIL NIL)(\"application\" \"msword\" NIL NIL NIL \"base64\" 50446 NIL (NIL NIL) NIL NIL)(\"application\" \"msword\" NIL NIL NIL \"base64\" 45544 NIL (\"attachment\" (\"filename\" \"PREIS ANSPRUCHS FORMULAR.doc\")) NIL NIL) \"mixed\" (\"boundary\" \"===============1176586998==\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic msword;
+						BodyPartText plain;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (body.ContentType.IsMimeType ("multipart", "mixed"), "Content-Type did not match.");
+						Assert.AreEqual ("===============1176586998==", body.ContentType.Parameters["boundary"], "boundary param did not match");
+						Assert.AreEqual (3, multipart.BodyParts.Count, "BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						plain = (BodyPartText) multipart.BodyParts[0];
+						Assert.AreEqual ("text/plain", plain.ContentType.MimeType, "Content-Type did not match.");
+						Assert.AreEqual ("iso-8859-1", plain.ContentType.Charset, "Content-Type charset parameter did not match.");
+						Assert.AreEqual ("quoted-printable", plain.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual ("Mail message body", plain.ContentDescription, "Content-Description did not match.");
+						Assert.AreEqual (2201, plain.Octets, "Octets did not match.");
+						Assert.AreEqual (34, plain.Lines, "Lines did not match.");
+						Assert.IsNull (plain.ContentDisposition, "Content-Disposition did not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child does not match.");
+						msword = (BodyPartBasic) multipart.BodyParts[1];
+						Assert.AreEqual ("application/msword", msword.ContentType.MimeType, "Content-Type did not match.");
+						Assert.AreEqual ("base64", msword.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (50446, msword.Octets, "Octets did not match.");
+						Assert.IsNull (msword.ContentDisposition, "Content-Disposition did not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[2], "The type of the second child does not match.");
+						msword = (BodyPartBasic) multipart.BodyParts[2];
+						Assert.AreEqual ("application/msword", msword.ContentType.MimeType, "Content-Type did not match.");
+						Assert.AreEqual ("base64", msword.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (45544, msword.Octets, "Octets did not match.");
+						Assert.AreEqual ("attachment", msword.ContentDisposition.Disposition, "Content-Disposition did not match.");
+						Assert.AreEqual ("PREIS ANSPRUCHS FORMULAR.doc", msword.ContentDisposition.FileName, "Filename parameters do not match.");
 					}
 				}
 			}
