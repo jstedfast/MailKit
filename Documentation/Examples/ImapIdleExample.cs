@@ -41,7 +41,7 @@ namespace ImapIdleExample {
 	class IdleClient : IDisposable
 	{
 		readonly string host, username, password;
-		readonly SecureSocketOptions options;
+		readonly SecureSocketOptions sslOptions;
 		readonly int port;
 		List<IMessageSummary> messages;
 		CancellationTokenSource cancel;
