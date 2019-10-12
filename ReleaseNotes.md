@@ -1,5 +1,23 @@
 # Release Notes
 
+### MailKit 2.3.2 (2019-10-12)
+
+* Fixed trimming delimeters from the end of IMAP folder names.
+* Fixed fetching of IMAP PreviewText when message bodies do not contain any text parts.
+* Fixed Pop3Client to never emit Authenticated events w/ null messages.
+* Dropped SslProtocols.Tls (aka TLSv1.0) from the default SslProtocols used by IMAP, POP3
+  and SMTP clients. To override this behavior, use the client.SslProtocols property
+  to set the preferred SslProtocol(s).
+* Fixed ImapFolder.Search(string query) to properly encode the query string when the query
+  contains unicode characters.
+* If an IMAP SEARCH fails due to BADCHARSET, retry the search query after flattening the
+  query strings into US-ASCII. This *may* fix issues such as
+  issue [#808](https://github.com/jstedfast/MailKit/issues/808).
+* Added work-arounds for Exchange IMAP bugs causing it to send mal-formed body-fld-dsp
+  parameters. (issue [#919](https://github.com/jstedfast/MailKit/issues/919))
+* Go back to only using the BDAT command when the user is sending BINARYMIME in the SmtpClient.
+  (issue [#921](https://github.com/jstedfast/MailKit/issues/921))
+
 ### MailKit 2.3.1 (2019-09-08)
 
 * Fixed SmtpClient.Send*() to make sure never to add an extra CRLF sequence to the end of
