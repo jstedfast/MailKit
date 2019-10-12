@@ -76,40 +76,40 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
       <group targetFramework="monoandroid">
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
       <group targetFramework="xamarinios">
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
       <group targetFramework="netstandard1.6">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
       <group targetFramework="portable-win81+wpa81">
-        <dependency id="MimeKit" version="2.3.1" />
+        <dependency id="MimeKit" version="2.3.2" />
       </group>
     </dependencies>
   </metadata>
