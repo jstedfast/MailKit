@@ -351,6 +351,101 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// This tests the work-around for issue #669
+		[Test]
+		public void TestParseEnvelopeWithMissingMessageId ()
+		{
+			const string text = "(\"Tue, 24 Sep 2019 09:48:05 +0800\" \"subject\" ((\"From Name\" NIL \"from\" \"example.com\")) ((\"Sender Name\" NIL \"sender\" \"example.com\")) ((\"Reply-To Name\" NIL \"reply-to\" \"example.com\")) NIL NIL NIL \"<in-reply-to@example.com>\")\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						Envelope envelope;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsTrue (envelope.Date.HasValue, "Parsed ENVELOPE date is null.");
+						Assert.AreEqual ("Tue, 24 Sep 2019 09:48:05 +0800", DateUtils.FormatDate (envelope.Date.Value), "Date does not match.");
+						Assert.AreEqual ("subject", envelope.Subject, "Subject does not match.");
+
+						Assert.AreEqual (1, envelope.From.Count, "From counts do not match.");
+						Assert.AreEqual ("\"From Name\" <from@example.com>", envelope.From.ToString (), "From does not match.");
+
+						Assert.AreEqual (1, envelope.Sender.Count, "Sender counts do not match.");
+						Assert.AreEqual ("\"Sender Name\" <sender@example.com>", envelope.Sender.ToString (), "Sender does not match.");
+
+						Assert.AreEqual (1, envelope.ReplyTo.Count, "Reply-To counts do not match.");
+						Assert.AreEqual ("\"Reply-To Name\" <reply-to@example.com>", envelope.ReplyTo.ToString (), "Reply-To does not match.");
+
+						Assert.AreEqual (0, envelope.To.Count, "To counts do not match.");
+						Assert.AreEqual (0, envelope.Cc.Count, "Cc counts do not match.");
+						Assert.AreEqual (0, envelope.Bcc.Count, "Bcc counts do not match.");
+
+						Assert.AreEqual ("in-reply-to@example.com", envelope.InReplyTo, "In-Reply-To does not match.");
+
+						Assert.IsNull (envelope.MessageId, "Message-Id is not null.");
+					}
+				}
+			}
+		}
+
+		// This tests the work-around for issue #932
+		[Test]
+		public void TestParseEnvelopeWithMissingInReplyTo ()
+		{
+			const string text = "(\"Tue, 24 Sep 2019 09:48:05 +0800\" \"=?GBK?B?sbG+qdW9x/jI1bGose0=?=\" ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) NIL NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						Envelope envelope;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsTrue (envelope.Date.HasValue, "Parsed ENVELOPE date is null.");
+						Assert.AreEqual ("Tue, 24 Sep 2019 09:48:05 +0800", DateUtils.FormatDate (envelope.Date.Value), "Date does not match.");
+						Assert.AreEqual ("北京战区日报表", envelope.Subject, "Subject does not match.");
+
+						Assert.AreEqual (1, envelope.From.Count, "From counts do not match.");
+						Assert.AreEqual ("\"数据分析小组\" <unkonwn-name@unknown-domain>", envelope.From.ToString (), "From does not match.");
+
+						Assert.AreEqual (1, envelope.Sender.Count, "Sender counts do not match.");
+						Assert.AreEqual ("\"数据分析小组\" <unkonwn-name@unknown-domain>", envelope.Sender.ToString (), "Sender does not match.");
+
+						Assert.AreEqual (1, envelope.ReplyTo.Count, "Reply-To counts do not match.");
+						Assert.AreEqual ("\"数据分析小组\" <unkonwn-name@unknown-domain>", envelope.ReplyTo.ToString (), "Reply-To does not match.");
+
+						Assert.AreEqual (0, envelope.To.Count, "To counts do not match.");
+						Assert.AreEqual (0, envelope.Cc.Count, "Cc counts do not match.");
+						Assert.AreEqual (0, envelope.Bcc.Count, "Bcc counts do not match.");
+
+						Assert.IsNull (envelope.InReplyTo, "In-Reply-To is not null.");
+						Assert.IsNull (envelope.MessageId, "Message-Id is not null.");
+					}
+				}
+			}
+		}
+
 		[Test]
 		public void TestParseMalformedMailboxAddressInEnvelope ()
 		{
