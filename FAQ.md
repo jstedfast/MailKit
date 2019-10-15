@@ -1385,7 +1385,7 @@ If you get this exception, it's probably because you thought you had to open the
 passed as an argument to one of the
 [CopyTo](http://www.mimekit.net/docs/html/Overload_MailKit_MailFolder_CopyTo.htm) or
 [MoveTo](http://www.mimekit.net/docs/html/Overload_MailKit_MailFolder_MoveTo.htm) methods. When you opened
-that destination folder, you also inadvertantly closed the source folder which is why you are getting this
+that destination folder, you also inadvertently closed the source folder which is why you are getting this
 exception.
 
 The IMAP server can only have a single folder open at a time. Whenever you open a folder, you automatically
