@@ -49,7 +49,11 @@ namespace MailKit {
 	/// </remarks>
 	public abstract class MailService : IMailService
 	{
+#if NET_4_8
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13;
+#else
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;
+#endif
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
@@ -132,8 +136,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets the SSL and TLS protocol versions that the client is allowed to use.</para>
-		/// <para>By default, MailKit initializes this value to support only TLS v1.0 and greater and
-		/// does not support any version of SSL due to those protocols no longer being considered
+		/// <para>By default, MailKit initializes this value to support only TLS v1.1 and greater and
+		/// does not support TLS v1.0 or any version of SSL due to those protocols no longer being considered
 		/// secure.</para>
 		/// <para>This property should be set before calling any of the
 		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> methods.</para>

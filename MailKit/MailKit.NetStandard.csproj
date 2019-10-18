@@ -5,7 +5,7 @@
     <AssemblyTitle>MailKit</AssemblyTitle>
     <VersionPrefix>2.3.2</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
-    <TargetFrameworks>netstandard1.3;netstandard1.6;netstandard2.0;net46;net47</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.6;netstandard2.0;net46;net47;net48</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <AssemblyName>MailKit</AssemblyName>
@@ -46,6 +46,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net47' ">
     <DefineConstants>$(DefineConstants);SERIALIZABLE;NET_4_7</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <DefineConstants>$(DefineConstants);SERIALIZABLE;NET_4_8</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
@@ -139,8 +142,8 @@
     <Compile Include="Search\UnarySearchQuery.cs" />
     <Compile Include="Security\Ntlm\BitConverterLE.cs" />
     <Compile Include="Security\Ntlm\ChallengeResponse2.cs" />
-    <Compile Include="Security\Ntlm\DES.cs" Condition=" $(TargetFramework.StartsWith('netstandard')) " />
-    <Compile Include="Security\Ntlm\HMACMD5.cs" Condition=" $(TargetFramework.StartsWith('netstandard')) " />
+    <Compile Include="Security\Ntlm\DES.cs" Condition=" $(TargetFramework.StartsWith('netstandard1.')) " />
+    <Compile Include="Security\Ntlm\HMACMD5.cs" Condition=" $(TargetFramework.StartsWith('netstandard1.')) " />
     <Compile Include="Security\Ntlm\MD4.cs" />
     <Compile Include="Security\Ntlm\MessageBase.cs" />
     <Compile Include="Security\Ntlm\NtlmAuthLevel.cs" />
