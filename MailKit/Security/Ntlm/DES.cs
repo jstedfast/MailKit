@@ -25,143 +25,12 @@
 //
 
 using System;
-
-#if NETFX_CORE
-using Windows.Storage.Streams;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-#else
 using System.Security.Cryptography;
 
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
-#endif
 
 namespace MailKit.Security.Ntlm {
-#if NETFX_CORE
-	enum CipherMode {
-		CBC,
-		ECB
-	}
-
-	sealed class SymmetricKeyEncryptor : IDisposable
-	{
-		readonly SymmetricKeyAlgorithmProvider algorithm;
-		readonly CryptographicKey key;
-		readonly IBuffer iv;
-
-		public SymmetricKeyEncryptor (SymmetricKeyAlgorithmProvider algorithm, CryptographicKey key, IBuffer iv)
-		{
-			this.algorithm = algorithm;
-			this.key = key;
-			this.iv = iv;
-		}
-
-		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
-		{
-			if (inputBuffer == null)
-				throw new ArgumentNullException ("inputBuffer");
-
-			if (inputOffset < 0 || inputOffset > inputBuffer.Length)
-				throw new ArgumentOutOfRangeException ("inputOffset");
-
-			if (inputCount < 0 || inputOffset > inputBuffer.Length - inputCount)
-				throw new ArgumentOutOfRangeException ("inputCount");
-
-			if (inputCount != 8)
-				throw new ArgumentOutOfRangeException ("inputCount", "Can only transform 8 bytes at a time.");
-
-			if (outputBuffer == null)
-				throw new ArgumentNullException ("outputBuffer");
-
-			if (outputOffset < 0 || outputOffset > outputBuffer.Length - algorithm.BlockLength)
-				throw new ArgumentOutOfRangeException ("outputOffset");
-
-			IBuffer encrypted, data;
-			byte[] input, output;
-
-			input = new byte[inputCount];
-			Array.Copy (inputBuffer, inputOffset, input, 0, inputCount);
-			data = CryptographicBuffer.CreateFromByteArray (input);
-
-			encrypted = CryptographicEngine.Encrypt (key, data, iv);
-
-			CryptographicBuffer.CopyToByteArray (encrypted, out output);
-
-			Array.Copy (output, 0, outputBuffer, outputOffset, output.Length);
-
-			return output.Length;
-		}
-
-		public void Dispose ()
-		{
-		}
-	}
-
-	sealed class DES : IDisposable
-	{
-		public static DES Create ()
-		{
-			return new DES ();
-		}
-
-		~DES ()
-		{
-			Dispose (false);
-		}
-
-		public CipherMode Mode {
-			get; set;
-		}
-
-		public byte[] Key {
-			get; set;
-		}
-
-		public void Clear ()
-		{
-			Dispose ();
-		}
-
-		public SymmetricKeyEncryptor CreateEncryptor ()
-		{
-			var buffer = CryptographicBuffer.CreateFromByteArray (Key);
-			SymmetricKeyAlgorithmProvider algorithm;
-			CryptographicKey key;
-			string algorithmName;
-			IBuffer iv = null;
-
-			switch (Mode) {
-			case CipherMode.CBC: algorithmName = SymmetricAlgorithmNames.DesCbc; break;
-			case CipherMode.ECB: algorithmName = SymmetricAlgorithmNames.DesEcb; break;
-			default: throw new IndexOutOfRangeException ("Mode");
-			}
-
-			algorithm = SymmetricKeyAlgorithmProvider.OpenAlgorithm (algorithmName);
-			key = algorithm.CreateSymmetricKey (buffer);
-
-			if (Mode == CipherMode.CBC)
-				iv = CryptographicBuffer.GenerateRandom (algorithm.BlockLength);
-
-			return new SymmetricKeyEncryptor (algorithm, key, iv);
-		}
-
-		void Dispose (bool disposing)
-		{
-			if (Key != null) {
-				Array.Clear (Key, 0, Key.Length);
-				Key = null;
-			}
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-	}
-#else
 	class DES : SymmetricAlgorithm
 	{
 		DES ()
@@ -360,5 +229,4 @@ namespace MailKit.Security.Ntlm {
 				(((ulong) block[6]) << 8) | ((ulong) block[7]);
 		}
 	}
-#endif
 }

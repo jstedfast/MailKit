@@ -28,28 +28,14 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Net.Sockets;
 using System.Globalization;
 using System.Threading.Tasks;
 
-using Buffer = System.Buffer;
-
-#if NETFX_CORE
-using Windows.Storage.Streams;
-using Windows.Networking.Sockets;
-using Socket = Windows.Networking.Sockets.StreamSocket;
-
-using Encoding = Portable.Text.Encoding;
-using EncoderExceptionFallback = Portable.Text.EncoderExceptionFallback;
-using DecoderExceptionFallback = Portable.Text.DecoderExceptionFallback;
-using DecoderFallbackException = Portable.Text.DecoderFallbackException;
-#else
-using System.Net.Security;
-using System.Net.Sockets;
-
-using NetworkStream = MailKit.Net.NetworkStream;
-#endif
-
 using MimeKit.IO;
+
+using Buffer = System.Buffer;
+using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -304,9 +290,6 @@ namespace MailKit.Net.Imap {
 
 		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
-#if NETFX_CORE
-			cancellationToken.ThrowIfCancellationRequested ();
-#else
 			if (!cancellationToken.CanBeCanceled)
 				return;
 
@@ -318,7 +301,6 @@ namespace MailKit.Net.Imap {
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
-#endif
 		}
 
 		async Task<int> ReadAheadAsync (int atleast, bool doAsync, CancellationToken cancellationToken)
@@ -361,11 +343,7 @@ namespace MailKit.Net.Imap {
 			end = input.Length - PadSize;
 
 			try {
-#if !NETFX_CORE
 				bool buffered = !(Stream is NetworkStream);
-#else
-				bool buffered = true;
-#endif
 
 				if (buffered) {
 					cancellationToken.ThrowIfCancellationRequested ();
@@ -612,7 +590,7 @@ namespace MailKit.Net.Imap {
 					await ReadAheadAsync (2, doAsync, cancellationToken).ConfigureAwait (false);
 				} while (true);
 
-#if !NETFX_CORE && !NETSTANDARD
+#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
 				var buffer = memory.GetBuffer ();
 #else
 				var buffer = memory.ToArray ();
@@ -645,7 +623,7 @@ namespace MailKit.Net.Imap {
 				} while (true);
 
 				var count = (int) memory.Length;
-#if !NETFX_CORE && !NETSTANDARD
+#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
 				var buf = memory.GetBuffer ();
 #else
 				var buf = memory.ToArray ();

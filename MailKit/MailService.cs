@@ -25,25 +25,19 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-#if !NETFX_CORE
-using System.IO;
 using System.Net.Sockets;
 using System.Net.Security;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using SslProtocols = System.Security.Authentication.SslProtocols;
 
 using MailKit.Net;
 using MailKit.Net.Proxy;
-#else
-using Encoding = Portable.Text.Encoding;
-#endif
-
 using MailKit.Security;
 
 namespace MailKit {
@@ -55,11 +49,7 @@ namespace MailKit {
 	/// </remarks>
 	public abstract class MailService : IMailService
 	{
-#if NET_4_5 || NET_4_6 || NET_4_7 || __MOBILE__ || NETSTANDARD
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;
-#elif !NETFX_CORE
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
-#endif
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
@@ -76,10 +66,8 @@ namespace MailKit {
 			if (protocolLogger == null)
 				throw new ArgumentNullException (nameof (protocolLogger));
 
-#if !NETFX_CORE
 			SslProtocols = DefaultSslProtocols;
 			CheckCertificateRevocation = true;
-#endif
 			ProtocolLogger = protocolLogger;
 		}
 
@@ -139,7 +127,6 @@ namespace MailKit {
 			get; private set;
 		}
 
-#if !NETFX_CORE
 		/// <summary>
 		/// Gets or sets the SSL and TLS protocol versions that the client is allowed to use.
 		/// </summary>
@@ -219,7 +206,6 @@ namespace MailKit {
 		public IProxyClient ProxyClient {
 			get; set;
 		}
-#endif
 
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the mail server.
@@ -288,7 +274,6 @@ namespace MailKit {
 			get; set;
 		}
 
-#if !NETFX_CORE
 		/// <summary>
 		/// The default server certificate validation callback used when connecting via SSL or TLS.
 		/// </summary>
@@ -365,7 +350,6 @@ namespace MailKit {
 
 			return await SocketUtils.ConnectAsync (host, port, LocalEndPoint, Timeout, doAsync, cancellationToken).ConfigureAwait (false);
 		}
-#endif
 
 		/// <summary>
 		/// Establish a connection to the specified mail server.
@@ -449,7 +433,6 @@ namespace MailKit {
 		/// </exception>
 		public abstract Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
-#if !NETFX_CORE
 		/// <summary>
 		/// Establish a connection to the specified mail server using the provided socket.
 		/// </summary>
@@ -619,7 +602,6 @@ namespace MailKit {
 		/// The server responded with an unexpected token.
 		/// </exception>
 		public abstract Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
-#endif
 
 		internal SecureSocketOptions GetSecureSocketOptions (Uri uri)
 		{

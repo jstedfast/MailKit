@@ -29,12 +29,7 @@ using System.Net;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
-
-#if NETFX_CORE
-using Encoding = Portable.Text.Encoding;
-#else
 using System.Security.Cryptography;
-#endif
 
 namespace MailKit.Security {
 	/// <summary>

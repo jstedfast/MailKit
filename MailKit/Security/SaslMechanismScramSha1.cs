@@ -26,13 +26,7 @@
 
 using System;
 using System.Net;
-
-#if NETFX_CORE
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-#else
 using System.Security.Cryptography;
-#endif
 
 namespace MailKit.Security {
 	/// <summary>
@@ -150,18 +144,8 @@ namespace MailKit.Security {
 		/// <param name="str">The string.</param>
 		protected override byte[] Hash (byte[] str)
 		{
-#if NETFX_CORE
-			var sha1 = HashAlgorithmProvider.OpenAlgorithm (HashAlgorithmNames.Sha1);
-			var buf = sha1.HashData (CryptographicBuffer.CreateFromByteArray (str));
-			byte[] hash;
-
-			CryptographicBuffer.CopyToByteArray (buf, out hash);
-
-			return hash;
-#else
 			using (var sha1 = SHA1.Create ())
 				return sha1.ComputeHash (str);
-#endif
 		}
 	}
 }

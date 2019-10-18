@@ -27,22 +27,13 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
-using Buffer = System.Buffer;
-
-#if NETFX_CORE
-using Windows.Storage.Streams;
-using Windows.Networking.Sockets;
-using Socket = Windows.Networking.Sockets.StreamSocket;
-#else
-using System.Net.Security;
-using System.Net.Sockets;
-
-using NetworkStream = MailKit.Net.NetworkStream;
-#endif
-
 using MimeKit.IO;
+
+using Buffer = System.Buffer;
+using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
@@ -288,9 +279,6 @@ namespace MailKit.Net.Pop3 {
 
 		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
-#if NETFX_CORE
-			cancellationToken.ThrowIfCancellationRequested ();
-#else
 			if (!cancellationToken.CanBeCanceled)
 				return;
 
@@ -302,7 +290,6 @@ namespace MailKit.Net.Pop3 {
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
-#endif
 		}
 
 		async Task<int> ReadAheadAsync (bool doAsync, CancellationToken cancellationToken)
@@ -341,11 +328,7 @@ namespace MailKit.Net.Pop3 {
 			end = input.Length - PadSize;
 
 			try {
-#if !NETFX_CORE
 				bool buffered = !(Stream is NetworkStream);
-#else
-				bool buffered = true;
-#endif
 
 				if (buffered) {
 					cancellationToken.ThrowIfCancellationRequested ();

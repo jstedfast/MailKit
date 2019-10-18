@@ -29,10 +29,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-#if NETFX_CORE
-using Encoding = Portable.Text.Encoding;
-#endif
-
 namespace MailKit.Net.Pop3 {
 	/// <summary>
 	/// POP3 command handler.

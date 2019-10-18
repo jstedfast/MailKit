@@ -29,16 +29,9 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
-#if NETFX_CORE
-using Windows.Networking;
-using Windows.Networking.Sockets;
-using Encoding = Portable.Text.Encoding;
-#else
-using System.Net.Sockets;
-#endif
 
 using MimeKit;
 
@@ -275,7 +268,6 @@ namespace MailKit.Net.Smtp
 			return ConnectAsync (host, port, options, true, cancellationToken);
 		}
 
-#if !NETFX_CORE
 		/// <summary>
 		/// Asynchronously establish a connection to the specified SMTP or SMTP/S server using the provided socket.
 		/// </summary>
@@ -411,7 +403,6 @@ namespace MailKit.Net.Smtp
 		{
 			return ConnectAsync (stream, null, host, port, options, true, cancellationToken);
 		}
-#endif
 
 		/// <summary>
 		/// Asynchronously disconnect the service.

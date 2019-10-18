@@ -28,26 +28,14 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Net.Sockets;
+using System.Net.Security;
 using System.Threading.Tasks;
 
-using Buffer = System.Buffer;
-
-#if NETFX_CORE
-using Windows.Storage.Streams;
-using Windows.Networking.Sockets;
-using Encoding = Portable.Text.Encoding;
-using Socket = Windows.Networking.Sockets.StreamSocket;
-using EncoderExceptionFallback = Portable.Text.EncoderExceptionFallback;
-using DecoderExceptionFallback = Portable.Text.DecoderExceptionFallback;
-using DecoderFallbackException = Portable.Text.DecoderFallbackException;
-#else
-using System.Net.Security;
-using System.Net.Sockets;
-
-using NetworkStream = MailKit.Net.NetworkStream;
-#endif
-
 using MimeKit.IO;
+
+using Buffer = System.Buffer;
+using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit.Net.Smtp {
 	/// <summary>
@@ -255,9 +243,6 @@ namespace MailKit.Net.Smtp {
 
 		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
-#if NETFX_CORE
-			cancellationToken.ThrowIfCancellationRequested ();
-#else
 			if (!cancellationToken.CanBeCanceled)
 				return;
 
@@ -269,7 +254,6 @@ namespace MailKit.Net.Smtp {
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
-#endif
 		}
 
 		async Task<int> ReadAheadAsync (bool doAsync, CancellationToken cancellationToken)
@@ -293,11 +277,7 @@ namespace MailKit.Net.Smtp {
 			index = inputEnd;
 
 			try {
-#if !NETFX_CORE
 				bool buffered = !(Stream is NetworkStream);
-#else
-				bool buffered = true;
-#endif
 
 				if (buffered) {
 					cancellationToken.ThrowIfCancellationRequested ();
@@ -580,13 +560,13 @@ namespace MailKit.Net.Smtp {
 				string message = null;
 
 				try {
-#if !NETFX_CORE && !NETSTANDARD
+#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
 					message = UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
 					message = UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
 				} catch (DecoderFallbackException) {
-#if !NETFX_CORE && !NETSTANDARD
+#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
 					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
 					message = Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);

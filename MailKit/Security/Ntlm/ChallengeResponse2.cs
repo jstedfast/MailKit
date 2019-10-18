@@ -38,13 +38,7 @@
 
 using System;
 using System.Text;
-
-#if NETFX_CORE
-using Encoding = Portable.Text.Encoding;
-using MD5 = MimeKit.Cryptography.MD5;
-#else
 using System.Security.Cryptography;
-#endif
 
 namespace MailKit.Security.Ntlm {
 	static class ChallengeResponse2

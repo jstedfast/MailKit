@@ -27,33 +27,23 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Net.Sockets;
+using System.Net.Security;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
-#if NETFX_CORE
-using Windows.Networking;
-using Windows.Networking.Sockets;
-using Windows.Storage.Streams;
-using Encoding = Portable.Text.Encoding;
-using MD5 = MimeKit.Cryptography.MD5;
-#else
-using System.Net.Sockets;
-using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-
-using NetworkStream = MailKit.Net.NetworkStream;
-#endif
 
 using MimeKit;
 using MimeKit.IO;
 
 using MailKit.Security;
+
+using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
@@ -80,9 +70,6 @@ namespace MailKit.Net.Pop3 {
 		readonly MimeParser parser = new MimeParser (Stream.Null);
 		readonly Pop3Engine engine;
 		ProbedCapabilities probed;
-#if NETFX_CORE
-		StreamSocket socket;
-#endif
 		bool disposed, disconnecting, secure, utf8;
 		int timeout = 2 * 60 * 1000;
 		long octets;
@@ -235,20 +222,18 @@ namespace MailKit.Net.Pop3 {
 				throw new ServiceNotAuthenticatedException ("The Pop3Client has not been authenticated.");
 		}
 
-#if !NETFX_CORE
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			if (ServerCertificateValidationCallback != null)
 				return ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 
-#if !NETSTANDARD
+#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 #endif
 
 			return DefaultServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 		}
-#endif
 
 		static Exception CreatePop3Exception (Pop3Command pc)
 		{
@@ -890,7 +875,6 @@ namespace MailKit.Net.Pop3 {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
-#if !NETFX_CORE
 			var socket = await ConnectSocket (host, port, doAsync, cancellationToken).ConfigureAwait (false);
 
 			engine.Uri = uri;
@@ -902,7 +886,7 @@ namespace MailKit.Net.Pop3 {
 					if (doAsync) {
 						await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
 					} else {
-#if NETSTANDARD
+#if NETSTANDARD_1_3 || NETSTANDARD_1_6
 						ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
 						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
@@ -920,30 +904,6 @@ namespace MailKit.Net.Pop3 {
 				stream = new NetworkStream (socket, true);
 				secure = false;
 			}
-#else
-			var protection = options == SecureSocketOptions.SslOnConnect ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket;
-			var socket = new StreamSocket ();
-
-			try {
-				cancellationToken.ThrowIfCancellationRequested ();
-				if (doAsync)
-					await socket.ConnectAsync (new HostName (host), port.ToString (), protection).AsTask (cancellationToken).ConfigureAwait (false);
-				else
-					socket.ConnectAsync (new HostName (host), port.ToString (), protection).AsTask (cancellationToken).GetAwaiter ().GetResult ();
-			} catch (Exception ex) {
-				socket.Dispose ();
-				socket = null;
-
-				if (protection != SocketProtectionLevel.PlainSocket)
-					throw SslHandshakeException.Create (ex, false);
-
-				throw;
-			}
-
-			stream = new DuplexStream (socket.InputStream.AsStreamForRead (0), socket.OutputStream.AsStreamForWrite (0));
-			secure = options == SecureSocketOptions.SslOnConnect;
-			engine.Uri = uri;
-#endif
 
 			probed = ProbedCapabilities.None;
 			if (stream.CanTimeout) {
@@ -956,9 +916,6 @@ namespace MailKit.Net.Pop3 {
 			} catch {
 				stream.Dispose ();
 				secure = false;
-#if NETFX_CORE
-				socket = null;
-#endif
 				throw;
 			}
 
@@ -979,25 +936,18 @@ namespace MailKit.Net.Pop3 {
 					await SendCommandAsync (doAsync, cancellationToken, "STLS").ConfigureAwait (false);
 
 					try {
-#if !NETFX_CORE
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 						engine.Stream.Stream = tls;
 
 						if (doAsync) {
 							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
 						} else {
-#if NETSTANDARD
+#if NETSTANDARD_1_3 || NETSTANDARD_1_6
 							tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
 							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 #endif
 						}
-#else
-						if (doAsync)
-							await socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).ConfigureAwait (false);
-						else
-							socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host)).AsTask (cancellationToken).GetAwaiter ().GetResult ();
-#endif
 					} catch (Exception ex) {
 						throw SslHandshakeException.Create (ex, true);
 					}
@@ -1086,7 +1036,6 @@ namespace MailKit.Net.Pop3 {
 			ConnectAsync (host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-#if !NETFX_CORE
 		async Task ConnectAsync (Stream stream, Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (stream == null)
@@ -1121,7 +1070,7 @@ namespace MailKit.Net.Pop3 {
 					if (doAsync) {
 						await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
 					} else {
-#if NETSTANDARD
+#if NETSTANDARD_1_3 || NETSTANDARD_1_6
 						ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
 						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
@@ -1177,7 +1126,7 @@ namespace MailKit.Net.Pop3 {
 						if (doAsync) {
 							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
 						} else {
-#if NETSTANDARD
+#if NETSTANDARD_1_3 || NETSTANDARD_1_6
 							tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
 							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
@@ -1348,7 +1297,6 @@ namespace MailKit.Net.Pop3 {
 		{
 			ConnectAsync (stream, null, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
-#endif
 
 		async Task DisconnectAsync (bool quit, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -1366,11 +1314,6 @@ namespace MailKit.Net.Pop3 {
 				} catch (IOException) {
 				}
 			}
-
-#if NETFX_CORE
-			socket.Dispose ();
-			socket = null;
-#endif
 
 			disconnecting = true;
 			engine.Disconnect ();
@@ -3448,12 +3391,6 @@ namespace MailKit.Net.Pop3 {
 		{
 			if (disposing && !disposed) {
 				engine.Disconnect ();
-
-#if NETFX_CORE
-				if (socket != null)
-					socket.Dispose ();
-#endif
-
 				disposed = true;
 			}
 

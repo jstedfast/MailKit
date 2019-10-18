@@ -27,14 +27,9 @@
 using System;
 using System.Net;
 using System.Text;
-
-#if NETFX_CORE
-using Encoding = Portable.Text.Encoding;
-#else
 using System.Security.Cryptography;
-#endif
 
-#if NETFX_CORE || NETSTANDARD
+#if NETSTANDARD_1_3 || NETSTANDARD_1_6
 using MD5 = MimeKit.Cryptography.MD5;
 #endif
 
@@ -587,7 +582,7 @@ namespace MailKit.Security {
 				}
 			}
 
-#if !NETFX_CORE && !NETSTANDARD
+#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
 			return builder.ToString ().Normalize (NormalizationForm.FormKC);
 #else
 			return builder.ToString ();

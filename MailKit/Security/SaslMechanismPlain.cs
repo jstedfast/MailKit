@@ -28,10 +28,6 @@ using System;
 using System.Net;
 using System.Text;
 
-#if NETFX_CORE
-using Encoding = Portable.Text.Encoding;
-#endif
-
 namespace MailKit.Security {
 	/// <summary>
 	/// The PLAIN SASL mechanism.

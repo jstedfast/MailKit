@@ -29,15 +29,10 @@ using System.Net;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
-#if NETFX_CORE
-using Encoding = Portable.Text.Encoding;
+#if NETSTANDARD_1_3 || NETSTANDARD_1_6
 using MD5 = MimeKit.Cryptography.MD5;
-#elif NETSTANDARD
-using System.Security.Cryptography;
-using MD5 = MimeKit.Cryptography.MD5;
-#else
-using System.Security.Cryptography;
 #endif
 
 namespace MailKit.Security {

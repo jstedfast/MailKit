@@ -29,19 +29,14 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-#if !NETFX_CORE
 using System.Net.Sockets;
 using System.Net.Security;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using SslProtocols = System.Security.Authentication.SslProtocols;
 
 using MailKit.Net.Proxy;
-#else
-using Encoding = Portable.Text.Encoding;
-#endif
 
 using MailKit.Security;
 
@@ -64,7 +59,6 @@ namespace MailKit {
 		/// <value>The sync root.</value>
 		object SyncRoot { get; }
 
-#if !NETFX_CORE
 		/// <summary>
 		/// Gets or sets the SSL and TLS protocol versions that the client is allowed to use.
 		/// </summary>
@@ -132,7 +126,6 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The proxy client.</value>
 		IProxyClient ProxyClient { get; set; }
-#endif
 
 		/// <summary>
 		/// Get the authentication mechanisms supported by the message service.
@@ -345,7 +338,6 @@ namespace MailKit {
 		/// </exception>
 		Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
-#if !NETFX_CORE
 		/// <summary>
 		/// Establish a connection to the specified mail server using the provided socket.
 		/// </summary>
@@ -515,7 +507,6 @@ namespace MailKit {
 		/// The server responded with an unexpected token.
 		/// </exception>
 		Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
-#endif
 
 		/// <summary>
 		/// Authenticate using the supplied credentials.

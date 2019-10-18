@@ -36,11 +36,6 @@ using MimeKit;
 using MimeKit.IO;
 using MimeKit.Utils;
 
-#if NETFX_CORE
-using Windows.Storage.Streams;
-using Encoding = Portable.Text.Encoding;
-#endif
-
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// An IMAP continuation handler.

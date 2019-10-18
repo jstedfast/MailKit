@@ -37,10 +37,6 @@ using System.Collections.ObjectModel;
 using MimeKit;
 using MimeKit.Utils;
 
-#if NETFX_CORE
-using Encoding = Portable.Text.Encoding;
-#endif
-
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// IMAP utility functions.
