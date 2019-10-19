@@ -344,7 +344,7 @@ namespace MailKit.Net.Proxy
 
 				return socket;
 			} catch {
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				if (socket.Connected)
 					socket.Disconnect (false);
 #endif

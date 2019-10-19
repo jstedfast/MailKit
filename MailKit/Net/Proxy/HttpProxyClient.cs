@@ -169,7 +169,7 @@ namespace MailKit.Net.Proxy
 
 				throw new ProxyProtocolException (string.Format ("Failed to connect to {0}:{1}: {2}", host, port, response));
 			} catch {
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				if (socket.Connected)
 					socket.Disconnect (false);
 #endif

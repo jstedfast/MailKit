@@ -31,7 +31,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-#if NETSTANDARD_1_3 || NETSTANDARD_1_6
+#if NETSTANDARD1_3 || NETSTANDARD1_6
 using MD5 = MimeKit.Cryptography.MD5;
 #endif
 

@@ -49,7 +49,7 @@ namespace MailKit {
 	/// </remarks>
 	public abstract class MailService : IMailService
 	{
-#if NET_4_8
+#if NET48
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13;
 #else
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;

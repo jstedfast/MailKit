@@ -227,7 +227,7 @@ namespace MailKit.Net.Pop3 {
 			if (ServerCertificateValidationCallback != null)
 				return ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 #endif
@@ -886,7 +886,7 @@ namespace MailKit.Net.Pop3 {
 					if (doAsync) {
 						await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
 					} else {
-#if NETSTANDARD_1_3 || NETSTANDARD_1_6
+#if NETSTANDARD1_3 || NETSTANDARD1_6
 						ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
 						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
@@ -942,7 +942,7 @@ namespace MailKit.Net.Pop3 {
 						if (doAsync) {
 							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
 						} else {
-#if NETSTANDARD_1_3 || NETSTANDARD_1_6
+#if NETSTANDARD1_3 || NETSTANDARD1_6
 							tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
 							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
@@ -1070,7 +1070,7 @@ namespace MailKit.Net.Pop3 {
 					if (doAsync) {
 						await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
 					} else {
-#if NETSTANDARD_1_3 || NETSTANDARD_1_6
+#if NETSTANDARD1_3 || NETSTANDARD1_6
 						ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
 						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
@@ -1126,7 +1126,7 @@ namespace MailKit.Net.Pop3 {
 						if (doAsync) {
 							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
 						} else {
-#if NETSTANDARD_1_3 || NETSTANDARD_1_6
+#if NETSTANDARD1_3 || NETSTANDARD1_6
 							tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
 #else
 							tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);

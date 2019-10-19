@@ -590,7 +590,7 @@ namespace MailKit.Net.Imap {
 					await ReadAheadAsync (2, doAsync, cancellationToken).ConfigureAwait (false);
 				} while (true);
 
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				var buffer = memory.GetBuffer ();
 #else
 				var buffer = memory.ToArray ();
@@ -623,7 +623,7 @@ namespace MailKit.Net.Imap {
 				} while (true);
 
 				var count = (int) memory.Length;
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				var buf = memory.GetBuffer ();
 #else
 				var buf = memory.ToArray ();

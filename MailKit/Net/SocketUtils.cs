@@ -56,7 +56,7 @@ namespace MailKit.Net
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
 
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 					if (doAsync || cancellationToken.CanBeCanceled) {
 						var tcs = new TaskCompletionSource<bool> ();
 

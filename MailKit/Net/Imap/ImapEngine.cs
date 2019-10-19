@@ -746,7 +746,7 @@ namespace MailKit.Net.Imap {
 				} while (!complete);
 
 				count = (int) memory.Length;
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				buf = memory.GetBuffer ();
 #else
 				buf = memory.ToArray ();
@@ -984,7 +984,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				nread = (int) memory.Length;
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				buf = memory.GetBuffer ();
 #else
 				buf = memory.ToArray ();

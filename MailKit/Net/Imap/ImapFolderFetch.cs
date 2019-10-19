@@ -529,7 +529,7 @@ namespace MailKit.Net.Imap
 
 		internal static string GetPreviewText (MemoryStream memory, string charset)
 		{
-#if !NETSTANDARD_1_3 && !NETSTANDARD_1_6
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 			var content = memory.GetBuffer ();
 #else
 			var content = memory.ToArray ();

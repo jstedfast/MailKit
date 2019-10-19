@@ -16,7 +16,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\net45</OutputPath>
     <IntermediateOutputPath>obj\Debug\net45</IntermediateOutputPath>
-    <DefineConstants>DEBUG;TRACE;SERIALIZABLE;NET_4_5</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;SERIALIZABLE;NETFRAMEWORK;NET45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -31,7 +31,7 @@
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>bin\Release\net45\MailKit.xml</DocumentationFile>
-    <DefineConstants>SERIALIZABLE;NET_4_5</DefineConstants>
+    <DefineConstants>TRACE;SERIALIZABLE;NETFRAMEWORK;NET45</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
