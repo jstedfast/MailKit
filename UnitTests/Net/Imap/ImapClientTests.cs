@@ -1037,6 +1037,48 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestUnexpectedByeAfterCapability ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", Encoding.ASCII.GetBytes ("* BYE Autologout; idle for too long\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					Assert.Fail ("Did not expect to connect");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("Autologout; idle for too long", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestUnexpectedByeAfterCapabilityAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", Encoding.ASCII.GetBytes ("* BYE Autologout; idle for too long\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					Assert.Fail ("Did not expect to connect");
+				} catch (ImapProtocolException ex) {
+					Assert.AreEqual ("Autologout; idle for too long", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
 		public void TestUnexpectedByeWithAlert ()
 		{
 			var commands = new List<ImapReplayCommand> ();
