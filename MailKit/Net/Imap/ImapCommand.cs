@@ -877,9 +877,8 @@ namespace MailKit.Net.Imap {
 					// no clue what we got...
 					throw ImapEngine.UnexpectedToken ("Syntax error in response. Unexpected token: {0}", token);
 				}
-			} while (true);
+			} while (Status == ImapCommandStatus.Active);
 
-			// the status should always be Active at this point, but just to be sure...
 			if (Status == ImapCommandStatus.Active) {
 				current++;
 
@@ -888,9 +887,11 @@ namespace MailKit.Net.Imap {
 					Response = result;
 					return false;
 				}
+
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 	}
 }

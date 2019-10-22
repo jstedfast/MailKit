@@ -97,7 +97,8 @@ namespace MailKit.Net.Imap {
 		GMail,
 		ProtonMail,
 		UW,
-		Yahoo
+		Yahoo,
+		Yandex
 	}
 
 	class ImapFolderNameComparer : IEqualityComparer<string>
@@ -696,6 +697,8 @@ namespace MailKit.Net.Imap {
 					QuirksMode = ImapQuirksMode.GMail;
 				else if (text.Contains (" IMAP4rev1 2007f.") || text.Contains (" Panda IMAP "))
 					QuirksMode = ImapQuirksMode.UW;
+				else if (text.Contains ("Yandex IMAP4rev1 "))
+					QuirksMode = ImapQuirksMode.Yandex;
 
 				State = state;
 			} catch {
@@ -1894,6 +1897,15 @@ namespace MailKit.Net.Imap {
 				}
 
 				current.Bye = true;
+
+				// Note: Yandex IMAP is broken and will continue sending untagged BYE responses until the client closes
+				// the connection. In order to avoid this scenario, consider this command complete as soon as we receive
+				// the very first untagged BYE response and do not hold out hoping for a tagged response following the
+				// untagged BYE.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/938 for details.
+				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
+					current.Status = ImapCommandStatus.Complete;
 				break;
 			case "CAPABILITY":
 				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync, cancellationToken);
@@ -2052,7 +2064,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (current.Bye && !current.Logout)
-					Disconnect ();
+					throw new ImapProtocolException ("Bye.");
 			} catch (ImapProtocolException) {
 				var ic = current;
 
