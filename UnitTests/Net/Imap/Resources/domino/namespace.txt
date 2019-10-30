@@ -1,0 +1,2 @@
+* NAMESPACE (("" "\\")) (("Other\\" "\\")) (("Shared\\" "\\"))
+A######## OK NAMESPACE completed

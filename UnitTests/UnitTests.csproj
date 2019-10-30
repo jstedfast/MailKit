@@ -206,7 +206,10 @@
     <EmbeddedResource Include="Net\Imap\Resources\cyrus\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\cyrus\greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\domino\capability.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\domino\fetch-extra-parens.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\domino\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\domino\list-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\domino\namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.3.txt" />

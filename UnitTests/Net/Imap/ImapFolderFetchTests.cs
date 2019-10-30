@@ -1154,5 +1154,114 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("L'encyclopédie libre", preview, "french text x-unknown -> UTF-8 -> iso-8859-1");
 			}
 		}
+
+		List<ImapReplayCommand> CreateDominoParenthesisWorkaroundCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK Domino IMAP4 Server Release 10.0.1FP3 ready Wed, 30 Oct 2019 09:28:06 +0100\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "domino.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "domino.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 NAMESPACE\r\n", "domino.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 LIST \"\" \"INBOX\"\r\n", "domino.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 SELECT Inbox\r\n", "common.select-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 FETCH 1:* (UID ENVELOPE BODYSTRUCTURE)\r\n", "domino.fetch-extra-parens.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestDominoParenthesisWorkaround ()
+		{
+			var commands = CreateDominoParenthesisWorkaroundCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (1, client.PersonalNamespaces.Count, "Personal Count");
+				Assert.AreEqual ("", client.PersonalNamespaces[0].Path, "Personal Path");
+				Assert.AreEqual ('\\', client.PersonalNamespaces[0].DirectorySeparator, "Personal DirectorySeparator");
+
+				Assert.AreEqual (1, client.OtherNamespaces.Count, "Other Count");
+				Assert.AreEqual ("Other", client.OtherNamespaces[0].Path, "Other Path");
+				Assert.AreEqual ('\\', client.OtherNamespaces[0].DirectorySeparator, "Other DirectorySeparator");
+
+				Assert.AreEqual (1, client.SharedNamespaces.Count, "Shared Count");
+				Assert.AreEqual ("Shared", client.SharedNamespaces[0].Path, "Shared Path");
+				Assert.AreEqual ('\\', client.SharedNamespaces[0].DirectorySeparator, "Shared DirectorySeparator");
+
+				var inbox = client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure);
+				Assert.AreEqual (29, messages.Count, "Count");
+
+				for (int i = 0; i < 29; i++) {
+					Assert.AreEqual (i, messages[i].Index, "MessageSummaryItems are out of order!");
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestDominoParenthesisWorkaroundAsync ()
+		{
+			var commands = CreateDominoParenthesisWorkaroundCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (1, client.PersonalNamespaces.Count, "Personal Count");
+				Assert.AreEqual ("", client.PersonalNamespaces[0].Path, "Personal Path");
+				Assert.AreEqual ('\\', client.PersonalNamespaces[0].DirectorySeparator, "Personal DirectorySeparator");
+
+				Assert.AreEqual (1, client.OtherNamespaces.Count, "Other Count");
+				Assert.AreEqual ("Other", client.OtherNamespaces[0].Path, "Other Path");
+				Assert.AreEqual ('\\', client.OtherNamespaces[0].DirectorySeparator, "Other DirectorySeparator");
+
+				Assert.AreEqual (1, client.SharedNamespaces.Count, "Shared Count");
+				Assert.AreEqual ("Shared", client.SharedNamespaces[0].Path, "Shared Path");
+				Assert.AreEqual ('\\', client.SharedNamespaces[0].DirectorySeparator, "Shared DirectorySeparator");
+
+				var inbox = client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure);
+				Assert.AreEqual (29, messages.Count, "Count");
+
+				for (int i = 0; i < 29; i++) {
+					Assert.AreEqual (i, messages[i].Index, "MessageSummaryItems are out of order!");
+				}
+
+				client.Disconnect (false);
+			}
+		}
 	}
 }

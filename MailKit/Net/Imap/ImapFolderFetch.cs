@@ -166,6 +166,16 @@ namespace MailKit.Net.Imap
 				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
 					break;
 
+				bool parenthesized = false;
+				if (engine.QuirksMode == ImapQuirksMode.Domino && token.Type == ImapTokenType.OpenParen) {
+					// Note: Lotus Domino IMAP will (sometimes?) encapsulate the `ENVELOPE` segment of the
+					// response within an extra set of parenthesis.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/943 for details.
+					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					parenthesized = true;
+				}
+
 				ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 				var atom = (string) token.Value;
@@ -388,6 +398,12 @@ namespace MailKit.Net.Imap
 					if (token.Type == ImapTokenType.OpenParen)
 						await SkipParenthesizedList (engine, doAsync, cancellationToken).ConfigureAwait (false);
 					break;
+				}
+
+				if (parenthesized) {
+					// Note: This is the second half of the Lotus Domino IMAP server work-around.
+					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 				}
 			} while (true);
 

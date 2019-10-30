@@ -1,0 +1,2 @@
+* LIST (\Noinferiors \HasNoChildren) "\\" Inbox
+A######## OK LIST completed
