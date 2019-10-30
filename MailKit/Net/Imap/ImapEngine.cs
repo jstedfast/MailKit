@@ -2762,12 +2762,17 @@ namespace MailKit.Net.Imap {
 			return mailboxName.Length > 0;
 		}
 
-		public async Task<HeaderList> ParseHeadersAsync (Stream stream, bool doAsync, CancellationToken cancellationToken)
+		void InitializeParser (Stream stream, bool persistent)
 		{
 			if (parser == null)
-				parser = new MimeParser (ParserOptions.Default, stream);
+				parser = new MimeParser (ParserOptions.Default, stream, persistent);
 			else
-				parser.SetStream (ParserOptions.Default, stream);
+				parser.SetStream (ParserOptions.Default, stream, persistent);
+		}
+
+		public async Task<HeaderList> ParseHeadersAsync (Stream stream, bool doAsync, CancellationToken cancellationToken)
+		{
+			InitializeParser (stream, false);
 
 			if (doAsync)
 				return await parser.ParseHeadersAsync (cancellationToken).ConfigureAwait (false);
@@ -2777,10 +2782,7 @@ namespace MailKit.Net.Imap {
 
 		public async Task<MimeMessage> ParseMessageAsync (Stream stream, bool persistent, bool doAsync, CancellationToken cancellationToken)
 		{
-			if (parser == null)
-				parser = new MimeParser (ParserOptions.Default, stream, persistent);
-			else
-				parser.SetStream (ParserOptions.Default, stream, persistent);
+			InitializeParser (stream, persistent);
 
 			if (doAsync)
 				return await parser.ParseMessageAsync (cancellationToken).ConfigureAwait (false);
@@ -2790,10 +2792,7 @@ namespace MailKit.Net.Imap {
 
 		public async Task<MimeEntity> ParseEntityAsync (Stream stream, bool persistent, bool doAsync, CancellationToken cancellationToken)
 		{
-			if (parser == null)
-				parser = new MimeParser (ParserOptions.Default, stream, persistent);
-			else
-				parser.SetStream (ParserOptions.Default, stream, persistent);
+			InitializeParser (stream, persistent);
 
 			if (doAsync)
 				return await parser.ParseEntityAsync (cancellationToken).ConfigureAwait (false);
