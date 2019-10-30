@@ -43,6 +43,7 @@ using MimeKit.IO;
 
 using MailKit.Security;
 
+using SslStream = MailKit.Net.SslStream;
 using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit.Net.Pop3 {

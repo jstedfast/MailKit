@@ -37,7 +37,7 @@ namespace MailKit.Net
 		readonly SocketAsyncEventArgs args;
 		readonly Socket socket;
 		bool ownsSocket;
-		bool closed;
+		bool connected;
 
 		public NetworkStream (Socket socket, bool ownsSocket)
 		{
@@ -45,8 +45,11 @@ namespace MailKit.Net
 			args.Completed += AsyncOperationCompleted;
 			args.AcceptSocket = socket;
 
+			DisconnectOnCancel = true;
+
 			this.ownsSocket = ownsSocket;
 			this.socket = socket;
+			connected = true;
 		}
 
 		~NetworkStream ()
@@ -54,16 +57,20 @@ namespace MailKit.Net
 			Dispose (false);
 		}
 
+		public bool DisconnectOnCancel {
+			get; set;
+		}
+
 		public bool DataAvailable {
-			get { return socket.Available > 0; }
+			get { return connected && socket.Available > 0; }
 		}
 
 		public override bool CanRead {
-			get { return true; }
+			get { return connected; }
 		}
 
 		public override bool CanWrite {
-			get { return true; }
+			get { return connected; }
 		}
 
 		public override bool CanSeek {
@@ -71,7 +78,7 @@ namespace MailKit.Net
 		}
 
 		public override bool CanTimeout {
-			get { return true; }
+			get { return connected; }
 		}
 
 		public override long Length {
@@ -130,8 +137,8 @@ namespace MailKit.Net
 			} catch {
 				return;
 			} finally {
+				connected = false;
 				args.Dispose ();
-				closed = true;
 			}
 		}
 
@@ -161,10 +168,12 @@ namespace MailKit.Net
 					await tcs.Task.ConfigureAwait (false);
 					return args.BytesTransferred;
 				} catch (OperationCanceledException) {
-					if (socket.Connected)
-						socket.Shutdown (SocketShutdown.Both);
+					if (DisconnectOnCancel) {
+						if (socket.Connected)
+							socket.Shutdown (SocketShutdown.Both);
 
-					Disconnect ();
+						Disconnect ();
+					}
 					throw;
 				} catch (Exception ex) {
 					Disconnect ();
@@ -200,10 +209,12 @@ namespace MailKit.Net
 				try {
 					await tcs.Task.ConfigureAwait (false);
 				} catch (OperationCanceledException) {
-					if (socket.Connected)
-						socket.Shutdown (SocketShutdown.Both);
+					if (DisconnectOnCancel) {
+						if (socket.Connected)
+							socket.Shutdown (SocketShutdown.Both);
 
-					Disconnect ();
+						Disconnect ();
+					}
 					throw;
 				} catch (Exception ex) {
 					Disconnect ();
@@ -235,7 +246,7 @@ namespace MailKit.Net
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing && ownsSocket && !closed) {
+			if (disposing && ownsSocket && connected) {
 				ownsSocket = false;
 				Disconnect ();
 			}

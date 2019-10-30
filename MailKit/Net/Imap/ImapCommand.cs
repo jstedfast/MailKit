@@ -36,6 +36,9 @@ using MimeKit;
 using MimeKit.IO;
 using MimeKit.Utils;
 
+using SslStream = MailKit.Net.SslStream;
+using NetworkStream = MailKit.Net.NetworkStream;
+
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// An IMAP continuation handler.
@@ -797,14 +800,17 @@ namespace MailKit.Net.Imap {
 					try {
 						if (Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = -1;
+						Engine.Stream.SetIdle (true);
 
 						token = await Engine.ReadTokenAsync (doAsync, idle.LinkedToken).ConfigureAwait (false);
 
 						if (Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = timeout;
+						Engine.Stream.SetIdle (false);
 					} catch (OperationCanceledException) {
 						if (Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = timeout;
+						Engine.Stream.SetIdle (false);
 
 						if (idle.IsCancellationRequested)
 							throw;
@@ -812,6 +818,9 @@ namespace MailKit.Net.Imap {
 						Engine.Stream.IsConnected = true;
 
 						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
+					} catch {
+						Engine.Stream.SetIdle (false);
+						throw;
 					}
 				} else {
 					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);

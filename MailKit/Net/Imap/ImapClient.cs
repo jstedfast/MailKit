@@ -37,6 +37,7 @@ using System.Security.Cryptography.X509Certificates;
 
 using MailKit.Security;
 
+using SslStream = MailKit.Net.SslStream;
 using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit.Net.Imap {

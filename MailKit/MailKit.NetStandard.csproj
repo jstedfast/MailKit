@@ -103,6 +103,7 @@
     <Compile Include="Net\Smtp\SmtpStream.cs" />
     <Compile Include="Net\NetworkStream.cs" />
     <Compile Include="Net\SocketUtils.cs" />
+    <Compile Include="Net\SslStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AnnotationSearchQuery.cs" />
     <Compile Include="Search\BinarySearchQuery.cs" />
