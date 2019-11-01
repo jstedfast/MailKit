@@ -271,6 +271,16 @@ namespace MailKit.Net
 			cancellationToken.ThrowIfCancellationRequested ();
 		}
 
+		public async Task PollReadAsync (CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			while (Socket.Available <= 0) {
+				await Task.Delay (250).ConfigureAwait (false);
+				cancellationToken.ThrowIfCancellationRequested ();
+			}
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && ownsSocket && connected) {

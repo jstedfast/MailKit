@@ -168,6 +168,7 @@ namespace MailKit {
 			if (count == 0)
 				return 0;
 
+			var network = InnerStream as NetworkStream;
 			zIn.next_out = buffer;
 			zIn.next_out_index = offset;
 			zIn.avail_out = count;
@@ -177,8 +178,11 @@ namespace MailKit {
 					cancellationToken.ThrowIfCancellationRequested ();
 
 					if (doAsync) {
+						if (network != null)
+							await network.PollReadAsync (cancellationToken).ConfigureAwait (false);
 						zIn.avail_in = await InnerStream.ReadAsync (zIn.next_in, 0, zIn.next_in.Length, cancellationToken).ConfigureAwait (false);
 					} else {
+						network?.Poll (SelectMode.SelectRead, cancellationToken);
 						zIn.avail_in = InnerStream.Read (zIn.next_in, 0, zIn.next_in.Length);
 					}
 					eos = zIn.avail_in == 0;
