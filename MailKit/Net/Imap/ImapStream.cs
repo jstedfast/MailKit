@@ -265,18 +265,6 @@ namespace MailKit.Net.Imap {
 			get { return Stream.Length; }
 		}
 
-		/// <summary>
-		/// Enable or disable IDLE mode.
-		/// </summary>
-		/// <param name="idle"><c>true</c> if the stream should consider itself in IDLE mode; otherwise, <c>false</c>.</param>
-		public void SetIdle (bool idle)
-		{
-			var network = NetworkStream.Get (Stream);
-
-			if (network != null)
-				network.DisconnectOnCancel = !idle;
-		}
-
 		async Task<int> ReadAheadAsync (int atleast, bool doAsync, CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;

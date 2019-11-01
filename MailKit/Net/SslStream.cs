@@ -40,16 +40,5 @@ namespace MailKit.Net
 		new public Stream InnerStream {
 			get { return base.InnerStream; }
 		}
-
-		public override async Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
-		{
-			if (cancellationToken.CanBeCanceled && InnerStream is NetworkStream network) {
-				cancellationToken.ThrowIfCancellationRequested ();
-
-				await network.PollReadAsync (cancellationToken).ConfigureAwait (false);
-			}
-
-			return await base.ReadAsync (buffer, offset, count, cancellationToken).ConfigureAwait (false);
-		}
 	}
 }
