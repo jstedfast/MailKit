@@ -101,9 +101,9 @@ namespace UnitTests {
 				stream.Write (output, 0, output.Length);
 				stream.Flush ();
 
-				Assert.AreEqual (compressedLength, stream.BaseStream.Position, "Compressed output length");
+				Assert.AreEqual (compressedLength, stream.InnerStream.Position, "Compressed output length");
 
-				stream.BaseStream.Position = 0;
+				stream.InnerStream.Position = 0;
 
 				n = stream.Read (buffer, 0, buffer.Length);
 				Assert.AreEqual (output.Length, n, "Decompressed input length");
@@ -126,9 +126,9 @@ namespace UnitTests {
 				await stream.WriteAsync (output, 0, output.Length);
 				await stream.FlushAsync ();
 
-				Assert.AreEqual (compressedLength, stream.BaseStream.Position, "Compressed output length");
+				Assert.AreEqual (compressedLength, stream.InnerStream.Position, "Compressed output length");
 
-				stream.BaseStream.Position = 0;
+				stream.InnerStream.Position = 0;
 
 				n = await stream.ReadAsync (buffer, 0, buffer.Length);
 				Assert.AreEqual (output.Length, n, "Decompressed input length");

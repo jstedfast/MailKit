@@ -27,9 +27,12 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 using Org.BouncyCastle.Utilities.Zlib;
+
+using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit {
 	/// <summary>
@@ -40,9 +43,9 @@ namespace MailKit {
 		readonly ZStream zIn, zOut;
 		bool eos, disposed;
 
-		public CompressedStream (Stream baseStream)
+		public CompressedStream (Stream innerStream)
 		{
-			BaseStream = baseStream;
+			InnerStream = innerStream;
 
 			zOut = new ZStream ();
 			zOut.deflateInit (5, true);
@@ -54,10 +57,10 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the base stream.
+		/// Gets the inner stream.
 		/// </summary>
-		/// <value>The base stream.</value>
-		public Stream BaseStream {
+		/// <value>The inner stream.</value>
+		public Stream InnerStream {
 			get; private set;
 		}
 
@@ -66,7 +69,7 @@ namespace MailKit {
 		/// </summary>
 		/// <value><c>true</c> if the stream supports reading; otherwise, <c>false</c>.</value>
 		public override bool CanRead {
-			get { return BaseStream.CanRead; }
+			get { return InnerStream.CanRead; }
 		}
 
 		/// <summary>
@@ -74,7 +77,7 @@ namespace MailKit {
 		/// </summary>
 		/// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
 		public override bool CanWrite {
-			get { return BaseStream.CanWrite; }
+			get { return InnerStream.CanWrite; }
 		}
 
 		/// <summary>
@@ -90,7 +93,7 @@ namespace MailKit {
 		/// </summary>
 		/// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
 		public override bool CanTimeout {
-			get { return BaseStream.CanTimeout; }
+			get { return InnerStream.CanTimeout; }
 		}
 
 		/// <summary>
@@ -99,8 +102,8 @@ namespace MailKit {
 		/// <returns>A value, in miliseconds, that determines how long the stream will attempt to read before timing out.</returns>
 		/// <value>The read timeout.</value>
 		public override int ReadTimeout {
-			get { return BaseStream.ReadTimeout; }
-			set { BaseStream.ReadTimeout = value; }
+			get { return InnerStream.ReadTimeout; }
+			set { InnerStream.ReadTimeout = value; }
 		}
 
 		/// <summary>
@@ -109,8 +112,8 @@ namespace MailKit {
 		/// <returns>A value, in miliseconds, that determines how long the stream will attempt to write before timing out.</returns>
 		/// <value>The write timeout.</value>
 		public override int WriteTimeout {
-			get { return BaseStream.WriteTimeout; }
-			set { BaseStream.WriteTimeout = value; }
+			get { return InnerStream.WriteTimeout; }
+			set { InnerStream.WriteTimeout = value; }
 		}
 
 		/// <summary>
@@ -171,10 +174,13 @@ namespace MailKit {
 
 			do {
 				if (zIn.avail_in == 0 && !eos) {
-					if (doAsync)
-						zIn.avail_in = await BaseStream.ReadAsync (zIn.next_in, 0, zIn.next_in.Length, cancellationToken).ConfigureAwait (false);
-					else
-						zIn.avail_in = BaseStream.Read (zIn.next_in, 0, zIn.next_in.Length);
+					cancellationToken.ThrowIfCancellationRequested ();
+
+					if (doAsync) {
+						zIn.avail_in = await InnerStream.ReadAsync (zIn.next_in, 0, zIn.next_in.Length, cancellationToken).ConfigureAwait (false);
+					} else {
+						zIn.avail_in = InnerStream.Read (zIn.next_in, 0, zIn.next_in.Length);
+					}
 					eos = zIn.avail_in == 0;
 					zIn.next_in_index = 0;
 				}
@@ -274,9 +280,9 @@ namespace MailKit {
 					throw new IOException ("Error deflating: " + zOut.msg);
 
 				if (doAsync)
-					await BaseStream.WriteAsync (zOut.next_out, 0, zOut.next_out.Length - zOut.avail_out, cancellationToken).ConfigureAwait (false);
+					await InnerStream.WriteAsync (zOut.next_out, 0, zOut.next_out.Length - zOut.avail_out, cancellationToken).ConfigureAwait (false);
 				else
-					BaseStream.Write (zOut.next_out, 0, zOut.next_out.Length - zOut.avail_out);
+					InnerStream.Write (zOut.next_out, 0, zOut.next_out.Length - zOut.avail_out);
 			} while (zOut.avail_in > 0 || zOut.avail_out == 0);
 		}
 
@@ -359,7 +365,7 @@ namespace MailKit {
 		{
 			CheckDisposed ();
 
-			BaseStream.Flush ();
+			InnerStream.Flush ();
 		}
 
 		/// <summary>
@@ -380,7 +386,7 @@ namespace MailKit {
 		{
 			CheckDisposed ();
 
-			return BaseStream.FlushAsync (cancellationToken);
+			return InnerStream.FlushAsync (cancellationToken);
 		}
 
 		/// <summary>
@@ -410,7 +416,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Releases the unmanaged resources used by the <see cref="DuplexStream"/> and
+		/// Releases the unmanaged resources used by the <see cref="CompressedStream"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
@@ -418,7 +424,7 @@ namespace MailKit {
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
-				BaseStream.Dispose ();
+				InnerStream.Dispose ();
 				disposed = true;
 				zOut.free ();
 				zIn.free ();

@@ -64,7 +64,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "BADCHARSET (US-ASCII \"iso-8859-1\" UTF-8)] This is some free-form text\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						ImapResponseCode respCode;
 
@@ -95,7 +95,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "BADURL \"/INBOX;UIDVALIDITY=785799047/;UID=113330;section=1.5.9\"] CATENATE append has failed, one message expunged\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						ImapResponseCode respCode;
 
@@ -124,7 +124,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "MAXCONVERTMESSAGES 1] This is some free-form text\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						ImapResponseCode respCode;
 
@@ -153,7 +153,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "MAXCONVERTPARTS 1] This is some free-form text\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						ImapResponseCode respCode;
 
@@ -182,7 +182,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "NOUPDATE \"B02\"] Too many contexts\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						ImapResponseCode respCode;
 
@@ -211,7 +211,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "NEWNAME OldName NewName] This is some free-form text\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						ImapResponseCode respCode;
 
@@ -241,7 +241,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "UNDEFINED-FILTER filter-name] This is some free-form text\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						ImapResponseCode respCode;
 
@@ -267,7 +267,7 @@ namespace UnitTests.Net.Imap {
 		void TestGreetingDetection (string server, string fileName, ImapQuirksMode expected)
 		{
 			using (var input = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + server + "." + fileName)) {
-				using (var tokenizer = new ImapStream (input, null, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (input, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						try {
 							engine.ConnectAsync (tokenizer, false, CancellationToken.None).GetAwaiter ().GetResult ();

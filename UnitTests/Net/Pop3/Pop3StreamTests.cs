@@ -43,7 +43,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestCanReadWriteSeek ()
 		{
-			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				Assert.IsTrue (stream.CanRead);
 				Assert.IsTrue (stream.CanWrite);
 				Assert.IsFalse (stream.CanSeek);
@@ -54,7 +54,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestGetSetTimeouts ()
 		{
-			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				stream.ReadTimeout = 5;
 				Assert.AreEqual (5, stream.ReadTimeout, "ReadTimeout");
 
@@ -66,7 +66,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestRead ()
 		{
-			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var data = Encoding.ASCII.GetBytes ("+OK\r\n");
 				var buffer = new byte[16];
 
@@ -90,7 +90,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public async Task TestReadAsync ()
 		{
-			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var data = Encoding.ASCII.GetBytes ("+OK\r\n");
 				var buffer = new byte[16];
 
@@ -114,7 +114,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestSeek ()
 		{
-			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				Assert.Throws<NotSupportedException> (() => stream.Seek (0, SeekOrigin.Begin));
 				Assert.Throws<NotSupportedException> (() => stream.Position = 500);
 				Assert.AreEqual (0, stream.Position);
@@ -125,7 +125,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestSetLength ()
 		{
-			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				Assert.Throws<NotSupportedException> (() => stream.SetLength (500));
 			}
 		}
@@ -133,7 +133,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestWrite ()
 		{
-			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var memory = (MemoryStream) stream.Stream;
 				var buffer = new byte[8192];
 				var buf1k = new byte[1024];
@@ -199,7 +199,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public async Task TestWriteAsync ()
 		{
-			using (var stream = new Pop3Stream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var memory = (MemoryStream) stream.Stream;
 				var buffer = new byte[8192];
 				var buf1k = new byte[1024];

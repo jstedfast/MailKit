@@ -77,14 +77,12 @@ namespace MailKit.Net.Smtp {
 		/// Creates a new <see cref="SmtpStream"/>.
 		/// </remarks>
 		/// <param name="source">The underlying network stream.</param>
-		/// <param name="socket">The underlying network socket.</param>
 		/// <param name="protocolLogger">The protocol logger.</param>
-		public SmtpStream (Stream source, Socket socket, IProtocolLogger protocolLogger)
+		public SmtpStream (Stream source, IProtocolLogger protocolLogger)
 		{
 			logger = protocolLogger;
 			IsConnected = true;
 			Stream = source;
-			Socket = socket;
 		}
 
 		/// <summary>
@@ -96,17 +94,6 @@ namespace MailKit.Net.Smtp {
 		/// <value>The underlying network stream.</value>
 		public Stream Stream {
 			get; internal set;
-		}
-
-		/// <summary>
-		/// Get the underlying network socket.
-		/// </summary>
-		/// <remarks>
-		/// Gets the underlying network socket.
-		/// </remarks>
-		/// <value>The underlying network socket.</value>
-		public Socket Socket {
-			get; private set;
 		}
 
 		/// <summary>
@@ -230,32 +217,6 @@ namespace MailKit.Net.Smtp {
 			get { return Stream.Length; }
 		}
 
-		void DropConnection ()
-		{
-			if (Socket != null) {
-				try {
-					Socket.Dispose ();
-				} catch {
-					return;
-				}
-			}
-		}
-
-		void Poll (SelectMode mode, CancellationToken cancellationToken)
-		{
-			if (!cancellationToken.CanBeCanceled)
-				return;
-
-			if (Socket != null) {
-				do {
-					cancellationToken.ThrowIfCancellationRequested ();
-					// wait 1/4 second and then re-check for cancellation
-				} while (!Socket.Poll (250000, mode));
-			} else {
-				cancellationToken.ThrowIfCancellationRequested ();
-			}
-		}
-
 		async Task<int> ReadAheadAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
@@ -277,22 +238,15 @@ namespace MailKit.Net.Smtp {
 			index = inputEnd;
 
 			try {
-				bool buffered = !(Stream is NetworkStream);
+				var network = Stream as NetworkStream;
 
-				if (buffered) {
-					cancellationToken.ThrowIfCancellationRequested ();
+				cancellationToken.ThrowIfCancellationRequested ();
 
-					if (doAsync)
-						nread = await Stream.ReadAsync (input, index, left, cancellationToken).ConfigureAwait (false);
-					else
-						nread = Stream.Read (input, index, left);
+				if (doAsync) {
+					nread = await Stream.ReadAsync (input, index, left, cancellationToken).ConfigureAwait (false);
 				} else {
-					if (doAsync) {
-						nread = await Stream.ReadAsync (input, index, left, cancellationToken).ConfigureAwait (false);
-					} else {
-						Poll (SelectMode.SelectRead, cancellationToken);
-						nread = Stream.Read (input, index, left);
-					}
+					network?.Poll (SelectMode.SelectRead, cancellationToken);
+					nread = Stream.Read (input, index, left);
 				}
 
 				if (nread > 0) {
@@ -634,6 +588,7 @@ namespace MailKit.Net.Smtp {
 			ValidateArguments (buffer, offset, count);
 
 			try {
+				var network = NetworkStream.Get (Stream);
 				int index = offset;
 				int left = count;
 
@@ -653,7 +608,7 @@ namespace MailKit.Net.Smtp {
 						if (doAsync) {
 							await Stream.WriteAsync (output, 0, BlockSize, cancellationToken).ConfigureAwait (false);
 						} else {
-							Poll (SelectMode.SelectWrite, cancellationToken);
+							network?.Poll (SelectMode.SelectWrite, cancellationToken);
 							Stream.Write (output, 0, BlockSize);
 						}
 						logger.LogClient (output, 0, BlockSize);
@@ -666,7 +621,7 @@ namespace MailKit.Net.Smtp {
 							if (doAsync) {
 								await Stream.WriteAsync (buffer, index, BlockSize, cancellationToken).ConfigureAwait (false);
 							} else {
-								Poll (SelectMode.SelectWrite, cancellationToken);
+								network?.Poll (SelectMode.SelectWrite, cancellationToken);
 								Stream.Write (buffer, index, BlockSize);
 							}
 							logger.LogClient (buffer, index, BlockSize);
@@ -806,7 +761,9 @@ namespace MailKit.Net.Smtp {
 					await Stream.WriteAsync (output, 0, outputIndex, cancellationToken).ConfigureAwait (false);
 					await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 				} else {
-					Poll (SelectMode.SelectWrite, cancellationToken);
+					var network = NetworkStream.Get (Stream);
+
+					network?.Poll (SelectMode.SelectWrite, cancellationToken);
 					Stream.Write (output, 0, outputIndex);
 					Stream.Flush ();
 				}

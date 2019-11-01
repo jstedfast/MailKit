@@ -1109,7 +1109,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException (nameof (replayStream));
 
 			engine.Uri = new Uri ($"imap://{host}:143");
-			engine.ConnectAsync (new ImapStream (replayStream, null, ProtocolLogger), false, cancellationToken).GetAwaiter ().GetResult ();
+			engine.ConnectAsync (new ImapStream (replayStream, ProtocolLogger), false, cancellationToken).GetAwaiter ().GetResult ();
 			engine.TagPrefix = 'A';
 			secure = false;
 
@@ -1136,7 +1136,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException (nameof (replayStream));
 
 			engine.Uri = new Uri ($"imap://{host}:143");
-			await engine.ConnectAsync (new ImapStream (replayStream, null, ProtocolLogger), true, cancellationToken).ConfigureAwait (false);
+			await engine.ConnectAsync (new ImapStream (replayStream, ProtocolLogger), true, cancellationToken).ConfigureAwait (false);
 			engine.TagPrefix = 'A';
 			secure = false;
 
@@ -1260,7 +1260,7 @@ namespace MailKit.Net.Imap {
 			connecting = true;
 
 			try {
-				await engine.ConnectAsync (new ImapStream (stream, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
+				await engine.ConnectAsync (new ImapStream (stream, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
 			} catch {
 				connecting = false;
 				secure = false;
@@ -1391,7 +1391,7 @@ namespace MailKit.Net.Imap {
 			ConnectAsync (host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		async Task ConnectAsync (Stream stream, Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+		async Task ConnectAsync (Stream stream, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
@@ -1460,7 +1460,7 @@ namespace MailKit.Net.Imap {
 			connecting = true;
 
 			try {
-				await engine.ConnectAsync (new ImapStream (network, socket, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
+				await engine.ConnectAsync (new ImapStream (network, ProtocolLogger), doAsync, cancellationToken).ConfigureAwait (false);
 			} catch {
 				connecting = false;
 				throw;
@@ -1532,7 +1532,7 @@ namespace MailKit.Net.Imap {
 			if (!socket.Connected)
 				throw new ArgumentException ("The socket is not connected.", nameof (socket));
 
-			return ConnectAsync (new NetworkStream (socket, true), socket, host, port, options, doAsync, cancellationToken);
+			return ConnectAsync (new NetworkStream (socket, true), host, port, options, doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -1662,7 +1662,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			ConnectAsync (stream, null, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
+			ConnectAsync (stream, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		async Task DisconnectAsync (bool quit, bool doAsync, CancellationToken cancellationToken)

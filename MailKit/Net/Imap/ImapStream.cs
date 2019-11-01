@@ -102,14 +102,12 @@ namespace MailKit.Net.Imap {
 		/// Creates a new <see cref="ImapStream"/>.
 		/// </remarks>
 		/// <param name="source">The underlying network stream.</param>
-		/// <param name="socket">The underlying network socket.</param>
 		/// <param name="protocolLogger">The protocol logger.</param>
-		public ImapStream (Stream source, Socket socket, IProtocolLogger protocolLogger)
+		public ImapStream (Stream source, IProtocolLogger protocolLogger)
 		{
 			logger = protocolLogger;
 			IsConnected = true;
 			Stream = source;
-			Socket = socket;
 		}
 
 		/// <summary>
@@ -121,17 +119,6 @@ namespace MailKit.Net.Imap {
 		/// <value>The underlying network stream.</value>
 		public Stream Stream {
 			get; internal set;
-		}
-
-		/// <summary>
-		/// Get the underlying network socket.
-		/// </summary>
-		/// <remarks>
-		/// Gets the underlying network socket.
-		/// </remarks>
-		/// <value>The underlying network socket.</value>
-		public Socket Socket {
-			get; private set;
 		}
 
 		/// <summary>
@@ -278,42 +265,16 @@ namespace MailKit.Net.Imap {
 			get { return Stream.Length; }
 		}
 
-		NetworkStream GetNetworkStream ()
-		{
-			if (Stream is SslStream ssl)
-				return ssl.NetworkStream;
-
-			if (Stream is CompressedStream compressed)
-				return compressed.BaseStream as NetworkStream;
-
-			return Stream as NetworkStream;
-		}
-
 		/// <summary>
 		/// Enable or disable IDLE mode.
 		/// </summary>
 		/// <param name="idle"><c>true</c> if the stream should consider itself in IDLE mode; otherwise, <c>false</c>.</param>
 		public void SetIdle (bool idle)
 		{
-			var network = GetNetworkStream ();
+			var network = NetworkStream.Get (Stream);
 
 			if (network != null)
 				network.DisconnectOnCancel = !idle;
-		}
-
-		void Poll (SelectMode mode, CancellationToken cancellationToken)
-		{
-			if (!cancellationToken.CanBeCanceled)
-				return;
-
-			if (Socket != null) {
-				do {
-					cancellationToken.ThrowIfCancellationRequested ();
-					// wait 1/4 second and then re-check for cancellation
-				} while (!Socket.Poll (250000, mode));
-			} else {
-				cancellationToken.ThrowIfCancellationRequested ();
-			}
 		}
 
 		async Task<int> ReadAheadAsync (int atleast, bool doAsync, CancellationToken cancellationToken)
@@ -356,22 +317,15 @@ namespace MailKit.Net.Imap {
 			end = input.Length - PadSize;
 
 			try {
-				bool buffered = !(Stream is NetworkStream);
+				var network = Stream as NetworkStream;
 
-				if (buffered) {
-					cancellationToken.ThrowIfCancellationRequested ();
+				cancellationToken.ThrowIfCancellationRequested ();
 
-					if (doAsync)
-						nread = await Stream.ReadAsync (input, start, end - start, cancellationToken).ConfigureAwait (false);
-					else
-						nread = Stream.Read (input, start, end - start);
+				if (doAsync) {
+					nread = await Stream.ReadAsync (input, start, end - start, cancellationToken).ConfigureAwait (false);
 				} else {
-					if (doAsync) {
-						nread = await Stream.ReadAsync (input, start, end - start, cancellationToken).ConfigureAwait (false);
-					} else {
-						Poll (SelectMode.SelectRead, cancellationToken);
-						nread = Stream.Read (input, start, end - start);
-					}
+					network?.Poll (SelectMode.SelectRead, cancellationToken);
+					nread = Stream.Read (input, start, end - start);
 				}
 
 				if (nread > 0) {
@@ -381,7 +335,7 @@ namespace MailKit.Net.Imap {
 					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.");
 				}
 
-				if (buffered)
+				if (network == null)
 					cancellationToken.ThrowIfCancellationRequested ();
 			} catch {
 				IsConnected = false;
@@ -927,6 +881,7 @@ namespace MailKit.Net.Imap {
 			ValidateArguments (buffer, offset, count);
 
 			try {
+				var network = NetworkStream.Get (Stream);
 				int index = offset;
 				int left = count;
 
@@ -946,7 +901,7 @@ namespace MailKit.Net.Imap {
 						if (doAsync) {
 							await Stream.WriteAsync (output, 0, BlockSize, cancellationToken).ConfigureAwait (false);
 						} else {
-							Poll (SelectMode.SelectWrite, cancellationToken);
+							network?.Poll (SelectMode.SelectWrite, cancellationToken);
 							Stream.Write (output, 0, BlockSize);
 						}
 						logger.LogClient (output, 0, BlockSize);
@@ -959,7 +914,7 @@ namespace MailKit.Net.Imap {
 							if (doAsync) {
 								await Stream.WriteAsync (buffer, index, BlockSize, cancellationToken).ConfigureAwait (false);
 							} else {
-								Poll (SelectMode.SelectWrite, cancellationToken);
+								network?.Poll (SelectMode.SelectWrite, cancellationToken);
 								Stream.Write (buffer, index, BlockSize);
 							}
 							logger.LogClient (buffer, index, BlockSize);
@@ -1099,7 +1054,9 @@ namespace MailKit.Net.Imap {
 					await Stream.WriteAsync (output, 0, outputIndex, cancellationToken).ConfigureAwait (false);
 					await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 				} else {
-					Poll (SelectMode.SelectWrite, cancellationToken);
+					var network = NetworkStream.Get (Stream);
+
+					network?.Poll (SelectMode.SelectWrite, cancellationToken);
 					Stream.Write (output, 0, outputIndex);
 					Stream.Flush ();
 				}

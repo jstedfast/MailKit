@@ -35,7 +35,6 @@ namespace MailKit.Net
 	class NetworkStream : Stream
 	{
 		readonly SocketAsyncEventArgs args;
-		readonly Socket socket;
 		bool ownsSocket;
 		bool connected;
 
@@ -48,8 +47,8 @@ namespace MailKit.Net
 			DisconnectOnCancel = true;
 
 			this.ownsSocket = ownsSocket;
-			this.socket = socket;
-			connected = true;
+			connected = socket.Connected;
+			Socket = socket;
 		}
 
 		~NetworkStream ()
@@ -61,8 +60,12 @@ namespace MailKit.Net
 			get; set;
 		}
 
+		public Socket Socket {
+			get; private set;
+		}
+
 		public bool DataAvailable {
-			get { return connected && socket.Available > 0; }
+			get { return connected && Socket.Available > 0; }
 		}
 
 		public override bool CanRead {
@@ -92,7 +95,7 @@ namespace MailKit.Net
 
 		public override int ReadTimeout {
 			get {
-				int timeout = socket.ReceiveTimeout;
+				int timeout = Socket.ReceiveTimeout;
 
 				return timeout == 0 ? Timeout.Infinite : timeout;
 			}
@@ -100,13 +103,13 @@ namespace MailKit.Net
 				if (value <= 0 && value != Timeout.Infinite)
 					throw new ArgumentOutOfRangeException (nameof (value));
 
-				socket.ReceiveTimeout = value;
+				Socket.ReceiveTimeout = value;
 			}
 		}
 
 		public override int WriteTimeout {
 			get {
-				int timeout = socket.SendTimeout;
+				int timeout = Socket.SendTimeout;
 
 				return timeout == 0 ? Timeout.Infinite : timeout;
 			}
@@ -114,7 +117,7 @@ namespace MailKit.Net
 				if (value <= 0 && value != Timeout.Infinite)
 					throw new ArgumentOutOfRangeException (nameof (value));
 
-				socket.SendTimeout = value;
+				Socket.SendTimeout = value;
 			}
 		}
 
@@ -133,7 +136,7 @@ namespace MailKit.Net
 		void Disconnect ()
 		{
 			try {
-				socket.Dispose ();
+				Socket.Dispose ();
 			} catch {
 				return;
 			} finally {
@@ -145,7 +148,7 @@ namespace MailKit.Net
 		public override int Read (byte[] buffer, int offset, int count)
 		{
 			try {
-				return socket.Receive (buffer, offset, count, SocketFlags.None);
+				return Socket.Receive (buffer, offset, count, SocketFlags.None);
 			} catch (SocketException ex) {
 				throw new IOException (ex.Message, ex);
 			}
@@ -161,7 +164,7 @@ namespace MailKit.Net
 				args.SetBuffer (buffer, offset, count);
 				args.UserToken = tcs;
 
-				if (!socket.ReceiveAsync (args))
+				if (!Socket.ReceiveAsync (args))
 					AsyncOperationCompleted (null, args);
 
 				try {
@@ -169,8 +172,8 @@ namespace MailKit.Net
 					return args.BytesTransferred;
 				} catch (OperationCanceledException) {
 					if (DisconnectOnCancel) {
-						if (socket.Connected)
-							socket.Shutdown (SocketShutdown.Both);
+						if (Socket.Connected)
+							Socket.Shutdown (SocketShutdown.Both);
 
 						Disconnect ();
 					}
@@ -187,7 +190,7 @@ namespace MailKit.Net
 		public override void Write (byte[] buffer, int offset, int count)
 		{
 			try {
-				socket.Send (buffer, offset, count, SocketFlags.None);
+				Socket.Send (buffer, offset, count, SocketFlags.None);
 			} catch (SocketException ex) {
 				throw new IOException (ex.Message, ex);
 			}
@@ -203,15 +206,15 @@ namespace MailKit.Net
 				args.SetBuffer (buffer, offset, count);
 				args.UserToken = tcs;
 
-				if (!socket.SendAsync (args))
+				if (!Socket.SendAsync (args))
 					AsyncOperationCompleted (null, args);
 
 				try {
 					await tcs.Task.ConfigureAwait (false);
 				} catch (OperationCanceledException) {
 					if (DisconnectOnCancel) {
-						if (socket.Connected)
-							socket.Shutdown (SocketShutdown.Both);
+						if (Socket.Connected)
+							Socket.Shutdown (SocketShutdown.Both);
 
 						Disconnect ();
 					}
@@ -242,6 +245,30 @@ namespace MailKit.Net
 		public override void SetLength (long value)
 		{
 			throw new NotSupportedException ();
+		}
+
+		public static NetworkStream Get (Stream stream)
+		{
+			if (stream is CompressedStream compressed)
+				stream = compressed.InnerStream;
+
+			if (stream is SslStream ssl)
+				stream = ssl.InnerStream;
+
+			return stream as NetworkStream;
+		}
+
+		public void Poll (SelectMode mode, CancellationToken cancellationToken)
+		{
+			if (!cancellationToken.CanBeCanceled)
+				return;
+
+			do {
+				cancellationToken.ThrowIfCancellationRequested ();
+				// wait 1/4 second and then re-check for cancellation
+			} while (!Socket.Poll (250000, mode));
+
+			cancellationToken.ThrowIfCancellationRequested ();
 		}
 
 		protected override void Dispose (bool disposing)

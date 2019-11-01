@@ -401,7 +401,7 @@ namespace MailKit.Net.Smtp
 		/// </exception>
 		public override Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ConnectAsync (stream, null, host, port, options, true, cancellationToken);
+			return ConnectAsync (stream, host, port, options, true, cancellationToken);
 		}
 
 		/// <summary>

@@ -788,7 +788,7 @@ namespace MailKit.Net.Pop3 {
 			secure = false;
 
 			engine.Uri = new Uri ($"pop://{host}:110");
-			engine.Connect (new Pop3Stream (replayStream, null, ProtocolLogger), cancellationToken);
+			engine.Connect (new Pop3Stream (replayStream, ProtocolLogger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 			engine.Disconnected += OnEngineDisconnected;
 			OnConnected (host, 110, SecureSocketOptions.None);
@@ -808,7 +808,7 @@ namespace MailKit.Net.Pop3 {
 			secure = false;
 
 			engine.Uri = new Uri ($"pop://{host}:110");
-			await engine.ConnectAsync (new Pop3Stream (replayStream, null, ProtocolLogger), cancellationToken).ConfigureAwait (false);
+			await engine.ConnectAsync (new Pop3Stream (replayStream, ProtocolLogger), cancellationToken).ConfigureAwait (false);
 			await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
 			engine.Disconnected += OnEngineDisconnected;
 			OnConnected (host, 110, SecureSocketOptions.None);
@@ -920,7 +920,7 @@ namespace MailKit.Net.Pop3 {
 				throw;
 			}
 
-			var pop3 = new Pop3Stream (stream, socket, ProtocolLogger);
+			var pop3 = new Pop3Stream (stream, ProtocolLogger);
 
 			if (doAsync)
 				await engine.ConnectAsync (pop3, cancellationToken).ConfigureAwait (false);
@@ -1037,7 +1037,7 @@ namespace MailKit.Net.Pop3 {
 			ConnectAsync (host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		async Task ConnectAsync (Stream stream, Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+		async Task ConnectAsync (Stream stream, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
@@ -1104,7 +1104,7 @@ namespace MailKit.Net.Pop3 {
 				throw;
 			}
 
-			var pop3 = new Pop3Stream (network, socket, ProtocolLogger);
+			var pop3 = new Pop3Stream (network, ProtocolLogger);
 
 			if (doAsync)
 				await engine.ConnectAsync (pop3, cancellationToken).ConfigureAwait (false);
@@ -1160,7 +1160,7 @@ namespace MailKit.Net.Pop3 {
 			if (!socket.Connected)
 				throw new ArgumentException ("The socket is not connected.", nameof (socket));
 
-			return ConnectAsync (new NetworkStream (socket, true), socket, host, port, options, doAsync, cancellationToken);
+			return ConnectAsync (new NetworkStream (socket, true), host, port, options, doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -1296,7 +1296,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			ConnectAsync (stream, null, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
+			ConnectAsync (stream, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		async Task DisconnectAsync (bool quit, bool doAsync, CancellationToken cancellationToken)

@@ -469,6 +469,7 @@ namespace MailKit.Net.Smtp {
 
 		async Task<SmtpResponse> SendEhloAsync (bool ehlo, bool doAsync, CancellationToken cancellationToken)
 		{
+			var network = NetworkStream.Get (Stream.Stream);
 			string command = ehlo ? "EHLO " : "HELO ";
 			string domain = null;
 			IPAddress ip = null;
@@ -476,11 +477,11 @@ namespace MailKit.Net.Smtp {
 			if (!string.IsNullOrEmpty (LocalDomain)) {
 				if (!IPAddress.TryParse (LocalDomain, out ip))
 					domain = LocalDomain;
-			} else if (Stream.Socket != null) {
-				var ipEndPoint = Stream.Socket.LocalEndPoint as IPEndPoint;
+			} else if (network != null) {
+				var ipEndPoint = network.Socket.LocalEndPoint as IPEndPoint;
 
 				if (ipEndPoint == null)
-					domain = ((DnsEndPoint) Stream.Socket.LocalEndPoint).Host;
+					domain = ((DnsEndPoint) network.Socket.LocalEndPoint).Host;
 				else
 					ip = ipEndPoint.Address;
 			} else {
@@ -856,7 +857,7 @@ namespace MailKit.Net.Smtp {
 			if (replayStream == null)
 				throw new ArgumentNullException (nameof (replayStream));
 
-			Stream = new SmtpStream (replayStream, null, ProtocolLogger);
+			Stream = new SmtpStream (replayStream, ProtocolLogger);
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
 			uri = new Uri ($"smtp://{host}:25");
@@ -893,7 +894,7 @@ namespace MailKit.Net.Smtp {
 			if (replayStream == null)
 				throw new ArgumentNullException (nameof (replayStream));
 
-			Stream = new SmtpStream (replayStream, null, ProtocolLogger);
+			Stream = new SmtpStream (replayStream, ProtocolLogger);
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
 			uri = new Uri ($"smtp://{host}:25");
@@ -1019,7 +1020,7 @@ namespace MailKit.Net.Smtp {
 				stream.ReadTimeout = timeout;
 			}
 
-			Stream = new SmtpStream (stream, socket, ProtocolLogger);
+			Stream = new SmtpStream (stream, ProtocolLogger);
 
 			try {
 				ProtocolLogger.LogConnect (uri);
@@ -1154,7 +1155,7 @@ namespace MailKit.Net.Smtp {
 			ConnectAsync (host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		async Task ConnectAsync (Stream stream, Socket socket, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+		async Task ConnectAsync (Stream stream, string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
@@ -1214,7 +1215,7 @@ namespace MailKit.Net.Smtp {
 				network.ReadTimeout = timeout;
 			}
 
-			Stream = new SmtpStream (network, socket, ProtocolLogger);
+			Stream = new SmtpStream (network, ProtocolLogger);
 
 			try {
 				ProtocolLogger.LogConnect (uri);
@@ -1281,7 +1282,7 @@ namespace MailKit.Net.Smtp {
 			if (!socket.Connected)
 				throw new ArgumentException ("The socket is not connected.", nameof (socket));
 
-			return ConnectAsync (new NetworkStream (socket, true), socket, host, port, options, doAsync, cancellationToken);
+			return ConnectAsync (new NetworkStream (socket, true), host, port, options, doAsync, cancellationToken);
 		}
 
 		/// <summary>
@@ -1415,7 +1416,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			ConnectAsync (stream, null, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
+			ConnectAsync (stream, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		async Task DisconnectAsync (bool quit, bool doAsync, CancellationToken cancellationToken)

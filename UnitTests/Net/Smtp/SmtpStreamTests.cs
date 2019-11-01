@@ -43,7 +43,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestCanReadWriteSeek ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				Assert.IsTrue (stream.CanRead);
 				Assert.IsTrue (stream.CanWrite);
 				Assert.IsFalse (stream.CanSeek);
@@ -54,7 +54,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestGetSetTimeouts ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				stream.ReadTimeout = 5;
 				Assert.AreEqual (5, stream.ReadTimeout, "ReadTimeout");
 
@@ -66,7 +66,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestRead ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = new byte[16];
 
 				Assert.Throws<NotImplementedException> (() => stream.Read (buffer, 0, buffer.Length));
@@ -77,7 +77,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestReadResponseInvalidResponseCode ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = Encoding.ASCII.GetBytes ("XXX This is an invalid response.\r\n");
 				var dummy = (MemoryStream) stream.Stream;
 
@@ -91,7 +91,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestReadResponseMismatchedResponseCodes ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = Encoding.ASCII.GetBytes ("250-This is the first line of a response.\r\n340 And this is a mismatched response code.\r\n");
 				var dummy = (MemoryStream) stream.Stream;
 
@@ -108,7 +108,7 @@ namespace UnitTests.Net.Smtp {
 			const string input = "250-Wikipédia est un projet d'encyclopédie collective en ligne,\r\n250-universelle, multilingue et fonctionnant sur le principe du wiki.\r\n250-Ce projet vise à offrir un contenu librement réutilisable, objectif\r\n250 et vérifiable, que chacun peut modifier et améliorer.\r\n";
 			var expected = input.Replace ("250-", "").Replace ("250 ", "").Replace ("\r\n", "\n").TrimEnd ();
 
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = Encoding.GetEncoding (28591).GetBytes (input);
 				var dummy = (MemoryStream) stream.Stream;
 
@@ -145,7 +145,7 @@ namespace UnitTests.Net.Smtp {
 				expected = input.Replace ("250-", "").Replace ("250 ", "").Replace ("\r\n", "\n").TrimEnd ();
 			}
 
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = Encoding.ASCII.GetBytes (input);
 				var dummy = (MemoryStream) stream.Stream;
 
@@ -162,7 +162,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestSeek ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				Assert.Throws<NotSupportedException> (() => stream.Seek (0, SeekOrigin.Begin));
 				Assert.Throws<NotSupportedException> (() => stream.Position = 500);
 				Assert.AreEqual (0, stream.Position);
@@ -173,7 +173,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestSetLength ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				Assert.Throws<NotSupportedException> (() => stream.SetLength (500));
 			}
 		}
@@ -181,7 +181,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestWrite ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var memory = (MemoryStream) stream.Stream;
 				var buffer = new byte[8192];
 				var buf1k = new byte[1024];
@@ -247,7 +247,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestWriteAsync ()
 		{
-			using (var stream = new SmtpStream (new DummyNetworkStream (), null, new NullProtocolLogger ())) {
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var memory = (MemoryStream) stream.Stream;
 				var buffer = new byte[8192];
 				var buf1k = new byte[1024];

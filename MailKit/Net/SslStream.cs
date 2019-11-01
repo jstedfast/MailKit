@@ -35,8 +35,8 @@ namespace MailKit.Net
 		{
 		}
 
-		public NetworkStream NetworkStream {
-			get { return InnerStream as NetworkStream; }
+		new public Stream InnerStream {
+			get { return base.InnerStream; }
 		}
 	}
 }
