@@ -27,12 +27,9 @@
 using System;
 using System.IO;
 using System.Threading;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 
 using Org.BouncyCastle.Utilities.Zlib;
-
-using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit {
 	/// <summary>
@@ -168,7 +165,6 @@ namespace MailKit {
 			if (count == 0)
 				return 0;
 
-			var network = InnerStream as NetworkStream;
 			zIn.next_out = buffer;
 			zIn.next_out_index = offset;
 			zIn.avail_out = count;
@@ -177,14 +173,11 @@ namespace MailKit {
 				if (zIn.avail_in == 0 && !eos) {
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					if (doAsync) {
-						if (network != null)
-							await network.PollReadAsync (cancellationToken).ConfigureAwait (false);
+					if (doAsync)
 						zIn.avail_in = await InnerStream.ReadAsync (zIn.next_in, 0, zIn.next_in.Length, cancellationToken).ConfigureAwait (false);
-					} else {
-						network?.Poll (SelectMode.SelectRead, cancellationToken);
+					else
 						zIn.avail_in = InnerStream.Read (zIn.next_in, 0, zIn.next_in.Length);
-					}
+
 					eos = zIn.avail_in == 0;
 					zIn.next_in_index = 0;
 				}
@@ -277,6 +270,8 @@ namespace MailKit {
 			zOut.avail_in = count;
 
 			do {
+				cancellationToken.ThrowIfCancellationRequested ();
+
 				zOut.avail_out = zOut.next_out.Length;
 				zOut.next_out_index = 0;
 
