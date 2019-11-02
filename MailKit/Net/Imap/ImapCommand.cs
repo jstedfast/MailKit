@@ -825,10 +825,12 @@ namespace MailKit.Net.Imap {
 					if (Engine.Stream.CanTimeout)
 						Engine.Stream.ReadTimeout = -1;
 
-					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
-
-					if (Engine.Stream.CanTimeout)
-						Engine.Stream.ReadTimeout = timeout;
+					try {
+						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
+					} finally {
+						if (Engine.Stream.IsConnected && Engine.Stream.CanTimeout)
+							Engine.Stream.ReadTimeout = timeout;
+					}
 				} else {
 					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 				}
