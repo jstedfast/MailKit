@@ -1769,24 +1769,6 @@ namespace MailKit.Net.Imap {
 			NoOpAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		static void IdleComplete (object state)
-		{
-			var ctx = (ImapIdleContext) state;
-
-			if (ctx.Engine.State == ImapEngineState.Idle) {
-				var buf = Encoding.ASCII.GetBytes ("DONE\r\n");
-
-				try {
-					ctx.Engine.Stream.Write (buf, 0, buf.Length, ctx.CancellationToken);
-					ctx.Engine.Stream.Flush (ctx.CancellationToken);
-				} catch {
-					return;
-				}
-
-				ctx.Engine.State = ImapEngineState.Selected;
-			}
-		}
-
 		async Task IdleAsync (CancellationToken doneToken, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (!doneToken.CanBeCanceled)
@@ -1807,15 +1789,8 @@ namespace MailKit.Net.Imap {
 
 			using (var context = new ImapIdleContext (engine, doneToken, cancellationToken)) {
 				var ic = engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
+				ic.ContinuationHandler = context.ContinuationHandler;
 				ic.UserData = context;
-
-				ic.ContinuationHandler = (imap, cmd, text, xdoAsync) => {
-					imap.State = ImapEngineState.Idle;
-
-					doneToken.Register (IdleComplete, context);
-
-					return Task.FromResult (true);
-				};
 
 				await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 

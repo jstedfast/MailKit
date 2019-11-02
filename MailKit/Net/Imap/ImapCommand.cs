@@ -98,7 +98,8 @@ namespace MailKit.Net.Imap {
 	/// </remarks>
 	sealed class ImapIdleContext : IDisposable
 	{
-		readonly CancellationTokenSource source;
+		static readonly byte[] DoneCommand = Encoding.ASCII.GetBytes ("DONE\r\n");
+		CancellationTokenRegistration registration;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapIdleContext"/> class.
@@ -111,7 +112,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapIdleContext (ImapEngine engine, CancellationToken doneToken, CancellationToken cancellationToken)
 		{
-			source = CancellationTokenSource.CreateLinkedTokenSource (doneToken, cancellationToken);
 			CancellationToken = cancellationToken;
 			DoneToken = doneToken;
 			Engine = engine;
@@ -140,17 +140,6 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Get the linked token.
-		/// </summary>
-		/// <remarks>
-		/// Gets the linked token.
-		/// </remarks>
-		/// <value>The linked token.</value>
-		public CancellationToken LinkedToken {
-			get { return source.Token; }
-		}
-
-		/// <summary>
 		/// Get the done token.
 		/// </summary>
 		/// <remarks>
@@ -161,6 +150,7 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
+#if false
 		/// <summary>
 		/// Get whether or not cancellation has been requested.
 		/// </summary>
@@ -182,6 +172,41 @@ namespace MailKit.Net.Imap {
 		public bool IsDoneRequested {
 			get { return DoneToken.IsCancellationRequested; }
 		}
+#endif
+
+		void IdleComplete ()
+		{
+			if (Engine.State == ImapEngineState.Idle) {
+				try {
+					Engine.Stream.Write (DoneCommand, 0, DoneCommand.Length, CancellationToken);
+					Engine.Stream.Flush (CancellationToken);
+				} catch {
+					return;
+				}
+
+				Engine.State = ImapEngineState.Selected;
+			}
+		}
+
+		/// <summary>
+		/// Callback method to be used as the ImapCommand's ContinuationHandler.
+		/// </summary>
+		/// <remarks>
+		/// Callback method to be used as the ImapCommand's ContinuationHandler.
+		/// </remarks>
+		/// <param name="engine">The ImapEngine.</param>
+		/// <param name="ic">The ImapCommand.</param>
+		/// <param name="text">The text.</param>
+		/// <param name="doAsync"><c>true</c> if the command is being run asynchronously; otherwise, <c>false</c>.</param>
+		/// <returns></returns>
+		public Task ContinuationHandler (ImapEngine engine, ImapCommand ic, string text, bool doAsync)
+		{
+			Engine.State = ImapEngineState.Idle;
+
+			registration = DoneToken.Register (IdleComplete);
+
+			return Task.FromResult (true);
+		}
 
 		/// <summary>
 		/// Releases all resource used by the <see cref="MailKit.Net.Imap.ImapIdleContext"/> object.
@@ -193,7 +218,7 @@ namespace MailKit.Net.Imap {
 		/// <see cref="MailKit.Net.Imap.ImapIdleContext"/> was occupying.</remarks>
 		public void Dispose ()
 		{
-			source.Dispose ();
+			registration.Dispose ();
 		}
 	}
 
@@ -797,25 +822,13 @@ namespace MailKit.Net.Imap {
 			// now we need to read the response...
 			do {
 				if (Engine.State == ImapEngineState.Idle) {
-					try {
-						if (Engine.Stream.CanTimeout)
-							Engine.Stream.ReadTimeout = -1;
+					if (Engine.Stream.CanTimeout)
+						Engine.Stream.ReadTimeout = -1;
 
-						token = await Engine.ReadTokenAsync (doAsync, idle.LinkedToken).ConfigureAwait (false);
+					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 
-						if (Engine.Stream.CanTimeout)
-							Engine.Stream.ReadTimeout = timeout;
-					} catch (OperationCanceledException) {
-						if (Engine.Stream.CanTimeout)
-							Engine.Stream.ReadTimeout = timeout;
-
-						if (idle.IsCancellationRequested)
-							throw;
-
-						Engine.Stream.IsConnected = true;
-
-						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
-					}
+					if (Engine.Stream.CanTimeout)
+						Engine.Stream.ReadTimeout = timeout;
 				} else {
 					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 				}
