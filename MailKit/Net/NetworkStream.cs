@@ -34,7 +34,7 @@ namespace MailKit.Net
 {
 	class NetworkStream : Stream
 	{
-		readonly SocketAsyncEventArgs args;
+		SocketAsyncEventArgs args;
 		bool ownsSocket;
 		bool connected;
 
@@ -136,6 +136,7 @@ namespace MailKit.Net
 			} finally {
 				connected = false;
 				args.Dispose ();
+				args = null;
 			}
 		}
 
@@ -270,9 +271,14 @@ namespace MailKit.Net
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing && ownsSocket && connected) {
-				ownsSocket = false;
-				Disconnect ();
+			if (disposing) {
+				if (ownsSocket && connected) {
+					ownsSocket = false;
+					Disconnect ();
+				} else if (args != null) {
+					args.Dispose ();
+					args = null;
+				}
 			}
 
 			base.Dispose (disposing);
