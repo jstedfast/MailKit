@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.3.2</version>
+    <version>2.4.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,14 +26,12 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Fixed trimming delimeters from the end of IMAP folder names.
-* Fixed fetching of IMAP PreviewText when message bodies do not contain any text parts.
-* Fixed Pop3Client to never emit Authenticated events w/ null messages.
-* Dropped SslProtocols.Tls (aka TLSv1.0) from the default SslProtocols used by IMAP, POP3 and SMTP clients. To override this behavior, use the client.SslProtocols property to set the preferred SslProtocol(s).
-* Fixed ImapFolder.Search(string query) to properly encode the query string when the query contains unicode characters.
-* If an IMAP SEARCH fails due to BADCHARSET, retry the search query after flattening the query strings into US-ASCII. This *may* fix issues such as issue #808.
-* Added work-arounds for Exchange IMAP bugs causing it to send mal-formed body-fld-dsp parameters. (issue #919)
-* Go back to only using the BDAT command when the user is sending BINARYMIME in the SmtpClient. (issue #921)
+* Added work-around for IMAP ENVELOPE responses that do not include an In-Reply-To token. (issue #932)
+* Dropped support for WindowsPhone/Universal v8.1.
+* Added a net48 assembly to the NuGet package which supports TLS v1.3.
+* Added work-around for Yandex IMAP servers to disconnect immediately upon `* BYE`. (issue #938)
+* Fixed ImapClient.Idle[Async](). (issue #942)
+* Added work-around for Lotus Domino where it adds extra ()'s around some FETCH items. (issue #943)
 
 API Changes Since 2.0.x:
 
@@ -80,40 +78,40 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
       <group targetFramework="net48">
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
       <group targetFramework="monoandroid">
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
       <group targetFramework="xamarinios">
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
       <group targetFramework="netstandard1.6">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.3.2" />
+        <dependency id="MimeKit" version="2.4.0" />
       </group>
     </dependencies>
   </metadata>

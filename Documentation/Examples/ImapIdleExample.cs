@@ -75,7 +75,7 @@ namespace ImapIdleExample {
 
 		async Task FetchMessageSummariesAsync (bool print)
 		{
-			IList<IMessageSummary> fetched;
+			IList<IMessageSummary> fetched = null;
 
 			do {
 				try {

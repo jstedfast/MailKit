@@ -1,5 +1,18 @@
 # Release Notes
 
+### MailKit 2.4.0 (2019-11-02)
+
+* Added work-around for IMAP ENVELOPE responses that do not include an In-Reply-To token.
+  (issue [#932](https://github.com/jstedfast/MailKit/issues/932))
+* Dropped support for WindowsPhone/Universal v8.1.
+* Added a net48 assembly to the NuGet package which supports TLS v1.3.
+* Added work-around for Yandex IMAP servers to disconnect immediately upon `* BYE`.
+  (issue [#938](https://github.com/jstedfast/MailKit/issues/938))
+* Fixed ImapClient.Idle[Async]().
+  (issue [#942](https://github.com/jstedfast/MailKit/issues/942))
+* Added work-around for Lotus Domino where it adds extra ()'s around some FETCH items.
+  (issue [#943](https://github.com/jstedfast/MailKit/issues/943))
+
 ### MailKit 2.3.2 (2019-10-12)
 
 * Fixed trimming delimeters from the end of IMAP folder names.
