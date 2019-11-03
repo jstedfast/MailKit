@@ -8,7 +8,7 @@
 * Added a net48 assembly to the NuGet package which supports TLS v1.3.
 * Added work-around for Yandex IMAP servers to disconnect immediately upon `* BYE`.
   (issue [#938](https://github.com/jstedfast/MailKit/issues/938))
-* Fixed ImapClient.Idle[Async]().
+* Fixed ImapClient.Idle() and IdleAsync().
   (issue [#942](https://github.com/jstedfast/MailKit/issues/942))
 * Added work-around for Lotus Domino where it adds extra ()'s around some FETCH items.
   (issue [#943](https://github.com/jstedfast/MailKit/issues/943))
