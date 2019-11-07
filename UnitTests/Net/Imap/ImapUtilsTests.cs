@@ -589,7 +589,7 @@ namespace UnitTests.Net.Imap {
 
 		// This tests the work-around for issue #878
 		[Test]
-		public void TestParseBrokenMultipartRelatedBodyStructure ()
+		public void TestParseBodyStructureWithBrokenMultipartRelated ()
 		{
 			const string text = "((\"multipart\" \"related\" (\"boundary\" \"----=_@@@@BeautyqueenS87@_@147836_6893840099.85426606923635\") NIL NIL \"7BIT\" 400 (\"boundary\" \"----=_@@@@BeautyqueenS87@_@147836_6893840099.85426606923635\") NIL NIL NIL)(\"TEXT\" \"html\" (\"charset\" \"UTF8\") NIL NIL \"7BIT\" 1115 70 NIL NIL NIL NIL)(\"TEXT\" \"html\" (\"charset\" \"UTF8\") NIL NIL \"QUOTED-PRINTABLE\" 16 2 NIL NIL NIL NIL) \"mixed\" (\"boundary\" \"----=--_DRYORTABLE@@@_@@@8957836_03253840099.78526606923635\") NIL NIL NIL)\r\n";
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
@@ -625,6 +625,75 @@ namespace UnitTests.Net.Imap {
 						Assert.AreEqual ("----=_@@@@BeautyqueenS87@_@147836_6893840099.85426606923635", related.ContentType.Parameters["boundary"], "multipart/related boundary param did not match");
 						Assert.AreEqual ("7BIT", related.ContentTransferEncoding, "multipart/related Content-Transfer-Encoding did not match.");
 						Assert.AreEqual (400, related.Octets, "multipart/related octets do not match.");
+					}
+				}
+			}
+		}
+
+		// This tests the work-around for issue #944
+		[Test]
+		public void TestParseBodyStructureWithEmptyParenListAsMessageRfc822BodyToken ()
+		{
+			const string text = "((\"text\" \"plain\" (\"charset\" \"UTF-8\") NIL NIL \"base64\" 232 4 NIL NIL NIL)(\"message\" \"delivery-status\" NIL NIL NIL \"7BIT\" 421 NIL NIL NIL)(\"message\" \"rfc822\" NIL NIL NIL \"7BIT\" 787 (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL) () 0 NIL NIL NIL) \"report\" (\"report-type\" \"delivery-status\" \"boundary\" \"==IFJRGLKFGIR60132UHRUHIHD\") NIL NIL)\r\n";
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						var multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "report"), "multipart/report Content-Type did not match.");
+						Assert.AreEqual ("==IFJRGLKFGIR60132UHRUHIHD", multipart.ContentType.Parameters["boundary"], "boundary param did not match.");
+						Assert.AreEqual ("delivery-status", multipart.ContentType.Parameters["report-type"], "report-type param did not match.");
+						Assert.AreEqual (3, multipart.BodyParts.Count, "BodyParts count did not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child did not match.");
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child did not match.");
+						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "The type of the third child did not match.");
+
+						var plain = (BodyPartText) multipart.BodyParts[0];
+						Assert.IsTrue (plain.ContentType.IsMimeType ("text", "plain"), "text/plain Content-Type did not match.");
+						Assert.AreEqual ("UTF-8", plain.ContentType.Charset, "text/plain charset param did not match.");
+						Assert.AreEqual ("base64", plain.ContentTransferEncoding, "text/plain encoding did not match.");
+						Assert.AreEqual (232, plain.Octets, "text/plain octets did not match.");
+						Assert.AreEqual (4, plain.Lines, "text/plain lines did not match.");
+
+						var dstat = (BodyPartBasic) multipart.BodyParts[1];
+						Assert.IsTrue (dstat.ContentType.IsMimeType ("message", "delivery-status"), "message/delivery-status Content-Type did not match.");
+						Assert.AreEqual ("7BIT", dstat.ContentTransferEncoding, "message/delivery-status encoding did not match.");
+						Assert.AreEqual (421, dstat.Octets, "message/delivery-status octets did not match.");
+
+						var rfc822 = (BodyPartMessage) multipart.BodyParts[2];
+						Assert.IsTrue (rfc822.ContentType.IsMimeType ("message", "rfc822"), "message/rfc822 Content-Type did not match.");
+						Assert.IsNull (rfc822.ContentId, "message/rfc822 Content-Id should be NIL.");
+						Assert.IsNull (rfc822.ContentDescription, "message/rfc822 Content-Description should be NIL.");
+						Assert.AreEqual (0, rfc822.Envelope.Sender.Count, "message/rfc822 Envlope.Sender should be null.");
+						Assert.AreEqual (0, rfc822.Envelope.From.Count, "message/rfc822 Envlope.From should be null.");
+						Assert.AreEqual (0, rfc822.Envelope.ReplyTo.Count, "message/rfc822 Envlope.ReplyTo should be null.");
+						Assert.AreEqual (0, rfc822.Envelope.To.Count, "message/rfc822 Envlope.To should be null.");
+						Assert.AreEqual (0, rfc822.Envelope.Cc.Count, "message/rfc822 Envlope.Cc should be null.");
+						Assert.AreEqual (0, rfc822.Envelope.Bcc.Count, "message/rfc822 Envlope.Bcc should be null.");
+						Assert.IsNull (rfc822.Envelope.Subject, "message/rfc822 Envlope.Subject should be null.");
+						Assert.IsNull (rfc822.Envelope.MessageId, "message/rfc822 Envlope.MessageId should be null.");
+						Assert.IsNull (rfc822.Envelope.InReplyTo, "message/rfc822 Envlope.InReplyTo should be null.");
+						Assert.IsNull (rfc822.Envelope.Date, "message/rfc822 Envlope.Date should be null.");
+						Assert.AreEqual ("7BIT", rfc822.ContentTransferEncoding, "message/rfc822 encoding did not match.");
+						Assert.AreEqual (787, rfc822.Octets, "message/rfc822 octets did not match.");
+						Assert.IsNull (rfc822.Body, "message/rfc822 body should be null.");
+						Assert.AreEqual (0, rfc822.Lines, "message/rfc822 lines did not match.");
 					}
 				}
 			}

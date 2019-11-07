@@ -1043,6 +1043,14 @@ namespace MailKit.Net.Imap {
 
 			token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
+			// Note: If we immediately get a closing ')', then treat it the same as if we had gotten a `NIL` `body` token.
+			//
+			// See https://github.com/jstedfast/MailKit/issues/944 for details.
+			if (token.Type == ImapTokenType.CloseParen) {
+				await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				return null;
+			}
+
 			if (token.Type == ImapTokenType.OpenParen)
 				return await ParseMultipartAsync (engine, format, path, null, doAsync, cancellationToken).ConfigureAwait (false);
 
