@@ -1585,5 +1585,41 @@ namespace UnitTests.Net.Imap {
 				}
 			}
 		}
+
+		ImapFolder CreateImapFolder (ImapFolderConstructorArgs args)
+		{
+			return new ImapFolder (args);
+		}
+
+		// Tests the work-around for issue #945
+		[Test]
+		public void TestParseFolderListWithFolderNameContainingUnquotedTabs ()
+		{
+			const string text = " (\\HasNoChildren) \"/\" INBOX/Da\tOggetto\tRicevuto\tDimensione\tCategorie\t\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (CreateImapFolder)) {
+						var list = new List<ImapFolder> ();
+
+						engine.QuirksMode = ImapQuirksMode.Exchange;
+						engine.SetStream (tokenizer);
+
+						try {
+							ImapUtils.ParseFolderListAsync (engine, list, false, false, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing LIST response failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.AreEqual (1, list.Count, "Count");
+						Assert.AreEqual ("Da\tOggetto\tRicevuto\tDimensione\tCategorie\t", list[0].Name, "Name");
+					}
+				}
+			}
+		}
 	}
 }

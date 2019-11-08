@@ -439,6 +439,22 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
 				encodedName = (string) token.Value;
+
+				// Note: Exchange apparently doesn't quote folder names that contain tabs.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/945 for details.
+				if (engine.QuirksMode == ImapQuirksMode.Exchange) {
+					var line = await engine.ReadLineAsync (doAsync, cancellationToken);
+					int eoln = line.IndexOf ("\r\n", StringComparison.Ordinal);
+					eoln = eoln != -1 ? eoln : line.Length - 1;
+
+					// unget the \r\n sequence
+					token = new ImapToken (ImapTokenType.Eoln);
+					engine.Stream.UngetToken (token);
+
+					if (eoln > 0)
+						encodedName += line.Substring (0, eoln);
+				}
 				break;
 			case ImapTokenType.Nil:
 				// Note: according to rfc3501, section 4.5, NIL is acceptable as a mailbox name.
