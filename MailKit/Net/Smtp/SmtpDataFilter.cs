@@ -28,23 +28,48 @@ using MimeKit.IO.Filters;
 
 namespace MailKit.Net.Smtp {
 	/// <summary>
-	/// A special stream filter that escapes lines beginning with a '.'
-	/// as needed when uploading a message to an SMTP server.
+	/// An SMTP filter designed to format a message stream for the DATA command.
 	/// </summary>
-	class SmtpDataFilter : MimeFilterBase
+	/// <remarks>
+	/// A special stream filter that escapes lines beginning with a '.' as needed when
+	/// sending a message via the SMTP protocol or when saving a message to an IIS
+	/// message pickup directory.
+	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory" />
+	/// </example>
+	public class SmtpDataFilter : MimeFilterBase
 	{
-		bool bol = true;
+		bool bol;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpDataFilter"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpDataFilter"/>.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory" />
+		/// </example>
+		public SmtpDataFilter ()
+		{
+			bol = true;
+		}
 
 		/// <summary>
 		/// Filter the specified input.
 		/// </summary>
+		/// <remarks>
+		/// Filters the specified input buffer starting at the given index,
+		/// spanning across the specified number of bytes.
+		/// </remarks>
 		/// <returns>The filtered output.</returns>
 		/// <param name="input">The input buffer.</param>
 		/// <param name="startIndex">The starting index of the input buffer.</param>
-		/// <param name="length">Length.</param>
-		/// <param name="outputIndex">Output index.</param>
-		/// <param name="outputLength">Output length.</param>
-		/// <param name="flush">If set to <c>true</c> flush.</param>
+		/// <param name="length">The length of the input buffer, starting at <paramref name="startIndex"/>.</param>
+		/// <param name="outputIndex">The output index.</param>
+		/// <param name="outputLength">The output length.</param>
+		/// <param name="flush">If set to <c>true</c>, all internally buffered data should be flushed to the output buffer.</param>
 		protected override byte[] Filter (byte[] input, int startIndex, int length, out int outputIndex, out int outputLength, bool flush)
 		{
 			int inputEnd = startIndex + length;
@@ -101,8 +126,11 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Resets the filter.
+		/// Reset the filter.
 		/// </summary>
+		/// <remarks>
+		/// Resets the filter.
+		/// </remarks>
 		public override void Reset ()
 		{
 			base.Reset ();
