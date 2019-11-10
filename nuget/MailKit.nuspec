@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.4.0</version>
+    <version>2.4.1</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,12 +26,10 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Added work-around for IMAP ENVELOPE responses that do not include an In-Reply-To token. (issue #932)
-* Dropped support for WindowsPhone/Universal v8.1.
-* Added a net48 assembly to the NuGet package which supports TLS v1.3.
-* Added work-around for Yandex IMAP servers to disconnect immediately upon `* BYE`. (issue #938)
-* Fixed ImapClient.Idle[Async](). (issue #942)
-* Added work-around for Lotus Domino where it adds extra ()'s around some FETCH items. (issue #943)
+* Don't use PublicSign on non-Windows NT machines when building.
+* Work-around broken BODYSTRUCTUREs with `()` as a message/rfc822 body token. (issue #944)
+* Added work-around for an Exchange bug that forgets to quote folder names containing tabs. (issue #945)
+* Moved the SmtpDataFilter into the public API and updated the FAQ to show how to use it when writing messages into an IIS "pickup directory". (issue #948)
 
 API Changes Since 2.0.x:
 
@@ -78,40 +76,40 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
       <group targetFramework="net48">
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
       <group targetFramework="monoandroid">
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
       <group targetFramework="xamarinios">
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
       <group targetFramework="netstandard1.6">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.4.0" />
+        <dependency id="MimeKit" version="2.4.1" />
       </group>
     </dependencies>
   </metadata>

@@ -1,5 +1,16 @@
 # Release Notes
 
+### MailKit 2.4.1 (2019-11-10)
+
+* Don't use PublicSign on non-Windows NT machines when building.
+* Work-around broken BODYSTRUCTUREs with `()` as a message/rfc822 body token.
+  (issue [#944](https://github.com/jstedfast/MailKit/issues/944))
+* Added work-around for an Exchange bug that forgets to quote folder names containing tabs.
+  (issue [#945](https://github.com/jstedfast/MailKit/issues/945))
+* Moved the SmtpDataFilter into the public API and updated the FAQ to show how to
+  use it when writing messages into an IIS "pickup directory".
+  (issue #[948](https://github.com/jstedfast/MailKit/issues/948))
+
 ### MailKit 2.4.0 (2019-11-02)
 
 * Added work-around for IMAP ENVELOPE responses that do not include an In-Reply-To token.
