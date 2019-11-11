@@ -9,7 +9,7 @@
   (issue [#945](https://github.com/jstedfast/MailKit/issues/945))
 * Moved the SmtpDataFilter into the public API and updated the FAQ to show how to
   use it when writing messages into an IIS "pickup directory".
-  (issue #[948](https://github.com/jstedfast/MailKit/issues/948))
+  (issue [#948](https://github.com/jstedfast/MailKit/issues/948))
 
 ### MailKit 2.4.0 (2019-11-02)
 
