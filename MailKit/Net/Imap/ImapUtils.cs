@@ -909,8 +909,13 @@ namespace MailKit.Net.Imap {
 					if (token.Type == ImapTokenType.CloseParen)
 						break;
 
-					language = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
-					languages.Add (language);
+					// Note: Some broken IMAP servers send `NIL` tokens in this list. Just ignore them.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/953
+					language = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (language != null)
+						languages.Add (language);
 				} while (true);
 
 				// read the ')'

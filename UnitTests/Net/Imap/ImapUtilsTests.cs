@@ -1334,6 +1334,44 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseBodyStructureWithSwappedBodyFldDspAndBodyFldLang ()
+		{
+			const string text = "(((\"text\" \"plain\" (\"format\" \"flowed\" \"charset\" \"UTF-8\") NIL NIL \"8bit\" 314 8 NIL NIL NIL NIL)(\"text\" \"html\" (\"charset\" \"UTF-8\") NIL NIL \"8bit\" 763 18 NIL NIL NIL NIL) \"alternative\" (\"boundary\" \"b3_f0dcbd2fdb06033cba91309b09af1cd8\") NIL NIL NIL NIL)(\"image\" \"jpeg\" (\"name\" \"18e5ca259ceb18af6dd3ea0659f83a4c\") \"<18e5ca259ceb18af6dd3ea0659f83a4c>\" NIL \"base64\" 334384 NIL NIL NIL NIL)(\"image\" \"png\" (\"name\" \"87c487a1ff757e32ee27ff267d28af35\") \"<87c487a1ff757e32ee27ff267d28af35>\" NIL \"base64\" 375634 NIL NIL NIL NIL) \"related\" (\"type\" \"multipart/alternative\" \"charset\" \"UTF-8\" \"boundary\" \"b1_f0dcbd2fdb06033cba91309b09af1cd8\") NIL (\"inline\" NIL) NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic msword;
+						BodyPartText plain;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "related"), "Content-Type did not match.");
+						Assert.AreEqual ("b1_f0dcbd2fdb06033cba91309b09af1cd8", multipart.ContentType.Parameters["boundary"], "boundary param did not match");
+						Assert.AreEqual (3, multipart.BodyParts.Count, "BodyParts count does not match.");
+						Assert.AreEqual (1, multipart.ContentLanguage.Length, "Content-Language lengths do not match.");
+						Assert.AreEqual ("inline", multipart.ContentLanguage[0], "Content-Language does not match.");
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestParseExampleThreads ()
 		{
 			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
