@@ -115,6 +115,26 @@ property to a known value that you have verified at a prior date.
 You could also use this callback to prompt the user (much like you have probably seen web browsers do)
 as to whether or not the certificate should be trusted.
 
+#### 3. A Certificate Authority CRL server for one or more of the certificates in the chain is temporarily unavailable.
+
+Most Certificate Authorities are probably pretty good at keeping their CRL and/or OCSP servers up 24/7, but occasionally
+they *do* go down or are otherwise unreachable due to other network problems between you and the server. When this happens,
+it becomes impossible to check the revocation status of one or more of the certificates in the chain.
+
+To ignore revocation checks, you can set the
+[CheckCertificateRevocation](http://www.mimekit.net/docs/html/P_MailKit_IMailService_CheckCertificateRevocation.htm)
+property of the IMAP, POP3 or SMTP client to `false` before you connect:
+
+```csharp
+using (var client = new SmtpClient ()) {
+    client.CheckCertificateRevocation = false;
+
+    client.Connect (hostName, port, SecureSocketOptions.Auto);
+
+    // ...
+}
+```
+
 ### <a name="ProtocolLog">Q: How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
 
 All of MailKit's client implementations have a constructor that takes a nifty
