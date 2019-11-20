@@ -165,7 +165,16 @@ namespace MailKit {
 		/// Get or set whether connecting via SSL/TLS should check certificate revocation.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets whether connecting via SSL/TLS should check certificate revocation.
+		/// <para>Gets or sets whether connecting via SSL/TLS should check certificate revocation.</para>
+		/// <para>Normally, the value of this property should be set to <c>true</c> (the default) for security
+		/// reasons, but there are times when it may be necessary to set it to <c>false</c>.</para>
+		/// <para>For example, most Certificate Authorities are probably pretty good at keeping their CRL and/or
+		/// OCSP servers up 24/7, but occasionally they do go down or are otherwise unreachable due to other
+		/// network problems between the client and the Certificate Authority. When this happens, it becomes
+		/// impossible to check the revocation status of one or more of the certificates in the chain
+		/// resulting in an <see cref="SslHandshakeException"/> being thrown in the
+		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> method. If this becomes a problem,
+		/// it may become desirable to set <see cref="CheckCertificateRevocation"/> to <c>false</c>.</para>
 		/// </remarks>
 		/// <value><c>true</c> if certificate revocation should be checked; otherwise, <c>false</c>.</value>
 		public bool CheckCertificateRevocation {

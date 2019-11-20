@@ -141,7 +141,8 @@ namespace MailKit.Security
 			message += Environment.NewLine;
 			message += "1. The server is using a self-signed certificate which cannot be verified." + Environment.NewLine;
 			message += "2. The local system is missing a Root or Intermediate certificate needed to verify the server's certificate." + Environment.NewLine;
-			message += "3. The certificate presented by the server is expired or invalid." + Environment.NewLine;
+			message += "3. A Certificate Authority CRL server for one or more of the certificates in the chain is temporarily unavailable." + Environment.NewLine;
+			message += "4. The certificate presented by the server is expired or invalid." + Environment.NewLine;
 			message += Environment.NewLine;
 			message += "See " + SslHandshakeHelpLink + " for possible solutions.";
 

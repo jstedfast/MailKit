@@ -28,13 +28,9 @@ using System;
 using System.Net;
 using System.Security.Cryptography;
 
-#if __MOBILE__
-using SHA256CryptoServiceProvider = System.Security.Cryptography.SHA256Managed;
-#endif
-
 namespace MailKit.Security {
 	/// <summary>
-	/// The SCRAM-SHA-1 SASL mechanism.
+	/// The SCRAM-SHA-256 SASL mechanism.
 	/// </summary>
 	/// <remarks>
 	/// A salted challenge/response SASL mechanism that uses the HMAC SHA-256 algorithm.
