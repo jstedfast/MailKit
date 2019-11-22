@@ -3594,7 +3594,16 @@ namespace MailKit.Net.Imap
 			do {
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
+				if (token.Type == ImapTokenType.Eoln) {
+					// Note: Most likely the the message body was calculated to be 1 or 2 bytes too
+					// short (e.g. did not include the trailing <CRLF>) and that is the EOLN we just
+					// reached. Ignore it and continue as normal.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/954 for details.
+					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				}
+
+				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
 				ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
