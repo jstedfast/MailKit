@@ -182,7 +182,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Gets or sets the local domain.
+		/// Get or set the local domain.
 		/// </summary>
 		/// <remarks>
 		/// The local domain is used in the HELO or EHLO commands sent to
@@ -192,6 +192,23 @@ namespace MailKit.Net.Smtp {
 		/// <value>The local domain.</value>
 		public string LocalDomain {
 			get; set;
+		}
+
+		/// <summary>
+		/// Get whether or not the BDAT command is preferred over the DATA command.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the <c>BDAT</c> command is preferred over the standard <c>DATA</c>
+		/// command.</para>
+		/// <para>The <c>BDAT</c> command is normally only used when the message being sent contains binary data
+		/// (e.g. one mor more MIME parts contains a <c>Content-Transfer-Encoding: binary</c> header). This
+		/// option provides a way to override this behavior, forcing the <see cref="SmtpClient"/> to send
+		/// messages using the <c>BDAT</c> command instead of the <c>DATA</c> command even when it is not
+		/// necessary to do so.</para>
+		/// </remarks>
+		/// <value><c>true</c> if the <c>BDAT</c> command is preferred over the <c>DATA</c> command; otherwise, <c>false</c>.</value>
+		protected virtual bool PreferSendAsBinaryData {
+			get { return false; }
 		}
 
 		/// <summary>
@@ -2117,7 +2134,7 @@ namespace MailKit.Net.Smtp {
 					OnNoRecipientsAccepted (message);
 				}
 
-				if ((extensions & SmtpExtension.BinaryMime) != 0)
+				if ((extensions & SmtpExtension.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & SmtpCapabilities.BinaryMime) != 0))
 					await BdatAsync (format, message, size, doAsync, cancellationToken, progress).ConfigureAwait (false);
 				else
 					await DataAsync (format, message, size, doAsync, cancellationToken, progress).ConfigureAwait (false);
