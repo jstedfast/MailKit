@@ -96,7 +96,7 @@ You can work around this problem by supplying a custom [RemoteCertificateValidat
 and setting it on the client's [ServerCertificateValidationCallback](http://mimekit.net/docs/html/P_MailKit_MailService_ServerCertificateValidationCallback.htm)
 property.
 
-In the most simplest example, you could do something like this (although I would strongly recommend against it in
+In the simplest example, you could do something like this (although I would strongly recommend against it in
 production use):
 
 ```csharp
@@ -135,17 +135,17 @@ using (var client = new SmtpClient ()) {
 }
 ```
 
-#### 4. The server does not support the same set of SSL/TLS protocols that the MailKit client is configured to use.
+#### 4. The server does not support the same set of SSL/TLS protocols that the client is configured to use.
 
 MailKit attempts to keep up with the latest security recommendations and so is continuously removing older SSL and TLS
-protocols that are no longer considered secure from the default configuration. This often means that MailKit clients
-will fail to connect to servers that are still using older SSL and TLS protocols. Currently, the SSL and TLS protocols
-that are considered vulnerable are: SSL v2.0, SSL v3.0, and TLS v1.0.
+protocols that are no longer considered secure from the default configuration. This often means that MailKit's SMTP,
+POP3 and IMAP clients will fail to connect to servers that are still using older SSL and TLS protocols. Currently,
+the SSL and TLS protocols that are not supported by default are: SSL v2.0, SSL v3.0, and TLS v1.0.
 
 You can override MailKit's default set of supported
-[SSL/TLS protocols](https://docs.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols?view=netframework-4.8) 
-using the [SslProtocols](http://www.mimekit.net/docs/html/P_MailKit_MailService_SslProtocols.htm) property on any of the
-Client classes.
+[SSL and TLS protocols](https://docs.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols?view=netframework-4.8)
+by setting the value of the [SslProtocols](http://www.mimekit.net/docs/html/P_MailKit_MailService_SslProtocols.htm)
+property on your SMTP, POP3 or IMAP client.
 
 For example:
 
