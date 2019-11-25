@@ -46,7 +46,7 @@
 Yes. MimeKit and MailKit are both completely free and open source. They are both covered under the
 [MIT](https://opensource.org/licenses/MIT) license.
 
-### <a name="SslHandshakeException">Q: Why do I get `An error occurred while attempting to establish an SSL or TLS connection.` when I try to Connect?</a>
+### <a name="SslHandshakeException">Q: Why do I get `"An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?</a>
 
 When you get an exception with that error message, it usually means that you are encountering
 one of the following scenarios:
