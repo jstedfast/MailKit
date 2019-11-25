@@ -143,7 +143,7 @@ will fail to connect to servers that are still using older SSL and TLS protocols
 that are considered vulnerable are: SSL v2.0, SSL v3.0, and TLS v1.0.
 
 You can override MailKit's default set of supported
-[SslProtocols](https://docs.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols?view=netframework-4.8) 
+[SSL/TLS protocols](https://docs.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols?view=netframework-4.8) 
 using the [SslProtocols](http://www.mimekit.net/docs/html/P_MailKit_MailService_SslProtocols.htm) property on any of the
 Client classes.
 
