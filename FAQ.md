@@ -4,7 +4,7 @@
 
 ### General
 * [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#CompletelyFree)
-* [Why do I get `The remote certificate is invalid according to the validation procedure` when I try to Connect?](#InvalidSslCertificate)
+* [Why do I get `An error occurred while attempting to establish an SSL or TLS connection.` when I try to Connect?](#SslHandshakeException)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
 * [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
 * [How can I access GMail using MailKit?](#GMailAccess)
@@ -46,7 +46,7 @@
 Yes. MimeKit and MailKit are both completely free and open source. They are both covered under the
 [MIT](https://opensource.org/licenses/MIT) license.
 
-### <a name="InvalidSslCertificate">Q: Why do I get `The remote certificate is invalid according to the validation procedure` when I try to Connect?</a>
+### <a name="SslHandshakeException">Q: Why do I get `An error occurred while attempting to establish an SSL or TLS connection.` when I try to Connect?</a>
 
 When you get an exception with that error message, it usually means that you are encountering
 one of the following scenarios:
@@ -131,6 +131,31 @@ using (var client = new SmtpClient ()) {
 
     client.Connect (hostName, port, SecureSocketOptions.Auto);
 
+    // ...
+}
+```
+
+#### 4. The server does not support the same set of SSL/TLS protocols that the MailKit client is configured to use.
+
+MailKit attempts to keep up with the latest security recommendations and so is continuously removing older SSL and TLS
+protocols that are no longer considered secure from the default configuration. This often means that MailKit clients
+will fail to connect to servers that are still using older SSL and TLS protocols. Currently, the SSL and TLS protocols
+that are considered vulnerable are: SSL v2.0, SSL v3.0, and TLS v1.0.
+
+You can override MailKit's default set of supported
+[SslProtocols](https://docs.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols?view=netframework-4.8) 
+using the [SslProtocols](http://www.mimekit.net/docs/html/P_MailKit_MailService_SslProtocols.htm) property on any of the
+Client classes.
+
+For example:
+
+```csharp
+using (var client = new SmtpClient ()) {
+    // Allow SSLv3.0 and all versions of TLS
+    client.SslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13;
+    
+    client.Connect ("smtp.gmail.com", 465, true);
+    
     // ...
 }
 ```
