@@ -4,7 +4,7 @@
 
 ### General
 * [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#CompletelyFree)
-* [Why do I get `An error occurred while attempting to establish an SSL or TLS connection.` when I try to Connect?](#SslHandshakeException)
+* [Why do I get `"An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?](#SslHandshakeException)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
 * [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
 * [How can I access GMail using MailKit?](#GMailAccess)
