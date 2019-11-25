@@ -54,7 +54,7 @@ namespace MailKit.Security
 #endif
 	public class SslHandshakeException : Exception
 	{
-		const string SslHandshakeHelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#InvalidSslCertificate";
+		const string SslHandshakeHelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#SslHandshakeException";
 		const string DefaultMessage = "An error occurred while attempting to establish an SSL or TLS connection.";
 
 #if SERIALIZABLE
@@ -130,21 +130,19 @@ namespace MailKit.Security
 					ex = aggregate;
 			}
 
-			if (starttls) {
-				message += "The SSL certificate presented by the server is not trusted by the system for one or more of the following reasons:";
-			} else {
-				message += "One possibility is that you are trying to connect to a port which does not support SSL/TLS." + Environment.NewLine;
-				message += Environment.NewLine;
-				message += "The other possibility is that the SSL certificate presented by the server is not trusted by the system for one or more of the following reasons:";
-			}
-
+			message += "This usually means that the SSL certificate presented by the server is not trusted by the system for one or more of" + Environment.NewLine;
+			message += "the following reasons:" + Environment.NewLine;
 			message += Environment.NewLine;
 			message += "1. The server is using a self-signed certificate which cannot be verified." + Environment.NewLine;
 			message += "2. The local system is missing a Root or Intermediate certificate needed to verify the server's certificate." + Environment.NewLine;
 			message += "3. A Certificate Authority CRL server for one or more of the certificates in the chain is temporarily unavailable." + Environment.NewLine;
 			message += "4. The certificate presented by the server is expired or invalid." + Environment.NewLine;
 			message += Environment.NewLine;
-			message += "See " + SslHandshakeHelpLink + " for possible solutions.";
+			if (!starttls)
+				message += "Another possibility is that you are trying to connect to a port which does not support SSL/TLS." + Environment.NewLine + Environment.NewLine;
+			message += "It is also possible that the set of SSL/TLS protocols supported by the client and server do not match." + Environment.NewLine;
+			message += Environment.NewLine;
+			message += "See " + SslHandshakeHelpLink + " for possible solutions." + Environment.NewLine;
 
 			return new SslHandshakeException (message, ex);
 		}
