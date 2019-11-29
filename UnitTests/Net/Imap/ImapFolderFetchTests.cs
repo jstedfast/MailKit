@@ -29,6 +29,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -73,6 +74,16 @@ namespace UnitTests.Net.Imap {
 			using (var reader = new StreamReader (stream)) {
 				const string expected = "This is some dummy text just to make sure this is working correctly.";
 				var text = reader.ReadToEnd ();
+
+				Assert.AreEqual (expected, text);
+			}
+		}
+
+		static async Task GetStreamsAsyncCallback (ImapFolder folder, int index, UniqueId uid, Stream stream, CancellationToken cancellationToken)
+		{
+			using (var reader = new StreamReader (stream)) {
+				const string expected = "This is some dummy text just to make sure this is working correctly.";
+				var text = await reader.ReadToEndAsync ();
 
 				Assert.AreEqual (expected, text);
 			}
@@ -386,19 +397,19 @@ namespace UnitTests.Net.Imap {
 
 				// GetStreams
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStreams (-1, 0, GetStreamsCallback));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamsAsync (-1, 0, GetStreamsCallback));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamsAsync (-1, 0, GetStreamsAsyncCallback));
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStreams (1, 0, GetStreamsCallback));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamsAsync (1, 0, GetStreamsCallback));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await inbox.GetStreamsAsync (1, 0, GetStreamsAsyncCallback));
 				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams (0, -1, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync (0, -1, null));
 
 				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams ((IList<int>) null, GetStreamsCallback));
-				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync ((IList<int>) null, GetStreamsCallback));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync ((IList<int>) null, GetStreamsAsyncCallback));
 				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams (new int [] { 0 }, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync (new int [] { 0 }, null));
 
 				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams ((IList<UniqueId>) null, GetStreamsCallback));
-				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync ((IList<UniqueId>) null, GetStreamsCallback));
+				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync ((IList<UniqueId>) null, GetStreamsAsyncCallback));
 				Assert.Throws<ArgumentNullException> (() => inbox.GetStreams (UniqueIdRange.All, null));
 				Assert.Throws<ArgumentNullException> (async () => await inbox.GetStreamsAsync (UniqueIdRange.All, null));
 

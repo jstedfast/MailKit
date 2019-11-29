@@ -25,6 +25,8 @@
 //
 
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MailKit.Net.Imap
 {
@@ -39,5 +41,28 @@ namespace MailKit.Net.Imap
 	/// it is important to consume the stream right away and not add it to a queue
 	/// for later processing.</para>
 	/// </remarks>
+	/// <param name="folder">The IMAP folder that the message belongs to.</param>
+	/// <param name="index">The index of the message in the folder.</param>
+	/// <param name="uid">The UID of the message in the folder.</param>
+	/// <param name="stream">The raw message (or part) stream.</param>
 	public delegate void ImapFetchStreamCallback (ImapFolder folder, int index, UniqueId uid, Stream stream);
+
+	/// <summary>
+	/// An asynchronous callback used when fetching message streams.
+	/// </summary>
+	/// <remarks>
+	/// <para>This callback is meant to be used with the various
+	/// <a href="Overload_MailKit_Net_Imap_ImapFolder_GetStreamsAsync.htm">GetStreamsAsync</a>
+	/// methods.</para>
+	/// <para>Once this callback returns, the stream argument will be disposed, so
+	/// it is important to consume the stream right away and not add it to a queue
+	/// for later processing.</para>
+	/// </remarks>
+	/// <returns>An awaitable task context.</returns>
+	/// <param name="folder">The IMAP folder that the message belongs to.</param>
+	/// <param name="index">The index of the message in the folder.</param>
+	/// <param name="uid">The UID of the message in the folder.</param>
+	/// <param name="stream">The raw message (or part) stream.</param>
+	/// <param name="cancellationToken">The cancellation token.</param>
+	public delegate Task ImapFetchStreamAsyncCallback (ImapFolder folder, int index, UniqueId uid, Stream stream, CancellationToken cancellationToken);
 }

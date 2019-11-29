@@ -108,6 +108,16 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static async Task GetStreamsAsyncCallback (ImapFolder folder, int index, UniqueId uid, Stream stream, CancellationToken cancellationToken)
+		{
+			using (var reader = new StreamReader (stream)) {
+				const string expected = "This is some dummy text just to make sure this is working correctly.";
+				var text = await reader.ReadToEndAsync ();
+
+				Assert.AreEqual (expected, text);
+			}
+		}
+
 		[Test]
 		public void TestArgumentExceptions ()
 		{
@@ -3887,9 +3897,9 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.AreEqual (expectedSortByReverseArrivalResults[i], matches.UniqueIds[i].Id);
 
-				await destination.GetStreamsAsync (UniqueIdRange.All, GetStreamsCallback);
-				await destination.GetStreamsAsync (new int[] { 0, 1, 2 }, GetStreamsCallback);
-				await destination.GetStreamsAsync (0, -1, GetStreamsCallback);
+				await destination.GetStreamsAsync (UniqueIdRange.All, GetStreamsAsyncCallback);
+				await destination.GetStreamsAsync (new int[] { 0, 1, 2 }, GetStreamsAsyncCallback);
+				await destination.GetStreamsAsync (0, -1, GetStreamsAsyncCallback);
 
 				await destination.ExpungeAsync ();
 				Assert.AreEqual (7, destination.HighestModSeq);
