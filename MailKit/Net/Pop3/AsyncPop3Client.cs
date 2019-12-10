@@ -407,7 +407,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public async Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();

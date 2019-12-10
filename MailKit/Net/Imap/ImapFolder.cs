@@ -48,7 +48,7 @@ namespace MailKit.Net.Imap {
 	/// <example>
 	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
 	/// </example>
-	public partial class ImapFolder : MailFolder
+	public partial class ImapFolder : MailFolder, IImapFolder
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.

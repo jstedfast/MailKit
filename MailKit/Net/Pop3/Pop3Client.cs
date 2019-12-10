@@ -59,7 +59,7 @@ namespace MailKit.Net.Pop3 {
 	/// <example>
 	/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
 	/// </example>
-	public partial class Pop3Client : MailSpool
+	public partial class Pop3Client : MailSpool, IPop3Client
 	{
 		[Flags]
 		enum ProbedCapabilities : byte {
@@ -1368,7 +1368,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken))
+		public override int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();

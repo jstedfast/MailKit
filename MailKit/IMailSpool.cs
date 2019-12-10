@@ -66,6 +66,15 @@ namespace MailKit {
 		bool SupportsUids { get; }
 
 		/// <summary>
+		/// Get the message count.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message count.
+		/// </remarks>
+		/// <returns>The message count.</returns>
+		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Get the UID of the message at the specified index.
 		/// </summary>
 		/// <remarks>

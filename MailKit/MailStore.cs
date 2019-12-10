@@ -97,6 +97,22 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the threading algorithms supported by the mail store.
+		/// </summary>
+		/// <remarks>
+		/// The threading algorithms are queried as part of the
+		/// <a href="Overload_MailKit_MailStore_Connect.htm">Connect</a>
+		/// and <a href="Overload_MailKit_MailStore_Authenticate.htm">Authenticate</a> methods.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
+		/// <value>The supported threading algorithms.</value>
+		public abstract HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
+			get;
+		}
+
+		/// <summary>
 		/// Get the Inbox folder.
 		/// </summary>
 		/// <remarks>

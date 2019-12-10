@@ -58,7 +58,7 @@ namespace MailKit.Net.Imap {
 	/// <example>
 	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
 	/// </example>
-	public partial class ImapClient : MailStore
+	public partial class ImapClient : MailStore, IImapClient
 	{
 		static readonly char[] ReservedUriCharacters = { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '%' };
 		const string HexAlphabet = "0123456789ABCDEF";
@@ -587,8 +587,8 @@ namespace MailKit.Net.Imap {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
-		/// <value>The authentication mechanisms.</value>
-		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
+		/// <value>The supported threading algorithms.</value>
+		public override HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
 			get { return engine.ThreadingAlgorithms; }
 		}
 

@@ -64,7 +64,7 @@ namespace MailKit.Net.Smtp {
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages" />
 	/// </example>
-	public partial class SmtpClient : MailTransport
+	public partial class SmtpClient : MailTransport, ISmtpClient
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes (".\r\n");
 		const int MaxLineLength = 998;

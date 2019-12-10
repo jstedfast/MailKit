@@ -63,6 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Net\Imap\AsyncImapClient.cs" />
+    <Compile Include="Net\Imap\IImapClient.cs" />
+    <Compile Include="Net\Imap\IImapFolder.cs" />
     <Compile Include="Net\Imap\ImapCallbacks.cs" />
     <Compile Include="Net\Imap\ImapCapabilities.cs" />
     <Compile Include="Net\Imap\ImapClient.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Net\Imap\ImapToken.cs" />
     <Compile Include="Net\Imap\ImapUtils.cs" />
     <Compile Include="Net\Pop3\AsyncPop3Client.cs" />
+    <Compile Include="Net\Pop3\IPop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
     <Compile Include="Net\Pop3\Pop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3Command.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="Net\Proxy\Socks5Client.cs" />
     <Compile Include="Net\Proxy\SocksClient.cs" />
     <Compile Include="Net\Smtp\AsyncSmtpClient.cs" />
+    <Compile Include="Net\Smtp\ISmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpCommandException.cs" />
