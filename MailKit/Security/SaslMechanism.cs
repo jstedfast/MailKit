@@ -289,8 +289,8 @@ namespace MailKit.Security {
 
 			var challenge = Challenge (decoded, 0, length);
 
-			if (challenge == null)
-				return null;
+			if (challenge == null || challenge.Length == 0)
+				return string.Empty;
 
 			return Convert.ToBase64String (challenge);
 		}

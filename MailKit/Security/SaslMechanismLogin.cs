@@ -260,10 +260,10 @@ namespace MailKit.Security {
 		/// </exception>
 		protected override byte[] Challenge (byte[] token, int startIndex, int length)
 		{
-			byte[] challenge;
-
 			if (IsAuthenticated)
 				throw new InvalidOperationException ();
+
+			byte[] challenge = null;
 
 			switch (state) {
 			case LoginState.UserName:
@@ -277,8 +277,6 @@ namespace MailKit.Security {
 				challenge = encoding.GetBytes (Credentials.Password);
 				IsAuthenticated = true;
 				break;
-			default:
-				throw new IndexOutOfRangeException ();
 			}
 
 			return challenge;

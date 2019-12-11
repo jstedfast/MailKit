@@ -236,7 +236,7 @@ var credential = new ServiceAccountCredential (new ServiceAccountCredential
     .Initializer ("your-developer-id@developer.gserviceaccount.com") {
     // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
     Scopes = new[] { "https://mail.google.com/" },
-    User = "user@gmail.com"
+    User = "user@gmail.com" // this is the user's GMail account email address
 }.FromCertificate (certificate));
 
 bool result = await credential.RequestAccessTokenAsync (CancellationToken.None);

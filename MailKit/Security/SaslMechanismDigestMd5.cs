@@ -219,10 +219,10 @@ namespace MailKit.Security {
 					throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, "Server response did not contain the expected hash.");
 
 				IsAuthenticated = true;
-				return new byte[0];
-			default:
-				throw new IndexOutOfRangeException ("state");
+				break;
 			}
+
+			return null;
 		}
 
 		/// <summary>
