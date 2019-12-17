@@ -1060,8 +1060,9 @@ namespace MailKit.Net.Imap {
 
 		async Task UpdateCapabilitiesAsync (ImapTokenType sentinel, bool doAsync, CancellationToken cancellationToken)
 		{
+			// Clear the extensions except STARTTLS so that this capability stays set after a STARTTLS command.
 			ProtocolVersion = ImapProtocolVersion.Unknown;
-			Capabilities = ImapCapabilities.None;
+			Capabilities &= ImapCapabilities.StartTLS;
 			AuthenticationMechanisms.Clear ();
 			CompressionAlgorithms.Clear ();
 			ThreadingAlgorithms.Clear ();

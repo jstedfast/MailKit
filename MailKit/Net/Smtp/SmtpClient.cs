@@ -541,8 +541,8 @@ namespace MailKit.Net.Smtp {
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
-				// Clear the extensions
-				capabilities = SmtpCapabilities.None;
+				// Clear the extensions except STARTTLS so that this capability stays set after a STARTTLS command.
+				capabilities &= SmtpCapabilities.StartTLS;
 				AuthenticationMechanisms.Clear ();
 				MaxSize = 0;
 
