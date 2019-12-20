@@ -98,7 +98,7 @@
           </listItem>
           <listItem>
             <para>
-              All API's that might block allow canellation via <codeEntityReference>T:System.Threading.CancellationToken</codeEntityReference>.
+              All API's that might block allow cancellation via <codeEntityReference>T:System.Threading.CancellationToken</codeEntityReference>.
             </para>
           </listItem>
           <listItem>
