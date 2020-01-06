@@ -96,6 +96,7 @@ namespace MailKit.Net.Imap {
 		Exchange,
 		GMail,
 		ProtonMail,
+		SunMicrosystems,
 		UW,
 		Yahoo,
 		Yandex
@@ -1169,6 +1170,7 @@ namespace MailKit.Net.Imap {
 					case "XLIST":                 Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":            Capabilities |= ImapCapabilities.GMailExt1; QuirksMode = ImapQuirksMode.GMail; break;
 					case "XSTOP":                 QuirksMode = ImapQuirksMode.ProtonMail; break;
+					case "X-SUN-IMAP":            QuirksMode = ImapQuirksMode.SunMicrosystems; break;
 					case "XYMHIGHESTMODSEQ":      QuirksMode = ImapQuirksMode.Yahoo; break;
 					}
 				}
