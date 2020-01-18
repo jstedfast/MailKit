@@ -102,6 +102,7 @@ motivate me to continue working on the project.
     * [QRESYNC](https://tools.ietf.org/html/rfc5162)
     * [SORT](https://tools.ietf.org/html/rfc5256)
     * [THREAD](https://tools.ietf.org/html/rfc5256)
+	* [ANNOTATE](https://tools.ietf.org/html/rfc5257)
     * [LIST-EXTENDED](https://tools.ietf.org/html/rfc5258)
     * [ESORT](https://tools.ietf.org/html/rfc5267)
     * [METADATA / METADATA-SERVER](https://tools.ietf.org/html/rfc5464)
