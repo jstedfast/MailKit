@@ -184,7 +184,7 @@ namespace ImapIdle
 				else
 					Console.WriteLine ("\t1 new message has arrived.");
 
-				// Note: your first instict may be to fetch these new messages now, but you cannot do
+				// Note: your first instinct may be to fetch these new messages now, but you cannot do
 				// that in this event handler (the ImapFolder is not re-entrant).
 				//
 				// Instead, cancel the `done` token and update our state so that we know new messages
