@@ -1384,8 +1384,13 @@ namespace MailKit.Net.Imap {
 				// See https://github.com/jstedfast/MailKit/issues/669
 				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				if (token.Type != ImapTokenType.CloseParen) {
-					if ((nstring = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false)) != null)
-						envelope.MessageId = MimeUtils.ParseMessageId (nstring);
+					if ((nstring = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false)) != null) {
+						try {
+							envelope.MessageId = MimeUtils.ParseMessageId (nstring);
+						} catch {
+							envelope.MessageId = nstring;
+						}
+					}
 				}
 			}
 
