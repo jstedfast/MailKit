@@ -320,8 +320,20 @@ namespace MailKit {
 
 			// If we've gotten this far, then there were *only* errors in the certificate chain. Look at each error to determine the cause.
 			if (chain != null) {
+				var thumbprint = certificate.GetCertHash ();
+
 				foreach (var element in chain.ChainElements) {
-					if (element.Certificate != certificate)
+					var hash = element.Certificate.GetCertHash ();
+					var match = hash.Length == thumbprint.Length;
+
+					for (int i = 0; i < thumbprint.Length; i++) {
+						if (hash[i] != thumbprint[i]) {
+							match = false;
+							break;
+						}
+					}
+
+					if (!match)
 						continue;
 
 					var selfSigned = !string.IsNullOrEmpty (element.Certificate.Subject) && element.Certificate.Subject == certificate.Issuer;
