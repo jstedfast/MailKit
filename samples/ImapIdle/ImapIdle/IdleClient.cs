@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2014-2019 Jeffrey Stedfast
+// Copyright (c) 2014-2020 Jeffrey Stedfast
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -97,14 +97,8 @@ namespace ImapIdle
 						// Note: IMAP servers are only supposed to drop the connection after 30 minutes, so normally
 						// we'd IDLE for a max of, say, ~29 minutes... but GMail seems to drop idle connections after
 						// about 10 minutes, so we'll only idle for 9 minutes.
-						using (done = new CancellationTokenSource (new TimeSpan (0, 9, 0))) {
-							using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancel.Token, done.Token)) {
-								await client.IdleAsync (linked.Token);
-
-								// throw OperationCanceledException if the cancel token has been canceled.
-								cancel.Token.ThrowIfCancellationRequested ();
-							}
-						}
+						using (done = new CancellationTokenSource (new TimeSpan (0, 9, 0)))
+							await client.IdleAsync (done.Token, cancel.Token);
 					} else {
 						// Note: we don't want to spam the IMAP server with NOOP commands, so lets wait a minute
 						// between each NOOP command.
@@ -149,21 +143,27 @@ namespace ImapIdle
 				return;
 			}
 
+			// Note: We capture client.Inbox here because cancelling IdleAsync() *may* require
+			// disconnecting the IMAP client connection, and, if it does, the `client.Inbox`
+			// property will no longer be accessible which means we won't be able to disconnect
+			// our event handlers.
+			var inbox = client.Inbox;
+
 			// keep track of changes to the number of messages in the folder (this is how we'll tell if new messages have arrived).
-			client.Inbox.CountChanged += OnCountChanged;
+			inbox.CountChanged += OnCountChanged;
 
 			// keep track of messages being expunged so that when the CountChanged event fires, we can tell if it's
 			// because new messages have arrived vs messages being removed (or some combination of the two).
-			client.Inbox.MessageExpunged += OnMessageExpunged;
+			inbox.MessageExpunged += OnMessageExpunged;
 
 			// keep track of flag changes
-			client.Inbox.MessageFlagsChanged += OnMessageFlagsChanged;
+			inbox.MessageFlagsChanged += OnMessageFlagsChanged;
 
 			await IdleAsync ();
 
-			client.Inbox.MessageFlagsChanged -= OnMessageFlagsChanged;
-			client.Inbox.MessageExpunged -= OnMessageExpunged;
-			client.Inbox.CountChanged -= OnCountChanged;
+			inbox.MessageFlagsChanged -= OnMessageFlagsChanged;
+			inbox.MessageExpunged -= OnMessageExpunged;
+			inbox.CountChanged -= OnCountChanged;
 
 			await client.DisconnectAsync (true);
 		}
