@@ -735,6 +735,21 @@ namespace MailKit.Net.Imap {
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
+			// Note: this is a work-around for broken IMAP servers that return negative integer values for things
+			// like octet counts and line counts.
+			if (token.Type == ImapTokenType.Atom) {
+				var atom = (string) token.Value;
+
+				if (atom.Length > 0 && atom[0] == '-') {
+					if (!int.TryParse (atom, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var negative))
+						throw ImapEngine.UnexpectedToken (format, token);
+
+					// Note: since Octets & Lines are the only 2 values this method is responsible for parsing,
+					// it seems the only sane value to return would be 0.
+					return 0;
+				}
+			}
+
 			return ImapEngine.ParseNumber (token, false, format, token);
 		}
 

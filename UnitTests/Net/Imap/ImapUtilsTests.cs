@@ -1342,8 +1342,6 @@ namespace UnitTests.Net.Imap {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						BodyPartMultipart multipart;
-						BodyPartBasic msword;
-						BodyPartText plain;
 						BodyPart body;
 
 						engine.SetStream (tokenizer);
@@ -1366,6 +1364,43 @@ namespace UnitTests.Net.Imap {
 						Assert.AreEqual (3, multipart.BodyParts.Count, "BodyParts count does not match.");
 						Assert.AreEqual (1, multipart.ContentLanguage.Length, "Content-Language lengths do not match.");
 						Assert.AreEqual ("inline", multipart.ContentLanguage[0], "Content-Language does not match.");
+					}
+				}
+			}
+		}
+
+		// This tests a work-around for a bug in Exchange that was reported via email.
+		[Test]
+		public void TestParseBodyStructureWithNegativeOctetValue ()
+		{
+			const string text = "(\"multipart\" \"digest\" (\"boundary\" \"ommgDs4vJ6fX2nQAghXj4aUy9wsHMMDb\") NIL NIL \"7BIT\" -1 NIL NIL NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartBasic basic;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartBasic> (body, "Body types did not match.");
+						basic = (BodyPartBasic) body;
+
+						Assert.IsTrue (basic.ContentType.IsMimeType ("multipart", "digest"), "Content-Type did not match.");
+						Assert.AreEqual ("ommgDs4vJ6fX2nQAghXj4aUy9wsHMMDb", basic.ContentType.Parameters["boundary"], "boundary param did not match");
+						Assert.AreEqual ("7BIT", basic.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (0, basic.Octets, "Octets did not match.");
+						Assert.IsNull (basic.ContentDisposition, "Content-Disposition did not match.");
 					}
 				}
 			}
