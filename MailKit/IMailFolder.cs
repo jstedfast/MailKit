@@ -4670,6 +4670,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Emitted when a message is expunged from the folder.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
+		/// </example>
 		event EventHandler<MessageEventArgs> MessageExpunged;
 
 		/// <summary>
@@ -4686,6 +4689,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Emitted when flags changed on a message.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
+		/// </example>
 		event EventHandler<MessageFlagsChangedEventArgs> MessageFlagsChanged;
 
 		/// <summary>
@@ -4786,6 +4792,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Emitted when the <see cref="Count"/> property changes.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
+		/// </example>
 		event EventHandler<EventArgs> CountChanged;
 
 		/// <summary>
