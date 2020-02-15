@@ -1,5 +1,16 @@
 # Release Notes
 
+### MailKit 2.5.1 (2020-02-15)
+
+* Fixed the IMAP ENVELOPE parser to have a more lenient fallback if it fails to be able to
+  parse the Message-Id token value.
+  (issue [#976](https://github.com/jstedfast/MailKit/issues/976))
+* Fixed MailService.DefaultServerCertificateValidationCallback() to compare certificates by
+  their hashes rather than via Object.Equals().
+  (issue [#977](https://github.com/jstedfast/MailKit/issues/977))
+* Added work-around for IMAP servers that send `-1` as a line count or octet count in the
+  BODYSTRUCTURE response.
+
 ### MailKit 2.5.0 (2020-01-18)
 
 * Ignore NIL tokens in the body-fld-lang token list.
