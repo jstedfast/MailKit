@@ -1306,6 +1306,11 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
+				// Note: As seen in https://github.com/jstedfast/MailKit/issues/991, some IMAP servers
+				// will include a NIL address token within the address list. Just ignore it.
+				if (token.Type == ImapTokenType.Nil)
+					continue;
+
 				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 				var address = await ParseEnvelopeAddressAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);

@@ -520,6 +520,36 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// This tests the work-around for issue #991
+		[Test]
+		public void TestParseEnvelopeWithNilAddress ()
+		{
+			const string text = "(\"Thu, 18 Jul 2019 01:29:32 -0300\" \"Xxx xxx xxx xxx..\" (NIL ({123}\r\n_XXXXXXXX_xxxxxx_xxxx_xxx_?= =?iso-8859-1?Q?xxxx_xx_xxxxxxx_xxxxxxxxxx.Xxxxxxxx_xx_xxx=Xxxxxx_xx_xx_Xx?= =?iso-8859-1?Q?s?= NIL \"xxxxxxx\" \"xxxxxxxxxx.xxx\")) (NIL ({123}\r\n_XXXXXXXX_xxxxxx_xxxx_xxx_?= =?iso-8859-1?Q?xxxx_xx_xxxxxxx_xxxxxxxxxx.Xxxxxxxx_xx_xxx=Xxxxxx_xx_xx_Xx?= =?iso-8859-1?Q?s?= NIL \"xxxxxxx\" \"xxxxxxxxxx.xxx\")) ((NIL NIL \"xxxxxxx\" \"xxxxx.xxx.xx\")) ((NIL NIL \"xxxxxxx\" \"xxxxxxx.xxx.xx\")) NIL NIL NIL \"<0A9F01100712011D213C15B6D2B6DA@XXXXXXX-XXXXXXX>\"))\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						Envelope envelope;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual ("\"_XXXXXXXX_xxxxxx_xxxx_xxx_?= xxxx xx xxxxxxx xxxxxxxxxx.Xxxxxxxx xx xxx=Xxxxxx xx xx Xxs\" <xxxxxxx@xxxxxxxxxx.xxx>", envelope.Sender.ToString ());
+						Assert.AreEqual ("\"_XXXXXXXX_xxxxxx_xxxx_xxx_?= xxxx xx xxxxxxx xxxxxxxxxx.Xxxxxxxx xx xxx=Xxxxxx xx xx Xxs\" <xxxxxxx@xxxxxxxxxx.xxx>", envelope.From.ToString ());
+						Assert.AreEqual ("xxxxxxx@xxxxx.xxx.xx", envelope.ReplyTo.ToString ());
+						Assert.AreEqual ("xxxxxxx@xxxxxxx.xxx.xx", envelope.To.ToString ());
+						Assert.AreEqual ("0A9F01100712011D213C15B6D2B6DA@XXXXXXX-XXXXXXX", envelope.MessageId);
+					}
+				}
+			}
+		}
+
 		[Test]
 		public void TestParseDovcotEnvelopeWithGroupAddresses ()
 		{
