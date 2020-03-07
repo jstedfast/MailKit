@@ -363,17 +363,21 @@ namespace TestClient {
 }
 ```
 
-However, you probably want to do more complicated things with IMAP such as fetching summary information
-so that you can display a list of messages in a mail client without having to first download all of the
-messages from the server:
+### Fetching Information About the Messages in an IMAP Folder
+
+One of the advantages of IMAP over POP3 is that the IMAP protocol allows clients to retrieve information about
+the messages in a folder without having to first download all of them.
+
+Using the [Fetch](http://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_Fetch.htm) method overloads,
+it's possible to obtain any subset of summary information for any range of messages in a given folder.
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId)) {
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full)) {
 	Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
 }
 ```
 
-The results of a Fetch command can also be used to download individual MIME parts rather
+The results of a Fetch method can also be used to download individual MIME parts rather
 than downloading the entire message. For example:
 
 ```csharp
@@ -400,6 +404,31 @@ foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | Messa
     }
 }
 ```
+
+### Setting Message Flags in IMAP
+
+In order to set or update the flags on a particular message, what is actually needed is the UID or index of the message and
+the folder that it belongs to.
+
+An obvious reason to want to update message flags is to mark a message as "read" (aka "seen") after a user has opened a
+message and read it.
+
+```csharp
+folder.AddFlags (uid, MessageFlags.Seen, true);
+```
+
+### Deleting Messages in IMAP
+
+Deleting messages in IMAP involves setting a `\Deleted` flag on a message and, optionally, expunging it from the folder.
+
+The way to mark a message as `\Deleted` works the same way as marking a message as `\Seen`.
+
+```csharp
+folder.AddFlags (uid, MessageFlags.Deleted, true);
+folder.Expunge ();
+```
+
+### Searching an IMAP Folder
 
 You may also be interested in sorting and searching...
 
@@ -431,6 +460,8 @@ foreach (var uid in inbox.Sort (query, orderBy)) {
 
 Of course, instead of downloading the message, you could also fetch the summary information for the matching messages
 or do any of a number of other things with the UIDs that are returned.
+
+### Navigating Folders in IMAP
 
 How about navigating folders? MailKit can do that, too:
 
@@ -487,7 +518,8 @@ static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationT
 }
 ```
 
-Another option might be to allow the user of your application to configure which folder he or she wants to use as their Sent folder, Drafts folder, Trash folder, etc.
+Another option might be to allow the user of your application to configure which folder he or she wants to use as their
+Sent folder, Drafts folder, Trash folder, etc.
 
 How you handle this is up to you.
 
