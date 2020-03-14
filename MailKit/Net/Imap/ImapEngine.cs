@@ -96,6 +96,7 @@ namespace MailKit.Net.Imap {
 		Exchange,
 		GMail,
 		ProtonMail,
+		SmarterMail,
 		SunMicrosystems,
 		UW,
 		Yahoo,
@@ -698,6 +699,8 @@ namespace MailKit.Net.Imap {
 					QuirksMode = ImapQuirksMode.GMail;
 				else if (text.Contains (" IMAP4rev1 2007f.") || text.Contains (" Panda IMAP "))
 					QuirksMode = ImapQuirksMode.UW;
+				else if (text.Contains ("SmarterMail"))
+					QuirksMode = ImapQuirksMode.SmarterMail;
 				else if (text.Contains ("Yandex IMAP4rev1 "))
 					QuirksMode = ImapQuirksMode.Yandex;
 

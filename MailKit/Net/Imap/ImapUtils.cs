@@ -1306,8 +1306,8 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
-				// Note: As seen in https://github.com/jstedfast/MailKit/issues/991, some IMAP servers
-				// will include a NIL address token within the address list. Just ignore it.
+				// Note: As seen in https://github.com/jstedfast/MailKit/issues/991, it seems that SmarterMail IMAP
+				// servers will sometimes include a NIL address token within the address list. Just ignore it.
 				if (token.Type == ImapTokenType.Nil)
 					continue;
 
