@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 2.5.2 (2020-03-14)
+
+* Added work-around for ENVELOPE responses with a NIL address token in an address-list.
+  (issue [#991](https://github.com/jstedfast/MailKit/issues/991))
+
 ### MailKit 2.5.1 (2020-02-15)
 
 * Fixed the IMAP ENVELOPE parser to have a more lenient fallback if it fails to be able to
