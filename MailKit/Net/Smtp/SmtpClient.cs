@@ -1482,7 +1482,14 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
-			var response = await SendCommandAsync ("NOOP", doAsync, cancellationToken).ConfigureAwait (false);
+			SmtpResponse response;
+
+			try {
+				response = await SendCommandAsync ("NOOP", doAsync, cancellationToken).ConfigureAwait (false);
+			} catch {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
+			}
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
