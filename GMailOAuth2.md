@@ -1,8 +1,13 @@
 # Using OAuth2 With GMail (IMAP, POP3 or SMTP)
 
-## Setting up OAuth2 for use with Google Mail
+* [Setting up OAuth2 for use with Google Mail](#Setup)
+  * [Register Your Application with Google](#Register)
+  * [Obtaining an OAuth Client ID and Client Secret](#ObtainingClientID+Secret)
+* [Authenticating with the OAuth2 Client ID and Secret](#Authenticating)
 
-### Register Your Application with Google
+## <a name="Setup">Setting up OAuth2 for use with Google Mail</a>
+
+### <a name="Register">Register Your Application with Google</a>
 
 Go to [Google's Developer Console](https://cloud.google.com/console).
 
@@ -19,7 +24,7 @@ should be associated with. Then click *Create*.
 
 ![Create New Project](https://github.com/jstedfast/MailKit/blob/master/Documentation/media/google-developer-console/create-new-project.png)
 
-### Obtaining an OAuth Client ID and Client Secret
+### <a name="ObtainingClientID+Secret">Obtaining an OAuth Client ID and Client Secret</a>
 
 Click the **☰** symbol, move down to **APIs & Services** and then select **OAuth consent screen**.
 
@@ -48,7 +53,7 @@ At this point, you will be presented with a web dialog that will allow you to co
 
 ![Client ID and Secret](https://github.com/jstedfast/MailKit/blob/master/Documentation/media/google-developer-console/client-id-and-secret.png)
 
-## Authenticating With GMail using OAuth2
+## <a href="Authenticating">Authenticating with the OAuth2 Client ID and Secret</a>
 
 Now that you have the **Client ID** and **Client Secret** strings, you'll need to plug those values into
 your application.
@@ -80,7 +85,7 @@ if (authCode.ShouldRequestAuthorizationCode (credential.Token))
 
 var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
 
-using (var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()))) {
+using (var client = new ImapClient ()) {
 	await client.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
 	await client.AuthenticateAsync (oauth2);
 	await client.DisconnectAsync (true);

@@ -227,6 +227,9 @@ The first thing you need to do is follow
 [Google's instructions](https://developers.google.com/accounts/docs/OAuth2) 
 for obtaining OAuth 2.0 credentials for your application.
 
+(Or, as an alternative set of step-by-step instructions, you can follow the directions that I have
+written in [GMailOAuth2.md](https://github.com/jstedfast/MailKit/blob/master/GMailOAuth2.md).)
+
 Once you've done that, the easiest way to obtain an access token is to use Google's 
 [Google.Apis.Auth](https://www.nuget.org/packages/Google.Apis.Auth/) library:
 
@@ -239,6 +242,7 @@ var clientSecrets = new ClientSecrets {
 };
 
 var codeFlow = new GoogleAuthorizationCodeFlow (new GoogleAuthorizationCodeFlow.Initializer {
+	// Cache tokens in ~/.local/share/google-filedatastore/CredentialCacheFolder on Linux/Mac
 	DataStore = new FileDataStore ("CredentialCacheFolder", false),
 	Scopes = new [] { "https://mail.google.com/" },
 	ClientSecrets = clientSecrets
@@ -253,7 +257,7 @@ if (authCode.ShouldRequestAuthorizationCode (credential.Token))
 
 var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
 
-using (var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()))) {
+using (var client = new ImapClient ()) {
 	await client.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
 	await client.AuthenticateAsync (oauth2);
 	await client.DisconnectAsync (true);
