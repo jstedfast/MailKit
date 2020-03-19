@@ -1,13 +1,15 @@
 # Using OAuth2 With GMail (IMAP, POP3 or SMTP)
 
-* [Setting up OAuth2 for use with Google Mail](#Setup)
-  * [Register Your Application with Google](#Register)
-  * [Obtaining an OAuth Client ID and Client Secret](#ObtainingClientID+Secret)
-* [Authenticating with the OAuth2 Client ID and Secret](#Authenticating)
+## Quick Index
 
-## <a name="Setup">Setting up OAuth2 for use with Google Mail</a>
+* [Setting up OAuth2 for use with Google Mail](#setting-up-oauth2-for-use-with-google-mail)
+  * [Register Your Application with Google](#register-your-application-with-google)
+  * [Obtaining an OAuth2 Client ID and Secret](#obtaining-an-oauth2-client-id-and-secret)
+* [Authenticating with the OAuth2 Client ID and Secret](#authenticating-with-the-oauth2-client-id-and-secret)
 
-### <a name="Register">Register Your Application with Google</a>
+## Setting up OAuth2 for use with Google Mail
+
+### Register Your Application with Google
 
 Go to [Google's Developer Console](https://cloud.google.com/console).
 
@@ -24,7 +26,7 @@ should be associated with. Then click *Create*.
 
 ![Create New Project](https://github.com/jstedfast/MailKit/blob/master/Documentation/media/google-developer-console/create-new-project.png)
 
-### <a name="ObtainingClientID+Secret">Obtaining an OAuth Client ID and Client Secret</a>
+### Obtaining an OAuth2 Client ID and Secret
 
 Click the **☰** symbol, move down to **APIs & Services** and then select **OAuth consent screen**.
 
@@ -53,7 +55,7 @@ At this point, you will be presented with a web dialog that will allow you to co
 
 ![Client ID and Secret](https://github.com/jstedfast/MailKit/blob/master/Documentation/media/google-developer-console/client-id-and-secret.png)
 
-## <a href="Authenticating">Authenticating with the OAuth2 Client ID and Secret</a>
+## Authenticating with the OAuth2 Client ID and Secret
 
 Now that you have the **Client ID** and **Client Secret** strings, you'll need to plug those values into
 your application.
