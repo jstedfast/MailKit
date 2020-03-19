@@ -231,28 +231,32 @@ Once you've done that, the easiest way to obtain an access token is to use Googl
 [Google.Apis.Auth](https://www.nuget.org/packages/Google.Apis.Auth/) library:
 
 ```csharp
-var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
-var credential = new ServiceAccountCredential (new ServiceAccountCredential
-    .Initializer ("your-developer-id@developer.gserviceaccount.com") {
-    // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
-    Scopes = new[] { "https://mail.google.com/" },
-    User = "user@gmail.com" // this is the user's GMail account email address
-}.FromCertificate (certificate));
+const string GMailAccount = "username@gmail.com";
 
-bool result = await credential.RequestAccessTokenAsync (CancellationToken.None);
+var clientSecrets = new ClientSecrets {
+	ClientId = "XXX.apps.googleusercontent.com",
+	ClientSecret = "XXX"
+};
 
-// Note: result will be true if the access token was received successfully
-```
+var codeFlow = new GoogleAuthorizationCodeFlow (new GoogleAuthorizationCodeFlow.Initializer {
+	DataStore = new FileDataStore ("CredentialCacheFolder", false),
+	Scopes = new [] { "https://mail.google.com/" },
+	ClientSecrets = clientSecrets
+});
 
-Now that you have an access token (`credential.Token.AccessToken`), you can use it with MailKit by using the
-token to create a new OAuth2 SASL mechanism context and then authenticating with it:
+var codeReceiver = new LocalServerCodeReceiver ();
+var authCode = new AuthorizationCodeInstalledApp (codeFlow, codeReceiver);
+var credential = await authCode.AuthorizeAsync (GMailAccount, CancellationToken.None);
 
-```csharp
-using (var client = new ImapClient ()) {
-    client.Connect ("imap.gmail.com", 993, true);
+if (authCode.ShouldRequestAuthorizationCode (credential.Token))
+	await credential.RefreshTokenAsync (CancellationToken.None);
 
-    var oauth2 = new SaslMechanismOAuth2 ("user@gmail.com", credential.Token.AccessToken);
-    client.Authenticate (oauth2);
+var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
+
+using (var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()))) {
+	await client.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+	await client.AuthenticateAsync (oauth2);
+	await client.DisconnectAsync (true);
 }
 ```
 
