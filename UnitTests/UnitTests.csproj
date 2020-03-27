@@ -380,12 +380,10 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.43.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.50.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-objectid.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext7.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext8.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext9.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext10.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext11.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext12.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-bodystructure.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-peek-html-only.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-peek-text-alternative.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-peek-text-only.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\expunge-during-fetch.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\get-indexes.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\go-ahead.txt" />

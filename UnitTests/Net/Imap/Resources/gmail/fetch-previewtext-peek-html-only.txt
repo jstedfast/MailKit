@@ -1,0 +1,1003 @@
+* 2 FETCH (UID 2 BODY[TEXT]<0> {16384}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <title>
+        Planet Fitness
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 " />
+    <meta content="telephone=no" name="format-detection">
+
+    <link href="https://fonts.googleapis.com/css?family=Archivo+Narrow:400,500,600,600i,700,700i" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700&display=swap" rel="stylesheet">
+
+    <style type="text/css">
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-text-size-adjust: 100% !important;
+            -ms-text-size-adjust: 100% !important;
+        }
+
+        img {
+            border: 0 !important;
+            outline: none !important;
+        }
+
+        p {
+            Margin: 0px !important;
+            Padding: 0px !important;
+        }
+
+        table {
+            border-collapse: collapse;
+            mso-table-lspace: 0px;
+            mso-table-rspace: 0px;
+        }
+
+        td, a, span {
+            border-collapse: collapse;
+            mso-line-height-rule: exactly;
+        }
+
+        .ExternalClass * {
+            line-height: 100%;
+        }
+
+        .em_defaultlink a {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+
+
+        /* RESET STYLES */
+
+        img {
+            border: 0;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        table {
+            border-collapse: collapse !important;
+        }
+
+        body {
+            height: 100% !important;
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+        }
+
+        a:link, v:link {
+            color: #732282;
+        }
+        /*Link Color for IOS */
+        .appleLinksWhite a {
+            color: #ffffff !important;
+            text-decoration: none;
+        }
+
+        .appleLinksBlack a {
+            color: #000000 !important;
+            text-decoration: none;
+        }
+
+        /* WEB FONTS */
+
+        <!-- [if mso] > * {
+            font-family: sans-serif !important;
+        }
+
+        <![endif] -->
+        /* latin-ext */
+        @font-face {
+            font-family: 'Archivo Narrow';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Archivo Narrow Regular'), local('ArchivoNarrow-Regular'), url(https://fonts.gstatic.com/s/archivonarrow/v8/tss0ApVBdCYD5Q7hcxTE1ArZ0bb-iXxw2d8oBxk.woff2) format('woff2');
+            unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+        /* latin */
+        @font-face {
+            font-family: 'Archivo Narrow';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Archivo Narrow Regular'), local('ArchivoNarrow-Regular'), url(https://fonts.gstatic.com/s/archivonarrow/v8/tss0ApVBdCYD5Q7hcxTE1ArZ0bbwiXxw2d8o.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        /* Rockwell */
+        @font-face {
+            font-family: rockwellstd-extrabold;
+            src: url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.eot);
+            src: url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.eot#iefix) format('embedded-opentype'), url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.woff2) format('woff2'), url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.woff) format('woff'), url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.ttf) format('truetype')
+        }
+
+        /* Roboto */
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Roboto'), local('Roboto-Regular'), url(http://fonts.gstatic.com/s/roboto/v15/oMMgfZMQthOryQo9n22dcuvvDin1pK8aKteLpeZ5c0A.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+        }
+
+        /* Roboto Bold */
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 700;
+            src: local('Roboto Bold'), local('Roboto-Bold'), url(http://fonts.gstatic.com/s/roboto/v15/d-6IYplOFocCacKzxwXSOJBw1xU1rKptJj_0jans920.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+        }
+
+        /* Roboto Slab */
+        @font-face {
+            font-family: 'Roboto Slab';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Roboto Slab Regular'), local('RobotoSlab-Regular'), url(fonts/RobotoSlab-Regular.ttf) format('woff');
+        }
+
+        @font-face {
+            font-family: 'Roboto Slab';
+            font-style: normal;
+            font-weight: 700;
+            src: local('Roboto Slab Bold'), local('RobotoSlab-Bold'), url(fonts/RobotoSlab-Bold.ttf) format('woff');
+        }
+
+        @import url('https://fonts.googleapis.com/css?family=Roboto:400,700,900');
+        @import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+
+        /* END WEB FONTS */
+
+        /*Stylesheet for the devices width between 481px to 599px*/
+        @media only screen and (min-width:481px) and (max-width:599px) {
+            .em_wrapper {
+                width: 100% !important;
+            }
+
+            .em_main_table {
+                width: 100% !important;
+            }
+
+            .em_aside {
+                padding: 0px 15px !important;
+            }
+
+            .em_hide {
+                display: none !important;
+            }
+
+            .br_show {
+                display: inline;
+            }
+
+            .em_img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .em_full_img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+                .em_full_img img {
+                    width: 100% !important;
+                    height: auto !important;
+                }
+
+            .em_aside10 {
+                padding: 20px 0px !important;
+            }
+
+            .em_font_28 {
+                font-size: 30px !important;
+                line-height: 33px !important;
+            }
+
+
+            .em_h20 {
+                height: 20px !important;
+            }
+
+            .em_bottom {
+                padding-bottom: 20px !important;
+            }
+
+            .em_bottom1 {
+                padding-bottom: 30px !important;
+            }
+
+            .em_ftr_nav {
+                height: 50px !important;
+                font-size: 13px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            .em_ftr_nav2 {
+                padding: 20px 0px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            div[class=display_mobile] {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .display_mobile {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .hide_desktop {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            div[class=hide_desktop] {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            table[class=tbl_center] {
+                margin: 0 auto !important;
+                align: center !important;
+            }
+
+            td[class=mbltd_padding] {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .em_center {
+                text-align: center !important;
+            }
+
+            .pad_mobile {
+                background: white;
+                padding: 0px 15px;
+            }
+
+            .em_img1 {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 100% !important;
+            }
+
+            .em_w30 {
+                width: 90% !important;
+            }
+
+            .em_w150 {
+                width: 150px !important;
+            }
+
+            .m2button {
+                width: 120px !important;
+                font-size: 13px !important;
+            }
+
+            .em_red a {
+                color: #e4002b;
+                text-decoration: none !important;
+                font-size: 35px !important;
+            }
+        }
+        /*Stylesheed for the devices width between 0px to 480px*/
+        @media only screen and (max-width:480px) {
+
+
+            .em_wrapper {
+                width: 100% !important;
+            }
+
+            .em_main_table {
+                width: 100% !important;
+            }
+
+            .em_aside {
+                padding: 0px 15px !important;
+            }
+
+            .em_hide {
+                display: none !important;
+            }
+
+            .br_show {
+                display: inline;
+            }
+
+            .em_img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .em_img1 {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 100% !important;
+            }
+
+            .em_full_img img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .em_aside10 {
+                padding: 20px 0px !important;
+            }
+
+            .em_font_28 {
+                font-size: 30px !important;
+                line-height: 33px !important;
+            }
+
+            .em_h20 {
+                height: 20px !important;
+            }
+
+            .em_bottom {
+                padding-bottom: 20px !important;
+            }
+
+            .em_bottom1 {
+                padding-bottom: 30px !important;
+            }
+
+            .em_f60 {
+                font-size: 60px !important;
+                line-height: 63px !important;
+            }
+
+            .em_f14 {
+                font-size: 11px !important;
+                line-height: 17px !important;
+            }
+
+            .em_ftr_nav {
+                height: 50px !important;
+                font-size: 13px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            .em_ftr_nav2 {
+                padding: 20px 0px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            .em_ftr_nav1 {
+                padding: 0px 0px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            div[class=display_mobile] {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .display_mobile {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .hide_desktop {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            div[class=hide_desktop] {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            table[class=tbl_center] {
+                margin: 0 auto !important;
+                align: center !important;
+            }
+
+            td[class=mbltd_padding] {
+                padding-left: 15px;
+                padding-right: 15px;
+                padding-top: 5px;
+            }
+
+            .em_center {
+                text-align: center !important;
+            }
+
+            .pad_mobile {
+                background: white;
+                padding: 0px 15px;
+            }
+
+            .em_w30 {
+                width: 100% !important;
+            }
+
+            .em_w150 {
+                width: 270px !important;
+            }
+
+            .m2button {
+                width: 120px !important;
+                font-size: 13px !important;
+            }
+
+            .em_red a {
+                color: #e4002b;
+                text-decoration: none !important;
+                font-size: 35px !important;
+            }
+        }
+    </style>
+    <!--[if gte mso 9]> <xml> <o:OfficeDocumentSettings> <o:AllowPNG/> <o:PixelsPerInch>96</o:PixelsPerInch> </o:OfficeDocumentSettings> </xml> <![endif]-->
+
+</head>
+
+<body style="margin:0px; padding:0px;">
+    <style type="text/css">
+        div.preheader {
+            display: none !important;
+        }
+    </style>
+    <div class="preheader" style="font-size: 1px; display: none !important;">Don’t miss our celebrity guest Monday evening</div>
+    <img src="https://click.email.planetfitness.com/open.aspx?ffcb10-feb913747c6c007b-fe2b17707560007a721374-fe9213727763067a77-ff931375-fe2e15757c62027e751572-ff3c16707464" width="1" height="1">
+    <!--[if mso]> <style type="text/css"> body, table, td, a, li {font-family: Arial, Helvetica, sans-serif !important;} </style> <![endif]-->
+    <!--Full width table start-->
+
+    <div align="center" style="background-color:#ffffff;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed;">
+            <tr valign="top">
+                <td align="center">
+                    <table class="em_main_table" width="600" style="width:600px;" cellpadding="0" cellspacing="0" border="0" role="presentation" align="center">
+                        <tr>
+                            <td align="center" valign="top" style="padding:0px 20px 0px 20px;">
+
+                                <!-- Header  -->
+                        <tr>
+                            <td align="center" class="em_aside">
+                                <table width="600" border="0" cellspacing="0" cellpadding="0" align="center" class="em_wrapper" style="width:600px; table-layout:fixed;">
+                                    <tr>
+                                        )
+* 5 FETCH (UID 5 BODY[TEXT]<0> {16384}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <title>
+        Planet Fitness
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 " />
+    <meta content="telephone=no" name="format-detection">
+
+    <link href="https://fonts.googleapis.com/css?family=Archivo+Narrow:400,500,600,600i,700,700i" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700&display=swap" rel="stylesheet">
+
+    <style type="text/css">
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-text-size-adjust: 100% !important;
+            -ms-text-size-adjust: 100% !important;
+        }
+
+        img {
+            border: 0 !important;
+            outline: none !important;
+        }
+
+        p {
+            Margin: 0px !important;
+            Padding: 0px !important;
+        }
+
+        table {
+            border-collapse: collapse;
+            mso-table-lspace: 0px;
+            mso-table-rspace: 0px;
+        }
+
+        td, a, span {
+            border-collapse: collapse;
+            mso-line-height-rule: exactly;
+        }
+
+        .ExternalClass * {
+            line-height: 100%;
+        }
+
+        .em_defaultlink a {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+
+
+        /* RESET STYLES */
+
+        img {
+            border: 0;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        table {
+            border-collapse: collapse !important;
+        }
+
+        body {
+            height: 100% !important;
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+        }
+
+        a:link, v:link {
+            color: #732282;
+        }
+        /*Link Color for IOS */
+        .appleLinksWhite a {
+            color: #ffffff !important;
+            text-decoration: none;
+        }
+
+        .appleLinksBlack a {
+            color: #000000 !important;
+            text-decoration: none;
+        }
+
+        /* WEB FONTS */
+
+        <!-- [if mso] > * {
+            font-family: sans-serif !important;
+        }
+
+        <![endif] -->
+        /* latin-ext */
+        @font-face {
+            font-family: 'Archivo Narrow';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Archivo Narrow Regular'), local('ArchivoNarrow-Regular'), url(https://fonts.gstatic.com/s/archivonarrow/v8/tss0ApVBdCYD5Q7hcxTE1ArZ0bb-iXxw2d8oBxk.woff2) format('woff2');
+            unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+        /* latin */
+        @font-face {
+            font-family: 'Archivo Narrow';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Archivo Narrow Regular'), local('ArchivoNarrow-Regular'), url(https://fonts.gstatic.com/s/archivonarrow/v8/tss0ApVBdCYD5Q7hcxTE1ArZ0bbwiXxw2d8o.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        /* Rockwell */
+        @font-face {
+            font-family: rockwellstd-extrabold;
+            src: url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.eot);
+            src: url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.eot#iefix) format('embedded-opentype'), url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.woff2) format('woff2'), url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.woff) format('woff'), url(https://www.planetfitness.com/themes/planet_fitness/css/webfonts/33EE73_0_0.ttf) format('truetype')
+        }
+
+        /* Roboto */
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Roboto'), local('Roboto-Regular'), url(http://fonts.gstatic.com/s/roboto/v15/oMMgfZMQthOryQo9n22dcuvvDin1pK8aKteLpeZ5c0A.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+        }
+
+        /* Roboto Bold */
+        @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 700;
+            src: local('Roboto Bold'), local('Roboto-Bold'), url(http://fonts.gstatic.com/s/roboto/v15/d-6IYplOFocCacKzxwXSOJBw1xU1rKptJj_0jans920.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+        }
+
+        /* Roboto Slab */
+        @font-face {
+            font-family: 'Roboto Slab';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Roboto Slab Regular'), local('RobotoSlab-Regular'), url(fonts/RobotoSlab-Regular.ttf) format('woff');
+        }
+
+        @font-face {
+            font-family: 'Roboto Slab';
+            font-style: normal;
+            font-weight: 700;
+            src: local('Roboto Slab Bold'), local('RobotoSlab-Bold'), url(fonts/RobotoSlab-Bold.ttf) format('woff');
+        }
+
+        @import url('https://fonts.googleapis.com/css?family=Roboto:400,700,900');
+        @import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+
+        /* END WEB FONTS */
+
+        /*Stylesheet for the devices width between 481px to 599px*/
+        @media only screen and (min-width:481px) and (max-width:599px) {
+            .em_wrapper {
+                width: 100% !important;
+            }
+
+            .em_main_table {
+                width: 100% !important;
+            }
+
+            .em_aside {
+                padding: 0px 15px !important;
+            }
+
+            .em_hide {
+                display: none !important;
+            }
+
+            .br_show {
+                display: inline;
+            }
+
+            .em_img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .em_full_img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+                .em_full_img img {
+                    width: 100% !important;
+                    height: auto !important;
+                }
+
+            .em_aside10 {
+                padding: 20px 0px !important;
+            }
+
+            .em_font_28 {
+                font-size: 30px !important;
+                line-height: 33px !important;
+            }
+
+
+            .em_h20 {
+                height: 20px !important;
+            }
+
+            .em_bottom {
+                padding-bottom: 20px !important;
+            }
+
+            .em_bottom1 {
+                padding-bottom: 30px !important;
+            }
+
+            .em_ftr_nav {
+                height: 50px !important;
+                font-size: 13px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            .em_ftr_nav2 {
+                padding: 20px 0px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            div[class=display_mobile] {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .display_mobile {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .hide_desktop {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            div[class=hide_desktop] {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            table[class=tbl_center] {
+                margin: 0 auto !important;
+                align: center !important;
+            }
+
+            td[class=mbltd_padding] {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .em_center {
+                text-align: center !important;
+            }
+
+            .pad_mobile {
+                background: white;
+                padding: 0px 15px;
+            }
+
+            .em_img1 {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 100% !important;
+            }
+
+            .em_w30 {
+                width: 90% !important;
+            }
+
+            .em_w150 {
+                width: 150px !important;
+            }
+
+            .m2button {
+                width: 120px !important;
+                font-size: 13px !important;
+            }
+
+            .em_red a {
+                color: #e4002b;
+                text-decoration: none !important;
+                font-size: 35px !important;
+            }
+        }
+        /*Stylesheed for the devices width between 0px to 480px*/
+        @media only screen and (max-width:480px) {
+
+
+            .em_wrapper {
+                width: 100% !important;
+            }
+
+            .em_main_table {
+                width: 100% !important;
+            }
+
+            .em_aside {
+                padding: 0px 15px !important;
+            }
+
+            .em_hide {
+                display: none !important;
+            }
+
+            .br_show {
+                display: inline;
+            }
+
+            .em_img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .em_img1 {
+                width: 100% !important;
+                height: auto !important;
+                max-width: 100% !important;
+            }
+
+            .em_full_img img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .em_aside10 {
+                padding: 20px 0px !important;
+            }
+
+            .em_font_28 {
+                font-size: 30px !important;
+                line-height: 33px !important;
+            }
+
+            .em_h20 {
+                height: 20px !important;
+            }
+
+            .em_bottom {
+                padding-bottom: 20px !important;
+            }
+
+            .em_bottom1 {
+                padding-bottom: 30px !important;
+            }
+
+            .em_f60 {
+                font-size: 60px !important;
+                line-height: 63px !important;
+            }
+
+            .em_f14 {
+                font-size: 11px !important;
+                line-height: 17px !important;
+            }
+
+            .em_ftr_nav {
+                height: 50px !important;
+                font-size: 13px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            .em_ftr_nav2 {
+                padding: 20px 0px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            .em_ftr_nav1 {
+                padding: 0px 0px !important;
+                border: #eeeeee 1px solid !important;
+            }
+
+            div[class=display_mobile] {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .display_mobile {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .hide_desktop {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            div[class=hide_desktop] {
+                display: table !important;
+                float: none !important;
+                width: 100% !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            table[class=tbl_center] {
+                margin: 0 auto !important;
+                align: center !important;
+            }
+
+            td[class=mbltd_padding] {
+                padding-left: 15px;
+                padding-right: 15px;
+                padding-top: 5px;
+            }
+
+            .em_center {
+                text-align: center !important;
+            }
+
+            .pad_mobile {
+                background: white;
+                padding: 0px 15px;
+            }
+
+            .em_w30 {
+                width: 100% !important;
+            }
+
+            .em_w150 {
+                width: 270px !important;
+            }
+
+            .m2button {
+                width: 120px !important;
+                font-size: 13px !important;
+            }
+
+            .em_red a {
+                color: #e4002b;
+                text-decoration: none !important;
+                font-size: 35px !important;
+            }
+        }
+    </style>
+    <!--[if gte mso 9]> <xml> <o:OfficeDocumentSettings> <o:AllowPNG/> <o:PixelsPerInch>96</o:PixelsPerInch> </o:OfficeDocumentSettings> </xml> <![endif]-->
+
+</head>
+
+<body style="margin:0px; padding:0px;">
+    <style type="text/css">
+        div.preheader {
+            display: none !important;
+        }
+    </style>
+    <div class="preheader" style="font-size: 1px; display: none !important;">Don’t miss our celebrity guest Monday evening</div>
+    <img src="https://click.email.planetfitness.com/open.aspx?ffcb10-feb913747c6c007b-fe2b17707560007a721374-fe9213727763067a77-ff931375-fe2e15757c62027e751572-ff3c16707464" width="1" height="1">
+    <!--[if mso]> <style type="text/css"> body, table, td, a, li {font-family: Arial, Helvetica, sans-serif !important;} </style> <![endif]-->
+    <!--Full width table start-->
+
+    <div align="center" style="background-color:#ffffff;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed;">
+            <tr valign="top">
+                <td align="center">
+                    <table class="em_main_table" width="600" style="width:600px;" cellpadding="0" cellspacing="0" border="0" role="presentation" align="center">
+                        <tr>
+                            <td align="center" valign="top" style="padding:0px 20px 0px 20px;">
+
+                                <!-- Header  -->
+                        <tr>
+                            <td align="center" class="em_aside">
+                                <table width="600" border="0" cellspacing="0" cellpadding="0" align="center" class="em_wrapper" style="width:600px; table-layout:fixed;">
+                                    <tr>
+                                        )
+A######## OK Success

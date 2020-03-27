@@ -1,0 +1,33 @@
+* 1 FETCH (UID 1 BODY[TEXT]<0> {512}
+Planet Fitness
+ 
+ 
+https://view.email.planetfitness.com/?qs=9a098a031cabde68c0a4260051cd6fe473a2e997a53678ff26b4b199a711a9d2ad0536530d6f837c246b09f644d42016ecfb298f930b7af058e9e454b34f3d818ceb3052ae317b1ac4594aab28a2d788 
+View web version. 
+
+ 
+ 
+
+
+ 
+
+https://click.email.planetfitness.com/?qs=fd2766e949040b4ab48e22f7d9e9447a24bee0d865e2726344dbb9445bfe9550309f3710c1455f171c23158086b024cfc6354b301deb2985 
+
+https://click.email.planetfitness.com/?qs=fd2766e949040b4addbddbe9bb6f8638f98f7bb4a15c3f34)
+* 4 FETCH (UID 4 BODY[TEXT]<0> {512}
+Planet Fitness
+ 
+ 
+https://view.email.planetfitness.com/?qs=9a098a031cabde68c0a4260051cd6fe473a2e997a53678ff26b4b199a711a9d2ad0536530d6f837c246b09f644d42016ecfb298f930b7af058e9e454b34f3d818ceb3052ae317b1ac4594aab28a2d788 
+View web version. 
+
+ 
+ 
+
+
+ 
+
+https://click.email.planetfitness.com/?qs=fd2766e949040b4ab48e22f7d9e9447a24bee0d865e2726344dbb9445bfe9550309f3710c1455f171c23158086b024cfc6354b301deb2985 
+
+https://click.email.planetfitness.com/?qs=fd2766e949040b4addbddbe9bb6f8638f98f7bb4a15c3f34)
+A######## OK Success

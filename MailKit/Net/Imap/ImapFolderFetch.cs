@@ -36,6 +36,7 @@ using System.Collections.ObjectModel;
 
 using MimeKit;
 using MimeKit.IO;
+using MimeKit.Text;
 using MimeKit.Utils;
 
 using MailKit.Search;
@@ -45,7 +46,8 @@ namespace MailKit.Net.Imap
 	public partial class ImapFolder
 	{
 		internal static readonly HashSet<string> EmptyHeaderFields = new HashSet<string> ();
-		const string PreviewTextLength = "256";
+		const int PreviewHtmlLength = 16 * 1024;
+		const int PreviewTextLength = 512;
 
 		class FetchSummaryContext
 		{
@@ -543,41 +545,11 @@ namespace MailKit.Net.Imap
 			return new ReadOnlyCollection<IMessageSummary> (array);
 		}
 
-		internal static string GetPreviewText (MemoryStream memory, string charset)
-		{
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-			var content = memory.GetBuffer ();
-#else
-			var content = memory.ToArray ();
-#endif
-			Encoding encoding = null;
-
-			if (charset != null) {
-				try {
-					encoding = Encoding.GetEncoding (charset);
-				} catch (NotSupportedException) {
-				} catch (ArgumentException) {
-				}
-			}
-
-			if (encoding == null) {
-				try {
-					return ImapEngine.UTF8.GetString (content, 0, (int) memory.Length);
-				} catch (DecoderFallbackException) {
-					// fall back to iso-8859-1
-					encoding = ImapEngine.Latin1;
-				}
-			}
-
-			try {
-				return encoding.GetString (content, 0, (int) memory.Length);
-			} catch {
-				return string.Empty;
-			}
-		}
-
 		class FetchPreviewTextContext : FetchStreamContextBase
 		{
+			static readonly PlainTextPreviewer textPreviewer = new PlainTextPreviewer ();
+			static readonly HtmlTextPreviewer htmlPreviewer = new HtmlTextPreviewer ();
+
 			readonly FetchSummaryContext ctx;
 			readonly ImapFolder folder;
 
@@ -594,11 +566,20 @@ namespace MailKit.Net.Imap
 				if (!ctx.TryGetValue (section.Index, out message))
 					return Complete;
 
-				var body = message.TextBody ?? message.HtmlBody;
+				var body = message.TextBody;
+				TextPreviewer previewer;
+
+				if (body == null) {
+					previewer = htmlPreviewer;
+					body = message.HtmlBody;
+				} else {
+					previewer = textPreviewer;
+				}
+
 				if (body == null)
 					return Complete;
 
-				var charset = body.ContentType.Charset;
+				var charset = body.ContentType.Charset ?? "utf-8";
 				ContentEncoding encoding;
 
 				if (!string.IsNullOrEmpty (body.ContentTransferEncoding))
@@ -610,8 +591,16 @@ namespace MailKit.Net.Imap
 					var content = new MimeContent (section.Stream, encoding);
 
 					content.DecodeTo (memory);
+					memory.Position = 0;
 
-					message.PreviewText = GetPreviewText (memory, charset);
+					try {
+						message.PreviewText = previewer.GetPreviewText (memory, charset);
+					} catch (DecoderFallbackException) {
+						memory.Position = 0;
+
+						message.PreviewText = previewer.GetPreviewText (memory, ImapEngine.Latin1);
+					}
+
 					message.Fields |= MessageSummaryItems.PreviewText;
 					folder.OnMessageSummaryFetched (message);
 				}
@@ -625,14 +614,64 @@ namespace MailKit.Net.Imap
 			}
 		}
 
+		async Task FetchPreviewTextAsync (FetchSummaryContext sctx, Dictionary<string, UniqueIdSet> bodies, int octets, bool doAsync, CancellationToken cancellationToken)
+		{
+			foreach (var pair in bodies) {
+				var uids = pair.Value;
+				string specifier;
+
+				if (!string.IsNullOrEmpty (pair.Key))
+					specifier = pair.Key;
+				else
+					specifier = "TEXT";
+
+				// TODO: if the IMAP server supports the CONVERT extension, we could possibly use the
+				// CONVERT command instead to decode *and* convert (html) into utf-8 plain text.
+				//
+				// e.g. "UID CONVERT {0} (\"text/plain\" (\"charset\" \"utf-8\")) BINARY[{1}]<0.{2}>\r\n"
+				//
+				// This would allow us to more accurately fetch X number of characters because we wouldn't
+				// need to guestimate accounting for base64/quoted-printable decoding.
+
+				var command = string.Format (CultureInfo.InvariantCulture, "UID FETCH {0} (BODY.PEEK[{1}]<0.{2}>)\r\n", uids, specifier, octets);
+				var ic = new ImapCommand (Engine, cancellationToken, this, command);
+				var ctx = new FetchPreviewTextContext (this, sctx);
+
+				ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+				ic.UserData = ctx;
+
+				Engine.QueueCommand (ic);
+
+				try {
+					await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+
+					ProcessResponseCodes (ic, null);
+
+					if (ic.Response != ImapCommandResponse.Ok)
+						throw ImapCommandException.Create ("FETCH", ic);
+				} finally {
+					ctx.Dispose ();
+				}
+			}
+		}
+
 		async Task GetPreviewTextAsync (FetchSummaryContext sctx, bool doAsync, CancellationToken cancellationToken)
 		{
-			var sets = new Dictionary<string, UniqueIdSet> ();
+			var textBodies = new Dictionary<string, UniqueIdSet> ();
+			var htmlBodies = new Dictionary<string, UniqueIdSet> ();
 
 			foreach (var item in sctx.Messages) {
+				Dictionary<string, UniqueIdSet> bodies;
 				var message = (MessageSummary) item;
-				var body = message.TextBody ?? message.HtmlBody;
+				var body = message.TextBody;
 				UniqueIdSet uids;
+
+				if (body == null) {
+					body = message.HtmlBody;
+					bodies = htmlBodies;
+				} else {
+					bodies = textBodies;
+				}
 
 				if (body == null) {
 					message.Fields |= MessageSummaryItems.PreviewText;
@@ -641,9 +680,9 @@ namespace MailKit.Net.Imap
 					continue;
 				}
 
-				if (!sets.TryGetValue (body.PartSpecifier, out uids)) {
+				if (!bodies.TryGetValue (body.PartSpecifier, out uids)) {
 					uids = new UniqueIdSet (SortOrder.Ascending);
-					sets.Add (body.PartSpecifier, uids);
+					bodies.Add (body.PartSpecifier, uids);
 				}
 
 				uids.Add (message.UniqueId);
@@ -652,43 +691,8 @@ namespace MailKit.Net.Imap
 			MessageExpunged += sctx.OnMessageExpunged;
 
 			try {
-				foreach (var pair in sets) {
-					var uids = pair.Value;
-					string specifier;
-
-					if (!string.IsNullOrEmpty (pair.Key))
-						specifier = pair.Key;
-					else
-						specifier = "TEXT";
-
-					// TODO: if the IMAP server supports the CONVERT extension, we could possibly use the
-					// CONVERT command instead to decode *and* convert (html) into utf-8 plain text.
-					//
-					// e.g. "UID CONVERT {0} (\"text/plain\" (\"charset\" \"utf-8\")) BINARY[{1}]<0.{2}>\r\n"
-					//
-					// This would allow us to more accurately fetch X number of characters because we wouldn't
-					// need to guestimate accounting for base64/quoted-printable decoding.
-
-					var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<0.{2}>)\r\n", uids, specifier, PreviewTextLength);
-					var ic = new ImapCommand (Engine, cancellationToken, this, command);
-					var ctx = new FetchPreviewTextContext (this, sctx);
-
-					ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
-					ic.UserData = ctx;
-
-					Engine.QueueCommand (ic);
-
-					try {
-						await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-						ProcessResponseCodes (ic, null);
-
-						if (ic.Response != ImapCommandResponse.Ok)
-							throw ImapCommandException.Create ("FETCH", ic);
-					} finally {
-						ctx.Dispose ();
-					}
-				}
+				await FetchPreviewTextAsync (sctx, textBodies, PreviewTextLength, doAsync, cancellationToken).ConfigureAwait (false);
+				await FetchPreviewTextAsync (sctx, htmlBodies, PreviewHtmlLength, doAsync, cancellationToken).ConfigureAwait (false);
 			} finally {
 				MessageExpunged -= sctx.OnMessageExpunged;
 			}
