@@ -190,7 +190,7 @@ namespace MailKit {
 		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\InvalidSslCertificate.cs" region="Simple"/>
+		/// <code language="c#" source="Examples\SslCertificateValidation.cs"/>
 		/// </example>
 		/// <value>The server certificate validation callback function.</value>
 		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {

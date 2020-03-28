@@ -267,9 +267,6 @@ I just wanted to let you know that Monica and I were going to go play some paint
 			};
 
 			using (var client = new SmtpClient ()) {
-				// For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
-
 				client.Connect ("smtp.friends.com", 587, false);
 
 				// Note: only needed if the SMTP server requires authentication
@@ -300,9 +297,6 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new Pop3Client ()) {
-				// For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
-
 				client.Connect ("pop.friends.com", 110, false);
 
 				client.Authenticate ("joey", "password");
@@ -337,9 +331,6 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new ImapClient ()) {
-				// For demo-purposes, accept all SSL certificates
-				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
-
 				client.Connect ("imap.friends.com", 993, true);
 
 				client.Authenticate ("joey", "password");

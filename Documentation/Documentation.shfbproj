@@ -111,7 +111,6 @@
     <None Include="Examples\ForwardExamples.cs" />
     <None Include="Examples\ImapExamples.cs" />
     <None Include="Examples\ImapIdleExample.cs" />
-    <None Include="Examples\InvalidSslCertificate.cs" />
     <None Include="Examples\MessageDeliveryStatusExamples.cs" />
     <None Include="Examples\MimeIterator.cs" />
     <None Include="Examples\MimeMessageLoad.cs" />
@@ -129,6 +128,7 @@
     <None Include="Examples\AttachmentExamples.cs" />
     <None Include="Examples\SMimeExamples.cs" />
     <None Include="Examples\SmtpExamples.cs" />
+    <None Include="Examples\SslCertificateValidation.cs" />
     <None Include="Examples\VerifySignature.cs" />
   </ItemGroup>
   <ItemGroup>

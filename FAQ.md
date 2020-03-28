@@ -109,11 +109,43 @@ using (var client = new SmtpClient ()) {
 }
 ```
 
-Most likely you'll want to instead compare the certificate's [Thumbprint](https://msdn.microsoft.com/en-us/library/system.security.cryptography.x509certificates.x509certificate2.thumbprint(v=vs.110).aspx)
-property to a known value that you have verified at a prior date.
+A better solution might be to compare the certificate's common name, issuer, serial number, and fingerprint
+to known values to make sure that the certificate can be trusted. Take the following code snippet as an
+example of how to do this:
 
-You could also use this callback to prompt the user (much like you have probably seen web browsers do)
-as to whether or not the certificate should be trusted.
+```csharp
+bool MyServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+{
+    if (sslPolicyErrors == SslPolicyErrors.None)
+        return true;
+
+    if (certificate is X509Certificate2 certificate2) {
+        var cn = certificate.GetNameInfo (X509NameType.SimpleName, false);
+        var fingerprint = certificate.Thumbprint;
+        var serial = certificate.SerialNumber;
+        var issuer = certificate.Issuer;
+
+        return cn == "imap.gmail.com" && issuer == "CN=GTS CA 1O1, O=Google Trust Services, C=US" &&
+	    serial == "0096768414983DDE9C0800000000320A68" &&
+	    fingerprint == "A53BA86C137D828618540738014F7C3D52F699C7";
+    }
+
+    return false;
+}
+```
+
+The downside of the above example is that it requires had-coding known values for "trusted" mail server
+certificates which can quickly become unweildy to deal with if your program is meant to be used with
+a wide range of mail servers.
+
+The best approach would be to prompt the user with a dialog explaining that the certificate is
+not trusted for the reasons enumerated by the `sslPolicyErrors` argument as well as potentially
+the errors provided in the `chain`. If the user wishes to accept the risks of trusting the
+certificate, your program could then `return true`.
+
+For more details on writing a custom SSL certificate validation callback, it may be worth checking out the
+[SslCertificateValidation.cs](https://github.com/jstedfast/MailKit/blob/master/Documentation/Examples/SslCertificateValidation.cs)
+example.
 
 #### 3. A Certificate Authority CRL server for one or more of the certificates in the chain is temporarily unavailable.
 
@@ -208,7 +240,6 @@ code snippet to connect to GMail via IMAP:
 
 ```csharp
 using (var client = new ImapClient ()) {
-    client.ServerCertificateValidationCallback = (s,c,ch,e) => true;
     client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
     client.Authenticate ("user@gmail.com", "password");
     
