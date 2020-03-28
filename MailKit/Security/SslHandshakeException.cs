@@ -166,9 +166,13 @@ namespace MailKit.Security
 
 			if (ServerCertificate != null)
 				info.AddValue ("ServerCertificate", Convert.ToBase64String (ServerCertificate.GetRawCertData ()));
+			else
+				info.AddValue ("ServerCertificate", null, typeof (string));
 
 			if (RootCertificateAuthority != null)
 				info.AddValue ("RootCertificateAuthority", Convert.ToBase64String (RootCertificateAuthority.GetRawCertData ()));
+			else
+				info.AddValue ("RootCertificateAuthority", null, typeof (string));
 		}
 #endif
 
