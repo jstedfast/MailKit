@@ -138,7 +138,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>The preview text is a short snippet of the beginning of the message
-		/// text, typically shown in a mail client's message list UI.</para>
+		/// text, typically shown in a mail client's message list to provide the user
+		/// with a sense of what the message is about.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.PreviewText"/> flag is passed to
 		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
@@ -373,7 +374,8 @@ namespace MailKit {
 		/// Gets the index of the message.
 		/// </summary>
 		/// <remarks>
-		/// Gets the index of the message.
+		/// <para>Gets the index of the message.</para>
+		/// <para>This property is always set.</para>
 		/// </remarks>
 		/// <value>The index of the message.</value>
 		int Index { get; }

@@ -131,7 +131,14 @@ namespace MailKit {
 		#endregion
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.PreviewText"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.PreviewText"/>.</para>
+		/// <note type="note">This property is quite expensive to calculate because it is not an
+		/// item that is cached on the IMAP server. Instead, MailKit must download a hunk of the
+		/// message body so that it can decode and parse it in order to generate a meaningful
+		/// text snippet. This usually involves downloading the first 512 bytes for <c>text/plain</c>
+		/// message bodies and the first 16 kilobytes for <c>text/html</c> message bodies. If a
+		/// message contains both a <c>text/plain</c> body and a <c>text/html</c> body, then the
+		/// <c>text/plain</c> content is used in order to reduce network traffic.</note>
 		/// </summary>
 		PreviewText    = 1 << 14,
 
