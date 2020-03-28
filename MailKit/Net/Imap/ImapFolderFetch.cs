@@ -343,8 +343,8 @@ namespace MailKit.Net.Imap
 
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					message.Fields |= MessageSummaryItems.Id;
-					message.Id = (string) token.Value;
+					message.Fields |= MessageSummaryItems.EmailId;
+					message.EmailId = (string) token.Value;
 
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -486,7 +486,7 @@ namespace MailKit.Net.Imap
 			}
 
 			if ((engine.Capabilities & ImapCapabilities.ObjectID) != 0) {
-				if ((items & MessageSummaryItems.Id) != 0)
+				if ((items & MessageSummaryItems.EmailId) != 0)
 					tokens.Add ("EMAILID");
 				if ((items & MessageSummaryItems.ThreadId) != 0)
 					tokens.Add ("THREADID");

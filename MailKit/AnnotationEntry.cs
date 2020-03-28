@@ -31,7 +31,9 @@ namespace MailKit {
 	/// An annotation entry.
 	/// </summary>
 	/// <remarks>
-	/// An annotation entry.
+	/// <para>An annotation entry.</para>
+	/// <para>For more information about annotations, see
+	/// <a href="https://tools.ietf.org/html/rfc5257">rfc5257</a>.</para>
 	/// </remarks>
 	public class AnnotationEntry : IEquatable<AnnotationEntry>
 	{

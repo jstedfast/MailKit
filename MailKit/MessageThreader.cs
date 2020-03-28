@@ -115,6 +115,9 @@ namespace MailKit {
 				get { return Message != null ? Message.References : Children[0].References; }
 			}
 
+			public string EmailId => null;
+
+			[Obsolete]
 			public string Id => null;
 
 			public string ThreadId => null;

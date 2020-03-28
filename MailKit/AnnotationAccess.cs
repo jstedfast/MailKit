@@ -29,7 +29,9 @@ namespace MailKit {
 	/// An annotation access level.
 	/// </summary>
 	/// <remarks>
-	/// An annotation access level.
+	/// <para>An annotation access level.</para>
+	/// <para>For more information about annotations, see
+	/// <a href="https://tools.ietf.org/html/rfc5257">rfc5257</a>.</para>
 	/// </remarks>
 	public enum AnnotationAccess
 	{

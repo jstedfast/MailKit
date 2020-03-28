@@ -31,7 +31,9 @@ namespace MailKit {
 	/// The scope of an annotation.
 	/// </summary>
 	/// <remarks>
-	/// Represents the scope of an annotation.
+	/// <para>Represents the scope of an annotation.</para>
+	/// <para>For more information about annotations, see
+	/// <a href="https://tools.ietf.org/html/rfc5257">rfc5257</a>.</para>
 	/// </remarks>
 	[Flags]
 	public enum AnnotationScope

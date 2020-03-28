@@ -332,13 +332,31 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Gets the globally unique identifier of the message, if available.</para>
 		/// <para>This property will only be set if the
-		/// <see cref="MessageSummaryItems.Id"/> flag is passed to
+		/// <see cref="MessageSummaryItems.EmailId"/> flag is passed to
 		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
 		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
 		/// methods.</para>
-		/// <note type="info">This property maps to the <c>EMAILID</c> value defined in the <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
+		/// <note type="info">This property maps to the <c>EMAILID</c> value defined in the
+		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The globally unique message identifier.</value>
+		string EmailId { get; }
+
+		/// <summary>
+		/// Get the globally unique identifier for the message, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the globally unique identifier of the message, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.EmailId"/> flag is passed to
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
+		/// <note type="info">This property maps to the <c>EMAILID</c> value defined in the
+		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
+		/// </remarks>
+		/// <value>The globally unique message identifier.</value>
+		[Obsolete ("Use EmailId instead.")]
 		string Id { get; }
 
 		/// <summary>
@@ -351,7 +369,8 @@ namespace MailKit {
 		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
 		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
 		/// methods.</para>
-		/// <note type="info">This property maps to the <c>THREADID</c> value defined in the <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
+		/// <note type="info">This property maps to the <c>THREADID</c> value defined in the
+		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The globally unique thread identifier.</value>
 		string ThreadId { get; }

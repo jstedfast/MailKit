@@ -45,7 +45,16 @@ namespace MailKit {
 		None           = 0,
 
 		/// <summary>
+		/// <para>Fetch the <see cref="IMessageSummary.Annotations"/>.</para>
+		/// <para>Fetches all <c>ANNOATION</c> values as defined in
+		/// <a href="https://tools.ietf.org/html/rfc5257">rfc5257</a>.</para>
+		/// </summary>
+		Annotations    = 1 << 0,
+
+		/// <summary>
 		/// <para>Fetch the <see cref="IMessageSummary.Body"/>.</para>
+		/// <para>Fetches the <c>BODY</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// <note type="note">Unlike <see cref="BodyStructure"/>, <c>Body</c> will not populate the
 		/// <see cref="BodyPart.ContentType"/> parameters nor will it populate the
 		/// <see cref="BodyPartBasic.ContentDisposition"/>, <see cref="BodyPartBasic.ContentLanguage"/>
@@ -53,10 +62,12 @@ namespace MailKit {
 		/// body part. This makes <c>Body</c> far less useful than <c>BodyStructure</c> especially when
 		/// it is desirable to determine whether or not a body part is an attachment.</note>
 		/// </summary>
-		Body           = 1 << 0,
+		Body           = 1 << 1,
 
 		/// <summary>
 		/// <para>Fetch the <see cref="IMessageSummary.Body"/> (but with more details than <see cref="Body"/>).</para>
+		/// <para>Fetches the <c>BODYSTRUCTURE</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// <note type="note">Unlike <see cref="Body"/>, <c>BodyStructure</c> will also populate the
 		/// <see cref="BodyPart.ContentType"/> parameters as well as the
 		/// <see cref="BodyPartBasic.ContentDisposition"/>, <see cref="BodyPartBasic.ContentLanguage"/>
@@ -64,71 +75,109 @@ namespace MailKit {
 		/// body part. The <c>Content-Disposition</c> information is especially important when trying to
 		/// determine whether or not a body part is an attachment, for example.</note>
 		/// </summary>
-		BodyStructure  = 1 << 1,
+		BodyStructure  = 1 << 2,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.Envelope"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.Envelope"/>.</para>
+		/// <para>Fetches the <c>ENVELOPE</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
-		Envelope       = 1 << 2,
+		Envelope       = 1 << 3,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.Flags"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.Flags"/>.</para>
+		/// <para>Fetches the <c>FLAGS</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
-		Flags          = 1 << 3,
+		Flags          = 1 << 4,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.InternalDate"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.InternalDate"/>.</para>
+		/// <para>Fetches the <c>INTERNALDATE</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
-		InternalDate   = 1 << 4,
+		InternalDate   = 1 << 5,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.Size"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.Size"/>.</para>
+		/// <para>Fetches the <c>RFC822.SIZE</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
-		Size           = 1 << 5,
+		Size           = 1 << 6,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.ModSeq"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.ModSeq"/>.</para>
+		/// <para>Fetches the <c>MODSEQ</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc4551">rfc4551</a>.</para>
 		/// </summary>
-		ModSeq         = 1 << 6,
+		ModSeq         = 1 << 7,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.References"/>.
 		/// </summary>
-		References     = 1 << 7,
+		References     = 1 << 8,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.UniqueId"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.UniqueId"/>.</para>
+		/// <para>Fetches the <c>UID</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
-		UniqueId       = 1 << 8,
+		UniqueId       = 1 << 9,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.Id"/>.
+		/// <para></para>Fetch the <see cref="IMessageSummary.EmailId"/>.
+		/// <para>Fetches the <c>EMAILID</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc8474">rfc8474</a>.</para>
 		/// </summary>
-		Id             = 1 << 9,
+		EmailId        = 1 << 10,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.ThreadId"/>.
+		/// <para></para>Fetch the <see cref="IMessageSummary.EmailId"/>.
+		/// <para>Fetches the <c>EMAILID</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc8474">rfc8474</a>.</para>
 		/// </summary>
-		ThreadId       = 1 << 10,
+		[Obsolete ("Use EmailId instead.")]
+		Id             = EmailId,
+
+		/// <summary>
+		/// <para>Fetch the <see cref="IMessageSummary.ThreadId"/>.</para>
+		/// <para>Fetches the <c>THREADID</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc8474">rfc8474</a>.</para>
+		/// </summary>
+		ThreadId       = 1 << 11,
 
 		#region GMail extension items
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.GMailMessageId"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.GMailMessageId"/>.</para>
+		/// <para>Fetches the <c>X-GM-MSGID</c> value as defined in Google's
+		/// <a href="https://developers.google.com/gmail/imap/imap-extensions">IMAP extensions</a>
+		/// documentation.</para>
 		/// </summary>
-		GMailMessageId = 1 << 11,
+		GMailMessageId = 1 << 12,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.GMailThreadId"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.GMailThreadId"/>.</para>
+		/// <para>Fetches the <c>X-GM-THRID</c> value as defined in Google's
+		/// <a href="https://developers.google.com/gmail/imap/imap-extensions">IMAP extensions</a>
+		/// documentation.</para>
 		/// </summary>
-		GMailThreadId  = 1 << 12,
+		GMailThreadId  = 1 << 13,
 
 		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.GMailLabels"/>.
+		/// <para>Fetch the <see cref="IMessageSummary.GMailLabels"/>.</para>
+		/// <para>Fetches the <c>X-GM-LABELS</c> value as defined in Google's
+		/// <a href="https://developers.google.com/gmail/imap/imap-extensions">IMAP extensions</a>
+		/// documentation.</para>
 		/// </summary>
-		GMailLabels    = 1 << 13,
+		GMailLabels    = 1 << 14,
 
 		#endregion
+
+		/// <summary>
+		/// <para>Fetch the the complete list of <see cref="IMessageSummary.Headers"/> for each message.</para>
+		/// </summary>
+		Headers        = 1 << 15,
 
 		/// <summary>
 		/// <para>Fetch the <see cref="IMessageSummary.PreviewText"/>.</para>
@@ -140,34 +189,31 @@ namespace MailKit {
 		/// message contains both a <c>text/plain</c> body and a <c>text/html</c> body, then the
 		/// <c>text/plain</c> content is used in order to reduce network traffic.</note>
 		/// </summary>
-		PreviewText    = 1 << 14,
-
-		/// <summary>
-		/// Fetch the the complete list of <see cref="IMessageSummary.Headers"/>.
-		/// </summary>
-		Headers        = 1 << 15,
-
-		/// <summary>
-		/// Fetch the <see cref="IMessageSummary.Annotations"/>.
-		/// </summary>
-		Annotations    = 1 << 16,
+		PreviewText    = 1 << 16,
 
 		#region Macros
 
 		/// <summary>
-		/// A macro for <see cref="Envelope"/>, <see cref="Flags"/>, <see cref="InternalDate"/>,
-		/// and <see cref="Size"/>.
+		/// <para>A macro for fetching the <see cref="Envelope"/>, <see cref="Flags"/>,
+		/// <see cref="InternalDate"/>, and <see cref="Size"/> values.</para>
+		/// <para>This macro maps to the equivalent <c>ALL</c> macro as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
 		All           = Envelope | Flags | InternalDate | Size,
 
 		/// <summary>
-		/// A macro for <see cref="Flags"/>, <see cref="InternalDate"/>, and <see cref="Size"/>.
+		/// <para>A macro for fetching the <see cref="Flags"/>, <see cref="InternalDate"/>, and
+		/// <see cref="Size"/> values.</para>
+		/// <para>This macro maps to the equivalent <c>FAST</c> macro as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
 		Fast          = Flags | InternalDate | Size,
 
 		/// <summary>
-		/// A macro for <see cref="Body"/>, <see cref="Envelope"/>, <see cref="Flags"/>,
-		/// <see cref="InternalDate"/>, and <see cref="Size"/>.
+		/// <para>A macro for fetching the <see cref="Body"/>, <see cref="Envelope"/>,
+		/// <see cref="Flags"/>, <see cref="InternalDate"/>, and <see cref="Size"/> values.</para>
+		/// <para>This macro maps to the equivalent <c>FULL</c> macro as defined in
+		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
 		Full          = Body | Envelope | Flags| InternalDate | Size,
 

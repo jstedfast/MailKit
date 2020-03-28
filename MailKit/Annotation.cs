@@ -32,7 +32,9 @@ namespace MailKit {
 	/// An annotation.
 	/// </summary>
 	/// <remarks>
-	/// An annotation.
+	/// <para>An annotation.</para>
+	/// <para>For more information about annotations, see
+	/// <a href="https://tools.ietf.org/html/rfc5257">rfc5257</a>.</para>
 	/// </remarks>
 	public class Annotation
 	{

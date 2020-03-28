@@ -944,19 +944,19 @@ namespace UnitTests.Net.Imap {
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadOnly);
 
-				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Id | MessageSummaryItems.ThreadId);
+				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.EmailId | MessageSummaryItems.ThreadId);
 				Assert.AreEqual (4, messages.Count, "Count");
 				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M6d99ac3275bb4e", messages[0].Id, "EmailId");
+				Assert.AreEqual ("M6d99ac3275bb4e", messages[0].EmailId, "EmailId");
 				Assert.AreEqual ("T64b478a75b7ea9", messages[0].ThreadId, "ThreadId");
 				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M288836c4c7a762", messages[1].Id, "EmailId");
+				Assert.AreEqual ("M288836c4c7a762", messages[1].EmailId, "EmailId");
 				Assert.AreEqual ("T64b478a75b7ea9", messages[1].ThreadId, "ThreadId");
 				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M5fdc09b49ea703", messages[2].Id, "EmailId");
+				Assert.AreEqual ("M5fdc09b49ea703", messages[2].EmailId, "EmailId");
 				Assert.AreEqual ("T11863d02dd95b5", messages[2].ThreadId, "ThreadId");
 				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M4fdc09b49ea629", messages[3].Id, "EmailId");
+				Assert.AreEqual ("M4fdc09b49ea629", messages[3].EmailId, "EmailId");
 				Assert.AreEqual (null, messages[3].ThreadId, "ThreadId");
 
 				client.Disconnect (true);
@@ -986,19 +986,19 @@ namespace UnitTests.Net.Imap {
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
 
-				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Id | MessageSummaryItems.ThreadId);
+				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.EmailId | MessageSummaryItems.ThreadId);
 				Assert.AreEqual (4, messages.Count, "Count");
 				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M6d99ac3275bb4e", messages[0].Id, "EmailId");
+				Assert.AreEqual ("M6d99ac3275bb4e", messages[0].EmailId, "EmailId");
 				Assert.AreEqual ("T64b478a75b7ea9", messages[0].ThreadId, "ThreadId");
 				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M288836c4c7a762", messages[1].Id, "EmailId");
+				Assert.AreEqual ("M288836c4c7a762", messages[1].EmailId, "EmailId");
 				Assert.AreEqual ("T64b478a75b7ea9", messages[1].ThreadId, "ThreadId");
 				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M5fdc09b49ea703", messages[2].Id, "EmailId");
+				Assert.AreEqual ("M5fdc09b49ea703", messages[2].EmailId, "EmailId");
 				Assert.AreEqual ("T11863d02dd95b5", messages[2].ThreadId, "ThreadId");
 				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M4fdc09b49ea629", messages[3].Id, "EmailId");
+				Assert.AreEqual ("M4fdc09b49ea629", messages[3].EmailId, "EmailId");
 				Assert.AreEqual (null, messages[3].ThreadId, "ThreadId");
 
 				await client.DisconnectAsync (true);
