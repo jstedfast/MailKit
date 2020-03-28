@@ -96,10 +96,12 @@ namespace MailKit {
 		/// <para>The body will be one of <see cref="BodyPartText"/>,
 		/// <see cref="BodyPartMessage"/>, <see cref="BodyPartBasic"/>,
 		/// or <see cref="BodyPartMultipart"/>.</para>
-		/// <para>This property will only be set if the
-		/// <see cref="MessageSummaryItems.BodyStructure"/> or
-		/// <see cref="MessageSummaryItems.Body"/> flag is used
-		/// when fetching summary information from a <see cref="IMailFolder"/>.</para>
+		/// <para>This property will only be set if either the
+		/// <see cref="MessageSummaryItems.Body"/> flag or the
+		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The body structure of the message.</value>
 		public BodyPart Body {
@@ -229,9 +231,11 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the <c>text/plain</c> body part of the message.</para>
-		/// <para>In order for this to work properly, it is necessary to include
-		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
-		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// <para>This property will only be usable if the
+		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
@@ -262,9 +266,11 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the <c>text/html</c> body part of the message.</para>
-		/// <para>In order for this to work properly, it is necessary to include
-		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
-		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// <para>This property will only be usable if the
+		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The html body if it exists; otherwise, <c>null</c>.</value>
 		public BodyPartText HtmlBody {
@@ -317,10 +323,12 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
 		/// <see cref="BodyPartBasic"/> objects.</para>
-		/// <para>In order for this to work, it is necessary to include
-		/// <see cref="MessageSummaryItems.BodyStructure"/> or
-		/// <see cref="MessageSummaryItems.Body"/> when fetching
-		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// <para>This property will only be usable if either the
+		/// <see cref="MessageSummaryItems.Body"/> flag or the
+		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The body parts.</value>
 		public IEnumerable<BodyPartBasic> BodyParts {
@@ -334,9 +342,11 @@ namespace MailKit {
 		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
 		/// <see cref="BodyPartBasic"/> objects that have a <c>Content-Disposition</c>
 		/// header set to <c>"attachment"</c>.</para>
-		/// <para>In order for this to work properly, it is necessary to include
-		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
-		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// <para>This property will only be usable if the
+		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
@@ -352,9 +362,11 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>The preview text is a short snippet of the beginning of the message
 		/// text, typically shown in a mail client's message list UI.</para>
-		/// <para>In order for this to work properly, it is necessary to include
-		/// <see cref="MessageSummaryItems.PreviewText"/> when fetching
-		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.PreviewText"/> flag is passed to
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The preview text.</value>
 		public string PreviewText {
@@ -372,7 +384,9 @@ namespace MailKit {
 		/// and the message id.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Envelope"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The envelope of the message.</value>
 		public Envelope Envelope {
@@ -429,7 +443,9 @@ namespace MailKit {
 		/// <para>Gets the message flags, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The message flags.</value>
 		public MessageFlags? Flags {
@@ -443,7 +459,9 @@ namespace MailKit {
 		/// <para>Gets the user-defined message flags, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The user-defined message flags.</value>
 		public HashSet<string> Keywords {
@@ -457,7 +475,9 @@ namespace MailKit {
 		/// <para>Gets the user-defined message flags, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The user-defined message flags.</value>
 		[Obsolete ("Use Keywords instead.")]
@@ -473,7 +493,9 @@ namespace MailKit {
 		/// <para>Gets the message annotations, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Annotations"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The message annotations.</value>
 		public IList<Annotation> Annotations {
@@ -485,9 +507,14 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the list of headers, if available.</para>
-		/// <para>This property will only be set if <see cref="MessageSummaryItems.Headers"/> is specified or specific headers are requested via a method such as
+		/// <para>This property will only be set if <see cref="MessageSummaryItems.Headers"/>
+		/// is specified in a call to one of the
+		/// <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods or specific headers are requested via a one of the Fetch or FetchAsync methods
+		/// that accept list of specific headers to request for each message such as
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Collections.Generic.IEnumerable&lt;MimeKit.HeaderId&gt;,System.Threading.CancellationToken)"/>.
-		/// that takes a list of specific headers to request for each message.</para>
+		/// </para>
 		/// </remarks>
 		/// <value>The list of headers.</value>
 		public HeaderList Headers {
@@ -501,7 +528,9 @@ namespace MailKit {
 		/// <para>Gets the internal date of the message (i.e. the "received" date), if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.InternalDate"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The internal date of the message.</value>
 		public DateTimeOffset? InternalDate {
@@ -515,7 +544,9 @@ namespace MailKit {
 		/// <para>Gets the size of the message, in bytes, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Size"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The size of the message.</value>
 		public uint? Size {
@@ -529,7 +560,9 @@ namespace MailKit {
 		/// <para>Gets the mod-sequence value for the message, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.ModSeq"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The mod-sequence value.</value>
 		public ulong? ModSeq {
@@ -543,7 +576,9 @@ namespace MailKit {
 		/// <para>Gets the message-ids that the message references, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.References"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The references.</value>
 		public MessageIdList References {
@@ -557,7 +592,9 @@ namespace MailKit {
 		/// <para>Gets the globally unique identifier of the message, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Id"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// <note type="info">This property maps to the <c>EMAILID</c> value defined in the <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The globally unique message identifier.</value>
@@ -572,7 +609,9 @@ namespace MailKit {
 		/// <para>Gets the globally unique thread identifier for the message, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.ThreadId"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// <note type="info">This property maps to the <c>THREADID</c> value defined in the <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The globally unique thread identifier.</value>
@@ -587,7 +626,9 @@ namespace MailKit {
 		/// <para>Gets the unique identifier of the message, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.UniqueId"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The uid of the message.</value>
 		public UniqueId UniqueId {
@@ -614,7 +655,9 @@ namespace MailKit {
 		/// <para>Gets the GMail message identifier, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.GMailMessageId"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The GMail message identifier.</value>
 		public ulong? GMailMessageId {
@@ -628,7 +671,9 @@ namespace MailKit {
 		/// <para>Gets the GMail thread identifier, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.GMailThreadId"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The GMail thread identifier.</value>
 		public ulong? GMailThreadId {
@@ -642,7 +687,9 @@ namespace MailKit {
 		/// <para>Gets the list of GMail labels, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.GMailLabels"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value>The GMail labels.</value>
 		public IList<string> GMailLabels {

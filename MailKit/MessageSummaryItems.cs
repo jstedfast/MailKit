@@ -64,86 +64,86 @@ namespace MailKit {
 		/// body part. The <c>Content-Disposition</c> information is especially important when trying to
 		/// determine whether or not a body part is an attachment, for example.</note>
 		/// </summary>
-		BodyStructure  = 1 << 2,
+		BodyStructure  = 1 << 1,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.Envelope"/>.
 		/// </summary>
-		Envelope       = 1 << 3,
+		Envelope       = 1 << 2,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.Flags"/>.
 		/// </summary>
-		Flags          = 1 << 4,
+		Flags          = 1 << 3,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.InternalDate"/>.
 		/// </summary>
-		InternalDate   = 1 << 5,
+		InternalDate   = 1 << 4,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.Size"/>.
 		/// </summary>
-		Size           = 1 << 6,
+		Size           = 1 << 5,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.ModSeq"/>.
 		/// </summary>
-		ModSeq         = 1 << 7,
+		ModSeq         = 1 << 6,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.References"/>.
 		/// </summary>
-		References     = 1 << 8,
+		References     = 1 << 7,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.UniqueId"/>.
 		/// </summary>
-		UniqueId       = 1 << 9,
+		UniqueId       = 1 << 8,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.Id"/>.
 		/// </summary>
-		Id             = 1 << 10,
+		Id             = 1 << 9,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.ThreadId"/>.
 		/// </summary>
-		ThreadId       = 1 << 11,
+		ThreadId       = 1 << 10,
 
 		#region GMail extension items
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.GMailMessageId"/>.
 		/// </summary>
-		GMailMessageId = 1 << 12,
+		GMailMessageId = 1 << 11,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.GMailThreadId"/>.
 		/// </summary>
-		GMailThreadId  = 1 << 13,
+		GMailThreadId  = 1 << 12,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.GMailLabels"/>.
 		/// </summary>
-		GMailLabels    = 1 << 14,
+		GMailLabels    = 1 << 13,
 
 		#endregion
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.PreviewText"/>.
 		/// </summary>
-		PreviewText    = 1 << 15,
+		PreviewText    = 1 << 14,
 
 		/// <summary>
 		/// Fetch the the complete list of <see cref="IMessageSummary.Headers"/>.
 		/// </summary>
-		Headers        = 1 << 16,
+		Headers        = 1 << 15,
 
 		/// <summary>
 		/// Fetch the <see cref="IMessageSummary.Annotations"/>.
 		/// </summary>
-		Annotations    = 1 << 17,
+		Annotations    = 1 << 16,
 
 		#region Macros
 
