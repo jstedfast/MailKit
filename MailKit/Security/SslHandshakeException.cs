@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Net.Security;
+using System.Collections.Generic;
 #if SERIALIZABLE
 using System.Security;
 using System.Runtime.Serialization;
@@ -199,9 +200,9 @@ namespace MailKit.Security
 			if (validationInfo != null) {
 				client.SslCertificateValidationInfo = null;
 
-				int rootIndex = validationInfo.Chain.ChainElements.Count - 1;
+				int rootIndex = validationInfo.ChainElements.Count - 1;
 				if (rootIndex > 0)
-					root = validationInfo.Chain.ChainElements[rootIndex].Certificate;
+					root = validationInfo.ChainElements[rootIndex].Certificate;
 				certificate = validationInfo.Certificate;
 
 				if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0) {
@@ -210,8 +211,8 @@ namespace MailKit.Security
 					message.AppendLine ("The host name did not match the name given in the server's SSL certificate.");
 				} else {
 					message.AppendLine ("The server's SSL certificate could not be validated for the following reasons:");
-					for (int chainIndex = 0; chainIndex < validationInfo.Chain.ChainElements.Count; chainIndex++) {
-						var element = validationInfo.Chain.ChainElements[chainIndex];
+					for (int chainIndex = 0; chainIndex < validationInfo.ChainElements.Count; chainIndex++) {
+						var element = validationInfo.ChainElements[chainIndex];
 
 						if (element.ChainElementStatus.Length == 0)
 							continue;
@@ -250,19 +251,39 @@ namespace MailKit.Security
 		}
 	}
 
+	class SslChainElement
+	{
+		public readonly X509Certificate Certificate;
+		public readonly X509ChainStatus[] ChainElementStatus;
+		public readonly string Information;
+
+		public SslChainElement (X509ChainElement element)
+		{
+			Certificate = new X509Certificate2 (element.Certificate.GetRawCertData ());
+			ChainElementStatus = element.ChainElementStatus;
+			Information = element.Information;
+		}
+	}
+
 	class SslCertificateValidationInfo
 	{
+		public readonly List<SslChainElement> ChainElements;
+		public readonly X509ChainStatus[] ChainStatus;
 		public readonly SslPolicyErrors SslPolicyErrors;
 		public readonly X509Certificate Certificate;
-		public readonly X509Chain Chain;
 		public readonly string Host;
 
 		public SslCertificateValidationInfo (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
+			Certificate = new X509Certificate2 (certificate.GetRawCertData ());
+			ChainElements = new List<SslChainElement> ();
 			SslPolicyErrors = sslPolicyErrors;
-			Certificate = certificate;
+			ChainStatus = chain.ChainStatus;
 			Host = sender as string;
-			Chain = chain;
+
+			// Note: we need to copy the ChainElements because the chain will be destroyed
+			foreach (var element in chain.ChainElements)
+				ChainElements.Add (new SslChainElement (element));
 		}
 	}
 }
