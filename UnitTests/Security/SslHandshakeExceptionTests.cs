@@ -177,22 +177,22 @@ namespace UnitTests.Security {
 
 			protected override string Protocol => throw new NotImplementedException ();
 
-			public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default)
+			public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default)
+			public override void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default)
+			public override Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default)
+			public override Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
@@ -226,52 +226,52 @@ namespace UnitTests.Security {
 				}
 			}
 
-			public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
+			public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				ConnectAsync (host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 			}
 
-			public override void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
+			public override void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
+			public override void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
+			public override Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				return ConnectAsync (host, port, options, false, cancellationToken);
 			}
 
-			public override Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
+			public override Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
+			public override Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override void Disconnect (bool quit, CancellationToken cancellationToken = default)
+			public override void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default)
+			public override Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override void NoOp (CancellationToken cancellationToken = default)
+			public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override Task NoOpAsync (CancellationToken cancellationToken = default)
+			public override Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken))
 			{
 				throw new NotImplementedException ();
 			}
