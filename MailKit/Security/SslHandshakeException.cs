@@ -211,6 +211,9 @@ namespace MailKit.Security
 					message.AppendLine ("The host name did not match the name given in the server's SSL certificate.");
 				} else {
 					message.AppendLine ("The server's SSL certificate could not be validated for the following reasons:");
+
+					bool haveReason = false;
+
 					for (int chainIndex = 0; chainIndex < validationInfo.ChainElements.Count; chainIndex++) {
 						var element = validationInfo.ChainElements[chainIndex];
 
@@ -227,6 +230,19 @@ namespace MailKit.Security
 
 						foreach (var status in element.ChainElementStatus)
 							message.AppendFormat ("  \u2022 {0}{1}", status.StatusInformation, Environment.NewLine);
+
+						haveReason = true;
+					}
+
+					// Note: Because Mono does not include any elements in the chain (at least on macOS), we need
+					// to find the inner-most exception and append its Message.
+					if (!haveReason) {
+						var innerException = ex.InnerException;
+
+						while (innerException.InnerException != null)
+							innerException = innerException.InnerException;
+
+						message.AppendLine ("\u2022 " + innerException.Message);
 					}
 				}
 			} else {
