@@ -83,7 +83,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false);
+			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -97,7 +97,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), true);
+			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), true);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -111,7 +111,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (new AggregateException ("Aggregate errors.", new IOException ()), false);
+			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException ()), false);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -125,7 +125,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (new AggregateException ("Aggregate errors.", new IOException ()), true);
+			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException ()), true);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 

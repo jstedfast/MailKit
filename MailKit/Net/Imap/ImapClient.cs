@@ -1234,7 +1234,7 @@ namespace MailKit.Net.Imap {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (ex, false);
+					throw SslHandshakeException.Create (this, ex, false);
 				}
 
 				secure = true;
@@ -1295,7 +1295,7 @@ namespace MailKit.Net.Imap {
 #endif
 							}
 						} catch (Exception ex) {
-							throw SslHandshakeException.Create (ex, true);
+							throw SslHandshakeException.Create (this, ex, true);
 						}
 
 						secure = true;
@@ -1434,7 +1434,7 @@ namespace MailKit.Net.Imap {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (ex, false);
+					throw SslHandshakeException.Create (this, ex, false);
 				}
 
 				network = ssl;
@@ -1494,7 +1494,7 @@ namespace MailKit.Net.Imap {
 #endif
 							}
 						} catch (Exception ex) {
-							throw SslHandshakeException.Create (ex, true);
+							throw SslHandshakeException.Create (this, ex, true);
 						}
 
 						secure = true;

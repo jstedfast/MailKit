@@ -293,6 +293,53 @@ namespace MailKit {
 		const string YahooCertificateIssuer = "CN=DigiCert SHA2 High Assurance Server CA, OU=www.digicert.com, O=DigiCert Inc, C=US";
 		const string GmxCertificateIssuer = "CN=TeleSec ServerPass Extended Validation Class 3 CA, STREET=Untere Industriestr. 20, L=Netphen, OID.2.5.4.17=57250, S=Nordrhein Westfalen, OU=T-Systems Trust Center, O=T-Systems International GmbH, C=DE";
 
+		static bool IsKnownMailServerCertificate (X509Certificate2 certificate)
+		{
+			var cn = certificate.GetNameInfo (X509NameType.SimpleName, false);
+			var fingerprint = certificate.Thumbprint;
+			var serial = certificate.SerialNumber;
+			var issuer = certificate.Issuer;
+
+			switch (cn) {
+			case "imap.gmail.com":
+				return issuer == GMailCertificateIssuer && serial == "0096768414983DDE9C0800000000320A68" && fingerprint == "A53BA86C137D828618540738014F7C3D52F699C7";
+			case "pop.gmail.com":
+				return issuer == GMailCertificateIssuer && serial == "00D80446EA4406BA970800000000320A6A" && fingerprint == "379A18659C855AE5CD00E24CEBE2C6552235B701";
+			case "smtp.gmail.com":
+				return issuer == GMailCertificateIssuer && serial == "00A2683EEFC8500CA20800000000320A71" && fingerprint == "8F0A0B43DE223D360C4BBC41725C202B806CED32";
+			case "outlook.com":
+				return issuer == OutlookCertificateIssuer && serial == "0654F84B6325595A20BC68A6A5851CBB" && fingerprint == "7F0804B4D0A6C83E46A3A00EC98F8343D7308566";
+			case "imap.mail.me.com":
+				return issuer == AppleCertificateIssuer && serial == "62CBBFC566127C4758E96BDBC38EC9E6" && fingerprint == "E1A5F9D22A810979CACDFC0B4151F561E8D02976";
+			case "smtp.mail.me.com":
+				return issuer == AppleCertificateIssuer && serial == "3460D64A763D9ACA4B460C25021653C7" && fingerprint == "C262F01E83D6CE0C361E8B049E5BE8FE6E55806B";
+			case "*.imap.mail.yahoo.com":
+				return issuer == YahooCertificateIssuer && serial == "0B2804C9ED82D14FEFEF111E54A0551C" && fingerprint == "F8047F0F60C4641F718353BE7DDC31665B96B5C0";
+			case "legacy.pop.mail.yahoo.com":
+				return issuer == YahooCertificateIssuer && serial == "05179AA3E07FA5B4D0FC55A7A950B8D8" && fingerprint == "08E010CBAEFAADD20DB0B222C8B6812E762F28EC";
+			case "smtp.mail.yahoo.com":
+				return issuer == YahooCertificateIssuer && serial == "0F962C48837807B6556C5B6961FC4671" && fingerprint == "E53995EBA816FB73FD4F4BD55ABED04981DA0F18";
+			case "mail.gmx.net":
+				return issuer == GmxCertificateIssuer && serial == "218296213149726650EB233346353EEA" && fingerprint == "67DED57393303E005937D5EDECB6A29C136024CA";
+			default:
+				return false;
+			}
+		}
+
+		static bool IsUntrustedRoot (X509Chain chain)
+		{
+			foreach (var status in chain.ChainStatus) {
+				if (status.Status == X509ChainStatusFlags.NoError || status.Status == X509ChainStatusFlags.UntrustedRoot)
+					continue;
+
+				return false;
+			}
+
+			return true;
+		}
+
+		internal SslCertificateValidationInfo SslCertificateValidationInfo;
+
 		/// <summary>
 		/// The default server certificate validation callback used when connecting via SSL or TLS.
 		/// </summary>
@@ -306,51 +353,26 @@ namespace MailKit {
 		/// <param name="certificate">The server's SSL certificate.</param>
 		/// <param name="chain">The server's SSL certificate chain.</param>
 		/// <param name="sslPolicyErrors">The SSL policy errors.</param>
-		public static bool DefaultServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		protected bool DefaultServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
+			const SslPolicyErrors mask = SslPolicyErrors.RemoteCertificateNotAvailable | SslPolicyErrors.RemoteCertificateNameMismatch;
+
+			SslCertificateValidationInfo = null;
+
 			if (sslPolicyErrors == SslPolicyErrors.None)
 				return true;
 
-			// If the remote certificate isn't available, there's nothing we can do.
-			if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0)
-				return false;
+			if ((sslPolicyErrors & mask) == 0) {
+				// At this point, all that is left is SslPolicyErrors.RemoteCertificateChainErrors
 
-			// Make sure that the certificate's name matches the host we are connecting to.
-			if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0)
-				return false;
-
-			// At this point, all that is left is SslPolicyErrors.RemoteCertificateChainErrors
-
-			// If the problem is an untrusted root, then compare the certificate to a list of known mail server certificates.
-			if (chain.ChainStatus.Length > 0 && chain.ChainStatus[0].Status == X509ChainStatusFlags.UntrustedRoot && certificate is X509Certificate2 certificate2) {
-				var cn = certificate2.GetNameInfo (X509NameType.SimpleName, false);
-				var fingerprint = certificate2.Thumbprint;
-				var serial = certificate2.SerialNumber;
-				var issuer = certificate2.Issuer;
-
-				switch (cn) {
-				case "imap.gmail.com":
-					return issuer == GMailCertificateIssuer && serial == "0096768414983DDE9C0800000000320A68" && fingerprint == "A53BA86C137D828618540738014F7C3D52F699C7";
-				case "pop.gmail.com":
-					return issuer == GMailCertificateIssuer && serial == "00D80446EA4406BA970800000000320A6A" && fingerprint == "379A18659C855AE5CD00E24CEBE2C6552235B701";
-				case "smtp.gmail.com":
-					return issuer == GMailCertificateIssuer && serial == "00A2683EEFC8500CA20800000000320A71" && fingerprint == "8F0A0B43DE223D360C4BBC41725C202B806CED32";
-				case "outlook.com":
-					return issuer == OutlookCertificateIssuer && serial == "0654F84B6325595A20BC68A6A5851CBB" && fingerprint == "7F0804B4D0A6C83E46A3A00EC98F8343D7308566";
-				case "imap.mail.me.com":
-					return issuer == AppleCertificateIssuer && serial == "62CBBFC566127C4758E96BDBC38EC9E6" && fingerprint == "E1A5F9D22A810979CACDFC0B4151F561E8D02976";
-				case "smtp.mail.me.com":
-					return issuer == AppleCertificateIssuer && serial == "3460D64A763D9ACA4B460C25021653C7" && fingerprint == "C262F01E83D6CE0C361E8B049E5BE8FE6E55806B";
-				case "*.imap.mail.yahoo.com":
-					return issuer == YahooCertificateIssuer && serial == "0B2804C9ED82D14FEFEF111E54A0551C" && fingerprint == "F8047F0F60C4641F718353BE7DDC31665B96B5C0";
-				case "legacy.pop.mail.yahoo.com":
-					return issuer == YahooCertificateIssuer && serial == "05179AA3E07FA5B4D0FC55A7A950B8D8" && fingerprint == "08E010CBAEFAADD20DB0B222C8B6812E762F28EC";
-				case "smtp.mail.yahoo.com":
-					return issuer == YahooCertificateIssuer && serial == "0F962C48837807B6556C5B6961FC4671" && fingerprint == "E53995EBA816FB73FD4F4BD55ABED04981DA0F18";
-				case "mail.gmx.net":
-					return issuer == GmxCertificateIssuer && serial == "218296213149726650EB233346353EEA" && fingerprint == "67DED57393303E005937D5EDECB6A29C136024CA";
+				// If the problem is an untrusted root, then compare the certificate to a list of known mail server certificates.
+				if (IsUntrustedRoot (chain) && certificate is X509Certificate2 certificate2) {
+					if (IsKnownMailServerCertificate (certificate2))
+						return true;
 				}
 			}
+
+			SslCertificateValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
 
 			return false;
 		}
