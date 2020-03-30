@@ -141,9 +141,11 @@ certificates which can quickly become unweildy to deal with if your program is m
 a wide range of mail servers.
 
 The best approach would be to prompt the user with a dialog explaining that the certificate is
-not trusted for the reasons enumerated by the `sslPolicyErrors` argument as well as potentially
-the errors provided in the `chain`. If the user wishes to accept the risks of trusting the
-certificate, your program could then `return true`.
+not trusted for the reasons enumerated by the
+[SslPolicyErrors](https://docs.microsoft.com/en-us/dotnet/api/system.net.security.sslpolicyerrors?view=netframework-4.8)
+argument as well as potentially the errors provided in the
+[X509Chain](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509chain?view=netframework-4.8).
+If the user wishes to accept the risks of trusting the certificate, your program could then `return true`.
 
 For more details on writing a custom SSL certificate validation callback, it may be worth checking out the
 [SslCertificateValidation.cs](https://github.com/jstedfast/MailKit/blob/master/Documentation/Examples/SslCertificateValidation.cs)
