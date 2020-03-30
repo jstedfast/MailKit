@@ -531,20 +531,25 @@ tracker and look for something that might pique your interest!
 
 ## Reporting Bugs
 
-Have a bug or a feature request? [Please open a new issue](https://github.com/jstedfast/MailKit/issues).
+Have a bug or a feature request? Please open a new
+[bug report](https://github.com/jstedfast/MailKit/issues/new?template=bug_report.md)
+or
+[feature request](https://github.com/jstedfast/MailKit/issues/new?template=feature_request.md).
 
-Before opening a new issue, please search for existing issues to avoid submitting duplicates.
+Before opening a new issue, please search through any [existing issues](https://github.com/jstedfast/MailKit/issues)
+to avoid submitting duplicates. It may also be worth checking the
+[FAQ](https://github.com/jstedfast/MailKit/blob/master/FAQ.md) for common questions that other developers
+have had.
 
 If MailKit does not work with your mail server, please include a [protocol
 log](https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog) in your bug report, otherwise
 there is nothing I can do to fix the problem.
 
 If you are getting an exception from somewhere within MailKit, don't just provide the `Exception.Message`
-string. Please include the `Exception.StackTrace` as well. The `Message`, by itself, is useless.
+string. Please include the `Exception.StackTrace` as well. The `Message`, by itself, is often useless.
 
 ## Documentation
 
 API documentation can be found at [http://www.mimekit.net/docs](http://www.mimekit.net/docs).
 
-A copy of the xml formatted API documentation is also included in the NuGet and/or
-Xamarin Component package.
+A copy of the XML-formatted API reference documentation is also included in the NuGet package.
