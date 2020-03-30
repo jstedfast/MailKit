@@ -119,11 +119,13 @@ bool MyServerCertificateValidationCallback (object sender, X509Certificate certi
     if (sslPolicyErrors == SslPolicyErrors.None)
         return true;
 
+    // Note: The following code casts to an X509Certificate2 because it's easier to get the
+    // values for comparison, but it's possible to get them from an X509Certificate as well.
     if (certificate is X509Certificate2 certificate2) {
-        var cn = certificate.GetNameInfo (X509NameType.SimpleName, false);
-        var fingerprint = certificate.Thumbprint;
-        var serial = certificate.SerialNumber;
-        var issuer = certificate.Issuer;
+        var cn = certificate2.GetNameInfo (X509NameType.SimpleName, false);
+        var fingerprint = certificate2.Thumbprint;
+        var serial = certificate2.SerialNumber;
+        var issuer = certificate2.Issuer;
 
         return cn == "imap.gmail.com" && issuer == "CN=GTS CA 1O1, O=Google Trust Services, C=US" &&
 	    serial == "0096768414983DDE9C0800000000320A68" &&
