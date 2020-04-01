@@ -162,27 +162,31 @@ namespace MailKit.Net
 
 			var tcs = new TaskCompletionSource<bool> ();
 
-			using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-				recv.SetBuffer (buffer, offset, count);
-				recv.UserToken = tcs;
+			using (var timeout = new CancellationTokenSource (ReadTimeout)) {
+				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, timeout.Token)) {
+					using (var registration = linked.Token.Register (() => tcs.TrySetCanceled (), false)) {
+						recv.SetBuffer (buffer, offset, count);
+						recv.UserToken = tcs;
 
-				if (!Socket.ReceiveAsync (recv))
-					AsyncOperationCompleted (null, recv);
+						if (!Socket.ReceiveAsync (recv))
+							AsyncOperationCompleted (null, recv);
 
-				try {
-					await tcs.Task.ConfigureAwait (false);
-					return recv.BytesTransferred;
-				} catch (OperationCanceledException) {
-					if (Socket.Connected)
-						Socket.Shutdown (SocketShutdown.Both);
+						try {
+							await tcs.Task.ConfigureAwait (false);
+							return recv.BytesTransferred;
+						} catch (OperationCanceledException) {
+							if (Socket.Connected)
+								Socket.Shutdown (SocketShutdown.Both);
 
-					Disconnect ();
-					throw;
-				} catch (Exception ex) {
-					Disconnect ();
-					if (ex is SocketException)
-						throw new IOException (ex.Message, ex);
-					throw;
+							Disconnect ();
+							throw;
+						} catch (Exception ex) {
+							Disconnect ();
+							if (ex is SocketException)
+								throw new IOException (ex.Message, ex);
+							throw;
+						}
+					}
 				}
 			}
 		}
@@ -202,26 +206,30 @@ namespace MailKit.Net
 
 			var tcs = new TaskCompletionSource<bool> ();
 
-			using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-				send.SetBuffer (buffer, offset, count);
-				send.UserToken = tcs;
+			using (var timeout = new CancellationTokenSource (WriteTimeout)) {
+				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, timeout.Token)) {
+					using (var registration = linked.Token.Register (() => tcs.TrySetCanceled (), false)) {
+						send.SetBuffer (buffer, offset, count);
+						send.UserToken = tcs;
 
-				if (!Socket.SendAsync (send))
-					AsyncOperationCompleted (null, send);
+						if (!Socket.SendAsync (send))
+							AsyncOperationCompleted (null, send);
 
-				try {
-					await tcs.Task.ConfigureAwait (false);
-				} catch (OperationCanceledException) {
-					if (Socket.Connected)
-						Socket.Shutdown (SocketShutdown.Both);
+						try {
+							await tcs.Task.ConfigureAwait (false);
+						} catch (OperationCanceledException) {
+							if (Socket.Connected)
+								Socket.Shutdown (SocketShutdown.Both);
 
-					Disconnect ();
-					throw;
-				} catch (Exception ex) {
-					Disconnect ();
-					if (ex is SocketException)
-						throw new IOException (ex.Message, ex);
-					throw;
+							Disconnect ();
+							throw;
+						} catch (Exception ex) {
+							Disconnect ();
+							if (ex is SocketException)
+								throw new IOException (ex.Message, ex);
+							throw;
+						}
+					}
 				}
 			}
 		}
