@@ -43,7 +43,7 @@
   </ItemGroup-->
 
   <ItemGroup>
-    <PackageReference Include="MimeKit" Version="2.5.2" />
+    <PackageReference Include="MimeKit" Version="2.6.0" />
   </ItemGroup>
 
   <ItemGroup>
