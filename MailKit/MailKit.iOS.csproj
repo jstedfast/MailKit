@@ -53,12 +53,6 @@
       <IsAppExtension>false</IsAppExtension>
       <IsWatchApp>false</IsWatchApp>
     </ProjectReference>
-    <ProjectReference Include="..\submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.iOS.csproj">
-      <Project>{0249241C-205E-4AC0-828B-90F822359B9E}</Project>
-      <Name>BouncyCastle.iOS</Name>
-      <IsAppExtension>false</IsAppExtension>
-      <IsWatchApp>false</IsWatchApp>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Net\Imap\AsyncImapClient.cs" />

@@ -56,10 +56,6 @@
       <Project>{004B4019-62B7-4A15-AF2C-C20968845C46}</Project>
       <Name>MimeKit.Android</Name>
     </ProjectReference>
-    <ProjectReference Include="..\submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.Android.csproj">
-      <Project>{A0D302CB-8866-4AB1-98B9-F0772EABF5DF}</Project>
-      <Name>BouncyCastle.Android</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Net\Imap\AsyncImapClient.cs" />
