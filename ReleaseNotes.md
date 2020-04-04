@@ -1,5 +1,26 @@
 # Release Notes
 
+### MailKit 2.6.0 (2020-04-03)
+
+* Properly handle connection drops in SmtpClient.NoOp() and NoOpAsync()
+  methods.
+* Improved default SSL certificate validation logic to be more secure
+  and to recognize the most commonly used mail servers even if their
+  Root CA Certificates are not available on the system.
+* SslHandshakeException's Message has been improved to be based on the
+  errors reported in the ServerCertificateValidationCallback and also
+  now has 2 new X509Certificate properties which represent the
+  ServerCertificate and the RootCertificateAuthority in order to help
+  developers diagnose problems.
+  (issue [#1002](https://github.com/jstedfast/MailKit/issues/1002))
+* Improved the IMAP PreviewText to extract text from HTML bodies.
+  (issue [#1001](https://github.com/jstedfast/MailKit/issues/1001))
+* Renamed MessageSummaryItems.Id to MessageSummaryItems.EmailId to
+  better map to the property name used in the IMAP OBJECTID
+  specification.
+* Updated NetworkStream.ReadAsync() and WriteAsync() mehods to make use of
+  timeouts. (issue [#827](https://github.com/jstedfast/MailKit/issues/827))
+
 ### MailKit 2.5.2 (2020-03-14)
 
 * Added work-around for ENVELOPE responses with a NIL address token in an address-list.

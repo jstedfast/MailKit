@@ -1,4 +1,4 @@
-version: 2.5.2.{build}
+version: 2.6.0.{build}
 os: Visual Studio 2017
 configuration: Debug
 platform: Any CPU
