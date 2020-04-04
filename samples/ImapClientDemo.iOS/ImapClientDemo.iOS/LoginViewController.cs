@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2019 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2020 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,14 +69,12 @@ namespace ImapClientDemo.iOS
 
 		async void Login ()
 		{
-			int port;
-
 			hostEntry.FetchValue ();
 			portEntry.FetchValue ();
 			userEntry.FetchValue ();
 			passwordEntry.FetchValue ();
 
-			int.TryParse (portEntry.Value, out port);
+			int.TryParse (portEntry.Value, out var port);
 
 			try {
 				if (Mail.Client.IsConnected)

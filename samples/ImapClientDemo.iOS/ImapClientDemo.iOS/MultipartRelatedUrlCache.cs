@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2019 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2020 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,9 +47,7 @@ namespace ImapClientDemo.iOS {
 			int index;
 
 			if ((index = related.IndexOf (uri)) != -1) {
-				var part = related[index] as MimePart;
-
-				if (part != null) {
+				if (related[index] is MimePart part) {
 					var mimeType = part.ContentType.MimeType;
 					var charset = part.ContentType.Charset;
 					NSUrlResponse response;

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2019 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2020 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -60,11 +60,9 @@ namespace ImapClientDemo
 
 		async void buttonLogin_Click (object sender, EventArgs e)
 		{
-			int port;
-
 			buttonLogin.Enabled = false;
 
-			int.TryParse (textPort.Text, out port);
+			int.TryParse (textPort.Text, out var port);
 
 			try {
 				// Note: for demo purposes, we're ignoring SSL validation errors (don't do this in production code)

@@ -15,7 +15,7 @@ namespace ImapClientDemo
 {
 	
 	
-	[System.CodeDom.Compiler.GeneratedCodeAttribute("Xamarin.Android.Build.Tasks", "1.0.0.0")]
+	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Xamarin.Android.Build.Tasks", "1.0.0.0")]
 	public partial class Resource
 	{
 		
@@ -44,8 +44,8 @@ namespace ImapClientDemo
 		public partial class Drawable
 		{
 			
-			// aapt resource value: 0x7f020000
-			public const int Icon = 2130837504;
+			// aapt resource value: 0x7F010000
+			public const int Icon = 2130771968;
 			
 			static Drawable()
 			{
@@ -60,44 +60,44 @@ namespace ImapClientDemo
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f060006
-			public const int buttonLogin = 2131099654;
+			// aapt resource value: 0x7F020000
+			public const int buttonLogin = 2130837504;
 			
-			// aapt resource value: 0x7f060003
-			public const int checkSsl = 2131099651;
+			// aapt resource value: 0x7F020001
+			public const int checkSsl = 2130837505;
 			
-			// aapt resource value: 0x7f060000
-			public const int listView = 2131099648;
+			// aapt resource value: 0x7F020002
+			public const int listView = 2130837506;
 			
-			// aapt resource value: 0x7f060007
-			public const int myButton = 2131099655;
+			// aapt resource value: 0x7F020003
+			public const int myButton = 2130837507;
 			
-			// aapt resource value: 0x7f06000b
-			public const int scrollView = 2131099659;
+			// aapt resource value: 0x7F020004
+			public const int scrollView = 2130837508;
 			
-			// aapt resource value: 0x7f06000c
-			public const int textBody = 2131099660;
+			// aapt resource value: 0x7F020005
+			public const int textBody = 2130837509;
 			
-			// aapt resource value: 0x7f06000a
-			public const int textDate = 2131099658;
+			// aapt resource value: 0x7F020006
+			public const int textDate = 2130837510;
 			
-			// aapt resource value: 0x7f060009
-			public const int textFrom = 2131099657;
+			// aapt resource value: 0x7F020007
+			public const int textFrom = 2130837511;
 			
-			// aapt resource value: 0x7f060004
-			public const int textLogin = 2131099652;
+			// aapt resource value: 0x7F020008
+			public const int textLogin = 2130837512;
 			
-			// aapt resource value: 0x7f060005
-			public const int textPassword = 2131099653;
+			// aapt resource value: 0x7F020009
+			public const int textPassword = 2130837513;
 			
-			// aapt resource value: 0x7f060002
-			public const int textPort = 2131099650;
+			// aapt resource value: 0x7F02000A
+			public const int textPort = 2130837514;
 			
-			// aapt resource value: 0x7f060001
-			public const int textServer = 2131099649;
+			// aapt resource value: 0x7F02000B
+			public const int textServer = 2130837515;
 			
-			// aapt resource value: 0x7f060008
-			public const int textSubject = 2131099656;
+			// aapt resource value: 0x7F02000C
+			public const int textSubject = 2130837516;
 			
 			static Id()
 			{
@@ -112,22 +112,22 @@ namespace ImapClientDemo
 		public partial class Layout
 		{
 			
-			// aapt resource value: 0x7f030000
+			// aapt resource value: 0x7F030000
 			public const int FoldersLayout = 2130903040;
 			
-			// aapt resource value: 0x7f030001
+			// aapt resource value: 0x7F030001
 			public const int LoginLayout = 2130903041;
 			
-			// aapt resource value: 0x7f030002
+			// aapt resource value: 0x7F030002
 			public const int Main = 2130903042;
 			
-			// aapt resource value: 0x7f030003
+			// aapt resource value: 0x7F030003
 			public const int MessageListItemLayout = 2130903043;
 			
-			// aapt resource value: 0x7f030004
+			// aapt resource value: 0x7F030004
 			public const int MessagesLayout = 2130903044;
 			
-			// aapt resource value: 0x7f030005
+			// aapt resource value: 0x7F030005
 			public const int ViewMessageLayout = 2130903045;
 			
 			static Layout()
@@ -143,11 +143,11 @@ namespace ImapClientDemo
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f040001
-			public const int app_name = 2130968577;
+			// aapt resource value: 0x7F040000
+			public const int app_name = 2130968576;
 			
-			// aapt resource value: 0x7f040000
-			public const int hello = 2130968576;
+			// aapt resource value: 0x7F040001
+			public const int hello = 2130968577;
 			
 			static String()
 			{
@@ -162,7 +162,7 @@ namespace ImapClientDemo
 		public partial class Style
 		{
 			
-			// aapt resource value: 0x7f050000
+			// aapt resource value: 0x7F050000
 			public const int AppTheme = 2131034112;
 			
 			static Style()
