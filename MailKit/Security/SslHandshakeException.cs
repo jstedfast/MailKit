@@ -275,7 +275,7 @@ namespace MailKit.Security
 
 		public SslChainElement (X509ChainElement element)
 		{
-			Certificate = new X509Certificate2 (element.Certificate.GetRawCertData ());
+			Certificate = new X509Certificate2 (element.Certificate.RawData);
 			ChainElementStatus = element.ChainElementStatus;
 			Information = element.Information;
 		}
@@ -291,7 +291,7 @@ namespace MailKit.Security
 
 		public SslCertificateValidationInfo (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			Certificate = new X509Certificate2 (certificate.GetRawCertData ());
+			Certificate = new X509Certificate2 (certificate.Export (X509ContentType.Cert));
 			ChainElements = new List<SslChainElement> ();
 			SslPolicyErrors = sslPolicyErrors;
 			ChainStatus = chain.ChainStatus;
