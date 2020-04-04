@@ -29,9 +29,9 @@
               <listItem>
                 <para>Supports DKIM-Signatures.</para>
               </listItem>
-	      <listItem>
-		<para>Supports ARC signatures.</para>
-	      </listItem>
+              <listItem>
+                <para>Supports ARC signatures.</para>
+              </listItem>
             </list>
           </listItem>
           <listItem>

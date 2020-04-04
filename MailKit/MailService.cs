@@ -346,7 +346,7 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>The default server certificate validation callback recognizes and accepts the certificates
 		/// for a list of commonly used mail servers such as gmail.com, outlook.com, mail.me.com, yahoo.com,
-		/// and gmx.net.
+		/// and gmx.net.</para>
 		/// </remarks>
 		/// <returns><c>true</c> if the certificate is deemed valid; otherwise, <c>false</c>.</returns>
 		/// <param name="sender">The object that is connecting via SSL or TLS.</param>

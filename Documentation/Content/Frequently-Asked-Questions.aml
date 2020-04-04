@@ -29,40 +29,219 @@
       </content>
     </section>
     
-    <section address="InvalidSslCertificate">
-      <title>Why do I get 'The remote certificate is invalid according to the validation procedure' when I try to Connect?</title>
+    <section address="SslHandshakeException">
+      <title>Why do I get "An error occurred while attempting to establish an SSL or TLS connection." when I try to Connect?</title>
       <content>
         <para>
-          When you get an exception with that error message, it means that the IMAP, POP3 or SMTP
-          server that you are connecting to is using an SSL certificate that is either expired
-          or untrusted by your system.
+          When you get an exception with that error message, it usually means that you are encountering
+          one of the following scenarios:
         </para>
-        <para>
-          Often times, mail servers will use self-signed certificates instead of using a certificate
-          that has been signed by a trusted Certificate Authority. When your system is unable to
-          validate the mail server's certificate because it is not signed by a known and trusted
-          Certificate Authority, the above error will occur.
-        </para>
-        <para>
-          You can work around this problem by supplying a custom <externalLink>
-            <linkText>RemoteServerCertificateValidationCallback</linkText>
-            <linkUri>https://msdn.microsoft.com/en-us/library/ms145054</linkUri>
-            <linkTarget>_blank</linkTarget>
-          </externalLink>
-          and setting it on the client's <codeEntityReference>P:MailKit.MailService.ServerCertificateValidationCallback</codeEntityReference> property.
-        </para>
-        <para>
-          In the most simplest example, you could do something like this (although I would strongly recommend against it in production use):
-        </para>
-        <code language="c#" source="Examples\InvalidSslCertificate.cs" region="Simple"/>
-        <para>
-          Most likely you'll want to instead compare the certificate's <externalLink>
-            <linkText>Thumbprint</linkText>
-            <linkUri>https://msdn.microsoft.com/en-us/library/system.security.cryptography.x509certificates.x509certificate2.thumbprint(v=vs.110).aspx</linkUri>
-            <linkTarget>_blank</linkTarget>
-          </externalLink>
-          property to a known value that you have verified at a prior date.
-        </para>
+        <list class="ordered">
+          <listItem>
+            <para>The mail server does not support SSL on the specified port.</para>
+            <para>
+              There are 2 different ways to use SSL/TLS encryption with mail servers.
+            </para>
+            <para>
+              The first way is to enable SSL/TLS encryption immediately upon connecting to the
+              SMTP, POP3 or IMAP server. This method requires an "SSL port" because the standard
+              port defined for the protocol is meant for plain-text communication.
+            </para>
+            <para>
+              The second way is via a <literal>STARTTLS</literal> command (aka <literal>STLS</literal> for POP3) that is
+              <legacyItalic>optionally</legacyItalic> supported by the server.
+            </para>
+            <para>
+              Below is a table of the protocols supported by MailKit and the standard plain-text ports
+              (which either do not support any SSL/TLS encryption at all or only via the <literal>STARTTLS</literal>
+              command extension) and the SSL ports which require SSL/TLS encryption immediately upon a
+              successful connection to the remote host.
+            </para>
+            <table>
+              <tableHeader>
+                <row>
+                  <entry>Protocol</entry>
+                  <entry>Standard Port</entry>
+                  <entry>SSL Port</entry>
+                </row>
+              </tableHeader>
+              <row>
+                <entry>SMTP</entry>
+                <entry>25 or 587</entry>
+                <entry>465</entry>
+              </row>
+              <row>
+                <entry>POP3</entry>
+                <entry>110</entry>
+                <entry>995</entry>
+              </row>
+              <row>
+                <entry>IMAP</entry>
+                <entry>143</entry>
+                <entry>993</entry>
+              </row>
+            </table>
+            <para>
+              It is important to use the correct <codeEntityReference>T:MailKit.Security.SecureSocketOptions</codeEntityReference> for
+              the port that you are connecting to.
+            </para>
+            <para>
+              If you are connecting to one of the standard ports above, you will need to use <literal>SecureSocketOptions.None</literal>,
+              <literal>SecureSocketOptions.StartTls</literal> or <literal>SecureSocketOptions.StartTlsWhenAvailable</literal>.
+            </para>
+            <para>
+              If you are connecting to one of the SSL ports, you will need to use <literal>SecureSocketOptions.SslOnConnect</literal>.
+            </para>
+            <para>
+              You could also try using <literal>SecureSocketOptions.Auto</literal> which works by choosing the appropriate option to use
+              by comparing the specified port to the ports in the above table.
+            </para>
+          </listItem>
+          <listItem>
+            <para>The mail server that you are connecting to is using an expired (or otherwise untrusted) SSL certificate.</para>
+            <para>
+              Often times, mail servers will use self-signed certificates instead of using a certificate that
+              has been signed by a trusted Certificate Authority. Another potential pitfall is when locally
+              installed anti-virus software replaces the certificate in order to scan web traffic for viruses.
+            </para>
+            <para>
+              When your system is unable to validate the mail server's certificate because it is not signed
+              by a known and trusted Certificate Authority, the above error will occur.
+            </para>
+            <para>
+              You can work around this problem by supplying a custom
+              <externalLink>
+                <linkText>RemoteServerCertificateValidationCallback</linkText>
+                <linkUri>https://msdn.microsoft.com/en-us/library/ms145054</linkUri>
+                <linkTarget>_blank</linkTarget>
+              </externalLink>
+              and setting it on the client's <codeEntityReference>P:MailKit.MailService.ServerCertificateValidationCallback</codeEntityReference>
+              property.
+            </para>
+            <para>
+              In the simplest example, you could do something like this (although I would strongly recommend against it in
+              production use):
+            </para>
+            <code language="c#">
+              using (var client = new SmtpClient ()) {
+                  client.ServerCertificateValidationCallback = (s,c,h,e) => true;
+
+                  client.Connect (hostName, port, SecureSocketOptions.Auto);
+
+                  // ...
+              }
+            </code>
+            <para>
+              A better solution might be to compare the certificate's common name, issuer, serial number, and fingerprint
+              to known values to make sure that the certificate can be trusted. Take the following code snippet as an
+              example of how to do this:
+            </para>
+            <code language="c#">
+              bool MyServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+              {
+                  if (sslPolicyErrors == SslPolicyErrors.None)
+                      return true;
+
+                  // Note: The following code casts to an X509Certificate2 because it's easier to get the
+                  // values for comparison, but it's possible to get them from an X509Certificate as well.
+                  if (certificate is X509Certificate2 certificate2) {
+                      var cn = certificate2.GetNameInfo (X509NameType.SimpleName, false);
+                      var fingerprint = certificate2.Thumbprint;
+                      var serial = certificate2.SerialNumber;
+                      var issuer = certificate2.Issuer;
+
+                      return cn == "imap.gmail.com" &amp;&amp; issuer == "CN=GTS CA 1O1, O=Google Trust Services, C=US" &amp;&amp;
+                          serial == "0096768414983DDE9C0800000000320A68" &amp;&amp;
+                          fingerprint == "A53BA86C137D828618540738014F7C3D52F699C7";
+                  }
+
+                  return false;
+              }
+            </code>
+            <para>
+              The downside of the above example is that it requires had-coding known values for "trusted" mail server
+              certificates which can quickly become unweildy to deal with if your program is meant to be used with
+              a wide range of mail servers.
+            </para>
+            <para>
+              The best approach would be to prompt the user with a dialog explaining that the certificate is
+              not trusted for the reasons enumerated by the
+              <externalLink>
+                <linkText>SslPolicyErrors</linkText>
+                <linkUri>https://docs.microsoft.com/en-us/dotnet/api/system.net.security.sslpolicyerrors?view=netframework-4.8</linkUri>
+                <linkTarget>_blank</linkTarget>
+              </externalLink>
+              argument as well as potentially the errors provided in the
+              <externalLink>
+                <linkText>X509Chain</linkText>
+                <linkUri>https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509chain?view=netframework-4.8</linkUri>
+                <linkTarget>_blank</linkTarget>
+              </externalLink>
+              If the user wishes to accept the risks of trusting the certificate, your program could then <literal>return true</literal>.
+            </para>
+            <para>
+              For more details on writing a custom SSL certificate validation callback, it may be worth checking out the
+              <externalLink>
+                <linkText>SslCertificateValidation.cs</linkText>
+                <linkUri>https://github.com/jstedfast/MailKit/blob/master/Documentation/Examples/SslCertificateValidation.cs</linkUri>
+                <linkTarget>_blank</linkTarget>
+              </externalLink>
+              example.
+            </para>
+          </listItem>
+          <listItem>
+            <para>A Certificate Authority CRL server for one or more of the certificates in the chain is temporarily unavailable.</para>
+            <para>
+              Most Certificate Authorities are probably pretty good at keeping their CRL and/or OCSP servers up 24/7, but occasionally
+              they <legacyItalic>do</legacyItalic> go down or are otherwise unreachable due to other network problems between you and the
+              server. When this happens, it becomes impossible to check the revocation status of one or more of the certificates in the chain.
+            </para>
+            <para>
+              To ignore revocation checks, you can set the
+              <codeEntityReference>P:MailKit.MailService.CheckCertificateRevocation</codeEntityReference>
+              property of the IMAP, POP3 or SMTP client to <literal>false</literal> before you connect:
+            </para>
+            <code language="c#">
+              using (var client = new SmtpClient ()) {
+                  client.CheckCertificateRevocation = false;
+
+                  client.Connect (hostName, port, SecureSocketOptions.Auto);
+
+                  // ...
+              }
+            </code>
+          </listItem>
+          <listItem>
+            <para>The server does not support the same set of SSL/TLS protocols that the client is configured to use.</para>
+            <para>
+              MailKit attempts to keep up with the latest security recommendations and so is continuously removing older SSL and TLS
+              protocols that are no longer considered secure from the default configuration. This often means that MailKit's SMTP,
+              POP3 and IMAP clients will fail to connect to servers that are still using older SSL and TLS protocols. Currently,
+              the SSL and TLS protocols that are not supported by default are: SSL v2.0, SSL v3.0, and TLS v1.0.
+            </para>
+            <para>
+              You can override MailKit's default set of supported
+              <externalLink>
+                <linkText>SSL and TLS protocols</linkText>
+                <linkUri>https://docs.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols?view=netframework-4.8</linkUri>
+                <linkTarget>_blank</linkTarget>
+              </externalLink>
+              by setting the value of the <codeReference>P:MailKit.MailService.SslProtocols</codeReference>
+              property on your SMTP, POP3 or IMAP client.
+            </para>
+            <para>For example:</para>
+            <code language="c#">
+              using (var client = new SmtpClient ()) {
+                  // Allow SSLv3.0 and all versions of TLS
+                  client.SslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13;
+
+                  client.Connect ("smtp.gmail.com", 465, true);
+
+                  // ...
+              }
+            </code>
+          </listItem>
+        </list>
       </content>
     </section>
 
@@ -151,33 +330,66 @@ using (var client = new ImapClient ()) {
           Connecting via POP3 or SMTP is identical except for the host names and ports (and, of course, you'd
           use a Pop3Client or SmtpClient as appropriate).
         </para>
+      </content>
+    </section>
+
+    <section address="GMailOAuth2">
+      <title>How can I log in to a GMail account using OAuth 2.0?</title>
+      <content>
         <para>
-          If you decide to authenticate via OAuth 2.0 instead of enabling less secure apps, you'll need to read
+          The first thing you need to do is follow
           <externalLink>
-            <linkText>Google's OAuth 2.0 documentation</linkText>
-            <linkUri>https://developers.google.com/identity/protocols/OAuth2</linkUri>
+            <linkText>Google's instructions</linkText>
+            <linkUri>https://developers.google.com/accounts/docs/OAuth2</linkUri>
             <linkTarget>_blank</linkTarget>
-          </externalLink> to learn how to do this.
+          </externalLink>
+          for obtaining OAuth 2.0 credentials for your application.
         </para>
         <para>
-          Once you obtain an OAuth2 access token, you can use it with MailKit by using the access token to create a new OAuth2 SASL mechanism context and then authenticating with it.
+          Or, as an alternative set of step-by-step instructions, you can follow the directions that
+          <externalLink>
+            <linkText>I have written</linkText>
+            <linkUri>https://github.com/jstedfast/MailKit/blob/master/GMailOAuth2.md</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> (complete with screenshots).
+        </para>
+        <para>
+          Once you've done that, the easiest way to obtain an access token is to use Google's 
+          <externalLink>
+            <linkText>Google.Apis.Auth</linkText>
+            <linkUri>https://www.nuget.org/packages/Google.Apis.Auth/</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> library:
         </para>
         <code language="c#">
-var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
-var credential = new ServiceAccountCredential (new ServiceAccountCredential.Initializer ("your-developer-id@developer.gserviceaccount.com") {
-    // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
-    Scopes = new[] { "https://mail.google.com/" },
-    User = "user@gmail.com"
-}.FromCertificate (certificate));
+const string GMailAccount = "username@gmail.com";
 
-// Note: result will be true if the access token was received successfully
-bool result = await credential.RequestAccessTokenAsync (cancel.Token);
+var clientSecrets = new ClientSecrets {
+    ClientId = "XXX.apps.googleusercontent.com",
+    ClientSecret = "XXX"
+};
 
-// create an OAuth2 SASL context
-var oauth2 = new SaslMechanismOAuth2 ("user@gmail.com", credential.Token.AccessToken);
+var codeFlow = new GoogleAuthorizationCodeFlow (new GoogleAuthorizationCodeFlow.Initializer {
+    // Cache tokens in ~/.local/share/google-filedatastore/CredentialCacheFolder on Linux/Mac
+    DataStore = new FileDataStore ("CredentialCacheFolder", false),
+    Scopes = new [] { "https://mail.google.com/" },
+    ClientSecrets = clientSecrets
+});
 
-// authenticate using the OAuth2 SASL mechanism
-client.Authenticate (oauth2);
+var codeReceiver = new LocalServerCodeReceiver ();
+var authCode = new AuthorizationCodeInstalledApp (codeFlow, codeReceiver);
+var credential = await authCode.AuthorizeAsync (GMailAccount, CancellationToken.None);
+
+if (authCode.ShouldRequestAuthorizationCode (credential.Token))
+    await credential.RefreshTokenAsync (CancellationToken.None);
+
+var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
+
+using (var client = new ImapClient ()) {
+    await client.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+    await client.AuthenticateAsync (oauth2);
+    await client.DisconnectAsync (true);
+}
         </code>
       </content>
     </section>
