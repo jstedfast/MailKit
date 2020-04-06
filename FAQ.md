@@ -136,7 +136,7 @@ bool MyServerCertificateValidationCallback (object sender, X509Certificate certi
 }
 ```
 
-The downside of the above example is that it requires had-coding known values for "trusted" mail server
+The downside of the above example is that it requires hard-coding known values for "trusted" mail server
 certificates which can quickly become unweildy to deal with if your program is meant to be used with
 a wide range of mail servers.
 

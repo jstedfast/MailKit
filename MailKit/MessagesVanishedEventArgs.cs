@@ -66,10 +66,10 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets whether the messages vanished inthe past as opposed to just now.
+		/// Gets whether the messages vanished in the past as opposed to just now.
 		/// </summary>
 		/// <remarks>
-		/// Gets whether the messages vanished inthe past as opposed to just now.
+		/// Gets whether the messages vanished in the past as opposed to just now.
 		/// </remarks>
 		/// <value><c>true</c> if the messages vanished earlier; otherwise, <c>false</c>.</value>
 		public bool Earlier {
