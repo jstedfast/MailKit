@@ -43,6 +43,17 @@ namespace MailKit {
 	public interface IMessageSummary
 	{
 		/// <summary>
+		/// Get the folder that the message belongs to.
+		/// </summary>
+		/// <remarks>
+		/// Gets the folder that the message belongs to, if available.
+		/// </remarks>
+		/// <value>The folder.</value>
+		IMailFolder Folder {
+			get;
+		}
+
+		/// <summary>
 		/// Get a bitmask of fields that have been populated.
 		/// </summary>
 		/// <remarks>
