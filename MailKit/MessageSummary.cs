@@ -36,10 +36,11 @@ namespace MailKit {
 	/// A summary of a message.
 	/// </summary>
 	/// <remarks>
-	/// A <see cref="MessageSummary"/> is returned by
-	/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;, MessageSummaryItems, System.Threading.CancellationToken)"/>.
-	/// The properties of the <see cref="MessageSummary"/> that will be available
-	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.
+	/// <para>The <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a> and
+	/// <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a> methods
+	/// return lists of <see cref="IMessageSummary"/> items.</para>
+	/// <para>The properties of the <see cref="MessageSummary"/> that will be available
+	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.</para>
 	/// </remarks>
 	public class MessageSummary : IMessageSummary
 	{
