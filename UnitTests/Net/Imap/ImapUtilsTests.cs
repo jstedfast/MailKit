@@ -1517,7 +1517,8 @@ namespace UnitTests.Net.Imap {
 
 						Assert.AreEqual ((uint) 3, threads[0].UniqueId.Value.Id);
 						Assert.AreEqual ((uint) 1, threads[1].UniqueId.Value.Id);
-						Assert.AreEqual ((uint) 0, threads[2].UniqueId.Value.Id);
+						//Assert.AreEqual ((uint) 0, threads[2].UniqueId.Value.Id);
+						Assert.IsFalse (threads[2].UniqueId.HasValue);
 
 						var branches = threads[2].Children.ToArray ();
 						Assert.AreEqual (3, branches.Length, "Expected 3 children.");
@@ -1550,7 +1551,8 @@ namespace UnitTests.Net.Imap {
 
 						Assert.AreEqual (1, threads.Count, "Expected 1 thread.");
 
-						Assert.AreEqual ((uint) 0, threads[0].UniqueId.Value.Id);
+						//Assert.AreEqual ((uint) 0, threads[0].UniqueId.Value.Id);
+						Assert.IsFalse (threads[0].UniqueId.HasValue);
 
 						var children = threads[0].Children;
 						Assert.AreEqual (2, children.Count, "Expected 2 children.");
