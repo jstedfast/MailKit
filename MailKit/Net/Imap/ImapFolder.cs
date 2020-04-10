@@ -5350,7 +5350,7 @@ namespace MailKit.Net.Imap {
 
 		internal async Task OnFetchAsync (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)
 		{
-			var message = new MessageSummary (index);
+			var message = new MessageSummary (this, index);
 			UniqueId? uid = null;
 
 			await FetchSummaryItemsAsync (engine, message, doAsync, cancellationToken).ConfigureAwait (false);

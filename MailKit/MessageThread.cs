@@ -33,7 +33,7 @@ namespace MailKit {
 	/// <remarks>
 	/// A message thread.
 	/// </remarks>
-	public sealed class MessageThread
+	public class MessageThread
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MessageThread"/> class.
@@ -49,15 +49,47 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MessageThread"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new message thread node.
+		/// </remarks>
+		/// <param name="message">The message summary.</param>
+		public MessageThread (IMessageSummary message)
+		{
+			Children = new List<MessageThread> ();
+			UniqueId = message?.UniqueId;
+			Message = message;
+		}
+
+		/// <summary>
+		/// Gets the message summary, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the message summary, if available.</para>
+		/// <note type="note">This property will only ever be set if the <see cref="MessageThread"/>
+		/// was created by the <see cref="MessageThreader"/>. <see cref="MessageThread"/>s that are
+		/// created by any of the
+		/// <a href="Overload_MailKit_Net_Imap_ImapFolder_Thread.htm">Thread</a> or
+		/// <a href="Overload_MailKit_Net_Imap_ImapFolder_ThreadAsync.htm">ThreadAsync</a>
+		/// methods will always be <c>null</c>.</note>
+		/// </remarks>
+		/// <value>The message summary.</value>
+		public IMessageSummary Message {
+			get; private set;
+		}
+
+		/// <summary>
 		/// Gets the unique identifier of the message.
 		/// </summary>
 		/// <remarks>
-		/// The unique identifier may be <c>null</c> if the message is missing
-		/// from the <see cref="IMailFolder"/> or did not match the 
-		/// <see cref="MailKit.Search.SearchQuery"/>.
+		/// The unique identifier may be <c>null</c> if the message is missing from the
+		/// <see cref="IMailFolder"/> or from the list of messages provided to the
+		/// <see cref="MessageThreader"/>.
 		/// </remarks>
 		/// <value>The unique identifier.</value>
 		public UniqueId? UniqueId {
+			// FIXME: this shouldn't be a nullable since we can just use UniqueId.Invalid
 			get; private set;
 		}
 

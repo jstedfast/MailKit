@@ -339,12 +339,8 @@ namespace MailKit {
 
 			for (int i = 0; i < root.Children.Count; i++) {
 				var message = root.Children[i].Message;
-				UniqueId? uid = null;
+				var thread = new MessageThread (message);
 
-				if (message != null)
-					uid = message.UniqueId;
-
-				var thread = new MessageThread (uid);
 				GetThreads (root.Children[i], thread.Children, orderBy);
 				threads.Add (thread);
 			}

@@ -418,7 +418,7 @@ namespace MailKit.Net.Imap
 			MessageSummary message;
 
 			if (!ctx.TryGetValue (index, out message)) {
-				message = new MessageSummary (index);
+				message = new MessageSummary (this, index);
 				ctx.Add (index, message);
 			}
 

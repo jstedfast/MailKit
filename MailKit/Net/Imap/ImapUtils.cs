@@ -1600,7 +1600,7 @@ namespace MailKit.Net.Imap {
 			uint uid;
 
 			if (token.Type == ImapTokenType.OpenParen) {
-				thread = new MessageThread (UniqueId.Invalid);
+				thread = new MessageThread (null /*UniqueId.Invalid*/);
 
 				do {
 					child = await ParseThreadAsync (engine, uidValidity, doAsync, cancellationToken).ConfigureAwait (false);
