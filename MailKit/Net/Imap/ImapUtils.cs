@@ -1426,8 +1426,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The flags list string.</returns>
 		/// <param name="flags">The message flags.</param>
-		/// <param name="numUserFlags">The number of user-defined flags.</param>
-		public static string FormatFlagsList (MessageFlags flags, int numUserFlags)
+		/// <param name="numKeywords">The number of keywords.</param>
+		public static string FormatFlagsList (MessageFlags flags, int numKeywords)
 		{
 			var builder = new StringBuilder ();
 
@@ -1444,7 +1444,7 @@ namespace MailKit.Net.Imap {
 			if ((flags & MessageFlags.Seen) != 0)
 				builder.Append ("\\Seen ");
 
-			for (int i = 0; i < numUserFlags; i++)
+			for (int i = 0; i < numKeywords; i++)
 				builder.Append ("%S ");
 
 			if (builder.Length > 1)
