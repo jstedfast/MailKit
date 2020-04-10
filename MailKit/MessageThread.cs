@@ -58,7 +58,8 @@ namespace MailKit {
 		public MessageThread (IMessageSummary message)
 		{
 			Children = new List<MessageThread> ();
-			UniqueId = message?.UniqueId;
+			if (message != null && message.UniqueId.IsValid)
+				UniqueId = message?.UniqueId;
 			Message = message;
 		}
 
