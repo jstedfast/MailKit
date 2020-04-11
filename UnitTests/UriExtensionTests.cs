@@ -68,7 +68,7 @@ namespace UnitTests {
 		[Test]
 		public void TestQueryWithoutValue ()
 		{
-			var uri = new Uri ("imap://imap.gmail.com/?starttls=false&compress=");
+			var uri = new Uri ("imap://imap.gmail.com/?starttls=false&compress");
 			var query = uri.ParsedQuery ();
 
 			Assert.AreEqual (2, query.Count, "Unexpected number of queries.");
