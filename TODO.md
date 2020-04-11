@@ -26,5 +26,10 @@
     * Append() could use a similar approach so that the MimeMessage and the flags/date/annotations/etc.
       are all contained within an AppendRequest object. This would simplify MUTLIAPPEND support. We
       could also allow Append()ing raw Streams?
+* MessageThreader
+  * Fix UniqueId property to be just a UniqueId instead of Nullable<UniqueId>.
+* IMailFolder
+  * Modify Append() methods to simply return UniqueId instead of Nullable<UniqueId>?
+  * Modify CopyTo/MoveTo() methods to also return UniqueId instead of Nullable<UniqueId>?
 * Maildir
 * Thunderbird mbox folder trees
