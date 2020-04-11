@@ -308,5 +308,31 @@ Welcome to Netscape
 
 			Assert.AreEqual (expected, builder.ToString (), "Threading did not produce the expected results");
 		}
+
+		[Test]
+		public void TestThreadableNodeUnusedProperties ()
+		{
+			var node = new MessageThreader.ThreadableNode (new MessageSummary (0));
+
+			Assert.IsNull (node.Folder, "Folder");
+			Assert.IsNull (node.Body, "Body");
+			Assert.IsNull (node.TextBody, "TextBody");
+			Assert.IsNull (node.HtmlBody, "HtmlBody");
+			Assert.IsNull (node.BodyParts, "BodyParts");
+			Assert.IsNull (node.Attachments, "Attachments");
+			Assert.IsNull (node.PreviewText, "PreviewText");
+			Assert.IsNull (node.Envelope, "Envelope");
+			Assert.IsFalse (node.Flags.HasValue, "Flags");
+			Assert.IsNull (node.Keywords, "Keywords");
+			Assert.IsNull (node.UserFlags, "UserFlags");
+			Assert.IsNull (node.Headers, "Headers");
+			Assert.IsFalse (node.InternalDate.HasValue, "InternalDate");
+			Assert.IsNull (node.Id, "Id");
+			Assert.IsNull (node.EmailId, "EmailId");
+			Assert.IsNull (node.ThreadId, "ThreadId");
+			Assert.IsFalse (node.GMailMessageId.HasValue, "GMailMessageId");
+			Assert.IsFalse (node.GMailThreadId.HasValue, "GMailThreadId");
+			Assert.IsNull (node.GMailLabels, "GMailLabels");
+		}
 	}
 }
