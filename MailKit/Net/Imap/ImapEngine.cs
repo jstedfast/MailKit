@@ -1467,7 +1467,14 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.UidNext:
 				var next = (UidNextResponseCode) code;
 
-				next.Uid = new UniqueId (ParseNumber (token, true, GenericResponseCodeSyntaxErrorFormat, "UIDNEXT", token));
+				// Note: we allow '0' here because some servers have been known to send "* OK [UIDNEXT 0]".
+				// The *probable* explanation here is that the folder has never been opened and/or no messages
+				// have ever been delivered (yet) to that mailbox and so the UIDNEXT has not (yet) been
+				// initialized.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/1010 for an example.
+				var uid = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UIDNEXT", token);
+				next.Uid = uid > 0 ? new UniqueId (uid) : UniqueId.Invalid;
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.UidValidity:
@@ -1475,7 +1482,7 @@ namespace MailKit.Net.Imap {
 
 				// Note: we allow '0' here because some servers have been known to send "* OK [UIDVALIDITY 0]".
 				// The *probable* explanation here is that the folder has never been opened and/or no messages
-				// have ever been delivered (yet) to that mailbox and so the UNIDVALIDITY has not (yet) been
+				// have ever been delivered (yet) to that mailbox and so the UIDVALIDITY has not (yet) been
 				// initialized.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/150 for an example.
