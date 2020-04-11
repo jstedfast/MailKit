@@ -64,5 +64,16 @@ namespace UnitTests {
 			Assert.AreEqual ("false", query["starttls"], "Unexpected value for 'starttls'.");
 			Assert.AreEqual ("false", query["compress"], "Unexpected value for 'compress'.");
 		}
+
+		[Test]
+		public void TestQueryWithoutValue ()
+		{
+			var uri = new Uri ("imap://imap.gmail.com/?starttls=false&compress=");
+			var query = uri.ParsedQuery ();
+
+			Assert.AreEqual (2, query.Count, "Unexpected number of queries.");
+			Assert.AreEqual ("false", query["starttls"], "Unexpected value for 'starttls'.");
+			Assert.AreEqual (string.Empty, query["compress"], "Unexpected value for 'compress'.");
+		}
 	}
 }
