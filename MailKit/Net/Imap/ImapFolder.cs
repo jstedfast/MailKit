@@ -105,6 +105,22 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Get whether or not the folder supports quick resynchronization.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the folder supports quick resynchronization.</para>
+		/// <para>If quick resynchronization is supported by the folder, then
+		/// <see cref="Open(FolderAccess, uint, ulong, IList{UniqueId}, CancellationToken)"/> and
+		/// <see cref="OpenAsync(FolderAccess, uint, ulong, IList{UniqueId}, CancellationToken)"/> can
+		/// be used, otherwise they will throw <see cref="System.NotSupportedException"/> and should
+		/// not be used.</para>
+		/// </remarks>
+		/// <value><c>true</c> if supports quick resynchronization; otherwise, <c>false</c>.</value>
+		public override bool SupportsQuickResync {
+			get { return Engine.QResyncEnabled; }
+		}
+
+		/// <summary>
 		/// Gets an object that can be used to synchronize access to the IMAP server.
 		/// </summary>
 		/// <remarks>
@@ -336,7 +352,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.QuickResync) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
-			if (!Engine.QResyncEnabled)
+			if (!SupportsQuickResync)
 				throw new InvalidOperationException ("The QRESYNC extension has not been enabled.");
 
 			string qresync;

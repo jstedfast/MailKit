@@ -276,12 +276,29 @@ namespace MailKit {
 		/// Get whether or not the folder supports mod-sequences.
 		/// </summary>
 		/// <remarks>
+		/// <para>Gets whether or not the folder supports mod-sequences.</para>
 		/// <para>If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
 		/// argument will throw <see cref="System.NotSupportedException"/> and should not be used.</para>
 		/// </remarks>
 		/// <value><c>true</c> if supports mod-sequences; otherwise, <c>false</c>.</value>
 		public bool SupportsModSeq {
 			get; protected set;
+		}
+
+		/// <summary>
+		/// Get whether or not the folder supports quick resynchronization.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the folder supports quick resynchronization.</para>
+		/// <para>If quick resynchronization is supported by the folder, then
+		/// <see cref="Open(FolderAccess, uint, ulong, IList{UniqueId}, CancellationToken)"/> and
+		/// <see cref="OpenAsync(FolderAccess, uint, ulong, IList{UniqueId}, CancellationToken)"/> can
+		/// be used, otherwise they will throw <see cref="System.NotSupportedException"/> and should
+		/// not be used.</para>
+		/// </remarks>
+		/// <value><c>true</c> if supports quick resynchronization; otherwise, <c>false</c>.</value>
+		public abstract bool SupportsQuickResync {
+			get;
 		}
 
 		/// <summary>
@@ -15067,10 +15084,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnOpened ()
 		{
-			var handler = Opened;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			Opened?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15089,8 +15103,6 @@ namespace MailKit {
 		/// </remarks>
 		internal protected virtual void OnClosed ()
 		{
-			var handler = Closed;
-
 			PermanentFlags = MessageFlags.None;
 			AcceptedFlags = MessageFlags.None;
 			Access = FolderAccess.None;
@@ -15099,8 +15111,7 @@ namespace MailKit {
 			AnnotationScopes = AnnotationScope.None;
 			MaxAnnotationSize = 0;
 
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			Closed?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15119,10 +15130,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnDeleted ()
 		{
-			var handler = Deleted;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			Deleted?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15143,10 +15151,7 @@ namespace MailKit {
 		/// <param name="newName">The new name of the folder.</param>
 		protected virtual void OnRenamed (string oldName, string newName)
 		{
-			var handler = Renamed;
-
-			if (handler != null)
-				handler (this, new FolderRenamedEventArgs (oldName, newName));
+			Renamed?.Invoke (this, new FolderRenamedEventArgs (oldName, newName));
 		}
 
 		/// <summary>
@@ -15187,10 +15192,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnSubscribed ()
 		{
-			var handler = Subscribed;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			Subscribed?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15209,10 +15211,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnUnsubscribed ()
 		{
-			var handler = Unsubscribed;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			Unsubscribed?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15235,10 +15234,7 @@ namespace MailKit {
 		/// <param name="args">The message expunged event args.</param>
 		protected virtual void OnMessageExpunged (MessageEventArgs args)
 		{
-			var handler = MessageExpunged;
-
-			if (handler != null)
-				handler (this, args);
+			MessageExpunged?.Invoke (this, args);
 		}
 
 		/// <summary>
@@ -15258,10 +15254,7 @@ namespace MailKit {
 		/// <param name="args">The messages vanished event args.</param>
 		protected virtual void OnMessagesVanished (MessagesVanishedEventArgs args)
 		{
-			var handler = MessagesVanished;
-
-			if (handler != null)
-				handler (this, args);
+			MessagesVanished?.Invoke (this, args);
 		}
 
 		/// <summary>
@@ -15284,10 +15277,7 @@ namespace MailKit {
 		/// <param name="args">The message flags changed event args.</param>
 		protected virtual void OnMessageFlagsChanged (MessageFlagsChangedEventArgs args)
 		{
-			var handler = MessageFlagsChanged;
-
-			if (handler != null)
-				handler (this, args);
+			MessageFlagsChanged?.Invoke (this, args);
 		}
 
 		/// <summary>
@@ -15307,10 +15297,7 @@ namespace MailKit {
 		/// <param name="args">The message labels changed event args.</param>
 		protected virtual void OnMessageLabelsChanged (MessageLabelsChangedEventArgs args)
 		{
-			var handler = MessageLabelsChanged;
-
-			if (handler != null)
-				handler (this, args);
+			MessageLabelsChanged?.Invoke (this, args);
 		}
 
 		/// <summary>
@@ -15330,10 +15317,7 @@ namespace MailKit {
 		/// <param name="args">The message annotations changed event args.</param>
 		protected virtual void OnAnnotationsChanged (AnnotationsChangedEventArgs args)
 		{
-			var handler = AnnotationsChanged;
-
-			if (handler != null)
-				handler (this, args);
+			AnnotationsChanged?.Invoke (this, args);
 		}
 
 		/// <summary>
@@ -15383,10 +15367,7 @@ namespace MailKit {
 		/// <param name="message">The message summary.</param>
 		protected virtual void OnMessageSummaryFetched (IMessageSummary message)
 		{
-			var handler = MessageSummaryFetched;
-
-			if (handler != null)
-				handler (this, new MessageSummaryFetchedEventArgs (message));
+			MessageSummaryFetched?.Invoke (this, new MessageSummaryFetchedEventArgs (message));
 		}
 
 		/// <summary>
@@ -15406,10 +15387,7 @@ namespace MailKit {
 		/// <param name="metadata">The metadata that changed.</param>
 		internal protected virtual void OnMetadataChanged (Metadata metadata)
 		{
-			var handler = MetadataChanged;
-
-			if (handler != null)
-				handler (this, new MetadataChangedEventArgs (metadata));
+			MetadataChanged?.Invoke (this, new MetadataChangedEventArgs (metadata));
 		}
 
 		/// <summary>
@@ -15429,10 +15407,7 @@ namespace MailKit {
 		/// <param name="args">The mod-sequence changed event args.</param>
 		protected virtual void OnModSeqChanged (ModSeqChangedEventArgs args)
 		{
-			var handler = ModSeqChanged;
-
-			if (handler != null)
-				handler (this, args);
+			ModSeqChanged?.Invoke (this, args);
 		}
 
 		/// <summary>
@@ -15451,10 +15426,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnHighestModSeqChanged ()
 		{
-			var handler = HighestModSeqChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			HighestModSeqChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15473,10 +15445,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnUidNextChanged ()
 		{
-			var handler = UidNextChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			UidNextChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15495,10 +15464,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnUidValidityChanged ()
 		{
-			var handler = UidValidityChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			UidValidityChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15517,10 +15483,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnIdChanged ()
 		{
-			var handler = IdChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			IdChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15539,10 +15502,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnSizeChanged ()
 		{
-			var handler = SizeChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			SizeChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15564,10 +15524,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnCountChanged ()
 		{
-			var handler = CountChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			CountChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15586,10 +15543,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnRecentChanged ()
 		{
-			var handler = RecentChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			RecentChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -15608,10 +15562,7 @@ namespace MailKit {
 		/// </remarks>
 		protected virtual void OnUnreadChanged ()
 		{
-			var handler = UnreadChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			UnreadChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		#region IEnumerable<MimeMessage> implementation
