@@ -147,6 +147,8 @@ namespace UnitTests {
 		{
 			AnnotationEntry entry;
 
+			Assert.Throws<FormatException> (() => AnnotationEntry.Parse (string.Empty), "string.Empty");
+
 			// invalid part-specs
 			Assert.Throws<FormatException> (() => AnnotationEntry.Parse ("/1./comment"), "/1./comment");
 			Assert.Throws<FormatException> (() => AnnotationEntry.Parse ("/1../comment"), "/1../comment");
@@ -154,6 +156,7 @@ namespace UnitTests {
 
 			// invalid paths
 			Assert.Throws<FormatException> (() => AnnotationEntry.Parse ("x"), "x"); // paths must begin with '/'
+			Assert.Throws<FormatException> (() => AnnotationEntry.Parse ("/1a/comment"), "/1a/comment"); // invalid character in part-spec
 			Assert.Throws<FormatException> (() => AnnotationEntry.Parse ("/1.2.3.4.5"), "/1.2.3.4.5"); // paths must not contain only a part-spec
 			Assert.Throws<FormatException> (() => AnnotationEntry.Parse ("/台北/日本語"), "/台北/日本語"); // paths may not contain non-ascii characters
 			Assert.Throws<FormatException> (() => AnnotationEntry.Parse ("/path/0wnz"), "/path/0wnz"); // path components must not begin with a number
@@ -229,6 +232,95 @@ namespace UnitTests {
 			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
 			Assert.AreEqual ("/comment", entry.Path, "Path");
 			Assert.AreEqual (AnnotationScope.Shared, entry.Scope, "Scope");
+		}
+
+		[Test]
+		public void TestCreate ()
+		{
+			AnnotationEntry entry;
+
+			try {
+				entry = AnnotationEntry.Create ("/comment");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.Comment, entry, "/comment");
+
+			try {
+				entry = AnnotationEntry.Create ("/comment.priv");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.PrivateComment, entry, "/comment.priv");
+
+			try {
+				entry = AnnotationEntry.Create ("/comment.shared");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.SharedComment, entry, "/comment.shared");
+
+			try {
+				entry = AnnotationEntry.Create ("/flags");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.Flags, entry, "/flags");
+
+			try {
+				entry = AnnotationEntry.Create ("/flags.priv");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.PrivateFlags, entry, "/flags.priv");
+
+			try {
+				entry = AnnotationEntry.Create ("/flags.shared");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.SharedFlags, entry, "/flags.shared");
+
+			try {
+				entry = AnnotationEntry.Create ("/altsubject");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.AltSubject, entry, "/altsubject");
+
+			try {
+				entry = AnnotationEntry.Create ("/altsubject.priv");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.PrivateAltSubject, entry, "/altsubject.priv");
+
+			try {
+				entry = AnnotationEntry.Create ("/altsubject.shared");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual (AnnotationEntry.SharedAltSubject, entry, "/altsubject.shared");
+
+			try {
+				entry = AnnotationEntry.Create ("/1.2.3.4/comment");
+			} catch (Exception ex) {
+				Assert.Fail ("Did not expect: {0}", ex);
+				return;
+			}
+			Assert.AreEqual ("/1.2.3.4/comment", entry.Entry, "Entry");
+			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
+			Assert.AreEqual ("/comment", entry.Path, "Path");
+			Assert.AreEqual (AnnotationScope.Both, entry.Scope, "Scope");
 		}
 	}
 }
