@@ -120,6 +120,7 @@
     <None Include="Examples\MultipartFormDataExamples.cs" />
     <None Include="Examples\OpeningContent.cs" />
     <None Include="Examples\OpenPGPExamples.cs" />
+    <None Include="Examples\ParameterExamples.cs" />
     <None Include="Examples\Pop3Examples.cs" />
     <None Include="Examples\ArcSignerExample.cs" />
     <None Include="Examples\ArcVerifierExample.cs" />
