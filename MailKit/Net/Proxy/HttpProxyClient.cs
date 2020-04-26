@@ -160,7 +160,7 @@ namespace MailKit.Net.Proxy
 
 				var response = builder.ToString ();
 
-				if (response.Length >= 16 && response.StartsWith ("HTTP/1.", StringComparison.OrdinalIgnoreCase) &&
+				if (response.Length >= 15 && response.StartsWith ("HTTP/1.", StringComparison.OrdinalIgnoreCase) &&
 					(response[7] == '1' || response[7] == '0') && response[8] == ' ' &&
 					response[9] == '2' && response[10] == '0' && response[11] == '0' &&
 					response[12] == ' ') {
