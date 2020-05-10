@@ -229,8 +229,6 @@ namespace MailKit.Net.Proxy
 					n += nread;
 			} while (n < 2);
 
-			VerifySocksVersion (buffer[0]);
-
 			if (buffer[1] != (byte) Socks5Reply.Success)
 				throw new AuthenticationException ("Failed to authenticate with SOCKS5 proxy server.");
 		}
