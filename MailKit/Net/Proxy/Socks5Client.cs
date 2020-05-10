@@ -211,7 +211,7 @@ namespace MailKit.Net.Proxy
 			var buffer = new byte[user.Length + passwd.Length + 3];
 			int nread, n = 0;
 
-			buffer[n++] = (byte) SocksVersion;
+			buffer[n++] = 1;
 			buffer[n++] = (byte) user.Length;
 			Buffer.BlockCopy (user, 0, buffer, n, user.Length);
 			n += user.Length;
