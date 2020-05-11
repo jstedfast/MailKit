@@ -211,7 +211,7 @@ namespace MailKit.Net.Proxy
 			var buffer = new byte[user.Length + passwd.Length + 3];
 			int nread, n = 0;
 
-			buffer[n++] = (byte) SocksVersion;
+			buffer[n++] = 1;
 			buffer[n++] = (byte) user.Length;
 			Buffer.BlockCopy (user, 0, buffer, n, user.Length);
 			n += user.Length;
@@ -228,8 +228,6 @@ namespace MailKit.Net.Proxy
 				if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
 					n += nread;
 			} while (n < 2);
-
-			VerifySocksVersion (buffer[0]);
 
 			if (buffer[1] != (byte) Socks5Reply.Success)
 				throw new AuthenticationException ("Failed to authenticate with SOCKS5 proxy server.");
