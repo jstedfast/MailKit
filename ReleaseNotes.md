@@ -128,8 +128,8 @@ this release breaks API/ABI.
 * Modified SmtpClient.Send*() to not call MimeMessage.Prepare() if any DKIM or ARC headers
   are present in order to avoid the potential risk of altering the message and breaking
   the signatures within those headers.
-* Added SmtpClient.SendCommand[Async]() to allow custom subclasses the ability to send
-  custom commands to the SMTP server.
+* Added SmtpClient.SendCommand() and SendCommandAsync() to allow custom subclasses the
+  ability to send custom commands to the SMTP server.
   (issue [#891](https://github.com/jstedfast/MailKit/issues/891))
 * Allow SmtpClient subclasses to override message preparation by overriding a new
   SmtpClient.Prepare() method.
@@ -196,9 +196,9 @@ this release breaks API/ABI.
   developers to specify the `RET` parameter value to the `MAIL FROM` command.
 * Fixed a number of locations in the code to clear password buffers after using
   them.
-* SmtpClient.Send[Async]() methods that accept a FormatOptions argument will no
-  longer hide Bcc, Resent-Bcc, nor Content-Length headers when uploading the
-  raw message to the SMTP server. It is now up to callers to add these values
+* SmtpClient.Send() and SendAsync() methods that accept a FormatOptions argument
+  will no longer hide Bcc, Resent-Bcc, nor Content-Length headers when uploading
+  the raw message to the SMTP server. It is now up to callers to add these values
   to their custom FormatOptions.HiddenHeaders property.
   (issue [#360](https://github.com/jstedfast/MailKit/issues/360))
 
