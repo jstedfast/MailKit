@@ -70,7 +70,7 @@ namespace UnitTests.Net.Smtp {
 				var buffer = new byte[16];
 
 				Assert.Throws<NotImplementedException> (() => stream.Read (buffer, 0, buffer.Length));
-				Assert.Throws<NotImplementedException> (async () => await stream.ReadAsync (buffer, 0, buffer.Length));
+				Assert.ThrowsAsync<NotImplementedException> (async () => await stream.ReadAsync (buffer, 0, buffer.Length));
 			}
 		}
 

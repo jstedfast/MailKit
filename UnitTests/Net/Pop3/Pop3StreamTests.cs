@@ -94,15 +94,15 @@ namespace UnitTests.Net.Pop3 {
 				var data = Encoding.ASCII.GetBytes ("+OK\r\n");
 				var buffer = new byte[16];
 
-				Assert.Throws<ArgumentNullException> (async () => await stream.ReadAsync (null, 0, buffer.Length));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await stream.ReadAsync (buffer, -1, buffer.Length));
-				Assert.Throws<ArgumentOutOfRangeException> (async () => await stream.ReadAsync (buffer, 0, -1));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await stream.ReadAsync (null, 0, buffer.Length));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await stream.ReadAsync (buffer, -1, buffer.Length));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await stream.ReadAsync (buffer, 0, -1));
 
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;
 
 				stream.Mode = Pop3StreamMode.Line;
-				Assert.Throws<InvalidOperationException> (async () => await stream.ReadAsync (buffer, 0, buffer.Length));
+				Assert.ThrowsAsync<InvalidOperationException> (async () => await stream.ReadAsync (buffer, 0, buffer.Length));
 
 				stream.Mode = Pop3StreamMode.Data;
 				var n = await stream.ReadAsync (buffer, 0, buffer.Length);

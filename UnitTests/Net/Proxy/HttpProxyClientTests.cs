@@ -56,21 +56,21 @@ namespace UnitTests.Net.Proxy {
 
 			Assert.Throws<ArgumentNullException> (() => proxy.Connect (null, 80));
 			Assert.Throws<ArgumentNullException> (() => proxy.Connect (null, 80, ConnectTimeout));
-			Assert.Throws<ArgumentNullException> (async () => await proxy.ConnectAsync (null, 80));
-			Assert.Throws<ArgumentNullException> (async () => await proxy.ConnectAsync (null, 80, ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentNullException> (async () => await proxy.ConnectAsync (null, 80));
+			Assert.ThrowsAsync<ArgumentNullException> (async () => await proxy.ConnectAsync (null, 80, ConnectTimeout));
 
 			Assert.Throws<ArgumentException> (() => proxy.Connect (string.Empty, 80));
 			Assert.Throws<ArgumentException> (() => proxy.Connect (string.Empty, 80, ConnectTimeout));
-			Assert.Throws<ArgumentException> (async () => await proxy.ConnectAsync (string.Empty, 80));
-			Assert.Throws<ArgumentException> (async () => await proxy.ConnectAsync (string.Empty, 80, ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentException> (async () => await proxy.ConnectAsync (string.Empty, 80));
+			Assert.ThrowsAsync<ArgumentException> (async () => await proxy.ConnectAsync (string.Empty, 80, ConnectTimeout));
 
 			Assert.Throws<ArgumentOutOfRangeException> (() => proxy.Connect ("www.google.com", 0));
 			Assert.Throws<ArgumentOutOfRangeException> (() => proxy.Connect ("www.google.com", 0, ConnectTimeout));
-			Assert.Throws<ArgumentOutOfRangeException> (async () => await proxy.ConnectAsync ("www.google.com", 0));
-			Assert.Throws<ArgumentOutOfRangeException> (async () => await proxy.ConnectAsync ("www.google.com", 0, ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await proxy.ConnectAsync ("www.google.com", 0));
+			Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await proxy.ConnectAsync ("www.google.com", 0, ConnectTimeout));
 
 			Assert.Throws<ArgumentOutOfRangeException> (() => proxy.Connect ("www.google.com", 80, -ConnectTimeout));
-			Assert.Throws<ArgumentOutOfRangeException> (async () => await proxy.ConnectAsync ("www.google.com", 80, -ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await proxy.ConnectAsync ("www.google.com", 80, -ConnectTimeout));
 		}
 
 		[Test]

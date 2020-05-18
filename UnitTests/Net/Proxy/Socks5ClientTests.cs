@@ -62,21 +62,21 @@ namespace UnitTests.Net.Proxy {
 
 			Assert.Throws<ArgumentNullException> (() => socks.Connect (null, 80));
 			Assert.Throws<ArgumentNullException> (() => socks.Connect (null, 80, ConnectTimeout));
-			Assert.Throws<ArgumentNullException> (async () => await socks.ConnectAsync (null, 80));
-			Assert.Throws<ArgumentNullException> (async () => await socks.ConnectAsync (null, 80, ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentNullException> (async () => await socks.ConnectAsync (null, 80));
+			Assert.ThrowsAsync<ArgumentNullException> (async () => await socks.ConnectAsync (null, 80, ConnectTimeout));
 
 			Assert.Throws<ArgumentException> (() => socks.Connect (string.Empty, 80));
 			Assert.Throws<ArgumentException> (() => socks.Connect (string.Empty, 80, 100000));
-			Assert.Throws<ArgumentException> (async () => await socks.ConnectAsync (string.Empty, 80));
-			Assert.Throws<ArgumentException> (async () => await socks.ConnectAsync (string.Empty, 80, ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentException> (async () => await socks.ConnectAsync (string.Empty, 80));
+			Assert.ThrowsAsync<ArgumentException> (async () => await socks.ConnectAsync (string.Empty, 80, ConnectTimeout));
 
 			Assert.Throws<ArgumentOutOfRangeException> (() => socks.Connect ("www.google.com", 0));
 			Assert.Throws<ArgumentOutOfRangeException> (() => socks.Connect ("www.google.com", 0, ConnectTimeout));
-			Assert.Throws<ArgumentOutOfRangeException> (async () => await socks.ConnectAsync ("www.google.com", 0));
-			Assert.Throws<ArgumentOutOfRangeException> (async () => await socks.ConnectAsync ("www.google.com", 0, ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await socks.ConnectAsync ("www.google.com", 0));
+			Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await socks.ConnectAsync ("www.google.com", 0, ConnectTimeout));
 
 			Assert.Throws<ArgumentOutOfRangeException> (() => socks.Connect ("www.google.com", 80, -ConnectTimeout));
-			Assert.Throws<ArgumentOutOfRangeException> (async () => await socks.ConnectAsync ("www.google.com", 80, -ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await socks.ConnectAsync ("www.google.com", 80, -ConnectTimeout));
 		}
 
 		static string ResolveIPv4 (string host)
