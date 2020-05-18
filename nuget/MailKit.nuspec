@@ -117,22 +117,31 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
   </metadata>
   <files>
     <file src="..\MailKit\bin\Release\netstandard1.3\MailKit.dll" target="lib\netstandard1.3\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard1.3\MailKit.pdb" target="lib\netstandard1.3\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard1.3\MailKit.xml" target="lib\netstandard1.3\MailKit.xml" />
     <file src="..\MailKit\bin\Release\netstandard1.6\MailKit.dll" target="lib\netstandard1.6\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard1.6\MailKit.pdb" target="lib\netstandard1.6\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard1.6\MailKit.xml" target="lib\netstandard1.6\MailKit.xml" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
     <file src="..\MailKit\bin\Release\MonoAndroid\MailKit.dll" target="lib\monoandroid\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\MonoAndroid\MailKit.pdb" target="lib\monoandroid\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\MonoAndroid\MailKit.xml" target="lib\monoandroid\MailKit.xml" />
     <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.dll" target="lib\xamarinios\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.pdb" target="lib\xamarinios\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.xml" target="lib\xamarinios\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net45\MailKit.pdb" target="lib\net45\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net46\MailKit.dll" target="lib\net46\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net46\MailKit.pdb" target="lib\net46\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net46\MailKit.xml" target="lib\net46\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net47\MailKit.dll" target="lib\net47\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net47\MailKit.pdb" target="lib\net47\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net47\MailKit.xml" target="lib\net47\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net48\MailKit.dll" target="lib\net48\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net48\MailKit.pdb" target="lib\net48\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net48\MailKit.xml" target="lib\net48\MailKit.xml" />
     <file src="mailkit-50.png" target="icons\mailkit-50.png" />
   </files>
