@@ -40,12 +40,11 @@ namespace MailKit {
 	/// </example>
 	public class ProtocolLogger : IProtocolLogger
 	{
-		private static byte[] staticClientPrefix = Encoding.ASCII.GetBytes ("C: ");
-		private static byte[] staticServerPrefix = Encoding.ASCII.GetBytes ("S: ");
+		static byte[] DefaultClientPrefix = Encoding.ASCII.GetBytes ("C: ");
+		static byte[] DefaultServerPrefix = Encoding.ASCII.GetBytes ("S: ");
 
-		private byte[] instanceClientPrefix = staticClientPrefix;
-		private byte[] instanceServerPrefix = staticServerPrefix;
-
+		byte[] clientPrefix = DefaultClientPrefix;
+		byte[] serverPrefix = DefaultServerPrefix;
 		readonly Stream stream;
 		readonly bool leaveOpen;
 		bool clientMidline;
@@ -107,60 +106,62 @@ namespace MailKit {
 		public Stream Stream {
 			get { return stream; }
 		}
-
+		
 		/// <summary>
-		/// Get or set the static client prefix.
+		/// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the static client prefix.
+		/// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
 		/// </remarks>
-		/// <value>The static client prefix as a string.</value>
-		public static string StaticClientPrefix {
-			get { return Encoding.ASCII.GetString(staticClientPrefix); }
-			set { staticClientPrefix = Encoding.ASCII.GetBytes(value); }
-		}
-
-    /// <summary>
-    /// Get or set the static server prefix.
-    /// </summary>
-    /// <remarks>
-    /// Gets or sets the static server prefix.
-    /// </remarks>
-    /// <value>The static server prefix as a string.</value>
-    public static string StaticServerPrefix {
-			get { return Encoding.ASCII.GetString(staticServerPrefix); }
-			set { staticServerPrefix = Encoding.ASCII.GetBytes(value); }
+		/// <value>The default client prefix.</value>
+		public static string DefaultClientPrefix
+		{
+			get { return Encoding.UTF8.GetString (DefaultClientPrefix); }
+			set { DefaultClientPrefix = Encoding.UTF8.GetBytes (value); }
 		}
 
 		/// <summary>
-		/// Get or set the client prefix for the current object.
+		/// Get or set the default server prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the client prefix for the current object.
+		/// Get or set the default server prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
 		/// </remarks>
-		/// <value>The client prefix for the current object as a string.</value>
-		public string InstanceClientPrefix
-    {
-      get { return Encoding.ASCII.GetString(instanceClientPrefix); }
-      set { instanceClientPrefix = Encoding.ASCII.GetBytes(value); }
-    }
+		/// <value>The default server prefix.</value>
+		public static string DefaultServerPrefix
+		{
+			get { return Encoding.UTF8.GetString (DefaultServerPrefix); }
+			set { DefaultServerPrefix = Encoding.UTF8.GetBytes (value); }
+		}
 
 		/// <summary>
-		/// Get or set the server prefix for the current object.
+		/// Get or set the client prefix to use when logging client messages.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the server prefix for the current object.
+		/// Gets or sets the client prefix to use when logging client messages.
 		/// </remarks>
-		/// <value>The server prefix for the current object as a string.</value>
-		public string InstanceServerPrefix
-    {
-      get { return Encoding.ASCII.GetString(instanceServerPrefix); }
-      set { instanceServerPrefix = Encoding.ASCII.GetBytes(value); }
-    }
+		/// <value>The client prefix.</value>
+		public string ClientPrefix
+		{
+			get { return Encoding.UTF8.GetString (clientPrefix); }
+			set { clientPrefix = Encoding.UTF8.GetBytes (value); }
+		}
 
-    #region IProtocolLogger implementation
+		/// <summary>
+		/// Get or set the server prefix to use when logging server messages.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the server prefix to use when logging server messages.
+		/// </remarks>
+		/// <value>The server prefix.</value>
+		public string ServerPrefix
+		{
+			get { return Encoding.UTF8.GetString (serverPrefix); }
+			set { serverPrefix = Encoding.UTF8.GetBytes (value); }
+		}
 
-    static void ValidateArguments (byte[] buffer, int offset, int count)
+		#region IProtocolLogger implementation
+
+		static void ValidateArguments (byte[] buffer, int offset, int count)
 		{
 			if (buffer == null)
 				throw new ArgumentNullException (nameof (buffer));
@@ -266,7 +267,7 @@ namespace MailKit {
 		{
 			ValidateArguments (buffer, offset, count);
 
-			Log (instanceClientPrefix, ref clientMidline, buffer, offset, count);
+			Log (clientPrefix, ref clientMidline, buffer, offset, count);
 		}
 
 		/// <summary>
@@ -299,7 +300,7 @@ namespace MailKit {
 		{
 			ValidateArguments (buffer, offset, count);
 
-			Log (instanceServerPrefix, ref serverMidline, buffer, offset, count);
+			Log (serverPrefix, ref serverMidline, buffer, offset, count);
 		}
 
 		#endregion
