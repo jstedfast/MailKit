@@ -106,7 +106,7 @@ namespace MailKit {
 		public Stream Stream {
 			get { return stream; }
 		}
-		
+
 		/// <summary>
 		/// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
 		/// </summary>
