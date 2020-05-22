@@ -536,6 +536,7 @@
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+binarymime.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+dsn.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+pipelining.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+smtputf8.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-greeting.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-mail-from.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-noop.txt" />
