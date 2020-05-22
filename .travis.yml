@@ -5,5 +5,5 @@ install:
   - nuget restore submodules/MimeKit/MimeKit.Net45.sln
   - nuget restore MailKit.Net45.sln
 script:
-  - xbuild /p:Configuration=Debug MailKit.Net45.sln
-  - mono ./packages/NUnit.Runners.2.6.4/tools/nunit-console.exe UnitTests/bin/Debug/UnitTests.dll
+  - msbuild /p:Configuration=Debug MailKit.Net45.sln
+  - mono ./packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe UnitTests/bin/Debug/UnitTests.dll
