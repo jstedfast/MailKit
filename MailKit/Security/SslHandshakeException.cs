@@ -237,7 +237,7 @@ namespace MailKit.Security
 					// Note: Because Mono does not include any elements in the chain (at least on macOS), we need
 					// to find the inner-most exception and append its Message.
 					if (!haveReason) {
-						var innerException = ex.InnerException;
+						var innerException = ex;
 
 						while (innerException.InnerException != null)
 							innerException = innerException.InnerException;
