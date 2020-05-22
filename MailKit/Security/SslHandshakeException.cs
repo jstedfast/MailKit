@@ -217,7 +217,7 @@ namespace MailKit.Security
 					for (int chainIndex = 0; chainIndex < validationInfo.ChainElements.Count; chainIndex++) {
 						var element = validationInfo.ChainElements[chainIndex];
 
-						if (element.ChainElementStatus.Length == 0)
+						if (element.ChainElementStatus == null || element.ChainElementStatus.Length == 0)
 							continue;
 
 						if (chainIndex == 0) {
