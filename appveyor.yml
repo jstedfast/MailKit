@@ -28,8 +28,6 @@ test_script:
 
     regsvr32 .\packages\OpenCover.4.6.519\tools\x64\OpenCover.Profiler.dll
 
-    cd UnitTests\bin\Debug
+    .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -filter:"+[MailKit]* -[UnitTests]* -[submodules]*" -target:"packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe" -targetargs:"/domain:single UnitTests\bin\Debug\UnitTests.dll" -output:opencover.xml
 
-    ..\..\..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -filter:"+[MailKit]* -[UnitTests]* -[submodules]*" -target:"..\..\..\packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe" -targetargs:"/domain:single UnitTests.dll" -output:opencover.xml
-
-    ..\..\..\packages\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencover.xml --repoToken $Env:COVERALLS_REPO_TOKEN --useRelativePaths --basePath ..\..\.. --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_BUILD_NUMBER --serviceName appveyor
+    .\packages\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencover.xml --repoToken $Env:COVERALLS_REPO_TOKEN --useRelativePaths --basePath .\UnitTests\bin\Debug --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_BUILD_NUMBER --serviceName appveyor
