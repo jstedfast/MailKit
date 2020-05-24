@@ -1751,6 +1751,9 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestInternationalMailboxes ()
 		{
+			var mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
+			var addrspec = MailboxAddress.EncodeAddrspec (mailbox.Address);
+
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+smtputf8.txt"));
@@ -1759,8 +1762,8 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("RCPT TO:<úßerñame@example.com>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
 			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<xn--erame-kqa2kwc@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<xn--erame-kqa2kwc@example.com>\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ($"MAIL FROM:<{addrspec}> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
+			commands.Add (new SmtpReplayCommand ($"RCPT TO:<{addrspec}>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
 			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
@@ -1785,7 +1788,6 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
-				var mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
 				var message = CreateEightBitMessage ();
 
 				try {
@@ -1822,6 +1824,9 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestInternationalMailboxesAsync ()
 		{
+			var mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
+			var addrspec = MailboxAddress.EncodeAddrspec (mailbox.Address);
+
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+smtputf8.txt"));
@@ -1830,8 +1835,8 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("RCPT TO:<úßerñame@example.com>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
 			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<xn--erame-kqa2kwc@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<xn--erame-kqa2kwc@example.com>\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ($"MAIL FROM:<{addrspec}> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
+			commands.Add (new SmtpReplayCommand ($"RCPT TO:<{addrspec}>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
 			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
@@ -1856,7 +1861,6 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
-				var mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
 				var message = CreateEightBitMessage ();
 
 				try {
