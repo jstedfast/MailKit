@@ -223,12 +223,8 @@ directory and select **Git Sync...** in the menu. Once you do that, you'll need 
 
 In the top-level MailKit directory, there are a number of solution files; they are:
 
-* **MailKit.sln** - includes the projects for .NET 4.5, .NETStandard 1.3/1.6/2.0, Windows Universal 8.1,
-  Xamarin.Android, and Xamarin.iOS.
-* **MailKit.Mobile.sln** - includes only the Xamarin.iOS and Xamarin.Android projects.
+* **MailKit.sln** - includes the projects for .NET 4.5/4.6/4.7/4.8, .NETStandard 1.3/1.6/2.0 as well as the unit tests.
 * **MailKit.Net45.sln** - includes only the .NET 4.5 project and the unit tests.
-
-If you don't have the Xamarin products, you'll probably want to open the MailKit.Net45.sln instead of MailKit.sln.
 
 Once you've opened the appropriate MailKit solution file in [Visual Studio](https://www.visualstudio.com/downloads/),
 you can choose the **Debug** or **Release** build configuration and then build.
