@@ -1692,24 +1692,16 @@ namespace MailKit.Net.Smtp {
 			get; set;
 		}
 
-		static string GetAddrspec (MailboxAddress mailbox, bool utf8)
-		{
-			if (utf8)
-				return MailboxAddress.DecodeAddrspec (mailbox.Address);
-
-			return MailboxAddress.EncodeAddrspec (mailbox.Address);
-		}
-
 		async Task MailFromAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, long size, bool doAsync, CancellationToken cancellationToken)
 		{
-			var utf8 = (extensions & SmtpExtension.UTF8) != 0;
+			var idnEncode = (extensions & SmtpExtension.UTF8) == 0;
 			var builder = new StringBuilder ("MAIL FROM:<");
 
-			var addrspec = GetAddrspec (mailbox, utf8);
+			var addrspec = mailbox.GetAddress (idnEncode);
 			builder.Append (addrspec);
 			builder.Append ('>');
 
-			if (utf8)
+			if (!idnEncode)
 				builder.Append (" SMTPUTF8");
 
 			if ((Capabilities & SmtpCapabilities.Size) != 0 && size != -1)
@@ -1830,7 +1822,8 @@ namespace MailKit.Net.Smtp {
 
 		async Task<bool> RcptToAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, bool doAsync, CancellationToken cancellationToken)
 		{
-			var command = string.Format ("RCPT TO:<{0}>", GetAddrspec (mailbox, (Capabilities & SmtpCapabilities.UTF8) != 0));
+			var idnEncode = (Capabilities & SmtpCapabilities.UTF8) == 0;
+			var command = string.Format ("RCPT TO:<{0}>", mailbox.GetAddress (idnEncode));
 
 			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
 				var notify = GetDeliveryStatusNotifications (message, mailbox);
