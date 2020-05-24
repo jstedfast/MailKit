@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Net45", "MailKit\MailKit.Net45.csproj", "{7264D469-A390-4C10-9C87-DAA37EDD3C1D}"
 EndProject
@@ -9,19 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net45", "submodules
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Data.Sqlite", "submodules\MimeKit\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj", "{F26434C1-BA3D-41FB-B560-C009CB72B1B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Android", "MailKit\MailKit.Android.csproj", "{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Android", "submodules\MimeKit\MimeKit\MimeKit.Android.csproj", "{004B4019-62B7-4A15-AF2C-C20968845C46}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.iOS", "MailKit\MailKit.iOS.csproj", "{60B5D72B-8219-48B6-B688-AD0FE284A96A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.iOS", "submodules\MimeKit\MimeKit\MimeKit.iOS.csproj", "{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.NetStandard", "submodules\MimeKit\MimeKit\MimeKit.NetStandard.csproj", "{E8667DCE-A5BB-4D30-9815-FC8959E447F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MimeKit.NetStandard", "submodules\MimeKit\MimeKit\MimeKit.NetStandard.csproj", "{E8667DCE-A5BB-4D30-9815-FC8959E447F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.NetStandard", "MailKit\MailKit.NetStandard.csproj", "{507D2CF2-55FF-463F-8513-778442EBD251}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKit.NetStandard", "MailKit\MailKit.NetStandard.csproj", "{507D2CF2-55FF-463F-8513-778442EBD251}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,22 +33,6 @@ Global
 		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}.Release|Any CPU.Build.0 = Release|Any CPU
-		{004B4019-62B7-4A15-AF2C-C20968845C46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{004B4019-62B7-4A15-AF2C-C20968845C46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{004B4019-62B7-4A15-AF2C-C20968845C46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{004B4019-62B7-4A15-AF2C-C20968845C46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60B5D72B-8219-48B6-B688-AD0FE284A96A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60B5D72B-8219-48B6-B688-AD0FE284A96A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60B5D72B-8219-48B6-B688-AD0FE284A96A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60B5D72B-8219-48B6-B688-AD0FE284A96A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}.Release|Any CPU.Build.0 = Release|Any CPU
 		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -72,6 +48,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80311676-045A-4523-8BD6-AEAD1F21474C}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MailKit\MailKit.csproj

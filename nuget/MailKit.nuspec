@@ -49,7 +49,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </releaseNotes>
     <copyright>Xamarin Inc.</copyright>
     <language>en-US</language>
-    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 netstandard netstandard1.3 netstandard1.6 netstandard2.0 xamarin android ios monodroid monoandroid wpa81</tags>
+    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 net46 net47 net58 netstandard netstandard1.3 netstandard1.6 netstandard2.0</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
@@ -89,12 +89,6 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
       <group targetFramework="net48">
         <dependency id="MimeKit" version="2.6.0" />
       </group>
-      <group targetFramework="monoandroid">
-        <dependency id="MimeKit" version="2.6.0" />
-      </group>
-      <group targetFramework="xamarinios">
-        <dependency id="MimeKit" version="2.6.0" />
-      </group>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
@@ -125,12 +119,6 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\MonoAndroid\MailKit.dll" target="lib\monoandroid\MailKit.dll" />
-    <file src="..\MailKit\bin\Release\MonoAndroid\MailKit.pdb" target="lib\monoandroid\MailKit.pdb" />
-    <file src="..\MailKit\bin\Release\MonoAndroid\MailKit.xml" target="lib\monoandroid\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.dll" target="lib\xamarinios\MailKit.dll" />
-    <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.pdb" target="lib\xamarinios\MailKit.pdb" />
-    <file src="..\MailKit\bin\Release\Xamarin.iOS\MailKit.xml" target="lib\xamarinios\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net45\MailKit.pdb" target="lib\net45\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net45\MailKit.xml" />

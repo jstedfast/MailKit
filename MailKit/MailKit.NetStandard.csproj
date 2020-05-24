@@ -10,7 +10,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <AssemblyName>MailKit</AssemblyName>
     <PackageId>MailKit</PackageId>
-    <PackageTags>smtp;pop3;imap;mime;security;dkim;smime;s/mime;openpgp;pgp;mbox;mail;email;parser;tnef;net45;netstandard;netstandard1.3;netstandard1.6;netstandard2.0;xamarin;android;ios;monodroid;monoandroid;wpa81</PackageTags>
+    <PackageTags>smtp;pop3;imap;mime;security;dkim;smime;s/mime;openpgp;pgp;mbox;mail;email;parser;tnef;net45;net46;net47;net48;netstandard;netstandard1.3;netstandard1.6;netstandard2.0</PackageTags>
     <PackageProjectUrl>https://github.com/jstedfast/MailKit</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/jstedfast/MailKit/blob/master/License.md</PackageLicenseUrl>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
