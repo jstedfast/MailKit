@@ -1787,8 +1787,6 @@ namespace UnitTests.Net.Smtp {
 
 				var mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
 				var message = CreateEightBitMessage ();
-				var options = FormatOptions.Default.Clone ();
-				options.International = true;
 
 				try {
 					client.Authenticate ("username", "password");
@@ -1797,7 +1795,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Send (options, message, mailbox, new MailboxAddress[] { mailbox });
+					client.Send (message, mailbox, new MailboxAddress[] { mailbox });
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -1806,7 +1804,7 @@ namespace UnitTests.Net.Smtp {
 				client.Capabilities &= ~SmtpCapabilities.UTF8;
 
 				try {
-					client.Send (options, message, mailbox, new MailboxAddress[] { mailbox });
+					client.Send (message, mailbox, new MailboxAddress[] { mailbox });
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -1860,8 +1858,6 @@ namespace UnitTests.Net.Smtp {
 
 				var mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
 				var message = CreateEightBitMessage ();
-				var options = FormatOptions.Default.Clone ();
-				options.International = true;
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -1870,7 +1866,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					await client.SendAsync (options, message, mailbox, new MailboxAddress[] { mailbox });
+					await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -1879,7 +1875,7 @@ namespace UnitTests.Net.Smtp {
 				client.Capabilities &= ~SmtpCapabilities.UTF8;
 
 				try {
-					await client.SendAsync (options, message, mailbox, new MailboxAddress[] { mailbox });
+					await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
