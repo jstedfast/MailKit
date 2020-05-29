@@ -1,0 +1,619 @@
+
+
+
+
+
+
+Internet Engineering Task Force (IETF)                     B. Leiba, Ed.
+Request for Comments: 8457                           Huawei Technologies
+Category: Standards Track                                 September 2018
+ISSN: 2070-1721
+
+
+    IMAP "$Important" Keyword and "\Important" Special-Use Attribute
+
+Abstract
+
+   RFC 6154 created an IMAP special-use LIST extension and defined an
+   initial set of attributes.  This document defines a new attribute,
+   "\Important", and establishes a new IANA registry for IMAP folder
+   attributes, which include the attributes defined in RFCs 5258, 3501,
+   and 6154.  This document also defines a new IMAP keyword,
+   "$Important", and registers it in the registry defined in RFC 5788.
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 7841.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   https://www.rfc-editor.org/info/rfc8457.
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+Leiba                        Standards Track                    [Page 1]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   1.1.  Conventions Used in This Document . . . . . . . . . . . . .   3
+   2.  Definition of the "$Important" Message Keyword  . . . . . . .   3
+   3.  Definition of the 'Important' Mailbox Attribute . . . . . . .   3
+   3.1.  Formal Syntax . . . . . . . . . . . . . . . . . . . . . . .   4
+   3.2.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   3.2.1.  Example of a LIST Response  . . . . . . . . . . . . . . .   4
+   3.2.2.  Examples of Creating a New Mailbox Using "\Important" . .   4
+   4.  Implementation Notes  . . . . . . . . . . . . . . . . . . . .   5
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
+   6.1.  Registration of the "$Important" Keyword  . . . . . . . . .   6
+   6.2.  Creation of the IMAP Mailbox Name Attributes Registry . . .   7
+   6.2.1.  Instructions to the Designated Expert . . . . . . . . . .   8
+   6.3.  Initial Entries for the IMAP Mailbox Name Attributes
+         Registry  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
+   7.1.  Normative References  . . . . . . . . . . . . . . . . . . .  10
+   7.2.  Informative References  . . . . . . . . . . . . . . . . . .  10
+   Contributors  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+
+1.  Introduction
+
+   The Internet Message Access Protocol (IMAP) specification [RFC3501]
+   defines the use of message keywords, and an "IMAP Keywords" registry
+   is created in [RFC5788].  [RFC6154] defines an extension to the IMAP
+   LIST command for special-use mailboxes.  The extension allows servers
+   to provide extra information (attributes) about the purpose of a
+   mailbox and defines an initial set of special-use attributes.
+
+   This document does the following:
+
+   o  defines a new message keyword, "$Important", to apply to messages
+      that are considered important for the user by some externally
+      defined criteria;
+
+   o  registers the "$Important" keyword in the "IMAP Keywords"
+      registry;
+
+   o  defines a new special-use attribute, "\Important", to designate a
+      mailbox that will hold messages that are considered important for
+      the user by some externally defined criteria; and
+
+
+
+
+
+
+Leiba                        Standards Track                    [Page 2]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+   o  creates a registry for IMAP mailbox attributes and registers the
+      new attribute and those defined in [RFC5258], [RFC3501], and
+      [RFC6154].
+
+1.1.  Conventions Used in This Document
+
+   In the examples used in this document, "C:" indicates lines sent by a
+   client that is connected to a server, and "S:" indicates lines sent
+   by the server to the client.
+
+2.  Definition of the "$Important" Message Keyword
+
+   The "$Important" keyword is a signal that a message is likely
+   important to the user.  The keyword is generally expected to be set
+   automatically by the system based on available signals (such as who
+   the message is from, who else the message is addressed to, evaluation
+   of the subject or content, or other heuristics).  While the keyword
+   also can be set by the user, that is not expected to be the primary
+   usage.
+
+   This is distinct from the "\Flagged" system flag in two ways:
+
+   1.  "$Important" carries a meaning of general importance, as opposed
+       to follow-up or urgency.  It is meant to be used for a form of
+       triage, with "\Flagged" remaining as a designation of special
+       attention, need for follow-up, or time sensitivity.  In
+       particular, the sense of "$Important" is that other messages that
+       are "like this one" according to some server-applied heuristics
+       will also be considered "$Important".
+
+   2.  The setting of "$Important" is expected to be based at least
+       partly on heuristics (generally set automatically by the server),
+       whereas "\Flagged" is only intended to be set by the user with
+       some sort of "flag this message" or "put a star on this message"
+       interface.
+
+3.  Definition of the 'Important' Mailbox Attribute
+
+   The "\Important" mailbox attribute is a signal that the mailbox
+   contains messages that are likely important to the user.  In an
+   implementation that also supports the "$Important" keyword, this
+   special use is likely to represent a virtual mailbox collecting
+   messages (from other mailboxes) that are marked with the "$Important"
+   keyword.  In other implementations, the system might automatically
+   put messages there based on the same sorts of heuristics that are
+   noted for the "$Important" keyword (see Section 2).  The distinctions
+   between "\Important" and "\Flagged" for mailboxes are similar to
+   those between "$Important" and "\Flagged" for messages.
+
+
+
+Leiba                        Standards Track                    [Page 3]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+3.1.  Formal Syntax
+
+   The following syntax specification adds to the one in Section 6 of
+   [RFC6154] using Augmented Backus-Naur Form (ABNF) as described in
+   [RFC5234].  Be sure to see the ABNF notes at the beginning of
+   Section 9 of [RFC3501].
+
+       use-attr      =/  "\Important"
+
+3.2.  Examples
+
+3.2.1.  Example of a LIST Response
+
+   In the following example, the mailbox called "Important Messages" is
+   the one designated with the "\Important" attribute.
+
+      C: t1 LIST "" "Imp*"
+      S: * LIST (\HasNoChildren \Important) "/" "Important Messages"
+      S: * LIST (\HasNoChildren) "/" "Imported Wine"
+      S: t1 OK Success
+
+3.2.2.  Examples of Creating a New Mailbox Using "\Important"
+
+   In the following example, the mailbox called "Important Messages" is
+   created with the "\Important" attribute on a server that advertises
+   the "CREATE-SPECIAL-USE" capability string.
+
+      C: t1 CREATE "Important Messages" (USE (\Important))
+      S: t1 OK Mailbox created
+
+   The following example is similar to the previous one, but the server
+   is not able to assign the "\Important" attribute to the new mailbox.
+
+      C: t1 CREATE "Important Messages" (USE (\Important))
+      S: t1 NO [USEATTR] An \Important mailbox already exists
+
+   The following example is similar to the previous one, but the server
+   does not support this extension.
+
+      C: t1 CREATE "Important Messages" (USE (\Important))
+      S: t1 NO [USEATTR] Mailbox not created; unsupported use \Important
+
+   In both of the failure-mode examples, the "USEATTR" response code
+   lets the client know that the problem is in the "USE" parameters.
+   Note that the same response code is given in both cases, and the
+   human-readable text is the only way to tell the difference.  That
+   text is not parsable by the client (it can only be logged and/or
+   reported to the user).
+
+
+
+Leiba                        Standards Track                    [Page 4]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+4.  Implementation Notes
+
+   This section is non-normative and is intended to describe the
+   intended (and current as of this publication) usage of "$Important"
+   in contrast with "\Flagged" on a message.
+
+   On the server:
+
+   o  "\Flagged" is set or cleared in response to an explicit command
+      from the client.
+
+   o  "$Important" is set via a heuristic process performed by the
+      server and usually involves analysis of header fields, what
+      mailbox the message is filed in, perhaps message content,
+      attachments, and such.  It may then be set or cleared in response
+      to an explicit command from the client, and the server may use
+      that to adjust the heuristics in the future.  It's also possible
+      that the server will re-evaluate this and make a message
+      "$Important" later if the user accesses the message frequently,
+      for example.
+
+   On the client:
+
+   o  Typically, an icon such as a flag or a star (or an indication,
+      such as red or bold text) is associated with "\Flagged", and the
+      UI provides a way for the user to turn that icon or indication on
+      or off.  Manipulation of this results in a command to the server.
+
+   o  Typically, a lesser indication is used for "$Important".  The
+      client might or might not provide the user with a way to
+      manipulate it.  If it does, manipulation results in a command to
+      the server.
+
+5.  Security Considerations
+
+   The security considerations in Section 7 of [RFC6154] apply equally
+   to this extension, in particular, "Conveying special-use information
+   to a client exposes a small bit of extra information that could be of
+   value to an attacker."  Moreover, identifying important messages or a
+   place where important messages are kept could give an attacker a
+   strategic starting point.  If the algorithm by which messages are
+   determined to be important is well known, still more information is
+   exposed -- perhaps, for example, there is an implication that the
+   senders of these messages are particularly significant to the mailbox
+   owner, and perhaps that is information that should not be made
+   public.
+
+
+
+
+
+Leiba                        Standards Track                    [Page 5]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+   As noted in RFC 6154, it is wise to protect the IMAP channel from
+   passive eavesdropping and to defend against unauthorized discernment
+   of the identity of a user's "\Important" mailbox or of a user's
+   "$Important" messages.  See Section 11 of [RFC3501] for security
+   considerations about using the IMAP STARTTLS command to protect the
+   IMAP channel.
+
+6.  IANA Considerations
+
+   IANA has completed three actions, which are specified in the sections
+   below:
+
+   1.  registration of the "$Important" keyword;
+
+   2.  creation of a new "IMAP Mailbox Name Attributes" registry; and
+
+   3.  registration of initial entries in the "IMAP Mailbox Name
+       Attributes" registry.
+
+6.1.  Registration of the "$Important" Keyword
+
+   IANA has registered the "$Important" keyword in the "IMAP Keywords"
+   registry, as follows, using the template in [RFC5788].
+
+   IMAP keyword name:  $Important
+
+   Purpose (description):  The "$Important" keyword is a signal that a
+         message is likely important to the user.
+
+   Private or Shared on a server:  PRIVATE
+
+   Is it an advisory keyword or may it cause an automatic action:
+         Advisory (but see the reference for details).
+
+   When/by whom the keyword is set/cleared:  The keyword can be set by
+         the user, or automatically by the system based on available
+         signals (such as who the message is from, who else the message
+         is addressed to, evaluation of the subject or content, or other
+         heuristics).
+
+   Related keywords:  None (see the reference for the related mailbox
+         name attribute).
+
+   Related IMAP capabilities:  None.
+
+   Security considerations:  See Section 5 of RFC 8457.
+
+   Published specification:  RFC 8457
+
+
+
+Leiba                        Standards Track                    [Page 6]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+   Person & email address to contact for further information:
+         IETF Applications and Real-Time Area <art@ietf.org>
+
+   Intended usage:  COMMON
+
+   Owner/Change controller:  IESG
+
+   Note: None.
+
+6.2.  Creation of the IMAP Mailbox Name Attributes Registry
+
+   IANA has created a new registry in the group "Internet Message Access
+   Protocol (IMAP)".  It is called "IMAP Mailbox Name Attributes", and
+   it has two references: "RFC 3501, Section 7.2.2", and "RFC 8457,
+   Section 6".  This registry will be shared with the JSON Meta
+   Application Protocol (JMAP) for Mail [JMAP-MAIL].
+
+   The registry entries contain the following fields:
+
+   1.  Attribute Name
+   2.  Description
+   3.  Reference
+   4.  Usage Notes
+
+   IANA keeps this list in alphabetical order by Attribute Name, which
+   is registered without the initial backslash ("\").  The names are
+   generally registered with initial capital letters but are treated as
+   case-insensitive US-ASCII strings.
+
+   The "Usage Notes" field is free-form US-ASCII text that will normally
+   be empty (and is empty if it's not specified in the registration
+   request).  It is intended to hold things such as "not used by JMAP"
+   and "JMAP only".  The field is for human use, and there is no need
+   for a registry of strings that may appear here.
+
+   The registration policy for the new registry is listed as "IETF
+   Review" or "Expert Review" [RFC8126], and new registrations will be
+   accepted in one of two ways:
+
+   1.  For registrations requested in an IETF consensus document, the
+       registration policy will be IETF Review, and the request will be
+       made in the IANA Considerations section of the document, which
+       gives the requested values for each of the fields.
+
+   2.  For other registrations, the policy will be Expert Review policy
+       (see Section 6.2.1), and the request will be made by sending
+       email to IANA asking for a new IMAP Mailbox Name Attribute and
+       giving the requested values for each of the fields.  While a
+
+
+
+Leiba                        Standards Track                    [Page 7]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+       formal specification is not required, the reference document
+       should provide a description of the proposed attribute sufficient
+       for building interoperable implementations.  An Informational RFC
+       (submitted, for example, through the IETF or Independent stream)
+       is a fine way to publish a reference document (see also
+       Section 6.2.1).
+
+6.2.1.  Instructions to the Designated Expert
+
+   The expert reviewer, who will be designated by the IESG, is expected
+   to provide only a general review of the requested registration,
+   checking that the reference and description are adequate for
+   understanding the intent of the registered attribute.  Efforts should
+   also be made to generalize the intent of an attribute so that
+   multiple implementations with the same requirements may reuse
+   existing attributes.  Except for this check, this is intended to be
+   very close to a first come first served policy, and the expert should
+   not block serious registration requests with a reasonable reference.
+   The reference may be to any form of documentation, including a web
+   page, but consideration should be given to providing one that is
+   expected to be long-lived and stable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Leiba                        Standards Track                    [Page 8]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+6.3.  Initial Entries for the IMAP Mailbox Name Attributes Registry
+
+   The registry initially contains these entries:
+
+   +===============+===================================+===========+
+   | Attribute     | Description                       | Reference |
+   | Name          |                                   |           |
+   +===============+===================================+===========+
+   | All           | All messages                      | [RFC6154] |
+   +---------------+-----------------------------------+-----------+
+   | Archive       | Archived messages                 | [RFC6154] |
+   +---------------+-----------------------------------+-----------+
+   | Drafts        | Messages that are working drafts  | [RFC6154] |
+   +---------------+-----------------------------------+-----------+
+   | Flagged       | Messages with the \Flagged flag   | [RFC6154] |
+   +---------------+-----------------------------------+-----------+
+   | HasChildren   | Has accessible child mailboxes    | [RFC5258] | *
+   +---------------+-----------------------------------+-----------+
+   | HasNoChildren | Has no accessible child mailboxes | [RFC5258] | *
+   +---------------+-----------------------------------+-----------+
+   | Important     | Messages deemed important to user |  RFC 8457 |
+   +---------------+-----------------------------------+-----------+
+   | Junk          | Messages identified as Spam/Junk  | [RFC6154] |
+   +---------------+-----------------------------------+-----------+
+   | Marked        | Server has marked the mailbox as  | [RFC3501] | *
+   |               | "interesting"                     |           |
+   +---------------+-----------------------------------+-----------+
+   | NoInferiors   | No hierarchy under this name      | [RFC3501] | *
+   +---------------+-----------------------------------+-----------+
+   | NonExistent   | The mailbox name doesn't actually | [RFC5258] | *
+   |               | exist                             |           |
+   +---------------+-----------------------------------+-----------+
+   | Noselect      | The mailbox is not selectable     | [RFC3501] | *
+   +---------------+-----------------------------------+-----------+
+   | Remote        | The mailbox exists on a remote    | [RFC5258] | *
+   |               | server                            |           |
+   +---------------+-----------------------------------+-----------+
+   | Sent          | Sent mail                         | [RFC6154] |
+   +---------------+-----------------------------------+-----------+
+   | Subscribed    | The mailbox is subscribed to      | [RFC5258] |
+   +---------------+-----------------------------------+-----------+
+   | Trash         | Messages the user has discarded   | [RFC6154] |
+   +---------------+-----------------------------------+-----------+
+   | Unmarked      | No new messages since last select | [RFC3501] | *
+   +===============+===================================+===========+
+
+   The rows marked with "*" at the end have their Usage Notes field set
+   to "not used by JMAP".
+
+
+
+Leiba                        Standards Track                    [Page 9]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+7.  References
+
+7.1.  Normative References
+
+   [RFC3501]  Crispin, M., "INTERNET MESSAGE ACCESS PROTOCOL - VERSION
+              4rev1", RFC 3501, DOI 10.17487/RFC3501, March 2003,
+              <https://www.rfc-editor.org/info/rfc3501>.
+
+   [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
+              <https://www.rfc-editor.org/info/rfc5234>.
+
+   [RFC6154]  Leiba, B. and J. Nicolson, "IMAP LIST Extension for
+              Special-Use Mailboxes", RFC 6154, DOI 10.17487/RFC6154,
+              March 2011, <https://www.rfc-editor.org/info/rfc6154>.
+
+   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", BCP 26,
+              RFC 8126, DOI 10.17487/RFC8126, June 2017,
+              <https://www.rfc-editor.org/info/rfc8126>.
+
+7.2.  Informative References
+
+   [JMAP-MAIL]
+              Jenkins, N. and C. Newman, "JMAP for Mail", Work in
+              Progress, draft-ietf-jmap-mail-07, August 2018.
+
+   [RFC5258]  Leiba, B. and A. Melnikov, "Internet Message Access
+              Protocol version 4 - LIST Command Extensions", RFC 5258,
+              DOI 10.17487/RFC5258, June 2008,
+              <https://www.rfc-editor.org/info/rfc5258>.
+
+   [RFC5788]  Melnikov, A. and D. Cridland, "IMAP4 Keyword Registry",
+              RFC 5788, DOI 10.17487/RFC5788, March 2010,
+              <https://www.rfc-editor.org/info/rfc5788>.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Leiba                        Standards Track                   [Page 10]
+
+RFC 8457         IMAP "Important" Keyword and Attribute   September 2018
+
+
+Contributors
+
+   The following author was an original contributor to this document in
+   addition to the editor.
+
+   Eric "Iceman"
+   Google
+   Email: iceman@google.com
+
+Author's Address
+
+   Barry Leiba (editor)
+   Huawei Technologies
+
+   Phone: +1 646 827 0648
+   Email: barryleiba@computer.org
+   URI:   http://internetmessagingtechnology.org/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Leiba                        Standards Track                   [Page 11]
+

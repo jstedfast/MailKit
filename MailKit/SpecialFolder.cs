@@ -48,9 +48,14 @@ namespace MailKit {
 		Drafts,
 
 		/// <summary>
-		/// The special folder that contains important messages.
+		/// The special folder that contains flagged messages.
 		/// </summary>
 		Flagged,
+
+		/// <summary>
+		/// The special folder that contains important messages.
+		/// </summary>
+		Important,
 
 		/// <summary>
 		/// The special folder that contains spam messages.

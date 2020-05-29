@@ -498,6 +498,14 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the special folder containing important messages.
+		/// </summary>
+		/// <value>The important folder.</value>
+		public ImapFolder Important {
+			get; private set;
+		}
+
+		/// <summary>
 		/// Gets the special folder containing junk messages.
 		/// </summary>
 		/// <value>The junk folder.</value>
@@ -2405,6 +2413,8 @@ namespace MailKit.Net.Imap {
 				Drafts = folder;
 			if ((folder.Attributes & FolderAttributes.Flagged) != 0)
 				Flagged = folder;
+			if ((folder.Attributes & FolderAttributes.Important) != 0)
+				Important = folder;
 			if ((folder.Attributes & FolderAttributes.Junk) != 0)
 				Junk = folder;
 			if ((folder.Attributes & FolderAttributes.Sent) != 0)

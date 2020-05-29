@@ -2126,13 +2126,14 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the SPECIAL-USE nor XLIST extensions.");
 
 			switch (folder) {
-			case SpecialFolder.All:     return engine.All;
-			case SpecialFolder.Archive: return engine.Archive;
-			case SpecialFolder.Drafts:  return engine.Drafts;
-			case SpecialFolder.Flagged: return engine.Flagged;
-			case SpecialFolder.Junk:    return engine.Junk;
-			case SpecialFolder.Sent:    return engine.Sent;
-			case SpecialFolder.Trash:   return engine.Trash;
+			case SpecialFolder.All:       return engine.All;
+			case SpecialFolder.Archive:   return engine.Archive;
+			case SpecialFolder.Drafts:    return engine.Drafts;
+			case SpecialFolder.Flagged:   return engine.Flagged;
+			case SpecialFolder.Important: return engine.Important;
+			case SpecialFolder.Junk:      return engine.Junk;
+			case SpecialFolder.Sent:      return engine.Sent;
+			case SpecialFolder.Trash:     return engine.Trash;
 			default: throw new ArgumentOutOfRangeException (nameof (folder));
 			}
 		}

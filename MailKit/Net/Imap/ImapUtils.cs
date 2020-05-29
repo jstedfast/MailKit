@@ -44,7 +44,8 @@ namespace MailKit.Net.Imap {
 	static class ImapUtils
 	{
 		const FolderAttributes SpecialUseAttributes = FolderAttributes.All | FolderAttributes.Archive | FolderAttributes.Drafts |
-		    FolderAttributes.Flagged | FolderAttributes.Inbox | FolderAttributes.Junk | FolderAttributes.Sent | FolderAttributes.Trash;
+		    FolderAttributes.Flagged | FolderAttributes.Important | FolderAttributes.Inbox | FolderAttributes.Junk |
+			FolderAttributes.Sent | FolderAttributes.Trash;
 		const string QuotedSpecials = " \t()<>@,;:\\\"/[]?=";
 		static readonly int InboxLength = "INBOX".Length;
 
@@ -506,12 +507,12 @@ namespace MailKit.Net.Imap {
 				case "\\Archive":       attrs |= FolderAttributes.Archive; break;
 				case "\\Drafts":        attrs |= FolderAttributes.Drafts; break;
 				case "\\Flagged":       attrs |= FolderAttributes.Flagged; break;
+				case "\\Important":     attrs |= FolderAttributes.Important; break;
 				case "\\Junk":          attrs |= FolderAttributes.Junk; break;
 				case "\\Sent":          attrs |= FolderAttributes.Sent; break;
 				case "\\Trash":         attrs |= FolderAttributes.Trash; break;
 				// XLIST flags:
 				case "\\AllMail":       attrs |= FolderAttributes.All; break;
-				case "\\Important":     attrs |= FolderAttributes.Flagged; break;
 				case "\\Inbox":         attrs |= FolderAttributes.Inbox; break;
 				case "\\Spam":          attrs |= FolderAttributes.Junk; break;
 				case "\\Starred":       attrs |= FolderAttributes.Flagged; break;

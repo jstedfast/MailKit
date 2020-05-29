@@ -890,13 +890,14 @@ namespace MailKit.Net.Imap {
 					uses.Append (' ');
 
 				switch (use) {
-				case SpecialFolder.All:     uses.Append ("\\All"); break;
-				case SpecialFolder.Archive: uses.Append ("\\Archive"); break;
-				case SpecialFolder.Drafts:  uses.Append ("\\Drafts"); break;
-				case SpecialFolder.Flagged: uses.Append ("\\Flagged"); break;
-				case SpecialFolder.Junk:    uses.Append ("\\Junk"); break;
-				case SpecialFolder.Sent:    uses.Append ("\\Sent"); break;
-				case SpecialFolder.Trash:   uses.Append ("\\Trash"); break;
+				case SpecialFolder.All:       uses.Append ("\\All"); break;
+				case SpecialFolder.Archive:   uses.Append ("\\Archive"); break;
+				case SpecialFolder.Drafts:    uses.Append ("\\Drafts"); break;
+				case SpecialFolder.Flagged:   uses.Append ("\\Flagged"); break;
+				case SpecialFolder.Important: uses.Append ("\\Important"); break;
+				case SpecialFolder.Junk:      uses.Append ("\\Junk"); break;
+				case SpecialFolder.Sent:      uses.Append ("\\Sent"); break;
+				case SpecialFolder.Trash:     uses.Append ("\\Trash"); break;
 				default: if (uses.Length > 0) uses.Length--; break;
 				}
 			}

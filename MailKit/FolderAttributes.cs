@@ -108,23 +108,28 @@ namespace MailKit {
 		Flagged       = (1 << 12),
 
 		/// <summary>
+		/// The folder is the special "Important" folder.
+		/// </summary>
+		Important     = (1 << 13),
+
+		/// <summary>
 		/// The folder is the special "Inbox" folder.
 		/// </summary>
-		Inbox         = (1 << 13),
+		Inbox         = (1 << 14),
 
 		/// <summary>
 		/// The folder is the special "Junk" folder.
 		/// </summary>
-		Junk          = (1 << 14),
+		Junk          = (1 << 15),
 
 		/// <summary>
 		/// The folder is the special "Sent" folder.
 		/// </summary>
-		Sent          = (1 << 15),
+		Sent          = (1 << 16),
 
 		/// <summary>
 		/// The folder is the special "Trash" folder.
 		/// </summary>
-		Trash         = (1 << 16),
+		Trash         = (1 << 17),
 	}
 }
