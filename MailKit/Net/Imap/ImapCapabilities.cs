@@ -326,6 +326,11 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		ObjectID         = 1L << 55,
 
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc8508">REPLACE</a> extension.
+		/// </summary>
+		Replace          = 1L << 56,
+
 		#region GMail Extensions
 
 		/// <summary>

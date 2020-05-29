@@ -1178,6 +1178,7 @@ namespace MailKit.Net.Imap {
 					case "STATUS=SIZE":           Capabilities |= ImapCapabilities.StatusSize; break;
 					case "LIST-MYRIGHTS":         Capabilities |= ImapCapabilities.ListMyRights; break;
 					case "OBJECTID":              Capabilities |= ImapCapabilities.ObjectID; break;
+					case "REPLACE":               Capabilities |= ImapCapabilities.Replace; break;
 					case "XLIST":                 Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":            Capabilities |= ImapCapabilities.GMailExt1; QuirksMode = ImapQuirksMode.GMail; break;
 					case "XSTOP":                 QuirksMode = ImapQuirksMode.ProtonMail; break;
