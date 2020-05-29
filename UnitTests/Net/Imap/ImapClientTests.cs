@@ -82,13 +82,14 @@ namespace UnitTests.Net.Imap {
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
 		{
 			switch (special) {
-			case SpecialFolder.All:     return FolderAttributes.All;
-			case SpecialFolder.Archive: return FolderAttributes.Archive;
-			case SpecialFolder.Drafts:  return FolderAttributes.Drafts;
-			case SpecialFolder.Flagged: return FolderAttributes.Flagged;
-			case SpecialFolder.Junk:    return FolderAttributes.Junk;
-			case SpecialFolder.Sent:    return FolderAttributes.Sent;
-			case SpecialFolder.Trash:   return FolderAttributes.Trash;
+			case SpecialFolder.All:       return FolderAttributes.All;
+			case SpecialFolder.Archive:   return FolderAttributes.Archive;
+			case SpecialFolder.Drafts:    return FolderAttributes.Drafts;
+			case SpecialFolder.Flagged:   return FolderAttributes.Flagged;
+			case SpecialFolder.Important: return FolderAttributes.Important;
+			case SpecialFolder.Junk:      return FolderAttributes.Junk;
+			case SpecialFolder.Sent:      return FolderAttributes.Sent;
+			case SpecialFolder.Trash:     return FolderAttributes.Trash;
 			default: throw new ArgumentOutOfRangeException ();
 			}
 		}
@@ -2241,7 +2242,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
 				AssertFolder (folders[2], "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (folders[3], "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (folders[5], "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (folders[6], "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (folders[7], "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2250,7 +2251,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.Inbox, "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.All), "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Drafts), "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				//AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (client.GetFolder (SpecialFolder.Important), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Sent), "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Junk), "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2265,7 +2266,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
 				AssertFolder (folders[2], "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (folders[3], "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (folders[5], "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (folders[6], "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (folders[7], "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2274,7 +2275,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.Inbox, "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.All), "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Drafts), "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				//AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (client.GetFolder (SpecialFolder.Important), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Sent), "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Junk), "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2289,7 +2290,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
 				AssertFolder (folders[2], "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (folders[3], "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (folders[5], "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (folders[6], "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (folders[7], "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2298,7 +2299,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.Inbox, "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.All), "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Drafts), "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				//AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (client.GetFolder (SpecialFolder.Important), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Sent), "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Junk), "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2349,7 +2350,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
 				AssertFolder (folders[2], "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (folders[3], "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (folders[5], "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (folders[6], "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (folders[7], "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2358,7 +2359,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.Inbox, "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.All), "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Drafts), "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				//AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (client.GetFolder (SpecialFolder.Important), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Sent), "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Junk), "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2373,7 +2374,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
 				AssertFolder (folders[2], "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (folders[3], "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (folders[5], "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (folders[6], "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (folders[7], "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2382,7 +2383,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.Inbox, "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.All), "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Drafts), "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				//AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (client.GetFolder (SpecialFolder.Important), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Sent), "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Junk), "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2397,7 +2398,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
 				AssertFolder (folders[2], "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (folders[3], "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (folders[4], "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (folders[5], "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (folders[6], "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (folders[7], "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);
@@ -2406,7 +2407,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.Inbox, "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.All), "[Gmail]/All Mail", "f668b57d-9f42-453b-b315-a18cd3eb0f85", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 41234, 67, 0, 1210, 11, 3, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Drafts), "[Gmail]/Drafts", "fdacc3c7-4e20-4ca0-a0d7-4f7267187e48", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 41234, 0, 0, 1, 6, 0, 1024);
-				//AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 58, 0, 307, 9, 0, 1024);
+				AssertFolder (client.GetFolder (SpecialFolder.Important), "[Gmail]/Important", "2a0410e1-252a-4ee8-b48d-30111cda734a", FolderAttributes.HasNoChildren | FolderAttributes.Important, true, 41234, 58, 0, 307, 9, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Sent), "[Gmail]/Sent Mail", "79da5ecd-afe4-440e-81ce-64ace69c9fbd", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 41234, 4, 0, 7, 5, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Junk), "[Gmail]/Spam", "f5df5af8-5e11-49a5-891d-c3e05591265e", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 41234, 0, 0, 1, 3, 0, 1024);
 				AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Starred", "93ad849a-2127-4c8e-ac41-594cd0a346a4", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 41234, 1, 0, 7, 4, 0, 1024);

@@ -48,13 +48,14 @@ namespace UnitTests.Net.Imap {
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
 		{
 			switch (special) {
-			case SpecialFolder.All:     return FolderAttributes.All;
-			case SpecialFolder.Archive: return FolderAttributes.Archive;
-			case SpecialFolder.Drafts:  return FolderAttributes.Drafts;
-			case SpecialFolder.Flagged: return FolderAttributes.Flagged;
-			case SpecialFolder.Junk:    return FolderAttributes.Junk;
-			case SpecialFolder.Sent:    return FolderAttributes.Sent;
-			case SpecialFolder.Trash:   return FolderAttributes.Trash;
+			case SpecialFolder.All:       return FolderAttributes.All;
+			case SpecialFolder.Archive:   return FolderAttributes.Archive;
+			case SpecialFolder.Drafts:    return FolderAttributes.Drafts;
+			case SpecialFolder.Flagged:   return FolderAttributes.Flagged;
+			case SpecialFolder.Important: return FolderAttributes.Important;
+			case SpecialFolder.Junk:      return FolderAttributes.Junk;
+			case SpecialFolder.Sent:      return FolderAttributes.Sent;
+			case SpecialFolder.Trash:     return FolderAttributes.Trash;
 			default: throw new ArgumentOutOfRangeException ();
 			}
 		}
