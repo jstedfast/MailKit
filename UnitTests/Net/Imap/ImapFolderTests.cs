@@ -777,6 +777,328 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		List<ImapReplayCommand> CreateReplaceCommands (bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+replace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
+
+			internalDates = withInternalDates ? new List<DateTimeOffset> () : null;
+			messages = new List<MimeMessage> ();
+			flags = new List<MessageFlags> ();
+			var command = new StringBuilder ();
+			int id = 5;
+
+			for (int i = 0; i < 8; i++) {
+				MimeMessage message;
+				string latin1;
+				long length;
+
+				using (var resource = GetResourceStream (string.Format ("common.message.{0}.msg", i)))
+					message = MimeMessage.Load (resource);
+
+				messages.Add (message);
+				flags.Add (MessageFlags.Seen);
+				if (withInternalDates)
+					internalDates.Add (message.Date);
+
+				using (var stream = new MemoryStream ()) {
+					var options = FormatOptions.Default.Clone ();
+					options.NewLineFormat = NewLineFormat.Dos;
+					options.EnsureNewLine = true;
+
+					message.WriteTo (options, stream);
+					length = stream.Length;
+					stream.Position = 0;
+
+					using (var reader = new StreamReader (stream, Latin1))
+						latin1 = reader.ReadToEnd ();
+				}
+
+				var tag = string.Format ("A{0:D8}", id++);
+				command.Clear ();
+
+				command.AppendFormat ("{0} REPLACE {1} INBOX (\\Seen) ", tag, i + 1);
+
+				if (withInternalDates)
+					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
+
+				//if (length > 4096) {
+				//	command.Append ('{').Append (length.ToString ()).Append ("}\r\n");
+				//	commands.Add (new ImapReplayCommand (command.ToString (), ImapReplayCommandResponse.Plus));
+				//	commands.Add (new ImapReplayCommand (tag, latin1 + "\r\n", string.Format ("dovecot.append.{0}.txt", i + 1)));
+				//} else {
+					command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
+					commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
+				//}
+			}
+
+			commands.Add (new ImapReplayCommand (string.Format ("A{0:D8} LOGOUT\r\n", id), "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[TestCase (true, TestName = "TestReplaceWithInternalDates")]
+		[TestCase (false, TestName = "TestReplaceWithoutInternalDates")]
+		public void TestReplace (bool withInternalDates)
+		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+			List<DateTimeOffset> internalDates;
+			List<MimeMessage> messages;
+			List<MessageFlags> flags;
+
+			var commands = CreateReplaceCommands (withInternalDates, out messages, out flags, out internalDates);
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
+
+				client.Inbox.Open (FolderAccess.ReadWrite);
+
+				for (int i = 0; i < messages.Count; i++) {
+					UniqueId? uid;
+
+					if (withInternalDates)
+						uid = client.Inbox.Replace (i, messages[i], flags[i], internalDates[i]);
+					else
+						uid = client.Inbox.Replace (i, messages[i], flags[i]);
+
+					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
+					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+				}
+
+				client.Disconnect (true);
+			}
+		}
+
+		[TestCase (true, TestName = "TestReplaceWithInternalDatesAsync")]
+		[TestCase (false, TestName = "TestReplaceWithoutInternalDatesAsync")]
+		public async Task TestReplaceAsync (bool withInternalDates)
+		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+			List<DateTimeOffset> internalDates;
+			List<MimeMessage> messages;
+			List<MessageFlags> flags;
+
+			var commands = CreateReplaceCommands (withInternalDates, out messages, out flags, out internalDates);
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
+
+				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				for (int i = 0; i < messages.Count; i++) {
+					UniqueId? uid;
+
+					if (withInternalDates)
+						uid = await client.Inbox.ReplaceAsync (i, messages[i], flags[i], internalDates[i]);
+					else
+						uid = await client.Inbox.ReplaceAsync (i, messages[i], flags[i]);
+
+					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
+					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		List<ImapReplayCommand> CreateReplaceByUidCommands (bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+replace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
+
+			internalDates = withInternalDates ? new List<DateTimeOffset> () : null;
+			messages = new List<MimeMessage> ();
+			flags = new List<MessageFlags> ();
+			var command = new StringBuilder ();
+			int id = 5;
+
+			for (int i = 0; i < 8; i++) {
+				MimeMessage message;
+				string latin1;
+				long length;
+
+				using (var resource = GetResourceStream (string.Format ("common.message.{0}.msg", i)))
+					message = MimeMessage.Load (resource);
+
+				messages.Add (message);
+				flags.Add (MessageFlags.Seen);
+				if (withInternalDates)
+					internalDates.Add (message.Date);
+
+				using (var stream = new MemoryStream ()) {
+					var options = FormatOptions.Default.Clone ();
+					options.NewLineFormat = NewLineFormat.Dos;
+					options.EnsureNewLine = true;
+
+					message.WriteTo (options, stream);
+					length = stream.Length;
+					stream.Position = 0;
+
+					using (var reader = new StreamReader (stream, Latin1))
+						latin1 = reader.ReadToEnd ();
+				}
+
+				var tag = string.Format ("A{0:D8}", id++);
+				command.Clear ();
+
+				command.AppendFormat ("{0} UID REPLACE {1} INBOX (\\Seen) ", tag, i + 1);
+
+				if (withInternalDates)
+					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
+
+				//if (length > 4096) {
+				//	command.Append ('{').Append (length.ToString ()).Append ("}\r\n");
+				//	commands.Add (new ImapReplayCommand (command.ToString (), ImapReplayCommandResponse.Plus));
+				//	commands.Add (new ImapReplayCommand (tag, latin1 + "\r\n", string.Format ("dovecot.append.{0}.txt", i + 1)));
+				//} else {
+				command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
+				commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
+				//}
+			}
+
+			commands.Add (new ImapReplayCommand (string.Format ("A{0:D8} LOGOUT\r\n", id), "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[TestCase (true, TestName = "TestReplaceByUidWithInternalDates")]
+		[TestCase (false, TestName = "TestReplaceByUidWithoutInternalDates")]
+		public void TestReplaceByUid (bool withInternalDates)
+		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+			List<DateTimeOffset> internalDates;
+			List<MimeMessage> messages;
+			List<MessageFlags> flags;
+
+			var commands = CreateReplaceByUidCommands (withInternalDates, out messages, out flags, out internalDates);
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
+
+				client.Inbox.Open (FolderAccess.ReadWrite);
+
+				for (int i = 0; i < messages.Count; i++) {
+					UniqueId? uid;
+
+					if (withInternalDates)
+						uid = client.Inbox.Replace (new UniqueId ((uint) i + 1), messages[i], flags[i], internalDates[i]);
+					else
+						uid = client.Inbox.Replace (new UniqueId ((uint) i + 1), messages[i], flags[i]);
+
+					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
+					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+				}
+
+				client.Disconnect (true);
+			}
+		}
+
+		[TestCase (true, TestName = "TestReplaceByUidWithInternalDatesAsync")]
+		[TestCase (false, TestName = "TestReplaceByUidWithoutInternalDatesAsync")]
+		public async Task TestReplaceByUidAsync (bool withInternalDates)
+		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+			List<DateTimeOffset> internalDates;
+			List<MimeMessage> messages;
+			List<MessageFlags> flags;
+
+			var commands = CreateReplaceByUidCommands (withInternalDates, out messages, out flags, out internalDates);
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
+
+				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				for (int i = 0; i < messages.Count; i++) {
+					UniqueId? uid;
+
+					if (withInternalDates)
+						uid = await client.Inbox.ReplaceAsync (new UniqueId ((uint) i + 1), messages[i], flags[i], internalDates[i]);
+					else
+						uid = await client.Inbox.ReplaceAsync (new UniqueId ((uint) i + 1), messages[i], flags[i]);
+
+					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
+					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		List<ImapReplayCommand> CreateCreateRenameDeleteCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();

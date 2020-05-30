@@ -225,6 +225,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+annotate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+gmail-capabilities.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+replace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\copy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\enable-qresync.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\examine-folder.txt" />
@@ -550,7 +551,6 @@
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-expn.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-vrfy.txt" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>
