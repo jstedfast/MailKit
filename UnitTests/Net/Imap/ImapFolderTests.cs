@@ -103,6 +103,7 @@ namespace UnitTests.Net.Imap {
 				var messages = new List<MimeMessage> ();
 				var flags = new List<MessageFlags> ();
 				var now = DateTimeOffset.Now;
+				var uid = new UniqueId (1);
 
 				messages.Add (CreateThreadableMessage ("A", "<a@mimekit.net>", null, now.AddMinutes (-7)));
 				messages.Add (CreateThreadableMessage ("B", "<b@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-6)));
@@ -239,6 +240,32 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.AppendAsync (FormatOptions.Default, messages, null, dates));
 				Assert.Throws<ArgumentNullException> (() => inbox.Append (FormatOptions.Default, messages, flags, null));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.AppendAsync (FormatOptions.Default, messages, flags, null));
+
+				// Replace
+				Assert.Throws<ArgumentException> (() => inbox.Replace (UniqueId.Invalid, messages[0]));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.ReplaceAsync (UniqueId.Invalid, messages[0]));
+				Assert.Throws<ArgumentException> (() => inbox.Replace (UniqueId.Invalid, messages[0], MessageFlags.None, DateTimeOffset.Now));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.ReplaceAsync (UniqueId.Invalid, messages[0], MessageFlags.None, DateTimeOffset.Now));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (uid, null));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ReplaceAsync (uid, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (uid, null, MessageFlags.None, DateTimeOffset.Now));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ReplaceAsync (uid, null, MessageFlags.None, DateTimeOffset.Now));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (null, uid, messages[0]));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ReplaceAsync (null, uid, messages[0]));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (null, uid, messages[0], MessageFlags.None, DateTimeOffset.Now));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ReplaceAsync (null, uid, messages[0], MessageFlags.None, DateTimeOffset.Now));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Replace (-1, messages[0]));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.ReplaceAsync (-1, messages[0]));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Replace (-1, messages[0], MessageFlags.None, DateTimeOffset.Now));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.ReplaceAsync (-1, messages[0], MessageFlags.None, DateTimeOffset.Now));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (0, null));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ReplaceAsync (0, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (0, null, MessageFlags.None, DateTimeOffset.Now));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ReplaceAsync (0, null, MessageFlags.None, DateTimeOffset.Now));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (null, 0, messages[0]));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ReplaceAsync (null, 0, messages[0]));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (null, 0, messages[0], MessageFlags.None, DateTimeOffset.Now));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ReplaceAsync (null, 0, messages[0], MessageFlags.None, DateTimeOffset.Now));
 
 				// CopyTo
 				Assert.Throws<ArgumentNullException> (() => inbox.CopyTo ((IList<UniqueId>) null, inbox));
