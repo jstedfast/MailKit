@@ -3675,10 +3675,7 @@ namespace MailKit.Net.Imap {
 
 				if (unmark.Count > 0) {
 					// clear the \Deleted flag on all messages except the ones that are to be expunged
-					if (doAsync)
-						await RemoveFlagsAsync (unmark, MessageFlags.Deleted, true, cancellationToken).ConfigureAwait (false);
-					else
-						RemoveFlags (unmark, MessageFlags.Deleted, true, cancellationToken);
+					await ModifyFlagsAsync (unmark, null, MessageFlags.Deleted, null, "-FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
 				// expunge the folder
@@ -3686,10 +3683,7 @@ namespace MailKit.Net.Imap {
 
 				if (unmark.Count > 0) {
 					// restore the \Deleted flags
-					if (doAsync)
-						await AddFlagsAsync (unmark, MessageFlags.Deleted, true, cancellationToken).ConfigureAwait (false);
-					else
-						AddFlags (unmark, MessageFlags.Deleted, true, cancellationToken);
+					await ModifyFlagsAsync (unmark, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
 				return;
@@ -5486,10 +5480,7 @@ namespace MailKit.Net.Imap {
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				var copied = await CopyToAsync (uids, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				if (doAsync)
-					await AddFlagsAsync (uids, MessageFlags.Deleted, true, cancellationToken).ConfigureAwait (false);
-				else
-					AddFlags (uids, MessageFlags.Deleted, true, cancellationToken);
+				await ModifyFlagsAsync (uids, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
 				await ExpungeAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
 				return copied;
 			}
@@ -5812,10 +5803,7 @@ namespace MailKit.Net.Imap {
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				await CopyToAsync (indexes, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				if (doAsync)
-					await AddFlagsAsync (indexes, MessageFlags.Deleted, true, cancellationToken).ConfigureAwait (false);
-				else
-					AddFlags (indexes, MessageFlags.Deleted, true, cancellationToken);
+				await ModifyFlagsAsync (indexes, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
 				return;
 			}
 
