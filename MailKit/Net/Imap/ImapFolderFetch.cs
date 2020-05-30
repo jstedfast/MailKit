@@ -797,7 +797,7 @@ namespace MailKit.Net.Imap
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException (nameof (items));
 
-			if (!SupportsModSeq)
+			if (!supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
@@ -846,7 +846,7 @@ namespace MailKit.Net.Imap
 
 			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
-			if (!SupportsModSeq)
+			if (!supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
@@ -1697,7 +1697,7 @@ namespace MailKit.Net.Imap
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException (nameof (items));
 
-			if (!SupportsModSeq)
+			if (!supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
@@ -1740,7 +1740,7 @@ namespace MailKit.Net.Imap
 
 			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
-			if (!SupportsModSeq)
+			if (!supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
@@ -2574,7 +2574,7 @@ namespace MailKit.Net.Imap
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException (nameof (items));
 
-			if (!SupportsModSeq)
+			if (!supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
@@ -2616,7 +2616,7 @@ namespace MailKit.Net.Imap
 
 			var headerFields = ImapUtils.GetUniqueHeaders (headers);
 
-			if (!SupportsModSeq)
+			if (!supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
