@@ -492,13 +492,7 @@ namespace UnitTests.Net.Imap {
 		[TestCase (false, TestName = "TestAppendWithoutInternalDates")]
 		public void TestAppend (bool withInternalDates)
 		{
-			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
-			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
-
-			var commands = CreateAppendCommands (withInternalDates, out messages, out flags, out internalDates);
+			var commands = CreateAppendCommands (withInternalDates, out var messages, out var flags, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -533,13 +527,7 @@ namespace UnitTests.Net.Imap {
 		[TestCase (false, TestName = "TestAppendWithoutInternalDatesAsync")]
 		public async Task TestAppendAsync (bool withInternalDates)
 		{
-			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
-			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
-
-			var commands = CreateAppendCommands (withInternalDates, out messages, out flags, out internalDates);
+			var commands = CreateAppendCommands (withInternalDates, out var messages, out var flags, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -558,9 +546,9 @@ namespace UnitTests.Net.Imap {
 					UniqueId? uid;
 
 					if (withInternalDates)
-						uid = await client.Inbox.AppendAsync (messages [i], flags [i], internalDates [i]);
+						uid = await client.Inbox.AppendAsync (messages[i], flags[i], internalDates[i]);
 					else
-						uid = await client.Inbox.AppendAsync (messages [i], flags [i]);
+						uid = await client.Inbox.AppendAsync (messages[i], flags[i]);
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
@@ -667,14 +655,8 @@ namespace UnitTests.Net.Imap {
 		[TestCase (false, TestName = "TestMultiAppendWithoutInternalDates")]
 		public void TestMultiAppend (bool withInternalDates)
 		{
-			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
-			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
+			var commands = CreateMultiAppendCommands (withInternalDates, out var messages, out var flags, out var internalDates);
 			IList<UniqueId> uids;
-
-			var commands = CreateMultiAppendCommands (withInternalDates, out messages, out flags, out internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -724,14 +706,8 @@ namespace UnitTests.Net.Imap {
 		[TestCase (false, TestName = "TestMultiAppendWithoutInternalDatesAsync")]
 		public async Task TestMultiAppendAsync (bool withInternalDates)
 		{
-			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
-			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
+			var commands = CreateMultiAppendCommands (withInternalDates, out var messages, out var flags, out var internalDates);
 			IList<UniqueId> uids;
-
-			var commands = CreateMultiAppendCommands (withInternalDates, out messages, out flags, out internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -777,7 +753,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateReplaceCommands (bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		List<ImapReplayCommand> CreateReplaceCommands (bool clientSide, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -822,7 +798,10 @@ namespace UnitTests.Net.Imap {
 				var tag = string.Format ("A{0:D8}", id++);
 				command.Clear ();
 
-				command.AppendFormat ("{0} REPLACE {1} INBOX (\\Seen) ", tag, i + 1);
+				if (clientSide)
+					command.AppendFormat ("{0} APPEND INBOX (\\Seen) ", tag);
+				else
+					command.AppendFormat ("{0} REPLACE {1} INBOX (\\Seen) ", tag, i + 1);
 
 				if (withInternalDates)
 					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
@@ -835,6 +814,11 @@ namespace UnitTests.Net.Imap {
 					command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
 					commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
 				//}
+
+				if (clientSide) {
+					tag = string.Format ("A{0:D8}", id++);
+					commands.Add (new ImapReplayCommand ($"{tag} STORE {i + 1} +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK));
+				}
 			}
 
 			commands.Add (new ImapReplayCommand (string.Format ("A{0:D8} LOGOUT\r\n", id), "gmail.logout.txt"));
@@ -842,17 +826,13 @@ namespace UnitTests.Net.Imap {
 			return commands;
 		}
 
-		[TestCase (true, TestName = "TestReplaceWithInternalDates")]
-		[TestCase (false, TestName = "TestReplaceWithoutInternalDates")]
-		public void TestReplace (bool withInternalDates)
+		[TestCase (false, true, TestName = "TestReplaceWithInternalDates")]
+		[TestCase (false, false, TestName = "TestReplaceWithoutInternalDates")]
+		[TestCase (true, true, TestName = "TestClientSideReplaceWithInternalDates")]
+		[TestCase (true, false, TestName = "TestClientSideReplaceWithoutInternalDates")]
+		public void TestReplace (bool clientSide, bool withInternalDates)
 		{
-			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
-			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
-
-			var commands = CreateReplaceCommands (withInternalDates, out messages, out flags, out internalDates);
+			var commands = CreateReplaceCommands (clientSide, withInternalDates, out var messages, out var flags, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -870,7 +850,10 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
+				if (clientSide)
+					client.Capabilities &= ~ImapCapabilities.Replace;
+				else
+					Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
 
 				client.Inbox.Open (FolderAccess.ReadWrite);
 
@@ -890,17 +873,13 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[TestCase (true, TestName = "TestReplaceWithInternalDatesAsync")]
-		[TestCase (false, TestName = "TestReplaceWithoutInternalDatesAsync")]
-		public async Task TestReplaceAsync (bool withInternalDates)
+		[TestCase (false, true, TestName = "TestReplaceWithInternalDatesAsync")]
+		[TestCase (false, false, TestName = "TestReplaceWithoutInternalDatesAsync")]
+		[TestCase (true, true, TestName = "TestClientSideReplaceWithInternalDatesAsync")]
+		[TestCase (true, false, TestName = "TestClientSideReplaceWithoutInternalDatesAsync")]
+		public async Task TestReplaceAsync (bool clientSide, bool withInternalDates)
 		{
-			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
-			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
-
-			var commands = CreateReplaceCommands (withInternalDates, out messages, out flags, out internalDates);
+			var commands = CreateReplaceCommands (clientSide, withInternalDates, out var messages, out var flags, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -918,7 +897,10 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
+				if (clientSide)
+					client.Capabilities &= ~ImapCapabilities.Replace;
+				else
+					Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
 
 				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
 
@@ -938,7 +920,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateReplaceByUidCommands (bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		List<ImapReplayCommand> CreateReplaceByUidCommands (bool clientSide, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -983,7 +965,10 @@ namespace UnitTests.Net.Imap {
 				var tag = string.Format ("A{0:D8}", id++);
 				command.Clear ();
 
-				command.AppendFormat ("{0} UID REPLACE {1} INBOX (\\Seen) ", tag, i + 1);
+				if (clientSide)
+					command.AppendFormat ("{0} APPEND INBOX (\\Seen) ", tag);
+				else
+					command.AppendFormat ("{0} UID REPLACE {1} INBOX (\\Seen) ", tag, i + 1);
 
 				if (withInternalDates)
 					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
@@ -996,6 +981,14 @@ namespace UnitTests.Net.Imap {
 				command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
 				commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
 				//}
+
+				if (clientSide) {
+					tag = string.Format ("A{0:D8}", id++);
+					commands.Add (new ImapReplayCommand ($"{tag} UID STORE {i + 1} +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK));
+
+					tag = string.Format ("A{0:D8}", id++);
+					commands.Add (new ImapReplayCommand ($"{tag} UID EXPUNGE {i + 1}\r\n", ImapReplayCommandResponse.OK));
+				}
 			}
 
 			commands.Add (new ImapReplayCommand (string.Format ("A{0:D8} LOGOUT\r\n", id), "gmail.logout.txt"));
@@ -1003,17 +996,13 @@ namespace UnitTests.Net.Imap {
 			return commands;
 		}
 
-		[TestCase (true, TestName = "TestReplaceByUidWithInternalDates")]
-		[TestCase (false, TestName = "TestReplaceByUidWithoutInternalDates")]
-		public void TestReplaceByUid (bool withInternalDates)
+		[TestCase (false, true, TestName = "TestReplaceByUidWithInternalDates")]
+		[TestCase (false, false, TestName = "TestReplaceByUidWithoutInternalDates")]
+		[TestCase (true, true, TestName = "TestClientSideReplaceByUidWithInternalDates")]
+		[TestCase (true, false, TestName = "TestClientSideReplaceByUidWithoutInternalDates")]
+		public void TestReplaceByUid (bool clientSide, bool withInternalDates)
 		{
-			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
-			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
-
-			var commands = CreateReplaceByUidCommands (withInternalDates, out messages, out flags, out internalDates);
+			var commands = CreateReplaceByUidCommands (clientSide, withInternalDates, out var messages, out var flags, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1031,7 +1020,10 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
+				if (clientSide)
+					client.Capabilities &= ~ImapCapabilities.Replace;
+				else
+					Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
 
 				client.Inbox.Open (FolderAccess.ReadWrite);
 
@@ -1051,17 +1043,13 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[TestCase (true, TestName = "TestReplaceByUidWithInternalDatesAsync")]
-		[TestCase (false, TestName = "TestReplaceByUidWithoutInternalDatesAsync")]
-		public async Task TestReplaceByUidAsync (bool withInternalDates)
+		[TestCase (false, true, TestName = "TestReplaceByUidWithInternalDatesAsync")]
+		[TestCase (false, false, TestName = "TestReplaceByUidWithoutInternalDatesAsync")]
+		[TestCase (true, true, TestName = "TestClientSideReplaceByUidWithInternalDatesAsync")]
+		[TestCase (true, false, TestName = "TestClientSideReplaceByUidWithoutInternalDatesAsync")]
+		public async Task TestReplaceByUidAsync (bool clientSide, bool withInternalDates)
 		{
-			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
-			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
-
-			var commands = CreateReplaceByUidCommands (withInternalDates, out messages, out flags, out internalDates);
+			var commands = CreateReplaceByUidCommands (clientSide, withInternalDates, out var messages, out var flags, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1079,7 +1067,10 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
+				if (clientSide)
+					client.Capabilities &= ~ImapCapabilities.Replace;
+				else
+					Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Replace), "REPLACE");
 
 				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
 
