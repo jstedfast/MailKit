@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.6.0</version>
+    <version>2.7.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -18,7 +18,7 @@ Features include:
 * SASL Authentication via SCRAM-SHA-256, SCRAM-SHA-1, NTLM, DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
 * A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME, ENHANCEDSTATUSCODES, SIZE, DSN, PIPELINING and SMTPUTF8.
 * A fully-cancellable Pop3Client with support for STLS, UIDL, APOP, PIPELINING, UTF8, and LANG.
-* A fully-cancellable ImapClient with support for ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, WITHIN, ENABLE, QRESYNC, SORT, THREAD, ANNOTATE, LIST-EXTENDED, ESORT, METADATA / METADATA-SERVER, NOTIFY, FILTERS, LIST-STATUS, SORT=DISPLAY, SPECIAL-USE / CREATE-SPECIAL-USE, SEARCH=FUZZY, MOVE, UTF8=ACCEPT / UTF8=ONLY, LITERAL-, APPENDLIMIT, STATUS=SIZE, OBJECTID, XLIST, and X-GM-EXT1.
+* A fully-cancellable ImapClient with support for ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, WITHIN, ENABLE, QRESYNC, SORT, THREAD, ANNOTATE, LIST-EXTENDED, ESORT, METADATA / METADATA-SERVER, NOTIFY, FILTERS, LIST-STATUS, SORT=DISPLAY, SPECIAL-USE / CREATE-SPECIAL-USE, SEARCH=FUZZY, MOVE, UTF8=ACCEPT / UTF8=ONLY, LITERAL-, APPENDLIMIT, STATUS=SIZE, OBJECTID, REPLACE, XLIST, and X-GM-EXT1.
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
 * Asynchronous versions of all methods that hit the network.
 * S/MIME, OpenPGP, DKIM and ARC support via MimeKit.
@@ -26,12 +26,17 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Properly handle connection drops in SmtpClient.NoOp() and NoOpAsync() methods.
-* Improved default SSL certificate validation logic to be more secure and to recognize the most commonly used mail servers even if their Root CA Certificates are not available on the system.
-* SslHandshakeException's Message has been improved to be based on the errors reported in the ServerCertificateValidationCallback and also now has 2 new X509Certificate properties which represent the ServerCertificate and the RootCertificateAuthority in order to help developers diagnose problems. (issue #1002)
-* Improved the IMAP PreviewText to extract text from HTML bodies. (issue #1001)
-* Renamed MessageSummaryItems.Id to MessageSummaryItems.EmailId to better map to the property name used in the IMAP OBJECTID specification.
-* Updated NetworkStream.ReadAsync() and WriteAsync() methods to make use of timeouts. (issue #827)
+* Added a MessageSummary.Folder property and MessageThread.Message property to allow developers to thread messages from multiple IMAP folders and be able to figure out which folder each message belongs to.
+* Added a work-around for IMAP servers that send a UIDNEXT response with a value of '0'. (issue #1010)
+* Added an IMailFolder.Supports(FolderFeature) method so that developers can check whether a feature is supported by the folder without needing a reference to the corresponding ImapClient object in order to check the Capabilities.
+* Fixed the HTTP proxy client to accept "200 OK" with an empty body as a successful connection. (issue #1015)
+* Fixed the SOCKS5 proxy client to correctly send an authentication request. (issue #1019)
+* Added support for customizable ProtocolLogger client/server prefixes. (issue #1024)
+* Fixed an NRE in SslHandshakeException.Create() when running on Mono/Linux.
+* Modified the SmtpClient to take advantage of the SMTPUTF8 extension for the `MAIL FROM` and `RCPT TO` commands even if a `options.International` is not explicitly set to `true` if any of the mailbox addresses are international addresses. (issue #1026)
+* Added support for a new Important SpecialFolder (rfc8457).
+* Added support for the IMAP REPLACE extension (rfc8508).
+* NuGet packages now include the portable pdb's.
 
 API Changes Since 2.0.x:
 
@@ -78,34 +83,34 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.6.0" />
+        <dependency id="MimeKit" version="2.8.0" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.6.0" />
+        <dependency id="MimeKit" version="2.8.0" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.6.0" />
+        <dependency id="MimeKit" version="2.8.0" />
       </group>
       <group targetFramework="net48">
-        <dependency id="MimeKit" version="2.6.0" />
+        <dependency id="MimeKit" version="2.8.0" />
       </group>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.6.0" />
+        <dependency id="MimeKit" version="2.8.0" />
       </group>
       <group targetFramework="netstandard1.6">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.6.0" />
+        <dependency id="MimeKit" version="2.8.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Net.NameResolution" version="4.3.0" />
         <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.6.0" />
+        <dependency id="MimeKit" version="2.8.0" />
       </group>
     </dependencies>
   </metadata>

@@ -118,6 +118,7 @@ motivate me to continue working on the project.
     * [APPENDLIMIT](https://tools.ietf.org/html/rfc7889)
     * [STATUS=SIZE](https://tools.ietf.org/html/rfc8438)
     * [OBJECTID](https://tools.ietf.org/html/rfc8474)
+    * [REPLACE](https://tools.ietf.org/html/rfc8508)
     * [XLIST](https://developers.google.com/gmail/imap_extensions)
     * [X-GM-EXT1](https://developers.google.com/gmail/imap_extensions) (X-GM-MSGID, X-GM-THRID, X-GM-RAW and X-GM-LABELS)
   * All APIs are cancellable.

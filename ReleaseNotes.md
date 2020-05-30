@@ -1,5 +1,31 @@
 # Release Notes
 
+### MailKit 2.7.0 (2020-05-30)
+
+* Added a MessageSummary.Folder property and MessageThread.Message property
+  to allow developers to thread messages from multiple IMAP folders and be
+  able to figure out which folder each message belongs to.
+* Added a work-around for IMAP servers that send a UIDNEXT response with a
+  value of '0'. (issue [#1010](https://github.com/jstedfast/MailKit/issues/1010))
+* Added an IMailFolder.Supports(FolderFeature) method so that developers can check
+  whether a feature is supported by the folder without needing a reference to the
+  corresponding ImapClient object in order to check the Capabilities.
+* Fixed the HTTP proxy client to accept "200 OK" with an empty body as a successful
+  connection. (issue [#1015](https://github.com/jstedfast/MailKit/issues/1015))
+* Fixed the SOCKS5 proxy client to correctly send an authentication request.
+  (issue [#1019](https://github.com/jstedfast/MailKit/issues/1019))
+* Added support for customizable ProtocolLogger client/server prefixes.
+  (issue [#1024](https://github.com/jstedfast/MailKit/issues/1024))
+* Fixed an NRE in SslHandshakeException.Create() when running on Mono/Linux.
+* Modified the SmtpClient to take advantage of the SMTPUTF8 extension for the
+  `MAIL FROM` and `RCPT TO` commands even if a `options.International` is not
+  explicitly set to `true` if any of the mailbox addresses are international
+  addresses.
+  (issue [#1026](https://github.com/jstedfast/MailKit/issues/1026))
+* Added support for a new Important SpecialFolder ([rfc8457](https://tools.ietf.org/html/rfc8457)).
+* Added support for the IMAP REPLACE extension ([rfc8508](https://tools.ietf.org/html/rfc8508)).
+* NuGet packages now include the portable pdb's.
+
 ### MailKit 2.6.0 (2020-04-03)
 
 * Properly handle connection drops in SmtpClient.NoOp() and NoOpAsync()
