@@ -46,9 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle" Version="1.8.5" />
-    <PackageReference Include="MimeKit" Version="2.6.0" />
-    <PackageReference Include="MailKit" Version="2.6.0" />
+    <PackageReference Include="MailKit" Version="2.7.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FolderSelectedEventArgs.cs" />
