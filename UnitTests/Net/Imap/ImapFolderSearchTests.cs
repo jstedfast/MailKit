@@ -435,6 +435,9 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
+				Assert.IsTrue (inbox.Supports (FolderFeature.Threading), "Supports threading");
+				Assert.IsTrue (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Supports threading by References");
+
 				var threaded = inbox.Thread (ThreadingAlgorithm.References, SearchQuery.SubjectContains ("привет"));
 				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");
 
@@ -479,6 +482,9 @@ namespace UnitTests.Net.Imap {
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
+
+				Assert.IsTrue (inbox.Supports (FolderFeature.Threading), "Supports threading");
+				Assert.IsTrue (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Supports threading by References");
 
 				var threaded = inbox.Thread (UniqueIdRange.All, ThreadingAlgorithm.References, SearchQuery.SubjectContains ("привет"));
 				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");

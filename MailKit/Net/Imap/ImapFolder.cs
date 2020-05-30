@@ -50,6 +50,8 @@ namespace MailKit.Net.Imap {
 	/// </example>
 	public partial class ImapFolder : MailFolder, IImapFolder
 	{
+		bool supportsModSeq;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.
 		/// </summary>
@@ -105,22 +107,6 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Get whether or not the folder supports quick resynchronization.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the folder supports quick resynchronization.</para>
-		/// <para>If quick resynchronization is supported by the folder, then
-		/// <see cref="Open(FolderAccess, uint, ulong, IList{UniqueId}, CancellationToken)"/> and
-		/// <see cref="OpenAsync(FolderAccess, uint, ulong, IList{UniqueId}, CancellationToken)"/> can
-		/// be used, otherwise they will throw <see cref="System.NotSupportedException"/> and should
-		/// not be used.</para>
-		/// </remarks>
-		/// <value><c>true</c> if supports quick resynchronization; otherwise, <c>false</c>.</value>
-		public override bool SupportsQuickResync {
-			get { return Engine.QResyncEnabled; }
-		}
-
-		/// <summary>
 		/// Gets an object that can be used to synchronize access to the IMAP server.
 		/// </summary>
 		/// <remarks>
@@ -131,6 +117,41 @@ namespace MailKit.Net.Imap {
 		/// <value>The lock object.</value>
 		public override object SyncRoot {
 			get { return Engine; }
+		}
+
+		/// <summary>
+		/// Get the threading algorithms supported by the folder.
+		/// </summary>
+		/// <remarks>
+		/// Get the threading algorithms supported by the folder.
+		/// </remarks>
+		/// <value>The supported threading algorithms.</value>
+		public override HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
+			get { return Engine.ThreadingAlgorithms; }
+		}
+
+		/// <summary>
+		/// Determine whether or not an <see cref="ImapFolder"/> supports a feature.
+		/// </summary>
+		/// <remarks>
+		/// Determines whether or not an <see cref="ImapFolder"/> supports a feature.
+		/// </remarks>
+		/// <param name="feature">The desired feature.</param>
+		/// <returns><c>true</c> if the feature is supported; otherwise, <c>false</c>.</returns>
+		public override bool Supports (FolderFeature feature)
+		{
+			switch (feature) {
+			case FolderFeature.AccessRights: return (Engine.Capabilities & ImapCapabilities.Acl) != 0;
+			case FolderFeature.Annotations: return AnnotationAccess != AnnotationAccess.None;
+			case FolderFeature.Metadata: return (Engine.Capabilities & ImapCapabilities.Metadata) != 0;
+			case FolderFeature.ModSequences: return supportsModSeq;
+			case FolderFeature.QuickResync: return Engine.QResyncEnabled;
+			case FolderFeature.Quotas: return (Engine.Capabilities & ImapCapabilities.Quota) != 0;
+			case FolderFeature.Sorting: return (Engine.Capabilities & ImapCapabilities.Sort) != 0;
+			case FolderFeature.Threading: return (Engine.Capabilities & ImapCapabilities.Thread) != 0;
+			case FolderFeature.UTF8: return Engine.UTF8Enabled;
+			default: return false;
+			}
 		}
 
 		void CheckState (bool open, bool rw)
@@ -173,7 +194,7 @@ namespace MailKit.Net.Imap {
 			MaxAnnotationSize = 0;
 
 			// condstore state
-			SupportsModSeq = false;
+			supportsModSeq = false;
 			HighestModSeq = 0;
 		}
 
@@ -235,14 +256,14 @@ namespace MailKit.Net.Imap {
 					break;
 				case ImapResponseCodeType.HighestModSeq:
 					var highestModSeq = ((HighestModSeqResponseCode) code).HighestModSeq;
-					SupportsModSeq = true;
+					supportsModSeq = true;
 					if (IsOpen)
 						UpdateHighestModSeq (highestModSeq);
 					else
 						HighestModSeq = highestModSeq;
 					break;
 				case ImapResponseCodeType.NoModSeq:
-					SupportsModSeq = false;
+					supportsModSeq = false;
 					HighestModSeq = 0;
 					break;
 				case ImapResponseCodeType.MailboxId:
@@ -352,7 +373,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.QuickResync) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
-			if (!SupportsQuickResync)
+			if (!Supports (FolderFeature.QuickResync))
 				throw new InvalidOperationException ("The QRESYNC extension has not been enabled.");
 
 			string qresync;

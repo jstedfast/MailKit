@@ -70,7 +70,7 @@ namespace MailKit.Net.Imap
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
-			if (modseq.HasValue && !SupportsModSeq)
+			if (modseq.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, true);
@@ -739,7 +739,7 @@ namespace MailKit.Net.Imap
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
-			if (modseq.HasValue && !SupportsModSeq)
+			if (modseq.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, true);

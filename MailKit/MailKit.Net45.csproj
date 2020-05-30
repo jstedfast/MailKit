@@ -185,6 +185,7 @@
     <Compile Include="FolderAccess.cs" />
     <Compile Include="FolderAttributes.cs" />
     <Compile Include="FolderCreatedEventArgs.cs" />
+    <Compile Include="FolderFeature.cs" />
     <Compile Include="FolderNamespace.cs" />
     <Compile Include="FolderNamespaceCollection.cs" />
     <Compile Include="FolderNotFoundException.cs" />

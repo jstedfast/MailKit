@@ -211,22 +211,9 @@ namespace MailKit {
 		/// <para>If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
 		/// argument will throw <see cref="System.NotSupportedException"/> and should not be used.</para>
 		/// </remarks>
-		/// <value><c>true</c> if supports mod-sequences; otherwise, <c>false</c>.</value>
+		/// <value><c>true</c> if the folder supports mod-sequences; otherwise, <c>false</c>.</value>
+		[Obsolete ("Use Supports(FolderFeature.ModSequences) instead.")]
 		bool SupportsModSeq { get; }
-
-		/// <summary>
-		/// Get whether or not the folder supports quick resynchronization.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the folder supports quick resynchronization.</para>
-		/// <para>If quick resynchronization is supported by the folder, then
-		/// <see cref="Open(FolderAccess, uint, ulong, IList{UniqueId}, CancellationToken)"/> and
-		/// <see cref="OpenAsync(FolderAccess, uint, ulong, IList{UniqueId}, CancellationToken)"/> can
-		/// be used, otherwise they will throw <see cref="System.NotSupportedException"/> and should
-		/// not be used.</para>
-		/// </remarks>
-		/// <value><c>true</c> if supports quick resynchronization; otherwise, <c>false</c>.</value>
-		bool SupportsQuickResync { get; }
 
 		/// <summary>
 		/// Get the highest mod-sequence value of all messages in the mailbox.
@@ -320,6 +307,25 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The total number of messages.</value>
 		int Count { get; }
+
+		/// <summary>
+		/// Get the threading algorithms supported by the folder.
+		/// </summary>
+		/// <remarks>
+		/// Get the threading algorithms supported by the folder.
+		/// </remarks>
+		/// <value>The supported threading algorithms.</value>
+		HashSet<ThreadingAlgorithm> ThreadingAlgorithms { get; }
+
+		/// <summary>
+		/// Determine whether or not an <see cref="IMailFolder"/> supports a feature.
+		/// </summary>
+		/// <remarks>
+		/// Determines whether or not an <see cref="IMailFolder"/> supports a feature.
+		/// </remarks>
+		/// <param name="feature">The desired feature.</param>
+		/// <returns><c>true</c> if the feature is supported; otherwise, <c>false</c>.</returns>
+		bool Supports (FolderFeature feature);
 
 		/// <summary>
 		/// Opens the folder using the requested folder access.

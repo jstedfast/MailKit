@@ -2719,6 +2719,16 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 
+				Assert.IsFalse (client.Inbox.Supports (FolderFeature.AccessRights));
+				Assert.IsFalse (client.Inbox.Supports (FolderFeature.Annotations));
+				Assert.IsFalse (client.Inbox.Supports (FolderFeature.Metadata));
+				Assert.IsFalse (client.Inbox.Supports (FolderFeature.ModSequences)); // not supported until opened
+				Assert.IsFalse (client.Inbox.Supports (FolderFeature.QuickResync)); // not supported until it is enabled
+				Assert.IsFalse (client.Inbox.Supports (FolderFeature.Quotas));
+				Assert.IsTrue (client.Inbox.Supports (FolderFeature.Sorting));
+				Assert.IsTrue (client.Inbox.Supports (FolderFeature.Threading));
+				Assert.IsFalse (client.Inbox.Supports (FolderFeature.UTF8));
+
 				// Make sure these all throw NotSupportedException
 				Assert.Throws<NotSupportedException> (() => client.EnableUTF8 ());
 				Assert.Throws<NotSupportedException> (() => client.Inbox.GetAccessRights ("smith"));
@@ -2759,6 +2769,8 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception when enabling QRESYNC: {0}", ex);
 				}
 
+				Assert.IsTrue (client.Inbox.Supports (FolderFeature.QuickResync));
+
 				// take advantage of LIST-STATUS to get top-level personal folders...
 				var statusItems = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread;
 
@@ -2796,6 +2808,7 @@ namespace UnitTests.Net.Imap {
 
 				// SELECT the folder so that we can test some stuff
 				var access = folder.Open (FolderAccess.ReadWrite);
+				Assert.IsTrue (folder.Supports (FolderFeature.ModSequences));
 				Assert.AreEqual (expectedPermanentFlags, folder.PermanentFlags, "UnitTests.Messages PERMANENTFLAGS");
 				Assert.AreEqual (expectedFlags, folder.AcceptedFlags, "UnitTests.Messages FLAGS");
 				Assert.AreEqual (8, folder.Count, "UnitTests.Messages EXISTS");
@@ -2884,6 +2897,10 @@ namespace UnitTests.Net.Imap {
 				recentChanged = false;
 				vanished.Clear ();
 
+				Assert.IsTrue (folder.Supports (FolderFeature.Threading), "Supports threading");
+				Assert.IsTrue (folder.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Supports threading by References");
+				Assert.IsTrue (folder.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), "Supports threading by OrderedSubject");
+
 				// Verify that THREAD works correctly
 				var threaded = folder.Thread (ThreadingAlgorithm.References, SearchQuery.All);
 				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");
@@ -2895,6 +2912,7 @@ namespace UnitTests.Net.Imap {
 				folder.Close ();
 
 				// Use QRESYNC to get the changes since last time we opened the folder
+				Assert.IsTrue (folder.Supports (FolderFeature.QuickResync), "Supports QRESYNC");
 				access = folder.Open (FolderAccess.ReadWrite, uidValidity, highestModSeq, appended);
 				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected UnitTests.Messages to be opened in READ-WRITE mode");
 				Assert.AreEqual (7, flagsChanged.Count, "Unexpected number of MessageFlagsChanged events");
