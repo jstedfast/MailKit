@@ -4694,8 +4694,13 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, true);
 
-			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the REPLACE extension.");
+			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+				var appended = await AppendAsync (options, message, flags, date, annotations, doAsync, cancellationToken, progress).ConfigureAwait (false);
+				await ModifyFlagsAsync (new[] { uid }, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
+				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+					await ExpungeAsync (new[] { uid }, doAsync, cancellationToken).ConfigureAwait (false);
+				return appended;
+			}
 
 			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
@@ -4770,8 +4775,6 @@ namespace MailKit.Net.Imap {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The IMAP server does not support the REPLACE extension.</para>
-		/// <para>-or-</para>
 		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
@@ -4831,8 +4834,6 @@ namespace MailKit.Net.Imap {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The IMAP server does not support the REPLACE extension.</para>
-		/// <para>-or-</para>
 		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
@@ -4893,8 +4894,6 @@ namespace MailKit.Net.Imap {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The IMAP server does not support the REPLACE extension.</para>
-		/// <para>-or-</para>
 		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
@@ -4955,8 +4954,6 @@ namespace MailKit.Net.Imap {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The IMAP server does not support the REPLACE extension.</para>
-		/// <para>-or-</para>
 		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
@@ -5021,8 +5018,11 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, true);
 
-			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the REPLACE extension.");
+			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+				var uid = await AppendAsync (options, message, flags, date, annotations, doAsync, cancellationToken, progress).ConfigureAwait (false);
+				await ModifyFlagsAsync (new[] { index }, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
+				return uid;
+			}
 
 			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
@@ -5097,8 +5097,6 @@ namespace MailKit.Net.Imap {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The IMAP server does not support the REPLACE extension.</para>
-		/// <para>-or-</para>
 		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
@@ -5158,8 +5156,6 @@ namespace MailKit.Net.Imap {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The IMAP server does not support the REPLACE extension.</para>
-		/// <para>-or-</para>
 		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
@@ -5220,8 +5216,6 @@ namespace MailKit.Net.Imap {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The IMAP server does not support the REPLACE extension.</para>
-		/// <para>-or-</para>
 		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
@@ -5282,8 +5276,6 @@ namespace MailKit.Net.Imap {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The IMAP server does not support the REPLACE extension.</para>
-		/// <para>-or-</para>
 		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
