@@ -1440,9 +1440,10 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 CREATE \"[Gmail]/Archives\" (USE (\\All \\Archive \\Drafts \\Flagged \\Junk \\Sent \\Trash))\r\n", "gmail.create-mailboxid.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 CREATE \"[Gmail]/Archives\" (USE (\\All \\Archive \\Drafts \\Flagged \\Important \\Junk \\Sent \\Trash))\r\n", "gmail.create-mailboxid.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" \"[Gmail]/Archives\"\r\n", "gmail.list-archives.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 CREATE \"[Gmail]/MyImportant\" (USE (\\Important))\r\n", Encoding.ASCII.GetBytes ("A00000007 NO [USEATTR] An \\Important mailbox already exists\r\n")));
+			commands.Add (new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt"));
 
 			return commands;
 		}
@@ -1477,6 +1478,7 @@ namespace UnitTests.Net.Imap {
 				uses.Add (SpecialFolder.Archive);
 				uses.Add (SpecialFolder.Drafts);
 				uses.Add (SpecialFolder.Flagged);
+				uses.Add (SpecialFolder.Important);
 				uses.Add (SpecialFolder.Junk);
 				uses.Add (SpecialFolder.Sent);
 				uses.Add (SpecialFolder.Trash);
@@ -1485,10 +1487,23 @@ namespace UnitTests.Net.Imap {
 				uses.Add (SpecialFolder.All);
 				uses.Add (SpecialFolder.Flagged);
 
+				// and add one that is invalid
+				uses.Add ((SpecialFolder) 15);
+
 				var archive = gmail.Create ("Archives", uses);
 				Assert.AreEqual (FolderAttributes.HasNoChildren | FolderAttributes.Archive, archive.Attributes);
 				Assert.AreEqual (archive, client.GetFolder (SpecialFolder.Archive));
 				Assert.AreEqual ("25dcfa84-fd65-41c3-abc3-633c8f10923f", archive.Id);
+
+				try {
+					gmail.Create ("MyImportant", new[] { SpecialFolder.Important });
+					Assert.Fail ("Creating the MyImportamnt folder should have thrown an ImapCommandException");
+				} catch (ImapCommandException ex) {
+					Assert.AreEqual (ImapCommandResponse.No, ex.Response);
+					Assert.AreEqual ("An \\Important mailbox already exists", ex.ResponseText);
+				} catch (Exception ex) {
+					Assert.Fail ("Unexpected exception: {0}", ex);
+				}
 
 				client.Disconnect (true);
 			}
@@ -1524,6 +1539,7 @@ namespace UnitTests.Net.Imap {
 				uses.Add (SpecialFolder.Archive);
 				uses.Add (SpecialFolder.Drafts);
 				uses.Add (SpecialFolder.Flagged);
+				uses.Add (SpecialFolder.Important);
 				uses.Add (SpecialFolder.Junk);
 				uses.Add (SpecialFolder.Sent);
 				uses.Add (SpecialFolder.Trash);
@@ -1532,10 +1548,23 @@ namespace UnitTests.Net.Imap {
 				uses.Add (SpecialFolder.All);
 				uses.Add (SpecialFolder.Flagged);
 
+				// and add one that is invalid
+				uses.Add ((SpecialFolder) 15);
+
 				var archive = await gmail.CreateAsync ("Archives", uses);
 				Assert.AreEqual (FolderAttributes.HasNoChildren | FolderAttributes.Archive, archive.Attributes);
 				Assert.AreEqual (archive, client.GetFolder (SpecialFolder.Archive));
 				Assert.AreEqual ("25dcfa84-fd65-41c3-abc3-633c8f10923f", archive.Id);
+
+				try {
+					await gmail.CreateAsync ("MyImportant", new[] { SpecialFolder.Important });
+					Assert.Fail ("Creating the MyImportamnt folder should have thrown an ImapCommandException");
+				} catch (ImapCommandException ex) {
+					Assert.AreEqual (ImapCommandResponse.No, ex.Response);
+					Assert.AreEqual ("An \\Important mailbox already exists", ex.ResponseText);
+				} catch (Exception ex) {
+					Assert.Fail ("Unexpected exception: {0}", ex);
+				}
 
 				await client.DisconnectAsync (true);
 			}

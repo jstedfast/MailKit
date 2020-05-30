@@ -917,14 +917,8 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok) {
-				var useAttr = GetResponseCode (ic, ImapResponseCodeType.UseAttr);
-
-				if (useAttr != null)
-					throw new ImapCommandException (ic.Response, useAttr.Message);
-
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("CREATE", ic);
-			}
 
 			var code = (MailboxIdResponseCode) GetResponseCode (ic, ImapResponseCodeType.MailboxId);
 			var id = code?.MailboxId;
@@ -4654,12 +4648,12 @@ namespace MailKit.Net.Imap {
 			if (date.HasValue)
 				builder.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (date.Value));
 
-			if (annotations != null && annotations.Count > 0) {
-				ImapUtils.FormatAnnotations (builder, annotations, list, false);
-
-				if (builder[builder.Length - 1] != ' ')
-					builder.Append (' ');
-			}
+			//if (annotations != null && annotations.Count > 0) {
+			//	ImapUtils.FormatAnnotations (builder, annotations, list, false);
+			//
+			//	if (builder[builder.Length - 1] != ' ')
+			//		builder.Append (' ');
+			//}
 
 			builder.Append ("%L\r\n");
 			list.Add (message);
@@ -4978,12 +4972,12 @@ namespace MailKit.Net.Imap {
 			if (date.HasValue)
 				builder.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (date.Value));
 
-			if (annotations != null && annotations.Count > 0) {
-				ImapUtils.FormatAnnotations (builder, annotations, list, false);
-
-				if (builder[builder.Length - 1] != ' ')
-					builder.Append (' ');
-			}
+			//if (annotations != null && annotations.Count > 0) {
+			//	ImapUtils.FormatAnnotations (builder, annotations, list, false);
+			//
+			//	if (builder[builder.Length - 1] != ' ')
+			//		builder.Append (' ');
+			//}
 
 			builder.Append ("%L\r\n");
 			list.Add (message);
