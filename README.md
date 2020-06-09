@@ -230,6 +230,12 @@ In the top-level MailKit directory, there are a number of solution files; they a
 Once you've opened the appropriate MailKit solution file in [Visual Studio](https://www.visualstudio.com/downloads/),
 you can choose the **Debug** or **Release** build configuration and then build.
 
+Both Visual Studio 2017 and Visual Studio 2019 should be able to build MailKit without any issues, but older versions such as
+Visual Studio 2015 will require modifications to the projects in order to build correctly. It has been reported that adding
+NuGet package references to [Microsoft.Net.Compilers](https://www.nuget.org/packages/Microsoft.Net.Compilers/) >= 3.6.0
+and [System.ValueTuple](https://www.nuget.org/packages/System.ValueTuple/) >= 4.5.0 to the MimeKit and MailKit projects will
+allow them to build successfully.
+
 Note: The **Release** build will generate the xml API documentation, but the **Debug** build will not.
 
 ## Using MailKit
