@@ -52,7 +52,7 @@ In order to authenticate using the XOAUTH2 SASL mechanism, you must now use the 
 
 client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </releaseNotes>
-    <copyright>Xamarin Inc.</copyright>
+    <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
     <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 net46 net47 net58 netstandard netstandard1.3 netstandard1.6 netstandard2.0</tags>
     <frameworkAssemblies>

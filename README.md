@@ -161,7 +161,7 @@ which should improve performance of sending messages (although might not be very
 
 ## License Information
 
-MailKit is Copyright (C) 2013-2020 Xamarin Inc. and is licensed under the MIT license:
+MailKit is Copyright (C) 2013-2020 .NET Foundation and Contributors and is licensed under the MIT license:
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -556,3 +556,11 @@ string. Please include the `Exception.StackTrace` as well. The `Message`, by its
 API documentation can be found at [http://www.mimekit.net/docs](http://www.mimekit.net/docs).
 
 A copy of the XML-formatted API reference documentation is also included in the NuGet package.
+
+## .NET Foundation
+
+MailKit is a [.NET Foundation](https://www.dotnetfoundation.org/projects) project.
+
+This project has adopted the code of conduct defined by the [Contributor Covenant](http://contributor-covenant.org/) to clarify expected behavior in our community. For more information, see the [.NET Foundation Code of Conduct](http://www.dotnetfoundation.org/code-of-conduct).
+
+General .NET OSS discussions: [.NET Foundation forums](https://forums.dotnetfoundation.org)
