@@ -1,9 +1,10 @@
 language: csharp
-solution: MailKit.Net45.sln
+dotnet: 2.1.807
+solution: MailKit.sln
 install:
   - git submodule update --init --recursive
-  - nuget restore submodules/MimeKit/MimeKit.Net45.sln
-  - nuget restore MailKit.Net45.sln
+  - dotnet restore submodules/MimeKit/MimeKit.sln
+  - dotnet restore MailKit.sln
 script:
-  - msbuild /p:Configuration=Debug MailKit.Net45.sln
-  - mono ./packages/NUnit.ConsoleRunner.3.11.1/tools/nunit3-console.exe UnitTests/bin/Debug/UnitTests.dll
+  - msbuild /p:Configuration=Debug /p:MonoRuntime=true MailKit.sln
+  - mono ~/.nuget/packages/nunit.consolerunner/3.11.1/tools/nunit3-console.exe UnitTests/bin/Debug/net48/UnitTests.dll

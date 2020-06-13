@@ -36,11 +36,17 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- powershell: '.\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[MailKit]* -[UnitTests]* -[submodules]*" -target:"packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe" -targetargs:"/domain:single /out:UnitTests\bin\Release\TEST-UnitTests.xml UnitTests\bin\Release\UnitTests.dll" -output:opencover.xml'
+- task: PowerShell@2
   displayName: 'Run Unit Tests'
-
+  inputs:
+    targetType: 'filePath'
+    filePath: 'azure-test-runner.ps1'
+  
 - task: PublishTestResults@2
   displayName: 'Publish Unit Test Results'
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: 'TestResult.xml'
 
 - task: NuGetCommand@2
   displayName: 'Package MailKit-$(Build.BuildNumber)'

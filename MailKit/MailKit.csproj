@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
     <AssemblyTitle>MailKit</AssemblyTitle>
     <VersionPrefix>2.7.0</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
-    <TargetFrameworks>netstandard1.3;netstandard1.6;netstandard2.0;net46;net47;net48</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.6;netstandard2.0;net45;net46;net47;net48</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <AssemblyName>MailKit</AssemblyName>
@@ -52,7 +52,7 @@
   </ItemGroup-->
 
   <ItemGroup>
-    <PackageReference Include="MimeKit" Version="2.8.0" />
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

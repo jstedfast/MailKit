@@ -72,6 +72,7 @@ namespace MailKit {
 		/// Gets the message count.
 		/// </remarks>
 		/// <returns>The message count.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>

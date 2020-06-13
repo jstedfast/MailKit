@@ -1,61 +1,40 @@
-﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\NUnit3TestAdapter.3.16.1\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\packages\NUnit3TestAdapter.3.16.1\build\net35\NUnit3TestAdapter.props')" />
-  <Import Project="..\packages\NUnit.3.12.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.12.0\build\NUnit.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}</ProjectGuid>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <OutputType>Library</OutputType>
-    <RootNamespace>UnitTests</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>UnitTests</AssemblyName>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <NoWarn>219</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <NoWarn>219</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup>
+    <DebugType>Full</DebugType>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
+    <DefineConstants Condition=" '$(MonoRuntime)' == 'true' ">$(DefineConstants);MONO</DefineConstants>
     <AssemblyOriginatorKeyFile>..\MailKit\mailkit.snk</AssemblyOriginatorKeyFile>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
+    <PackageReference Include="coveralls.net" Version="0.7.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit.ConsoleRunner" Version="3.11.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="OpenCover" Version="4.6.519" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.Net45.csproj">
-      <Project>{D5F54A4F-D84B-430F-9271-F7861E285B3E}</Project>
-      <Name>MimeKit.Net45</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MailKit\MailKit.Net45.csproj">
-      <Project>{7264D469-A390-4C10-9C87-DAA37EDD3C1D}</Project>
-      <Name>MailKit.Net45</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\submodules\MimeKit\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj" />
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.csproj" />
+    <ProjectReference Include="..\MailKit\MailKit.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <Compile Include="Net\Imap\ImapClientTests.cs" />
     <Compile Include="Net\Imap\ImapCommandExceptionTests.cs" />
@@ -551,26 +530,5 @@
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-expn.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-vrfy.txt" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
-        </Policies>
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\NUnit3TestAdapter.3.16.1\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit3TestAdapter.3.16.1\build\net35\NUnit3TestAdapter.props'))" />
-  </Target>
+
 </Project>

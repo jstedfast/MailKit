@@ -140,18 +140,6 @@
     <Content Include="icons\Help.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.Net45.csproj">
-      <Name>MimeKit.Net45</Name>
-      <Project>{d5f54a4f-d84b-430f-9271-f7861e285b3e}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\MailKit\MailKit.Net45.csproj">
-      <Name>MailKit.Net45</Name>
-      <Project>{7264d469-a390-4c10-9c87-daa37edd3c1d}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="media\clone.png">
       <ImageId>clone</ImageId>
       <AlternateText>Clone MailKit source code from GitHub using TortoiseGit.</AlternateText>
@@ -160,6 +148,18 @@
       <ImageId>update</ImageId>
       <AlternateText>Update MailKit source code via TortoiseGit using the Pull and Submodule Update buttons.</AlternateText>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MailKit\MailKit.csproj">
+      <Name>MailKit</Name>
+      <Project>{e543a427-93de-4e65-adf2-44412e440fb1}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.csproj">
+      <Name>MimeKit</Name>
+      <Project>{faec8a91-6983-4ed9-a414-09c6b65b13bb}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- Import the SHFB build targets -->
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />

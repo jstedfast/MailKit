@@ -15,19 +15,33 @@ environment:
 
 install:
   - cmd: git submodule update --init --recursive
-  - cmd: nuget restore submodules\MimeKit\MimeKit.Net45.sln
-  - cmd: nuget restore MailKit.Net45.sln
+  - cmd: dotnet restore submodules\MimeKit\MimeKit.sln
+  - cmd: dotnet restore MailKit.sln
 
 build:
-  project: MailKit.Net45.sln
+  project: MailKit.sln
   verbosity: minimal
 
 test_script:
 - ps: >-
-    regsvr32 .\packages\OpenCover.4.6.519\tools\x86\OpenCover.Profiler.dll
+    $NUnitConsoleRunner = Join-Path $Home ".nuget\packages\nunit.consolerunner\3.11.1\tools\nunit3-console.exe"
 
-    regsvr32 .\packages\OpenCover.4.6.519\tools\x64\OpenCover.Profiler.dll
+    $Coveralls = Join-Path $Home ".nuget\packages\coveralls.net\0.7.0\tools\csmacnz.Coveralls.exe"
 
-    .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -filter:"+[MailKit]* -[UnitTests]* -[submodules]*" -target:"packages\NUnit.ConsoleRunner.3.11.1\tools\nunit3-console.exe" -targetargs:"/domain:single UnitTests\bin\Debug\UnitTests.dll" -output:opencover.xml
+    $OpenCoverDir = Join-Path $Home ".nuget\packages\opencover\4.6.519\tools"
 
-    .\packages\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencover.xml --repoToken $Env:COVERALLS_REPO_TOKEN --useRelativePaths --basePath .\UnitTests\bin\Debug --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_BUILD_NUMBER --serviceName appveyor
+    $OpenCoverProfiler32 = Join-Path $OpenCoverDir "x86\OpenCover.Profiler.dll"
+
+    $OpenCoverProfiler64 = Join-Path $OpenCoverDir "x64\OpenCover.Profiler.dll"
+
+    $OpenCover = Join-Path $OpenCoverDir "OpenCover.Console.exe"
+
+    $OutputDir = "UnitTests\bin\Debug\net48"
+
+    & regsvr32 $OpenCoverProfiler32
+
+    & regsvr32 $OpenCoverProfiler64
+
+    & $OpenCover -filter:"+[MailKit]* -[MimeKit]* -[UnitTests]*" -target:"$NUnitConsoleRunner" -targetdir:"$OutputDir" -targetargs:"--domain:single UnitTests.dll" -output:opencover.xml
+
+    & $Coveralls --opencover -i opencover.xml --repoToken $Env:COVERALLS_REPO_TOKEN --useRelativePaths --basePath $OutputDir --commitId $Env:APPVEYOR_REPO_COMMIT --commitBranch $Env:APPVEYOR_REPO_BRANCH --commitAuthor $Env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $Env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $Env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $Env:APPVEYOR_BUILD_NUMBER --serviceName appveyor

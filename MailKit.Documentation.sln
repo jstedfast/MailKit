@@ -3,16 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Net45", "MailKit\MailKit.Net45.csproj", "{7264D469-A390-4C10-9C87-DAA37EDD3C1D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net45", "submodules\MimeKit\MimeKit\MimeKit.Net45.csproj", "{D5F54A4F-D84B-430F-9271-F7861E285B3E}"
-EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Documentation", "Documentation\Documentation.shfbproj", "{59115814-A1E3-46AE-AE30-4065AE8F4CAF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2299B3E8-95E4-4766-9AA2-5553EAD7F375}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MimeKit", "submodules\MimeKit\MimeKit\MimeKit.csproj", "{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKit", "MailKit\MailKit.csproj", "{E543A427-93DE-4E65-ADF2-44412E440FB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,17 +15,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59115814-A1E3-46AE-AE30-4065AE8F4CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{59115814-A1E3-46AE-AE30-4065AE8F4CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59115814-A1E3-46AE-AE30-4065AE8F4CAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E543A427-93DE-4E65-ADF2-44412E440FB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E543A427-93DE-4E65-ADF2-44412E440FB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E543A427-93DE-4E65-ADF2-44412E440FB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E543A427-93DE-4E65-ADF2-44412E440FB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
