@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2020 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2020 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle ("MailKit")]
 [assembly: AssemblyDescription ("A cross-platform mail client library.")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("Xamarin Inc.")]
+[assembly: AssemblyCompany (".NET Foundation")]
 [assembly: AssemblyProduct ("MailKit")]
-[assembly: AssemblyCopyright ("Copyright © 2013-2020 Xamarin Inc. (www.xamarin.com)")]
-[assembly: AssemblyTrademark ("Xamarin Inc.")]
+[assembly: AssemblyCopyright ("Copyright © 2013-2020 .NET Foundation and Contributors")]
+[assembly: AssemblyTrademark (".NET Foundation")]
 [assembly: AssemblyCulture ("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
