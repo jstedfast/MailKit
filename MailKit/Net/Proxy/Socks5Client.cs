@@ -29,6 +29,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using MailKit.Security;
@@ -139,7 +140,7 @@ namespace MailKit.Net.Proxy
 			case Socks5Reply.TTLExpired:              return "TTL expired.";
 			case Socks5Reply.CommandNotSupported:     return "Command not supported.";
 			case Socks5Reply.AddressTypeNotSupported: return "Address type not supported.";
-			default:                                  return string.Format ("Unknown error ({0}).", (int) reply);
+			default:                                  return string.Format (CultureInfo.InvariantCulture, "Unknown error ({0}).", (int) reply);
 			}
 		}
 
@@ -158,7 +159,7 @@ namespace MailKit.Net.Proxy
 		void VerifySocksVersion (byte version)
 		{
 			if (version != (byte) SocksVersion)
-				throw new ProxyProtocolException (string.Format ("Proxy server responded with unknown SOCKS version: {0}", (int) version));
+				throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Proxy server responded with unknown SOCKS version: {0}", (int) version));
 		}
 
 		async Task<Socks5AuthMethod> NegotiateAuthMethodAsync (Socket socket, bool doAsync, CancellationToken cancellationToken, params Socks5AuthMethod[] methods)
@@ -322,7 +323,7 @@ namespace MailKit.Net.Proxy
 				VerifySocksVersion (buffer[0]);
 
 				if (buffer[1] != (byte) Socks5Reply.Success)
-					throw new ProxyProtocolException (string.Format ("Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
+					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
 
 				addrType = (Socks5AddressType) buffer[3];
 

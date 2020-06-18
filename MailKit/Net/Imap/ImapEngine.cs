@@ -540,7 +540,7 @@ namespace MailKit.Net.Imap {
 
 		internal static ImapProtocolException UnexpectedToken (string format, params object[] args)
 		{
-			return new ImapProtocolException (string.Format (format, args)) { UnexpectedToken = true };
+			return new ImapProtocolException (string.Format (CultureInfo.InvariantCulture, format, args)) { UnexpectedToken = true };
 		}
 
 		internal static void AssertToken (ImapToken token, ImapTokenType type, string format, params object[] args)

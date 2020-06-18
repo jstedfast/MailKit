@@ -249,12 +249,12 @@ namespace MailKit.Net.Pop3 {
 
 		static ProtocolException CreatePop3ParseException (Exception innerException, string format, params object[] args)
 		{
-			return new Pop3ProtocolException (string.Format (format, args), innerException);
+			return new Pop3ProtocolException (string.Format (CultureInfo.InvariantCulture, format, args), innerException);
 		}
 
 		static ProtocolException CreatePop3ParseException (string format, params object[] args)
 		{
-			return new Pop3ProtocolException (string.Format (format, args));
+			return new Pop3ProtocolException (string.Format (CultureInfo.InvariantCulture, format, args));
 		}
 
 		async Task SendCommandAsync (bool doAsync, CancellationToken token, string command)

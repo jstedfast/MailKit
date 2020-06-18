@@ -29,6 +29,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace MailKit.Net.Proxy
@@ -99,12 +100,12 @@ namespace MailKit.Net.Proxy
 			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
 			var builder = new StringBuilder ();
 
-			builder.AppendFormat ("CONNECT {0}:{1} HTTP/1.1\r\n", host, port);
-			builder.AppendFormat ("Host: {0}:{1}\r\n", host, port);
+			builder.AppendFormat (CultureInfo.InvariantCulture, "CONNECT {0}:{1} HTTP/1.1\r\n", host, port);
+			builder.AppendFormat (CultureInfo.InvariantCulture, "Host: {0}:{1}\r\n", host, port);
 			if (ProxyCredentials != null) {
-				var token = Encoding.UTF8.GetBytes (string.Format ("{0}:{1}", ProxyCredentials.UserName, ProxyCredentials.Password));
+				var token = Encoding.UTF8.GetBytes (string.Format (CultureInfo.InvariantCulture, "{0}:{1}", ProxyCredentials.UserName, ProxyCredentials.Password));
 				var base64 = Convert.ToBase64String (token);
-				builder.AppendFormat ("Proxy-Authorization: Basic {0}\r\n", base64);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "Proxy-Authorization: Basic {0}\r\n", base64);
 			}
 			builder.Append ("\r\n");
 
@@ -167,7 +168,7 @@ namespace MailKit.Net.Proxy
 					return socket;
 				}
 
-				throw new ProxyProtocolException (string.Format ("Failed to connect to {0}:{1}: {2}", host, port, response));
+				throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, response));
 			} catch {
 #if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				if (socket.Connected)

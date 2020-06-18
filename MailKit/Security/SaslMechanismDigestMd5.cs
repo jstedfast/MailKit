@@ -555,7 +555,7 @@ namespace MailKit.Security {
 			builder.AppendFormat (",digest-uri=\"{0}\"", DigestUri);
 			builder.AppendFormat (",response={0}", Response);
 			if (MaxBuf.HasValue)
-				builder.AppendFormat (",maxbuf={0}", MaxBuf.Value);
+				builder.AppendFormat (CultureInfo.InvariantCulture, ",maxbuf={0}", MaxBuf.Value);
 			if (!string.IsNullOrEmpty (Charset))
 				builder.AppendFormat (",charset={0}", Charset);
 			if (!string.IsNullOrEmpty (Algorithm))

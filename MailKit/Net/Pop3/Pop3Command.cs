@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Threading;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace MailKit.Net.Pop3 {
@@ -64,7 +65,7 @@ namespace MailKit.Net.Pop3 {
 
 		public Pop3Command (CancellationToken cancellationToken, Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
 		{
-			Command = string.Format (format, args);
+			Command = string.Format (CultureInfo.InvariantCulture, format, args);
 			CancellationToken = cancellationToken;
 			Encoding = encoding;
 			Handler = handler;

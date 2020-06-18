@@ -872,7 +872,7 @@ namespace MailKit {
 
 				string next;
 				if (start != end)
-					next = string.Format ("{0}:{1}", start, end);
+					next = string.Format (CultureInfo.InvariantCulture, "{0}:{1}", start, end);
 				else
 					next = start.ToString ();
 

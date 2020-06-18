@@ -214,7 +214,7 @@ namespace MailKit.Net.Proxy
 				} while (n < 8);
 
 				if (buffer[1] != (byte) Socks4Reply.RequestGranted)
-					throw new ProxyProtocolException (string.Format ("Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
+					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
 
 				// TODO: do we care about BND.ADDR and BND.PORT?
 

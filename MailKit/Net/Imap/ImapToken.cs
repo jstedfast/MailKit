@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System.Globalization;
+
 namespace MailKit.Net.Imap {
 	enum ImapTokenType {
 		NoData        = -7,
@@ -71,7 +73,7 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Asterisk:     return "'*'";
 			case ImapTokenType.OpenBracket:  return "'['";
 			case ImapTokenType.CloseBracket: return "']'";
-			default:                         return string.Format ("[{0}: '{1}']", Type, Value);
+			default:                         return string.Format (CultureInfo.InvariantCulture, "[{0}: '{1}']", Type, Value);
 			}
 		}
 	}
