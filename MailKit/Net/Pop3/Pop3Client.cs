@@ -836,19 +836,19 @@ namespace MailKit.Net.Pop3 {
 
 			switch (options) {
 			case SecureSocketOptions.StartTlsWhenAvailable:
-				uri = new Uri ("pop://" + host + ":" + port + "/?starttls=when-available");
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "pop://{0}:{1}/?starttls=when-available", host, port));
 				starttls = true;
 				break;
 			case SecureSocketOptions.StartTls:
-				uri = new Uri ("pop://" + host + ":" + port + "/?starttls=always");
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "pop://{0}:{1}/?starttls=always", host, port));
 				starttls = true;
 				break;
 			case SecureSocketOptions.SslOnConnect:
-				uri = new Uri ("pops://" + host + ":" + port);
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "pops://{0}:{1}", host, port));
 				starttls = false;
 				break;
 			default:
-				uri = new Uri ("pop://" + host + ":" + port);
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "pop://{0}:{1}", host, port));
 				starttls = false;
 				break;
 			}

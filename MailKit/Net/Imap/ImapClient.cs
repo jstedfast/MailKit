@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -787,7 +788,7 @@ namespace MailKit.Net.Imap {
 		{
 			var uri = engine.Uri;
 
-			return string.Format ("{0}://{1}@{2}:{3}", uri.Scheme, EscapeUserName (userName), uri.Host, uri.Port);
+			return string.Format (CultureInfo.InvariantCulture, "{0}://{1}@{2}:{3}", uri.Scheme, EscapeUserName (userName), uri.Host, uri.Port);
 		}
 
 		async Task OnAuthenticatedAsync (string message, bool doAsync, CancellationToken cancellationToken)
@@ -1174,19 +1175,19 @@ namespace MailKit.Net.Imap {
 
 			switch (options) {
 			case SecureSocketOptions.StartTlsWhenAvailable:
-				uri = new Uri ("imap://" + host + ":" + port + "/?starttls=when-available");
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "imap://{0}:{1}/?starttls=when-available", host, port));
 				starttls = true;
 				break;
 			case SecureSocketOptions.StartTls:
-				uri = new Uri ("imap://" + host + ":" + port + "/?starttls=always");
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "imap://{0}:{1}/?starttls=always", host, port));
 				starttls = true;
 				break;
 			case SecureSocketOptions.SslOnConnect:
-				uri = new Uri ("imaps://" + host + ":" + port);
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "imaps://{0}:{1}", host, port));
 				starttls = false;
 				break;
 			default:
-				uri = new Uri ("imap://" + host + ":" + port);
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "imap://{0}:{1}", host, port));
 				starttls = false;
 				break;
 			}

@@ -960,19 +960,19 @@ namespace MailKit.Net.Smtp {
 
 			switch (options) {
 			case SecureSocketOptions.StartTlsWhenAvailable:
-				uri = new Uri ("smtp://" + host + ":" + port + "/?starttls=when-available");
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "smtp://{0}:{1}/?starttls=when-available", host, port));
 				starttls = true;
 				break;
 			case SecureSocketOptions.StartTls:
-				uri = new Uri ("smtp://" + host + ":" + port + "/?starttls=always");
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "smtp://{0}:{1}/?starttls=always", host, port));
 				starttls = true;
 				break;
 			case SecureSocketOptions.SslOnConnect:
-				uri = new Uri ("smtps://" + host + ":" + port);
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "smtps://{0}:{1}", host, port));
 				starttls = false;
 				break;
 			default:
-				uri = new Uri ("smtp://" + host + ":" + port);
+				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "smtp://{0}:{1}", host, port));
 				starttls = false;
 				break;
 			}
