@@ -29,6 +29,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace MailKit.Net.Proxy
