@@ -2475,7 +2475,7 @@ namespace MailKit.Net.Imap
 
 			var maxValue = max != -1 ? (max + 1).ToString (CultureInfo.InvariantCulture) : "*";
 
-			return string.Format ("{0}:{1}", minValue, maxValue);
+			return string.Format (CultureInfo.InvariantCulture, "{0}:{1}", minValue, maxValue);
 		}
 
 		async Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, bool doAsync, CancellationToken cancellationToken)
