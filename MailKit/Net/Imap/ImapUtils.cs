@@ -1474,21 +1474,23 @@ namespace MailKit.Net.Imap {
 
 			token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 
-			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.QString) {
-				var flag = (string) token.Value;
+			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.QString || token.Type == ImapTokenType.Nil) {
+				if (token.Type != ImapTokenType.Nil) {
+					var flag = (string) token.Value;
 
-				switch (flag) {
-				case "\\Answered": flags |= MessageFlags.Answered; break;
-				case "\\Deleted":  flags |= MessageFlags.Deleted; break;
-				case "\\Draft":    flags |= MessageFlags.Draft; break;
-				case "\\Flagged":  flags |= MessageFlags.Flagged; break;
-				case "\\Seen":     flags |= MessageFlags.Seen; break;
-				case "\\Recent":   flags |= MessageFlags.Recent; break;
-				case "\\*":        flags |= MessageFlags.UserDefined; break;
-				default:
-					if (keywords != null)
-						keywords.Add (flag);
-					break;
+					switch (flag) {
+					case "\\Answered": flags |= MessageFlags.Answered; break;
+					case "\\Deleted": flags |= MessageFlags.Deleted; break;
+					case "\\Draft": flags |= MessageFlags.Draft; break;
+					case "\\Flagged": flags |= MessageFlags.Flagged; break;
+					case "\\Seen": flags |= MessageFlags.Seen; break;
+					case "\\Recent": flags |= MessageFlags.Recent; break;
+					case "\\*": flags |= MessageFlags.UserDefined; break;
+					default:
+						if (keywords != null)
+							keywords.Add (flag);
+						break;
+					}
 				}
 
 				token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
