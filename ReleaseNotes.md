@@ -1,5 +1,14 @@
 # Release Notes
 
+### MailKit 2.8.0 (2020-07-11)
+
+* Make sure to use the InvariantCulture when converting port values to a string.
+  (issue [#1040](https://github.com/jstedfast/MailKit/issues/1040))
+* Fixed other instances of string formatting for integer values to always use
+  CultureInfo.InvariantCulture.
+* Added a work-around for broken IMAP servers that allow NIL message flags.
+  (issue [#1042](https://github.com/jstedfast/MailKit/issues/1042))
+
 ### MailKit 2.7.0 (2020-05-30)
 
 * Added a MessageSummary.Folder property and MessageThread.Message property

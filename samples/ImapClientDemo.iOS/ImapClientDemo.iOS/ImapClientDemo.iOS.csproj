@@ -72,7 +72,7 @@
     <Reference Include="MonoTouch.Dialog-1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.7.0" />
+    <PackageReference Include="MailKit" Version="2.8.0" />
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">
