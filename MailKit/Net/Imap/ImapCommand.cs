@@ -570,31 +570,33 @@ namespace MailKit.Net.Imap {
 						length += EstimateStringLength (engine, options, true, utf7, out eoln);
 						break;
 					case 'L': // a MimeMessage or a byte[]
-						var arg = args[argc++];
-						byte[] prefix;
-						long len;
+						// Note: This is commented out because %L is only ever used for APPEND and REPLACE commands which
+						// never need to split the command to keep it under the max line length.
+						//var arg = args[argc++];
+						//byte[] prefix;
+						//long len;
 
-						if (arg is MimeMessage message) {
-							prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
-							var literal = new ImapLiteral (options, message, null);
-							len = literal.Length;
-						} else {
-							len = ((byte[]) arg).Length;
-							prefix = LiteralTokenPrefix;
-						}
+						//if (arg is MimeMessage message) {
+						//	prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
+						//	var literal = new ImapLiteral (options, message, null);
+						//	len = literal.Length;
+						//} else {
+						//	len = ((byte[]) arg).Length;
+						//	prefix = LiteralTokenPrefix;
+						//}
 
-						length += prefix.Length;
-						length += Encoding.ASCII.GetByteCount (len.ToString (CultureInfo.InvariantCulture));
+						//length += prefix.Length;
+						//length += Encoding.ASCII.GetByteCount (len.ToString (CultureInfo.InvariantCulture));
 
-						if (CanUseNonSynchronizedLiteral (engine, len))
-							length++;
+						//if (CanUseNonSynchronizedLiteral (engine, len))
+						//	length++;
 
-						length += LiteralTokenSuffix.Length;
+						//length += LiteralTokenSuffix.Length;
 
-						if (prefix == UTF8LiteralTokenPrefix)
-							length++;
+						//if (prefix == UTF8LiteralTokenPrefix)
+						//	length++;
 
-						eoln = true;
+						//eoln = true;
 						break;
 					case 'S': // a string which may need to be quoted or made into a literal
 						length += EstimateStringLength (engine, options, true, (string) args[argc++], out eoln);

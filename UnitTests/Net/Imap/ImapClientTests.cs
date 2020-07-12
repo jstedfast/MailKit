@@ -2949,8 +2949,6 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Fuzzy (SearchQuery.SubjectContains ("some fuzzy text"))));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter (new MetadataTag ("/private/filters/values/saved-search"))));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter ("saved-search")));
-				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.OlderThan (500)));
-				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.YoungerThan (500)));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SaveDateSupported));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedBefore (DateTime.Now)));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedOn (DateTime.Now)));
@@ -3579,8 +3577,6 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Fuzzy (SearchQuery.SubjectContains ("some fuzzy text"))));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter (new MetadataTag ("/private/filters/values/saved-search"))));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter ("saved-search")));
-				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.OlderThan (500)));
-				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.YoungerThan (500)));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SaveDateSupported));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedBefore (DateTime.Now)));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedOn (DateTime.Now)));

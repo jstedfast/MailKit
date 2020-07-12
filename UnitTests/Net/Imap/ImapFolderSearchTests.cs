@@ -131,6 +131,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.Throws<ArgumentNullException> (() => inbox.Sort ((string) null));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.SortAsync ((string) null));
+				Assert.Throws<ArgumentException> (() => inbox.Sort (string.Empty));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.SortAsync (string.Empty));
 
 				// Thread
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Thread ((ThreadingAlgorithm) 500, SearchQuery.All));
