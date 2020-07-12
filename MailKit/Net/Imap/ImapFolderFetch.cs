@@ -156,6 +156,21 @@ namespace MailKit.Net.Imap
 			} while (true);
 		}
 
+		async Task<DateTimeOffset?> ReadDateTimeOffsetTokenAsync (ImapEngine engine, string atom, bool doAsync, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+			switch (token.Type) {
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				return ImapUtils.ParseInternalDate ((string) token.Value);
+			case ImapTokenType.Nil:
+				return null;
+			default:
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+			}
+		}
+
 		async Task FetchSummaryItemsAsync (ImapEngine engine, MessageSummary message, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -188,37 +203,11 @@ namespace MailKit.Net.Imap
 
 				switch (atom.ToUpperInvariant ()) {
 				case "INTERNALDATE":
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					switch (token.Type) {
-					case ImapTokenType.QString:
-					case ImapTokenType.Atom:
-						message.InternalDate = ImapUtils.ParseInternalDate ((string) token.Value);
-						break;
-					case ImapTokenType.Nil:
-						message.InternalDate = null;
-						break;
-					default:
-						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-					}
-
+					message.InternalDate = await ReadDateTimeOffsetTokenAsync (engine, atom, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.InternalDate;
 					break;
 				case "SAVEDATE":
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					switch (token.Type) {
-					case ImapTokenType.QString:
-					case ImapTokenType.Atom:
-						message.SaveDate = ImapUtils.ParseInternalDate ((string) token.Value);
-						break;
-					case ImapTokenType.Nil:
-						message.SaveDate = null;
-						break;
-					default:
-						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-					}
-
+					message.SaveDate = await ReadDateTimeOffsetTokenAsync (engine, atom, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.SaveDate;
 					break;
 				case "RFC822.SIZE":
