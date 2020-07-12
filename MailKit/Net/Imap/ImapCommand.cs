@@ -567,7 +567,7 @@ namespace MailKit.Net.Imap {
 						break;
 					case 'F': // an ImapFolder
 						var utf7 = ((ImapFolder) args[argc++]).EncodedName;
-						length += EstimateStringLength (engine, options, true, utf7, out eoln);
+						length += EstimateStringLength (engine, true, utf7, out eoln);
 						break;
 					case 'L': // a MimeMessage or a byte[]
 						// Note: This is commented out because %L is only ever used for APPEND and REPLACE commands which
@@ -599,10 +599,10 @@ namespace MailKit.Net.Imap {
 						//eoln = true;
 						break;
 					case 'S': // a string which may need to be quoted or made into a literal
-						length += EstimateStringLength (engine, options, true, (string) args[argc++], out eoln);
+						length += EstimateStringLength (engine, true, (string) args[argc++], out eoln);
 						break;
 					case 'Q': // similar to %S but string must be quoted at a minimum
-						length += EstimateStringLength (engine, options, false, (string) args[argc++], out eoln);
+						length += EstimateStringLength (engine, false, (string) args[argc++], out eoln);
 						break;
 					default:
 						throw new FormatException ();
@@ -669,7 +669,7 @@ namespace MailKit.Net.Imap {
 				(length <= 4096 && (engine.Capabilities & ImapCapabilities.LiteralMinus) != 0);
 		}
 
-		static int EstimateStringLength (ImapEngine engine, FormatOptions options, bool allowAtom, string value, out bool eoln)
+		static int EstimateStringLength (ImapEngine engine, bool allowAtom, string value, out bool eoln)
 		{
 			eoln = false;
 
