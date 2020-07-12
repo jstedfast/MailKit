@@ -2949,6 +2949,12 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Fuzzy (SearchQuery.SubjectContains ("some fuzzy text"))));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter (new MetadataTag ("/private/filters/values/saved-search"))));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter ("saved-search")));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.OlderThan (500)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.YoungerThan (500)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SaveDateSupported));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedBefore (DateTime.Now)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedOn (DateTime.Now)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedSince (DateTime.Now)));
 
 				// Use SEARCH and FETCH to get the same info
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
@@ -3573,6 +3579,12 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Fuzzy (SearchQuery.SubjectContains ("some fuzzy text"))));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter (new MetadataTag ("/private/filters/values/saved-search"))));
 				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.Filter ("saved-search")));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.OlderThan (500)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.YoungerThan (500)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SaveDateSupported));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedBefore (DateTime.Now)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedOn (DateTime.Now)));
+				Assert.Throws<NotSupportedException> (() => folder.Search (SearchQuery.SavedSince (DateTime.Now)));
 
 				// Use SEARCH and FETCH to get the same info
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
