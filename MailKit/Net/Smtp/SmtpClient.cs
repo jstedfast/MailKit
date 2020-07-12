@@ -574,22 +574,18 @@ namespace MailKit.Net.Smtp {
 
 						if (uint.TryParse (capability.Substring (index), NumberStyles.None, CultureInfo.InvariantCulture, out size))
 							MaxSize = size;
-					} else if (capability == "DSN") {
-						capabilities |= SmtpCapabilities.Dsn;
-					} else if (capability == "BINARYMIME") {
-						capabilities |= SmtpCapabilities.BinaryMime;
-					} else if (capability == "CHUNKING") {
-						capabilities |= SmtpCapabilities.Chunking;
-					} else if (capability == "ENHANCEDSTATUSCODES") {
-						capabilities |= SmtpCapabilities.EnhancedStatusCodes;
-					} else if (capability == "8BITMIME") {
-						capabilities |= SmtpCapabilities.EightBitMime;
-					} else if (capability == "PIPELINING") {
-						capabilities |= SmtpCapabilities.Pipelining;
-					} else if (capability == "STARTTLS") {
-						capabilities |= SmtpCapabilities.StartTLS;
-					} else if (capability == "SMTPUTF8") {
-						capabilities |= SmtpCapabilities.UTF8;
+					} else {
+						switch (capability) {
+						case "DSN":                 capabilities |= SmtpCapabilities.Dsn; break;
+						case "BINARYMIME":          capabilities |= SmtpCapabilities.BinaryMime; break;
+						case "CHUNKING":            capabilities |= SmtpCapabilities.Chunking; break;
+						case "ENHANCEDSTATUSCODES": capabilities |= SmtpCapabilities.EnhancedStatusCodes; break;
+						case "8BITMIME":            capabilities |= SmtpCapabilities.EightBitMime; break;
+						case "PIPELINING":          capabilities |= SmtpCapabilities.Pipelining; break;
+						case "STARTTLS":            capabilities |= SmtpCapabilities.StartTLS; break;
+						case "SMTPUTF8":            capabilities |= SmtpCapabilities.UTF8; break;
+						case "REQUIRETLS":          capabilities |= SmtpCapabilities.RequireTLS; break;
+						}
 					}
 				}
 			}
