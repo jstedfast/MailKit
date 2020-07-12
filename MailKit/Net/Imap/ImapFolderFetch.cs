@@ -204,6 +204,23 @@ namespace MailKit.Net.Imap
 
 					message.Fields |= MessageSummaryItems.InternalDate;
 					break;
+				case "SAVEDATE":
+					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					switch (token.Type) {
+					case ImapTokenType.QString:
+					case ImapTokenType.Atom:
+						message.SaveDate = ImapUtils.ParseInternalDate ((string) token.Value);
+						break;
+					case ImapTokenType.Nil:
+						message.SaveDate = null;
+						break;
+					default:
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					}
+
+					message.Fields |= MessageSummaryItems.SaveDate;
+					break;
 				case "RFC822.SIZE":
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -490,6 +507,11 @@ namespace MailKit.Net.Imap
 					tokens.Add ("EMAILID");
 				if ((items & MessageSummaryItems.ThreadId) != 0)
 					tokens.Add ("THREADID");
+			}
+
+			if ((engine.Capabilities & ImapCapabilities.SaveDate) != 0) {
+				if ((items & MessageSummaryItems.SaveDate) != 0)
+					tokens.Add ("SAVEDATE");
 			}
 
 			if ((engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {

@@ -573,6 +573,22 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Gets the date and time that the message was saved to the current mailbox, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the date and time that the message was saved to the current mailbox, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.SaveDate"/> flag is passed to
+		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+		/// methods.</para>
+		/// </remarks>
+		/// <value>The save date of the message.</value>
+		public DateTimeOffset? SaveDate {
+			get; set;
+		}
+
+		/// <summary>
 		/// Gets the size of the message, in bytes, if available.
 		/// </summary>
 		/// <remarks>

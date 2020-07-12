@@ -331,6 +331,11 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		Replace          = 1L << 56,
 
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc8514">SAVEDATE</a> extension.
+		/// </summary>
+		SaveDate         = 1L << 57,
+
 		#region GMail Extensions
 
 		/// <summary>

@@ -250,6 +250,33 @@ namespace MailKit.Net.Imap
 			case SearchTerm.Recent:
 				builder.Append ("RECENT");
 				break;
+			case SearchTerm.SaveDateSupported:
+				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
+					throw new NotSupportedException ("The SAVEDATESUPPORTED search term is not supported by the IMAP server.");
+
+				builder.Append ("SAVEDATESUPPORTED");
+				break;
+			case SearchTerm.SavedBefore:
+				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
+					throw new NotSupportedException ("The SAVEDBEFORE search term is not supported by the IMAP server.");
+
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("SAVEDBEFORE {0}", FormatDateTime (date.Date));
+				break;
+			case SearchTerm.SavedOn:
+				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
+					throw new NotSupportedException ("The SAVEDON search term is not supported by the IMAP server.");
+
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("SAVEDON {0}", FormatDateTime (date.Date));
+				break;
+			case SearchTerm.SavedSince:
+				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
+					throw new NotSupportedException ("The SAVEDSINCE search term is not supported by the IMAP server.");
+
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("SAVEDSINCE {0}", FormatDateTime (date.Date));
+				break;
 			case SearchTerm.Seen:
 				builder.Append ("SEEN");
 				break;

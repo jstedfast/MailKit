@@ -889,6 +889,59 @@ namespace MailKit.Search {
 		public static readonly SearchQuery Recent = new SearchQuery (SearchTerm.Recent);
 
 		/// <summary>
+		/// Match all messages in the mailbox when the underlying storage of that mailbox supports
+		/// the save date attribute.
+		/// </summary>
+		/// <remarks>
+		/// Matches all messages in the mailbox when the underlying storage of that mailbox supports
+		/// the save date attribute. Conversely, it matches no messages in the mailbox when the save
+		/// date attribute is not supported.
+		/// </remarks>
+		public static readonly SearchQuery SaveDateSupported = new SearchQuery (SearchTerm.SaveDateSupported);
+
+		/// <summary>
+		/// Match messages that were saved to the mailbox before the specified date.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that were saved to the mailbox before the specified date.</para>
+		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// </remarks>
+		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
+		/// <param name="date">The date.</param>
+		public static DateSearchQuery SavedBefore (DateTime date)
+		{
+			return new DateSearchQuery (SearchTerm.SavedBefore, date);
+		}
+
+		/// <summary>
+		/// Match messages that were saved to the mailbox on the specified date.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that were saved to the mailbox on the specified date.</para>
+		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// </remarks>
+		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
+		/// <param name="date">The date.</param>
+		public static DateSearchQuery SavedOn (DateTime date)
+		{
+			return new DateSearchQuery (SearchTerm.SavedOn, date);
+		}
+
+		/// <summary>
+		/// Match messages that were saved to the mailbox since the specified date.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that were saved to the mailbox since the specified date.</para>
+		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// </remarks>
+		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
+		/// <param name="date">The date.</param>
+		public static DateSearchQuery SavedSince (DateTime date)
+		{
+			return new DateSearchQuery (SearchTerm.SavedSince, date);
+		}
+
+		/// <summary>
 		/// Match messages with the <see cref="MessageFlags.Seen"/> flag set.
 		/// </summary>
 		/// <remarks>

@@ -191,6 +191,13 @@ namespace MailKit {
 		/// </summary>
 		PreviewText    = 1 << 16,
 
+		/// <summary>
+		/// <para>Fetch the <see cref="IMessageSummary.SaveDate"/>.</para>
+		/// <para>Fetches the <c>SAVEDATE</c> value as defined in
+		/// <a href="https://tools.ietf.org/html/rfc8514">rfc8514</a>.</para>
+		/// </summary>
+		SaveDate       = 1 << 17,
+
 		#region Macros
 
 		/// <summary>
@@ -199,7 +206,7 @@ namespace MailKit {
 		/// <para>This macro maps to the equivalent <c>ALL</c> macro as defined in
 		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
-		All           = Envelope | Flags | InternalDate | Size,
+		All            = Envelope | Flags | InternalDate | Size,
 
 		/// <summary>
 		/// <para>A macro for fetching the <see cref="Flags"/>, <see cref="InternalDate"/>, and
@@ -207,7 +214,7 @@ namespace MailKit {
 		/// <para>This macro maps to the equivalent <c>FAST</c> macro as defined in
 		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
-		Fast          = Flags | InternalDate | Size,
+		Fast           = Flags | InternalDate | Size,
 
 		/// <summary>
 		/// <para>A macro for fetching the <see cref="Body"/>, <see cref="Envelope"/>,
@@ -215,7 +222,7 @@ namespace MailKit {
 		/// <para>This macro maps to the equivalent <c>FULL</c> macro as defined in
 		/// <a href="https://tools.ietf.org/html/rfc3501">rfc3501</a>.</para>
 		/// </summary>
-		Full          = Body | Envelope | Flags| InternalDate | Size,
+		Full           = Body | Envelope | Flags| InternalDate | Size,
 
 		#endregion
 	}
