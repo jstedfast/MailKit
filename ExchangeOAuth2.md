@@ -27,8 +27,8 @@ var options = new PublicClientApplicationOptions {
 };
  
 var publicClientApplication = PublicClientApplicationBuilder
-    .CreateWithApplicationOptions(options)
-    .Build();
+    .CreateWithApplicationOptions (options)
+    .Build ();
  
 var scopes = new string[] {
     "email",
@@ -38,7 +38,7 @@ var scopes = new string[] {
     "https://outlook.office.com/SMTP.AccessAsUser.All", // Only needed for SMTP
 };
 
-var authToken = await publicClientApplication.AcquireTokenInteractive(scopes).ExecuteAsync();
+var authToken = await publicClientApplication.AcquireTokenInteractive (scopes).ExecuteAsync ();
 
 var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
