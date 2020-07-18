@@ -285,16 +285,6 @@ namespace MailKit.Net.Imap {
 				throw new FolderNotFoundException (folder.FullName);
 		}
 
-		static ImapResponseCode GetResponseCode (ImapCommand ic, ImapResponseCodeType type)
-		{
-			for (int i = 0; i < ic.RespCodes.Count; i++) {
-				if (ic.RespCodes[i].Type == type)
-					return ic.RespCodes[i];
-			}
-
-			return null;
-		}
-
 		#region IMailFolder implementation
 
 		/// <summary>
@@ -774,10 +764,10 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok && GetResponseCode (ic, ImapResponseCodeType.AlreadyExists) == null)
+			if (ic.Response != ImapCommandResponse.Ok && ic.GetResponseCode (ImapResponseCodeType.AlreadyExists) == null)
 				throw ImapCommandException.Create ("CREATE", ic);
 
-			var code = (MailboxIdResponseCode) GetResponseCode (ic, ImapResponseCodeType.MailboxId);
+			var code = (MailboxIdResponseCode) ic.GetResponseCode (ImapResponseCodeType.MailboxId);
 			var id = code?.MailboxId;
 
 			var created = await GetCreatedFolderAsync (encodedName, id, false, doAsync, cancellationToken).ConfigureAwait (false);
@@ -795,7 +785,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The created folder.</returns>
 		/// <param name="name">The name of the folder to create.</param>
-		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise <c>false</c>.</param>
+		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="name"/> is <c>null</c>.
@@ -840,7 +830,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The created folder.</returns>
 		/// <param name="name">The name of the folder to create.</param>
-		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise <c>false</c>.</param>
+		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="name"/> is <c>null</c>.
@@ -941,7 +931,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("CREATE", ic);
 
-			var code = (MailboxIdResponseCode) GetResponseCode (ic, ImapResponseCodeType.MailboxId);
+			var code = (MailboxIdResponseCode) ic.GetResponseCode (ImapResponseCodeType.MailboxId);
 			var id = code?.MailboxId;
 
 			var created = await GetCreatedFolderAsync (encodedName, id, true, doAsync, cancellationToken).ConfigureAwait (false);
@@ -3009,7 +2999,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
 
-			var metadata = (MetadataResponseCode) GetResponseCode (ic, ImapResponseCodeType.Metadata);
+			var metadata = (MetadataResponseCode) ic.GetResponseCode (ImapResponseCodeType.Metadata);
 			if (metadata != null && metadata.SubType == MetadataResponseCodeSubType.LongEntries)
 				options.LongEntries = metadata.Value;
 
@@ -3901,7 +3891,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
 
-			var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
+			var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
 			if (append != null)
 				return append.UidSet[0];
@@ -4314,7 +4304,7 @@ namespace MailKit.Net.Imap {
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
 
-				var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
+				var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
 				if (append != null)
 					return append.UidSet;
@@ -4507,7 +4497,7 @@ namespace MailKit.Net.Imap {
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
 
-				var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
+				var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
 				if (append != null)
 					return append.UidSet;
@@ -4733,7 +4723,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("REPLACE", ic);
 
-			var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
+			var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
 			if (append != null)
 				return append.UidSet[0];
@@ -5055,7 +5045,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("REPLACE", ic);
 
-			var append = (AppendUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.AppendUid);
+			var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
 			if (append != null)
 				return append.UidSet[0];
@@ -5362,7 +5352,7 @@ namespace MailKit.Net.Imap {
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("COPY", ic);
 
-				var copy = (CopyUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.CopyUid);
+				var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
 				if (copy != null) {
 					if (dest == null) {
@@ -5531,7 +5521,7 @@ namespace MailKit.Net.Imap {
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("MOVE", ic);
 
-				var copy = (CopyUidResponseCode) GetResponseCode (ic, ImapResponseCodeType.CopyUid);
+				var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
 				if (copy != null) {
 					if (dest == null) {

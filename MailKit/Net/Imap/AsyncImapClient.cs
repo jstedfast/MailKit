@@ -822,7 +822,7 @@ namespace MailKit.Net.Imap
 		/// An I/O error occurred.
 		/// </exception>
 		/// <exception cref="ImapCommandException">
-		/// The server replied to the IDLE command with a NO or BAD response.
+		/// The server replied to the LIST command with a NO or BAD response.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.

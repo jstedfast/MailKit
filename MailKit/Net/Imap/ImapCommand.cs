@@ -916,5 +916,23 @@ namespace MailKit.Net.Imap {
 
 			return false;
 		}
+
+		/// <summary>
+		/// Get the first response-code of the specified type.
+		/// </summary>
+		/// <remarks>
+		/// Gets the first response-code of the specified type.
+		/// </remarks>
+		/// <param name="type">The type of response-code.</param>
+		/// <returns>The response-code if it exists; otherwise, <c>null</c>.</returns>
+		public ImapResponseCode GetResponseCode (ImapResponseCodeType type)
+		{
+			for (int i = 0; i < RespCodes.Count; i++) {
+				if (RespCodes[i].Type == type)
+					return RespCodes[i];
+			}
+
+			return null;
+		}
 	}
 }
