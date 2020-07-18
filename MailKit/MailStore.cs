@@ -497,13 +497,13 @@ namespace MailKit {
 		/// <param name="tag">The metadata tag.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
+		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
+		/// The <see cref="MailStore"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The folder does not support metadata.
@@ -532,13 +532,13 @@ namespace MailKit {
 		/// <param name="tag">The metadata tag.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
+		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
+		/// The <see cref="MailStore"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The folder does not support metadata.
@@ -570,13 +570,13 @@ namespace MailKit {
 		/// <paramref name="tags"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
+		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
+		/// The <see cref="MailStore"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The folder does not support metadata.
@@ -611,13 +611,13 @@ namespace MailKit {
 		/// <paramref name="tags"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
+		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
+		/// The <see cref="MailStore"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The folder does not support metadata.
@@ -655,13 +655,13 @@ namespace MailKit {
 		/// <para><paramref name="tags"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
+		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
+		/// The <see cref="MailStore"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The folder does not support metadata.
@@ -696,13 +696,13 @@ namespace MailKit {
 		/// <para><paramref name="tags"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
+		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
+		/// The <see cref="MailStore"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The folder does not support metadata.
@@ -733,13 +733,13 @@ namespace MailKit {
 		/// <paramref name="metadata"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
+		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
+		/// The <see cref="MailStore"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The folder does not support metadata.
@@ -771,13 +771,13 @@ namespace MailKit {
 		/// <paramref name="metadata"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
+		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
+		/// The <see cref="MailStore"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The folder does not support metadata.
