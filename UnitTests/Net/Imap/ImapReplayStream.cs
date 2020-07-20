@@ -465,7 +465,10 @@ namespace UnitTests.Net.Imap {
 				else
 					done = true;
 			} else {
-				Assert.IsFalse (isAsync, "Trying to WriteAsync in a non-async unit test.");
+				if (count != 6 || Encoding.ASCII.GetString (buffer, offset, count) != "DONE\r\n")
+					Assert.IsFalse (isAsync, "Trying to WriteAsync in a non-async unit test.");
+				else
+					done = true;
 			}
 
 			Assert.AreEqual (ImapReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
@@ -510,7 +513,8 @@ namespace UnitTests.Net.Imap {
 		{
 			CheckDisposed ();
 
-			Assert.IsTrue (asyncIO, "Trying to FlushAsync in a non-async unit test.");
+			Assert.IsTrue (asyncIO || done, "Trying to FlushAsync in a non-async unit test.");
+			done = false;
 
 			return Task.FromResult (true);
 		}

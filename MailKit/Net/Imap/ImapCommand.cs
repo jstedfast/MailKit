@@ -174,12 +174,12 @@ namespace MailKit.Net.Imap {
 		}
 #endif
 
-		void IdleComplete ()
+		async void IdleComplete ()
 		{
 			if (Engine.State == ImapEngineState.Idle) {
 				try {
-					Engine.Stream.Write (DoneCommand, 0, DoneCommand.Length, CancellationToken);
-					Engine.Stream.Flush (CancellationToken);
+					await Engine.Stream.WriteAsync (DoneCommand, 0, DoneCommand.Length, CancellationToken).ConfigureAwait (false);
+					await Engine.Stream.FlushAsync (CancellationToken).ConfigureAwait (false);
 				} catch {
 					return;
 				}
