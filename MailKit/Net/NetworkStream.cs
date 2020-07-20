@@ -135,6 +135,9 @@ namespace MailKit.Net
 		void Disconnect ()
 		{
 			try {
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
+				Socket.Disconnect (false);
+#endif
 				Socket.Dispose ();
 			} catch {
 				return;
@@ -175,9 +178,6 @@ namespace MailKit.Net
 							await tcs.Task.ConfigureAwait (false);
 							return recv.BytesTransferred;
 						} catch (OperationCanceledException) {
-							if (Socket.Connected)
-								Socket.Shutdown (SocketShutdown.Both);
-
 							Disconnect ();
 							throw;
 						} catch (Exception ex) {
@@ -218,9 +218,6 @@ namespace MailKit.Net
 						try {
 							await tcs.Task.ConfigureAwait (false);
 						} catch (OperationCanceledException) {
-							if (Socket.Connected)
-								Socket.Shutdown (SocketShutdown.Both);
-
 							Disconnect ();
 							throw;
 						} catch (Exception ex) {
