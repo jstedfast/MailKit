@@ -4,6 +4,7 @@
 
 * [Register Your Application with Microsoft](#register-your-application-with-microsoft)
 * [Authenticating with OAuth2](#authenticating-with-oauth2)
+* [Additional Resources](#additional-resources)
 
 ## Register Your Application with Microsoft
 
@@ -48,3 +49,16 @@ using (var client = new ImapClient ()) {
 	await client.DisconnectAsync (true);
 }
 ```
+
+Note: Once you've acquired an auth token using the interactive method above, you can avoid prompting the user
+if you cache the `authToken.Account` information and then silently reacquire auth tokens in the future using
+the following code:
+
+```csharp
+var authToken = await publicClientApplication.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
+```
+
+## Additional Resources
+
+For more inforrmation, check out the [Microsoft.Identity.Client](https://docs.microsoft.com/en-us/dotnet/api/microsoft.identity.client?view=azure-dotnet)
+documentation.
