@@ -1,0 +1,9 @@
+* 1 EXISTS
+* 0 RECENT
+* OK [UIDVALIDITY 1595903349] UIDs valid
+* OK [UIDNEXT 3] Predicted next UID
+* FLAGS (\Answered \Deleted \Draft \Flagged \Seen $Forwarded $Junk $NotJunk)
+* OK [PERMANENTFLAGS ()] No permanent flags permitted
+* OK [HIGHESTMODSEQ 7]
+* OK [MAILBOXID (27)] Ok
+A######## OK [READ-ONLY] EXAMINE completed; now in selected state

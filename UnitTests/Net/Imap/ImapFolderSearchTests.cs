@@ -198,6 +198,50 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestSearchStringWithSpaces ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "yahoo.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", "yahoo.capabilities.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "yahoo.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "yahoo.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 EXAMINE Inbox\r\n", "yahoo.examine-inbox.txt"));
+			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH SUBJECT \"Yahoo Mail\"\r\n", "yahoo.search.txt"));
+
+			using (var client = new ImapClient ()) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadOnly);
+
+				var uids = inbox.Search (SearchQuery.SubjectContains ("Yahoo Mail"));
+				Assert.AreEqual (14, uids.Count);
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id);
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
 		public void TestSearchBadCharsetFallback ()
 		{
 			var badCharsetResponse = Encoding.ASCII.GetBytes ("A00000005 NO [BADCHARSET (US-ASCII)] The specified charset is not supported.\r\n");

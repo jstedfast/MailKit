@@ -440,6 +440,12 @@
     <EmbeddedResource Include="Net\Imap\Resources\metadata\setmetadata-toomany.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\uw\greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\uw\preauth-greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\yahoo\capabilities.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\yahoo\examine-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\yahoo\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\yahoo\list-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\yahoo\namespace.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\yahoo\search.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa2.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\err.txt" />
