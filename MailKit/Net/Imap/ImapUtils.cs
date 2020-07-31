@@ -491,31 +491,31 @@ namespace MailKit.Net.Imap {
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom) {
-				var atom = (string) token.Value;
+				var atom = ((string) token.Value).ToLowerInvariant ();
 
 				switch (atom) {
-				case "\\NoInferiors":   attrs |= FolderAttributes.NoInferiors; break;
-				case "\\Noselect":      attrs |= FolderAttributes.NoSelect; break;
-				case "\\Marked":        attrs |= FolderAttributes.Marked; break;
-				case "\\Unmarked":      attrs |= FolderAttributes.Unmarked; break;
-				case "\\NonExistent":   attrs |= FolderAttributes.NonExistent; break;
-				case "\\Subscribed":    attrs |= FolderAttributes.Subscribed; break;
-				case "\\Remote":        attrs |= FolderAttributes.Remote; break;
-				case "\\HasChildren":   attrs |= FolderAttributes.HasChildren; break;
-				case "\\HasNoChildren": attrs |= FolderAttributes.HasNoChildren; break;
-				case "\\All":           attrs |= FolderAttributes.All; break;
-				case "\\Archive":       attrs |= FolderAttributes.Archive; break;
-				case "\\Drafts":        attrs |= FolderAttributes.Drafts; break;
-				case "\\Flagged":       attrs |= FolderAttributes.Flagged; break;
-				case "\\Important":     attrs |= FolderAttributes.Important; break;
-				case "\\Junk":          attrs |= FolderAttributes.Junk; break;
-				case "\\Sent":          attrs |= FolderAttributes.Sent; break;
-				case "\\Trash":         attrs |= FolderAttributes.Trash; break;
+				case "\\noinferiors":   attrs |= FolderAttributes.NoInferiors; break;
+				case "\\noselect":      attrs |= FolderAttributes.NoSelect; break;
+				case "\\marked":        attrs |= FolderAttributes.Marked; break;
+				case "\\unmarked":      attrs |= FolderAttributes.Unmarked; break;
+				case "\\nonexistent":   attrs |= FolderAttributes.NonExistent; break;
+				case "\\subscribed":    attrs |= FolderAttributes.Subscribed; break;
+				case "\\remote":        attrs |= FolderAttributes.Remote; break;
+				case "\\haschildren":   attrs |= FolderAttributes.HasChildren; break;
+				case "\\hasnochildren": attrs |= FolderAttributes.HasNoChildren; break;
+				case "\\all":           attrs |= FolderAttributes.All; break;
+				case "\\archive":       attrs |= FolderAttributes.Archive; break;
+				case "\\drafts":        attrs |= FolderAttributes.Drafts; break;
+				case "\\flagged":       attrs |= FolderAttributes.Flagged; break;
+				case "\\important":     attrs |= FolderAttributes.Important; break;
+				case "\\junk":          attrs |= FolderAttributes.Junk; break;
+				case "\\sent":          attrs |= FolderAttributes.Sent; break;
+				case "\\trash":         attrs |= FolderAttributes.Trash; break;
 				// XLIST flags:
-				case "\\AllMail":       attrs |= FolderAttributes.All; break;
-				case "\\Inbox":         attrs |= FolderAttributes.Inbox; break;
-				case "\\Spam":          attrs |= FolderAttributes.Junk; break;
-				case "\\Starred":       attrs |= FolderAttributes.Flagged; break;
+				case "\\allmail":       attrs |= FolderAttributes.All; break;
+				case "\\inbox":         attrs |= FolderAttributes.Inbox; break;
+				case "\\spam":          attrs |= FolderAttributes.Junk; break;
+				case "\\starred":       attrs |= FolderAttributes.Flagged; break;
 				}
 
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
