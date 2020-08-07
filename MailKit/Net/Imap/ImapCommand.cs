@@ -833,7 +833,7 @@ namespace MailKit.Net.Imap {
 					try {
 						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 					} finally {
-						if (Engine.Stream.IsConnected && Engine.Stream.CanTimeout)
+						if (Engine.Stream != null && Engine.Stream.IsConnected && Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = timeout;
 					}
 				} else {
