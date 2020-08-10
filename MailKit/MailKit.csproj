@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
@@ -37,11 +37,11 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
+  <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' ">
     <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
+  <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' == '.NETStandard' AND '$(TargetFrameworkVersion)' != 'v2.0' ">
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="System.Net.Security" Version="4.3.2" />

@@ -99,9 +99,6 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
         <dependency id="MimeKit" version="2.9.1" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-        <dependency id="System.Net.NameResolution" version="4.3.0" />
-        <dependency id="System.Net.Security" version="4.3.2" />
         <dependency id="MimeKit" version="2.9.1" />
       </group>
     </dependencies>
