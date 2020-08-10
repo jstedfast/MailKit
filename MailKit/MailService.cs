@@ -52,7 +52,7 @@ namespace MailKit {
 #if NET48
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13;
 #else
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12;
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls11 | SslProtocols.Tls12 | (SslProtocols) 12288;
 #endif
 
 		/// <summary>
