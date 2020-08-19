@@ -608,7 +608,7 @@ namespace MailKit.Net.Imap
 			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
 			// search syntax.
 			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
-			ic.UserData = new SearchResults (SortOrder.Ascending);
+			ic.UserData = new SearchResults (UidValidity, SortOrder.Ascending);
 
 			Engine.QueueCommand (ic);
 
@@ -746,7 +746,7 @@ namespace MailKit.Net.Imap
 			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
 			// search syntax.
 			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
-			ic.UserData = new SearchResults (SortOrder.Ascending);
+			ic.UserData = new SearchResults (UidValidity, SortOrder.Ascending);
 
 			Engine.QueueCommand (ic);
 
@@ -898,7 +898,7 @@ namespace MailKit.Net.Imap
 			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
 			// search syntax.
 			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
-			ic.UserData = new SearchResults ();
+			ic.UserData = new SearchResults (UidValidity);
 
 			Engine.QueueCommand (ic);
 
@@ -1032,7 +1032,7 @@ namespace MailKit.Net.Imap
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
 			ic.RegisterUntaggedHandler ("SORT", SearchMatchesAsync);
-			ic.UserData = new SearchResults ();
+			ic.UserData = new SearchResults (UidValidity);
 
 			Engine.QueueCommand (ic);
 
@@ -1180,7 +1180,7 @@ namespace MailKit.Net.Imap
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
 			else
 				ic.RegisterUntaggedHandler ("SORT", SearchMatchesAsync);
-			ic.UserData = new SearchResults ();
+			ic.UserData = new SearchResults (UidValidity);
 
 			Engine.QueueCommand (ic);
 
@@ -1347,7 +1347,7 @@ namespace MailKit.Net.Imap
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
-			ic.UserData = new SearchResults ();
+			ic.UserData = new SearchResults (UidValidity);
 
 			Engine.QueueCommand (ic);
 
