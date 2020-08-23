@@ -994,16 +994,16 @@ namespace MailKit.Net.Smtp {
 			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
-			SmtpResponse response;
-			Stream stream;
-			bool starttls;
-
-			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
+			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
 			var socket = await ConnectSocket (host, port, doAsync, cancellationToken).ConfigureAwait (false);
+			Stream stream = new NetworkStream (socket, true) {
+				WriteTimeout = timeout,
+				ReadTimeout = timeout
+			};
 
 			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
 					if (doAsync) {
@@ -1024,18 +1024,14 @@ namespace MailKit.Net.Smtp {
 				secure = true;
 				stream = ssl;
 			} else {
-				stream = new NetworkStream (socket, true);
 				secure = false;
-			}
-
-			if (stream.CanTimeout) {
-				stream.WriteTimeout = timeout;
-				stream.ReadTimeout = timeout;
 			}
 
 			Stream = new SmtpStream (stream, ProtocolLogger);
 
 			try {
+				SmtpResponse response;
+
 				ProtocolLogger.LogConnect (uri);
 
 				// read the greeting

@@ -870,18 +870,18 @@ namespace MailKit.Net.Pop3 {
 			if (IsConnected)
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
 
-			Stream stream;
-			bool starttls;
-			Uri uri;
-
-			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
+			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
 			var socket = await ConnectSocket (host, port, doAsync, cancellationToken).ConfigureAwait (false);
+			Stream stream = new NetworkStream (socket, true) {
+				WriteTimeout = timeout,
+				ReadTimeout = timeout
+			};
 
 			engine.Uri = uri;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
 					if (doAsync) {
@@ -902,15 +902,10 @@ namespace MailKit.Net.Pop3 {
 				secure = true;
 				stream = ssl;
 			} else {
-				stream = new NetworkStream (socket, true);
 				secure = false;
 			}
 
 			probed = ProbedCapabilities.None;
-			if (stream.CanTimeout) {
-				stream.WriteTimeout = timeout;
-				stream.ReadTimeout = timeout;
-			}
 
 			try {
 				ProtocolLogger.LogConnect (uri);
