@@ -1,5 +1,22 @@
 # Release Notes
 
+### MailKit 2.9.0 (2020-09-12)
+
+* Refactored Connect/ConnectAsync() logic to set timeouts *before* calling SslStream.AuthenticateAsClient()
+  when connecting to an SSL-wrapped service.
+  (issue [#1059](https://github.com/jstedfast/MailKit/issues/1059))
+* Hardcode the value of SslProtocols.Tls13 for frameworks that do not support it and add it to the
+  client's default SslProtocols. This adds TLS v1.3 support, by default, for apps using .NETStandard2.0
+  where the app project is built against a version of .NETCore that supports TLS v1.3.
+  (issue [#1058](https://github.com/jstedfast/MailKit/issues/1058))
+* Initialize IMAP SearchResults with the UIDVALIDITY value.
+  (issue [#1060](https://github.com/jstedfast/MailKit/issues/1060))
+* Make sure the ImapStream is not null (can be null if user calls Disconnect() causing IDLE to abort).
+  (issue [#1025](https://github.com/jstedfast/MailKit/issues/1025))
+* Case-insenitively match IMAP folder attribute flags (e.g. \HasNoChildren and \NoSelect).
+* Added support for the IMAP SAVEDATE extension.
+* Added support for detecting SMTP's REQUIRETLS extension.
+
 ### MailKit 2.8.0 (2020-07-11)
 
 * Make sure to use the InvariantCulture when converting port values to a string.
