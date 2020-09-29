@@ -161,7 +161,7 @@ namespace MailKit.Net.Smtp {
 		/// Get the capabilities supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made 
+		/// The capabilities will not be known until a successful connection has been made
 		/// and may change once the client is authenticated.
 		/// </remarks>
 		/// <example>
@@ -2138,7 +2138,7 @@ namespace MailKit.Net.Smtp {
 				await ResetAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				throw;
 			} catch {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri) , false);
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 				throw;
 			}
 		}
