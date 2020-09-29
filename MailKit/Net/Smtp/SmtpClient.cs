@@ -76,6 +76,7 @@ namespace MailKit.Net.Smtp {
 
 		readonly HashSet<string> authenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
+		readonly List<MailboxAddress> acceptedRecipients = new List<MailboxAddress> ();
 		SmtpCapabilities capabilities;
 		int timeout = 2 * 60 * 1000;
 		bool authenticated;
@@ -161,7 +162,7 @@ namespace MailKit.Net.Smtp {
 		/// Get the capabilities supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made 
+		/// The capabilities will not be known until a successful connection has been made
 		/// and may change once the client is authenticated.
 		/// </remarks>
 		/// <example>
@@ -179,6 +180,14 @@ namespace MailKit.Net.Smtp {
 
 				capabilities = value;
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the PRDR extension should be used if it is
+		/// offered by the SMTP server. This must be set before sending a message.
+		/// </summary>
+		public bool UsePrdr {
+			get; set;
 		}
 
 		/// <summary>
@@ -585,6 +594,7 @@ namespace MailKit.Net.Smtp {
 						case "STARTTLS":            capabilities |= SmtpCapabilities.StartTLS; break;
 						case "SMTPUTF8":            capabilities |= SmtpCapabilities.UTF8; break;
 						case "REQUIRETLS":          capabilities |= SmtpCapabilities.RequireTLS; break;
+						case "PRDR":                capabilities |= SmtpCapabilities.Prdr; break;
 						}
 					}
 				}
@@ -1582,6 +1592,7 @@ namespace MailKit.Net.Smtp {
 			EightBitMime = 1 << 0,
 			BinaryMime   = 1 << 1,
 			UTF8         = 1 << 2,
+			Prdr         = 1 << 3,
 		}
 
 		class ContentTransferEncodingVisitor : MimeVisitor
@@ -1722,6 +1733,9 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
+			if ((extensions & SmtpExtension.Prdr) != 0)
+				builder.Append (" PRDR");
+
 			var command = builder.ToString ();
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
@@ -1764,6 +1778,7 @@ namespace MailKit.Net.Smtp {
 		bool ProcessRcptToResponse (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
 		{
 			if (response.StatusCode < (SmtpStatusCode) 300) {
+				acceptedRecipients.Add (mailbox);
 				OnRecipientAccepted (message, mailbox, response);
 				return true;
 			}
@@ -1962,6 +1977,33 @@ namespace MailKit.Net.Smtp {
 			case SmtpStatusCode.Ok:
 				OnMessageSent (new MessageSentEventArgs (message, response.Response));
 				break;
+			case SmtpStatusCode.PrdrResponse:
+				var perRecipientResponses = new Dictionary<MailboxAddress, SmtpResponse> ();
+				foreach (var rcpt in acceptedRecipients) {
+					// Read a response for each previously accepted recipient
+					if (doAsync) {
+						response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+					} else {
+						response = Stream.ReadResponse (cancellationToken);
+					}
+					perRecipientResponses[rcpt] = response;
+				}
+				// Read final response
+				if (doAsync) {
+					response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+				} else {
+					response = Stream.ReadResponse (cancellationToken);
+				}
+				switch (response.StatusCode) {
+				default:
+					throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
+				case SmtpStatusCode.AuthenticationRequired:
+					throw new ServiceNotAuthenticatedException (response.Response);
+				case SmtpStatusCode.Ok:
+					OnMessageSent (new MessageSentEventArgs (message, response.Response, perRecipientResponses));
+					break;
+				}
+				break;
 			}
 		}
 
@@ -2097,6 +2139,8 @@ namespace MailKit.Net.Smtp {
 
 			if ((Capabilities & SmtpCapabilities.UTF8) != 0 && (format.International || sender.IsInternational || recipients.Any (x => x.IsInternational)))
 				extensions |= SmtpExtension.UTF8;
+			if ((Capabilities & SmtpCapabilities.Prdr) != 0 && UsePrdr && recipients.Count > 1)
+				extensions |= SmtpExtension.Prdr;
 
 			if ((Capabilities & (SmtpCapabilities.Chunking | SmtpCapabilities.Size)) != 0 || progress != null) {
 				if (doAsync)
@@ -2107,6 +2151,7 @@ namespace MailKit.Net.Smtp {
 				size = -1;
 			}
 
+			acceptedRecipients.Clear ();
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
 				// queue their commands instead of sending them immediately.
@@ -2138,8 +2183,10 @@ namespace MailKit.Net.Smtp {
 				await ResetAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				throw;
 			} catch {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri) , false);
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 				throw;
+			} finally {
+				acceptedRecipients.Clear ();
 			}
 		}
 

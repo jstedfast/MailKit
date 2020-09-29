@@ -78,6 +78,11 @@ namespace MailKit.Net.Smtp {
 		AuthenticationChallenge = 334,
 
 		/// <summary>
+		/// The "PRDR response" status code.
+		/// </summary>
+		PrdrResponse = 353,
+
+		/// <summary>
 		/// The "start mail input" status code.
 		/// </summary>
 		StartMailInput = 354,

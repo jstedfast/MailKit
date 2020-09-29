@@ -104,8 +104,13 @@ namespace MailKit.Net.Smtp {
 		UTF8                = 1 << 9,
 
 		/// <summary>
-		/// The server supports the <a href="https://tools.ietf.org/html/rfc8689">REQUIRETLS</a>a> extension.
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc8689">REQUIRETLS</a> extension.
 		/// </summary>
 		RequireTLS          = 1 << 10,
+
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/draft-hall-prdr-00">PRDR</a> extension.
+		/// </summary>
+		Prdr                = 1 << 11,
 	}
 }

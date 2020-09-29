@@ -25,6 +25,9 @@
 //
 
 using System;
+using System.Collections.Generic;
+
+using MailKit.Net.Smtp;
 
 using MimeKit;
 
@@ -38,7 +41,7 @@ namespace MailKit {
 	public class MessageSentEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.MessageSentEventArgs"/> class.
+		/// Initializes a new instance of the <see cref="MessageSentEventArgs"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Creates a new <see cref="MessageSentEventArgs"/>.
@@ -51,6 +54,25 @@ namespace MailKit {
 		/// <para><paramref name="response"/> is <c>null</c>.</para>
 		/// </exception>
 		public MessageSentEventArgs (MimeMessage message, string response)
+			: this (message, response, null)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MessageSentEventArgs"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MessageSentEventArgs"/>.
+		/// </remarks>
+		/// <param name="message">The message that was just sent.</param>
+		/// <param name="response">The response from the server.</param>
+		/// <param name="perRecipientResponses">The pre-recipient responses from the server.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="response"/> is <c>null</c>.</para>
+		/// </exception>
+		public MessageSentEventArgs (MimeMessage message, string response, Dictionary<MailboxAddress, SmtpResponse> perRecipientResponses)
 		{
 			if (message == null)
 				throw new ArgumentNullException (nameof (message));
@@ -60,6 +82,7 @@ namespace MailKit {
 
 			Message = message;
 			Response = response;
+			PerRecipientResponses = perRecipientResponses ?? new Dictionary<MailboxAddress, SmtpResponse>();
 		}
 
 		/// <summary>
@@ -81,6 +104,15 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The response.</value>
 		public string Response {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the responses for each recipient using the PRDR extension.
+		/// If this is empty, the server did not return per-recipient responses and the final
+		/// <see cref="Response"/> is valid for all recipients of the message.
+		/// </summary>
+		public Dictionary<MailboxAddress, SmtpResponse> PerRecipientResponses {
 			get; private set;
 		}
 	}

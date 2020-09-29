@@ -64,5 +64,14 @@ namespace MailKit.Net.Smtp {
 			StatusCode = code;
 			Response = response;
 		}
+
+		/// <summary>
+		/// Returns the status code and response in a string.
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString ()
+		{
+			return (int)StatusCode + " " + Response;
+		}
 	}
 }
