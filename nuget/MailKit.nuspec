@@ -50,7 +50,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
-    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 net46 net47 net58 netstandard netstandard1.3 netstandard1.6 netstandard2.0</tags>
+    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 net46 net47 net48 netstandard netstandard2.0</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
@@ -90,30 +90,12 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
       <group targetFramework="net48">
         <dependency id="MimeKit" version="2.9.2" />
       </group>
-      <group targetFramework="netstandard1.3">
-        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-        <dependency id="System.Net.NameResolution" version="4.3.0" />
-        <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.9.2" />
-      </group>
-      <group targetFramework="netstandard1.6">
-        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-        <dependency id="System.Net.NameResolution" version="4.3.0" />
-        <dependency id="System.Net.Security" version="4.3.2" />
-        <dependency id="MimeKit" version="2.9.2" />
-      </group>
       <group targetFramework="netstandard2.0">
         <dependency id="MimeKit" version="2.9.2" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="..\MailKit\bin\Release\netstandard1.3\MailKit.dll" target="lib\netstandard1.3\MailKit.dll" />
-    <file src="..\MailKit\bin\Release\netstandard1.3\MailKit.pdb" target="lib\netstandard1.3\MailKit.pdb" />
-    <file src="..\MailKit\bin\Release\netstandard1.3\MailKit.xml" target="lib\netstandard1.3\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\netstandard1.6\MailKit.dll" target="lib\netstandard1.6\MailKit.dll" />
-    <file src="..\MailKit\bin\Release\netstandard1.6\MailKit.pdb" target="lib\netstandard1.6\MailKit.pdb" />
-    <file src="..\MailKit\bin\Release\netstandard1.6\MailKit.xml" target="lib\netstandard1.6\MailKit.xml" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
