@@ -65,11 +65,11 @@ namespace MailKit.Examples
 			foreach (var element in chain.ChainElements) {
 				// Each element in the chain will have its own status list. If the status list is empty, it means that the
 				// certificate itself did not contain any errors.
-				if (element.ChainStatus.Length == 0)
+				if (element.ChainElementStatus.Length == 0)
 					continue;
 
 				Console.WriteLine ("\u2022 {0}", element.Certificate.Subject);
-				foreach (var error in element.ChainStatus) {
+				foreach (var error in element.ChainElementStatus) {
 					// `error.StatusInformation` contains a human-readable error string while `error.Status` is the corresponding enum value.
 					Console.WriteLine ("\t\u2022 {0}", error.StatusInformation);
 				}
