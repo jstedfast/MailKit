@@ -16,11 +16,11 @@ namespace ArcSignerExample
         {
         }
 
-        public DummyArcSigner (string fileName, string domain, string selector, DkimSignatureAlgorithm algorithm = DkimSignatureAlgorithm.RsaSha256) : base (fileName, domain, selector, algorithm)
+        public ExampleArcSigner (string fileName, string domain, string selector, DkimSignatureAlgorithm algorithm = DkimSignatureAlgorithm.RsaSha256) : base (fileName, domain, selector, algorithm)
         {
         }
 
-        public DummyArcSigner (AsymmetricKeyParameter key, string domain, string selector, DkimSignatureAlgorithm algorithm = DkimSignatureAlgorithm.RsaSha256) : base (key, domain, selector, algorithm)
+        public ExampleArcSigner (AsymmetricKeyParameter key, string domain, string selector, DkimSignatureAlgorithm algorithm = DkimSignatureAlgorithm.RsaSha256) : base (key, domain, selector, algorithm)
         {
         }
 
@@ -90,8 +90,8 @@ namespace ArcSignerExample
 
             var headers = new HeaderId[] { HeaderId.From, HeaderId.Subject, HeaderId.Date };
             var signer = new ExampleArcSigner ("privatekey.pem", "example.com", "brisbane", DkimSignatureAlgorithm.RsaSha256) {
-		HeaderCanonicalizationAlgorithm = DkimCanonicalizationAlgorithm.Simple,
-		BodyCanonicalizationAlgorithm = DkimCanonicalizationAlgorithm.Simple,
+                HeaderCanonicalizationAlgorithm = DkimCanonicalizationAlgorithm.Simple,
+                BodyCanonicalizationAlgorithm = DkimCanonicalizationAlgorithm.Simple,
                 AgentOrUserIdentifier = "@eng.example.com",
             };
 
