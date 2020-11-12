@@ -37,6 +37,7 @@ motivate me to continue working on the project.
   * [PLAIN](https://tools.ietf.org/html/rfc2595)
   * [SCRAM-SHA-1](https://tools.ietf.org/html/rfc5802)
   * [SCRAM-SHA-256](https://tools.ietf.org/html/rfc5802)
+  * [SCRAM-SHA-512](https://tools.ietf.org/html/draft-melnikov-scram-sha-512-00)
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
 * Proxy Support
   * [SOCKS4/4a](http://www.openssh.com/txt/socks4.protocol)

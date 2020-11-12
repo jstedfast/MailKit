@@ -83,6 +83,7 @@
     <Compile Include="Security\SaslMechanismPlainTests.cs" />
     <Compile Include="Security\SaslMechanismScramSha1Tests.cs" />
     <Compile Include="Security\SaslMechanismScramSha256Tests.cs" />
+    <Compile Include="Security\SaslMechanismScramSha512Tests.cs" />
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="Security\SslHandshakeExceptionTests.cs" />
     <Compile Include="AccessControlListTests.cs" />
