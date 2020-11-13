@@ -329,6 +329,7 @@ namespace MailKit.Security {
 			case "SCRAM-SHA-1":   return true;
 			case "DIGEST-MD5":    return md5supported;
 			case "CRAM-MD5":      return md5supported;
+			case "OAUTHBEARER":   return true;
 			case "XOAUTH2":       return true;
 			case "PLAIN":         return true;
 			case "LOGIN":         return true;
@@ -382,6 +383,7 @@ namespace MailKit.Security {
 			case "DIGEST-MD5":    return md5supported ? new SaslMechanismDigestMd5 (cred) { Uri = uri } : null;
 			case "CRAM-MD5":      return md5supported ? new SaslMechanismCramMd5 (cred) { Uri = uri } : null;
 			//case "GSSAPI":        return null;
+			case "OAUTHBEARER":   return new SaslMechanismOAuthBearer (cred) { Uri = uri };
 			case "XOAUTH2":       return new SaslMechanismOAuth2 (cred) { Uri = uri };
 			case "PLAIN":         return new SaslMechanismPlain (encoding, cred) { Uri = uri };
 			case "LOGIN":         return new SaslMechanismLogin (encoding, cred) { Uri = uri };

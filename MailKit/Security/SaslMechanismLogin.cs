@@ -261,7 +261,7 @@ namespace MailKit.Security {
 		protected override byte[] Challenge (byte[] token, int startIndex, int length)
 		{
 			if (IsAuthenticated)
-				throw new InvalidOperationException ();
+				return null;
 
 			byte[] challenge = null;
 

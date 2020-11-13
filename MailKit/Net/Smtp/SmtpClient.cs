@@ -631,10 +631,7 @@ namespace MailKit.Net.Smtp {
 			SaslException saslException = null;
 
 			try {
-				while (!mechanism.IsAuthenticated) {
-					if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
-						break;
-
+				while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
 					challenge = mechanism.Challenge (response.Response);
 					response = await SendCommandAsync (challenge, doAsync, cancellationToken).ConfigureAwait (false);
 				}

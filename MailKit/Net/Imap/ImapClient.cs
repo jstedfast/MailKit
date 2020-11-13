@@ -830,16 +830,7 @@ namespace MailKit.Net.Imap {
 
 			ic = engine.QueueCommand (cancellationToken, null, command);
 			ic.ContinuationHandler = async (imap, cmd, text, xdoAsync) => {
-				string challenge;
-
-				if (mechanism.IsAuthenticated) {
-					// The server claims we aren't done authenticating, but our SASL mechanism thinks we are...
-					// Send an empty string to abort the AUTHENTICATE command.
-					challenge = string.Empty;
-				} else {
-					challenge = mechanism.Challenge (text);
-				}
-
+				var challenge = mechanism.Challenge (text);
 				var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 
 				if (xdoAsync) {
@@ -963,16 +954,7 @@ namespace MailKit.Net.Imap {
 
 				ic = engine.QueueCommand (cancellationToken, null, command);
 				ic.ContinuationHandler = async (imap, cmd, text, xdoAsync) => {
-					string challenge;
-
-					if (sasl.IsAuthenticated) {
-						// The server claims we aren't done authenticating, but our SASL mechanism thinks we are...
-						// Send an empty string to abort the AUTHENTICATE command.
-						challenge = string.Empty;
-					} else {
-						challenge = sasl.Challenge (text);
-					}
-
+					var challenge = sasl.Challenge (text);
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 
 					if (xdoAsync) {

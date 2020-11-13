@@ -1,5 +1,5 @@
 ﻿//
-// SaslMechanismOAuth2.cs
+// SaslMechanismOAuthBearer.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -26,25 +26,29 @@
 
 using System;
 using System.Net;
+using System.Text;
+using System.Globalization;
 
 namespace MailKit.Security {
 	/// <summary>
-	/// The OAuth2 SASL mechanism.
+	/// The OAuth Bearer SASL mechanism.
 	/// </summary>
 	/// <remarks>
 	/// A SASL mechanism used by Google that makes use of a short-lived
 	/// OAuth 2.0 access token.
 	/// </remarks>
-	public class SaslMechanismOAuth2 : SaslMechanism
+	public class SaslMechanismOAuthBearer : SaslMechanism
 	{
+		static readonly byte[] ErrorResponse = new byte[1] { 0x01 };
 		const string AuthBearer = "auth=Bearer ";
-		const string UserEquals = "user=";
+		const string HostEquals = "host=";
+		const string PortEquals = "port=";
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuth2"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuthBearer"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new XOAUTH2 SASL context.
+		/// Creates a new OAUTHBEARER SASL context.
 		/// </remarks>
 		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
@@ -53,16 +57,16 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
-		[Obsolete ("Use SaslMechanismOAuth2(NetworkCredential) instead.")]
-		public SaslMechanismOAuth2 (Uri uri, ICredentials credentials) : base (uri, credentials)
+		[Obsolete ("Use SaslMechanismOAuthBearer(NetworkCredential) instead.")]
+		public SaslMechanismOAuthBearer (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuth2"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuthBearer"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new XOAUTH2 SASL context.
+		/// Creates a new OAUTHBEARER SASL context.
 		/// </remarks>
 		/// <param name="uri">The URI of the service.</param>
 		/// <param name="userName">The user name.</param>
@@ -74,30 +78,30 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="auth_token"/> is <c>null</c>.</para>
 		/// </exception>
-		[Obsolete ("Use SaslMechanismOAuth2(string, string) instead.")]
-		public SaslMechanismOAuth2 (Uri uri, string userName, string auth_token) : base (uri, userName, auth_token)
+		[Obsolete ("Use SaslMechanismOAuthBearer(string, string) instead.")]
+		public SaslMechanismOAuthBearer (Uri uri, string userName, string auth_token) : base (uri, userName, auth_token)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuth2"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuthBearer"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new XOAUTH2 SASL context.
+		/// Creates a new OAUTHBEARER SASL context.
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
-		public SaslMechanismOAuth2 (NetworkCredential credentials) : base (credentials)
+		public SaslMechanismOAuthBearer (NetworkCredential credentials) : base (credentials)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuth2"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuthBearer"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new XOAUTH2 SASL context.
+		/// Creates a new OAUTHBEARER SASL context.
 		/// </remarks>
 		/// <param name="userName">The user name.</param>
 		/// <param name="auth_token">The auth token.</param>
@@ -106,7 +110,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="auth_token"/> is <c>null</c>.</para>
 		/// </exception>
-		public SaslMechanismOAuth2 (string userName, string auth_token) : base (userName, auth_token)
+		public SaslMechanismOAuthBearer (string userName, string auth_token) : base (userName, auth_token)
 		{
 		}
 
@@ -118,7 +122,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <value>The name of the mechanism.</value>
 		public override string MechanismName {
-			get { return "XOAUTH2"; }
+			get { return "OAUTHBEARER"; }
 		}
 
 		/// <summary>
@@ -131,6 +135,32 @@ namespace MailKit.Security {
 		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
 		public override bool SupportsInitialResponse {
 			get { return true; }
+		}
+
+		static int CalculateBufferSize (byte[] authzid, byte[] host, string port, string token)
+		{
+			int length = 0;
+
+			length += 2; // channel binding ("n,")
+			length += 2; // a=
+			length += authzid.Length;
+			length += 1; // ','
+
+			length++; // ^A
+
+			length += HostEquals.Length;
+			length += host.Length;
+			length++; // ^A
+
+			length += PortEquals.Length;
+			length += port.Length;
+			length++; // ^A
+
+			length += AuthBearer.Length;
+			length += token.Length;
+			length += 2; // ^A^A
+
+			return length;
 		}
 
 		/// <summary>
@@ -152,24 +182,43 @@ namespace MailKit.Security {
 		protected override byte[] Challenge (byte[] token, int startIndex, int length)
 		{
 			if (IsAuthenticated)
-				return null;
+				return ErrorResponse;
 
+			var authzid = Encoding.UTF8.GetBytes (Credentials.UserName);
+			var port = Uri.Port.ToString (CultureInfo.InvariantCulture);
+			var host = Encoding.UTF8.GetBytes (Uri.Host);
 			var authToken = Credentials.Password;
-			var userName = Credentials.UserName;
+
+			var buf = new byte[CalculateBufferSize (authzid, host, port, authToken)];
 			int index = 0;
 
-			var buf = new byte[UserEquals.Length + userName.Length + AuthBearer.Length + authToken.Length + 3];
-			for (int i = 0; i < UserEquals.Length; i++)
-				buf[index++] = (byte) UserEquals[i];
-			for (int i = 0; i < userName.Length; i++)
-				buf[index++] = (byte) userName[i];
-			buf[index++] = 1;
+			buf[index++] = (byte) 'n'; // channel binding not supported
+			buf[index++] = (byte) ',';
+			buf[index++] = (byte) 'a';
+			buf[index++] = (byte) '=';
+			for (int i = 0; i < authzid.Length; i++)
+				buf[index++] = authzid[i];
+			buf[index++] = (byte) ',';
+			buf[index++] = 0x01;
+
+			for (int i = 0; i < HostEquals.Length; i++)
+				buf[index++] = (byte) HostEquals[i];
+			for (int i = 0; i < host.Length; i++)
+				buf[index++] = host[i];
+			buf[index++] = 0x01;
+
+			for (int i = 0; i < PortEquals.Length; i++)
+				buf[index++] = (byte) PortEquals[i];
+			for (int i = 0; i < port.Length; i++)
+				buf[index++] = (byte) port[i];
+			buf[index++] = 0x01;
+
 			for (int i = 0; i < AuthBearer.Length; i++)
 				buf[index++] = (byte) AuthBearer[i];
 			for (int i = 0; i < authToken.Length; i++)
 				buf[index++] = (byte) authToken[i];
-			buf[index++] = 1;
-			buf[index++] = 1;
+			buf[index++] = 0x01;
+			buf[index++] = 0x01;
 
 			IsAuthenticated = true;
 

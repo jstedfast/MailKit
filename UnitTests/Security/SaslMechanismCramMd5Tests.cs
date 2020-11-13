@@ -69,7 +69,7 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (expected, result, "{0}: challenge response does not match the expected string.", prefix);
 			Assert.IsTrue (sasl.IsAuthenticated, "{0}: should be authenticated now.", prefix);
-			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
 		}
 
 		[Test]

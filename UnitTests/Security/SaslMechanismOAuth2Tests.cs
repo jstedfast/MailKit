@@ -60,7 +60,7 @@ namespace UnitTests.Security {
 			challenge = sasl.Challenge (string.Empty);
 			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
 			Assert.AreEqual (expected, challenge, "Challenge");
-			Assert.Throws<InvalidOperationException> (() => sasl.Challenge (string.Empty), "Already authenticated.");
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "Already authenticated.");
 		}
 
 		[Test]

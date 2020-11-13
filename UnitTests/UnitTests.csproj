@@ -80,6 +80,7 @@
     <Compile Include="Security\SaslMechanismLoginTests.cs" />
     <Compile Include="Security\SaslMechanismNtlmTests.cs" />
     <Compile Include="Security\SaslMechanismOAuth2Tests.cs" />
+    <Compile Include="Security\SaslMechanismOAuthBearerTests.cs" />
     <Compile Include="Security\SaslMechanismPlainTests.cs" />
     <Compile Include="Security\SaslMechanismScramSha1Tests.cs" />
     <Compile Include="Security\SaslMechanismScramSha256Tests.cs" />

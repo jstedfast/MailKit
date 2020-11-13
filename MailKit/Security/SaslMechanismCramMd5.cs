@@ -150,11 +150,11 @@ namespace MailKit.Security {
 		/// </exception>
 		protected override byte[] Challenge (byte[] token, int startIndex, int length)
 		{
-			if (IsAuthenticated)
-				throw new InvalidOperationException ();
-
 			if (token == null)
 				throw new NotSupportedException ("CRAM-MD5 does not support SASL-IR.");
+
+			if (IsAuthenticated)
+				return null;
 
 			var userName = Encoding.UTF8.GetBytes (Credentials.UserName);
 			var password = Encoding.UTF8.GetBytes (Credentials.Password);

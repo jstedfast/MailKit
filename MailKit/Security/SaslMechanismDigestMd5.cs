@@ -182,11 +182,11 @@ namespace MailKit.Security {
 		/// </exception>
 		protected override byte[] Challenge (byte[] token, int startIndex, int length)
 		{
-			if (IsAuthenticated)
-				throw new InvalidOperationException ();
-
 			if (token == null)
 				throw new NotSupportedException ("DIGEST-MD5 does not support SASL-IR.");
+
+			if (IsAuthenticated)
+				return null;
 
 			switch (state) {
 			case LoginState.Auth:
