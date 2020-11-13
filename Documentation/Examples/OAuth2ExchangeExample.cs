@@ -11,20 +11,21 @@ using Microsoft.Identity.Client;
 namespace XOAuthExchangeExample {
     class Program
     {
-		const string ExchangeAccount = "username@office365.com";
+        const string ExchangeAccount = "username@office365.com";
 
-		public static void Main (string[] args)
-		{
+        public static void Main (string[] args)
+        {
             using (var client = new ImapClient ()) {
                 client.Connect ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
-                AuthenticateAsync (client).GetAwaiter ().GetResult ();
+                if (client.AuthenticationMechanisms.Contains ("OAUTHBEARER") || client.AuthenticationMechanisms.Contains ("XOAUTH2"))
+                    AuthenticateAsync (client).GetAwaiter ().GetResult ();
                 client.Disconnect (true);
             }
         }
 
         static async Task AuthenticateAsync (ImapClient client)
         {
-			var options = new PublicClientApplicationOptions {
+            var options = new PublicClientApplicationOptions {
                 ClientId = "Application (client) ID",
                 TenantId = "Directory (tenant) ID",
                 RedirectUri = "https://login.microsoftonline.com/common/oauth2/nativeclient"
@@ -55,6 +56,6 @@ namespace XOAuthExchangeExample {
                 oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
             await client.AuthenticateAsync (oauth2);
-		}
+        }
     }
 }
