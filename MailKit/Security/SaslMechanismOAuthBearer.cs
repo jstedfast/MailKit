@@ -34,9 +34,12 @@ namespace MailKit.Security {
 	/// The OAuth Bearer SASL mechanism.
 	/// </summary>
 	/// <remarks>
-	/// A SASL mechanism used by Google that makes use of a short-lived
-	/// OAuth 2.0 access token.
+	/// A SASL mechanism that makes use of a short-lived OAuth Bearer access tokens.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\OAuth2GMailExample.cs"/>
+	/// <code language="c#" source="Examples\OAuth2ExchangeExample.cs"/>
+	/// </example>
 	public class SaslMechanismOAuthBearer : SaslMechanism
 	{
 		static readonly byte[] ErrorResponse = new byte[1] { 0x01 };
@@ -103,6 +106,10 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Creates a new OAUTHBEARER SASL context.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\OAuth2GMailExample.cs"/>
+		/// <code language="c#" source="Examples\OAuth2ExchangeExample.cs"/>
+		/// </example>
 		/// <param name="userName">The user name.</param>
 		/// <param name="auth_token">The auth token.</param>
 		/// <exception cref="System.ArgumentNullException">
