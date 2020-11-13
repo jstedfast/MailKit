@@ -1,16 +1,17 @@
 using System;
-using SYstem.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 
+using Google.Apis.Util;
+using Google.Apis.Util.Store;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
-using Google.Apis.Util.Store;
 
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Security;
 
-namespace XOAuthGMailExample {
+namespace OAuth2GMailExample {
     class Program
     {
         const string GMailAccount = "username@gmail.com";

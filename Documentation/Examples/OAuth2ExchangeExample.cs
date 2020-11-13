@@ -1,5 +1,5 @@
 using System;
-using SYstem.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 
 using MailKit;
@@ -8,7 +8,7 @@ using MailKit.Security;
 
 using Microsoft.Identity.Client;
 
-namespace XOAuthExchangeExample {
+namespace OAuth2ExchangeExample {
     class Program
     {
         const string ExchangeAccount = "username@office365.com";
