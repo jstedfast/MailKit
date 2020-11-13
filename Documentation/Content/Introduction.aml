@@ -16,7 +16,7 @@
                 <para>SASL Authentication</para>
                 <list class="bullet">
                   <listItem>
-                    <para>Supports the CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, and XOAUTH2 mechanisms.</para>
+                    <para>Supports the CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, SCRAM-SHA-512, OAUTHBEARER, and XOAUTH2 mechanisms.</para>
                   </listItem>
                 </list>
               </listItem>
