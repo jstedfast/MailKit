@@ -16,7 +16,7 @@ namespace XOAuthExchangeExample {
 		public static void Main (string[] args)
 		{
             using (var client = new ImapClient ()) {
-            	client.Connect ("imap.office365.com", 993, SecureSocketOptions.SslOnConnect);
+                client.Connect ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
                 AuthenticateAsync (client).GetAwaiter ().GetResult ();
                 client.Disconnect (true);
             }

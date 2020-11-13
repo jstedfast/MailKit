@@ -35,8 +35,8 @@ var scopes = new string[] {
     "email",
     "offline_access",
     "https://outlook.office.com/IMAP.AccessAsUser.All", // Only needed for IMAP
-    "https://outlook.office.com/POP.AccessAsUser.All",  // Only needed for POP
-    "https://outlook.office.com/SMTP.Send", // Only needed for SMTP
+    //"https://outlook.office.com/POP.AccessAsUser.All",  // Only needed for POP
+    //"https://outlook.office.com/SMTP.Send", // Only needed for SMTP
 };
 
 var authToken = await publicClientApplication.AcquireTokenInteractive (scopes).ExecuteAsync ();
