@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Buffers;
 using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
@@ -2347,6 +2348,8 @@ namespace MailKit.Net.Pop3 {
 
 		class DownloadStreamContext : DownloadContext<Stream>
 		{
+			const int BufferSize = 4096;
+
 			public DownloadStreamContext (Pop3Client client, ITransferProgress progress = null) : base (client, progress)
 			{
 			}
@@ -2355,36 +2358,46 @@ namespace MailKit.Net.Pop3 {
 			{
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				var stream = new MemoryBlockStream ();
-				var buffer = new byte[4096];
-				int nread;
+				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
 
-				while ((nread = data.Read (buffer, 0, buffer.Length, cancellationToken)) > 0) {
-					stream.Write (buffer, 0, nread);
-					Update (nread);
+				try {
+					var stream = new MemoryBlockStream ();
+					int nread;
+
+					while ((nread = data.Read (buffer, 0, BufferSize, cancellationToken)) > 0) {
+						stream.Write (buffer, 0, nread);
+						Update (nread);
+					}
+
+					stream.Position = 0;
+
+					return stream;
+				} finally {
+					ArrayPool<byte>.Shared.Return (buffer);
 				}
-
-				stream.Position = 0;
-
-				return stream;
 			}
 
 			protected override async Task<Stream> ParseAsync (Pop3Stream data, CancellationToken cancellationToken)
 			{
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				var stream = new MemoryBlockStream ();
-				var buffer = new byte[4096];
-				int nread;
+				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
 
-				while ((nread = await data.ReadAsync (buffer, 0, buffer.Length, cancellationToken).ConfigureAwait (false)) > 0) {
-					stream.Write (buffer, 0, nread);
-					Update (nread);
+				try {
+					var stream = new MemoryBlockStream ();
+					int nread;
+
+					while ((nread = await data.ReadAsync (buffer, 0, BufferSize, cancellationToken).ConfigureAwait (false)) > 0) {
+						stream.Write (buffer, 0, nread);
+						Update (nread);
+					}
+
+					stream.Position = 0;
+
+					return stream;
+				} finally {
+					ArrayPool<byte>.Shared.Return (buffer);
 				}
-
-				stream.Position = 0;
-
-				return stream;
 			}
 		}
 

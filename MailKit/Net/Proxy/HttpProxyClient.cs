@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Buffers;
 using System.Threading;
 using System.Net.Sockets;
 using System.Globalization;
@@ -42,6 +43,8 @@ namespace MailKit.Net.Proxy
 	/// </remarkas>
 	public class HttpProxyClient : ProxyClient
 	{
+		const int BufferSize = 1024;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.HttpProxyClient"/> class.
 		/// </summary>
@@ -114,39 +117,44 @@ namespace MailKit.Net.Proxy
 			try {
 				await SendAsync (socket, command, 0, command.Length, doAsync, cancellationToken).ConfigureAwait (false);
 
-				var buffer = new byte[1024];
-				var endOfHeaders = false;
-				var newline = false;
+				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
 
-				builder.Clear ();
+				try {
+					var endOfHeaders = false;
+					var newline = false;
 
-				// read until we consume the end of the headers (it's ok if we read some of the content)
-				do {
-					int nread = await ReceiveAsync (socket, buffer, 0, buffer.Length, doAsync, cancellationToken).ConfigureAwait (false);
+					builder.Clear ();
 
-					if (nread > 0) {
-						int n = nread;
+					// read until we consume the end of the headers (it's ok if we read some of the content)
+					do {
+						int nread = await ReceiveAsync (socket, buffer, 0, BufferSize, doAsync, cancellationToken).ConfigureAwait (false);
 
-						for (int i = 0; i < nread && !endOfHeaders; i++) {
-							switch ((char) buffer[i]) {
-							case '\r':
-								break;
-							case '\n':
-								endOfHeaders = newline;
-								newline = true;
+						if (nread > 0) {
+							int n = nread;
 
-								if (endOfHeaders)
-									n = i + 1;
-								break;
-							default:
-								newline = false;
-								break;
+							for (int i = 0; i < nread && !endOfHeaders; i++) {
+								switch ((char) buffer[i]) {
+								case '\r':
+									break;
+								case '\n':
+									endOfHeaders = newline;
+									newline = true;
+
+									if (endOfHeaders)
+										n = i + 1;
+									break;
+								default:
+									newline = false;
+									break;
+								}
 							}
-						}
 
-						builder.Append (Encoding.UTF8.GetString (buffer, 0, n));
-					}
-				} while (!endOfHeaders);
+							builder.Append (Encoding.UTF8.GetString (buffer, 0, n));
+						}
+					} while (!endOfHeaders);
+				} finally {
+					ArrayPool<byte>.Shared.Return (buffer);
+				}
 
 				int index = 0;
 

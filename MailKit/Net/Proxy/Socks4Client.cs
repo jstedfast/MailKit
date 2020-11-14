@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Buffers;
 using System.Threading;
 using System.Net.Sockets;
 using System.Globalization;
@@ -182,42 +183,47 @@ namespace MailKit.Net.Proxy
 				// | 1  |  1  |    2     |    4     | VARIABLE | X'00' |   VARIABLE   | X'00' |
 				// +----+-----+----------+----------+----------+-------+--------------+-------+
 				int bufferSize = 9 + user.Length + (domain != null ? domain.Length + 1 : 0);
-				var buffer = new byte[bufferSize];
-				int nread, n = 0;
+				var buffer = ArrayPool<byte>.Shared.Rent (bufferSize);
 
-				buffer[n++] = (byte) SocksVersion;
-				buffer[n++] = (byte) Socks4Command.Connect;
-				buffer[n++] = (byte)(port >> 8);
-				buffer[n++] = (byte) port;
-				Buffer.BlockCopy (addr, 0, buffer, n, 4);
-				n += 4;
-				Buffer.BlockCopy (user, 0, buffer, n, user.Length);
-				n += user.Length;
-				buffer[n++] = 0x00;
-				if (domain != null) {
-					Buffer.BlockCopy (domain, 0, buffer, n, domain.Length);
-					n += domain.Length;
+				try {
+					int nread, n = 0;
+
+					buffer[n++] = (byte) SocksVersion;
+					buffer[n++] = (byte) Socks4Command.Connect;
+					buffer[n++] = (byte) (port >> 8);
+					buffer[n++] = (byte) port;
+					Buffer.BlockCopy (addr, 0, buffer, n, 4);
+					n += 4;
+					Buffer.BlockCopy (user, 0, buffer, n, user.Length);
+					n += user.Length;
 					buffer[n++] = 0x00;
+					if (domain != null) {
+						Buffer.BlockCopy (domain, 0, buffer, n, domain.Length);
+						n += domain.Length;
+						buffer[n++] = 0x00;
+					}
+
+					await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
+
+					// +-----+-----+----------+----------+
+					// | VER | REP | BND.PORT | BND.ADDR |
+					// +-----+-----+----------+----------+
+					// |  1  |  1  |    2     |    4     |
+					// +-----+-----+----------+----------+
+					n = 0;
+
+					do {
+						if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 8 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
+							n += nread;
+					} while (n < 8);
+
+					if (buffer[1] != (byte) Socks4Reply.RequestGranted)
+						throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
+
+					// TODO: do we care about BND.ADDR and BND.PORT?
+				} finally {
+					ArrayPool<byte>.Shared.Return (buffer);
 				}
-
-				await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
-
-				// +-----+-----+----------+----------+
-				// | VER | REP | BND.PORT | BND.ADDR |
-				// +-----+-----+----------+----------+
-				// |  1  |  1  |    2     |    4     |
-				// +-----+-----+----------+----------+
-				n = 0;
-
-				do {
-					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 8 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
-						n += nread;
-				} while (n < 8);
-
-				if (buffer[1] != (byte) Socks4Reply.RequestGranted)
-					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
-
-				// TODO: do we care about BND.ADDR and BND.PORT?
 
 				return socket;
 			} catch {

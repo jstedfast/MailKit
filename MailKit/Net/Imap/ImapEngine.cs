@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Buffers;
 using System.Threading;
 using System.Diagnostics;
 using System.Globalization;
@@ -136,6 +137,7 @@ namespace MailKit.Net.Imap {
 		internal const string FetchBodySyntaxErrorFormat = "Syntax error in BODY. Unexpected token: {0}";
 		const string GenericResponseCodeSyntaxErrorFormat = "Syntax error in {0} response code. Unexpected token: {1}";
 		const string GreetingSyntaxErrorFormat = "Syntax error in IMAP server greeting. Unexpected token: {0}";
+		const int BufferSize = 4096;
 
 		internal static readonly Encoding Latin1;
 		internal static readonly Encoding UTF8;
@@ -987,15 +989,19 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ();
 
 			using (var memory = new MemoryStream (Stream.LiteralLength)) {
-				var buf = new byte[4096];
+				var buf = ArrayPool<byte>.Shared.Rent (BufferSize);
 				int nread;
 
-				if (doAsync) {
-					while ((nread = await Stream.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false)) > 0)
-						memory.Write (buf, 0, nread);
-				} else {
-					while ((nread = Stream.Read (buf, 0, buf.Length, cancellationToken)) > 0)
-						memory.Write (buf, 0, nread);
+				try {
+					if (doAsync) {
+						while ((nread = await Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false)) > 0)
+							memory.Write (buf, 0, nread);
+					} else {
+						while ((nread = Stream.Read (buf, 0, BufferSize, cancellationToken)) > 0)
+							memory.Write (buf, 0, nread);
+					}
+				} finally {
+					ArrayPool<byte>.Shared.Return (buf);
 				}
 
 				nread = (int) memory.Length;
@@ -1057,15 +1063,19 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.Literal) {
-					var buf = new byte[4096];
+					var buf = ArrayPool<byte>.Shared.Rent (BufferSize);
 					int nread;
 
-					do {
-						if (doAsync)
-							nread = await Stream.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
-						else
-							nread = Stream.Read (buf, 0, buf.Length, cancellationToken);
-					} while (nread > 0);
+					try {
+						do {
+							if (doAsync)
+								nread = await Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false);
+							else
+								nread = Stream.Read (buf, 0, BufferSize, cancellationToken);
+						} while (nread > 0);
+					} finally {
+						ArrayPool<byte>.Shared.Return (buf);
+					}
 				}
 			} while (token.Type != ImapTokenType.Eoln);
 		}

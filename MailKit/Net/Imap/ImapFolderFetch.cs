@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Buffers;
 using System.Threading;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -48,6 +49,7 @@ namespace MailKit.Net.Imap
 		internal static readonly HashSet<string> EmptyHeaderFields = new HashSet<string> ();
 		const int PreviewHtmlLength = 16 * 1024;
 		const int PreviewTextLength = 512;
+		const int BufferSize = 4096;
 
 		class FetchSummaryContext
 		{
@@ -124,15 +126,19 @@ namespace MailKit.Net.Imap
 
 		static async Task ReadLiteralDataAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
 		{
-			var buf = new byte[4096];
+			var buf = ArrayPool<byte>.Shared.Rent (BufferSize);
 			int nread;
 
-			do {
-				if (doAsync)
-					nread = await engine.Stream.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
-				else
-					nread = engine.Stream.Read (buf, 0, buf.Length, cancellationToken);
-			} while (nread > 0);
+			try {
+				do {
+					if (doAsync)
+						nread = await engine.Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false);
+					else
+						nread = engine.Stream.Read (buf, 0, BufferSize, cancellationToken);
+				} while (nread > 0);
+			} finally {
+				ArrayPool<byte>.Shared.Return (buf);
+			}
 		}
 
 		static async Task SkipParenthesizedList (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
@@ -3603,12 +3609,12 @@ namespace MailKit.Net.Imap
 			bool modSeqChanged = false;
 			bool labelsChanged = false;
 			bool flagsChanged = false;
-			var buf = new byte[4096];
 			long nread = 0, size = 0;
 			UniqueId? uid = null;
 			Section section;
 			Stream stream;
 			string name;
+			byte[] buf;
 			int n;
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
@@ -3711,12 +3717,14 @@ namespace MailKit.Net.Imap
 
 						stream = CreateStream (uid, name, offset, length);
 
+						buf = ArrayPool<byte>.Shared.Rent (BufferSize);
+
 						try {
 							do {
 								if (doAsync)
-									n = await engine.Stream.ReadAsync (buf, 0, buf.Length, ic.CancellationToken).ConfigureAwait (false);
+									n = await engine.Stream.ReadAsync (buf, 0, BufferSize, ic.CancellationToken).ConfigureAwait (false);
 								else
-									n = engine.Stream.Read (buf, 0, buf.Length, ic.CancellationToken);
+									n = engine.Stream.Read (buf, 0, BufferSize, ic.CancellationToken);
 
 								if (n > 0) {
 									stream.Write (buf, 0, n);
@@ -3732,19 +3740,21 @@ namespace MailKit.Net.Imap
 						} catch {
 							stream.Dispose ();
 							throw;
+						} finally {
+							ArrayPool<byte>.Shared.Return (buf);
 						}
 						break;
 					case ImapTokenType.QString:
 					case ImapTokenType.Atom:
-						var buffer = Encoding.UTF8.GetBytes ((string) token.Value);
-						length = buffer.Length;
+						buf = Encoding.UTF8.GetBytes ((string) token.Value);
+						length = buf.Length;
 						nread += length;
 						size += length;
 
 						stream = CreateStream (uid, name, offset, length);
 
 						try {
-							stream.Write (buffer, 0, length);
+							stream.Write (buf, 0, length);
 							ctx.Report (nread, size);
 							stream.Position = 0;
 						} catch {
