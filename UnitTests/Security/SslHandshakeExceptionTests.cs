@@ -94,7 +94,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false);
+			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -108,7 +108,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), true);
+			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -122,7 +122,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException ()), false);
+			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -136,7 +136,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException ()), true);
+			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -221,7 +221,7 @@ namespace UnitTests.Security {
 					} catch (Exception ex) {
 						ssl.Dispose ();
 
-						throw SslHandshakeException.Create (this, ex, false);
+						throw SslHandshakeException.Create (this, ex, false, "HTTP", host, port, 443, 80);
 					}
 				}
 			}
@@ -331,6 +331,42 @@ namespace UnitTests.Security {
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						AssertRootCertificate (root);
+				} catch (Exception ex) {
+					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+				}
+			}
+		}
+
+		[Test]
+		public void TestSslConnectOnPlainTextPortFailure ()
+		{
+			Assert.Throws<ArgumentNullException> (() => new FakeClient (null));
+
+			using (var client = new FakeClient (new NullProtocolLogger ())) {
+				try {
+					client.Connect ("www.google.com", 80, SecureSocketOptions.SslOnConnect);
+					Assert.Fail ("SSL handshake should have failed with www.google.com:80.");
+				} catch (SslHandshakeException ex) {
+					Assert.IsNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.IsNull (ex.RootCertificateAuthority, "RootCertificateAuthority");
+				} catch (Exception ex) {
+					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestSslConnectOnPlainTextPortFailureAsync ()
+		{
+			Assert.Throws<ArgumentNullException> (() => new FakeClient (null));
+
+			using (var client = new FakeClient (new NullProtocolLogger ())) {
+				try {
+					await client.ConnectAsync ("www.google.com", 80, SecureSocketOptions.SslOnConnect);
+					Assert.Fail ("SSL handshake should have failed with www.google.com:80.");
+				} catch (SslHandshakeException ex) {
+					Assert.IsNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.IsNull (ex.RootCertificateAuthority, "RootCertificateAuthority");
 				} catch (Exception ex) {
 					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
 				}

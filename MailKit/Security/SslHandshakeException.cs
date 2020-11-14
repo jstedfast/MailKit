@@ -25,8 +25,10 @@
 //
 
 using System;
+using System.Linq;
 using System.Text;
 using System.Net.Security;
+using System.Globalization;
 using System.Collections.Generic;
 #if SERIALIZABLE
 using System.Security;
@@ -177,7 +179,7 @@ namespace MailKit.Security
 		}
 #endif
 
-		internal static SslHandshakeException Create (MailService client, Exception ex, bool starttls)
+		internal static SslHandshakeException Create (MailService client, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
 		{
 			var message = new StringBuilder (DefaultMessage);
 			var aggregate = ex as AggregateException;
@@ -245,6 +247,14 @@ namespace MailKit.Security
 						message.AppendLine ("\u2022 " + innerException.Message);
 					}
 				}
+			} else if (!starttls && standardPorts.Contains (port)) {
+				string an = "AEHIOS".IndexOf (protocol[0]) != -1 ? "an" : "a";
+
+				message.AppendFormat (CultureInfo.InvariantCulture, "When connecting to {0} {1} service, port {2} is typically reserved for plain-text connections. If{3}", an, protocol, port, Environment.NewLine);
+				message.AppendFormat (CultureInfo.InvariantCulture, "you intended to connect to {0} on the SSL port, try connecting to port {1} instead. Otherwise,{2}", protocol, sslPort, Environment.NewLine);
+				message.AppendLine ("if you intended to use STARTTLS, make sure to use the following code:");
+				message.AppendLine ();
+				message.AppendFormat ("client.Connect (\"{0}\", {1}, SecureSocketOptions.StartTls);{2}", host, port, Environment.NewLine);
 			} else {
 				message.AppendLine ("This usually means that the SSL certificate presented by the server is not trusted by the system for one or more of");
 				message.AppendLine ("the following reasons:");
@@ -253,12 +263,9 @@ namespace MailKit.Security
 				message.AppendLine ("2. The local system is missing a Root or Intermediate certificate needed to verify the server's certificate.");
 				message.AppendLine ("3. A Certificate Authority CRL server for one or more of the certificates in the chain is temporarily unavailable.");
 				message.AppendLine ("4. The certificate presented by the server is expired or invalid.");
-				message.AppendLine ();
-				if (!starttls) {
-					message.AppendLine ("Another possibility is that you are trying to connect to a port which does not support SSL/TLS.");
-					message.AppendLine ();
-				}
-				message.AppendLine ("It is also possible that the set of SSL/TLS protocols supported by the client and server do not match.");
+				message.AppendLine ("5. The set of SSL/TLS protocols supported by the client and server do not match.");
+				if (!starttls)
+					message.AppendLine ("6. You are trying to connect to a port which does not support SSL/TLS.");
 				message.AppendLine ();
 				message.AppendLine ("See " + SslHandshakeHelpLink + " for possible solutions.");
 			}

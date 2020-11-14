@@ -896,7 +896,7 @@ namespace MailKit.Net.Pop3 {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (this, ex, false);
+					throw SslHandshakeException.Create (this, ex, false, "POP3", host, port, 995, 110);
 				}
 
 				secure = true;
@@ -945,7 +945,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 						}
 					} catch (Exception ex) {
-						throw SslHandshakeException.Create (this, ex, true);
+						throw SslHandshakeException.Create (this, ex, true, "POP3", host, port, 995, 110);
 					}
 
 					secure = true;
@@ -1075,7 +1075,7 @@ namespace MailKit.Net.Pop3 {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (this, ex, false);
+					throw SslHandshakeException.Create (this, ex, false, "POP3", host, port, 995, 110);
 				}
 
 				network = ssl;
@@ -1129,7 +1129,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 						}
 					} catch (Exception ex) {
-						throw SslHandshakeException.Create (this, ex, true);
+						throw SslHandshakeException.Create (this, ex, true, "POP3", host, port, 995, 110);
 					}
 
 					secure = true;

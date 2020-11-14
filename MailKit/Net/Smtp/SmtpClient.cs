@@ -1015,7 +1015,7 @@ namespace MailKit.Net.Smtp {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (this, ex, false);
+					throw SslHandshakeException.Create (this, ex, false, "SMTP", host, port, 465, 25, 587);
 				}
 
 				secure = true;
@@ -1065,7 +1065,7 @@ namespace MailKit.Net.Smtp {
 #endif
 						}
 					} catch (Exception ex) {
-						throw SslHandshakeException.Create (this, ex, true);
+						throw SslHandshakeException.Create (this, ex, true, "SMTP", host, port, 465, 25, 587);
 					}
 
 					secure = true;
@@ -1206,7 +1206,7 @@ namespace MailKit.Net.Smtp {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (this, ex, false);
+					throw SslHandshakeException.Create (this, ex, false, "SMTP", host, port, 465, 25, 587);
 				}
 
 				network = ssl;
@@ -1260,7 +1260,7 @@ namespace MailKit.Net.Smtp {
 #endif
 						}
 					} catch (Exception ex) {
-						throw SslHandshakeException.Create (this, ex, true);
+						throw SslHandshakeException.Create (this, ex, true, "SMTP", host, port, 465, 25, 587);
 					}
 
 					secure = true;
