@@ -59,7 +59,7 @@ namespace MailKit {
 		{
 			Children = new List<MessageThread> ();
 			if (message != null && message.UniqueId.IsValid)
-				UniqueId = message?.UniqueId;
+				UniqueId = message.UniqueId;
 			Message = message;
 		}
 
