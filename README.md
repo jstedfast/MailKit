@@ -232,6 +232,8 @@ directory and select **Git Sync...** in the menu. Once you do that, you'll need 
 In the top-level MailKit directory, there are a number of solution files; they are:
 
 * **MailKit.sln** - includes the projects for .NET 4.5/4.6/4.7/4.8, .NETStandard 1.3/1.6/2.0 as well as the unit tests.
+* **MailKit.Coverity.sln** - this is used to generate Coverity static analysis builds and is not generally useful.
+* **MailKit.Documentation.sln** - this is used to generate the documentation found at https://mimekit.net/docs
 
 Once you've opened the appropriate MailKit solution file in [Visual Studio](https://www.visualstudio.com/downloads/),
 you can choose the **Debug** or **Release** build configuration and then build.
