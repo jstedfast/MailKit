@@ -1,16 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Net45", "MailKit\MailKit.Net45.csproj", "{7264D469-A390-4C10-9C87-DAA37EDD3C1D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net45", "submodules\MimeKit\MimeKit\MimeKit.Net45.csproj", "{D5F54A4F-D84B-430F-9271-F7861E285B3E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BB3237C7-E19C-4232-B875-6658ABDD184A}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MimeKit", "submodules\MimeKit\MimeKit\MimeKit.csproj", "{4453C1EF-9C6A-4305-B70B-9154AE48B63C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKit", "MailKit\MailKit.csproj", "{67EBBC81-9334-49CE-BF7B-17DA659E9736}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,19 +18,20 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4453C1EF-9C6A-4305-B70B-9154AE48B63C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4453C1EF-9C6A-4305-B70B-9154AE48B63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4453C1EF-9C6A-4305-B70B-9154AE48B63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4453C1EF-9C6A-4305-B70B-9154AE48B63C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67EBBC81-9334-49CE-BF7B-17DA659E9736}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67EBBC81-9334-49CE-BF7B-17DA659E9736}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67EBBC81-9334-49CE-BF7B-17DA659E9736}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67EBBC81-9334-49CE-BF7B-17DA659E9736}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE4FD452-949D-40F5-B83B-B439EBA814AA}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MailKit\MailKit.Net45.csproj
