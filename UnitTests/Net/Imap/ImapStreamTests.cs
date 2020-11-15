@@ -210,7 +210,7 @@ namespace UnitTests.Net.Imap {
 
 				token = stream.ReadToken (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Atom, token.Type);
-				Assert.AreEqual ("[atom: atom]", token.ToString ());
+				Assert.AreEqual ("atom", token.ToString ());
 
 				token = stream.ReadToken (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.OpenParen, token.Type);
@@ -218,11 +218,11 @@ namespace UnitTests.Net.Imap {
 
 				token = stream.ReadToken (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Flag, token.Type);
-				Assert.AreEqual ("[flag: \\flag]", token.ToString ());
+				Assert.AreEqual ("\\flag", token.ToString ());
 
 				token = stream.ReadToken (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.QString, token.Type);
-				Assert.AreEqual ("[qstring: \"qstring\"]", token.ToString ());
+				Assert.AreEqual ("\"qstring\"", token.ToString ());
 
 				token = stream.ReadToken (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Nil, token.Type);
@@ -268,7 +268,7 @@ namespace UnitTests.Net.Imap {
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Atom, token.Type);
-				Assert.AreEqual ("[atom: atom]", token.ToString ());
+				Assert.AreEqual ("atom", token.ToString ());
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.OpenParen, token.Type);
@@ -276,11 +276,11 @@ namespace UnitTests.Net.Imap {
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Flag, token.Type);
-				Assert.AreEqual ("[flag: \\flag]", token.ToString ());
+				Assert.AreEqual ("\\flag", token.ToString ());
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.QString, token.Type);
-				Assert.AreEqual ("[qstring: \"qstring\"]", token.ToString ());
+				Assert.AreEqual ("\"qstring\"", token.ToString ());
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Nil, token.Type);

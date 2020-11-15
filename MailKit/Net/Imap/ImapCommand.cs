@@ -866,7 +866,7 @@ namespace MailKit.Net.Imap {
 					// the next token should be "OK", "NO", or "BAD"
 					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 
-					ImapEngine.AssertToken (token, ImapTokenType.Atom, "Syntax error in tagged response. Unexpected token: {0}", token);
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, "Syntax error in tagged response. {0}", token);
 
 					string atom = (string) token.Value;
 
@@ -874,7 +874,7 @@ namespace MailKit.Net.Imap {
 					case "BAD": result = ImapCommandResponse.Bad; break;
 					case "OK": result = ImapCommandResponse.Ok; break;
 					case "NO": result = ImapCommandResponse.No; break;
-					default: throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. Unexpected token: {0}", token);
+					default: throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. {0}", token);
 					}
 
 					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);

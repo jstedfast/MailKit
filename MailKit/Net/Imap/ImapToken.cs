@@ -26,6 +26,8 @@
 
 using System.Globalization;
 
+using MimeKit.Utils;
+
 namespace MailKit.Net.Imap {
 	enum ImapTokenType {
 		NoData        = -7,
@@ -63,11 +65,11 @@ namespace MailKit.Net.Imap {
 			switch (Type) {
 			case ImapTokenType.NoData:       return "<no data>";
 			case ImapTokenType.Nil:          return "NIL";
-			case ImapTokenType.Atom:         return "[atom: " + (string) Value + "]";
-			case ImapTokenType.Flag:         return "[flag: " + (string) Value + "]";
-			case ImapTokenType.QString:      return "[qstring: \"" + (string) Value + "\"]";
-			case ImapTokenType.Literal:      return "{" + (int) Value + "}";
-			case ImapTokenType.Eoln:         return "'\\n'";
+			case ImapTokenType.Atom:         return (string) Value;
+			case ImapTokenType.Flag:         return (string) Value;
+			case ImapTokenType.QString:      return MimeUtils.Quote ((string) Value);
+			case ImapTokenType.Literal:      return string.Format (CultureInfo.InvariantCulture, "{{{0}}}", (int) Value);
+			case ImapTokenType.Eoln:         return "'\\r\\n'";
 			case ImapTokenType.OpenParen:    return "'('";
 			case ImapTokenType.CloseParen:   return "')'";
 			case ImapTokenType.Asterisk:     return "'*'";

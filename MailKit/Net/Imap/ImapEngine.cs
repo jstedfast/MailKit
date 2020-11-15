@@ -132,11 +132,11 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	class ImapEngine : IDisposable
 	{
-		internal const string GenericUntaggedResponseSyntaxErrorFormat = "Syntax error in untagged {0} response. Unexpected token: {1}";
-		internal const string GenericItemSyntaxErrorFormat = "Syntax error in {0}. Unexpected token: {1}";
-		internal const string FetchBodySyntaxErrorFormat = "Syntax error in BODY. Unexpected token: {0}";
-		const string GenericResponseCodeSyntaxErrorFormat = "Syntax error in {0} response code. Unexpected token: {1}";
-		const string GreetingSyntaxErrorFormat = "Syntax error in IMAP server greeting. Unexpected token: {0}";
+		internal const string GenericUntaggedResponseSyntaxErrorFormat = "Syntax error in untagged {0} response. {1}";
+		internal const string GenericItemSyntaxErrorFormat = "Syntax error in {0}. {1}";
+		internal const string FetchBodySyntaxErrorFormat = "Syntax error in BODY. {0}";
+		const string GenericResponseCodeSyntaxErrorFormat = "Syntax error in {0} response code. {1}";
+		const string GreetingSyntaxErrorFormat = "Syntax error in IMAP server greeting. {0}";
 		const int BufferSize = 4096;
 
 		internal static readonly Encoding Latin1;
@@ -542,6 +542,19 @@ namespace MailKit.Net.Imap {
 
 		internal static ImapProtocolException UnexpectedToken (string format, params object[] args)
 		{
+			for (int i = 0; i < args.Length; i++) {
+				if (args[i] is ImapToken token) {
+					switch (token.Type) {
+					case ImapTokenType.Atom: args[i] = string.Format ("Unexpected atom token: {0}", token); break;
+					case ImapTokenType.Flag: args[i] = string.Format ("Unexpected flag token: {0}", token); break;
+					case ImapTokenType.QString: args[i] = string.Format ("Unexpected qstring token: {0}", token); break;
+					case ImapTokenType.Literal: args[i] = string.Format ("Unexpected literal token: {0}", token); break;
+					default: args[i] = string.Format ("Unexpected token: {0}", token); break;
+					}
+					break;
+				}
+			}
+
 			return new ImapProtocolException (string.Format (CultureInfo.InvariantCulture, format, args)) { UnexpectedToken = true };
 		}
 
@@ -1448,7 +1461,7 @@ namespace MailKit.Net.Imap {
 
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-			AssertToken (token, ImapTokenType.Atom, "Syntax error in response code. Unexpected token: {0}", token);
+			AssertToken (token, ImapTokenType.Atom, "Syntax error in response code. {0}", token);
 
 			atom = (string) token.Value;
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1744,7 +1757,7 @@ namespace MailKit.Net.Imap {
 				break;
 			}
 
-			AssertToken (token, ImapTokenType.CloseBracket, "Syntax error in response code. Unexpected token: {0}", token);
+			AssertToken (token, ImapTokenType.CloseBracket, "Syntax error in response code. {0}", token);
 
 			code.Message = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).Trim ();
 
@@ -1997,7 +2010,7 @@ namespace MailKit.Net.Imap {
 					// we probably have something like "* 1 EXISTS"
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					AssertToken (token, ImapTokenType.Atom, "Syntax error in untagged response. Unexpected token: {0}", token);
+					AssertToken (token, ImapTokenType.Atom, "Syntax error in untagged response. {0}", token);
 
 					atom = (string) token.Value;
 
@@ -2043,7 +2056,7 @@ namespace MailKit.Net.Imap {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
 					await ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync, cancellationToken).ConfigureAwait (false);
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
+					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
 				} else if (atom.Equals ("METADATA", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited METADATA response - probably due to NOTIFY MailboxMetadataChange or ServerMetadataChange
 					var metadata = new MetadataCollection ();
@@ -2051,7 +2064,7 @@ namespace MailKit.Net.Imap {
 					ProcessMetadataChanges (metadata);
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. Unexpected token: {0}", token);
+					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
 				} else if (atom.Equals ("VANISHED", StringComparison.OrdinalIgnoreCase) && folder != null) {
 					await folder.OnVanishedAsync (this, doAsync, cancellationToken).ConfigureAwait (false);
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
