@@ -20,9 +20,9 @@ steps:
 - script: git submodule update --init --recursive
 
 - task: NuGetToolInstaller@0
-  displayName: 'Install NuGet 5.3.0'
+  displayName: 'Install NuGet 5.8.0'
   inputs:
-    versionSpec: 5.3.0
+    versionSpec: 5.8.0
 
 - task: NuGetCommand@2
   displayName: 'Restore NuGet Package Dependencies'
