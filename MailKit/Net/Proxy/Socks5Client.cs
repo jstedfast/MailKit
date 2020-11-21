@@ -170,35 +170,30 @@ namespace MailKit.Net.Proxy
 			// +-----+----------+----------+
 			// |  1  |    1     | 1 to 255 |
 			// +-----+----------+----------+
-			var buffer = ArrayPool<byte>.Shared.Rent (2 + methods.Length);
+			var buffer = new byte[2 + methods.Length];
+			int nread, n = 0;
 
-			try {
-				int nread, n = 0;
+			buffer[n++] = (byte) SocksVersion;
+			buffer[n++] = (byte) methods.Length;
+			for (int i = 0; i < methods.Length; i++)
+				buffer[n++] = (byte) methods[i];
 
-				buffer[n++] = (byte) SocksVersion;
-				buffer[n++] = (byte) methods.Length;
-				for (int i = 0; i < methods.Length; i++)
-					buffer[n++] = (byte) methods[i];
+			await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
 
-				await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
+			// +-----+--------+
+			// | VER | METHOD |
+			// +-----+--------+
+			// |  1  |   1    |
+			// +-----+--------+
+			n = 0;
+			do {
+				if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
+					n += nread;
+			} while (n < 2);
 
-				// +-----+--------+
-				// | VER | METHOD |
-				// +-----+--------+
-				// |  1  |   1    |
-				// +-----+--------+
-				n = 0;
-				do {
-					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
-						n += nread;
-				} while (n < 2);
+			VerifySocksVersion (buffer[0]);
 
-				VerifySocksVersion (buffer[0]);
-
-				return (Socks5AuthMethod) buffer[1];
-			} finally {
-				ArrayPool<byte>.Shared.Return (buffer);
-			}
+			return (Socks5AuthMethod) buffer[1];
 		}
 
 		async Task AuthenticateAsync (Socket socket, bool doAsync, CancellationToken cancellationToken)
@@ -215,34 +210,29 @@ namespace MailKit.Net.Proxy
 				throw new AuthenticationException ("Password too long.");
 			}
 
-			var buffer = ArrayPool<byte>.Shared.Rent (user.Length + passwd.Length + 3);
+			var buffer = new byte[user.Length + passwd.Length + 3];
+			int nread, n = 0;
 
-			try {
-				int nread, n = 0;
+			buffer[n++] = 1;
+			buffer[n++] = (byte) user.Length;
+			Buffer.BlockCopy (user, 0, buffer, n, user.Length);
+			n += user.Length;
+			buffer[n++] = (byte) passwd.Length;
+			Buffer.BlockCopy (passwd, 0, buffer, n, passwd.Length);
+			n += passwd.Length;
 
-				buffer[n++] = 1;
-				buffer[n++] = (byte) user.Length;
-				Buffer.BlockCopy (user, 0, buffer, n, user.Length);
-				n += user.Length;
-				buffer[n++] = (byte) passwd.Length;
-				Buffer.BlockCopy (passwd, 0, buffer, n, passwd.Length);
-				n += passwd.Length;
+			Array.Clear (passwd, 0, passwd.Length);
 
-				Array.Clear (passwd, 0, passwd.Length);
+			await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
 
-				await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
+			n = 0;
+			do {
+				if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
+					n += nread;
+			} while (n < 2);
 
-				n = 0;
-				do {
-					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
-						n += nread;
-				} while (n < 2);
-
-				if (buffer[1] != (byte) Socks5Reply.Success)
-					throw new AuthenticationException ("Failed to authenticate with SOCKS5 proxy server.");
-			} finally {
-				ArrayPool<byte>.Shared.Return (buffer);
-			}
+			if (buffer[1] != (byte) Socks5Reply.Success)
+				throw new AuthenticationException ("Failed to authenticate with SOCKS5 proxy server.");
 		}
 
 		async Task<Socket> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
@@ -285,77 +275,71 @@ namespace MailKit.Net.Proxy
 				// +----+-----+-------+------+----------+----------+
 				// | 1  |  1  | X'00' |  1   | Variable |    2     |
 				// +----+-----+-------+------+----------+----------+
-				const int bufferSize = 6 + 257;
-				var buffer = ArrayPool<byte>.Shared.Rent (bufferSize);
+				var buffer = new byte[4 + 257 + 2];
+				int nread, n = 0;
 
-				try {
-					int nread, n = 0;
-
-					buffer[n++] = (byte) SocksVersion;
-					buffer[n++] = (byte) Socks5Command.Connect;
-					buffer[n++] = 0x00;
-					buffer[n++] = (byte) addrType;
-					switch (addrType) {
-					case Socks5AddressType.Domain:
-						buffer[n++] = (byte) domain.Length;
-						Buffer.BlockCopy (domain, 0, buffer, n, domain.Length);
-						n += domain.Length;
-						break;
-					case Socks5AddressType.IPv6:
-						addr = ip.GetAddressBytes ();
-						Buffer.BlockCopy (addr, 0, buffer, n, addr.Length);
-						n += 16;
-						break;
-					case Socks5AddressType.IPv4:
-						addr = ip.GetAddressBytes ();
-						Buffer.BlockCopy (addr, 0, buffer, n, addr.Length);
-						n += 4;
-						break;
-					}
-					buffer[n++] = (byte) (port >> 8);
-					buffer[n++] = (byte) port;
-
-					await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
-
-					// +-----+-----+-------+------+----------+----------+
-					// | VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
-					// +-----+-----+-------+------+----------+----------+
-					// |  1  |  1  | X'00' |  1   | Variable |    2     |
-					// +-----+-----+-------+------+----------+----------+
-
-					// Note: We know we'll need at least 4 bytes of header + a minimum of 1 byte
-					// to determine the length of the BND.ADDR field if ATYP is a domain.
-					int need = 5;
-					n = 0;
-
-					do {
-						if ((nread = await ReceiveAsync (socket, buffer, 0 + n, need - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
-							n += nread;
-					} while (n < need);
-
-					VerifySocksVersion (buffer[0]);
-
-					if (buffer[1] != (byte) Socks5Reply.Success)
-						throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
-
-					addrType = (Socks5AddressType) buffer[3];
-
-					switch (addrType) {
-					case Socks5AddressType.Domain: need += buffer[4] + 2; break;
-					case Socks5AddressType.IPv6: need += (16 - 1) + 2; break;
-					case Socks5AddressType.IPv4: need += (4 - 1) + 2; break;
-					default: throw new ProxyProtocolException ("Proxy server returned unknown address type.");
-					}
-
-					do {
-						if ((nread = await ReceiveAsync (socket, buffer, 0 + n, need - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
-							n += nread;
-					} while (n < need);
-
-					// TODO: do we care about BND.ADDR and BND.PORT?
-				} finally {
-					ArrayPool<byte>.Shared.Return (buffer);
+				buffer[n++] = (byte) SocksVersion;
+				buffer[n++] = (byte) Socks5Command.Connect;
+				buffer[n++] = 0x00;
+				buffer[n++] = (byte) addrType;
+				switch (addrType) {
+				case Socks5AddressType.Domain:
+					buffer[n++] = (byte) domain.Length;
+					Buffer.BlockCopy (domain, 0, buffer, n, domain.Length);
+					n += domain.Length;
+					break;
+				case Socks5AddressType.IPv6:
+					addr = ip.GetAddressBytes ();
+					Buffer.BlockCopy (addr, 0, buffer, n, addr.Length);
+					n += 16;
+					break;
+				case Socks5AddressType.IPv4:
+					addr = ip.GetAddressBytes ();
+					Buffer.BlockCopy (addr, 0, buffer, n, addr.Length);
+					n += 4;
+					break;
 				}
+				buffer[n++] = (byte) (port >> 8);
+				buffer[n++] = (byte) port;
+
+				await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
+
+				// +-----+-----+-------+------+----------+----------+
+				// | VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
+				// +-----+-----+-------+------+----------+----------+
+				// |  1  |  1  | X'00' |  1   | Variable |    2     |
+				// +-----+-----+-------+------+----------+----------+
+
+				// Note: We know we'll need at least 4 bytes of header + a minimum of 1 byte
+				// to determine the length of the BND.ADDR field if ATYP is a domain.
+				int need = 5;
+				n = 0;
+
+				do {
+					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, need - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
+						n += nread;
+				} while (n < need);
+
+				VerifySocksVersion (buffer[0]);
+
+				if (buffer[1] != (byte) Socks5Reply.Success)
+					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
+
+				addrType = (Socks5AddressType) buffer[3];
+
+				switch (addrType) {
+				case Socks5AddressType.Domain: need += buffer[4] + 2; break;
+				case Socks5AddressType.IPv6: need += (16 - 1) + 2; break;
+				case Socks5AddressType.IPv4: need += (4 - 1) + 2; break;
+				default: throw new ProxyProtocolException ("Proxy server returned unknown address type.");
+				}
+
+				do {
+					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, need - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
+						n += nread;
+				} while (n < need);
+
+				// TODO: do we care about BND.ADDR and BND.PORT?
 
 				return socket;
 			} catch {

@@ -43,7 +43,7 @@ namespace MailKit.Net.Proxy
 	/// </remarkas>
 	public class HttpProxyClient : ProxyClient
 	{
-		const int BufferSize = 1024;
+		const int BufferSize = 4096;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.HttpProxyClient"/> class.
