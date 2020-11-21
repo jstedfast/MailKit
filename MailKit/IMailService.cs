@@ -45,8 +45,9 @@ namespace MailKit {
 	/// An interface for message services such as SMTP, POP3, or IMAP.
 	/// </summary>
 	/// <remarks>
-	/// Implemented by <see cref="MailKit.Net.Smtp.SmtpClient"/>
-	/// and <see cref="MailKit.Net.Pop3.Pop3Client"/>.
+	/// Implemented by <see cref="MailKit.Net.Imap.ImapClient"/>,
+	/// <see cref="MailKit.Net.Pop3.Pop3Client"/> and
+	/// <see cref="MailKit.Net.Smtp.SmtpClient"/>.
 	/// </remarks>
 	public interface IMailService : IDisposable
 	{

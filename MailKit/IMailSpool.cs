@@ -36,7 +36,8 @@ namespace MailKit {
 	/// An interface for retreiving messages from a spool.
 	/// </summary>
 	/// <remarks>
-	/// An interface for retreiving messages from a spool.
+	/// <para>An interface for retreiving messages from a spool.</para>
+	/// <para>Implemented by <see cref="MailKit.Net.Pop3.Pop3Client"/>.</para>
 	/// </remarks>
 	public interface IMailSpool : IMailService, IEnumerable<MimeMessage>
 	{

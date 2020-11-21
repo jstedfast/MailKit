@@ -31,10 +31,11 @@ using System.Collections.Generic;
 
 namespace MailKit {
 	/// <summary>
-	/// An interface for retreiving messages from a message store such as IMAP.
+	/// An interface for retreiving messages from a message store.
 	/// </summary>
 	/// <remarks>
-	/// Implemented by <see cref="MailKit.Net.Imap.ImapClient"/>.
+	/// <para>An interface for retreiving messages from a message store.</para>
+	/// <para>Implemented by <see cref="MailKit.Net.Imap.ImapClient"/>.</para>
 	/// </remarks>
 	public interface IMailStore : IMailService
 	{

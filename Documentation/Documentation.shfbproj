@@ -13,7 +13,7 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <FrameworkVersion>.NET Framework 4.5</FrameworkVersion>
+    <FrameworkVersion>.NET Framework 4.7.2</FrameworkVersion>
     <OutputPath>bin\docs\</OutputPath>
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
@@ -49,10 +49,10 @@
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <RootNamespaceTitle>API Reference</RootNamespaceTitle>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\MailKit\bin\Release\net45\MailKit.dll" />
-      <DocumentationSource sourceFile="..\MailKit\bin\Release\net45\MailKit.xml" />
-      <DocumentationSource sourceFile="..\MailKit\bin\Release\net45\MimeKit.dll" />
-      <DocumentationSource sourceFile="..\MailKit\bin\Release\net45\MimeKit.xml" />
+      <DocumentationSource sourceFile="..\MailKit\bin\Release\net47\MailKit.dll" />
+      <DocumentationSource sourceFile="..\MailKit\bin\Release\net47\MailKit.xml" />
+      <DocumentationSource sourceFile="..\MailKit\bin\Release\net47\MimeKit.dll" />
+      <DocumentationSource sourceFile="..\MailKit\bin\Release\net47\MimeKit.xml" />
     </DocumentationSources>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="MimeKit" isDocumented="True">The &lt;b&gt;MimeKit&lt;/b&gt; namespace provides classes that are used to implement the core MIME parsing services of the framework.</NamespaceSummaryItem>

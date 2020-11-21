@@ -36,7 +36,8 @@ namespace MailKit {
 	/// An interface for sending messages.
 	/// </summary>
 	/// <remarks>
-	/// An interface for sending messages.
+	/// <para>An interface for sending messages.</para>
+	/// <para>Implemented by <see cref="MailKit.Net.Smtp.SmtpClient"/>.</para>
 	/// </remarks>
 	public interface IMailTransport : IMailService
 	{

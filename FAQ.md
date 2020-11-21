@@ -128,8 +128,8 @@ bool MyServerCertificateValidationCallback (object sender, X509Certificate certi
         var issuer = certificate2.Issuer;
 
         return cn == "imap.gmail.com" && issuer == "CN=GTS CA 1O1, O=Google Trust Services, C=US" &&
-	    serial == "0096768414983DDE9C0800000000320A68" &&
-	    fingerprint == "A53BA86C137D828618540738014F7C3D52F699C7";
+            serial == "00BABE95B167C9ECAF08000000006065B6" &&
+            fingerprint == "E79A011EF55EEC72D2B7E391D193761372796836";
     }
 
     return false;
@@ -176,7 +176,7 @@ using (var client = new SmtpClient ()) {
 MailKit attempts to keep up with the latest security recommendations and so is continuously removing older SSL and TLS
 protocols that are no longer considered secure from the default configuration. This often means that MailKit's SMTP,
 POP3 and IMAP clients will fail to connect to servers that are still using older SSL and TLS protocols. Currently,
-the SSL and TLS protocols that are not supported by default are: SSL v2.0, SSL v3.0, and TLS v1.0.
+the SSL and TLS protocols that are not supported by default are: SSL v2.0, SSL v3.0, TLS v1.0 and TLS v1.1.
 
 You can override MailKit's default set of supported
 [SSL and TLS protocols](https://docs.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols?view=netframework-4.8)

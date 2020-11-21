@@ -59,34 +59,17 @@
         <list class="bullet">
           <listItem>
             <para>
-              <application>MailKit.sln</application> includes projects for .NET 4.0,
-              .NET 4.5, Xamarin.Android, Xamarin.iOS, and the unit tests.
+              <application>MailKit.sln</application> includes projects for .NET 4.5,
+              .NET 4.6, .NET 4.7, .NET 4.8, .NETStandard 2.0, and the unit tests.
             </para>
           </listItem>
           <listItem>
             <para>
-              <application>MailKit.Mobile.sln</application> just includes the
-              Xamarin.Android and Xamarin.iOS projects.
-            </para>
-          </listItem>
-          <listItem>
-            <para>
-              <application>MailKit.Net45.sln</application> includes the .NET 4.5
-              project as well as the unit tests.
-            </para>
-          </listItem>
-          <listItem>
-            <para>
-              <application>MailKit.Net40.sln</application> just includes the
-              .NET 4.0 project.
+              <application>MailKit.Documentation.sln</application> includes projects for generating
+              the documentation that you are reading right now.
             </para>
           </listItem>
         </list>
-        <para>
-          If you don't have the Xamarin products, you'll probably want to open the
-          <application>MailKit.Net45.sln</application> instead of
-          <application>MailKit.sln</application>.
-        </para>
         <para>
           Once you've opened the appropriate <application>MailKit</application> solution
           file in either <application>Xamarin Studio</application> or
