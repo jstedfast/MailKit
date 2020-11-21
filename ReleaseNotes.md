@@ -1,5 +1,18 @@
 # Release Notes
 
+### MailKit 2.10.0 (2020-11-20)
+
+* Don't enable support for TLS v1.1 by default anymore.
+  (issue [#1077](https://github.com/jstedfast/MailKit/issues/1077))
+* Added support for the SCRAM-SHA-512 SASL mechanism.
+  (issue [#1097](https://github.com/jstedfast/MailKit/issues/1097))
+* Added support for the OAUTHBEARER SASL mechanism.
+* Updated SSL certificate info for the common mail servers (GMail, outlook.com, Yahoo! Mail, etc).
+* Improved the SslHandshakeException error message to report common mistakes like trying to initiate
+  an SSL connection on a non-SSL port.
+* Improved IMAP's "Unexpected token" exception messages a bit
+* Updated code to use ArrayPools from System.Buffers.
+
 ### MailKit 2.9.0 (2020-09-12)
 
 * Refactored Connect/ConnectAsync() logic to set timeouts *before* calling SslStream.AuthenticateAsClient()

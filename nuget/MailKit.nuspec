@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.9.0</version>
+    <version>2.10.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -15,7 +15,7 @@
 
 Features include:
 * HTTP, Socks4, Socks4a and Socks5 proxy support.
-* SASL Authentication via SCRAM-SHA-256, SCRAM-SHA-1, NTLM, DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
+* SASL Authentication via CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, OAUTHBEARER, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, SCRAM-SHA-512 and XOAUTH2.
 * A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME, ENHANCEDSTATUSCODES, SIZE, DSN, PIPELINING and SMTPUTF8.
 * A fully-cancellable Pop3Client with support for STLS, UIDL, APOP, PIPELINING, UTF8, and LANG.
 * A fully-cancellable ImapClient with support for ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, WITHIN, ENABLE, QRESYNC, SORT, THREAD, ANNOTATE, LIST-EXTENDED, ESORT, METADATA / METADATA-SERVER, NOTIFY, FILTERS, LIST-STATUS, SORT=DISPLAY, SPECIAL-USE / CREATE-SPECIAL-USE, SEARCH=FUZZY, MOVE, UTF8=ACCEPT / UTF8=ONLY, LITERAL-, APPENDLIMIT, STATUS=SIZE, OBJECTID, REPLACE, SAVEDATE, XLIST, and X-GM-EXT1.
@@ -26,13 +26,13 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Refactored Connect/ConnectAsync() logic to set timeouts *before* calling SslStream.AuthenticateAsClient() when connecting to an SSL-wrapped service. (issue #1059)
-* Hardcode the value of SslProtocols.Tls13 for frameworks that do not support it and add it to the client's default SslProtocols. This adds TLS v1.3 support, by default, for apps using .NETStandard2.0 where the app project is built against a version of .NETCore that supports TLS v1.3. (issue #1058)
-* Initialize IMAP SearchResults with the UIDVALIDITY value. (issue #1060)
-* Make sure the ImapStream is not null (can be null if user calls Disconnect() causing IDLE to abort). (issue #1025)
-* Case-insenitively match IMAP folder attribute flags (e.g. \HasNoChildren and \NoSelect).
-* Added support for the IMAP SAVEDATE extension.
-* Added support for detecting SMTP's REQUIRETLS extension.
+* Don't enable support for TLS v1.1 by default anymore. (issue #1077)
+* Added support for the SCRAM-SHA-512 SASL mechanism. (issue #1097)
+* Added support for the OAUTHBEARER SASL mechanism.
+* Updated SSL certificate info for the common mail servers (GMail, outlook.com, Yahoo! Mail, etc).
+* Improved the SslHandshakeException error message to report common mistakes like trying to initiate an SSL connection on a non-SSL port.
+* Improved IMAP's "Unexpected token" exception messages a bit
+* Updated code to use ArrayPools from System.Buffers.
 
 API Changes Since 2.0.x:
 
@@ -79,19 +79,19 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.9.2" />
+        <dependency id="MimeKit" version="2.10.0" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.9.2" />
+        <dependency id="MimeKit" version="2.10.0" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.9.2" />
+        <dependency id="MimeKit" version="2.10.0" />
       </group>
       <group targetFramework="net48">
-        <dependency id="MimeKit" version="2.9.2" />
+        <dependency id="MimeKit" version="2.10.0" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="MimeKit" version="2.9.2" />
+        <dependency id="MimeKit" version="2.10.0" />
       </group>
     </dependencies>
   </metadata>
