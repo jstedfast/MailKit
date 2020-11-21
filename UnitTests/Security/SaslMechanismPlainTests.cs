@@ -46,22 +46,10 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismPlain (credentials);
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain ((Uri) null, Encoding.UTF8, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, Encoding.UTF8, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain ((Uri) null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain ((Uri) null, Encoding.UTF8, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, Encoding.UTF8, null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, Encoding.UTF8, "username", null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain ((Uri) null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (Encoding.UTF8, null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain ((Encoding) null, "username", "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, "username", "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (Encoding.UTF8, null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (Encoding.UTF8, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, "password"));
@@ -87,7 +75,6 @@ namespace UnitTests.Security {
 		{
 			var credentials = new NetworkCredential ("username", "password");
 			var sasl = new SaslMechanismPlain (credentials);
-			var uri = new Uri ("smtp://localhost");
 
 			AssertPlain (sasl, "NetworkCredential");
 
@@ -95,13 +82,9 @@ namespace UnitTests.Security {
 
 			AssertPlain (sasl, "user/pass");
 
-			sasl = new SaslMechanismPlain (uri, credentials);
+			sasl = new SaslMechanismPlain (credentials);
 
-			AssertPlain (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismPlain (uri, "username", "password");
-
-			AssertPlain (sasl, "uri/user/pass");
+			AssertPlain (sasl, "credentials");
 		}
 
 		[Test]

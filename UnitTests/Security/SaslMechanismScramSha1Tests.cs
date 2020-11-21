@@ -45,13 +45,8 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismScramSha1 (credentials);
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (uri, (string) null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 ((string) null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha1 ("username", null));
 		}
 
@@ -98,13 +93,9 @@ namespace UnitTests.Security {
 
 			AssertScramSha1 (sasl, "user/pass");
 
-			sasl = new SaslMechanismScramSha1 (uri, credentials);
+			sasl = new SaslMechanismScramSha1 (credentials);
 
-			AssertScramSha1 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismScramSha1 (uri, "user", "pencil");
-
-			AssertScramSha1 (sasl, "uri/user/pass");
+			AssertScramSha1 (sasl, "credentials");
 		}
 
 		static void AssertSaslException (SaslMechanismScramSha1 sasl, string challenge, SaslErrorCode code)

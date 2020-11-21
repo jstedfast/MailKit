@@ -45,13 +45,8 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismScramSha512 (credentials);
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (uri, (string) null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 ((string) null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 ("username", null));
 		}
 
@@ -97,14 +92,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismScramSha512 ("user", "pencil");
 
 			AssertScramSha512 (sasl, "user/pass");
-
-			sasl = new SaslMechanismScramSha512 (uri, credentials);
-
-			AssertScramSha512 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismScramSha512 (uri, "user", "pencil");
-
-			AssertScramSha512 (sasl, "uri/user/pass");
 		}
 
 		static void AssertSaslException (SaslMechanismScramSha512 sasl, string challenge, SaslErrorCode code)

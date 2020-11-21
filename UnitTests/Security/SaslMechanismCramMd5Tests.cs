@@ -40,16 +40,10 @@ namespace UnitTests.Security {
 		public void TestArgumentExceptions ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("smtp://localhost");
 
 			var sasl = new SaslMechanismCramMd5 (credentials);
 			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismCramMd5 ("username", null));
@@ -84,14 +78,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismCramMd5 ("joe", "tanstaaftanstaaf");
 
 			AssertExampleFromRfc2195 (sasl, "user/pass");
-
-			sasl = new SaslMechanismCramMd5 (uri, credentials);
-
-			AssertExampleFromRfc2195 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismCramMd5 (uri, "joe", "tanstaaftanstaaf");
-
-			AssertExampleFromRfc2195 (sasl, "uri/user/pass");
 		}
 	}
 }

@@ -46,11 +46,6 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismNtlm (credentials);
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm ((Uri) null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm ((Uri) null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (uri, (string) null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismNtlm ("username", null));
@@ -360,21 +355,12 @@ namespace UnitTests.Security {
 		{
 			var credentials = new NetworkCredential ("username", "password");
 			var sasl = new SaslMechanismNtlm (credentials);
-			var uri = new Uri ("smtp://localhost");
 
 			AssertNtlmAuthNoDomain (sasl, "NetworkCredential");
 
 			sasl = new SaslMechanismNtlm ("username", "password");
 
 			AssertNtlmAuthNoDomain (sasl, "user/pass");
-
-			sasl = new SaslMechanismNtlm (uri, credentials);
-
-			AssertNtlmAuthNoDomain (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismNtlm (uri, "username", "password");
-
-			AssertNtlmAuthNoDomain (sasl, "uri/user/pass");
 		}
 
 		static void AssertNtlmAuthWithDomain (SaslMechanismNtlm sasl, string prefix)
@@ -401,21 +387,12 @@ namespace UnitTests.Security {
 		{
 			var credentials = new NetworkCredential ("domain\\username", "password");
 			var sasl = new SaslMechanismNtlm (credentials);
-			var uri = new Uri ("smtp://localhost");
 
 			AssertNtlmAuthWithDomain (sasl, "NetworkCredential");
 
 			sasl = new SaslMechanismNtlm ("domain\\username", "password");
 
 			AssertNtlmAuthWithDomain (sasl, "user/pass");
-
-			sasl = new SaslMechanismNtlm (uri, credentials);
-
-			AssertNtlmAuthWithDomain (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismNtlm (uri, "domain\\username", "password");
-
-			AssertNtlmAuthWithDomain (sasl, "uri/user/pass");
 		}
 
 		static Type1Message DecodeType1Message (string token)

@@ -51,47 +51,6 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Creates a new NTLM SASL context.
 		/// </remarks>
-		/// <param name="uri">The URI of the service.</param>
-		/// <param name="credentials">The user's credentials.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
-		/// </exception>
-		[Obsolete ("Use SaslMechanismNtlm(NetworkCredential) instead.")]
-		public SaslMechanismNtlm (Uri uri, ICredentials credentials) : base (uri, credentials)
-		{
-			Level = NtlmAuthLevel.NTLMv2_only;
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new NTLM SASL context.
-		/// </remarks>
-		/// <param name="uri">The URI of the service.</param>
-		/// <param name="userName">The user name.</param>
-		/// <param name="password">The password.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
-		/// </exception>
-		[Obsolete ("Use SaslMechanismNtlm(string, string) instead.")]
-		public SaslMechanismNtlm (Uri uri, string userName, string password) : base (uri, userName, password)
-		{
-			Level = NtlmAuthLevel.NTLMv2_only;
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new NTLM SASL context.
-		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.

@@ -273,20 +273,6 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Get whether or not the folder supports mod-sequences.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the folder supports mod-sequences.</para>
-		/// <para>If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
-		/// argument will throw <see cref="System.NotSupportedException"/> and should not be used.</para>
-		/// </remarks>
-		/// <value><c>true</c> if supports mod-sequences; otherwise, <c>false</c>.</value>
-		[Obsolete ("Use Supports (FolderFeature.ModSequences) instead.")]
-		public bool SupportsModSeq {
-			get { return Supports (FolderFeature.ModSequences); }
-		}
-
-		/// <summary>
 		/// Get the highest mod-sequence value of all messages in the mailbox.
 		/// </summary>
 		/// <remarks>

@@ -78,7 +78,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual ("Not" + flag.ToString (), optimized.Term.ToString (), "NOT ({0})", flag);
 
-				query = SearchQuery.Not (SearchQuery.DoesNotHaveFlags (flag));
+				query = SearchQuery.Not (SearchQuery.NotFlags (flag));
 				optimized = optimizer.Reduce (query);
 
 				Assert.AreEqual (flag.ToString (), optimized.Term.ToString (), "NOT ({0})", query.Operand.Term);
@@ -93,17 +93,17 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestReduceNotFlag ()
 		{
-			var query = SearchQuery.Not (SearchQuery.HasCustomFlag ("custom"));
+			var query = SearchQuery.Not (SearchQuery.HasKeyword ("custom"));
 			var optimized = optimizer.Reduce (query);
 
 			Assert.AreEqual (SearchTerm.NotKeyword, optimized.Term, "NOT KEYWORD");
 
-			query = SearchQuery.Not (SearchQuery.DoesNotHaveCustomFlag ("custom"));
+			query = SearchQuery.Not (SearchQuery.NotKeyword ("custom"));
 			optimized = optimizer.Reduce (query);
 
 			Assert.AreEqual (SearchTerm.Keyword, optimized.Term, "NOT NOTKEYWORD", query.Operand.Term);
 
-			query = SearchQuery.Not (SearchQuery.Not (SearchQuery.HasCustomFlag ("custom")));
+			query = SearchQuery.Not (SearchQuery.Not (SearchQuery.HasKeyword ("custom")));
 			optimized = optimizer.Reduce (query);
 
 			Assert.AreEqual (SearchTerm.Keyword, optimized.Term, "NOT NOT KEYWORD");

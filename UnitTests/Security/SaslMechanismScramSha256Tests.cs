@@ -45,13 +45,8 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismScramSha256 (credentials);
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (uri, (string) null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 ((string) null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha256 ("username", null));
 		}
 
@@ -97,14 +92,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismScramSha256 ("user", "pencil");
 
 			AssertScramSha256 (sasl, "user/pass");
-
-			sasl = new SaslMechanismScramSha256 (uri, credentials);
-
-			AssertScramSha256 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismScramSha256 (uri, "user", "pencil");
-
-			AssertScramSha256 (sasl, "uri/user/pass");
 		}
 
 		static void AssertSaslException (SaslMechanismScramSha256 sasl, string challenge, SaslErrorCode code)

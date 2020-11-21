@@ -4095,7 +4095,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (8, unchanged2[1], "unchanged indexes[1]");
 				modSeqChanged.Clear ();
 
-				var results = destination.Search (uids, SearchQuery.New.Or (SearchQuery.Old.Or (SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasCustomFlag ("$MailKit").Or (SearchQuery.NotKeyword ("$MailKit")))))))))))))));
+				var results = destination.Search (uids, SearchQuery.New.Or (SearchQuery.Old.Or (SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasKeyword ("$MailKit").Or (SearchQuery.NotKeyword ("$MailKit")))))))))))))));
 				Assert.AreEqual (14, results.Count, "Unexpected number of UIDs");
 
 				var matches = destination.Search (searchOptions, uids, SearchQuery.LargerThan (256).And (SearchQuery.SmallerThan (512)));
@@ -4109,7 +4109,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (matches.Count, matches.Relevancy.Count, "Unexpected number of relevancy scores");
 
 				orderBy = new OrderBy[] { OrderBy.ReverseDate, OrderBy.Subject, OrderBy.DisplayFrom, OrderBy.Size };
-				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
+				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentSince (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
 				var deliveredDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.DeliveredBefore (new DateTime (2016, 10, 12)), SearchQuery.DeliveredAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.DeliveredOn (new DateTime (2016, 10, 11))));
 				results = destination.Sort (sentDateQuery.Or (deliveredDateQuery), orderBy);
 				var expectedSortByDateResults = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
@@ -4724,7 +4724,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (8, unchanged2[1], "unchanged indexes[1]");
 				modSeqChanged.Clear ();
 
-				var results = await destination.SearchAsync (uids, SearchQuery.New.Or (SearchQuery.Old.Or (SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasCustomFlag ("$MailKit").Or (SearchQuery.NotKeyword ("$MailKit")))))))))))))));
+				var results = await destination.SearchAsync (uids, SearchQuery.New.Or (SearchQuery.Old.Or (SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasKeyword ("$MailKit").Or (SearchQuery.NotKeyword ("$MailKit")))))))))))))));
 				Assert.AreEqual (14, results.Count, "Unexpected number of UIDs");
 
 				var matches = await destination.SearchAsync (searchOptions, uids, SearchQuery.LargerThan (256).And (SearchQuery.SmallerThan (512)));
@@ -4738,7 +4738,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (matches.Count, matches.Relevancy.Count, "Unexpected number of relevancy scores");
 
 				orderBy = new OrderBy[] { OrderBy.ReverseDate, OrderBy.Subject, OrderBy.DisplayFrom, OrderBy.Size };
-				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
+				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentSince (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
 				var deliveredDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.DeliveredBefore (new DateTime (2016, 10, 12)), SearchQuery.DeliveredAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.DeliveredOn (new DateTime (2016, 10, 11))));
 				results = await destination.SortAsync (sentDateQuery.Or (deliveredDateQuery), orderBy);
 				var expectedSortByDateResults = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };

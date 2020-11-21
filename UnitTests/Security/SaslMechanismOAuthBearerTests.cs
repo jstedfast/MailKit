@@ -41,11 +41,6 @@ namespace UnitTests.Security {
 			var credentials = new NetworkCredential ("username", "password");
 			var uri = new Uri ("smtp://localhost");
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuthBearer (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuthBearer (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuthBearer (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuthBearer (uri, null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuthBearer (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuthBearer (null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuthBearer (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuthBearer ("username", null));
@@ -79,14 +74,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismOAuthBearer (userName, token) { Uri = uri };
 
 			AssertImapExampleFromRfc7628 (sasl, "user/pass");
-
-			sasl = new SaslMechanismOAuthBearer (uri, credentials);
-
-			AssertImapExampleFromRfc7628 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismOAuthBearer (uri, userName, token);
-
-			AssertImapExampleFromRfc7628 (sasl, "uri/user/pass");
 		}
 
 		static void AssertImapFailureExampleFromRfc7628 (SaslMechanismOAuthBearer sasl, string prefix)
@@ -118,14 +105,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismOAuthBearer (userName, token) { Uri = uri };
 
 			AssertImapFailureExampleFromRfc7628 (sasl, "user/pass");
-
-			sasl = new SaslMechanismOAuthBearer (uri, credentials);
-
-			AssertImapFailureExampleFromRfc7628 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismOAuthBearer (uri, userName, token);
-
-			AssertImapFailureExampleFromRfc7628 (sasl, "uri/user/pass");
 		}
 
 		static void AssertSmtpExampleFromRfc7628 (SaslMechanismOAuthBearer sasl, string prefix)
@@ -156,14 +135,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismOAuthBearer (userName, token) { Uri = uri };
 
 			AssertSmtpExampleFromRfc7628 (sasl, "user/pass");
-
-			sasl = new SaslMechanismOAuthBearer (uri, credentials);
-
-			AssertSmtpExampleFromRfc7628 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismOAuthBearer (uri, userName, token);
-
-			AssertSmtpExampleFromRfc7628 (sasl, "uri/user/pass");
 		}
 
 		static void AssertSmtpFailureExampleFromRfc7628 (SaslMechanismOAuthBearer sasl, string prefix)
@@ -195,14 +166,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismOAuthBearer (userName, token) { Uri = uri };
 
 			AssertSmtpFailureExampleFromRfc7628 (sasl, "user/pass");
-
-			sasl = new SaslMechanismOAuthBearer (uri, credentials);
-
-			AssertSmtpFailureExampleFromRfc7628 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismOAuthBearer (uri, userName, token);
-
-			AssertSmtpFailureExampleFromRfc7628 (sasl, "uri/user/pass");
 		}
 	}
 }

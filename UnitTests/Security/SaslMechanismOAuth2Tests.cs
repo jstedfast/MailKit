@@ -41,11 +41,6 @@ namespace UnitTests.Security {
 			var credentials = new NetworkCredential ("username", "password");
 			var uri = new Uri ("smtp://localhost");
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (uri, null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 ("username", null));
@@ -77,14 +72,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismOAuth2 ("username", "password");
 
 			AssertSimpleOAuth2 (sasl, "user/pass");
-
-			sasl = new SaslMechanismOAuth2 (uri, credentials);
-
-			AssertSimpleOAuth2 (sasl, "uri/credentials");
-
-			sasl = new SaslMechanismOAuth2 (uri, "username", "password");
-
-			AssertSimpleOAuth2 (sasl, "uri/user/pass");
 		}
 	}
 }

@@ -70,8 +70,8 @@ namespace UnitTests {
 			Assert.IsNull (summary.Size, "Size");
 			Assert.IsNull (summary.TextBody, "TextBody");
 			Assert.AreEqual (UniqueId.Invalid, summary.UniqueId, "UniqueId");
-			Assert.IsNotNull (summary.UserFlags, "UserFlags");
-			Assert.AreEqual (0, summary.UserFlags.Count, "UserFlags");
+			Assert.IsNotNull (summary.Keywords, "Keywords");
+			Assert.AreEqual (0, summary.Keywords.Count, "Keywords");
 		}
 
 		[Test]

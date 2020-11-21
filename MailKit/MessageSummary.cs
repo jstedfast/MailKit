@@ -504,24 +504,6 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the user-defined message flags, if available.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets the user-defined message flags, if available.</para>
-		/// <para>This property will only be set if the
-		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
-		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
-		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
-		/// methods.</para>
-		/// </remarks>
-		/// <value>The user-defined message flags.</value>
-		[Obsolete ("Use Keywords instead.")]
-		public HashSet<string> UserFlags {
-			get { return Keywords; }
-			set { Keywords = value; }
-		}
-
-		/// <summary>
 		/// Gets the message annotations, if available.
 		/// </summary>
 		/// <remarks>
@@ -652,25 +634,6 @@ namespace MailKit {
 		/// <value>The globally unique message identifier.</value>
 		public string EmailId {
 			get; set;
-		}
-
-		/// <summary>
-		/// Get the globally unique identifier for the message, if available.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets the globally unique identifier of the message, if available.</para>
-		/// <para>This property will only be set if the
-		/// <see cref="MessageSummaryItems.EmailId"/> flag is passed to
-		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
-		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
-		/// methods.</para>
-		/// <note type="info">This property maps to the <c>EMAILID</c> value defined in the
-		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
-		/// </remarks>
-		/// <value>The globally unique message identifier.</value>
-		[Obsolete ("Use EmailId instead.")]
-		public string Id {
-			get { return EmailId; }
 		}
 
 		/// <summary>

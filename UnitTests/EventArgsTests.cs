@@ -119,63 +119,63 @@ namespace UnitTests {
 			ulong modseq = 724;
 
 			args = new MessageFlagsChangedEventArgs (0);
-			Assert.AreEqual (0, args.UserFlags.Count);
+			Assert.AreEqual (0, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.None, args.Flags);
 			Assert.IsFalse (args.UniqueId.HasValue);
 			Assert.IsFalse (args.ModSeq.HasValue);
 			Assert.AreEqual (0, args.Index);
 
 			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered);
-			Assert.AreEqual (0, args.UserFlags.Count);
+			Assert.AreEqual (0, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.IsFalse (args.UniqueId.HasValue);
 			Assert.IsFalse (args.ModSeq.HasValue);
 			Assert.AreEqual (0, args.Index);
 
 			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, modseq);
-			Assert.AreEqual (0, args.UserFlags.Count);
+			Assert.AreEqual (0, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.IsFalse (args.UniqueId.HasValue);
 			Assert.AreEqual (modseq, args.ModSeq);
 			Assert.AreEqual (0, args.Index);
 
 			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, keywords);
-			Assert.AreEqual (keywords.Count, args.UserFlags.Count);
+			Assert.AreEqual (keywords.Count, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.IsFalse (args.UniqueId.HasValue);
 			Assert.IsFalse (args.ModSeq.HasValue);
 			Assert.AreEqual (0, args.Index);
 
 			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, keywords, modseq);
-			Assert.AreEqual (keywords.Count, args.UserFlags.Count);
+			Assert.AreEqual (keywords.Count, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.IsFalse (args.UniqueId.HasValue);
 			Assert.AreEqual (modseq, args.ModSeq);
 			Assert.AreEqual (0, args.Index);
 
 			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered);
-			Assert.AreEqual (0, args.UserFlags.Count);
+			Assert.AreEqual (0, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.AreEqual (uid, args.UniqueId);
 			Assert.IsFalse (args.ModSeq.HasValue);
 			Assert.AreEqual (0, args.Index);
 
 			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, modseq);
-			Assert.AreEqual (0, args.UserFlags.Count);
+			Assert.AreEqual (0, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.AreEqual (uid, args.UniqueId);
 			Assert.AreEqual (modseq, args.ModSeq);
 			Assert.AreEqual (0, args.Index);
 
 			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, keywords);
-			Assert.AreEqual (keywords.Count, args.UserFlags.Count);
+			Assert.AreEqual (keywords.Count, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.AreEqual (uid, args.UniqueId);
 			Assert.IsFalse (args.ModSeq.HasValue);
 			Assert.AreEqual (0, args.Index);
 
 			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, keywords, modseq);
-			Assert.AreEqual (keywords.Count, args.UserFlags.Count);
+			Assert.AreEqual (keywords.Count, args.Keywords.Count);
 			Assert.AreEqual (MessageFlags.Answered, args.Flags);
 			Assert.AreEqual (uid, args.UniqueId);
 			Assert.AreEqual (modseq, args.ModSeq);

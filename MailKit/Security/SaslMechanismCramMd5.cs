@@ -54,45 +54,6 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Creates a new CRAM-MD5 SASL context.
 		/// </remarks>
-		/// <param name="uri">The URI of the service.</param>
-		/// <param name="credentials">The user's credentials.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
-		/// </exception>
-		[Obsolete ("Use SaslMechanismCramMd5(NetworkCredential) instead.")]
-		public SaslMechanismCramMd5 (Uri uri, ICredentials credentials) : base (uri, credentials)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismCramMd5"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new CRAM-MD5 SASL context.
-		/// </remarks>
-		/// <param name="uri">The URI of the service.</param>
-		/// <param name="userName">The user name.</param>
-		/// <param name="password">The password.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
-		/// </exception>
-		[Obsolete ("Use SaslMechanismCramMd5(string, string) instead.")]
-		public SaslMechanismCramMd5 (Uri uri, string userName, string password) : base (uri, userName, password)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismCramMd5"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new CRAM-MD5 SASL context.
-		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.

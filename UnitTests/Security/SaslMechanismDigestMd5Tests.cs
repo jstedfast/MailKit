@@ -45,11 +45,6 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismDigestMd5 (credentials) { Uri = uri };
 			Assert.Throws<NotSupportedException> (() => sasl.Challenge (null));
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, (string)null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (uri, "username", null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismDigestMd5 ("username", null));
@@ -98,14 +93,6 @@ namespace UnitTests.Security {
 			sasl = new SaslMechanismDigestMd5 ("chris", "secret") { Uri = uri };
 
 			AssertExampleFromRfc2831 (sasl, "user/pass");
-
-			sasl = new SaslMechanismDigestMd5 (uri, credentials);
-
-			AssertExampleFromRfc2831 (sasl, "uri/credential");
-
-			sasl = new SaslMechanismDigestMd5 (uri, "chris", "secret");
-
-			AssertExampleFromRfc2831 (sasl, "uri/user/pass");
 		}
 
 		static void AssertSaslException (SaslMechanismDigestMd5 sasl, string challenge, SaslErrorCode code)

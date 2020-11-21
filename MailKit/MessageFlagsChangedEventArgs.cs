@@ -244,18 +244,6 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the updated user-defined message flags.
-		/// </summary>
-		/// <remarks>
-		/// Gets the updated user-defined message flags.
-		/// </remarks>
-		/// <value>The updated user-defined message flags.</value>
-		[Obsolete ("Use Keywords instead.")]
-		public HashSet<string> UserFlags {
-			get { return Keywords; }
-		}
-
-		/// <summary>
 		/// Gets the updated mod-sequence value of the message, if available.
 		/// </summary>
 		/// <remarks>

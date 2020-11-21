@@ -132,14 +132,6 @@ namespace MailKit {
 		EmailId        = 1 << 10,
 
 		/// <summary>
-		/// <para></para>Fetch the <see cref="IMessageSummary.EmailId"/>.
-		/// <para>Fetches the <c>EMAILID</c> value as defined in
-		/// <a href="https://tools.ietf.org/html/rfc8474">rfc8474</a>.</para>
-		/// </summary>
-		[Obsolete ("Use EmailId instead.")]
-		Id             = EmailId,
-
-		/// <summary>
 		/// <para>Fetch the <see cref="IMessageSummary.ThreadId"/>.</para>
 		/// <para>Fetches the <c>THREADID</c> value as defined in
 		/// <a href="https://tools.ietf.org/html/rfc8474">rfc8474</a>.</para>
