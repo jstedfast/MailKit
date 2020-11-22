@@ -102,6 +102,7 @@
     <Compile Include="EventArgsTests.cs" />
     <Compile Include="ExceptionTests.cs" />
     <Compile Include="FolderNamespaceTests.cs" />
+    <Compile Include="HeaderSetTests.cs" />
     <Compile Include="MailServiceTests.cs" />
     <Compile Include="MessageSortingTests.cs" />
     <Compile Include="MessageSummaryTests.cs" />

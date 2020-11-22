@@ -617,8 +617,26 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		public class MessageNew : ImapEvent
 		{
-			readonly MessageSummaryItems items;
-			readonly HashSet<string> headers;
+			readonly IFetchRequest request;
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
+			/// </summary>
+			/// <remarks>
+			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
+			/// </remarks>
+			/// <param name="request">The fetch request to use when new messages arrive.</param>
+			/// <exception cref="ArgumentNullException">
+			/// <paramref name="request"/> is <c>null</c>.
+			/// </exception>
+			public MessageNew (IFetchRequest request) : base ("MessageNew", true)
+			{
+				if (request == null)
+					throw new ArgumentNullException (nameof (request));
+
+				this.request = request;
+			}
+
 
 			/// <summary>
 			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
@@ -629,8 +647,7 @@ namespace MailKit.Net.Imap {
 			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
 			public MessageNew (MessageSummaryItems items = MessageSummaryItems.None) : base ("MessageNew", true)
 			{
-				headers = ImapFolder.EmptyHeaderFields;
-				this.items = items;
+				request = new FetchRequest (items);
 			}
 
 			/// <summary>
@@ -641,9 +658,15 @@ namespace MailKit.Net.Imap {
 			/// </remarks>
 			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
 			/// <param name="headers">Additional message headers to retrieve for new messages.</param>
-			public MessageNew (MessageSummaryItems items, HashSet<HeaderId> headers) : this (items)
+			/// <exception cref="ArgumentNullException">
+			/// <paramref name="headers"/> is <c>null</c>.
+			/// </exception>
+			/// <exception cref="ArgumentException">
+			/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
+			/// </exception>
+			public MessageNew (MessageSummaryItems items, IEnumerable<HeaderId> headers) : base ("MessageNew", true)
 			{
-				this.headers = ImapUtils.GetUniqueHeaders (headers);
+				request = new FetchRequest (items, headers);
 			}
 
 			/// <summary>
@@ -654,9 +677,15 @@ namespace MailKit.Net.Imap {
 			/// </remarks>
 			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
 			/// <param name="headers">Additional message headers to retrieve for new messages.</param>
-			public MessageNew (MessageSummaryItems items, HashSet<string> headers) : this (items)
+			/// <exception cref="ArgumentNullException">
+			/// <paramref name="headers"/> is <c>null</c>.
+			/// </exception>
+			/// <exception cref="ArgumentException">
+			/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
+			/// </exception>
+			public MessageNew (MessageSummaryItems items, IEnumerable<string> headers) : base ("MessageNew", true)
 			{
-				this.headers = ImapUtils.GetUniqueHeaders (headers);
+				request = new FetchRequest (items, headers);
 			}
 
 			/// <summary>
@@ -675,17 +704,14 @@ namespace MailKit.Net.Imap {
 			{
 				command.Append (Name);
 
-				if (items == MessageSummaryItems.None && headers.Count == 0)
+				if (ImapFolder.IsEmptyFetchRequest (request))
 					return;
 
 				if (!isSelectedFilter)
 					throw new InvalidOperationException ("The MessageNew event cannot have any parameters for mailbox filters other than SELECTED and SELECTED-DELAYED.");
 
-				var xitems = items;
-				bool previewText;
-
 				command.Append (" ");
-				command.Append (ImapFolder.FormatSummaryItems (engine, ref xitems, headers, out previewText, isNotify: true));
+				command.Append (ImapFolder.FormatSummaryItems (engine, request, out var previewText, isNotify: true));
 			}
 		}
 	}

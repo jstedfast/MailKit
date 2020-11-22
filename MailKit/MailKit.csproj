@@ -191,6 +191,7 @@
     <Compile Include="DisconnectedEventArgs.cs" />
     <Compile Include="DuplexStream.cs" />
     <Compile Include="Envelope.cs" />
+    <Compile Include="FetchRequest.cs" />
     <Compile Include="FolderAccess.cs" />
     <Compile Include="FolderAttributes.cs" />
     <Compile Include="FolderCreatedEventArgs.cs" />
@@ -201,7 +202,9 @@
     <Compile Include="FolderNotOpenException.cs" />
     <Compile Include="FolderQuota.cs" />
     <Compile Include="FolderRenamedEventArgs.cs" />
+    <Compile Include="HeaderSet.cs" />
     <Compile Include="IAuthenticationSecretDetector.cs" />
+    <Compile Include="IFetchRequest.cs" />
     <Compile Include="IMailFolder.cs" />
     <Compile Include="IMailService.cs" />
     <Compile Include="IMailSpool.cs" />
@@ -211,6 +214,7 @@
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="ITransferProgress.cs" />
     <Compile Include="MailFolder.cs" />
+    <Compile Include="IMailFolderExtensions.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="MailSpool.cs" />
     <Compile Include="MailStore.cs" />
