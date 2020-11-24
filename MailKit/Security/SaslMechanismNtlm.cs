@@ -30,6 +30,14 @@ using System.Net;
 using MailKit.Security.Ntlm;
 
 namespace MailKit.Security {
+	[Flags]
+	public enum NtlmFixes
+	{
+		None = 0,
+		NTLMv2IncludeZ24 = 1,
+		NTLMv2UseTargetInfoTimestamp = 2
+	}
+
 	/// <summary>
 	/// The NTLM SASL mechanism.
 	/// </summary>
@@ -146,6 +154,10 @@ namespace MailKit.Security {
 			get; set;
 		}
 
+		public NtlmFixes NtlmFixes {
+			get; set;
+		}
+
 		/// <summary>
 		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
 		/// </summary>
@@ -222,7 +234,7 @@ namespace MailKit.Security {
 		{
 			var type2 = new Type2Message (token, startIndex, length);
 
-			return new Type3Message (type2, OSVersion, Level, userName, password, Workstation);
+			return new Type3Message (type2, OSVersion, Level, userName, password, Workstation, NtlmFixes);
 		}
 
 		/// <summary>

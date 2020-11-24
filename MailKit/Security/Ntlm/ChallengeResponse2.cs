@@ -136,7 +136,7 @@ namespace MailKit.Security.Ntlm {
 			Array.Clear (nonce, 0, nonce.Length);
 		}
 
-		static byte[] ComputeNtlmV2 (Type2Message type2, string username, string password, string domain)
+		static byte[] ComputeNtlmV2 (Type2Message type2, string username, string password, string domain, NtlmFixes fixes)
 		{
 			var ntlm_hash = ComputeNtlmPassword (password);
 
@@ -157,6 +157,9 @@ namespace MailKit.Security.Ntlm {
 			using (var md5 = new HMACMD5 (ntlm_v2_hash)) {
 				var timestamp = DateTime.Now.Ticks - 504911232000000000;
 				var nonce = new byte[8];
+
+				if (type2.TargetInfo?.Timestamp != 0 && (fixes & NtlmFixes.NTLMv2UseTargetInfoTimestamp) != 0)
+					timestamp = type2.TargetInfo.Timestamp;
 
 				using (var rng = RandomNumberGenerator.Create ())
 					rng.GetBytes (nonce);
@@ -193,7 +196,7 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		public static void Compute (Type2Message type2, NtlmAuthLevel level, string username, string password, string domain, out byte[] lm, out byte[] ntlm)
+		public static void Compute (Type2Message type2, NtlmAuthLevel level, string username, string password, string domain, out byte[] lm, out byte[] ntlm, NtlmFixes fixes)
 		{
 			lm = null;
 
@@ -214,7 +217,9 @@ namespace MailKit.Security.Ntlm {
 					ntlm = ComputeNtlm (password, type2.Nonce);
 				break;
 			case NtlmAuthLevel.NTLMv2_only:
-				ntlm = ComputeNtlmV2 (type2, username, password, domain);
+				ntlm = ComputeNtlmV2 (type2, username, password, domain, fixes);
+				if (type2.TargetInfo.Timestamp != 0 && (fixes & NtlmFixes.NTLMv2IncludeZ24) != 0)
+					lm = new byte[24];
 				break;
 			default:
 				throw new InvalidOperationException ();

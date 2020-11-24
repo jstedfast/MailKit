@@ -42,6 +42,7 @@ namespace MailKit.Security.Ntlm {
 	{
 		readonly Type2Message type2;
 		readonly byte[] challenge;
+		NtlmFixes fixes;
 
 		public Type3Message (byte[] message, int startIndex, int length) : base (3)
 		{
@@ -49,9 +50,10 @@ namespace MailKit.Security.Ntlm {
 			type2 = null;
 		}
 
-		public Type3Message (Type2Message type2, Version osVersion, NtlmAuthLevel level, string userName, string password, string host) : base (3)
+		public Type3Message (Type2Message type2, Version osVersion, NtlmAuthLevel level, string userName, string password, string host, NtlmFixes fixes = NtlmFixes.None) : base (3)
 		{
 			this.type2 = type2;
+			this.fixes = fixes;
 
 			challenge = type2.Nonce;
 			Domain = type2.TargetName;
@@ -191,7 +193,7 @@ namespace MailKit.Security.Ntlm {
 			bool negotiateVersion;
 			byte[] lm, ntlm;
 
-			ChallengeResponse2.Compute (type2, Level, Username, Password, Domain, out lm, out ntlm);
+			ChallengeResponse2.Compute (type2, Level, Username, Password, Domain, out lm, out ntlm, fixes);
 
 			if (negotiateVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0)
 				payloadOffset += 8;
