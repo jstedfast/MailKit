@@ -51,6 +51,10 @@ namespace MailKit.Security.Ntlm {
 			get; set;
 		}
 
+		public Version OSVersion {
+			get; protected set;
+		}
+
 		public int Type {
 			get; private set;
 		}

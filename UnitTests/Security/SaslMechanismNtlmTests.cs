@@ -123,7 +123,7 @@ namespace UnitTests.Security {
 
 		static readonly byte [] NtlmType1EncodedMessage = {
 			0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x01, 0x00, 0x00, 0x00,
-			0x07, 0x32, 0x00, 0x00, 0x06, 0x00, 0x06, 0x00, 0x33, 0x00, 0x00, 0x00,
+			0x07, 0x32, 0x00, 0x02, 0x06, 0x00, 0x06, 0x00, 0x33, 0x00, 0x00, 0x00,
 			0x0b, 0x00, 0x0b, 0x00, 0x28, 0x00, 0x00, 0x00, 0x05, 0x00, 0x93, 0x08,
 			0x00, 0x00, 0x00, 0x0f, 0x57, 0x4f, 0x52, 0x4b, 0x53, 0x54, 0x41, 0x54,
 			0x49, 0x4f, 0x4e, 0x44, 0x4f, 0x4d, 0x41, 0x49, 0x4e
@@ -132,7 +132,7 @@ namespace UnitTests.Security {
 		[Test]
 		public void TestNtlmType1MessageEncode ()
 		{
-			var type1 = new Type1Message ("Workstation", "Domain") { OSVersion = new Version (5, 0, 2195) };
+			var type1 = new Type1Message ("Workstation", "Domain", new Version (5, 0, 2195));
 			var encoded = type1.Encode ();
 			string actual, expected;
 
@@ -146,13 +146,14 @@ namespace UnitTests.Security {
 		public void TestNtlmType1MessageDecode ()
 		{
 			var flags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateDomainSupplied | NtlmFlags.NegotiateWorkstationSupplied |
-				NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget;
+				NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateVersion;
 			var type1 = new Type1Message (NtlmType1EncodedMessage, 0, NtlmType1EncodedMessage.Length);
+			var osVersion = new Version (5, 0, 2195);
 
 			Assert.AreEqual (flags, type1.Flags, "The expected flags do not match.");
 			Assert.AreEqual ("WORKSTATION", type1.Host, "The expected workstation name does not match.");
 			Assert.AreEqual ("DOMAIN", type1.Domain, "The expected domain does not match.");
-			Assert.AreEqual (new Version (5, 0, 2195), type1.OSVersion, "The expected OS Version does not match.");
+			Assert.AreEqual (osVersion, type1.OSVersion, "The expected OS Version does not match.");
 		}
 
 		static readonly byte [] NtlmType2EncodedMessage = {
@@ -182,7 +183,7 @@ namespace UnitTests.Security {
 				DnsServerName = "server.domain.com"
 			};
 
-			var type2 = new Type2Message {
+			var type2 = new Type2Message (null) {
 				Flags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo,
 				Nonce = HexDecode ("0123456789abcdef"),
 				TargetInfo = targetInfo,
@@ -233,7 +234,7 @@ namespace UnitTests.Security {
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
 			var token = Convert.FromBase64String (challenge2);
 			var type2 = new Type2Message (token, 0, token.Length);
-			var type3 = new Type3Message (type2, NtlmAuthLevel.LM_and_NTLM, "user", "password", "WORKSTATION");
+			var type3 = new Type3Message (type2, null, NtlmAuthLevel.LM_and_NTLM, "user", "password", "WORKSTATION");
 			var actual = Convert.ToBase64String (type3.Encode ());
 
 			Assert.AreEqual (expected, actual, "The encoded Type3Message did not match the expected result.");
@@ -462,7 +463,7 @@ namespace UnitTests.Security {
 
 			var token = Convert.FromBase64String (challenge2);
 			var type2 = new Type2Message (token, 0, token.Length);
-			var type3 = new Type3Message (type2, sasl.Level, sasl.Credentials.UserName, sasl.Credentials.Password, sasl.Workstation);
+			var type3 = new Type3Message (type2, null, sasl.Level, sasl.Credentials.UserName, sasl.Credentials.Password, sasl.Workstation);
 			var ignoreLength = 48;
 
 			var actual = Convert.FromBase64String (challenge);
@@ -602,7 +603,7 @@ namespace UnitTests.Security {
 
 			var token = Convert.FromBase64String (challenge2);
 			var type2 = new Type2Message (token, 0, token.Length);
-			var type3 = new Type3Message (type2, sasl.Level, sasl.Credentials.UserName, sasl.Credentials.Password, sasl.Workstation);
+			var type3 = new Type3Message (type2, null, sasl.Level, sasl.Credentials.UserName, sasl.Credentials.Password, sasl.Workstation);
 			var ignoreLength = type2.EncodedTargetInfo.Length + 28 + 16;
 
 			var actual = Convert.FromBase64String (challenge);

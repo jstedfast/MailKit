@@ -147,6 +147,16 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
+		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
+		/// </remarks>
+		public Version OSVersion {
+			get; set;
+		}
+
+		/// <summary>
 		/// Gets or sets the workstation name to use for authentication.
 		/// </summary>
 		/// <remarks>
@@ -195,7 +205,7 @@ namespace MailKit.Security {
 
 			switch (state) {
 			case LoginState.Initial:
-				message = new Type1Message (Workstation, domain);
+				message = new Type1Message (Workstation, domain, OSVersion);
 				state = LoginState.Challenge;
 				break;
 			case LoginState.Challenge:
@@ -212,7 +222,7 @@ namespace MailKit.Security {
 		{
 			var type2 = new Type2Message (token, startIndex, length);
 
-			return new Type3Message (type2, Level, userName, password, Workstation);
+			return new Type3Message (type2, OSVersion, Level, userName, password, Workstation);
 		}
 
 		/// <summary>

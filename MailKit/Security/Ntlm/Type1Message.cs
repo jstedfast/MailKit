@@ -45,11 +45,15 @@ namespace MailKit.Security.Ntlm {
 		string domain;
 		string host;
 
-		public Type1Message (string hostName, string domainName) : base (1)
+		public Type1Message (string hostName, string domainName, Version osVersion) : base (1)
 		{
+			OSVersion = osVersion;
 			Flags = DefaultFlags;
 			Domain = domainName;
 			Host = hostName;
+
+			if (osVersion != null)
+				Flags |= NtlmFlags.NegotiateVersion;
 		}
 
 		public Type1Message (byte[] message, int startIndex, int length) : base (1)
@@ -85,29 +89,23 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		public Version OSVersion {
-			get; set;
-		}
-
 		void Decode (byte[] message, int startIndex, int length)
 		{
-			int offset, count;
-
 			ValidateArguments (message, startIndex, length);
 
 			Flags = (NtlmFlags) BitConverterLE.ToUInt32 (message, startIndex + 12);
 
 			// decode the domain
-			count = BitConverterLE.ToUInt16 (message, startIndex + 16);
-			offset = BitConverterLE.ToUInt16 (message, startIndex + 20);
-			domain = Encoding.UTF8.GetString (message, startIndex + offset, count);
+			var domainLength = BitConverterLE.ToUInt16 (message, startIndex + 16);
+			var domainOffset = BitConverterLE.ToUInt16 (message, startIndex + 20);
+			domain = Encoding.UTF8.GetString (message, startIndex + domainOffset, domainLength);
 
 			// decode the workstation/host
-			count = BitConverterLE.ToUInt16 (message, startIndex + 24);
-			offset = BitConverterLE.ToUInt16 (message, startIndex + 28);
-			host = Encoding.UTF8.GetString (message, startIndex + offset, count);
+			var workstationLength = BitConverterLE.ToUInt16 (message, startIndex + 24);
+			var workstationOffset = BitConverterLE.ToUInt16 (message, startIndex + 28);
+			host = Encoding.UTF8.GetString (message, startIndex + workstationOffset, workstationLength);
 
-			if (offset == 40) {
+			if ((Flags & NtlmFlags.NegotiateVersion) != 0 && length >= 40) {
 				// decode the OS Version
 				int major = message[startIndex + 32];
 				int minor = message[startIndex + 33];
@@ -119,7 +117,12 @@ namespace MailKit.Security.Ntlm {
 
 		public override byte[] Encode ()
 		{
-			int versionLength = OSVersion != null ? 8 : 0;
+			bool negotiateVersion;
+			int versionLength = 0;
+
+			if (negotiateVersion = (Flags & NtlmFlags.NegotiateVersion) != 0)
+				versionLength = 8;
+
 			int hostOffset = 32 + versionLength;
 			int domainOffset = hostOffset + host.Length;
 
@@ -144,10 +147,10 @@ namespace MailKit.Security.Ntlm {
 			message[28] = (byte) hostOffset;
 			message[29] = (byte)(hostOffset >> 8);
 
-			if (OSVersion != null) {
+			if (negotiateVersion) {
 				message[32] = (byte) OSVersion.Major;
 				message[33] = (byte) OSVersion.Minor;
-				message[34] = (byte)(OSVersion.Build);
+				message[34] = (byte) OSVersion.Build;
 				message[35] = (byte)(OSVersion.Build >> 8);
 				message[36] = 0x00;
 				message[37] = 0x00;
