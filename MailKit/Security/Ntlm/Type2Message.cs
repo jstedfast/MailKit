@@ -44,17 +44,18 @@ namespace MailKit.Security.Ntlm {
 		byte[] targetInfo;
 		byte[] nonce;
 
-		public Type2Message (Version osVersion) : base (2)
+		public Type2Message () : base (2)
 		{
 			Flags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateUnicode /*| NtlmFlags.NegotiateAlwaysSign*/;
-			OSVersion = osVersion;
 			nonce = new byte[8];
 
 			using (var rng = RandomNumberGenerator.Create ())
 				rng.GetBytes (nonce);
+		}
 
-			if (osVersion != null)
-				Flags |= NtlmFlags.NegotiateVersion;
+		public Type2Message (Version osVersion) : this ()
+		{
+			OSVersion = osVersion;
 		}
 
 		public Type2Message (byte[] message, int startIndex, int length) : base (2)

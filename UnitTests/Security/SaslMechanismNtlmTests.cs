@@ -156,7 +156,7 @@ namespace UnitTests.Security {
 			Assert.AreEqual (osVersion, type1.OSVersion, "The expected OS Version does not match.");
 		}
 
-		static readonly byte [] NtlmType2EncodedMessage = {
+		static readonly byte[] NtlmType2EncodedMessage = {
 			0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x02, 0x00, 0x00, 0x00,
 			0x0c, 0x00, 0x0c, 0x00, 0x30, 0x00, 0x00, 0x00, 0x01, 0x02, 0x81, 0x00,
 			0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x00, 0x00, 0x00, 0x00,
@@ -183,7 +183,7 @@ namespace UnitTests.Security {
 				DnsServerName = "server.domain.com"
 			};
 
-			var type2 = new Type2Message (null) {
+			var type2 = new Type2Message {
 				Flags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo,
 				Nonce = HexDecode ("0123456789abcdef"),
 				TargetInfo = targetInfo,
@@ -227,10 +227,85 @@ namespace UnitTests.Security {
 			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected re-encoded TargetInfo does not match.");
 		}
 
+		static readonly byte[] NtlmType2EncodedMessageWithOSVersion = {
+			0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x02, 0x00, 0x00, 0x00,
+			0x0c, 0x00, 0x0c, 0x00, 0x40, 0x00, 0x00, 0x00, 0x01, 0x02, 0x81, 0x02,
+			0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x6e, 0x00, 0x6e, 0x00, 0x4c, 0x00, 0x00, 0x00,
+			0x06, 0x03, 0x80, 0x25, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x44, 0x00, 0x4f, 0x00, 0x4d, 0x00, 0x41, 0x00,
+			0x49, 0x00, 0x4e, 0x00, 0x02, 0x00, 0x0c, 0x00, 0x44, 0x00, 0x4f, 0x00,
+			0x4d, 0x00, 0x41, 0x00, 0x49, 0x00, 0x4e, 0x00, 0x01, 0x00, 0x0c, 0x00,
+			0x53, 0x00, 0x45, 0x00, 0x52, 0x00, 0x56, 0x00, 0x45, 0x00, 0x52, 0x00,
+			0x04, 0x00, 0x14, 0x00, 0x64, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00,
+			0x69, 0x00, 0x6e, 0x00, 0x2e, 0x00, 0x63, 0x00, 0x6f, 0x00, 0x6d, 0x00,
+			0x03, 0x00, 0x22, 0x00, 0x73, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00,
+			0x65, 0x00, 0x72, 0x00, 0x2e, 0x00, 0x64, 0x00, 0x6f, 0x00, 0x6d, 0x00,
+			0x61, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x2e, 0x00, 0x63, 0x00, 0x6f, 0x00,
+			0x6d, 0x00, 0x07, 0x00, 0x08, 0x00, 0xd2, 0x02, 0x96, 0x49, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+		};
+
+		[Test]
+		public void TestNtlmType2MessageEncodeWithOSVersion ()
+		{
+			var targetInfo = new TargetInfo {
+				DomainName = "DOMAIN",
+				ServerName = "SERVER",
+				DnsDomainName = "domain.com",
+				DnsServerName = "server.domain.com",
+				Timestamp = 1234567890
+			};
+
+			var type2 = new Type2Message (new Version (6, 3, 9600)) {
+				Flags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo | NtlmFlags.NegotiateVersion,
+				Nonce = HexDecode ("0123456789abcdef"),
+				TargetInfo = targetInfo,
+				TargetName = "DOMAIN",
+			};
+
+			Assert.Throws<ArgumentNullException> (() => type2.Nonce = null);
+			Assert.Throws<ArgumentException> (() => type2.Nonce = new byte[0]);
+
+			var encoded = type2.Encode ();
+			string actual, expected;
+
+			expected = HexEncode (NtlmType2EncodedMessageWithOSVersion);
+			actual = HexEncode (encoded);
+
+			Assert.AreEqual (expected, actual, "The encoded Type2Message did not match the expected result.");
+		}
+
+		[Test]
+		public void TestNtlmType2MessageDecodeWithOSVersion ()
+		{
+			const string expectedTargetInfo = "02000c0044004f004d00410049004e0001000c005300450052005600450052000400140064006f006d00610069006e002e0063006f006d00030022007300650072007600650072002e0064006f006d00610069006e002e0063006f006d0007000800d20296490000000000000000";
+			var flags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo | NtlmFlags.NegotiateVersion;
+			var type2 = new Type2Message (NtlmType2EncodedMessageWithOSVersion, 0, NtlmType2EncodedMessageWithOSVersion.Length);
+
+			Assert.AreEqual (flags, type2.Flags, "The expected flags do not match.");
+			Assert.AreEqual ("DOMAIN", type2.TargetName, "The expected TargetName does not match.");
+
+			var nonce = HexEncode (type2.Nonce);
+			Assert.AreEqual ("0123456789abcdef", nonce, "The expected nonce does not match.");
+
+			var targetInfo = HexEncode (type2.EncodedTargetInfo);
+			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected TargetInfo does not match.");
+
+			Assert.AreEqual ("DOMAIN", type2.TargetInfo.DomainName, "The expected TargetInfo domain name does not match.");
+			Assert.AreEqual ("SERVER", type2.TargetInfo.ServerName, "The expected TargetInfo server name does not match.");
+			Assert.AreEqual ("domain.com", type2.TargetInfo.DnsDomainName, "The expected TargetInfo DNS domain name does not match.");
+			Assert.AreEqual ("server.domain.com", type2.TargetInfo.DnsServerName, "The expected TargetInfo DNS server name does not match.");
+			Assert.AreEqual (1234567890, type2.TargetInfo.Timestamp, "The expected TargetInfo Timestamp does not match.");
+
+			targetInfo = HexEncode (type2.TargetInfo.Encode (true));
+			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected re-encoded TargetInfo does not match.");
+		}
+
 		[Test]
 		public void TestNtlmType3MessageEncode ()
 		{
-			const string expected = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
+			const string expected = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
 			var token = Convert.FromBase64String (challenge2);
 			var type2 = new Type2Message (token, 0, token.Length);
@@ -380,7 +455,7 @@ namespace UnitTests.Security {
 		{
 			const string challenge1 = "TlRMTVNTUAABAAAABwIAAAAAAAAgAAAAAAAAACAAAAA=";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
 
 			var credentials = new NetworkCredential ("user", "password");
 			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.LM_and_NTLM };
@@ -393,7 +468,7 @@ namespace UnitTests.Security {
 		{
 			const string challenge1 = "TlRMTVNTUAABAAAABxIAAAYABgAgAAAAAAAAACAAAABET01BSU4=";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
 			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
 			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.LM_and_NTLM };
 
@@ -405,7 +480,7 @@ namespace UnitTests.Security {
 		{
 			const string challenge1 = "TlRMTVNTUAABAAAABzIAAAYABgArAAAACwALACAAAABXT1JLU1RBVElPTkRPTUFJTg==";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
 			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
 			var sasl = new SaslMechanismNtlm (credentials) { Workstation = "WORKSTATION", Level = NtlmAuthLevel.LM_and_NTLM };
 
@@ -418,7 +493,7 @@ namespace UnitTests.Security {
 			// Note: this will fallback to LN_and_NTLM because the type2 message does not contain the NegotiateNtlm2Key flag
 			const string challenge1 = "TlRMTVNTUAABAAAABwIAAAAAAAAgAAAAAAAAACAAAAA=";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
 
 			var credentials = new NetworkCredential ("user", "password");
 			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.LM_and_NTLM_and_try_NTLMv2_Session };
@@ -432,7 +507,7 @@ namespace UnitTests.Security {
 			// Note: this will fallback to LN_and_NTLM because the type2 message does not contain the NegotiateNtlm2Key flag
 			const string challenge1 = "TlRMTVNTUAABAAAABxIAAAYABgAgAAAAAAAAACAAAABET01BSU4=";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAFQAAAAYABgAbAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAACEAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIAmN73uH+Iql2v4t93loihct7xHH1cze8T3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
 			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
 			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.LM_and_NTLM_and_try_NTLMv2_Session };
 
@@ -445,7 +520,7 @@ namespace UnitTests.Security {
 			// Note: this will fallback to LN_and_NTLM because the type2 message does not contain the NegotiateNtlm2Key flag
 			const string challenge1 = "TlRMTVNTUAABAAAABzIAAAYABgArAAAACwALACAAAABXT1JLU1RBVElPTkRPTUFJTg==";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
+			const string challenge3 = "TlRMTVNTUAADAAAAGAAYAGoAAAAYABgAggAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACaAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAJje97h/iKpdr+Lfd5aIoXLe8Rx9XM3vE91UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
 			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
 			var sasl = new SaslMechanismNtlm (credentials) { Workstation = "WORKSTATION", Level = NtlmAuthLevel.LM_and_NTLM_and_try_NTLMv2_Session };
 
@@ -561,7 +636,7 @@ namespace UnitTests.Security {
 		{
 			const string challenge1 = "TlRMTVNTUAABAAAABwIAAAAAAAAgAAAAAAAAACAAAAA=";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAAAAAAFQAAAAYABgAVAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAABsAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIA3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
+			const string challenge3 = "TlRMTVNTUAADAAAAAAAAAFQAAAAYABgAVAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAABsAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIA3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
 			var credentials = new NetworkCredential ("user", "password");
 			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.NTLM_only };
 
@@ -573,7 +648,7 @@ namespace UnitTests.Security {
 		{
 			const string challenge1 = "TlRMTVNTUAABAAAABxIAAAYABgAgAAAAAAAAACAAAABET01BSU4=";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAAAAAAFQAAAAYABgAVAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAABsAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIA3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
+			const string challenge3 = "TlRMTVNTUAADAAAAAAAAAFQAAAAYABgAVAAAAAwADABAAAAACAAIAEwAAAAAAAAAVAAAAAAAAABsAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIA3VQosB6G9N/Kvqw5SUbb1D7oj3lN1jJV";
 			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
 			var sasl = new SaslMechanismNtlm (credentials) { Level = NtlmAuthLevel.NTLM_only };
 
@@ -585,7 +660,7 @@ namespace UnitTests.Security {
 		{
 			const string challenge1 = "TlRMTVNTUAABAAAABzIAAAYABgArAAAACwALACAAAABXT1JLU1RBVElPTkRPTUFJTg==";
 			const string challenge2 = "TlRMTVNTUAACAAAADAAMADAAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgA8AAAARABPAE0AQQBJAE4AAgAMAEQATwBNAEEASQBOAAEADABTAEUAUgBWAEUAUgAEABQAZABvAG0AYQBpAG4ALgBjAG8AbQADACIAcwBlAHIAdgBlAHIALgBkAG8AbQBhAGkAbgAuAGMAbwBtAAAAAAA=";
-			const string challenge3 = "TlRMTVNTUAADAAAAAAAAAGoAAAAYABgAagAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACCAAAAAQIAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAN1UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
+			const string challenge3 = "TlRMTVNTUAADAAAAAAAAAGoAAAAYABgAagAAAAwADABAAAAACAAIAEwAAAAWABYAVAAAAAAAAACCAAAAAQKAAEQATwBNAEEASQBOAHUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAN1UKLAehvTfyr6sOUlG29Q+6I95TdYyVQ==";
 			var credentials = new NetworkCredential ("user", "password", "DOMAIN");
 			var sasl = new SaslMechanismNtlm (credentials) { Workstation = "WORKSTATION", Level = NtlmAuthLevel.NTLM_only };
 

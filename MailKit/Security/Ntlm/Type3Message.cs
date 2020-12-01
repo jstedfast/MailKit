@@ -77,6 +77,12 @@ namespace MailKit.Security.Ntlm {
 
 			if ((type2.Flags & NtlmFlags.NegotiateNtlm2Key) != 0)
 				Flags |= NtlmFlags.NegotiateNtlm2Key;
+
+			if ((type2.Flags & NtlmFlags.NegotiateTargetInfo) != 0)
+				Flags |= NtlmFlags.NegotiateTargetInfo;
+
+			if ((type2.Flags & NtlmFlags.RequestTarget) != 0)
+				Flags |= NtlmFlags.RequestTarget;
 		}
 
 		~Type3Message ()
