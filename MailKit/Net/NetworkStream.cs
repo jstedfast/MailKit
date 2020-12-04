@@ -54,11 +54,6 @@ namespace MailKit.Net
 			Socket = socket;
 		}
 
-		~NetworkStream ()
-		{
-			Dispose (false);
-		}
-
 		public Socket Socket {
 			get; private set;
 		}
