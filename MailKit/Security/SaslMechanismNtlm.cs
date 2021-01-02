@@ -30,14 +30,6 @@ using System.Net;
 using MailKit.Security.Ntlm;
 
 namespace MailKit.Security {
-	[Flags]
-	public enum NtlmFixes
-	{
-		None = 0,
-		NTLMv2IncludeZ24 = 1,
-		NTLMv2UseTargetInfoTimestamp = 2
-	}
-
 	/// <summary>
 	/// The NTLM SASL mechanism.
 	/// </summary>
