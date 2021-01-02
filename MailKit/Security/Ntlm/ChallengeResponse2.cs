@@ -136,7 +136,7 @@ namespace MailKit.Security.Ntlm {
 			Array.Clear (nonce, 0, nonce.Length);
 		}
 
-		static byte[] ComputeNtlmV2 (Type2Message type2, string username, string password, string domain, NtlmFixes fixes)
+		static byte[] ComputeNtlmV2 (Type2Message type2, string username, string password, string domain)
 		{
 			var ntlm_hash = ComputeNtlmPassword (password);
 
@@ -196,7 +196,7 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		public static void Compute (Type2Message type2, NtlmAuthLevel level, string username, string password, string domain, out byte[] lm, out byte[] ntlm, NtlmFixes fixes)
+		public static void Compute (Type2Message type2, NtlmAuthLevel level, string username, string password, string domain, out byte[] lm, out byte[] ntlm)
 		{
 			lm = null;
 
@@ -217,7 +217,7 @@ namespace MailKit.Security.Ntlm {
 					ntlm = ComputeNtlm (password, type2.Nonce);
 				break;
 			case NtlmAuthLevel.NTLMv2_only:
-				ntlm = ComputeNtlmV2 (type2, username, password, domain, fixes);
+				ntlm = ComputeNtlmV2 (type2, username, password, domain);
 				if (type2.TargetInfo.Timestamp != 0)
 					lm = new byte[24];
 				break;

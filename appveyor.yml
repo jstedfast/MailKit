@@ -1,4 +1,4 @@
-version: 2.10.0.{build}
+version: 2.10.1.{build}
 os: Visual Studio 2019
 configuration: Debug
 platform: Any CPU

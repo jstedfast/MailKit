@@ -1,5 +1,9 @@
 # Release Notes
 
+### MailKit 2010.1 (2021-01-02)
+
+* A few NTLM improvements that I hope are correct.
+
 ### MailKit 2.10.0 (2020-11-20)
 
 * Don't enable support for TLS v1.1 by default anymore.

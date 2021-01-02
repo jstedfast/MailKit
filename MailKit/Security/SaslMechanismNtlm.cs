@@ -146,10 +146,6 @@ namespace MailKit.Security {
 			get; set;
 		}
 
-		public NtlmFixes NtlmFixes {
-			get; set;
-		}
-
 		/// <summary>
 		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
 		/// </summary>
@@ -226,7 +222,7 @@ namespace MailKit.Security {
 		{
 			var type2 = new Type2Message (token, startIndex, length);
 
-			return new Type3Message (type2, OSVersion, Level, userName, password, Workstation, NtlmFixes);
+			return new Type3Message (type2, OSVersion, Level, userName, password, Workstation);
 		}
 
 		/// <summary>

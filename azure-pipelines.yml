@@ -9,7 +9,7 @@ trigger:
 pool:
   vmImage: 'windows-2019'
 
-name: 2.10.0$(Rev:.r)
+name: 2.10.1$(Rev:.r)
 
 variables:
   solution: 'MailKit.sln'

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.10.0</version>
+    <version>2.10.1</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,13 +26,7 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Don't enable support for TLS v1.1 by default anymore. (issue #1077)
-* Added support for the SCRAM-SHA-512 SASL mechanism. (issue #1097)
-* Added support for the OAUTHBEARER SASL mechanism.
-* Updated SSL certificate info for the common mail servers (GMail, outlook.com, Yahoo! Mail, etc).
-* Improved the SslHandshakeException error message to report common mistakes like trying to initiate an SSL connection on a non-SSL port.
-* Improved IMAP's "Unexpected token" exception messages a bit
-* Updated code to use ArrayPools from System.Buffers.
+* A few NTLM improvements that I hope are correct.
 
 API Changes Since 2.0.x:
 
@@ -79,19 +73,19 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.10.0" />
+        <dependency id="MimeKit" version="2.10.1" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.10.0" />
+        <dependency id="MimeKit" version="2.10.1" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.10.0" />
+        <dependency id="MimeKit" version="2.10.1" />
       </group>
       <group targetFramework="net48">
-        <dependency id="MimeKit" version="2.10.0" />
+        <dependency id="MimeKit" version="2.10.1" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="MimeKit" version="2.10.0" />
+        <dependency id="MimeKit" version="2.10.1" />
       </group>
     </dependencies>
   </metadata>
