@@ -2382,6 +2382,11 @@ namespace MailKit.Net.Imap {
 			if ((Capabilities & ImapCapabilities.Namespace) != 0) {
 				ic = QueueCommand (cancellationToken, null, "NAMESPACE\r\n");
 				await RunAsync (ic, doAsync).ConfigureAwait (false);
+
+				if (QuirksMode == ImapQuirksMode.Exchange && ic.Response == ImapCommandResponse.Bad) {
+					State = ImapEngineState.Connected; // Reset back to Connected-but-not-Authenticated state
+					throw ImapCommandException.Create ("NAMESPACE", ic);
+				}
 			} else {
 				var list = new List<ImapFolder> ();
 

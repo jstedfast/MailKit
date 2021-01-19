@@ -1849,6 +1849,86 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestExchangeUserIsAuthenticatedButNotConnected ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "exchange.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "exchange.capability-preauth.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LOGIN \"user@domain.com\\\\mailbox\" password\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "exchange.capability-postauth.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 NAMESPACE\r\n", Encoding.ASCII.GetBytes ("A00000003 BAD User is authenticated but not connected.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.AreEqual (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.SaslIR | ImapCapabilities.UidPlus | ImapCapabilities.Id |
+					ImapCapabilities.Unselect | ImapCapabilities.Children | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.LiteralPlus |
+					ImapCapabilities.Status, client.Capabilities);
+				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("user@domain.com\\mailbox", "password");
+					Assert.Fail ("Did not expect Authenticate to work.");
+				} catch (ImapCommandException cx) {
+					Assert.AreEqual (ImapCommandResponse.Bad, cx.Response);
+					Assert.AreEqual ("User is authenticated but not connected.", cx.ResponseText);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestExchangeUserIsAuthenticatedButNotConnectedAsync ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "exchange.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "exchange.capability-preauth.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LOGIN \"user@domain.com\\\\mailbox\" password\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "exchange.capability-postauth.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 NAMESPACE\r\n", Encoding.ASCII.GetBytes ("A00000003 BAD User is authenticated but not connected.\r\n")));
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.AreEqual (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.SaslIR | ImapCapabilities.UidPlus | ImapCapabilities.Id |
+					ImapCapabilities.Unselect | ImapCapabilities.Children | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.LiteralPlus |
+					ImapCapabilities.Status, client.Capabilities);
+				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("user@domain.com\\mailbox", "password");
+					Assert.Fail ("Did not expect Authenticate to work.");
+				} catch (ImapCommandException cx) {
+					Assert.AreEqual (ImapCommandResponse.Bad, cx.Response);
+					Assert.AreEqual ("User is authenticated but not connected.", cx.ResponseText);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
 		public void TestAdvancedFeatures ()
 		{
 			var commands = new List<ImapReplayCommand> ();
