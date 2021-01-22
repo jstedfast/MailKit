@@ -49,7 +49,7 @@ namespace MailKit {
 	/// </remarks>
 	public abstract class MailService : IMailService
 	{
-#if NET48
+#if NET48 || NET50
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
 #else
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | (SslProtocols) 12288;
@@ -146,6 +146,21 @@ namespace MailKit {
 		public SslProtocols SslProtocols {
 			get; set;
 		}
+
+#if NET50
+		/// <summary>
+		/// Gets or sets the cipher suites allowed to be used when negotiating an SSL or TLS connection.
+		/// </summary>
+		/// <remarks>
+		/// Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
+		/// When set to <c>null</c>, the operating system default is used. Use extreme caution when
+		/// changing this setting.
+		/// </remarks>
+		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
+		public CipherSuitesPolicy SslCipherSuitesPolicy {
+			get; set;
+		}
+#endif
 
 		/// <summary>
 		/// Gets or sets the client SSL certificates.
@@ -382,6 +397,29 @@ namespace MailKit {
 
 			return false;
 		}
+
+#if NET50
+		/// <summary>
+		/// Gets the SSL/TLS client authentication options for use with .NET5's SslStream.AuthenticateAsClient() API.
+		/// </summary>
+		/// <remarks>
+		/// Gets the SSL/TLS client authentication options for use with .NET5's SslStream.AuthenticateAsClient() API.
+		/// </remarks>
+		/// <param name="host">The target host that the client is connected to.</param>
+		/// <param name="remoteCertificateValidationCallback">The remote certificate validation callback.</param>
+		/// <returns>The client SSL/TLS authentication options.</returns>
+		protected SslClientAuthenticationOptions GetSslClientAuthenticationOptions (string host, RemoteCertificateValidationCallback remoteCertificateValidationCallback)
+		{
+			return new SslClientAuthenticationOptions {
+				CertificateRevocationCheckMode = CheckCertificateRevocation ? X509RevocationMode.Online : X509RevocationMode.NoCheck,
+				RemoteCertificateValidationCallback = remoteCertificateValidationCallback,
+				CipherSuitesPolicy = SslCipherSuitesPolicy,
+				ClientCertificates = ClientCertificates,
+				EnabledSslProtocols = SslProtocols,
+				TargetHost = host
+			};
+		}
+#endif
 
 		internal async Task<Socket> ConnectSocket (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{

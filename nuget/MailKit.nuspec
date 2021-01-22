@@ -44,7 +44,7 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
-    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 net46 net47 net48 netstandard netstandard2.0</tags>
+    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 net46 net47 net48 net50 netstandard netstandard2.0</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
@@ -84,6 +84,9 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
       <group targetFramework="net48">
         <dependency id="MimeKit" version="2.10.1" />
       </group>
+      <group targetFramework="net50">
+        <dependency id="MimeKit" version="2.10.1" />
+      </group>
       <group targetFramework="netstandard2.0">
         <dependency id="MimeKit" version="2.10.1" />
       </group>
@@ -105,6 +108,9 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     <file src="..\MailKit\bin\Release\net48\MailKit.dll" target="lib\net48\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net48\MailKit.pdb" target="lib\net48\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net48\MailKit.xml" target="lib\net48\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net50\MailKit.dll" target="lib\net50\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net50\MailKit.pdb" target="lib\net50\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\net50\MailKit.xml" target="lib\net50\MailKit.xml" />
     <file src="mailkit-50.png" target="icons\mailkit-50.png" />
   </files>
 </package>

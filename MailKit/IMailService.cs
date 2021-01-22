@@ -74,6 +74,21 @@ namespace MailKit {
 		/// <value>The SSL and TLS protocol versions that are supported.</value>
 		SslProtocols SslProtocols { get; set; }
 
+#if NET50
+		/// <summary>
+		/// Gets or sets the cipher suites allowed to be used when negotiating an SSL or TLS connection.
+		/// </summary>
+		/// <remarks>
+		/// Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
+		/// When set to <c>null</c>, the operating system default is used. Use extreme caution when
+		/// changing this setting.
+		/// </remarks>
+		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
+		public CipherSuitesPolicy SslCipherSuitesPolicy {
+			get; set;
+		}
+#endif
+
 		/// <summary>
 		/// Get or set the client SSL certificates.
 		/// </summary>
