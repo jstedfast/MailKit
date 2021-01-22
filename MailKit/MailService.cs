@@ -304,7 +304,7 @@ namespace MailKit {
 
 		const string AppleCertificateIssuer = "C=US, S=California, O=Apple Inc., CN=Apple Public Server RSA CA 12 - G1";
 		const string GMailCertificateIssuer = "CN=GTS CA 1O1, O=Google Trust Services, C=US";
-		const string OutlookCertificateIssuer = "CN=GlobalSign Organization Validation CA - SHA256 - G3, O=GlobalSign nv-sa, C=BE";
+		const string OutlookCertificateIssuer = "CN=DigiCert Cloud Services CA-1, O=DigiCert Inc, C=US";
 		const string YahooCertificateIssuer = "CN=DigiCert SHA2 High Assurance Server CA, OU=www.digicert.com, O=DigiCert Inc, C=US";
 		const string GmxDotComCertificateIssuer = "CN=GeoTrust RSA CA 2018, OU=www.digicert.com, O=DigiCert Inc, C=US";
 		const string GmxDotNetCertificateIssuer = "CN=TeleSec ServerPass Extended Validation Class 3 CA, STREET=Untere Industriestr. 20, L=Netphen, PostalCode=57250, S=Nordrhein Westfalen, OU=T-Systems Trust Center, O=T-Systems International GmbH, C=DE";
@@ -319,23 +319,23 @@ namespace MailKit {
 
 			switch (cn) {
 			case "imap.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "00BABE95B167C9ECAF08000000006065B6" && fingerprint == "E79A011EF55EEC72D2B7E391D193761372796836"; // Expires 1/12/2021 1:07:03 PM
+				return issuer == GMailCertificateIssuer && serial == "15E3ABFBE021A3890500000000859178" && fingerprint == "E37ADB0D16CF5EB8F9FC6401B915F59D7BE79BE9"; // Expires 3/30/2021 8:11:15 AM
 			case "pop.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "144A7EDBEFED8ECF080000000061D6E0" && fingerprint == "86E6FC842D45A4B100AAE56B08306FA530A2D370"; // Expires 1/20/2021 11:22:15 AM
+				return issuer == GMailCertificateIssuer && serial == "00D47573DD756091B10300000000C7CDA5" && fingerprint == "AF29AA51E75C3F2C74518087E9F3B257344664F0"; // Expires 3/30/2021 8:11:16 AM
 			case "smtp.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "00A0D37DC18C84E8B602000000007FD4D7" && fingerprint == "DF20F56F063AB38093091B2873D046E66EDFD2D2"; // Expires 1/20/2021 11:22:20 AM
+				return issuer == GMailCertificateIssuer && serial == "00E44401FC458A1C58050000000085917D" && fingerprint == "217BC6DA8C393C1CB2FF0250DD46D656E0A6D282"; // Expires 3/30/2021 8:11:23 AM
 			case "outlook.com":
-				return issuer == OutlookCertificateIssuer && serial == "6DEA0BE1972760A159B18560" && fingerprint == "81ECA745808B790D002AFB6C48B55F25A1119ADB"; // Expires 8/14/2022 7:18:49 PM
+				return issuer == OutlookCertificateIssuer && serial == "07C8ACB7CCF0C64CEE3B1CE0CD1E9901" && fingerprint == "FEBBA28254D315A82080C6BE4B23CBC8F1E471AE"; // Expires 1/10/2022 6:59:59 PM
 			case "imap.mail.me.com":
 				return issuer == AppleCertificateIssuer && serial == "7693E9D2C3B5564F4F9A487D15A54116" && fingerprint == "FACBDEB692021F6404BE8B88A563767B282F98EE"; // Expires 10/3/2021 5:51:43 PM
 			case "smtp.mail.me.com":
 				return issuer == AppleCertificateIssuer && serial == "0A3048DECAB5CAA796E163E011CAE82E" && fingerprint == "B14CE4D4FF15FBC3C16C4848F1C632552184BD79"; // Expires 10/3/2021 6:12:03 PM
 			case "*.imap.mail.yahoo.com":
-				return issuer == YahooCertificateIssuer && serial == "0B591CC4A1E674384332A0FFCCF86845" && fingerprint == "577AC048211627BCDA8AF9DA39DE6DCB05F8DA28"; // Expires 12/27/2020 7:00:00 AM
+				return issuer == YahooCertificateIssuer && serial == "0644DDCE32898E80C7B9FDD42C516396" && fingerprint == "1EC290720506325E9F48D258BD2E51E5779E85EA"; // Expires 5/25/2021 7:59:59 PM
 			case "legacy.pop.mail.yahoo.com":
 				return issuer == YahooCertificateIssuer && serial == "058035C3D2AC58483DD14D3E2F9145B8" && fingerprint == "167AF555D510FACCA7B0B48EE0D10C360B512960"; // Expires 3/3/2021 7:00:00 AM
 			case "smtp.mail.yahoo.com":
-				return issuer == YahooCertificateIssuer && serial == "0C0D2A80B36896D8680FF2AC6AB6F92E" && fingerprint == "9EF297FF5370FDE75927EC5253EE0283668E317A"; // Expires 1/26/2021 7:00:00 AM
+				return issuer == YahooCertificateIssuer && serial == "0D6261AF405FAF9B39510CBD9E630676" && fingerprint == "14CBE3DAD16D7CA9A841AEA29C5EAB535DD49701"; // Expires 6/22/2021 7:59:59 PM
 			case "mout.gmx.com":
 				return issuer == GmxDotComCertificateIssuer && serial == "06206F2270494CD7AD11F2B17E286C2C" && fingerprint == "A7D3BCC363B307EC3BDE21269A2F05117D6614A8"; // Expires 7/12/2022 8:00:00 AM
 			case "mail.gmx.com":
