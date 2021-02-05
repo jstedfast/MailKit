@@ -199,7 +199,7 @@ namespace MailKit.Security.Ntlm {
 
 			ChallengeResponse2.Compute (type2, Level, Username, Password, Domain, out lm, out ntlm);
 
-			if (negotiateVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0)
+			if (negotiateVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0 && OSVersion != null)
 				payloadOffset += 8;
 
 			var lmResponseLength = lm != null ? lm.Length : 0;
