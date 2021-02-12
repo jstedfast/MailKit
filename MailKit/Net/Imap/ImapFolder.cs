@@ -5683,7 +5683,7 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return;
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var command = string.Format ("COPY {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 
@@ -5827,7 +5827,7 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return;
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var command = string.Format ("MOVE {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 

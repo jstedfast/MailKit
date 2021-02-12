@@ -1641,7 +1641,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -1680,7 +1680,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -1723,7 +1723,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var query = FormatSummaryItems (ref items, EmptyHeaderFields, out previewText);
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseqValue);
@@ -1766,7 +1766,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var query = FormatSummaryItems (ref items, headerFields, out previewText);
 			var modseqValue = modseq.ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseqValue);
@@ -6441,7 +6441,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return;
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var command = string.Format ("FETCH {0} (UID BODY.PEEK[])\r\n", set);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamCallbackContext (this, callback, progress);

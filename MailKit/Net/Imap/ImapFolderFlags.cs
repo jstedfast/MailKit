@@ -749,7 +749,7 @@ namespace MailKit.Net.Imap
 
 			var flaglist = ImapUtils.FormatFlagsList (flags & PermanentFlags, keywords != null ? keywords.Count : 0);
 			var keywordList = keywords != null ? keywords.ToArray () : new object [0];
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var @params = string.Empty;
 
 			if (modseq.HasValue)
@@ -2173,7 +2173,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return new int[0];
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var @params = string.Empty;
 
 			if (modseq.HasValue)

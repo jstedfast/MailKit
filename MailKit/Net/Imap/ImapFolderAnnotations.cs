@@ -320,7 +320,7 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0 || annotations.Count == 0)
 				return new int[0];
 
-			var set = ImapUtils.FormatIndexSet (indexes);
+			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var builder = new StringBuilder ("STORE ");
 			var values = new List<object> ();
 

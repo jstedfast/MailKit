@@ -299,15 +299,21 @@ namespace MailKit.Net.Imap {
 		/// Formats the array of indexes as a string suitable for use with IMAP commands.
 		/// </summary>
 		/// <returns>The index set.</returns>
+		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="indexes">The indexes.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <para><paramref name="engine"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// One or more of the indexes has a negative value.
 		/// </exception>
-		public static string FormatIndexSet (IList<int> indexes)
+		public static string FormatIndexSet (ImapEngine engine, IList<int> indexes)
 		{
+			if (engine == null)
+				throw new ArgumentNullException (nameof (engine));
+
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
@@ -333,7 +339,7 @@ namespace MailKit.Net.Imap {
 							end++;
 							i++;
 						}
-					} else if (indexes[i] == end - 1) {
+					} else if (indexes[i] == end - 1 && engine.QuirksMode != ImapQuirksMode.hMailServer) {
 						end = indexes[i++];
 
 						while (i < indexes.Count && indexes[i] == end - 1) {
