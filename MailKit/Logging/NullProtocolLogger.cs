@@ -26,7 +26,7 @@
 
 using System;
 
-namespace MailKit {
+namespace MailKit.Logging {
 	/// <summary>
 	/// A protocol logger that does not log to anywhere.
 	/// </summary>
@@ -39,7 +39,7 @@ namespace MailKit {
 	public sealed class NullProtocolLogger : IProtocolLogger
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.NullProtocolLogger"/> class.
+		/// Initializes a new instance of the <see cref="NullProtocolLogger"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Creates a new <see cref="NullProtocolLogger"/>.
@@ -90,21 +90,6 @@ namespace MailKit {
 		/// <paramref name="buffer"/> is <c>null</c>.
 		/// </exception>
 		public void LogServer (byte[] buffer, int offset, int count)
-		{
-		}
-
-		#endregion
-
-		#region IDisposable implementation
-
-		/// <summary>
-		/// Releases all resource used by the <see cref="MailKit.NullProtocolLogger"/> object.
-		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.NullProtocolLogger"/>. The
-		/// <see cref="Dispose"/> method leaves the <see cref="MailKit.NullProtocolLogger"/> in an unusable state. After
-		/// calling <see cref="Dispose"/>, you must release all references to the <see cref="MailKit.NullProtocolLogger"/> so
-		/// the garbage collector can reclaim the memory that the <see cref="MailKit.NullProtocolLogger"/> was occupying.</remarks>
-		public void Dispose ()
 		{
 		}
 

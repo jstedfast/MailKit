@@ -38,6 +38,7 @@ using MimeKit.Utils;
 
 using MailKit.Net.Imap;
 using MailKit;
+using MailKit.Logging;
 
 namespace UnitTests.Net.Imap {
 	[TestFixture]

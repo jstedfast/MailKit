@@ -39,6 +39,7 @@ using SslProtocols = System.Security.Authentication.SslProtocols;
 using MailKit.Net;
 using MailKit.Net.Proxy;
 using MailKit.Security;
+using MailKit.Logging;
 
 namespace MailKit {
 	/// <summary>
@@ -1606,8 +1607,8 @@ namespace MailKit {
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
-				ProtocolLogger.Dispose ();
+			if (disposing && ProtocolLogger is ProtocolStreamLogger protocolLogger)
+				protocolLogger.Dispose ();
 		}
 
 		/// <summary>

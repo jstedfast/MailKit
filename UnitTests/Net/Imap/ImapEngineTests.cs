@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 
 using MailKit;
+using MailKit.Logging;
 using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {

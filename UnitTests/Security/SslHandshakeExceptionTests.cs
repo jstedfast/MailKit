@@ -39,6 +39,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
 
 using MailKit;
+using MailKit.Logging;
 using MailKit.Security;
 
 using AuthenticationException = System.Security.Authentication.AuthenticationException;

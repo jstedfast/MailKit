@@ -33,7 +33,7 @@ using NUnit.Framework;
 using MimeKit.IO;
 using MimeKit.IO.Filters;
 
-using MailKit;
+using MailKit.Logging;
 
 namespace UnitTests {
 	[TestFixture]
@@ -42,9 +42,9 @@ namespace UnitTests {
 		[Test]
 		public void TestArgumentExceptions ()
 		{
-			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((string) null));
-			Assert.Throws<ArgumentNullException> (() => new ProtocolLogger ((Stream) null));
-			using (var logger = new ProtocolLogger (new MemoryStream ())) {
+			Assert.Throws<ArgumentNullException> (() => new ProtocolStreamLogger ((string) null));
+			Assert.Throws<ArgumentNullException> (() => new ProtocolStreamLogger ((Stream) null));
+			using (var logger = new ProtocolStreamLogger (new MemoryStream ())) {
 				var buffer = new byte[1024];
 
 				Assert.Throws<ArgumentNullException> (() => logger.LogConnect (null));
@@ -61,7 +61,7 @@ namespace UnitTests {
 		public void TestLogging ()
 		{
 			using (var stream = new MemoryStream ()) {
-				using (var logger = new ProtocolLogger (stream, true)) {
+				using (var logger = new ProtocolStreamLogger (stream, true)) {
 					logger.LogConnect (new Uri ("pop://pop.skyfall.net:110"));
 
 					var cmd = Encoding.ASCII.GetBytes ("RETR 1\r\n");

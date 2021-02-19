@@ -42,6 +42,7 @@ using System.Security.Cryptography.X509Certificates;
 using MimeKit;
 using MimeKit.IO;
 
+using MailKit.Logging;
 using MailKit.Security;
 
 using SslStream = MailKit.Net.SslStream;

@@ -32,6 +32,7 @@ using System.Net.Sockets;
 using System.Globalization;
 using System.Threading.Tasks;
 
+using MailKit.Logging;
 using MimeKit.IO;
 
 using Buffer = System.Buffer;

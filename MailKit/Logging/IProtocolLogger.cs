@@ -26,7 +26,7 @@
 
 using System;
 
-namespace MailKit {
+namespace MailKit.Logging {
 	/// <summary>
 	/// An interface for logging the communication between a client and server.
 	/// </summary>
@@ -36,7 +36,7 @@ namespace MailKit {
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger" />
 	/// </example>
-	public interface IProtocolLogger : IDisposable
+	public interface IProtocolLogger
 	{
 		/// <summary>
 		/// Logs a connection to the specified URI.

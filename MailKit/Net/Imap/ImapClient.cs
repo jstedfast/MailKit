@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
+using MailKit.Logging;
 using MailKit.Security;
 
 using SslStream = MailKit.Net.SslStream;

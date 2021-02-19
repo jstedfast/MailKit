@@ -28,7 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace MailKit {
+namespace MailKit.Logging {
 	/// <summary>
 	/// A default protocol logger for logging the communication between a client and server.
 	/// </summary>
@@ -38,7 +38,7 @@ namespace MailKit {
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger" />
 	/// </example>
-	public class ProtocolLogger : IProtocolLogger
+	public class ProtocolStreamLogger : IProtocolLogger, IDisposable
 	{
 		static byte[] defaultClientPrefix = Encoding.ASCII.GetBytes ("C: ");
 		static byte[] defaultServerPrefix = Encoding.ASCII.GetBytes ("S: ");
@@ -51,30 +51,30 @@ namespace MailKit {
 		bool serverMidline;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
+		/// Initializes a new instance of the <see cref="ProtocolStreamLogger"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="ProtocolLogger"/> to log to a specified file. The file is created if it does not exist.
+		/// Creates a new <see cref="ProtocolStreamLogger"/> to log to a specified file. The file is created if it does not exist.
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger" />
 		/// </example>
 		/// <param name="fileName">The file name.</param>
 		/// <param name="append"><c>true</c> if the file should be appended to; otherwise, <c>false</c>. Defaults to <c>true</c>.</param>
-		public ProtocolLogger (string fileName, bool append = true)
+		public ProtocolStreamLogger (string fileName, bool append = true)
 		{
 			stream = File.Open (fileName, append ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.Read);
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
+		/// Initializes a new instance of the <see cref="ProtocolStreamLogger"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="ProtocolLogger"/> to log to a specified stream.
+		/// Creates a new <see cref="ProtocolStreamLogger"/> to log to a specified stream.
 		/// </remarks>
 		/// <param name="stream">The stream.</param>
 		/// <param name="leaveOpen"><c>true</c> if the stream should be left open after the protocol logger is disposed.</param>
-		public ProtocolLogger (Stream stream, bool leaveOpen = false)
+		public ProtocolStreamLogger (Stream stream, bool leaveOpen = false)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
@@ -84,14 +84,14 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="MailKit.ProtocolLogger"/>
+		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="ProtocolStreamLogger"/>
 		/// is reclaimed by garbage collection.
 		/// </summary>
 		/// <remarks>
-		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="MailKit.ProtocolLogger"/>
+		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="ProtocolStreamLogger"/>
 		/// is reclaimed by garbage collection.
 		/// </remarks>
-		~ProtocolLogger ()
+		~ProtocolStreamLogger ()
 		{
 			Dispose (false);
 		}
@@ -108,10 +108,10 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
+		/// Get or set the default client prefix to use when creating new <see cref="ProtocolStreamLogger"/> instances.
 		/// </summary>
 		/// <remarks>
-		/// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
+		/// Get or set the default client prefix to use when creating new <see cref="ProtocolStreamLogger"/> instances.
 		/// </remarks>
 		/// <value>The default client prefix.</value>
 		public static string DefaultClientPrefix
@@ -121,10 +121,10 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Get or set the default server prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
+		/// Get or set the default server prefix to use when creating new <see cref="ProtocolStreamLogger"/> instances.
 		/// </summary>
 		/// <remarks>
-		/// Get or set the default server prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
+		/// Get or set the default server prefix to use when creating new <see cref="ProtocolStreamLogger"/> instances.
 		/// </remarks>
 		/// <value>The default server prefix.</value>
 		public static string DefaultServerPrefix
@@ -308,11 +308,11 @@ namespace MailKit {
 		#region IDisposable implementation
 
 		/// <summary>
-		/// Releases the unmanaged resources used by the <see cref="ProtocolLogger"/> and
+		/// Releases the unmanaged resources used by the <see cref="ProtocolStreamLogger"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
 		/// <remarks>
-		/// Releases the unmanaged resources used by the <see cref="ProtocolLogger"/> and
+		/// Releases the unmanaged resources used by the <see cref="ProtocolStreamLogger"/> and
 		/// optionally releases the managed resources.
 		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
@@ -324,12 +324,12 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Releases all resource used by the <see cref="MailKit.ProtocolLogger"/> object.
+		/// Releases all resource used by the <see cref="ProtocolStreamLogger"/> object.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailKit.ProtocolLogger"/>. The
-		/// <see cref="Dispose()"/> method leaves the <see cref="MailKit.ProtocolLogger"/> in an unusable state. After calling
-		/// <see cref="Dispose()"/>, you must release all references to the <see cref="MailKit.ProtocolLogger"/> so the garbage
-		/// collector can reclaim the memory that the <see cref="MailKit.ProtocolLogger"/> was occupying.</remarks>
+		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="ProtocolStreamLogger"/>. The
+		/// <see cref="Dispose()"/> method leaves the <see cref="ProtocolStreamLogger"/> in an unusable state. After calling
+		/// <see cref="Dispose()"/>, you must release all references to the <see cref="ProtocolStreamLogger"/> so the garbage
+		/// collector can reclaim the memory that the <see cref="ProtocolStreamLogger"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			Dispose (true);

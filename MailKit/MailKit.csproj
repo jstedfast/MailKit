@@ -5,7 +5,7 @@
     <AssemblyTitle>MailKit</AssemblyTitle>
     <VersionPrefix>2.10.1</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
-    <TargetFrameworks>netstandard2.0;net45;net46;net47;net48;net50</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net47;net48;net50</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <AssemblyName>MailKit</AssemblyName>
@@ -111,6 +111,7 @@
     <Compile Include="Net\SocketUtils.cs" />
     <Compile Include="Net\SslStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Logging\ProtocolLogger.cs" />
     <Compile Include="Search\AnnotationSearchQuery.cs" />
     <Compile Include="Search\BinarySearchQuery.cs" />
     <Compile Include="Search\DateSearchQuery.cs" />
@@ -200,7 +201,7 @@
     <Compile Include="IMailStore.cs" />
     <Compile Include="IMailTransport.cs" />
     <Compile Include="IMessageSummary.cs" />
-    <Compile Include="IProtocolLogger.cs" />
+    <Compile Include="Logging\IProtocolLogger.cs" />
     <Compile Include="ITransferProgress.cs" />
     <Compile Include="MailFolder.cs" />
     <Compile Include="MailService.cs" />
@@ -226,10 +227,10 @@
     <Compile Include="MetadataOptions.cs" />
     <Compile Include="MetadataTag.cs" />
     <Compile Include="ModSeqChangedEventArgs.cs" />
-    <Compile Include="NullProtocolLogger.cs" />
+    <Compile Include="Logging\NullProtocolLogger.cs" />
     <Compile Include="ProgressStream.cs" />
     <Compile Include="ProtocolException.cs" />
-    <Compile Include="ProtocolLogger.cs" />
+    <Compile Include="Logging\ProtocolStreamLogger.cs" />
     <Compile Include="ServiceNotAuthenticatedException.cs" />
     <Compile Include="ServiceNotConnectedException.cs" />
     <Compile Include="SpecialFolder.cs" />
@@ -242,4 +243,27 @@
     <Compile Include="UriExtensions.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
+      <Version>5.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
+      <Version>5.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
+      <Version>5.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net50'">
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
+      <Version>5.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
 </Project>
