@@ -951,6 +951,9 @@ namespace MailKit.Net.Smtp {
 				break;
 			}
 
+			if (IPAddress.TryParse (host, out var ip) && ip.AddressFamily == AddressFamily.InterNetworkV6)
+				host = "[" + host + "]";
+
 			switch (options) {
 			case SecureSocketOptions.StartTlsWhenAvailable:
 				uri = new Uri (string.Format (CultureInfo.InvariantCulture, "smtp://{0}:{1}/?starttls=when-available", host, port));
