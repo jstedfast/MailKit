@@ -522,6 +522,8 @@ namespace UnitTests.Net.Pop3 {
 				client.Connect (host, 0, options);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -530,6 +532,8 @@ namespace UnitTests.Net.Pop3 {
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+				Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
@@ -562,6 +566,8 @@ namespace UnitTests.Net.Pop3 {
 				await client.ConnectAsync (host, 0, options);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -570,6 +576,8 @@ namespace UnitTests.Net.Pop3 {
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+				Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
@@ -618,6 +626,8 @@ namespace UnitTests.Net.Pop3 {
 					}
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -626,6 +636,8 @@ namespace UnitTests.Net.Pop3 {
 					client.Disconnect (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -675,6 +687,8 @@ namespace UnitTests.Net.Pop3 {
 					}
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -683,6 +697,8 @@ namespace UnitTests.Net.Pop3 {
 					await client.DisconnectAsync (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -722,6 +738,8 @@ namespace UnitTests.Net.Pop3 {
 				client.Connect (socket, host, port, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -730,6 +748,8 @@ namespace UnitTests.Net.Pop3 {
 				client.Disconnect (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+				Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
@@ -768,6 +788,8 @@ namespace UnitTests.Net.Pop3 {
 				await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto);
 				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -776,6 +798,8 @@ namespace UnitTests.Net.Pop3 {
 				await client.DisconnectAsync (true);
 				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+				Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+				Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
@@ -810,12 +834,16 @@ namespace UnitTests.Net.Pop3 {
 					client.Connect (uri, cancel.Token);
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					client.Disconnect (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -851,12 +879,16 @@ namespace UnitTests.Net.Pop3 {
 					await client.ConnectAsync (uri, cancel.Token);
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					await client.DisconnectAsync (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -892,12 +924,16 @@ namespace UnitTests.Net.Pop3 {
 					client.Connect (socket, host, port, options, cancel.Token);
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					client.Disconnect (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -933,12 +969,16 @@ namespace UnitTests.Net.Pop3 {
 					await client.ConnectAsync (socket, host, port, options, cancel.Token);
 					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					await client.DisconnectAsync (true);
 					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}

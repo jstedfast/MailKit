@@ -277,6 +277,28 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get whether or not the connection is encrypted (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+		public abstract bool IsEncrypted {
+			get;
+		}
+
+		/// <summary>
+		/// Get whether or not the connection is signed (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is signed (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+		public abstract bool IsSigned {
+			get;
+		}
+
+		/// <summary>
 		/// Get whether or not the client is currently authenticated with the mail server.
 		/// </summary>
 		/// <remarks>

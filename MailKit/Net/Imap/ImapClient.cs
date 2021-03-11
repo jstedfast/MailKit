@@ -643,6 +643,28 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Get whether or not the connection is encrypted (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+		public override bool IsEncrypted {
+			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
+		}
+
+		/// <summary>
+		/// Get whether or not the connection is signed (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is signed (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+		public override bool IsSigned {
+			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
+		}
+
+		/// <summary>
 		/// Get whether or not the client is currently authenticated with the IMAP server.
 		/// </summary>
 		/// <remarks>

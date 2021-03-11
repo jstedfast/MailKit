@@ -168,6 +168,10 @@ namespace UnitTests.Security {
 
 			public override bool IsSecure => throw new NotImplementedException ();
 
+			public override bool IsEncrypted => throw new NotImplementedException ();
+
+			public override bool IsSigned => throw new NotImplementedException ();
+
 			public override bool IsAuthenticated => throw new NotImplementedException ();
 
 			public override int Timeout {

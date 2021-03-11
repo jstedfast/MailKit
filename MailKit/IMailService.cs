@@ -200,6 +200,24 @@ namespace MailKit {
 		bool IsSecure { get; }
 
 		/// <summary>
+		/// Get whether or not the connection is encrypted (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+		bool IsEncrypted { get; }
+
+		/// <summary>
+		/// Get whether or not the connection is signed (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is signed (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+		bool IsSigned { get; }
+
+		/// <summary>
 		/// Get or set the timeout for network streaming operations, in milliseconds.
 		/// </summary>
 		/// <remarks>
