@@ -1,6 +1,22 @@
 # Release Notes
 
-### MailKit 2010.1 (2021-01-02)
+### MailKit 2.11.0 (2021-03-12)
+
+* Handle BAD responses to the NAMESPACE command for Exchange.
+  (issue [#1135](https://github.com/jstedfast/MailKit/issues/1135))
+* Added support for configuring SSL/TLS cipher algorithms (only available in the .NET 5.0 API).
+  (issue [#1140](https://github.com/jstedfast/MailKit/issues/1140))
+* Updated GMail and Yahoo! Mail SSL certificate info.
+* Protect against NREs in NTLM authentication of no OSVersion is set.
+  (issue [#1148](https://github.com/jstedfast/MailKit/issues/1148))
+* Added work-around for hMailServer bug that doesn't accept seq-ranges in descending order.
+  (issue [#1150](https://github.com/jstedfast/MailKit/issues/1150))
+* Properly escape IPv6 addresses for Uri in order to allow Connect/Async methods to work with IPv6 addresses.
+  (issue [#1165](https://github.com/jstedfast/MailKit/issues/1165))
+* Added IsEncrypted and IsSigned properties to IMailService.
+  (issue [#1175](https://github.com/jstedfast/MailKit/issues/1175))
+
+### MailKit 2.10.1 (2021-01-02)
 
 * A few NTLM improvements that I hope are correct.
 

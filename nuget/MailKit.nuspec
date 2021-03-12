@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.10.1</version>
+    <version>2.11.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,7 +26,13 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* A few NTLM improvements that I hope are correct.
+* Handle BAD responses to the NAMESPACE command for Exchange. (issue #1135)
+* Added support for configuring SSL/TLS cipher algorithms (only available in the .NET 5.0 API). (issue #1140)
+* Updated GMail and Yahoo! Mail SSL certificate info.
+* Protect against NREs in NTLM authentication of no OSVersion is set. (issue #1148)
+* Added work-around for hMailServer bug that doesn't accept seq-ranges in descending order. (issue #1150)
+* Properly escape IPv6 addresses for Uri in order to allow Connect/Async methods to work with IPv6 addresses. (issue #1165)
+* Added IsEncrypted and IsSigned properties to IMailService. (issue #1175)
 
 API Changes Since 2.0.x:
 
@@ -73,22 +79,22 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.10.1" />
+        <dependency id="MimeKit" version="2.11.0" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.10.1" />
+        <dependency id="MimeKit" version="2.11.0" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.10.1" />
+        <dependency id="MimeKit" version="2.11.0" />
       </group>
       <group targetFramework="net48">
-        <dependency id="MimeKit" version="2.10.1" />
+        <dependency id="MimeKit" version="2.11.0" />
       </group>
       <group targetFramework="net50">
-        <dependency id="MimeKit" version="2.10.1" />
+        <dependency id="MimeKit" version="2.11.0" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="MimeKit" version="2.10.1" />
+        <dependency id="MimeKit" version="2.11.0" />
       </group>
     </dependencies>
   </metadata>
