@@ -1580,7 +1580,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN () ALL\r\n", "gmail.search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) ALL\r\n", "gmail.search.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" \"Archived Messages\"\r\n", "gmail.list-archived-messages.txt"));
 			commands.Add (new ImapReplayCommand ("A00000008 UID COPY 1:3,5,7:9,11:14,26:29,31,34,41:43,50 \"Archived Messages\"\r\n", "gmail.uid-copy.txt"));
 			commands.Add (new ImapReplayCommand ("A00000009 SEARCH UID 1:3,5,7:9,11:14,26:29,31,34,41:43,50\r\n", "gmail.get-indexes.txt"));
@@ -1690,7 +1690,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN () ALL\r\n", "gmail.search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) ALL\r\n", "gmail.search.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" \"Archived Messages\"\r\n", "gmail.list-archived-messages.txt"));
 			commands.Add (new ImapReplayCommand ("A00000008 UID MOVE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 \"Archived Messages\"\r\n", "gmail.uid-move.txt"));
 			if (disableMove) {
@@ -1835,13 +1835,13 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN () ALL\r\n", "gmail.search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) ALL\r\n", "gmail.search.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK));
 			if (!disableUidPlus) {
 				commands.Add (new ImapReplayCommand ("A00000008 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt"));
 				commands.Add (new ImapReplayCommand ("A00000009 LOGOUT\r\n", "gmail.logout.txt"));
 			} else {
-				commands.Add (new ImapReplayCommand ("A00000008 UID SEARCH RETURN () DELETED NOT UID 1:3\r\n", "gmail.search-deleted-not-1-3.txt"));
+				commands.Add (new ImapReplayCommand ("A00000008 UID SEARCH RETURN (ALL) DELETED NOT UID 1:3\r\n", "gmail.search-deleted-not-1-3.txt"));
 				commands.Add (new ImapReplayCommand ("A00000009 UID STORE 5,7:9,11:14,26:29,31,34,41:43,50 -FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK));
 				commands.Add (new ImapReplayCommand ("A00000010 EXPUNGE\r\n", "gmail.expunge.txt"));
 				commands.Add (new ImapReplayCommand ("A00000011 UID STORE 5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK));

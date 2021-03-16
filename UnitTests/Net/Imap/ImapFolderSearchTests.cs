@@ -253,8 +253,8 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH RETURN () CHARSET UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN () SUBJECT {6+}\r\n?@825B\r\n", "dovecot.search-raw.txt"));
+			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH RETURN (ALL) CHARSET UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
+			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) SUBJECT {6+}\r\n?@825B\r\n", "dovecot.search-raw.txt"));
 
 			using (var client = new ImapClient ()) {
 				var credentials = new NetworkCredential ("username", "password");
@@ -353,8 +353,8 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SORT RETURN () (SUBJECT) UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SORT RETURN () (SUBJECT) US-ASCII SUBJECT {6+}\r\n?@825B\r\n", "dovecot.sort-raw.txt"));
+			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SORT RETURN (ALL) (SUBJECT) UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
+			commands.Add (new ImapReplayCommand ("A00000006 UID SORT RETURN (ALL) (SUBJECT) US-ASCII SUBJECT {6+}\r\n?@825B\r\n", "dovecot.sort-raw.txt"));
 
 			using (var client = new ImapClient ()) {
 				var credentials = new NetworkCredential ("username", "password");

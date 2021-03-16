@@ -463,7 +463,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate-readonly.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 UID SEARCH RETURN () ANNOTATION /comment value \"a comment\"\r\n", "dovecot.search-uids.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 UID SEARCH RETURN (ALL) ANNOTATION /comment value \"a comment\"\r\n", "dovecot.search-uids.txt"));
 
 			return commands;
 		}
@@ -569,8 +569,8 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate-readonly.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 UID SORT RETURN () (ANNOTATION /altsubject value.shared) US-ASCII ALL\r\n", "dovecot.sort-by-strings.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SORT RETURN () (REVERSE ANNOTATION /altsubject value.shared) US-ASCII ALL\r\n", "dovecot.sort-by-strings.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 UID SORT RETURN (ALL) (ANNOTATION /altsubject value.shared) US-ASCII ALL\r\n", "dovecot.sort-by-strings.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 UID SORT RETURN (ALL) (REVERSE ANNOTATION /altsubject value.shared) US-ASCII ALL\r\n", "dovecot.sort-by-strings.txt"));
 
 			return commands;
 		}

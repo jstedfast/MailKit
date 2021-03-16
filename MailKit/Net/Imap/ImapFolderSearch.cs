@@ -731,7 +731,7 @@ namespace MailKit.Net.Imap
 			var command = "UID SEARCH ";
 
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
-				command += "RETURN () ";
+				command += "RETURN (ALL) ";
 
 			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
 				command += "CHARSET " + charset + " ";
@@ -1171,7 +1171,7 @@ namespace MailKit.Net.Imap
 			var command = "UID SORT ";
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
-				command += "RETURN () ";
+				command += "RETURN (ALL) ";
 
 			command += order + " " + (charset ?? "US-ASCII") + " " + expr + "\r\n";
 
