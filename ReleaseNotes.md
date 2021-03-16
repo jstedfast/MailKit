@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 2.11.1 (2021-03-16)
+
+* Added work-around for IMAP servers that do not correctly handle the ESEARCH `RETURN ()` syntax
+  the same as `RETURN (ALL)`. (issue [#1177](https://github.com/jstedfast/MailKit/issues/1177))
+
 ### MailKit 2.11.0 (2021-03-12)
 
 * Handle BAD responses to the NAMESPACE command for Exchange.
