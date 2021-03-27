@@ -1091,6 +1091,7 @@ public class ReplyVisitor : MimeVisitor
     MimeMessage original, reply;
     MailboxAddress from;
     bool replyToAll;
+    int isRelated;
 
     /// <summary>
     /// Creates a new ReplyVisitor.
@@ -1215,10 +1216,12 @@ public class ReplyVisitor : MimeVisitor
 
         root.Accept (this);
 
+        isRelated++;
         for (int i = 0; i < related.Count; i++) {
             if (related[i] != root)
                 related[i].Accept (this);
         }
+        isRelated--;
 
         Pop ();
     }
@@ -1313,6 +1316,14 @@ public class ReplyVisitor : MimeVisitor
     protected override void VisitMessagePart (MessagePart entity)
     {
         // don't descend into message/rfc822 parts
+    }
+
+    protected override void VisitMimePart (MimePart entity)
+    {
+        if (isRelated > 0 || !entity.IsAttachment) {
+            var parent = stack.Peek ();
+            parent.Add (entity);
+        }
     }
 }
 ```
