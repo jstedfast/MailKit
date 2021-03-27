@@ -5,7 +5,7 @@
     <AssemblyTitle>MailKit</AssemblyTitle>
     <VersionPrefix>2.11.1</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
-    <TargetFrameworks>netstandard2.0;net45;net46;net47;net48;net50</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net45;net46;net47;net48;net50</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <AssemblyName>MailKit</AssemblyName>

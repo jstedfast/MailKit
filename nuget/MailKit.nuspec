@@ -90,12 +90,18 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
       <group targetFramework="netstandard2.0">
         <dependency id="MimeKit" version="2.11.0" />
       </group>
+      <group targetFramework="netstandard2.1">
+        <dependency id="MimeKit" version="2.11.0" />
+      </group>
     </dependencies>
   </metadata>
   <files>
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.dll" target="lib\netstandard2.1\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.pdb" target="lib\netstandard2.1\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.xml" target="lib\netstandard2.1\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net45\MailKit.pdb" target="lib\net45\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
