@@ -49,7 +49,7 @@ namespace MailKit {
 	/// </remarks>
 	public abstract class MailService : IMailService
 	{
-#if NET48 || NET50
+#if NET48 || NET5_0
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
 #else
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | (SslProtocols) 12288;
@@ -147,7 +147,7 @@ namespace MailKit {
 			get; set;
 		}
 
-#if NET50
+#if NET5_0
 		/// <summary>
 		/// Gets or sets the cipher suites allowed to be used when negotiating an SSL or TLS connection.
 		/// </summary>
@@ -420,7 +420,7 @@ namespace MailKit {
 			return false;
 		}
 
-#if NET50
+#if NET5_0
 		/// <summary>
 		/// Gets the SSL/TLS client authentication options for use with .NET5's SslStream.AuthenticateAsClient() API.
 		/// </summary>

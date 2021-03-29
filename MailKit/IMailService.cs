@@ -74,7 +74,7 @@ namespace MailKit {
 		/// <value>The SSL and TLS protocol versions that are supported.</value>
 		SslProtocols SslProtocols { get; set; }
 
-#if NET50
+#if NET5_0
 		/// <summary>
 		/// Gets or sets the cipher suites allowed to be used when negotiating an SSL or TLS connection.
 		/// </summary>
