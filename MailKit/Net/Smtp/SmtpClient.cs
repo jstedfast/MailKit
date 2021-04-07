@@ -1029,7 +1029,7 @@ namespace MailKit.Net.Smtp {
 
 				try {
 					if (doAsync) {
-#if NET5_0
+#if NET5_0 || NETSTANDARD2_1
 						await ssl.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
 #else
 						await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
@@ -1087,7 +1087,7 @@ namespace MailKit.Net.Smtp {
 						Stream.Stream = tls;
 
 						if (doAsync) {
-#if NET5_0
+#if NET5_0 || NETSTANDARD2_1
 							await tls.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
 #else
 							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
@@ -1232,7 +1232,7 @@ namespace MailKit.Net.Smtp {
 
 				try {
 					if (doAsync) {
-#if NET5_0
+#if NET5_0 || NETSTANDARD2_1
 						await ssl.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
 #else
 						await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
@@ -1294,7 +1294,7 @@ namespace MailKit.Net.Smtp {
 
 					try {
 						if (doAsync) {
-#if NET5_0
+#if NET5_0 || NETSTANDARD2_1
 							await tls.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
 #else
 							await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);

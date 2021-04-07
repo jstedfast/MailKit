@@ -420,7 +420,7 @@ namespace MailKit {
 			return false;
 		}
 
-#if NET5_0
+#if NET5_0 || NETSTANDARD2_1
 		/// <summary>
 		/// Gets the SSL/TLS client authentication options for use with .NET5's SslStream.AuthenticateAsClient() API.
 		/// </summary>
@@ -435,7 +435,9 @@ namespace MailKit {
 			return new SslClientAuthenticationOptions {
 				CertificateRevocationCheckMode = CheckCertificateRevocation ? X509RevocationMode.Online : X509RevocationMode.NoCheck,
 				RemoteCertificateValidationCallback = remoteCertificateValidationCallback,
+#if NET5_0
 				CipherSuitesPolicy = SslCipherSuitesPolicy,
+#endif
 				ClientCertificates = ClientCertificates,
 				EnabledSslProtocols = SslProtocols,
 				TargetHost = host
@@ -443,7 +445,7 @@ namespace MailKit {
 		}
 #endif
 
-		internal async Task<Socket> ConnectSocket (string host, int port, bool doAsync, CancellationToken cancellationToken)
+			internal async Task<Socket> ConnectSocket (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (ProxyClient != null) {
 				ProxyClient.LocalEndPoint = LocalEndPoint;
