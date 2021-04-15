@@ -167,7 +167,7 @@ which should improve performance of sending messages (although might not be very
 ```
 MIT License
 
-Copyright (C) 2013-2020 .NET Foundation and Contributors
+Copyright (C) 2013-2021 .NET Foundation and Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
