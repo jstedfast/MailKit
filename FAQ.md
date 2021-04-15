@@ -1344,7 +1344,7 @@ public static MimeMessage Reply (MimeMessage message, MailboxAddress from, bool 
 There are 2 common ways of forwarding a message: attaching the original message as an attachment and inlining
 the message body much like replying typically does. Which method you choose is up to you.
 
-To forward a message by attaching it as an attachment, you would do do something like this:
+To forward a message by attaching it as an attachment, you would do something like this:
 
 ```csharp
 public static MimeMessage Forward (MimeMessage original, MailboxAddress from, IEnumerable<InternetAddress> to)
@@ -1552,7 +1552,7 @@ class CachedMessageInfo
 {
     public UniqueId UniqueId;
     public MessageFlags Flags;
-    public HashSet<string> UserFlags;
+    public HashSet<string> Keywords;
     public Envelope Envelope;
     public BodyPart Body;
 }
@@ -1605,7 +1605,7 @@ static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref 
                 // hurt to add error checking to make sure. I'm not bothering to here
                 // for simplicity reasons.
                 cache[i].Flags = summaries[i].Flags.Value;
-                cache[i].UserFlags = summaries[i].UserFlags;
+                cache[i].Keywords = summaries[i].Keywords;
             }
         } else {
             // The UIDVALIDITY of the folder has changed. This means that our entire
@@ -1625,7 +1625,7 @@ static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref 
         cache.Add (new CachedMessageInfo {
             UniqueId = summaries[i].UniqueId,
             Flags = summaries[i].Flags.Value,
-            UserFlags = summaries[i].UserFlags,
+            Keywords = summaries[i].Keywords,
             Envelope = summaries[i].Envelope,
             Body = summaries[i].Body
         });
