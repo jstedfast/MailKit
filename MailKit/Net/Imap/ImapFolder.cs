@@ -3680,7 +3680,7 @@ namespace MailKit.Net.Imap {
 
 				if (unmark.Count > 0) {
 					// clear the \Deleted flag on all messages except the ones that are to be expunged
-					await ModifyFlagsAsync (unmark, null, MessageFlags.Deleted, null, "-FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
+					await StoreAsync (unmark, RemoveDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
 				// expunge the folder
@@ -3688,7 +3688,7 @@ namespace MailKit.Net.Imap {
 
 				if (unmark.Count > 0) {
 					// restore the \Deleted flags
-					await ModifyFlagsAsync (unmark, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
+					await StoreAsync (unmark, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
 				return;
@@ -4695,7 +4695,7 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
 				var appended = await AppendAsync (options, message, flags, date, annotations, doAsync, cancellationToken, progress).ConfigureAwait (false);
-				await ModifyFlagsAsync (new[] { uid }, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
+				await StoreAsync (new[] { uid }, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
 					await ExpungeAsync (new[] { uid }, doAsync, cancellationToken).ConfigureAwait (false);
 				return appended;
@@ -5019,7 +5019,7 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
 				var uid = await AppendAsync (options, message, flags, date, annotations, doAsync, cancellationToken, progress).ConfigureAwait (false);
-				await ModifyFlagsAsync (new[] { index }, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
+				await StoreAsync (new[] { index }, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				return uid;
 			}
 
@@ -5485,7 +5485,7 @@ namespace MailKit.Net.Imap {
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				var copied = await CopyToAsync (uids, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				await ModifyFlagsAsync (uids, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
+				await StoreAsync (uids, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				await ExpungeAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
 				return copied;
 			}
@@ -5808,7 +5808,7 @@ namespace MailKit.Net.Imap {
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				await CopyToAsync (indexes, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				await ModifyFlagsAsync (indexes, null, MessageFlags.Deleted, null, "+FLAGS.SILENT", doAsync, cancellationToken).ConfigureAwait (false);
+				await StoreAsync (indexes, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				return;
 			}
 

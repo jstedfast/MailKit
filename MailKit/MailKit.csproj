@@ -212,6 +212,8 @@
     <Compile Include="IMailTransport.cs" />
     <Compile Include="IMessageSummary.cs" />
     <Compile Include="IProtocolLogger.cs" />
+    <Compile Include="IStoreFlagsRequest.cs" />
+    <Compile Include="IStoreRequest.cs" />
     <Compile Include="ITransferProgress.cs" />
     <Compile Include="MailFolder.cs" />
     <Compile Include="IMailFolderExtensions.cs" />
@@ -246,6 +248,8 @@
     <Compile Include="ServiceNotConnectedException.cs" />
     <Compile Include="SpecialFolder.cs" />
     <Compile Include="StatusItems.cs" />
+    <Compile Include="StoreAction.cs" />
+    <Compile Include="StoreFlagsRequest.cs" />
     <Compile Include="ThreadingAlgorithm.cs" />
     <Compile Include="UniqueId.cs" />
     <Compile Include="UniqueIdMap.cs" />
