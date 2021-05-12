@@ -128,8 +128,8 @@ bool MyServerCertificateValidationCallback (object sender, X509Certificate certi
         var issuer = certificate2.Issuer;
 
         return cn == "imap.gmail.com" && issuer == "CN=GTS CA 1O1, O=Google Trust Services, C=US" &&
-            serial == "00BABE95B167C9ECAF08000000006065B6" &&
-            fingerprint == "E79A011EF55EEC72D2B7E391D193761372796836";
+            serial == "00A15434C2695FB1880300000000CBF786" &&
+            fingerprint == "F351BCB631771F19AF41DFF22EB0A0839092DA51";
     }
 
     return false;
