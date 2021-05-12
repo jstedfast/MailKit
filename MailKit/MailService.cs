@@ -341,21 +341,21 @@ namespace MailKit {
 
 			switch (cn) {
 			case "imap.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "15E3ABFBE021A3890500000000859178" && fingerprint == "E37ADB0D16CF5EB8F9FC6401B915F59D7BE79BE9"; // Expires 3/30/2021 8:11:15 AM
+				return issuer == GMailCertificateIssuer && serial == "00A15434C2695FB1880300000000CBF786" && fingerprint == "F351BCB631771F19AF41DFF22EB0A0839092DA51"; // Expires 7/6/2021 6:15:47 AM
 			case "pop.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "00D47573DD756091B10300000000C7CDA5" && fingerprint == "AF29AA51E75C3F2C74518087E9F3B257344664F0"; // Expires 3/30/2021 8:11:16 AM
+				return issuer == GMailCertificateIssuer && serial == "00ADE0870C95CFCB30050000000087BC0D" && fingerprint == "D1E6036A1C9307CED83914B9DDFC4C84F0E9A702"; // Expires 7/6/2021 6:15:50 AM
 			case "smtp.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "00E44401FC458A1C58050000000085917D" && fingerprint == "217BC6DA8C393C1CB2FF0250DD46D656E0A6D282"; // Expires 3/30/2021 8:11:23 AM
+				return issuer == GMailCertificateIssuer && serial == "5645821E254664EF0300000000CBF788" && fingerprint == "B24907A7684FDE6875D43278B3EE880DD107ACBE"; // Expires 7/6/2021 6:15:54 AM
 			case "outlook.com":
-				return issuer == OutlookCertificateIssuer && serial == "07C8ACB7CCF0C64CEE3B1CE0CD1E9901" && fingerprint == "FEBBA28254D315A82080C6BE4B23CBC8F1E471AE"; // Expires 1/10/2022 6:59:59 PM
+				return issuer == OutlookCertificateIssuer && serial == "0CCAC32B0EF281026392B8852AB15642" && fingerprint == "CBAA1582F1E49AD1D108193B5D38B966BE4993C6"; // Expires 1/21/2022 6:59:59 PM
 			case "imap.mail.me.com":
 				return issuer == AppleCertificateIssuer && serial == "7693E9D2C3B5564F4F9A487D15A54116" && fingerprint == "FACBDEB692021F6404BE8B88A563767B282F98EE"; // Expires 10/3/2021 5:51:43 PM
 			case "smtp.mail.me.com":
 				return issuer == AppleCertificateIssuer && serial == "0A3048DECAB5CAA796E163E011CAE82E" && fingerprint == "B14CE4D4FF15FBC3C16C4848F1C632552184BD79"; // Expires 10/3/2021 6:12:03 PM
 			case "*.imap.mail.yahoo.com":
-				return issuer == YahooCertificateIssuer && serial == "0644DDCE32898E80C7B9FDD42C516396" && fingerprint == "1EC290720506325E9F48D258BD2E51E5779E85EA"; // Expires 5/25/2021 7:59:59 PM
+				return issuer == YahooCertificateIssuer && serial == "090883C7E8D9B60E60ABA19D508BD988" && fingerprint == "4018766D324ED3CC37A05D5997405E5B33A7CAEF"; // Expires 10/20/2021 7:59:59 PM
 			case "legacy.pop.mail.yahoo.com":
-				return issuer == YahooCertificateIssuer && serial == "058035C3D2AC58483DD14D3E2F9145B8" && fingerprint == "167AF555D510FACCA7B0B48EE0D10C360B512960"; // Expires 3/3/2021 7:00:00 AM
+				return issuer == YahooCertificateIssuer && serial == "0867B5394892A22A820DDFC97B22DFC4" && fingerprint == "A97792FD0708311430AD5D0431B69BA1B49B6B92"; // Expires 7/27/2021 7:59:59 PM
 			case "smtp.mail.yahoo.com":
 				return issuer == YahooCertificateIssuer && serial == "0D6261AF405FAF9B39510CBD9E630676" && fingerprint == "14CBE3DAD16D7CA9A841AEA29C5EAB535DD49701"; // Expires 6/22/2021 7:59:59 PM
 			case "mout.gmx.com":
@@ -363,7 +363,7 @@ namespace MailKit {
 			case "mail.gmx.com":
 				return issuer == GmxDotComCertificateIssuer && serial == "0719A4D33A18B550133DDA3253AF6C96" && fingerprint == "948B0C3FA22BC12C91EEE5B1631A6C41B4A01B9C"; // Expires 7/12/2022 8:00:00 AM
 			case "mail.gmx.net":
-				return issuer == GmxDotNetCertificateIssuer && serial == "218296213149726650EB233346353EEA" && fingerprint == "67DED57393303E005937D5EDECB6A29C136024CA"; // Expires 5/13/2021 7:59:59 PM
+				return issuer == GmxDotNetCertificateIssuer && serial == "070E7CD59BB7AFD73E8A206219C4F011" && fingerprint == "E66DC8FE17C9A7718D17441CBE347D1D6F7BF3D2"; // Expires 5/3/2022 7:59:59 PM
 			default:
 				return false;
 			}
