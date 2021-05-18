@@ -12,7 +12,7 @@ MailKit implements the following IETF specifications:
 * [1426](https://tools.ietf.org/html/rfc1426): SMTP Service Extension for 8bit-MIMEtransport
 * [1460](https://tools.ietf.org/html/rfc1460): Post Office Protocol - Version 3 (Obsoletes rfc1225)
 * [1651](https://tools.ietf.org/html/rfc1651): SMTP Service Extensions (Obsoletes rfc1425)
-* [1652](https://tools.ietf.org/html/rfc1652): SMTP Service Extension for 8bit-MIMEtransport (Obsoletes rfc1426)
+* [1652](https://tools.ietf.org/html/rfc1652): SMTP Service Extension for 8bit-MIME transport (Obsoletes rfc1426)
 * [1653](https://tools.ietf.org/html/rfc1653): SMTP Service Extension for Message Size Declaration
 * [1725](https://tools.ietf.org/html/rfc1725): Post Office Protocol - Version 3 (Obsoletes rfc1460)
 * [1730](https://tools.ietf.org/html/rfc1730): INTERNET MESSAGE ACCESS PROTOCOL - VERSION 4
