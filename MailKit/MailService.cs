@@ -445,7 +445,7 @@ namespace MailKit {
 		}
 #endif
 
-			internal async Task<Socket> ConnectSocket (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		internal async Task<Socket> ConnectSocket (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (ProxyClient != null) {
 				ProxyClient.LocalEndPoint = LocalEndPoint;
