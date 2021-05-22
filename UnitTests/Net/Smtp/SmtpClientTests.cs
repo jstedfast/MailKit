@@ -1848,30 +1848,43 @@ namespace UnitTests.Net.Smtp {
 
 				var message = CreateSimpleMessage ();
 				var options = FormatOptions.Default;
+				string response;
 
 				try {
-					client.Send (message);
+					response = client.Send (message);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					return;
 				}
 
-				try {
-					client.Send (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
+				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
 
 				try {
-					client.Send (options, message);
+					response = client.Send (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					return;
 				}
 
+				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
 				try {
-					client.Send (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+					response = client.Send (options, message);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					return;
 				}
+
+				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
+				try {
+					response = client.Send (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					return;
+				}
+
+				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
 
 				try {
 					client.Disconnect (true);
@@ -1996,30 +2009,43 @@ namespace UnitTests.Net.Smtp {
 
 				var message = CreateSimpleMessage ();
 				var options = FormatOptions.Default;
+				string response;
 
 				try {
-					await client.SendAsync (message);
+					response = await client.SendAsync (message);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					return;
 				}
 
-				try {
-					await client.SendAsync (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
+				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
 
 				try {
-					await client.SendAsync (options, message);
+					response = await client.SendAsync (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					return;
 				}
 
+				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
 				try {
-					await client.SendAsync (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+					response = await client.SendAsync (options, message);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					return;
 				}
+
+				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
+				try {
+					response = await client.SendAsync (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					return;
+				}
+
+				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
 
 				try {
 					await client.DisconnectAsync (true);

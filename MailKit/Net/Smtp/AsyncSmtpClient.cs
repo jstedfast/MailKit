@@ -468,7 +468,7 @@ namespace MailKit.Net.Smtp
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 		/// </example>
-		/// <returns>An asynchronous task context.</returns>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -507,7 +507,7 @@ namespace MailKit.Net.Smtp
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public override Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<string> SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -533,7 +533,7 @@ namespace MailKit.Net.Smtp
 		/// <remarks>
 		/// Sends the message by uploading it to an SMTP server using the supplied sender and recipients.
 		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
@@ -578,7 +578,7 @@ namespace MailKit.Net.Smtp
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public override Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<string> SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));

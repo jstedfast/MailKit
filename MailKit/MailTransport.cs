@@ -82,6 +82,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
@@ -114,9 +115,9 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual string Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			Send (DefaultOptions, message, cancellationToken, progress);
+			return Send (DefaultOptions, message, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -131,7 +132,7 @@ namespace MailKit {
 		/// the recipients are collected from the Resent-To, Resent-Cc, and
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
@@ -164,7 +165,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual Task SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<string> SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return SendAsync (DefaultOptions, message, cancellationToken, progress);
 		}
@@ -175,6 +176,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Sends the specified message using the supplied sender and recipients.
 		/// </remarks>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
@@ -213,9 +215,9 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual string Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			Send (DefaultOptions, message, sender, recipients, cancellationToken, progress);
+			return Send (DefaultOptions, message, sender, recipients, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -224,7 +226,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sends the specified message using the supplied sender and recipients.
 		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
@@ -263,7 +265,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual Task SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<string> SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return SendAsync (DefaultOptions, message, sender, recipients, cancellationToken, progress);
 		}
@@ -283,6 +285,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 		/// </example>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -321,7 +324,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public abstract void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract string Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message.
@@ -335,7 +338,7 @@ namespace MailKit {
 		/// the recipients are collected from the Resent-To, Resent-Cc, and
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -374,7 +377,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public abstract Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<string> SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Send the specified message using the supplied sender and recipients.
@@ -382,6 +385,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Sends the specified message using the supplied sender and recipients.
 		/// </remarks>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
@@ -426,7 +430,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public abstract void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract string Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message using the supplied sender and recipients.
@@ -434,7 +438,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sends the specified message using the supplied sender and recipients.
 		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
+		/// <returns>The final free-form text response from the server.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
@@ -479,7 +483,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public abstract Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<string> SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Occurs when a message is successfully sent via the transport.
