@@ -33,6 +33,7 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using SslProtocols = System.Security.Authentication.SslProtocols;
 
@@ -61,13 +62,12 @@ namespace MailKit {
 		object SyncRoot { get; }
 
 		/// <summary>
-		/// Gets or sets the SSL and TLS protocol versions that the client is allowed to use.
+		/// Gets or sets the set of enabled SSL and/or TLS protocol versions that the client is allowed to use.
 		/// </summary>
 		/// <remarks>
-		/// <para>Gets or sets the SSL and TLS protocol versions that the client is allowed to use.</para>
-		/// <para>By default, MailKit initializes this value to support only TLS v1.0 and greater and
-		/// does not support any version of SSL due to those protocols no longer being considered
-		/// secure.</para>
+		/// <para>By default, MailKit initializes this value to enable only TLS v1.2 and greater.
+		/// TLS v1.1, TLS v1.0 and all versions of SSL are not enabled by default due to them all being
+		/// susceptible to security vulnerabilities such as POODLE.</para>
 		/// <para>This property should be set before calling any of the
 		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
@@ -216,6 +216,51 @@ namespace MailKit {
 		/// </remarks>
 		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
 		bool IsSigned { get; }
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS protocol version.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the negotiated SSL or TLS protocol version once an SSL or TLS connection has been made.</para>
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS protocol version.</value>
+		SslProtocols SslProtocol { get; }
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS cipher algorithm.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS cipher algorithm.</value>
+		CipherAlgorithmType? SslCipherAlgorithm { get; }
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS cipher algorithm strength.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS cipher algorithm strength.</value>
+		int? SslCipherStrength { get; }
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS hash algorithm.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS hash algorithm.</value>
+		HashAlgorithmType? SslHashAlgorithm { get; }
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS hash algorithm strength.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS hash algorithm strength.</value>
+		int? SslHashStrength { get; }
 
 		/// <summary>
 		/// Get or set the timeout for network streaming operations, in milliseconds.

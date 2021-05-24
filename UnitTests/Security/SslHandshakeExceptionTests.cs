@@ -33,6 +33,7 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -40,8 +41,6 @@ using NUnit.Framework;
 
 using MailKit;
 using MailKit.Security;
-
-using AuthenticationException = System.Security.Authentication.AuthenticationException;
 
 namespace UnitTests.Security {
 	[TestFixture]
@@ -171,6 +170,16 @@ namespace UnitTests.Security {
 			public override bool IsEncrypted => throw new NotImplementedException ();
 
 			public override bool IsSigned => throw new NotImplementedException ();
+
+			public override SslProtocols SslProtocol => throw new NotImplementedException ();
+
+			public override CipherAlgorithmType? SslCipherAlgorithm => throw new NotImplementedException ();
+
+			public override int? SslCipherStrength => throw new NotImplementedException ();
+
+			public override HashAlgorithmType? SslHashAlgorithm => throw new NotImplementedException ();
+
+			public override int? SslHashStrength => throw new NotImplementedException ();
 
 			public override bool IsAuthenticated => throw new NotImplementedException ();
 
