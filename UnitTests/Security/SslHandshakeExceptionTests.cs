@@ -181,6 +181,10 @@ namespace UnitTests.Security {
 
 			public override int? SslHashStrength => throw new NotImplementedException ();
 
+			public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm => throw new NotImplementedException ();
+
+			public override int? SslKeyExchangeStrength => throw new NotImplementedException ();
+
 			public override bool IsAuthenticated => throw new NotImplementedException ();
 
 			public override int Timeout {

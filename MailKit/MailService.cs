@@ -355,6 +355,28 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the negotiated SSL or TLS key exchange algorithm.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
+		public abstract ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
+			get;
+		}
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS key exchange algorithm strength.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
+		public abstract int? SslKeyExchangeStrength {
+			get;
+		}
+
+		/// <summary>
 		/// Get whether or not the client is currently authenticated with the mail server.
 		/// </summary>
 		/// <remarks>

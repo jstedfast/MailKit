@@ -263,6 +263,24 @@ namespace MailKit {
 		int? SslHashStrength { get; }
 
 		/// <summary>
+		/// Get the negotiated SSL or TLS key exchange algorithm.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
+		ExchangeAlgorithmType? SslKeyExchangeAlgorithm { get; }
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS key exchange algorithm strength.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
+		int? SslKeyExchangeStrength { get; }
+
+		/// <summary>
 		/// Get or set the timeout for network streaming operations, in milliseconds.
 		/// </summary>
 		/// <remarks>

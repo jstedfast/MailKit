@@ -747,6 +747,38 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Get the negotiated SSL or TLS key exchange algorithm.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
+		public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
+			get {
+				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+					return sslStream.KeyExchangeAlgorithm;
+
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS key exchange algorithm strength.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
+		public override int? SslKeyExchangeStrength {
+			get {
+				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+					return sslStream.KeyExchangeStrength;
+
+				return null;
+			}
+		}
+
+		/// <summary>
 		/// Get whether or not the client is currently authenticated with the IMAP server.
 		/// </summary>
 		/// <remarks>
