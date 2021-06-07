@@ -26,7 +26,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
     <PackageReference Include="OpenCover" Version="4.6.519" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.114.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.114.2" />
   </ItemGroup>
 
   <ItemGroup>
