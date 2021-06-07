@@ -287,7 +287,7 @@ var codeReceiver = new LocalServerCodeReceiver ();
 var authCode = new AuthorizationCodeInstalledApp (codeFlow, codeReceiver);
 var credential = await authCode.AuthorizeAsync (GMailAccount, CancellationToken.None);
 
-if (authCode.ShouldRequestAuthorizationCode (credential.Token))
+if (credential.Token.IsExpired (SystemClock.Default))
     await credential.RefreshTokenAsync (CancellationToken.None);
 
 var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
