@@ -1,0 +1,2 @@
+* NO [WEBALERT https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbsNd6RU3LIlgDfhmL9Y7ywYhtagFig_xfuSJCUHD9Eg3XqN8DKlDk3G8jmj2w5viIm5PDC3BS4SVy7iFMB6g1244cnQt1E60EdOTSEpnqDzL6FH2L-ReOAyZ3qkSXZQZs2pIfL2] Web login required.
+A######## NO [ALERT] Please log in via your web browser: https://support.google.com/mail/accounts/answer/78754 (Failure)

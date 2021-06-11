@@ -1585,6 +1585,106 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestGMailWebAlert ()
+		{
+			const string webUri = "https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbsNd6RU3LIlgDfhmL9Y7ywYhtagFig_xfuSJCUHD9Eg3XqN8DKlDk3G8jmj2w5viIm5PDC3BS4SVy7iFMB6g1244cnQt1E60EdOTSEpnqDzL6FH2L-ReOAyZ3qkSXZQZs2pIfL2";
+			const string alert = "Please log in via your web browser: https://support.google.com/mail/accounts/answer/78754 (Failure)";
+
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", "gmail.authenticate+webalert.txt"));
+
+			using (var client = new ImapClient ()) {
+				int webalerts = 0;
+				int alerts = 0;
+
+				client.Alert += (sender, e) => {
+					Assert.AreEqual (alert, e.Message);
+					alerts++;
+				};
+
+				client.WebAlert += (sender, e) => {
+					Assert.AreEqual (webUri, e.WebUri.AbsoluteUri);
+					Assert.AreEqual ("Web login required.", e.Message);
+					webalerts++;
+				};
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+					Assert.Fail ("Did not expect Authenticate to work.");
+				} catch (AuthenticationException ax) {
+					Assert.AreEqual (alert, ax.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (1, alerts, "Expected 1 alert");
+				Assert.AreEqual (1, webalerts, "Expected 1 web alert");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestGMailWebAlertAsync ()
+		{
+			const string webUri = "https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbsNd6RU3LIlgDfhmL9Y7ywYhtagFig_xfuSJCUHD9Eg3XqN8DKlDk3G8jmj2w5viIm5PDC3BS4SVy7iFMB6g1244cnQt1E60EdOTSEpnqDzL6FH2L-ReOAyZ3qkSXZQZs2pIfL2";
+			const string alert = "Please log in via your web browser: https://support.google.com/mail/accounts/answer/78754 (Failure)";
+
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", "gmail.authenticate+webalert.txt"));
+
+			using (var client = new ImapClient ()) {
+				int webalerts = 0;
+				int alerts = 0;
+
+				client.Alert += (sender, e) => {
+					Assert.AreEqual (alert, e.Message);
+					alerts++;
+				};
+
+				client.WebAlert += (sender, e) => {
+					Assert.AreEqual (webUri, e.WebUri.AbsoluteUri);
+					Assert.AreEqual ("Web login required.", e.Message);
+					webalerts++;
+				};
+
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+					Assert.Fail ("Did not expect Authenticate to work.");
+				} catch (AuthenticationException ax) {
+					Assert.AreEqual (alert, ax.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (1, alerts, "Expected 1 alert");
+				Assert.AreEqual (1, webalerts, "Expected 1 web alert");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		[Test]
 		public void TestUnicodeRespText ()
 		{
 			const string respText = "╟ы╩╣╙├╩┌╚и┬ы╡╟┬╝бг╧ъ╟щ╟ы┐┤";

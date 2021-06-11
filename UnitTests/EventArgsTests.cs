@@ -48,6 +48,18 @@ namespace UnitTests {
 		}
 
 		[Test]
+		public void TestWebAlertEventArgs ()
+		{
+			var args = new WebAlertEventArgs (new Uri ("http://www.google.com/"), "Klingons on the starboard bow!");
+
+			Assert.AreEqual ("http://www.google.com/", args.WebUri.AbsoluteUri);
+			Assert.AreEqual ("Klingons on the starboard bow!", args.Message);
+
+			Assert.Throws<ArgumentNullException> (() => new WebAlertEventArgs (null, "message text."));
+			Assert.Throws<ArgumentNullException> (() => new WebAlertEventArgs (new Uri ("http://www.google.com/"), null));
+		}
+
+		[Test]
 		public void TestAnnotationsChangedEventArgs ()
 		{
 			var annotations = new List<Annotation> ();

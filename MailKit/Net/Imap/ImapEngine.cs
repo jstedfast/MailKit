@@ -1339,6 +1339,9 @@ namespace MailKit.Net.Imap {
 				case ImapResponseCodeType.Alert:
 					OnAlert (code.Message);
 					break;
+				case ImapResponseCodeType.WebAlert:
+					OnWebAlert (((WebAlertResponseCode) code).WebUri, code.Message);
+					break;
 				case ImapResponseCodeType.NotificationOverflow:
 					OnNotificationOverflow ();
 					break;
@@ -1437,6 +1440,7 @@ namespace MailKit.Net.Imap {
 			case "NONEXISTENT":          return ImapResponseCodeType.NonExistent;
 			case "USEATTR":              return ImapResponseCodeType.UseAttr;
 			case "MAILBOXID":            return ImapResponseCodeType.MailboxId;
+			case "WEBALERT":             return ImapResponseCodeType.WebAlert;
 			default:                     return ImapResponseCodeType.Unknown;
 			}
 		}
@@ -1742,6 +1746,15 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				AssertToken (token, ImapTokenType.CloseParen, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+
+				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.WebAlert:
+				var webalert = (WebAlertResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "WEBALERT", token);
+
+				Uri.TryCreate ((string) token.Value, UriKind.Absolute, out webalert.WebUri);
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
@@ -2867,6 +2880,19 @@ namespace MailKit.Net.Imap {
 
 			if (handler != null)
 				handler (this, new AlertEventArgs (message));
+		}
+
+		/// <summary>
+		/// Occurs when the engine receives a webalert message from the server.
+		/// </summary>
+		public event EventHandler<WebAlertEventArgs> WebAlert;
+
+		internal void OnWebAlert (Uri uri, string message)
+		{
+			var handler = WebAlert;
+
+			if (handler != null)
+				handler (this, new WebAlertEventArgs (uri, message));
 		}
 
 		/// <summary>

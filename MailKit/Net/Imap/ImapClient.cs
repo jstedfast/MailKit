@@ -115,6 +115,7 @@ namespace MailKit.Net.Imap {
 			engine.MetadataChanged += OnEngineMetadataChanged;
 			engine.FolderCreated += OnEngineFolderCreated;
 			engine.Disconnected += OnEngineDisconnected;
+			engine.WebAlert += OnEngineWebAlert;
 			engine.Alert += OnEngineAlert;
 		}
 
@@ -2714,6 +2715,41 @@ namespace MailKit.Net.Imap {
 			OnAlert (e.Message);
 		}
 
+		void OnEngineWebAlert (object sender, WebAlertEventArgs e)
+		{
+			OnWebAlert (e.WebUri, e.Message);
+		}
+
+		/// <summary>
+		/// Occurs when a Google Mail server sends a WEBALERT response code to the client.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="WebAlert"/> event is raised whenever the Google Mail server sends a
+		/// WEBALERT message.
+		/// </remarks>
+		public event EventHandler<WebAlertEventArgs> WebAlert;
+
+		/// <summary>
+		/// Raise the web alert event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the web alert event.
+		/// </remarks>
+		/// <param name="uri">The web alert URI.</param>
+		/// <param name="message">The web alert message.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// </exception>
+		protected virtual void OnWebAlert (Uri uri, string message)
+		{
+			var handler = WebAlert;
+
+			if (handler != null)
+				handler (this, new WebAlertEventArgs (uri, message));
+		}
+
 		void OnEngineDisconnected (object sender, EventArgs e)
 		{
 			if (connecting)
@@ -2744,6 +2780,7 @@ namespace MailKit.Net.Imap {
 				engine.MetadataChanged -= OnEngineMetadataChanged;
 				engine.FolderCreated -= OnEngineFolderCreated;
 				engine.Disconnected -= OnEngineDisconnected;
+				engine.WebAlert -= OnEngineWebAlert;
 				engine.Alert -= OnEngineAlert;
 				engine.Dispose ();
 				disposed = true;
