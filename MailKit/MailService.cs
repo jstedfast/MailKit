@@ -404,6 +404,7 @@ namespace MailKit {
 
 		const string AppleCertificateIssuer = "C=US, S=California, O=Apple Inc., CN=Apple Public Server RSA CA 12 - G1";
 		const string GMailCertificateIssuer = "CN=GTS CA 1O1, O=Google Trust Services, C=US";
+		const string GMailCertificateIssuer2 = "CN=GTS CA 1C3, O=Google Trust Services LLC, C=US";
 		const string OutlookCertificateIssuer = "CN=DigiCert Cloud Services CA-1, O=DigiCert Inc, C=US";
 		const string YahooCertificateIssuer = "CN=DigiCert SHA2 High Assurance Server CA, OU=www.digicert.com, O=DigiCert Inc, C=US";
 		const string GmxDotComCertificateIssuer = "CN=GeoTrust RSA CA 2018, OU=www.digicert.com, O=DigiCert Inc, C=US";
@@ -419,11 +420,18 @@ namespace MailKit {
 
 			switch (cn) {
 			case "imap.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "00A15434C2695FB1880300000000CBF786" && fingerprint == "F351BCB631771F19AF41DFF22EB0A0839092DA51"; // Expires 7/6/2021 6:15:47 AM
+				return (issuer == GMailCertificateIssuer && serial == "00A15434C2695FB1880300000000CBF786" && fingerprint == "F351BCB631771F19AF41DFF22EB0A0839092DA51") // Expires 7/6/2021 6:15:47 AM
+					|| (issuer == GMailCertificateIssuer && serial == "35A5E0504C84EE78050000000087D205" && fingerprint == "87D4E6C66E70D45A133B0BC660EBCBADB01F861E") // Expires 8/1/2021 11:14:58 PM
+					|| (issuer == GMailCertificateIssuer && serial == "00C0CEADAB616F1F51050000000087D9CE" && fingerprint == "DC8A13CF705E8D95BD1ABD61687CF05A3CA56142") // Expires 8/8/2021 11:07:00 PM
+					|| (issuer == GMailCertificateIssuer2 && serial == "5243D328A1B3764B0A00000000D56A81" && fingerprint == "83F1C54A009C0D4EE7CEAA1FD1466095B26544E2"); // Expires 8/8/2021 11:07:07 PM
 			case "pop.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "00ADE0870C95CFCB30050000000087BC0D" && fingerprint == "D1E6036A1C9307CED83914B9DDFC4C84F0E9A702"; // Expires 7/6/2021 6:15:50 AM
+				return (issuer == GMailCertificateIssuer && serial == "00ADE0870C95CFCB30050000000087BC0D" && fingerprint == "D1E6036A1C9307CED83914B9DDFC4C84F0E9A702") // Expires 7/6/2021 6:15:50 AM
+					|| (issuer == GMailCertificateIssuer && serial == "00F58BC741E628A259050000000087D206" && fingerprint == "11F31922F7AE9CAC0E807F83298B385133764022") // Expires 8/1/2021 11:15:26 PM
+					|| (issuer == GMailCertificateIssuer && serial == "00EBE45B38519C9D3F0300000000CC2415" && fingerprint == "5890C2702F4943FEAA182E432BFEA2C872430209"); // Expires 8/8/2021 11:07:31 PM
 			case "smtp.gmail.com":
-				return issuer == GMailCertificateIssuer && serial == "5645821E254664EF0300000000CBF788" && fingerprint == "B24907A7684FDE6875D43278B3EE880DD107ACBE"; // Expires 7/6/2021 6:15:54 AM
+				return (issuer == GMailCertificateIssuer && serial == "5645821E254664EF0300000000CBF788" && fingerprint == "B24907A7684FDE6875D43278B3EE880DD107ACBE") // Expires 7/6/2021 6:15:54 AM
+					|| (issuer == GMailCertificateIssuer && serial == "00DBDE269412152FE5050000000087D20B" && fingerprint == "EF2B8EBCCDD3EF711590B57C8B729ACFFE027AD1") // Expires 8/1/2021 11:17:56 PM
+					|| (issuer == GMailCertificateIssuer && serial == "0644BDA7346D8EB2050000000087D9D4" && fingerprint == "A42F8EA1FBC76190536D5A7CA6EB7A7A8C015180"); // Expires 8/8/2021 11:10:18 PM
 			case "outlook.com":
 				return issuer == OutlookCertificateIssuer && serial == "0CCAC32B0EF281026392B8852AB15642" && fingerprint == "CBAA1582F1E49AD1D108193B5D38B966BE4993C6"; // Expires 1/21/2022 6:59:59 PM
 			case "imap.mail.me.com":
@@ -512,6 +520,7 @@ namespace MailKit {
 		{
 			return new SslClientAuthenticationOptions {
 				CertificateRevocationCheckMode = CheckCertificateRevocation ? X509RevocationMode.Online : X509RevocationMode.NoCheck,
+				ApplicationProtocols = new List<SslApplicationProtocol> { new SslApplicationProtocol (Protocol) },
 				RemoteCertificateValidationCallback = remoteCertificateValidationCallback,
 #if NET5_0
 				CipherSuitesPolicy = SslCipherSuitesPolicy,
