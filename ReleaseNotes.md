@@ -1,5 +1,13 @@
 # Release Notes
 
+### MailKit 2.13.0 (2021-06-12)
+
+* Added new properties to all clients to get SSL cipher/hash/protocol/key-exchange info.
+  (issue [#1175](https://github.com/jstedfast/MailKit/issues/1175))
+* Added support for GMail's WEBALERT resp-code.
+  (issue [#1214](https://github.com/jstedfast/MailKit/issues/1175))
+* Updated GMail SSL certificate serial numbers and fingerprints.
+
 ### MailKit 2.12.0 (2021-05-12)
 
 * Fixed the .NET 5.0 build to include .NET 5.0-specific features. Previous releases incorrectly used
