@@ -71,13 +71,13 @@
       <NamespaceSummaryItem name="MailKit.Search" isDocumented="True">The &lt;b&gt;MailKit.Search&lt;/b&gt; namespace provides classes that are necessary for searching folders for messages matching a set of criteria.</NamespaceSummaryItem>
       <NamespaceSummaryItem name="MailKit.Security" isDocumented="True">The &lt;b&gt;MailKit.Security&lt;/b&gt; namespace provides implementations of various SASL authentication mechanisms used by the IMAP, POP3 and SMTP clients.</NamespaceSummaryItem>
     </NamespaceSummaries>
-    <CopyrightText>Copyright &amp;#169%3b 2013-2020 Jeffrey Stedfast</CopyrightText>
+    <CopyrightText>Copyright &amp;#169%3b 2013-2021 Jeffrey Stedfast</CopyrightText>
     <WorkingPath>obj\</WorkingPath>
     <FooterText>&amp;lt%3b!-- Global site tag %28gtag.js%29 - Google Analytics --&amp;gt%3b
-&amp;lt%3bscript async src=&amp;quot%3bhttps://www.googletagmanager.com/gtag/js%3fid=UA-63841238-1&amp;quot%3b&amp;gt%3b&amp;lt%3b/script&amp;gt%3b
+&amp;lt%3bscript src=&amp;quot%3bhttps://www.googletagmanager.com/gtag/js%3fid=UA-63841238-1&amp;quot%3b&amp;gt%3b&amp;lt%3b/script&amp;gt%3b
 &amp;lt%3bscript&amp;gt%3b
   window.dataLayer = window.dataLayer || []%3b
-  function gtag%28%29{dataLayer.push%28arguments%29%3b}
+  function gtag%28%29{{dataLayer.push%28arguments%29%3b}}
   gtag%28&amp;#39%3bjs&amp;#39%3b, new Date%28%29%29%3b
 
   gtag%28&amp;#39%3bconfig&amp;#39%3b, &amp;#39%3bUA-63841238-1&amp;#39%3b%29%3b
