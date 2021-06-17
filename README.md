@@ -266,7 +266,7 @@ namespace TestClient {
 		{
 			var message = new MimeMessage ();
 			message.From.Add (new MailboxAddress ("Joey Tribbiani", "joey@friends.com"));
-			message.To.Add (new MailboxAddress ("Mrs. Chanandler Bong", "chandler@friends.com"));
+			message.To.Add (new MailboxAddress ("Mrs. Chandler Bong", "chandler@friends.com"));
 			message.Subject = "How you doin'?";
 
 			message.Body = new TextPart ("plain") {
