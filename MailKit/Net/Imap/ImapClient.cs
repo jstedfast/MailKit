@@ -673,6 +673,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Gets the negotiated SSL or TLS protocol version once an SSL or TLS connection has been made.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
+		/// </example>
 		/// <value>The negotiated SSL or TLS protocol version.</value>
 		public override SslProtocols SslProtocol {
 			get {
@@ -689,6 +692,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
+		/// </example>
 		/// <value>The negotiated SSL or TLS cipher algorithm.</value>
 		public override CipherAlgorithmType? SslCipherAlgorithm {
 			get {
@@ -705,6 +711,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
+		/// </example>
 		/// <value>The negotiated SSL or TLS cipher algorithm strength.</value>
 		public override int? SslCipherStrength {
 			get {
@@ -721,6 +730,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
+		/// </example>
 		/// <value>The negotiated SSL or TLS hash algorithm.</value>
 		public override HashAlgorithmType? SslHashAlgorithm {
 			get {
@@ -737,6 +749,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
+		/// </example>
 		/// <value>The negotiated SSL or TLS hash algorithm strength.</value>
 		public override int? SslHashStrength {
 			get {
@@ -753,6 +768,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
+		/// </example>
 		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
 		public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
 			get {
@@ -769,6 +787,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
+		/// </example>
 		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
 		public override int? SslKeyExchangeStrength {
 			get {

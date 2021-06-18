@@ -1,9 +1,9 @@
 ﻿//
 // SmtpExamples.cs
 //
-// Author: Jeffrey Stedfast <jeff@xamarin.com>
+// Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2016 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2021 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -352,6 +352,37 @@ namespace MailKit.Examples {
 				// If you also want to be notified of delays or successful deliveries, simply bitwise-or
 				// whatever combination of flags you want to be notified about.
 				return DeliveryStatusNotification.Failure;
+			}
+		}
+		#endregion
+
+		#region SslConnectionInformation
+		public static void PrintSslConnectionInfo (string host, int port)
+		{
+			using (var client = new SmtpClient ()) {
+				client.Connect (host, port, SecureSocketOptions.Auto);
+
+				Console.WriteLine ($"Negotiated the following SSL options with {host}:");
+				Console.WriteLine ($"        Protocol Version: {client.SslProtocol}");
+				Console.WriteLine ($"        Cipher Algorithm: {client.SslCipherAlgorithm}");
+				Console.WriteLine ($"         Cipher Strength: {client.SslCipherStrength}");
+				Console.WriteLine ($"          Hash Algorithm: {client.SslHashAlgorithm}");
+				Console.WriteLine ($"           Hash Strength: {client.SslHashStrength}");
+				Console.WriteLine ($"  Key-Exchange Algorithm: {client.SslKeyExchangeAlgorithm}");
+				Console.WriteLine ($"   Key-Exchange Strength: {client.SslKeyExchangeStrength}");
+
+				// Example Log:
+				//
+				// Negotiated the following SSL options with smtp.gmail.com:
+				//         Protocol Version: Tls12
+				//         Cipher Algorithm: Aes128
+				//          Cipher Strength: 128
+				//           Hash Algorithm: Sha256
+				//            Hash Strength: 0
+				//   Key-Exchange Algorithm: 44550
+				//    Key-Exchange Strength: 255
+
+				client.Disconnect (true);
 			}
 		}
 		#endregion
