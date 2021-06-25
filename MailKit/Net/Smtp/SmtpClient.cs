@@ -77,6 +77,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		readonly HashSet<string> authenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
+		readonly SmtpAuthenticationSecretDetector detector = new SmtpAuthenticationSecretDetector ();
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
 		SmtpCapabilities capabilities;
 		int timeout = 2 * 60 * 1000;
@@ -122,6 +123,7 @@ namespace MailKit.Net.Smtp {
 		/// </example>
 		public SmtpClient (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
+			protocolLogger.AuthenticationSecretDetector = detector;
 		}
 
 		/// <summary>
@@ -766,6 +768,7 @@ namespace MailKit.Net.Smtp {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
+			SaslException saslException = null;
 			SmtpResponse response;
 			string challenge;
 			string command;
@@ -780,24 +783,28 @@ namespace MailKit.Net.Smtp {
 				command = string.Format ("AUTH {0}", mechanism.MechanismName);
 			}
 
-			response = await SendCommandAsync (command, doAsync, cancellationToken).ConfigureAwait (false);
-
-			if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
-				throw new AuthenticationException (response.Response);
-
-			SaslException saslException = null;
+			detector.IsAuthenticating = true;
 
 			try {
-				while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
-					challenge = mechanism.Challenge (response.Response);
-					response = await SendCommandAsync (challenge, doAsync, cancellationToken).ConfigureAwait (false);
-				}
+				response = await SendCommandAsync (command, doAsync, cancellationToken).ConfigureAwait (false);
 
-				saslException = null;
-			} catch (SaslException ex) {
-				// reset the authentication state
-				response = await SendCommandAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
-				saslException = ex;
+				if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
+					throw new AuthenticationException (response.Response);
+
+				try {
+					while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
+						challenge = mechanism.Challenge (response.Response);
+						response = await SendCommandAsync (challenge, doAsync, cancellationToken).ConfigureAwait (false);
+					}
+
+					saslException = null;
+				} catch (SaslException ex) {
+					// reset the authentication state
+					response = await SendCommandAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
+					saslException = ex;
+				}
+			} finally {
+				detector.IsAuthenticating = false;
 			}
 
 			if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
@@ -883,6 +890,7 @@ namespace MailKit.Net.Smtp {
 
 			var saslUri = new Uri ($"smtp://{uri.Host}");
 			AuthenticationException authException = null;
+			SaslException saslException;
 			SmtpResponse response;
 			SaslMechanism sasl;
 			bool tried = false;
@@ -908,27 +916,32 @@ namespace MailKit.Net.Smtp {
 					command = string.Format ("AUTH {0}", authmech);
 				}
 
-				response = await SendCommandAsync (command, doAsync, cancellationToken).ConfigureAwait (false);
-
-				if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
-					continue;
-
-				SaslException saslException = null;
+				detector.IsAuthenticating = true;
+				saslException = null;
 
 				try {
-					while (!sasl.IsAuthenticated) {
-						if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
-							break;
+					response = await SendCommandAsync (command, doAsync, cancellationToken).ConfigureAwait (false);
 
-						challenge = sasl.Challenge (response.Response);
-						response = await SendCommandAsync (challenge, doAsync, cancellationToken).ConfigureAwait (false);
+					if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
+						continue;
+
+					try {
+						while (!sasl.IsAuthenticated) {
+							if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
+								break;
+
+							challenge = sasl.Challenge (response.Response);
+							response = await SendCommandAsync (challenge, doAsync, cancellationToken).ConfigureAwait (false);
+						}
+
+						saslException = null;
+					} catch (SaslException ex) {
+						// reset the authentication state
+						response = await SendCommandAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
+						saslException = ex;
 					}
-
-					saslException = null;
-				} catch (SaslException ex) {
-					// reset the authentication state
-					response = await SendCommandAsync (string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
-					saslException = ex;
+				} finally {
+					detector.IsAuthenticating = false;
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {

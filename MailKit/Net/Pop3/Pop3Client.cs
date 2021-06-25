@@ -71,6 +71,7 @@ namespace MailKit.Net.Pop3 {
 			UIDL   = (1 << 1)
 		}
 
+		readonly Pop3AuthenticationSecretDetector detector = new Pop3AuthenticationSecretDetector ();
 		readonly MimeParser parser = new MimeParser (Stream.Null);
 		readonly Pop3Engine engine;
 		ProbedCapabilities probed;
@@ -97,6 +98,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public Pop3Client (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
+			protocolLogger.AuthenticationSecretDetector = detector;
 			engine = new Pop3Engine ();
 		}
 
@@ -674,12 +676,18 @@ namespace MailKit.Net.Pop3 {
 
 				AuthMessage = string.Empty;
 
-				do {
-					if (doAsync)
-						id = await Engine.IterateAsync ().ConfigureAwait (false);
-					else
-						id = Engine.Iterate ();
-				} while (id < pc.Id);
+				client.detector.IsAuthenticating = true;
+
+				try {
+					do {
+						if (doAsync)
+							id = await Engine.IterateAsync ().ConfigureAwait (false);
+						else
+							id = Engine.Iterate ();
+					} while (id < pc.Id);
+				} finally {
+					client.detector.IsAuthenticating = false;
+				}
 
 				return pc;
 			}
@@ -802,10 +810,14 @@ namespace MailKit.Net.Pop3 {
 				for (int i = 0; i < digest.Length; i++)
 					md5sum.Append (digest[i].ToString ("x2"));
 
+				detector.IsAuthenticating = true;
+
 				try {
 					message = await SendCommandAsync (doAsync, cancellationToken, encoding, "APOP {0} {1}", userName, md5sum).ConfigureAwait (false);
 					engine.State = Pop3EngineState.Transaction;
 				} catch (Pop3CommandException) {
+				} finally {
+					detector.IsAuthenticating = false;
 				}
 
 				if (engine.State == Pop3EngineState.Transaction) {
@@ -855,12 +867,15 @@ namespace MailKit.Net.Pop3 {
 			cred = credentials.GetCredential (saslUri, "DEFAULT");
 			userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
 			password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
+			detector.IsAuthenticating = true;
 
 			try {
 				await SendCommandAsync (doAsync, cancellationToken, encoding, "USER {0}", userName).ConfigureAwait (false);
 				message = await SendCommandAsync (doAsync, cancellationToken, encoding, "PASS {0}", password).ConfigureAwait (false);
 			} catch (Pop3CommandException) {
 				throw new AuthenticationException ();
+			} finally {
+				detector.IsAuthenticating = false;
 			}
 
 			engine.State = Pop3EngineState.Transaction;

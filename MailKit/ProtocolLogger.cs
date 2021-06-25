@@ -43,6 +43,7 @@ namespace MailKit {
 	{
 		static byte[] defaultClientPrefix = Encoding.ASCII.GetBytes ("C: ");
 		static byte[] defaultServerPrefix = Encoding.ASCII.GetBytes ("S: ");
+		static readonly byte[] Secret = Encoding.ASCII.GetBytes ("********");
 		static readonly byte[] Space = new byte[] { (byte) ' ' };
 
 		const string DefaultTimestampFormat = "yyyy-MM-ddTHH:mm:ssZ";
@@ -169,6 +170,17 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get or set whether or not authentication secrets should be redacted.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets whether or not authentication secrets should be redacted.
+		/// </remarks>
+		/// <value><c>true</c> if authentication secrets should be redacted; otherwise, <c>false</c>.</value>
+		public bool RedactSecrets {
+			get; set;
+		}
+
+		/// <summary>
 		/// Get or set whether timestamps should be logged.
 		/// </summary>
 		/// <remarks>
@@ -191,6 +203,15 @@ namespace MailKit {
 		}
 
 		#region IProtocolLogger implementation
+
+		/// <summary>
+		/// Get or set the authentication secret detector.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the authentication secret detector.
+		/// </remarks>
+		/// <value>The authentication secret detector.</value>
+		public IAuthenticationSecretDetector AuthenticationSecretDetector { get; set; }
 
 		static void ValidateArguments (byte[] buffer, int offset, int count)
 		{
@@ -231,6 +252,16 @@ namespace MailKit {
 					index++;
 				} else {
 					midline = true;
+				}
+
+				if (RedactSecrets) {
+					var secrets = AuthenticationSecretDetector.DetectSecrets (buffer, start, index - start);
+
+					foreach (var secret in secrets) {
+						stream.Write (buffer, start, secret.StartIndex - start);
+						start = secret.StartIndex + secret.Length;
+						stream.Write (Secret, 0, Secret.Length);
+					}
 				}
 
 				stream.Write (buffer, start, index - start);

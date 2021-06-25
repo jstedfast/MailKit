@@ -66,6 +66,7 @@ namespace MailKit.Net.Imap {
 		static readonly char[] ReservedUriCharacters = { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',', '%' };
 		const string HexAlphabet = "0123456789ABCDEF";
 
+		readonly ImapAuthenticationSecretDetector detector = new ImapAuthenticationSecretDetector ();
 		readonly ImapEngine engine;
 		int timeout = 2 * 60 * 1000;
 		string identifier;
@@ -110,6 +111,8 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapClient (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
+			protocolLogger.AuthenticationSecretDetector = detector;
+
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine (CreateImapFolder);
 			engine.MetadataChanged += OnEngineMetadataChanged;
@@ -1000,7 +1003,13 @@ namespace MailKit.Net.Imap {
 				}
 			};
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			detector.IsAuthenticating = true;
+
+			try {
+				await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			} finally {
+				detector.IsAuthenticating = false;
+			}
 
 			if (ic.Response != ImapCommandResponse.Ok) {
 				EmitAndThrowOnAlert (ic);
@@ -1124,7 +1133,13 @@ namespace MailKit.Net.Imap {
 					}
 				};
 
-				await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+				detector.IsAuthenticating = true;
+
+				try {
+					await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+				} finally {
+					detector.IsAuthenticating = false;
+				}
 
 				if (ic.Response != ImapCommandResponse.Ok) {
 					EmitAndThrowOnAlert (ic);
@@ -1163,7 +1178,13 @@ namespace MailKit.Net.Imap {
 
 			ic = engine.QueueCommand (cancellationToken, null, "LOGIN %S %S\r\n", cred.UserName, cred.Password);
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			detector.IsAuthenticating = true;
+
+			try {
+				await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			} finally {
+				detector.IsAuthenticating = false;
+			}
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw CreateAuthenticationException (ic);

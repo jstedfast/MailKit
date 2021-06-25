@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Net\Imap\ImapAuthenticationSecretDetectorTests.cs" />
     <Compile Include="Net\Imap\ImapClientTests.cs" />
     <Compile Include="Net\Imap\ImapCommandExceptionTests.cs" />
     <Compile Include="Net\Imap\ImapEncodingTests.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="Net\Imap\ImapSearchQueryOptimizerTests.cs" />
     <Compile Include="Net\Imap\ImapStreamTests.cs" />
     <Compile Include="Net\Imap\ImapUtilsTests.cs" />
+    <Compile Include="Net\Pop3\Pop3AuthenticationSecretDetectorTests.cs" />
     <Compile Include="Net\Pop3\Pop3ClientTests.cs" />
     <Compile Include="Net\Pop3\Pop3CommandExceptionTests.cs" />
     <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
@@ -63,6 +65,7 @@
     <Compile Include="Net\Proxy\Socks4ProxyListener.cs" />
     <Compile Include="Net\Proxy\Socks5ClientTests.cs" />
     <Compile Include="Net\Proxy\Socks5ProxyListener.cs" />
+    <Compile Include="Net\Smtp\SmtpAuthenticationSecretDetectorTests.cs" />
     <Compile Include="Net\Smtp\SmtpClientTests.cs" />
     <Compile Include="Net\Smtp\SmtpCommandExceptionTests.cs" />
     <Compile Include="Net\Smtp\SmtpDataFilterTests.cs" />
