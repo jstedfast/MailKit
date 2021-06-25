@@ -34,7 +34,7 @@ namespace MailKit {
 	/// <remarks>
 	/// An authentication secret.
 	/// </remarks>
-	public struct AuthSecret
+	public struct AuthenticationSecret
 	{
 		/// <summary>
 		/// Get the starting offset of the secret within a buffer.
@@ -55,14 +55,14 @@ namespace MailKit {
 		public int Length { get; private set; }
 
 		/// <summary>
-		/// Create a new <see cref="AuthSecret"/>.
+		/// Create a new <see cref="AuthenticationSecret"/>.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="AuthSecret"/>.
+		/// Creates a new <see cref="AuthenticationSecret"/>.
 		/// </remarks>
 		/// <param name="startIndex">The start index of the secret.</param>
 		/// <param name="length">The length of the secret.</param>
-		public AuthSecret (int startIndex, int length)
+		public AuthenticationSecret (int startIndex, int length)
 		{
 			StartIndex = startIndex;
 			Length = length;
@@ -88,6 +88,6 @@ namespace MailKit {
 		/// <param name="offset">The buffer offset.</param>
 		/// <param name="count">The length of the buffer.</param>
 		/// <returns>A list of secrets.</returns>
-		IList<AuthSecret> DetectSecrets (byte[] buffer, int offset, int count);
+		IList<AuthenticationSecret> DetectSecrets (byte[] buffer, int offset, int count);
 	}
 }

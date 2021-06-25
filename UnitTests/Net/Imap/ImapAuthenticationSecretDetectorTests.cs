@@ -63,7 +63,7 @@ namespace UnitTests.Net.Imap {
 			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -108,7 +108,7 @@ namespace UnitTests.Net.Imap {
 			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -130,7 +130,7 @@ namespace UnitTests.Net.Imap {
 		public void TestLoginCommandLiterals ()
 		{
 			var detector = new ImapAuthenticationSecretDetector ();
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			byte[] buffer;
 
 			detector.IsAuthenticating = true;
@@ -160,7 +160,7 @@ namespace UnitTests.Net.Imap {
 			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -205,7 +205,7 @@ namespace UnitTests.Net.Imap {
 			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -246,7 +246,7 @@ namespace UnitTests.Net.Imap {
 			var secretIndex = command.IndexOf ("AHVzZXJuYW1lAHBhc3N3b3Jk", System.StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -268,7 +268,7 @@ namespace UnitTests.Net.Imap {
 		public void TestMultiLineSaslAuthCommand ()
 		{
 			var detector = new ImapAuthenticationSecretDetector ();
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			byte[] buffer;
 
 			detector.IsAuthenticating = true;
@@ -291,7 +291,7 @@ namespace UnitTests.Net.Imap {
 			var secretIndex = command.IndexOf ("AHVzZXJuYW1lAHBhc3N3b3Jk", System.StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;

@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace MailKit.Net.Imap {
 	class ImapAuthenticationSecretDetector : IAuthenticationSecretDetector
 	{
-		static readonly IList<AuthSecret> EmptyAuthSecrets;
+		static readonly IList<AuthenticationSecret> EmptyAuthSecrets;
 
 		enum ImapAuthCommandState
 		{
@@ -95,9 +95,9 @@ namespace MailKit.Net.Imap {
 		static ImapAuthenticationSecretDetector ()
 		{
 #if NET45
-			EmptyAuthSecrets = new AuthSecret[0];
+			EmptyAuthSecrets = new AuthenticationSecret[0];
 #else
-			EmptyAuthSecrets = Array.Empty<AuthSecret> ();
+			EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
 #endif
 		}
 
@@ -125,7 +125,7 @@ namespace MailKit.Net.Imap {
 			return textIndex == text.Length;
 		}
 
-		IList<AuthSecret> DetectAuthSecrets (byte[] buffer, int offset, int endIndex)
+		IList<AuthenticationSecret> DetectAuthSecrets (byte[] buffer, int offset, int endIndex)
 		{
 			int index = offset;
 
@@ -177,12 +177,12 @@ namespace MailKit.Net.Imap {
 			if (index == startIndex)
 				return EmptyAuthSecrets;
 
-			var secret = new AuthSecret (startIndex, index - startIndex);
+			var secret = new AuthenticationSecret (startIndex, index - startIndex);
 
-			return new AuthSecret[] { secret };
+			return new AuthenticationSecret[] { secret };
 		}
 
-		bool SkipLiteralToken (List<AuthSecret> secrets, byte[] buffer, ref int index, int endIndex, byte sentinel)
+		bool SkipLiteralToken (List<AuthenticationSecret> secrets, byte[] buffer, ref int index, int endIndex, byte sentinel)
 		{
 			if (literalState == ImapLiteralState.Octets) {
 				while (index < endIndex && buffer[index] != (byte) '+' && buffer[index] != (byte) '}') {
@@ -218,7 +218,7 @@ namespace MailKit.Net.Imap {
 			if (literalState == ImapLiteralState.Literal) {
 				int skip = Math.Min (literalOctets - literalSeen, endIndex - index);
 
-				secrets.Add (new AuthSecret (index, skip));
+				secrets.Add (new AuthenticationSecret (index, skip));
 
 				literalSeen += skip;
 				index += skip;
@@ -235,7 +235,7 @@ namespace MailKit.Net.Imap {
 			return false;
 		}
 
-		bool SkipLoginToken (List<AuthSecret> secrets, byte[] buffer, ref int index, int endIndex, byte sentinel)
+		bool SkipLoginToken (List<AuthenticationSecret> secrets, byte[] buffer, ref int index, int endIndex, byte sentinel)
 		{
 			int startIndex;
 
@@ -276,7 +276,7 @@ namespace MailKit.Net.Imap {
 					}
 
 					if (index > startIndex)
-						secrets.Add (new AuthSecret (startIndex, index - startIndex));
+						secrets.Add (new AuthenticationSecret (startIndex, index - startIndex));
 
 					if (qstringState == ImapQStringState.EndQuote) {
 						qstringState = ImapQStringState.Complete;
@@ -302,7 +302,7 @@ namespace MailKit.Net.Imap {
 					index++;
 
 				if (index > startIndex)
-					secrets.Add (new AuthSecret (startIndex, index - startIndex));
+					secrets.Add (new AuthenticationSecret (startIndex, index - startIndex));
 
 				if (index >= endIndex)
 					return false;
@@ -313,9 +313,9 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		IList<AuthSecret> DetectLoginSecrets (byte[] buffer, int offset, int endIndex)
+		IList<AuthenticationSecret> DetectLoginSecrets (byte[] buffer, int offset, int endIndex)
 		{
-			var secrets = new List<AuthSecret> ();
+			var secrets = new List<AuthenticationSecret> ();
 			int index = offset;
 
 			if (commandState == ImapAuthCommandState.LoginNewLine)
@@ -349,7 +349,7 @@ namespace MailKit.Net.Imap {
 			return secrets;
 		}
 
-		public IList<AuthSecret> DetectSecrets (byte[] buffer, int offset, int count)
+		public IList<AuthenticationSecret> DetectSecrets (byte[] buffer, int offset, int count)
 		{
 			if (!isAuthenticating || commandState == ImapAuthCommandState.Error || count == 0)
 				return EmptyAuthSecrets;

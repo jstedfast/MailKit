@@ -58,7 +58,7 @@ namespace UnitTests.Net.Smtp {
 			var detector = new SmtpAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			int secretIndex = "AUTH PLAIN ".Length;
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -80,7 +80,7 @@ namespace UnitTests.Net.Smtp {
 		public void TestMultiLineSaslAuthCommand ()
 		{
 			var detector = new SmtpAuthenticationSecretDetector ();
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			byte[] buffer;
 
 			detector.IsAuthenticating = true;
@@ -103,7 +103,7 @@ namespace UnitTests.Net.Smtp {
 			var detector = new SmtpAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			int secretIndex = "AUTH PLAIN\r\n".Length;
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;

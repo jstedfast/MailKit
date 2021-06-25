@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace MailKit.Net.Smtp {
 	class SmtpAuthenticationSecretDetector : IAuthenticationSecretDetector
 	{
-		static readonly IList<AuthSecret> EmptyAuthSecrets;
+		static readonly IList<AuthenticationSecret> EmptyAuthSecrets;
 
 		enum SmtpAuthCommandState
 		{
@@ -57,9 +57,9 @@ namespace MailKit.Net.Smtp {
 		static SmtpAuthenticationSecretDetector ()
 		{
 #if NET45
-			EmptyAuthSecrets = new AuthSecret[0];
+			EmptyAuthSecrets = new AuthenticationSecret[0];
 #else
-			EmptyAuthSecrets = Array.Empty<AuthSecret> ();
+			EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
 #endif
 		}
 
@@ -78,7 +78,7 @@ namespace MailKit.Net.Smtp {
 			return commandIndex == command.Length;
 		}
 
-		public IList<AuthSecret> DetectSecrets (byte[] buffer, int offset, int count)
+		public IList<AuthenticationSecret> DetectSecrets (byte[] buffer, int offset, int count)
 		{
 			if (!isAuthenticating || state == SmtpAuthCommandState.Error || count == 0)
 				return EmptyAuthSecrets;
@@ -134,9 +134,9 @@ namespace MailKit.Net.Smtp {
 			if (index == startIndex)
 				return EmptyAuthSecrets;
 
-			var secret = new AuthSecret (startIndex, index - startIndex);
+			var secret = new AuthenticationSecret (startIndex, index - startIndex);
 
-			return new AuthSecret[] { secret };
+			return new AuthenticationSecret[] { secret };
 		}
 	}
 }

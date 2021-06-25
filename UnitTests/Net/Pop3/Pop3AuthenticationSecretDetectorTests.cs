@@ -59,7 +59,7 @@ namespace UnitTests.Net.Pop3 {
 			const string command = "APOP username AHVzZXJuYW1lAHBhc3N3b3Jk\r\n";
 			var detector = new Pop3AuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -81,7 +81,7 @@ namespace UnitTests.Net.Pop3 {
 		public void TestUserPassCommand ()
 		{
 			var detector = new Pop3AuthenticationSecretDetector ();
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			byte[] buffer;
 
 			detector.IsAuthenticating = true;
@@ -105,7 +105,7 @@ namespace UnitTests.Net.Pop3 {
 			const string command = "USER user\r\nPASS p@$$w0rd\r\n";
 			var detector = new Pop3AuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -145,7 +145,7 @@ namespace UnitTests.Net.Pop3 {
 			var detector = new Pop3AuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			int secretIndex = "AUTH PLAIN ".Length;
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;
@@ -167,7 +167,7 @@ namespace UnitTests.Net.Pop3 {
 		public void TestMultiLineSaslAuthCommand ()
 		{
 			var detector = new Pop3AuthenticationSecretDetector ();
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			byte[] buffer;
 
 			detector.IsAuthenticating = true;
@@ -190,7 +190,7 @@ namespace UnitTests.Net.Pop3 {
 			var detector = new Pop3AuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			int secretIndex = "AUTH PLAIN\r\n".Length;
-			IList<AuthSecret> secrets;
+			IList<AuthenticationSecret> secrets;
 			int index = 0;
 
 			detector.IsAuthenticating = true;

@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace MailKit.Net.Pop3 {
 	class Pop3AuthenticationSecretDetector : IAuthenticationSecretDetector
 	{
-		static readonly IList<AuthSecret> EmptyAuthSecrets;
+		static readonly IList<AuthenticationSecret> EmptyAuthSecrets;
 
 		enum Pop3AuthCommandState
 		{
@@ -69,9 +69,9 @@ namespace MailKit.Net.Pop3 {
 		static Pop3AuthenticationSecretDetector ()
 		{
 #if NET45
-			EmptyAuthSecrets = new AuthSecret[0];
+			EmptyAuthSecrets = new AuthenticationSecret[0];
 #else
-			EmptyAuthSecrets = Array.Empty<AuthSecret> ();
+			EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
 #endif
 		}
 
@@ -90,9 +90,9 @@ namespace MailKit.Net.Pop3 {
 			return commandIndex == command.Length;
 		}
 
-		IList<AuthSecret> DetectApopSecrets (byte[] buffer, int offset, int endIndex)
+		IList<AuthenticationSecret> DetectApopSecrets (byte[] buffer, int offset, int endIndex)
 		{
-			var secrets = new List<AuthSecret> ();
+			var secrets = new List<AuthenticationSecret> ();
 			int index = offset;
 			int startIndex;
 
@@ -114,7 +114,7 @@ namespace MailKit.Net.Pop3 {
 					index++;
 
 				if (index > startIndex)
-					secrets.Add (new AuthSecret (startIndex, index - startIndex));
+					secrets.Add (new AuthenticationSecret (startIndex, index - startIndex));
 
 				if (index < endIndex) {
 					state = Pop3AuthCommandState.ApopToken;
@@ -134,12 +134,12 @@ namespace MailKit.Net.Pop3 {
 				state = Pop3AuthCommandState.ApopNewLine;
 
 			if (index > startIndex)
-				secrets.Add (new AuthSecret (startIndex, index - startIndex));
+				secrets.Add (new AuthenticationSecret (startIndex, index - startIndex));
 
 			return secrets;
 		}
 
-		IList<AuthSecret> DetectAuthSecrets (byte[] buffer, int offset, int endIndex)
+		IList<AuthenticationSecret> DetectAuthSecrets (byte[] buffer, int offset, int endIndex)
 		{
 			int index = offset;
 
@@ -191,14 +191,14 @@ namespace MailKit.Net.Pop3 {
 			if (index == startIndex)
 				return EmptyAuthSecrets;
 
-			var secret = new AuthSecret (startIndex, index - startIndex);
+			var secret = new AuthenticationSecret (startIndex, index - startIndex);
 
-			return new AuthSecret[] { secret };
+			return new AuthenticationSecret[] { secret };
 		}
 
-		IList<AuthSecret> DetectUserPassSecrets (byte[] buffer, int offset, int endIndex)
+		IList<AuthenticationSecret> DetectUserPassSecrets (byte[] buffer, int offset, int endIndex)
 		{
-			var secrets = new List<AuthSecret> ();
+			var secrets = new List<AuthenticationSecret> ();
 			int index = offset;
 
 			if (state == Pop3AuthCommandState.User) {
@@ -216,7 +216,7 @@ namespace MailKit.Net.Pop3 {
 					index++;
 
 				if (index > startIndex)
-					secrets.Add (new AuthSecret (startIndex, index - startIndex));
+					secrets.Add (new AuthenticationSecret (startIndex, index - startIndex));
 
 				if (index < endIndex) {
 					state = Pop3AuthCommandState.UserNewLine;
@@ -255,7 +255,7 @@ namespace MailKit.Net.Pop3 {
 					index++;
 
 				if (index > startIndex)
-					secrets.Add (new AuthSecret (startIndex, index - startIndex));
+					secrets.Add (new AuthenticationSecret (startIndex, index - startIndex));
 
 				if (index < endIndex) {
 					state = Pop3AuthCommandState.PassNewLine;
@@ -279,7 +279,7 @@ namespace MailKit.Net.Pop3 {
 			return secrets;
 		}
 
-		public IList<AuthSecret> DetectSecrets (byte[] buffer, int offset, int count)
+		public IList<AuthenticationSecret> DetectSecrets (byte[] buffer, int offset, int count)
 		{
 			if (!isAuthenticating || state == Pop3AuthCommandState.Error || count == 0)
 				return EmptyAuthSecrets;
