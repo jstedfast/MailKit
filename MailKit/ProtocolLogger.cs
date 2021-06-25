@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Globalization;
 
 namespace MailKit {
 	/// <summary>
@@ -42,6 +43,9 @@ namespace MailKit {
 	{
 		static byte[] defaultClientPrefix = Encoding.ASCII.GetBytes ("C: ");
 		static byte[] defaultServerPrefix = Encoding.ASCII.GetBytes ("S: ");
+		static readonly byte[] Space = new byte[] { (byte) ' ' };
+
+		const string DefaultTimestampFormat = "yyyy-MM-ddTHH:mm:ssZ";
 
 		byte[] clientPrefix = defaultClientPrefix;
 		byte[] serverPrefix = defaultServerPrefix;
@@ -49,6 +53,11 @@ namespace MailKit {
 		readonly bool leaveOpen;
 		bool clientMidline;
 		bool serverMidline;
+
+		ProtocolLogger ()
+		{
+			TimestampFormat = DefaultTimestampFormat;
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
@@ -61,7 +70,7 @@ namespace MailKit {
 		/// </example>
 		/// <param name="fileName">The file name.</param>
 		/// <param name="append"><c>true</c> if the file should be appended to; otherwise, <c>false</c>. Defaults to <c>true</c>.</param>
-		public ProtocolLogger (string fileName, bool append = true)
+		public ProtocolLogger (string fileName, bool append = true) : this ()
 		{
 			stream = File.Open (fileName, append ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.Read);
 		}
@@ -74,7 +83,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="stream">The stream.</param>
 		/// <param name="leaveOpen"><c>true</c> if the stream should be left open after the protocol logger is disposed.</param>
-		public ProtocolLogger (Stream stream, bool leaveOpen = false)
+		public ProtocolLogger (Stream stream, bool leaveOpen = false) : this ()
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
@@ -159,6 +168,28 @@ namespace MailKit {
 			set { serverPrefix = Encoding.UTF8.GetBytes (value); }
 		}
 
+		/// <summary>
+		/// Get or set whether timestamps should be logged.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets whether or not timestamps should be logged.
+		/// </remarks>
+		/// <value><c>true</c> if timestamps should be logged; otherwise, <c>false</c>.</value>
+		public bool LogTimestamps {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set the date and time serialization format that should be used when logging timestamps.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the date and time serialization format that should be used when logging timestamps.
+		/// </remarks>
+		/// <value>The date and time serialization format that should be used when logging timestamps.</value>
+		public string TimestampFormat {
+			get; set;
+		}
+
 		#region IProtocolLogger implementation
 
 		static void ValidateArguments (byte[] buffer, int offset, int count)
@@ -185,8 +216,15 @@ namespace MailKit {
 				while (index < endIndex && buffer[index] != (byte) '\n')
 					index++;
 
-				if (!midline)
+				if (!midline) {
+					if (LogTimestamps) {
+						var timestamp = Encoding.ASCII.GetBytes (DateTime.UtcNow.ToString (TimestampFormat, CultureInfo.InvariantCulture));
+						stream.Write (timestamp, 0, timestamp.Length);
+						stream.Write (Space, 0, Space.Length);
+					}
+
 					stream.Write (prefix, 0, prefix.Length);
+				}
 
 				if (index < endIndex && buffer[index] == (byte) '\n') {
 					midline = false;
@@ -222,7 +260,14 @@ namespace MailKit {
 			if (uri == null)
 				throw new ArgumentNullException (nameof (uri));
 
-			var message = string.Format ("Connected to {0}\r\n", uri);
+			string message;
+
+			if (LogTimestamps) {
+				message = string.Format ("{0} Connected to {1}\r\n", DateTime.UtcNow.ToString (TimestampFormat, CultureInfo.InvariantCulture), uri);
+			} else {
+				message = string.Format ("Connected to {0}\r\n", uri);
+			}
+
 			var buf = Encoding.ASCII.GetBytes (message);
 
 			if (clientMidline || serverMidline) {

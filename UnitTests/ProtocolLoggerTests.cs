@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Globalization;
 
 using NUnit.Framework;
 
@@ -98,6 +99,131 @@ namespace UnitTests {
 							while ((expected = r.ReadLine ()) != null) {
 								line = reader.ReadLine ();
 
+								Assert.AreEqual ("S: " + expected, line);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestLoggingWithCustomPrefixes ()
+		{
+			using (var stream = new MemoryStream ()) {
+				using (var logger = new ProtocolLogger (stream, true) { ClientPrefix = "C> ", ServerPrefix = "S> " }) {
+					logger.LogConnect (new Uri ("pop://pop.skyfall.net:110"));
+
+					var cmd = Encoding.ASCII.GetBytes ("RETR 1\r\n");
+					logger.LogClient (cmd, 0, cmd.Length);
+
+					using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources.comcast.retr1.txt")) {
+						using (var filtered = new FilteredStream (response)) {
+							var buffer = new byte[4096];
+							int n;
+
+							filtered.Add (new Unix2DosFilter ());
+
+							while ((n = filtered.Read (buffer, 0, buffer.Length)) > 0)
+								logger.LogServer (buffer, 0, n);
+						}
+					}
+				}
+
+				stream.Position = 0;
+
+				using (var reader = new StreamReader (stream)) {
+					string line;
+
+					line = reader.ReadLine ();
+					Assert.AreEqual ("Connected to pop://pop.skyfall.net:110/", line);
+
+					line = reader.ReadLine ();
+					Assert.AreEqual ("C> RETR 1", line);
+
+					using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources.comcast.retr1.txt")) {
+						using (var r = new StreamReader (response)) {
+							string expected;
+
+							while ((expected = r.ReadLine ()) != null) {
+								line = reader.ReadLine ();
+
+								Assert.AreEqual ("S> " + expected, line);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		bool TryExtractTimestamp (ref string text, string format, out DateTime timestamp)
+		{
+			int index = text.IndexOf (' ');
+
+			if (index == -1) {
+				timestamp = default;
+				return false;
+			}
+
+			var ts = text.Substring (0, index);
+			if (!DateTime.TryParseExact (ts, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out timestamp))
+				return false;
+
+			text = text.Substring (index + 1);
+
+			return true;
+		}
+
+		[Test]
+		public void TestLoggingWithTimestamps ()
+		{
+			string format;
+
+			using (var stream = new MemoryStream ()) {
+				using (var logger = new ProtocolLogger (stream, true) { LogTimestamps = true }) {
+					format = logger.TimestampFormat;
+
+					logger.LogConnect (new Uri ("pop://pop.skyfall.net:110"));
+
+					var cmd = Encoding.ASCII.GetBytes ("RETR 1\r\n");
+					logger.LogClient (cmd, 0, cmd.Length);
+
+					using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources.comcast.retr1.txt")) {
+						using (var filtered = new FilteredStream (response)) {
+							var buffer = new byte[4096];
+							int n;
+
+							filtered.Add (new Unix2DosFilter ());
+
+							while ((n = filtered.Read (buffer, 0, buffer.Length)) > 0)
+								logger.LogServer (buffer, 0, n);
+						}
+					}
+				}
+
+				stream.Position = 0;
+
+				using (var reader = new StreamReader (stream)) {
+					DateTime timestamp;
+					string line;
+
+					line = reader.ReadLine ();
+
+					Assert.IsTrue (TryExtractTimestamp (ref line, format, out timestamp), "Connect timestamp");
+					Assert.AreEqual ("Connected to pop://pop.skyfall.net:110/", line);
+
+					line = reader.ReadLine ();
+					Assert.IsTrue (TryExtractTimestamp (ref line, format, out timestamp), "C: RETR 1 timestamp");
+					Assert.AreEqual ("C: RETR 1", line);
+
+					using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources.comcast.retr1.txt")) {
+						using (var r = new StreamReader (response)) {
+							string expected;
+
+							while ((expected = r.ReadLine ()) != null) {
+								line = reader.ReadLine ();
+
+								Assert.IsTrue (TryExtractTimestamp (ref line, format, out timestamp), "S: timestamp");
 								Assert.AreEqual ("S: " + expected, line);
 							}
 						}
