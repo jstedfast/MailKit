@@ -51,7 +51,7 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestNonAuthCommand ()
 		{
-			const string command = "RETR 1\r\n";
+			const string command = "UIDL 1\r\n";
 			var detector = new Pop3AuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 

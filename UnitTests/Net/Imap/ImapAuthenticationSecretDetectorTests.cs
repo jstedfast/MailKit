@@ -77,8 +77,8 @@ namespace UnitTests.Net.Imap {
 		public void TestLoginCommand ()
 		{
 			const string command = "A00000000 LOGIN username password\r\n";
-			var userIndex = command.IndexOf ("username", System.StringComparison.Ordinal);
-			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
+			var userIndex = command.IndexOf ("username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("password", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 
@@ -96,8 +96,8 @@ namespace UnitTests.Net.Imap {
 		public void TestLoginCommandBitByBit ()
 		{
 			const string command = "A00000000 LOGIN username password\r\n";
-			var userIndex = command.IndexOf ("username", System.StringComparison.Ordinal);
-			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
+			var userIndex = command.IndexOf ("username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("password", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			IList<AuthenticationSecret> secrets;
@@ -122,8 +122,8 @@ namespace UnitTests.Net.Imap {
 		public void TestLoginCommandQStrings ()
 		{
 			const string command = "A00000000 LOGIN \"username\" \"password\"\r\n";
-			var userIndex = command.IndexOf ("username", System.StringComparison.Ordinal);
-			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
+			var userIndex = command.IndexOf ("username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("password", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 
@@ -141,8 +141,8 @@ namespace UnitTests.Net.Imap {
 		public void TestLoginCommandQStringsBitByBit ()
 		{
 			const string command = "A00000000 LOGIN \"username\" \"password\"\r\n";
-			var userIndex = command.IndexOf ("username", System.StringComparison.Ordinal);
-			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
+			var userIndex = command.IndexOf ("username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("password", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			IList<AuthenticationSecret> secrets;
@@ -153,6 +153,51 @@ namespace UnitTests.Net.Imap {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if ((index >= userIndex && index < userIndex + 8) || (index >= passwdIndex && index < passwdIndex + 8)) {
+					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
+					Assert.AreEqual (1, secrets[0].Length, "Length");
+				} else {
+					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+				}
+				index++;
+			}
+		}
+
+		[Test]
+		public void TestLoginCommandEscapedQStrings ()
+		{
+			const string command = "A00000000 LOGIN \"domain\\\\username\" \"pass\\\"word\"\r\n";
+			var userIndex = command.IndexOf ("domain\\\\username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("pass\\\"word", StringComparison.Ordinal);
+			var detector = new ImapAuthenticationSecretDetector ();
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			detector.IsAuthenticating = true;
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (2, secrets.Count, "# of secrets");
+			Assert.AreEqual (userIndex, secrets[0].StartIndex, "UserName StartIndex");
+			Assert.AreEqual (16, secrets[0].Length, "UserName Length");
+			Assert.AreEqual (passwdIndex, secrets[1].StartIndex, "Password StartIndex");
+			Assert.AreEqual (10, secrets[1].Length, "Password Length");
+		}
+
+		[Test]
+		public void TestLoginCommandEscapedQStringsBitByBit ()
+		{
+			const string command = "A00000000 LOGIN \"domain\\\\username\" \"pass\\\"word\"\r\n";
+			var userIndex = command.IndexOf ("domain\\\\username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("pass\\\"word", StringComparison.Ordinal);
+			var detector = new ImapAuthenticationSecretDetector ();
+			var buffer = Encoding.ASCII.GetBytes (command);
+			IList<AuthenticationSecret> secrets;
+			int index = 0;
+
+			detector.IsAuthenticating = true;
+
+			while (index < command.Length) {
+				secrets = detector.DetectSecrets (buffer, index, 1);
+				if ((index >= userIndex && index < userIndex + 16) || (index >= passwdIndex && index < passwdIndex + 10)) {
 					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
 					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
 					Assert.AreEqual (1, secrets[0].Length, "Length");
@@ -193,8 +238,8 @@ namespace UnitTests.Net.Imap {
 		public void TestLoginCommandLiteralsBitByBit ()
 		{
 			const string command = "A00000000 LOGIN {8}\r\nusername {8}\r\npassword\r\n";
-			var userIndex = command.IndexOf ("username", System.StringComparison.Ordinal);
-			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
+			var userIndex = command.IndexOf ("username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("password", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			IList<AuthenticationSecret> secrets;
