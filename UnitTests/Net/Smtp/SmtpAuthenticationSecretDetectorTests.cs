@@ -37,6 +37,42 @@ namespace UnitTests.Net.Smtp {
 	public class SmtpAuthenticationSecretDetectorTests
 	{
 		[Test]
+		public void TestEmptyCommand ()
+		{
+			var detector = new SmtpAuthenticationSecretDetector ();
+			var buffer = new byte[0];
+
+			detector.IsAuthenticating = true;
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
+		[Test]
+		public void TestNonAuthCommand ()
+		{
+			const string command = "MAIL FROM:<user@domain.com>\r\n";
+			var detector = new SmtpAuthenticationSecretDetector ();
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			detector.IsAuthenticating = true;
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
+		[Test]
+		public void TestNotIsAuthenticating ()
+		{
+			const string command = "AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n";
+			var detector = new SmtpAuthenticationSecretDetector ();
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
+		[Test]
 		public void TestSaslIRAuthCommand ()
 		{
 			const string command = "AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n";

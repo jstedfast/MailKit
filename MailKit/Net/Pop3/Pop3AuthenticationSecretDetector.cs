@@ -281,7 +281,7 @@ namespace MailKit.Net.Pop3 {
 
 		public IList<AuthenticationSecret> DetectSecrets (byte[] buffer, int offset, int count)
 		{
-			if (!isAuthenticating || state == Pop3AuthCommandState.Error || count == 0)
+			if (!IsAuthenticating || state == Pop3AuthCommandState.Error || count == 0)
 				return EmptyAuthSecrets;
 
 			int endIndex = offset + count;

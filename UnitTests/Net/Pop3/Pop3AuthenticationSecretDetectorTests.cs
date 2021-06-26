@@ -37,6 +37,42 @@ namespace UnitTests.Net.Pop3 {
 	public class Pop3AuthenticationSecretDetectorTests
 	{
 		[Test]
+		public void TestEmptyCommand ()
+		{
+			var detector = new Pop3AuthenticationSecretDetector ();
+			var buffer = new byte[0];
+
+			detector.IsAuthenticating = true;
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
+		[Test]
+		public void TestNonAuthCommand ()
+		{
+			const string command = "RETR 1\r\n";
+			var detector = new Pop3AuthenticationSecretDetector ();
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			detector.IsAuthenticating = true;
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
+		[Test]
+		public void TestNotIsAuthenticating ()
+		{
+			const string command = "AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n";
+			var detector = new Pop3AuthenticationSecretDetector ();
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
+		[Test]
 		public void TestApopCommand ()
 		{
 			const string command = "APOP username AHVzZXJuYW1lAHBhc3N3b3Jk\r\n";

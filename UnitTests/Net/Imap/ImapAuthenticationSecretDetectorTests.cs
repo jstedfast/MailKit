@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Text;
 using System.Collections.Generic;
 
@@ -36,6 +37,42 @@ namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapAuthenticationSecretDetectorTests
 	{
+		[Test]
+		public void TestEmptyCommand ()
+		{
+			var detector = new ImapAuthenticationSecretDetector ();
+			var buffer = new byte[0];
+
+			detector.IsAuthenticating = true;
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
+		[Test]
+		public void TestNonAuthCommand ()
+		{
+			string command = string.Format ("A00000000 APPEND INBOX (\\Seen) \"{0}\" {{4096}}\r\n", ImapUtils.FormatInternalDate (DateTimeOffset.Now));
+			var detector = new ImapAuthenticationSecretDetector ();
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			detector.IsAuthenticating = true;
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
+		[Test]
+		public void TestNotIsAuthenticating ()
+		{
+			const string command = "A00000000 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n";
+			var detector = new ImapAuthenticationSecretDetector ();
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (0, secrets.Count, "# of secrets");
+		}
+
 		[Test]
 		public void TestLoginCommand ()
 		{

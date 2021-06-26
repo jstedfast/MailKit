@@ -351,7 +351,7 @@ namespace MailKit.Net.Imap {
 
 		public IList<AuthenticationSecret> DetectSecrets (byte[] buffer, int offset, int count)
 		{
-			if (!isAuthenticating || commandState == ImapAuthCommandState.Error || count == 0)
+			if (!IsAuthenticating || commandState == ImapAuthCommandState.Error || count == 0)
 				return EmptyAuthSecrets;
 
 			int endIndex = offset + count;

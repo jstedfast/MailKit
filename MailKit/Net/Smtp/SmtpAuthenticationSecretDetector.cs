@@ -80,7 +80,7 @@ namespace MailKit.Net.Smtp {
 
 		public IList<AuthenticationSecret> DetectSecrets (byte[] buffer, int offset, int count)
 		{
-			if (!isAuthenticating || state == SmtpAuthCommandState.Error || count == 0)
+			if (!IsAuthenticating || state == SmtpAuthCommandState.Error || count == 0)
 				return EmptyAuthSecrets;
 
 			int endIndex = offset + count;
