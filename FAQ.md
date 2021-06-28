@@ -23,6 +23,7 @@
 * [How can I decrypt PGP messages that are embedded in the main message text?](#DecryptInlinePGP)
 * [How can I reply to a message?](#Reply)
 * [How can I forward a message?](#Forward)
+* [Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5 app?](#GarbledText)
 
 ### ImapClient
 * [How can I get the number of unread messages in a folder?](#ImapUnreadCount)
@@ -1414,6 +1415,21 @@ public static MimeMessage Forward (MimeMessage original, MailboxAddress from, IE
 ```
 
 Keep in mind that not all messages will have a `TextBody` available, so you'll have to find a way to handle those cases.
+
+### <a name="GarbledText">Q: Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5 app?</a>
+
+.NET Core (and ASP.NET Core by extension) and .NET 5 only provide the Unicode encodings, ASCII and ISO-8859-1 by default.
+Other text encodings are not available to your application unless your application
+[registers](https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.registerprovider?view=net-5.0) the encoding
+provider that provides all of the additional encodings.
+
+To register the additional text encodings, use the following code snippet:
+
+```csharp
+System.Text.Encoding.RegisterProvider (System.Text.Encoding.CodePagesEncodingProvider.Instance);
+```
+
+Note: The above code snippet should be safe to call in .NET Framework versions >= 4.6 as well.
 
 ## ImapClient
 
