@@ -10,7 +10,7 @@ jobs:
         os: [ windows-latest, ubuntu-latest ]
         build-configuration: [ Debug, Release ]
     outputs:
-      latest-version: ${{ steps.get_semantic_version.outputs.version_num }}
+      latest-version: ${{ steps.semantic_version.outputs.version_num }}
     environment: ci
     env:
       SOLUTION_PATH: MailKit.sln
@@ -18,12 +18,12 @@ jobs:
       BUILD_CONFIGURATION: ${{ matrix.build-configuration }}
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
     steps:
-      - name: Steps' conditionals handler
-        id: step_conditionals_handler
+      - name: Configure build options
+        id: configure
         shell: pwsh
         run: |
-          $IS_CONFIGURATION_DEBUG = 'false'
-          $IS_CONFIGURATION_RELEASE = 'false'
+          $IS_DEBUG = 'false'
+          $IS_RELEASE = 'false'
           $IS_PUSH_TO_MASTER = 'false'
           $IS_NOT_PR = 'true'
           $IS_GITHUB_RELEASE = 'false'
@@ -31,10 +31,10 @@ jobs:
           $IS_UBUNTU = 'false'
 
           if ( $env:BUILD_CONFIGURATION -ceq 'Debug' ) {
-            $IS_CONFIGURATION_DEBUG = 'true'
+            $IS_DEBUG = 'true'
           }
           if ( $env:BUILD_CONFIGURATION -ceq 'Release' ) {
-            $IS_CONFIGURATION_RELEASE = 'true'
+            $IS_RELEASE = 'true'
           }
           if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') ) {
             $IS_PUSH_TO_MASTER = 'true'
@@ -52,8 +52,8 @@ jobs:
             $IS_UBUNTU = 'true'
           }
 
-          echo "::set-output name=is_configuration_debug::$(echo $IS_CONFIGURATION_DEBUG)"
-          echo "::set-output name=is_configuration_release::$(echo $IS_CONFIGURATION_RELEASE)"
+          echo "::set-output name=IS_DEBUG::$(echo $IS_DEBUG)"
+          echo "::set-output name=IS_RELEASE::$(echo $IS_RELEASE)"
           echo "::set-output name=is_push_to_master::$(echo $IS_PUSH_TO_MASTER)"
           echo "::set-output name=is_not_pr::$(echo $IS_NOT_PR)"
           echo "::set-output name=is_github_release::$(echo $IS_GITHUB_RELEASE)"
@@ -64,7 +64,7 @@ jobs:
           GITHUB_REF: ${{ github.ref }}
           OS: ${{ matrix.os }}
 
-      - if: steps.step_conditionals_handler.outputs.is_windows == 'true'
+      - if: steps.configure.outputs.is_windows == 'true'
         name: Setup MSBuild
         id: setup_msbuild
         uses: microsoft/setup-msbuild@v1.0.2
@@ -78,7 +78,7 @@ jobs:
           fetch-depth: 0
 
       - name: Get semantic version from csproj
-        id: get_semantic_version
+        id: semantic_version
         shell: pwsh
         run: |
           $xml = [xml](gc MailKit/MailKit.csproj)
@@ -86,7 +86,7 @@ jobs:
           echo "::set-output name=version_num::$(echo $SEMANTIC_VERSION_NUMBER[0].Trim())"
           echo "::set-output name=version_tag::$(echo v"$SEMANTIC_VERSION_NUMBER[0].Trim()")"
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+      - if: steps.configure.outputs.is_github_release == 'true'
         name: Get latest tag
         id: get_latest_tag
         shell: pwsh
@@ -96,7 +96,7 @@ jobs:
         env:
           GIT_URL: ${{ github.repository }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true' && steps.get_semantic_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
+      - if: steps.configure.outputs.is_github_release == 'true' && steps.semantic_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
         name: Add new tag to repo
         id: add_new_tag_to_repo
         shell: pwsh
@@ -108,7 +108,7 @@ jobs:
         env:
           GIT_USER_NAME: ${{ github.event.head_commit.author.username }}
           GIT_USER_EMAIL: ${{ github.event.head_commit.author.email }}
-          NEW_VERSION_NUM: ${{ steps.get_semantic_version.outputs.version_num }}
+          NEW_VERSION_NUM: ${{ steps.semantic_version.outputs.version_num }}
 
       - name: Run NuGet restore
         id: run_nuget_restore
@@ -131,9 +131,9 @@ jobs:
           /p:Configuration=$env:BUILD_CONFIGURATION `
           /p:MonoRuntime=$env:IS_UBUNTU
         env:
-          IS_UBUNTU: ${{ steps.step_conditionals_handler.outputs.is_ubuntu }}
+          IS_UBUNTU: ${{ steps.configure.outputs.is_ubuntu }}
 
-      - if: steps.step_conditionals_handler.outputs.is_configuration_release == 'true'
+      - if: steps.configure.outputs.is_release == 'true'
         name: Run unit tests
         id: run_unit_tests
         continue-on-error: true
@@ -143,7 +143,7 @@ jobs:
 
           & $NUnitConsoleRunner --domain:single "UnitTests/bin/Release/net48/UnitTests.dll"
 
-      - if: steps.step_conditionals_handler.outputs.is_configuration_release == 'true'
+      - if: steps.configure.outputs.is_release == 'true'
         name: Upload unit test results as artifact
         id: upload_test_results
         continue-on-error: true
@@ -152,7 +152,7 @@ jobs:
           name: Unit test results
           path: TestResult.xml
 
-      - if: steps.step_conditionals_handler.outputs.is_configuration_debug == 'true' && steps.step_conditionals_handler.outputs.is_windows == 'true'
+      - if: steps.configure.outputs.is_debug == 'true' && steps.configure.outputs.is_windows == 'true'
         name: Run unit tests and upload to Coveralls
         id: test_results_to_coveralls
         shell: pwsh
@@ -165,9 +165,9 @@ jobs:
           GIT_ACTOR: ${{ github.event.head_commit.author.username }}
           GIT_ACTOR_EMAIL: ${{ github.event.head_commit.author.email }}
           GIT_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          COVERALLS_JOB_ID: ${{ steps.get_semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}
+          COVERALLS_JOB_ID: ${{ steps.semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+      - if: steps.configure.outputs.is_github_release == 'true'
         name: Create NuGet package
         id: create_nuget_package
         shell: pwsh
@@ -175,9 +175,9 @@ jobs:
           nuget pack nuget/MailKit.nuspec `
           -Version "$env:LATEST_VERSION.$env:GITHUB_RUN_NUMBER"
         env:
-          LATEST_VERSION: ${{ steps.get_semantic_version.outputs.version_num }}
+          LATEST_VERSION: ${{ steps.semantic_version.outputs.version_num }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+      - if: steps.configure.outputs.is_github_release == 'true'
         name: Push NuGet package to MyGet
         id: push_nuget_package
         shell: pwsh
@@ -186,15 +186,15 @@ jobs:
           -ApiKey $env:MYGET_API_KEY `
           -Source https://www.myget.org/F/mimekit/api/v3/index.json
         env:
-          NUGET_PKG_PATH: MailKit.${{ steps.get_semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
+          NUGET_PKG_PATH: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
           MYGET_API_KEY: ${{ secrets.MYGET_API_KEY }}
 
-      - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
+      - if: steps.configure.outputs.is_github_release == 'true'
         name: Upload NuGet package as artifact
         id: upload_nuget_package
         uses: actions/upload-artifact@v1
         with:
-          name: MailKit.${{ steps.get_semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
-          path: MailKit.${{ steps.get_semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
+          name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
+          path: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
