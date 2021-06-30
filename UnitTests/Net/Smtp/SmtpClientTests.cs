@@ -1352,6 +1352,325 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static void AssertRedacted (MemoryStream stream, string commandPrefix, string nextCommandPrefix)
+		{
+			stream.Position = 0;
+
+			using (var reader = new StreamReader (stream, Encoding.ASCII, false, 1024, true)) {
+				string line, secret;
+
+				while ((line = reader.ReadLine ()) != null) {
+					if (line.StartsWith (commandPrefix, StringComparison.Ordinal))
+						break;
+				}
+
+				Assert.NotNull (line, "Authentication command not found: {0}", commandPrefix);
+
+				if (line.Length > commandPrefix.Length) {
+					// SASL IR; check next token is redacted.
+					secret = line.Substring (commandPrefix.Length);
+
+					Assert.AreEqual ("********", secret, "SASLIR token");
+				}
+
+				while ((line = reader.ReadLine ()) != null) {
+					if (line.StartsWith (nextCommandPrefix, StringComparison.Ordinal))
+						return;
+
+					if (!line.StartsWith ("C: ", StringComparison.Ordinal))
+						continue;
+
+					secret = line.Substring (3);
+
+					Assert.AreEqual ("********", secret, "SASL challenge");
+				}
+
+				Assert.Fail ("Did not find response.");
+			}
+		}
+
+		[Test]
+		public void TestRedactAuthentication ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
+			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
+			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var stream = new MemoryStream ()) {
+				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
+					client.LocalDomain = "unit-tests.mimekit.org";
+
+					try {
+						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
+
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					client.AuthenticationMechanisms.Remove ("PLAIN");
+
+					try {
+						client.Authenticate ("username", "password");
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					try {
+						client.Disconnect (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				}
+
+				AssertRedacted (stream, "C: AUTH LOGIN", "C: QUIT");
+			}
+		}
+
+		[Test]
+		public async Task TestRedactAuthenticationAsync ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
+			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
+			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var stream = new MemoryStream ()) {
+				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
+					client.LocalDomain = "unit-tests.mimekit.org";
+
+					try {
+						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
+
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					client.AuthenticationMechanisms.Remove ("PLAIN");
+
+					try {
+						await client.AuthenticateAsync ("username", "password");
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					try {
+						await client.DisconnectAsync (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				}
+
+				AssertRedacted (stream, "C: AUTH LOGIN", "C: QUIT");
+			}
+		}
+
+		[Test]
+		public void TestRedactSaslInitialResponse ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var stream = new MemoryStream ()) {
+				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
+					client.LocalDomain = "unit-tests.mimekit.org";
+
+					try {
+						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
+
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					try {
+						client.Authenticate (new SaslMechanismPlain ("username", "password"));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					try {
+						client.Disconnect (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				}
+
+				AssertRedacted (stream, "C: AUTH PLAIN ", "C: QUIT");
+			}
+		}
+
+		[Test]
+		public async Task TestRedactSaslInitialResponseAsync ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var stream = new MemoryStream ()) {
+				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
+					client.LocalDomain = "unit-tests.mimekit.org";
+
+					try {
+						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
+
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					try {
+						await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password"));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					try {
+						await client.DisconnectAsync (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				}
+
+				AssertRedacted (stream, "C: AUTH PLAIN ", "C: QUIT");
+			}
+		}
+
+		[Test]
+		public void TestRedactSaslAuthentication ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
+			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
+			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var stream = new MemoryStream ()) {
+				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
+					client.LocalDomain = "unit-tests.mimekit.org";
+
+					try {
+						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
+
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					try {
+						client.Authenticate (new SaslMechanismLogin ("username", "password"));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					try {
+						client.Disconnect (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				}
+
+				AssertRedacted (stream, "C: AUTH LOGIN", "C: QUIT");
+			}
+		}
+
+		[Test]
+		public async Task TestRedactSaslAuthenticationAsync ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
+			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
+			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var stream = new MemoryStream ()) {
+				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
+					client.LocalDomain = "unit-tests.mimekit.org";
+
+					try {
+						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
+
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					try {
+						await client.AuthenticateAsync (new SaslMechanismLogin ("username", "password"));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					try {
+						await client.DisconnectAsync (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				}
+
+				AssertRedacted (stream, "C: AUTH LOGIN", "C: QUIT");
+			}
+		}
+
 		[Test]
 		public void TestHeloFallback ()
 		{

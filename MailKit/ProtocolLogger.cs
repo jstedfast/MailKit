@@ -258,7 +258,8 @@ namespace MailKit {
 					var secrets = AuthenticationSecretDetector.DetectSecrets (buffer, start, index - start);
 
 					foreach (var secret in secrets) {
-						stream.Write (buffer, start, secret.StartIndex - start);
+						if (secret.StartIndex > start)
+							stream.Write (buffer, start, secret.StartIndex - start);
 						start = secret.StartIndex + secret.Length;
 						stream.Write (Secret, 0, Secret.Length);
 					}
