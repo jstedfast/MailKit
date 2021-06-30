@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -72,6 +73,35 @@ namespace UnitTests {
 
 			parsed = (BodyPartBasic) body;
 			Assert.AreEqual (expected, parsed.ToString ());
+		}
+
+		[Test]
+		public void TestNilSerialization ()
+		{
+			var builder = new StringBuilder ();
+
+			BodyPart.Encode (builder, (BodyPart) null);
+			Assert.AreEqual ("NIL", builder.ToString (), "BodyPart");
+
+			builder.Clear ();
+			BodyPart.Encode (builder, (BodyPartCollection) null);
+			Assert.AreEqual ("NIL", builder.ToString (), "BodyPartCollection");
+
+			builder.Clear ();
+			BodyPart.Encode (builder, (ContentDisposition) null);
+			Assert.AreEqual ("NIL", builder.ToString (), "ContentDisposition");
+
+			//builder.Clear ();
+			//BodyPart.Encode (builder, (ContentType) null);
+			//Assert.AreEqual ("NIL", builder.ToString (), "ContentType");
+
+			builder.Clear ();
+			BodyPart.Encode (builder, (Envelope) null);
+			Assert.AreEqual ("NIL", builder.ToString (), "Envelope");
+
+			builder.Clear ();
+			BodyPart.Encode (builder, (IList<Parameter>) null);
+			Assert.AreEqual ("NIL", builder.ToString (), "IEnumerable<Parameter>");
 		}
 
 		[Test]
@@ -329,6 +359,7 @@ namespace UnitTests {
 
 			var encoded = body.ToString ();
 
+			Assert.Throws<ArgumentNullException> (() => BodyPart.TryParse (null, out body));
 			Assert.IsTrue (BodyPart.TryParse (encoded, out body));
 
 			VerifyPartSpecifier (body);
