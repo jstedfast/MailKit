@@ -193,6 +193,18 @@ namespace MailKit.Net.Pop3 {
 
 			var secret = new AuthenticationSecret (startIndex, index - startIndex);
 
+			if (state == Pop3AuthCommandState.AuthNewLine) {
+				index++;
+
+				if (index < endIndex) {
+					if (buffer[index] == (byte) '\n') {
+						state = Pop3AuthCommandState.AuthToken;
+					} else {
+						state = Pop3AuthCommandState.Error;
+					}
+				}
+			}
+
 			return new AuthenticationSecret[] { secret };
 		}
 

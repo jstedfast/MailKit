@@ -136,6 +136,18 @@ namespace MailKit.Net.Smtp {
 
 			var secret = new AuthenticationSecret (startIndex, index - startIndex);
 
+			if (state == SmtpAuthCommandState.AuthNewLine) {
+				index++;
+
+				if (index < endIndex) {
+					if (buffer[index] == (byte) '\n') {
+						state = SmtpAuthCommandState.AuthToken;
+					} else {
+						state = SmtpAuthCommandState.Error;
+					}
+				}
+			}
+
 			return new AuthenticationSecret[] { secret };
 		}
 	}

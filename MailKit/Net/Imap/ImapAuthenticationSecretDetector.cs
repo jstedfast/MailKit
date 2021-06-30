@@ -179,6 +179,18 @@ namespace MailKit.Net.Imap {
 
 			var secret = new AuthenticationSecret (startIndex, index - startIndex);
 
+			if (commandState == ImapAuthCommandState.AuthNewLine) {
+				index++;
+
+				if (index < endIndex) {
+					if (buffer[index] == (byte) '\n') {
+						commandState = ImapAuthCommandState.AuthToken;
+					} else {
+						commandState = ImapAuthCommandState.Error;
+					}
+				}
+			}
+
 			return new AuthenticationSecret[] { secret };
 		}
 

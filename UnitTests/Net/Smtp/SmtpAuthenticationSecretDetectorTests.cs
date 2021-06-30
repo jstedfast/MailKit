@@ -121,24 +121,30 @@ namespace UnitTests.Net.Smtp {
 
 			detector.IsAuthenticating = true;
 
-			buffer = Encoding.ASCII.GetBytes ("AUTH PLAIN\r\n");
+			buffer = Encoding.ASCII.GetBytes ("AUTH LOGIN\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
 			Assert.AreEqual (0, secrets.Count, "initial # of secrets");
 
-			buffer = Encoding.ASCII.GetBytes ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n");
+			buffer = Encoding.ASCII.GetBytes ("dXNlcm5hbWU=\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
 			Assert.AreEqual (1, secrets.Count, "# of secrets");
 			Assert.AreEqual (0, secrets[0].StartIndex, "StartIndex");
-			Assert.AreEqual (24, secrets[0].Length, "Length");
+			Assert.AreEqual (12, secrets[0].Length, "Length");
+
+			buffer = Encoding.ASCII.GetBytes ("cGFzc3dvcmQ=\r\n");
+			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (1, secrets.Count, "# of secrets");
+			Assert.AreEqual (0, secrets[0].StartIndex, "StartIndex");
+			Assert.AreEqual (12, secrets[0].Length, "Length");
 		}
 
 		[Test]
 		public void TestMultiLineSaslAuthCommandBitByBit ()
 		{
-			const string command = "AUTH PLAIN\r\nAHVzZXJuYW1lAHBhc3N3b3Jk\r\n";
+			const string command = "AUTH LOGIN\r\ndXNlcm5hbWU=\r\ncGFzc3dvcmQ=\r\n";
 			var detector = new SmtpAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
-			int secretIndex = "AUTH PLAIN\r\n".Length;
+			int secretIndex = "AUTH LOGIN\r\n".Length;
 			IList<AuthenticationSecret> secrets;
 			int index = 0;
 

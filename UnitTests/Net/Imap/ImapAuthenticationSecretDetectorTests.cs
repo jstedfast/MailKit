@@ -264,8 +264,8 @@ namespace UnitTests.Net.Imap {
 		public void TestLoginCommandLiteralPlus ()
 		{
 			const string command = "A00000000 LOGIN {8+}\r\nusername {8+}\r\npassword\r\n";
-			var userIndex = command.IndexOf ("username", System.StringComparison.Ordinal);
-			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
+			var userIndex = command.IndexOf ("username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("password", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 
@@ -283,8 +283,8 @@ namespace UnitTests.Net.Imap {
 		public void TestLoginCommandLiteralPlusBitByBit ()
 		{
 			const string command = "A00000000 LOGIN {8+}\r\nusername {8+}\r\npassword\r\n";
-			var userIndex = command.IndexOf ("username", System.StringComparison.Ordinal);
-			var passwdIndex = command.IndexOf ("password", System.StringComparison.Ordinal);
+			var userIndex = command.IndexOf ("username", StringComparison.Ordinal);
+			var passwdIndex = command.IndexOf ("password", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			IList<AuthenticationSecret> secrets;
@@ -309,7 +309,7 @@ namespace UnitTests.Net.Imap {
 		public void TestSaslIRAuthCommand ()
 		{
 			const string command = "A00000000 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n";
-			var secretIndex = command.IndexOf ("AHVzZXJuYW1lAHBhc3N3b3Jk", System.StringComparison.Ordinal);
+			var secretIndex = command.IndexOf ("AHVzZXJuYW1lAHBhc3N3b3Jk", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 
@@ -325,7 +325,7 @@ namespace UnitTests.Net.Imap {
 		public void TestSaslIRAuthCommandBitByBit ()
 		{
 			const string command = "A00000000 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n";
-			var secretIndex = command.IndexOf ("AHVzZXJuYW1lAHBhc3N3b3Jk", System.StringComparison.Ordinal);
+			var secretIndex = command.IndexOf ("AHVzZXJuYW1lAHBhc3N3b3Jk", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			IList<AuthenticationSecret> secrets;
@@ -355,22 +355,28 @@ namespace UnitTests.Net.Imap {
 
 			detector.IsAuthenticating = true;
 
-			buffer = Encoding.ASCII.GetBytes ("A00000000 AUTHENTICATE PLAIN\r\n");
+			buffer = Encoding.ASCII.GetBytes ("A00000000 AUTHENTICATE LOGIN\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
 			Assert.AreEqual (0, secrets.Count, "initial # of secrets");
 
-			buffer = Encoding.ASCII.GetBytes ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n");
+			buffer = Encoding.ASCII.GetBytes ("dXNlcm5hbWU=\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
 			Assert.AreEqual (1, secrets.Count, "# of secrets");
 			Assert.AreEqual (0, secrets[0].StartIndex, "StartIndex");
-			Assert.AreEqual (24, secrets[0].Length, "Length");
+			Assert.AreEqual (12, secrets[0].Length, "Length");
+
+			buffer = Encoding.ASCII.GetBytes ("cGFzc3dvcmQ=\r\n");
+			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
+			Assert.AreEqual (1, secrets.Count, "# of secrets");
+			Assert.AreEqual (0, secrets[0].StartIndex, "StartIndex");
+			Assert.AreEqual (12, secrets[0].Length, "Length");
 		}
 
 		[Test]
 		public void TestMultiLineSaslAuthCommandBitByBit ()
 		{
-			const string command = "A00000000 AUTHENTICATE PLAIN\r\nAHVzZXJuYW1lAHBhc3N3b3Jk\r\n";
-			var secretIndex = command.IndexOf ("AHVzZXJuYW1lAHBhc3N3b3Jk", System.StringComparison.Ordinal);
+			const string command = "A00000000 AUTHENTICATE LOGIN\r\ndXNlcm5hbWU=\r\ncGFzc3dvcmQ=\r\n";
+			var secretIndex = command.IndexOf ("dXNlcm5hbWU=", StringComparison.Ordinal);
 			var detector = new ImapAuthenticationSecretDetector ();
 			var buffer = Encoding.ASCII.GetBytes (command);
 			IList<AuthenticationSecret> secrets;

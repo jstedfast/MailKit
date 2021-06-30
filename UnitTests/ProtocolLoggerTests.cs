@@ -59,6 +59,41 @@ namespace UnitTests {
 		}
 
 		[Test]
+		public void TestDefaultSettings ()
+		{
+			Assert.AreEqual ("C: ", ProtocolLogger.DefaultClientPrefix, "DefaultClientPrefix");
+			Assert.AreEqual ("S: ", ProtocolLogger.DefaultServerPrefix, "DefaultServerPrefix");
+
+			using (var logger = new ProtocolLogger (new MemoryStream ())) {
+				Assert.AreEqual ("C: ", logger.ClientPrefix, "ClientPrefix");
+				Assert.AreEqual ("S: ", logger.ServerPrefix, "ServerPrefix");
+				Assert.AreEqual ("yyyy-MM-ddTHH:mm:ssZ", logger.TimestampFormat, "TimestampFormat");
+				Assert.IsFalse (logger.LogTimestamps, "LogTimestamps");
+				Assert.IsFalse (logger.RedactSecrets, "RedactSecrets");
+			}
+		}
+
+		[Test]
+		public void TestOverridingDefaultSettings ()
+		{
+			try {
+				ProtocolLogger.DefaultClientPrefix = "C> ";
+				ProtocolLogger.DefaultServerPrefix = "S> ";
+
+				using (var logger = new ProtocolLogger (new MemoryStream ())) {
+					Assert.AreEqual ("C> ", logger.ClientPrefix, "ClientPrefix");
+					Assert.AreEqual ("S> ", logger.ServerPrefix, "ServerPrefix");
+					Assert.AreEqual ("yyyy-MM-ddTHH:mm:ssZ", logger.TimestampFormat, "TimestampFormat");
+					Assert.IsFalse (logger.LogTimestamps, "LogTimestamps");
+					Assert.IsFalse (logger.RedactSecrets, "RedactSecrets");
+				}
+			} finally {
+				ProtocolLogger.DefaultClientPrefix = "C: ";
+				ProtocolLogger.DefaultServerPrefix = "S: ";
+			}
+		}
+
+		[Test]
 		public void TestLogging ()
 		{
 			using (var stream = new MemoryStream ()) {
@@ -104,6 +139,32 @@ namespace UnitTests {
 						}
 					}
 				}
+			}
+		}
+
+		[Test]
+		public void TestLogConnectMidline ()
+		{
+			using (var stream = new MemoryStream ()) {
+				using (var logger = new ProtocolLogger (stream, true)) {
+					byte[] buf;
+
+					buf = Encoding.ASCII.GetBytes ("PARTIAL LINE");
+					logger.LogClient (buf, 0, buf.Length);
+
+					logger.LogConnect (new Uri ("proto://server.com"));
+
+					logger.LogServer (buf, 0, buf.Length);
+
+					logger.LogConnect (new Uri ("proto://server.com"));
+				}
+
+				var buffer = stream.GetBuffer ();
+				int length = (int) stream.Length;
+
+				var result = Encoding.ASCII.GetString (buffer, 0, length);
+
+				Assert.AreEqual ("C: PARTIAL LINE\r\nConnected to proto://server.com/\r\nS: PARTIAL LINE\r\nConnected to proto://server.com/\r\n", result);
 			}
 		}
 
