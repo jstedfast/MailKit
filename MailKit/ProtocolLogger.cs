@@ -225,7 +225,7 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException (nameof (count));
 		}
 
-		void Log (byte[] prefix, ref bool midline, byte[] buffer, int offset, int count)
+		void Log (byte[] prefix, ref bool midline, byte[] buffer, int offset, int count, bool isClient)
 		{
 			int endIndex = offset + count;
 			int index = offset;
@@ -254,7 +254,7 @@ namespace MailKit {
 					midline = true;
 				}
 
-				if (RedactSecrets) {
+				if (isClient && RedactSecrets) {
 					var secrets = AuthenticationSecretDetector.DetectSecrets (buffer, start, index - start);
 
 					foreach (var secret in secrets) {
@@ -343,7 +343,7 @@ namespace MailKit {
 		{
 			ValidateArguments (buffer, offset, count);
 
-			Log (clientPrefix, ref clientMidline, buffer, offset, count);
+			Log (clientPrefix, ref clientMidline, buffer, offset, count, true);
 		}
 
 		/// <summary>
@@ -376,7 +376,7 @@ namespace MailKit {
 		{
 			ValidateArguments (buffer, offset, count);
 
-			Log (serverPrefix, ref serverMidline, buffer, offset, count);
+			Log (serverPrefix, ref serverMidline, buffer, offset, count, false);
 		}
 
 		#endregion
