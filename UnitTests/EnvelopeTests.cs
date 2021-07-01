@@ -60,9 +60,30 @@ namespace UnitTests
 			original.Sender.Add (new MailboxAddress ("The Real Sender", "unit-tests@mimekit.org"));
 			original.Subject = "This is the subject";
 			original.To.Add (new GroupAddress ("Group Address", new MailboxAddress[] {
-				new MailboxAddress ("Recipient 1", "unit-tests@mimekit.org"),
-				new MailboxAddress ("Recipient 2", "unit-tests@mimekit.org")
+				new MailboxAddress ("John \"Q.\" Recipient", "unit-tests@mimekit.org"),
+				new MailboxAddress ("Sarah Connor", "unit-tests@mimekit.org")
 			}));
+			var text = original.ToString ();
+			Envelope envelope;
+
+			Assert.IsTrue (Envelope.TryParse (text, out envelope));
+			var text2 = envelope.ToString ();
+
+			Assert.AreEqual (text, text2);
+		}
+
+		[Test]
+		public void TestUnixAddressSerialization ()
+		{
+			var original = new Envelope ();
+			original.Date = DateTimeOffset.Now;
+			original.From.Add (new MailboxAddress ((string) null, "fejj"));
+			original.To.Add (new MailboxAddress ((string) null, "notzed"));
+			original.InReplyTo = "<xyz@mimekit.org>";
+			original.MessageId = "<xyz123@mimekit.org>";
+			original.ReplyTo.Add (new MailboxAddress ("Reply-To", "unit-tests@mimekit.org"));
+			original.Sender.Add (new MailboxAddress ("The Real Sender", "unit-tests@mimekit.org"));
+			original.Subject = "This is the subject";
 			var text = original.ToString ();
 			Envelope envelope;
 
