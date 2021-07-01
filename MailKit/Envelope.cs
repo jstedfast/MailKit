@@ -177,15 +177,19 @@ namespace MailKit {
 		{
 			builder.Append ('(');
 
-			if (mailbox.Name != null)
-				builder.AppendFormat ("{0} ", MimeUtils.Quote (mailbox.Name));
-			else
+			if (mailbox.Name != null) {
+				MimeUtils.AppendQuoted (builder, mailbox.Name);
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
-			if (mailbox.Route.Count != 0)
-				builder.AppendFormat ("\"{0}\" ", mailbox.Route);
-			else
+			if (mailbox.Route.Count != 0) {
+				MimeUtils.AppendQuoted (builder, mailbox.Route.ToString ());
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
 			int at = mailbox.Address.LastIndexOf ('@');
 
@@ -193,9 +197,12 @@ namespace MailKit {
 				var domain = mailbox.Address.Substring (at + 1);
 				var user = mailbox.Address.Substring (0, at);
 
-				builder.AppendFormat ("{0} {1}", MimeUtils.Quote (user), MimeUtils.Quote (domain));
+				MimeUtils.AppendQuoted (builder, user);
+				builder.Append (' ');
+				MimeUtils.AppendQuoted (builder, domain);
 			} else {
-				builder.AppendFormat ("{0} \"localhost\"", MimeUtils.Quote (mailbox.Address));
+				MimeUtils.AppendQuoted (builder, mailbox.Address);
+				builder.Append (" \"localhost\"");
 			}
 
 			builder.Append (')');
@@ -216,7 +223,9 @@ namespace MailKit {
 
 		static void EncodeGroup (StringBuilder builder, GroupAddress group)
 		{
-			builder.AppendFormat ("(NIL NIL {0} NIL)", MimeUtils.Quote (group.Name));
+			builder.Append ("(NIL NIL ");
+			MimeUtils.AppendQuoted (builder, group.Name);
+			builder.Append (" NIL)");
 			EncodeInternetAddressListAddresses (builder, group.Members);
 			builder.Append ("(NIL NIL NIL NIL)");
 		}
@@ -237,10 +246,12 @@ namespace MailKit {
 			else
 				builder.Append ("NIL ");
 
-			if (Subject != null)
-				builder.AppendFormat ("{0} ", MimeUtils.Quote (Subject));
-			else
+			if (Subject != null) {
+				MimeUtils.AppendQuoted (builder, Subject);
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
 			if (From.Count > 0) {
 				EncodeAddressList (builder, From);
@@ -285,20 +296,31 @@ namespace MailKit {
 			}
 
 			if (InReplyTo != null) {
+				string inReplyTo;
+
 				if (InReplyTo.Length > 1 && InReplyTo[0] != '<' && InReplyTo[InReplyTo.Length - 1] != '>')
-					builder.AppendFormat ("{0} ", MimeUtils.Quote ('<' + InReplyTo + '>'));
+					inReplyTo = '<' + InReplyTo + '>';
 				else
-					builder.AppendFormat ("{0} ", MimeUtils.Quote (InReplyTo));
-			} else
+					inReplyTo = InReplyTo;
+
+				MimeUtils.AppendQuoted (builder, inReplyTo);
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
 			if (MessageId != null) {
+				string messageId;
+
 				if (MessageId.Length > 1 && MessageId[0] != '<' && MessageId[MessageId.Length - 1] != '>')
-					builder.AppendFormat ("{0}", MimeUtils.Quote ('<' + MessageId + '>'));
+					messageId = '<' + MessageId + '>';
 				else
-					builder.AppendFormat ("{0}", MimeUtils.Quote (MessageId));
-			} else
+					messageId = MessageId;
+
+				MimeUtils.AppendQuoted (builder, messageId);
+			} else {
 				builder.Append ("NIL");
+			}
 
 			builder.Append (')');
 		}
@@ -589,4 +611,3 @@ namespace MailKit {
 		}
 	}
 }
-	

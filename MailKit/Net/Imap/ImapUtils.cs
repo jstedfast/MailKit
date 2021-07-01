@@ -792,7 +792,7 @@ namespace MailKit.Net.Imap {
 				builder.Append ("; ").Append (name).Append ('=');
 
 				if (NeedsQuoting (value))
-					builder.Append (MimeUtils.Quote (value));
+					MimeUtils.AppendQuoted (builder, value);
 				else
 					builder.Append (value);
 			} while (true);
