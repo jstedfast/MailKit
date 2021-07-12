@@ -77,6 +77,16 @@ namespace MailKit {
 		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Asynchronously get the message count.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the message count.
+		/// </remarks>
+		/// <returns>The message count.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Get the UID of the message at the specified index.
 		/// </summary>
 		/// <remarks>
