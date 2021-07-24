@@ -134,7 +134,8 @@ namespace MailKit.Net
 				Socket.Disconnect (false);
 #endif
 				Socket.Dispose ();
-			} catch {
+			} catch (Exception ex) {
+				Console.WriteLine ($"NetworkStream::Disconnect exception: {ex}");
 				return;
 			} finally {
 				connected = false;
@@ -272,6 +273,7 @@ namespace MailKit.Net
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {
+				Console.WriteLine ($"NetworkStream disposing...");
 				if (ownsSocket && connected) {
 					ownsSocket = false;
 					Disconnect ();
