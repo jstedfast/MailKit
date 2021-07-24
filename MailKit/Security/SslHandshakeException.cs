@@ -202,50 +202,54 @@ namespace MailKit.Security
 			if (validationInfo != null) {
 				client.SslCertificateValidationInfo = null;
 
-				int rootIndex = validationInfo.ChainElements.Count - 1;
-				if (rootIndex > 0)
-					root = validationInfo.ChainElements[rootIndex].Certificate;
-				certificate = validationInfo.Certificate;
+				try {
+					int rootIndex = validationInfo.ChainElements.Count - 1;
+					if (rootIndex > 0)
+						root = validationInfo.ChainElements[rootIndex].Certificate;
+					certificate = validationInfo.Certificate;
 
-				if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0) {
-					message.AppendLine ("The SSL certificate for the server was not available.");
-				} else if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0) {
-					message.AppendLine ("The host name did not match the name given in the server's SSL certificate.");
-				} else {
-					message.AppendLine ("The server's SSL certificate could not be validated for the following reasons:");
+					if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0) {
+						message.AppendLine ("The SSL certificate for the server was not available.");
+					} else if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0) {
+						message.AppendLine ("The host name did not match the name given in the server's SSL certificate.");
+					} else {
+						message.AppendLine ("The server's SSL certificate could not be validated for the following reasons:");
 
-					bool haveReason = false;
+						bool haveReason = false;
 
-					for (int chainIndex = 0; chainIndex < validationInfo.ChainElements.Count; chainIndex++) {
-						var element = validationInfo.ChainElements[chainIndex];
+						for (int chainIndex = 0; chainIndex < validationInfo.ChainElements.Count; chainIndex++) {
+							var element = validationInfo.ChainElements[chainIndex];
 
-						if (element.ChainElementStatus == null || element.ChainElementStatus.Length == 0)
-							continue;
+							if (element.ChainElementStatus == null || element.ChainElementStatus.Length == 0)
+								continue;
 
-						if (chainIndex == 0) {
-							message.AppendLine ("\u2022 The server certificate has the following errors:");
-						} else if (chainIndex == rootIndex) {
-							message.AppendLine ("\u2022 The root certificate has the following errors:");
-						} else {
-							message.AppendLine ("\u2022 An intermediate certificate has the following errors:");
+							if (chainIndex == 0) {
+								message.AppendLine ("\u2022 The server certificate has the following errors:");
+							} else if (chainIndex == rootIndex) {
+								message.AppendLine ("\u2022 The root certificate has the following errors:");
+							} else {
+								message.AppendLine ("\u2022 An intermediate certificate has the following errors:");
+							}
+
+							foreach (var status in element.ChainElementStatus)
+								message.AppendFormat ("  \u2022 {0}{1}", status.StatusInformation, Environment.NewLine);
+
+							haveReason = true;
 						}
 
-						foreach (var status in element.ChainElementStatus)
-							message.AppendFormat ("  \u2022 {0}{1}", status.StatusInformation, Environment.NewLine);
+						// Note: Because Mono does not include any elements in the chain (at least on macOS), we need
+						// to find the inner-most exception and append its Message.
+						if (!haveReason) {
+							var innerException = ex;
 
-						haveReason = true;
+							while (innerException.InnerException != null)
+								innerException = innerException.InnerException;
+
+							message.AppendLine ("\u2022 " + innerException.Message);
+						}
 					}
-
-					// Note: Because Mono does not include any elements in the chain (at least on macOS), we need
-					// to find the inner-most exception and append its Message.
-					if (!haveReason) {
-						var innerException = ex;
-
-						while (innerException.InnerException != null)
-							innerException = innerException.InnerException;
-
-						message.AppendLine ("\u2022 " + innerException.Message);
-					}
+				} finally {
+					validationInfo.Dispose ();
 				}
 			} else if (!starttls && standardPorts.Contains (port)) {
 				string an = "AEHIOS".IndexOf (protocol[0]) != -1 ? "an" : "a";
@@ -274,7 +278,7 @@ namespace MailKit.Security
 		}
 	}
 
-	class SslChainElement
+	class SslChainElement : IDisposable
 	{
 		public readonly X509Certificate Certificate;
 		public readonly X509ChainStatus[] ChainElementStatus;
@@ -286,9 +290,16 @@ namespace MailKit.Security
 			ChainElementStatus = element.ChainElementStatus;
 			Information = element.Information;
 		}
+
+		public void Dispose ()
+		{
+#if !NET45
+			Certificate.Dispose ();
+#endif
+		}
 	}
 
-	class SslCertificateValidationInfo
+	class SslCertificateValidationInfo : IDisposable
 	{
 		public readonly List<SslChainElement> ChainElements;
 		public readonly X509ChainStatus[] ChainStatus;
@@ -307,6 +318,15 @@ namespace MailKit.Security
 			// Note: we need to copy the ChainElements because the chain will be destroyed
 			foreach (var element in chain.ChainElements)
 				ChainElements.Add (new SslChainElement (element));
+		}
+
+		public void Dispose ()
+		{
+#if !NET45
+			Certificate.Dispose ();
+			foreach (var element in ChainElements)
+				element.Dispose ();
+#endif
 		}
 	}
 }

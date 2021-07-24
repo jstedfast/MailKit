@@ -515,6 +515,7 @@ namespace MailKit {
 		{
 			const SslPolicyErrors mask = SslPolicyErrors.RemoteCertificateNotAvailable | SslPolicyErrors.RemoteCertificateNameMismatch;
 
+			SslCertificateValidationInfo?.Dispose ();
 			SslCertificateValidationInfo = null;
 
 			if (sslPolicyErrors == SslPolicyErrors.None)
@@ -1746,8 +1747,11 @@ namespace MailKit {
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
+			if (disposing) {
+				SslCertificateValidationInfo?.Dispose ();
+				SslCertificateValidationInfo = null;
 				ProtocolLogger.Dispose ();
+			}
 		}
 
 		/// <summary>
