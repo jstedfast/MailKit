@@ -496,6 +496,7 @@ namespace MailKit {
 			return true;
 		}
 
+		// Note: This is used by SslHandshakeException to build the exception message.
 		internal SslCertificateValidationInfo SslCertificateValidationInfo;
 
 		/// <summary>
@@ -531,6 +532,7 @@ namespace MailKit {
 				}
 			}
 
+			// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
 			SslCertificateValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
 
 			return false;
