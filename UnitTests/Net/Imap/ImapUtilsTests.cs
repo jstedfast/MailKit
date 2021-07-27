@@ -165,6 +165,7 @@ namespace UnitTests.Net.Imap {
 		public void TestParseInvalidInternalDates ()
 		{
 			var internalDates = new string [] {
+				"00-Jan-0000 00:00:00 +0000", // Note: This example is taken from an actual response from a Domino IMAP server. Likely represents an uninitialized value.
 				"98765432100-OCT-2018 13:41:57 -0400",
 				"27-JAG-2018 13:41:57 -0400",
 				"27-OCT-1909 13:41:57 -0400",
@@ -176,7 +177,7 @@ namespace UnitTests.Net.Imap {
 			};
 
 			foreach (var internalDate in internalDates)
-				Assert.Throws<FormatException> (() => ImapUtils.ParseInternalDate (internalDate), internalDate);
+				Assert.AreEqual (DateTimeOffset.MinValue, ImapUtils.ParseInternalDate (internalDate), internalDate);
 		}
 
 		[Test]

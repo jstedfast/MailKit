@@ -195,11 +195,6 @@ namespace MailKit.Net.Imap {
 			return true;
 		}
 
-		static Exception InvalidInternalDateFormat (string text)
-		{
-			return new FormatException ("Invalid INTERNALDATE format: " + text);
-		}
-
 		/// <summary>
 		/// Parses the internal date string.
 		/// </summary>
@@ -215,37 +210,37 @@ namespace MailKit.Net.Imap {
 				index++;
 
 			if (index >= text.Length || !TryGetInt32 (text, ref index, '-', out day) || day < 1 || day > 31)
-				throw InvalidInternalDateFormat (text);
+				return DateTimeOffset.MinValue;
 
 			index++;
 			if (index >= text.Length || !TryGetMonth (text, ref index, '-', out month))
-				throw InvalidInternalDateFormat (text);
+				return DateTimeOffset.MinValue;
 
 			index++;
 			if (index >= text.Length || !TryGetInt32 (text, ref index, ' ', out year) || year < 1969)
-				throw InvalidInternalDateFormat (text);
+				return DateTimeOffset.MinValue;
 
 			index++;
 			if (index >= text.Length || !TryGetInt32 (text, ref index, ':', out hour) || hour > 23)
-				throw InvalidInternalDateFormat (text);
+				return DateTimeOffset.MinValue;
 
 			index++;
 			if (index >= text.Length || !TryGetInt32 (text, ref index, ':', out minute) || minute > 59)
-				throw InvalidInternalDateFormat (text);
+				return DateTimeOffset.MinValue;
 
 			index++;
 			if (index >= text.Length || !TryGetInt32 (text, ref index, ' ', out second) || second > 59)
-				throw InvalidInternalDateFormat (text);
+				return DateTimeOffset.MinValue;
 
 			index++;
 			if (index >= text.Length || !TryGetTimeZone (text, ref index, out timezone))
-				throw InvalidInternalDateFormat (text);
+				return DateTimeOffset.MinValue;
 
 			while (index < text.Length && char.IsWhiteSpace (text[index]))
 				index++;
 
 			if (index < text.Length)
-				throw InvalidInternalDateFormat (text);
+				return DateTimeOffset.MinValue;
 
 			// return DateTimeOffset.ParseExact (text.Trim (), "d-MMM-yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat);
 			return new DateTimeOffset (year, month, day, hour, minute, second, timezone);
