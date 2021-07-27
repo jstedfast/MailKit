@@ -49,11 +49,15 @@ namespace MailKit.Security {
 		/// The supported authentication mechanisms in order of strongest to weakest.
 		/// </summary>
 		/// <remarks>
-		/// Used by the various clients when authenticating via SASL to determine
-		/// which order the SASL mechanisms supported by the server should be tried.
+		/// <para>Used by the various clients when authenticating via SASL to determine
+		/// which order the SASL mechanisms supported by the server should be tried.</para>
+		/// <note type="note">Even though NTLM is more secure than PLAIN or LOGIN (and
+		/// probably others), it is tried last only because it is less reliable due to
+		/// missing functionalioty to make it 100% compatible with all NTLM server
+		/// implementations.</note>
 		/// </remarks>
 		public static readonly string[] AuthMechanismRank = {
-			"SCRAM-SHA-512", "SCRAM-SHA-256", "SCRAM-SHA-1", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN"
+			"SCRAM-SHA-512", "SCRAM-SHA-256", "SCRAM-SHA-1", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN", "NTLM"
 		};
 		static readonly bool md5supported;
 
