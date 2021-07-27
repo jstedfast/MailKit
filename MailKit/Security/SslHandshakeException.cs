@@ -278,7 +278,7 @@ namespace MailKit.Security
 		}
 	}
 
-	class SslChainElement : IDisposable
+	sealed class SslChainElement : IDisposable
 	{
 		public readonly X509Certificate Certificate;
 		public readonly X509ChainStatus[] ChainElementStatus;
@@ -299,7 +299,7 @@ namespace MailKit.Security
 		}
 	}
 
-	class SslCertificateValidationInfo : IDisposable
+	sealed class SslCertificateValidationInfo : IDisposable
 	{
 		public readonly List<SslChainElement> ChainElements;
 		public readonly X509ChainStatus[] ChainStatus;
