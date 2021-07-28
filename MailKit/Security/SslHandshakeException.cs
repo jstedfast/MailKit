@@ -205,8 +205,8 @@ namespace MailKit.Security
 				try {
 					int rootIndex = validationInfo.ChainElements.Count - 1;
 					if (rootIndex > 0)
-						root = validationInfo.ChainElements[rootIndex].Certificate;
-					certificate = validationInfo.Certificate;
+						root = new X509Certificate2 (validationInfo.ChainElements[rootIndex].Certificate.RawData);
+					certificate = new X509Certificate2 (validationInfo.Certificate.RawData);
 
 					if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0) {
 						message.AppendLine ("The SSL certificate for the server was not available.");
@@ -280,7 +280,7 @@ namespace MailKit.Security
 
 	sealed class SslChainElement : IDisposable
 	{
-		public readonly X509Certificate Certificate;
+		public readonly X509Certificate2 Certificate;
 		public readonly X509ChainStatus[] ChainElementStatus;
 		public readonly string Information;
 
@@ -304,7 +304,7 @@ namespace MailKit.Security
 		public readonly List<SslChainElement> ChainElements;
 		public readonly X509ChainStatus[] ChainStatus;
 		public readonly SslPolicyErrors SslPolicyErrors;
-		public readonly X509Certificate Certificate;
+		public readonly X509Certificate2 Certificate;
 		public readonly string Host;
 
 		public SslCertificateValidationInfo (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

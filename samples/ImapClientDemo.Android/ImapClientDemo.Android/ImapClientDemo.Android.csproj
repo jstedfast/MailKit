@@ -48,7 +48,7 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.13.0" />
+    <PackageReference Include="MailKit" Version="2.14.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

@@ -1,11 +1,26 @@
 # Release Notes
 
+### MailKit 2.14.0 (2021-07-28)
+
+* Added support for logging timestamps in the `ProtocolLogger` (see the `LogTimestamps` and `TimestampFormat`
+  properties on `ProtocolLogger`).
+* Added support for automatically redacting user credentials in protocol logs. To enable this, set the
+  `ProtocolLogger.RedactSecrets` property to `true`. (issue [#1174](https://github.com/jstedfast/MailKit/issues/1174))
+* Added the GetMessageSizeAsync() method to the IMailSpool interface.
+  (issue [#1233](https://github.com/jstedfast/MailKit/issues/1233))
+* Added a work-around to the IMAP INTERNALDATE parser to handle invalid dates such as "00-Jan-0000 00:00:00 +0000"
+  which appears in Domino IMAP server responses, likely when the INTERNALDATE value is uninitialized in the database.
+  (issue [#1236](https://github.com/jstedfast/MailKit/issues/1236))
+* Make sure to dispose X509Certificates in .NET >= 4.6.
+* Re-added NTLM as one of the default supported SASL mechanisms.
+* Updated GMail SSL certificate serial numbers and fingerprints.
+
 ### MailKit 2.13.0 (2021-06-12)
 
 * Added new properties to all clients to get SSL cipher/hash/protocol/key-exchange info.
   (issue [#1175](https://github.com/jstedfast/MailKit/issues/1175))
 * Added support for GMail's WEBALERT resp-code.
-  (issue [#1214](https://github.com/jstedfast/MailKit/issues/1175))
+  (issue [#1214](https://github.com/jstedfast/MailKit/issues/1214))
 * Updated GMail SSL certificate serial numbers and fingerprints.
 
 ### MailKit 2.12.0 (2021-05-12)
