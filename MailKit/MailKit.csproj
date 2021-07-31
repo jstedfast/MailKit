@@ -37,6 +37,10 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And $(TargetFramework.StartsWith('net4')) ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5')) ">
     <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
   </PropertyGroup>
