@@ -40,7 +40,6 @@ namespace UnitTests.Security {
 		public void TestArgumentExceptions ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("smtp://localhost");
 			SaslMechanism sasl;
 
 			sasl = new SaslMechanismPlain (credentials);

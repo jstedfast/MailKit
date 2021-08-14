@@ -119,7 +119,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets or sets the authorization identifier.
+		/// Get or set the authorization identifier.
 		/// </summary>
 		/// <remarks>
 		/// The authorization identifier is the desired user account that the server should use
@@ -131,22 +131,23 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets the name of the mechanism.
+		/// Get the name of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
-		/// Gets the name of the mechanism.
+		/// Gets the name of the SASL mechanism.
 		/// </remarks>
-		/// <value>The name of the mechanism.</value>
+		/// <value>The name of the SASL mechanism.</value>
 		public override string MechanismName {
 			get { return "PLAIN"; }
 		}
 
 		/// <summary>
-		/// Gets whether or not the mechanism supports an initial response (SASL-IR).
+		/// Get whether or not the mechanism supports an initial response (SASL-IR).
 		/// </summary>
 		/// <remarks>
-		/// SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.
+		/// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
+		/// <para>SASL mechanisms that support sending an initial client response to the server
+		/// should return <value>true</value>.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
 		public override bool SupportsInitialResponse {
@@ -154,7 +155,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Parses the server's challenge token and returns the next challenge response.
+		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
 		/// <remarks>
 		/// Parses the server's challenge token and returns the next challenge response.

@@ -75,6 +75,7 @@
     <Compile Include="Net\DummyNetworkStream.cs" />
     <Compile Include="Net\NetworkStreamTests.cs" />
     <Compile Include="Search\SearchQueryTests.cs" />
+    <Compile Include="Security\FakeTransportContext.cs" />
     <Compile Include="Security\Ntlm\MD4Tests.cs" />
     <Compile Include="Security\AuthenticationExceptionTests.cs" />
     <Compile Include="Security\SaslExceptionTests.cs" />

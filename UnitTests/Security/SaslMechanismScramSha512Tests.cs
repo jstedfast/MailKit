@@ -40,7 +40,6 @@ namespace UnitTests.Security {
 		public void TestArgumentExceptions ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("smtp://localhost");
 
 			var sasl = new SaslMechanismScramSha512 (credentials);
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
@@ -48,6 +47,13 @@ namespace UnitTests.Security {
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 (null, "password"));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512 ("username", null));
+
+			sasl = new SaslMechanismScramSha512Plus (credentials);
+			Assert.DoesNotThrow (() => sasl.Challenge (null));
+
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512Plus (null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512Plus (null, "password"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismScramSha512Plus ("username", null));
 		}
 
 		static void AssertScramSha512 (SaslMechanismScramSha512 sasl, string prefix)
@@ -60,6 +66,7 @@ namespace UnitTests.Security {
 
 			sasl.cnonce = entropy;
 
+			Assert.IsFalse (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
 			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
 
 			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
@@ -150,6 +157,53 @@ namespace UnitTests.Security {
 			Assert.AreEqual (string.Empty, challenge, "third SCRAM-SHA-512 challenge should be an empty string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-512 should be authenticated now.");
 			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
+		}
+
+		static void AssertScramSha512Plus (SaslMechanismScramSha512Plus sasl, string prefix)
+		{
+			const string expected = "c=cD10bHMtc2VydmVyLWVuZC1wb2ludCwsaW1hcDovL2Vsd29vZC5pbm5vc29mdC5jb20v,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=Lrbr64QBLm57rPiUjNzRxRpy5SmWXr9uo1YaZamnGl5eJlvHL+VO3EogXgUmr8ht+aJoS3d2XOSNN6RUiA05sQ==";
+			const string challenge1 = "r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096";
+			const string challenge2 = "v=mAlQYGd+jaCA+/6Ayj8wRQLKnuxQhjSabvJW4XqtPzjXayzXxbIElZP27ANJa7yNfb54XATe9O0/w1cNxvsRfg==";
+			const string entropy = "rOprNGfwEbeRWgbNEkqO";
+			string token;
+
+			sasl.cnonce = entropy;
+
+			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
+			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+
+			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
+
+			Assert.AreEqual ("p=tls-server-end-point,,n=user,r=" + entropy, challenge, "{0}: initial SCRAM-SHA-512-PLUS challenge response does not match the expected string.", prefix);
+			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+
+			Assert.AreEqual (expected, challenge, "{0}: second SCRAM-SHA-512-PLUS challenge response does not match the expected string.", prefix);
+			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-512-PLUS challenge should be an empty string.", prefix);
+			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-512-PLUS should be authenticated now.", prefix);
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
+		}
+
+		[Test]
+		public void TestScramSha512Plus ()
+		{
+			var credentials = new NetworkCredential ("user", "pencil");
+			var uri = new Uri ("imap://elwood.innosoft.com");
+			var context = new FakeTransportContext (uri.ToString ());
+
+			var sasl = new SaslMechanismScramSha512Plus (credentials) { TransportContext = context };
+
+			AssertScramSha512Plus (sasl, "NetworkCredential");
+
+			sasl = new SaslMechanismScramSha512Plus ("user", "pencil") { TransportContext = context };
+
+			AssertScramSha512Plus (sasl, "user/pass");
 		}
 	}
 }

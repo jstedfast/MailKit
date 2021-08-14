@@ -41,7 +41,6 @@ namespace UnitTests.Security {
 		public void TestArgumentExceptions ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("smtp://localhost");
 
 			var sasl = new SaslMechanismNtlm (credentials);
 			Assert.DoesNotThrow (() => sasl.Challenge (null));

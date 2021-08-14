@@ -30,6 +30,7 @@ using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Security.Authentication.ExtendedProtection;
 
 namespace MailKit.Security {
 	/// <summary>
@@ -83,11 +84,12 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets whether or not the mechanism supports an initial response (SASL-IR).
+		/// Get whether or not the mechanism supports an initial response (SASL-IR).
 		/// </summary>
 		/// <remarks>
-		/// SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.
+		/// <para>Get whether or not the mechanism supports an initial response (SASL-IR).</para>
+		/// <para>SASL mechanisms that support sending an initial client response to the server
+		/// should return <value>true</value>.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
 		public override bool SupportsInitialResponse {
@@ -224,7 +226,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Parses the server's challenge token and returns the next challenge response.
+		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
 		/// <remarks>
 		/// Parses the server's challenge token and returns the next challenge response.
@@ -250,7 +252,13 @@ namespace MailKit.Security {
 			case LoginState.Initial:
 				cnonce = cnonce ?? GenerateEntropy (18);
 				client = "n=" + Normalize (Credentials.UserName) + ",r=" + cnonce;
-				response = Encoding.UTF8.GetBytes ("n,," + client);
+
+				// Note: The "tls-unique" channel binding type is not considered secure and should no longer be used.
+				if (SupportsChannelBinding)
+					response = Encoding.UTF8.GetBytes ("p=tls-server-end-point,," + client);
+				else
+					response = Encoding.UTF8.GetBytes ("n,," + client);
+
 				state = LoginState.Final;
 				break;
 			case LoginState.Final:
@@ -278,7 +286,23 @@ namespace MailKit.Security {
 				salted = Hi (password, Convert.FromBase64String (salt), count);
 				Array.Clear (password, 0, password.Length);
 
-				var withoutProof = "c=" + Convert.ToBase64String (Encoding.ASCII.GetBytes ("n,,")) + ",r=" + nonce;
+				string channelBinding;
+
+				if (SupportsChannelBinding) {
+					var bindingType = Encoding.ASCII.GetBytes ("p=tls-server-end-point,,");
+					var bindingToken = GetChannelBindingToken (ChannelBindingKind.Endpoint);
+					var binding = new byte[bindingType.Length + bindingToken.Length];
+
+					Buffer.BlockCopy (bindingType, 0, binding, 0, bindingType.Length);
+					Buffer.BlockCopy (bindingToken, 0, binding, bindingType.Length, bindingToken.Length);
+
+					channelBinding = "c=" + Convert.ToBase64String (binding);
+				} else {
+					channelBinding = "c=" + Convert.ToBase64String (Encoding.ASCII.GetBytes ("n,,"));
+				}
+
+				var withoutProof = channelBinding + ",r=" + nonce;
+
 				auth = Encoding.UTF8.GetBytes (client + "," + server + "," + withoutProof);
 
 				var key = HMAC (salted, Encoding.ASCII.GetBytes ("Client Key"));
@@ -301,9 +325,11 @@ namespace MailKit.Security {
 				if (signature.Length != calculated.Length)
 					throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, "Challenge contained a signature with an invalid length.");
 
+				var expected = Convert.ToBase64String (calculated);
+
 				for (int i = 0; i < signature.Length; i++) {
 					if (signature[i] != calculated[i])
-						throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, "Challenge contained an invalid signatire.");
+						throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, $"Challenge contained an invalid signature. Expected: {expected}");
 				}
 
 				IsAuthenticated = true;
@@ -317,7 +343,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Resets the state of the SASL mechanism.
+		/// Reset the state of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
 		/// Resets the state of the SASL mechanism.

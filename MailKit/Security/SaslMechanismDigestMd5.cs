@@ -100,7 +100,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets or sets the authorization identifier.
+		/// Get or set the authorization identifier.
 		/// </summary>
 		/// <remarks>
 		/// The authorization identifier is the desired user account that the server should use
@@ -112,18 +112,18 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets the name of the mechanism.
+		/// Get the name of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
-		/// Gets the name of the mechanism.
+		/// Gets the name of the SASL mechanism.
 		/// </remarks>
-		/// <value>The name of the mechanism.</value>
+		/// <value>The name of the SASL mechanism.</value>
 		public override string MechanismName {
 			get { return "DIGEST-MD5"; }
 		}
 
 		/// <summary>
-		/// Parses the server's challenge token and returns the next challenge response.
+		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
 		/// <remarks>
 		/// Parses the server's challenge token and returns the next challenge response.
@@ -187,7 +187,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Resets the state of the SASL mechanism.
+		/// Reset the state of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
 		/// Resets the state of the SASL mechanism.

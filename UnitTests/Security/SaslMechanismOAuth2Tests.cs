@@ -39,7 +39,6 @@ namespace UnitTests.Security {
 		public void TestArgumentExceptions ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("smtp://localhost");
 
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null));
 			Assert.Throws<ArgumentNullException> (() => new SaslMechanismOAuth2 (null, "password"));
@@ -62,7 +61,6 @@ namespace UnitTests.Security {
 		public void TestSimpleOAuth2 ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("smtp://localhost");
 			SaslMechanismOAuth2 sasl;
 
 			sasl = new SaslMechanismOAuth2 (credentials);

@@ -28,6 +28,7 @@ using System;
 using System.Net;
 using System.Text;
 using System.Security.Cryptography;
+using System.Security.Authentication.ExtendedProtection;
 
 #if NETSTANDARD1_3 || NETSTANDARD1_6
 using MD5 = MimeKit.Cryptography.MD5;
@@ -53,11 +54,11 @@ namespace MailKit.Security {
 		/// which order the SASL mechanisms supported by the server should be tried.</para>
 		/// <note type="note">Even though NTLM is more secure than PLAIN or LOGIN (and
 		/// probably others), it is tried last only because it is less reliable due to
-		/// missing functionalioty to make it 100% compatible with all NTLM server
+		/// missing functionality to make it 100% compatible with all NTLM server
 		/// implementations.</note>
 		/// </remarks>
 		public static readonly string[] AuthMechanismRank = {
-			"SCRAM-SHA-512", "SCRAM-SHA-256", "SCRAM-SHA-1", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN", "NTLM"
+			"SCRAM-SHA-512-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-1", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN", "NTLM"
 		};
 		static readonly bool md5supported;
 
@@ -114,10 +115,10 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets the name of the mechanism.
+		/// Get the name of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
-		/// Gets the name of the mechanism.
+		/// Gets the name of the SASL mechanism.
 		/// </remarks>
 		/// <value>The name of the mechanism.</value>
 		public abstract string MechanismName {
@@ -125,7 +126,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets the user's credentials.
+		/// Get the user's credentials.
 		/// </summary>
 		/// <remarks>
 		/// Gets the user's credentials.
@@ -136,19 +137,31 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets whether or not the mechanism supports an initial response (SASL-IR).
+		/// Get whether or not the SASL mechanism supports channel binding.
 		/// </summary>
 		/// <remarks>
-		/// SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.
+		/// Gets whether or not the SASL mechanism supports channel binding.
 		/// </remarks>
-		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
+		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+		public virtual bool SupportsChannelBinding {
+			get { return false; }
+		}
+
+		/// <summary>
+		/// Get whether or not the SASL mechanism supports an initial response (SASL-IR).
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the SASL mechanism supports an initial response (SASL-IR).</para>
+		/// <para>SASL mechanisms that support sending an initial client response to the server
+		/// should return <value>true</value>.</para>
+		/// </remarks>
+		/// <value><c>true</c> if the SASL mechanism supports an initial response; otherwise, <c>false</c>.</value>
 		public virtual bool SupportsInitialResponse {
 			get { return false; }
 		}
 
 		/// <summary>
-		/// Gets or sets whether the SASL mechanism has finished authenticating.
+		/// Get or set whether the SASL mechanism has finished authenticating.
 		/// </summary>
 		/// <remarks>
 		/// Gets or sets whether the SASL mechanism has finished authenticating.
@@ -159,7 +172,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets whether or not a security layer was negotiated.
+		/// Get whether or not a security layer was negotiated by the SASL mechanism.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets whether or not a security layer has been negotiated by the SASL mechanism.</para>
@@ -172,7 +185,18 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets or sets the URI of the service.
+		/// Get or set the transport context.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the transport context.
+		/// </remarks>
+		/// <value>The transport context.</value>
+		internal TransportContext TransportContext {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set the URI of the service.
 		/// </summary>
 		/// <remarks>
 		/// Gets or sets the URI of the service.
@@ -183,7 +207,41 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Parses the server's challenge token and returns the next challenge response.
+		/// Get the channel binding token, if available.
+		/// </summary>
+		/// <remarks>
+		/// Gets the channel binding token, if available.
+		/// </remarks>
+		/// <returns>A buffer containing the channel binding token if available; otherwise, <c>null</c>.</returns>
+		/// <param name="kind">The kind of channel binding.</param>
+		/// <exception cref="NotSupportedException">
+		/// <paramref name="kind"/> is not a supported.
+		/// </exception>
+		protected byte[] GetChannelBindingToken (ChannelBindingKind kind)
+		{
+			var channelBinding = TransportContext?.GetChannelBinding (kind);
+
+			if (channelBinding == null || channelBinding.IsClosed || channelBinding.IsInvalid || channelBinding.Size <= 0)
+				return null;
+
+			byte[] token = new byte[channelBinding.Size];
+
+			unsafe {
+				fixed (byte* outbuf = token) {
+					byte* inbuf = (byte*) channelBinding.DangerousGetHandle ().ToPointer ();
+					byte* outptr = outbuf;
+					byte* inptr = inbuf;
+
+					for (int i = 0; i < token.Length; i++)
+						*outptr++ = *inptr++;
+				}
+			}
+
+			return token;
+		}
+
+		/// <summary>
+		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
 		/// <remarks>
 		/// Parses the server's challenge token and returns the next challenge response.
@@ -204,7 +262,7 @@ namespace MailKit.Security {
 		protected abstract byte[] Challenge (byte[] token, int startIndex, int length);
 
 		/// <summary>
-		/// Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
+		/// Decode the base64-encoded server challenge and return the next challenge response encoded in base64.
 		/// </summary>
 		/// <remarks>
 		/// Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
@@ -242,7 +300,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Resets the state of the SASL mechanism.
+		/// Reset the state of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
 		/// Resets the state of the SASL mechanism.
@@ -253,11 +311,11 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Determines if the specified SASL mechanism is supported by MailKit.
+		/// Determine if the specified SASL mechanism is supported by MailKit.
 		/// </summary>
 		/// <remarks>
 		/// Use this method to make sure that a SASL mechanism is supported before calling
-		/// <see cref="Create(string,Uri,ICredentials)"/>.
+		/// <see cref="Create(string,NetworkCredential)"/>.
 		/// </remarks>
 		/// <returns><c>true</c> if the specified SASL mechanism is supported; otherwise, <c>false</c>.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
@@ -270,22 +328,25 @@ namespace MailKit.Security {
 				throw new ArgumentNullException (nameof (mechanism));
 
 			switch (mechanism) {
-			case "SCRAM-SHA-512": return true;
-			case "SCRAM-SHA-256": return true;
-			case "SCRAM-SHA-1":   return true;
-			case "DIGEST-MD5":    return md5supported;
-			case "CRAM-MD5":      return md5supported;
-			case "OAUTHBEARER":   return true;
-			case "XOAUTH2":       return true;
-			case "PLAIN":         return true;
-			case "LOGIN":         return true;
-			case "NTLM":          return true;
-			default:              return false;
+			case "SCRAM-SHA-512-PLUS": return true;
+			case "SCRAM-SHA-512":      return true;
+			case "SCRAM-SHA-256-PLUS": return true;
+			case "SCRAM-SHA-256":      return true;
+			case "SCRAM-SHA-1-PLUS":   return true;
+			case "SCRAM-SHA-1":        return true;
+			case "DIGEST-MD5":         return md5supported;
+			case "CRAM-MD5":           return md5supported;
+			case "OAUTHBEARER":        return true;
+			case "XOAUTH2":            return true;
+			case "PLAIN":              return true;
+			case "LOGIN":              return true;
+			case "NTLM":               return true;
+			default:                   return false;
 			}
 		}
 
 		/// <summary>
-		/// Create an instance of the specified SASL mechanism using the uri and credentials.
+		/// Create an instance of the specified SASL mechanism using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// If unsure that a particular SASL mechanism is supported, you should first call
@@ -293,25 +354,19 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <c>null</c>.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
-		/// <param name="uri">The URI of the service to authenticate against.</param>
 		/// <param name="encoding">The text encoding to use for the credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="mechanism"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
 		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
-		public static SaslMechanism Create (string mechanism, Uri uri, Encoding encoding, ICredentials credentials)
+		public static SaslMechanism Create (string mechanism, Encoding encoding, NetworkCredential credentials)
 		{
 			if (mechanism == null)
 				throw new ArgumentNullException (nameof (mechanism));
-
-			if (uri == null)
-				throw new ArgumentNullException (nameof (uri));
 
 			if (encoding == null)
 				throw new ArgumentNullException (nameof (encoding));
@@ -319,27 +374,28 @@ namespace MailKit.Security {
 			if (credentials == null)
 				throw new ArgumentNullException (nameof (credentials));
 
-			var cred = credentials.GetCredential (uri, mechanism);
-
 			switch (mechanism) {
-			//case "KERBEROS_V4":   return null;
-			case "SCRAM-SHA-512": return new SaslMechanismScramSha512 (cred) { Uri = uri };
-			case "SCRAM-SHA-256": return new SaslMechanismScramSha256 (cred) { Uri = uri };
-			case "SCRAM-SHA-1":   return new SaslMechanismScramSha1 (cred) { Uri = uri };
-			case "DIGEST-MD5":    return md5supported ? new SaslMechanismDigestMd5 (cred) { Uri = uri } : null;
-			case "CRAM-MD5":      return md5supported ? new SaslMechanismCramMd5 (cred) { Uri = uri } : null;
-			//case "GSSAPI":        return null;
-			case "OAUTHBEARER":   return new SaslMechanismOAuthBearer (cred) { Uri = uri };
-			case "XOAUTH2":       return new SaslMechanismOAuth2 (cred) { Uri = uri };
-			case "PLAIN":         return new SaslMechanismPlain (encoding, cred) { Uri = uri };
-			case "LOGIN":         return new SaslMechanismLogin (encoding, cred) { Uri = uri };
-			case "NTLM":          return new SaslMechanismNtlm (cred) { Uri = uri };
-			default:              return null;
+			//case "KERBEROS_V4":      return null;
+			case "SCRAM-SHA-512-PLUS": return new SaslMechanismScramSha512Plus (credentials);
+			case "SCRAM-SHA-512":      return new SaslMechanismScramSha512 (credentials);
+			case "SCRAM-SHA-256-PLUS": return new SaslMechanismScramSha256Plus (credentials);
+			case "SCRAM-SHA-256":      return new SaslMechanismScramSha256 (credentials);
+			case "SCRAM-SHA-1-PLUS":   return new SaslMechanismScramSha1Plus (credentials);
+			case "SCRAM-SHA-1":        return new SaslMechanismScramSha1 (credentials);
+			case "DIGEST-MD5":         return md5supported ? new SaslMechanismDigestMd5 (credentials) : null;
+			case "CRAM-MD5":           return md5supported ? new SaslMechanismCramMd5 (credentials) : null;
+			//case "GSSAPI":           return null;
+			case "OAUTHBEARER":        return new SaslMechanismOAuthBearer (credentials);
+			case "XOAUTH2":            return new SaslMechanismOAuth2 (credentials);
+			case "PLAIN":              return new SaslMechanismPlain (encoding, credentials);
+			case "LOGIN":              return new SaslMechanismLogin (encoding, credentials);
+			case "NTLM":               return new SaslMechanismNtlm (credentials);
+			default:                   return null;
 			}
 		}
 
 		/// <summary>
-		/// Create an instance of the specified SASL mechanism using the uri and credentials.
+		/// Create an instance of the specified SASL mechanism using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// If unsure that a particular SASL mechanism is supported, you should first call
@@ -347,22 +403,19 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <c>null</c>.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
-		/// <param name="uri">The URI of the service to authenticate against.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="mechanism"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
-		public static SaslMechanism Create (string mechanism, Uri uri, ICredentials credentials)
+		public static SaslMechanism Create (string mechanism, NetworkCredential credentials)
 		{
-			return Create (mechanism, uri, Encoding.UTF8, credentials);
+			return Create (mechanism, Encoding.UTF8, credentials);
 		}
 
 		/// <summary>
-		/// Determines if the character is a non-ASCII space.
+		/// Determine if the character is a non-ASCII space.
 		/// </summary>
 		/// <remarks>
 		/// This list was obtained from http://tools.ietf.org/html/rfc3454#appendix-C.1.2
@@ -396,7 +449,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Determines if the character is commonly mapped to nothing.
+		/// Determine if the character is commonly mapped to nothing.
 		/// </summary>
 		/// <remarks>
 		/// This list was obtained from http://tools.ietf.org/html/rfc3454#appendix-B.1
@@ -422,7 +475,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Determines if the character is prohibited.
+		/// Determine if the character is prohibited.
 		/// </summary>
 		/// <remarks>
 		/// This list was obtained from http://tools.ietf.org/html/rfc3454#appendix-C.3
@@ -493,7 +546,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Prepares the user name or password string.
+		/// Prepare the user name or password string.
 		/// </summary>
 		/// <remarks>
 		/// Prepares a user name or password string according to the rules of rfc4013.

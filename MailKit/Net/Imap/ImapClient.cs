@@ -972,12 +972,12 @@ namespace MailKit.Net.Imap {
 
 			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var uri = new Uri ("imap://" + engine.Uri.Host);
-			NetworkCredential cred;
 			ImapCommand ic = null;
 			string id;
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
+			mechanism.TransportContext = (engine.Stream.Stream as SslStream)?.TransportContext;
 			mechanism.Uri = uri;
 
 			var command = string.Format ("AUTHENTICATE {0}", mechanism.MechanismName);
@@ -1019,8 +1019,7 @@ namespace MailKit.Net.Imap {
 
 			engine.State = ImapEngineState.Authenticated;
 
-			cred = mechanism.Credentials.GetCredential (mechanism.Uri, mechanism.MechanismName);
-			id = GetSessionIdentifier (cred.UserName);
+			id = GetSessionIdentifier (mechanism.Credentials.UserName);
 			if (id != identifier) {
 				engine.FolderCache.Clear ();
 				identifier = id;
@@ -1105,8 +1104,13 @@ namespace MailKit.Net.Imap {
 				if (!engine.AuthenticationMechanisms.Contains (authmech))
 					continue;
 
-				if ((sasl = SaslMechanism.Create (authmech, uri, encoding, credentials)) == null)
+				cred = credentials.GetCredential (uri, authmech);
+
+				if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
 					continue;
+
+				sasl.TransportContext = (engine.Stream.Stream as SslStream)?.TransportContext;
+				sasl.Uri = uri;
 
 				cancellationToken.ThrowIfCancellationRequested ();
 

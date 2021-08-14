@@ -40,16 +40,13 @@ namespace UnitTests.Security {
 		public void TestArgumentExceptions ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("smtp://localhost");
 
-			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create (null, uri, Encoding.UTF8, credentials));
-			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", null, Encoding.UTF8, credentials));
-			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", uri, null, credentials));
-			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", uri, Encoding.UTF8, null));
-
-			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create (null, uri, credentials));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create (null, Encoding.UTF8, credentials));
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", null, credentials));
-			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", uri, null));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", Encoding.UTF8, null));
+
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", null));
 
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.SaslPrep (null));
 		}
@@ -57,15 +54,14 @@ namespace UnitTests.Security {
 		[Test]
 		public void TestIsSupported ()
 		{
-			var supported = new [] { "PLAIN", "LOGIN", "CRAM-MD5", "DIGEST-MD5", "SCRAM-SHA-1", "SCRAM-SHA-256", "NTLM", "XOAUTH2" };
+			var supported = new [] { "PLAIN", "LOGIN", "CRAM-MD5", "DIGEST-MD5", "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-512-PLUS", "NTLM", "OAUTHBEARER", "XOAUTH2" };
 			var unsupported = new [] { "ANONYMOUS", "GSSAPI", "KERBEROS_V4" };
 			var credentials = new NetworkCredential ("username", "password");
-			var uri = new Uri ("smtp://localhost");
 
 			foreach (var mechanism in supported) {
 				Assert.IsTrue (SaslMechanism.IsSupported (mechanism), mechanism);
 
-				var sasl = SaslMechanism.Create (mechanism, uri, credentials);
+				var sasl = SaslMechanism.Create (mechanism, credentials);
 				Assert.IsNotNull (sasl, mechanism);
 				Assert.AreEqual (mechanism, sasl.MechanismName, "MechanismName");
 

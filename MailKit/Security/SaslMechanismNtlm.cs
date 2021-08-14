@@ -79,22 +79,23 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets the name of the mechanism.
+		/// Get the name of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
-		/// Gets the name of the mechanism.
+		/// Gets the name of the SASL mechanism.
 		/// </remarks>
-		/// <value>The name of the mechanism.</value>
+		/// <value>The name of the SASL mechanism.</value>
 		public override string MechanismName {
 			get { return "NTLM"; }
 		}
 
 		/// <summary>
-		/// Gets whether or not the mechanism supports an initial response (SASL-IR).
+		/// Get whether or not the mechanism supports an initial response (SASL-IR).
 		/// </summary>
 		/// <remarks>
-		/// SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.
+		/// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
+		/// <para>SASL mechanisms that support sending an initial client response to the server
+		/// should return <value>true</value>.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
 		public override bool SupportsInitialResponse {
@@ -106,7 +107,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
+		/// Get or set the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
 		/// </summary>
 		/// <remarks>
 		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
@@ -116,7 +117,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Gets or sets the workstation name to use for authentication.
+		/// Get or set the workstation name to use for authentication.
 		/// </summary>
 		/// <remarks>
 		/// Gets or sets the workstation name to use for authentication.
@@ -127,7 +128,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Parses the server's challenge token and returns the next challenge response.
+		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
 		/// <remarks>
 		/// Parses the server's challenge token and returns the next challenge response.
@@ -185,7 +186,7 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Resets the state of the SASL mechanism.
+		/// Reset the state of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
 		/// Resets the state of the SASL mechanism.
