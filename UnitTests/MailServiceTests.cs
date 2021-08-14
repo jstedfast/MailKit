@@ -50,7 +50,7 @@ namespace UnitTests {
 			var expires = certificate2.NotAfter;
 
 			Assert.IsNotNull (certificate2, "Cast");
-			Assert.IsTrue (MailService.IsKnownMailServerCertificate (certificate2), $"IsKnownMailServerCertificate failed: {cn} issuer={issuer} serial={serial} fingerprint={fingerprint} // Expires {expires}");
+			Assert.IsTrue (MailService.IsKnownMailServerCertificate (certificate2), $"IsKnownMailServerCertificate failed: {cn} (issuer == \"{issuer}\" && serial == \"{serial}\" && fingerprint == \"{fingerprint}\"); // Expires {expires}");
 
 			return true;
 		}
