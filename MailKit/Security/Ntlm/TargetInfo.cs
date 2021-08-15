@@ -43,6 +43,10 @@ namespace MailKit.Security.Ntlm {
 			get; set;
 		}
 
+		public byte[] ChannelBinding {
+			get; set;
+		}
+
 		public string DomainName {
 			get; set;
 		}
@@ -69,6 +73,18 @@ namespace MailKit.Security.Ntlm {
 
 		public long Timestamp {
 			get; set;
+		}
+
+		static byte[] DecodeByteArray (byte[] buffer, ref int index)
+		{
+			var length = BitConverterLE.ToInt16 (buffer, index);
+			var value = new byte[length];
+
+			Buffer.BlockCopy (buffer, index + 2, value, 0, length);
+
+			index += 2 + length;
+
+			return value;
 		}
 
 		static string DecodeString (byte[] buffer, ref int index, bool unicode)
@@ -147,6 +163,7 @@ namespace MailKit.Security.Ntlm {
 				case 6: Flags = DecodeFlags (buffer, ref index); break;
 				case 7: Timestamp = DecodeTimestamp (buffer, ref index); break;
 				case 9: TargetName = DecodeString (buffer, ref index, unicode); break;
+				case 10: ChannelBinding = DecodeByteArray (buffer, ref index); break;
 				default: index += 2 + BitConverterLE.ToInt16 (buffer, index); break;
 				}
 			} while (index < startIndex + length);
@@ -181,6 +198,9 @@ namespace MailKit.Security.Ntlm {
 			if (!string.IsNullOrEmpty (TargetName))
 				length += 4 + encoding.GetByteCount (TargetName);
 
+			if (ChannelBinding != null && ChannelBinding.Length > 0)
+				length += 4 + ChannelBinding.Length;
+
 			return length;
 		}
 
@@ -192,13 +212,17 @@ namespace MailKit.Security.Ntlm {
 			buf[index++] = (byte) (length >> 8);
 		}
 
+		static void EncodeByteArray (byte[] buf, ref int index, short type, byte[] value)
+		{
+			EncodeTypeAndLength (buf, ref index, type, (short) value.Length);
+			Buffer.BlockCopy (value, 0, buf, index, value.Length);
+			index += value.Length;
+		}
+
 		static void EncodeString (byte[] buf, ref int index, short type, string value, bool unicode)
 		{
 			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
-			int length = value.Length;
-
-			if (unicode)
-				length *= 2;
+			int length = encoding.GetByteCount (value);
 
 			EncodeTypeAndLength (buf, ref index, type, (short) length);
 			encoding.GetBytes (value, 0, value.Length, buf, index);
@@ -254,6 +278,9 @@ namespace MailKit.Security.Ntlm {
 
 			if (!string.IsNullOrEmpty (TargetName))
 				EncodeString (buf, ref index, 9, TargetName, unicode);
+
+			if (ChannelBinding != null && ChannelBinding.Length > 0)
+				EncodeByteArray (buf, ref index, 10, ChannelBinding);
 
 			return buf;
 		}

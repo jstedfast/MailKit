@@ -98,6 +98,7 @@ namespace UnitTests.Security {
 			var now = DateTime.Now.Ticks;
 
 			var targetInfo = new TargetInfo {
+				ChannelBinding = Encoding.ASCII.GetBytes ("channel-binding"),
 				TargetName = "TARGET",
 				DnsTreeName = "target.domain.com",
 				DomainName = "DOMAIN",
@@ -111,6 +112,7 @@ namespace UnitTests.Security {
 			var encoded = targetInfo.Encode (true);
 			var decoded = new TargetInfo (encoded, 0, encoded.Length, true);
 
+			Assert.AreEqual ("channel-binding", Encoding.ASCII.GetString (decoded.ChannelBinding), "ChannelBinding does not match.");
 			Assert.AreEqual (targetInfo.DnsDomainName, decoded.DnsDomainName, "DnsDomainName does not match.");
 			Assert.AreEqual (targetInfo.DnsServerName, decoded.DnsServerName, "DnsServerName does not match.");
 			Assert.AreEqual (targetInfo.DnsTreeName, decoded.DnsTreeName, "DnsTreeName does not match.");
@@ -151,7 +153,7 @@ namespace UnitTests.Security {
 			var osVersion = new Version (5, 0, 2195);
 
 			Assert.AreEqual (flags, type1.Flags, "The expected flags do not match.");
-			Assert.AreEqual ("WORKSTATION", type1.Host, "The expected workstation name does not match.");
+			Assert.AreEqual ("WORKSTATION", type1.Workstation, "The expected workstation name does not match.");
 			Assert.AreEqual ("DOMAIN", type1.Domain, "The expected domain does not match.");
 			Assert.AreEqual (osVersion, type1.OSVersion, "The expected OS Version does not match.");
 		}
@@ -325,7 +327,7 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (flags, type3.Flags, "The expected flags do not match.");
 			Assert.AreEqual ("DOMAIN", type3.Domain, "The expected Domain does not match.");
-			Assert.AreEqual ("WORKSTATION", type3.Host, "The expected Host does not match.");
+			Assert.AreEqual ("WORKSTATION", type3.Workstation, "The expected Workstation does not match.");
 			Assert.AreEqual ("user", type3.Username, "The expected Username does not match.");
 
 			var nt = HexEncode (type3.NT);
@@ -349,7 +351,7 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (Type1Message.DefaultFlags, type1.Flags, "{0}: Expected initial NTLM client challenge flags do not match.", prefix);
 			Assert.AreEqual (string.Empty, type1.Domain, "{0}: Expected initial NTLM client challenge domain does not match.", prefix);
-			Assert.AreEqual (string.Empty, type1.Host, "{0}: Expected initial NTLM client challenge host does not match.", prefix);
+			Assert.AreEqual (string.Empty, type1.Workstation, "{0}: Expected initial NTLM client challenge workstation does not match.", prefix);
 			Assert.IsFalse (sasl.IsAuthenticated, "{0}: NTLM should not be authenticated.", prefix);
 		}
 
@@ -390,7 +392,7 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (initialFlags, type1.Flags, "{0}: Expected initial NTLM client challenge flags do not match.", prefix);
 			Assert.AreEqual ("DOMAIN", type1.Domain, "{0}: Expected initial NTLM client challenge domain does not match.", prefix);
-			Assert.AreEqual (string.Empty, type1.Host, "{0}: Expected initial NTLM client challenge host does not match.", prefix);
+			Assert.AreEqual (string.Empty, type1.Workstation, "{0}: Expected initial NTLM client challenge workstation does not match.", prefix);
 			Assert.IsFalse (sasl.IsAuthenticated, "{0}: NTLM should not be authenticated.", prefix);
 		}
 

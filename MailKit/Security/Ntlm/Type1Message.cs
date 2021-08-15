@@ -42,15 +42,15 @@ namespace MailKit.Security.Ntlm {
 	{
 		internal static readonly NtlmFlags DefaultFlags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateUnicode | NtlmFlags.RequestTarget;
 
+		string workstation;
 		string domain;
-		string host;
 
-		public Type1Message (string hostName, string domainName, Version osVersion) : base (1)
+		public Type1Message (string workstation, string domainName, Version osVersion) : base (1)
 		{
-			OSVersion = osVersion;
 			Flags = DefaultFlags;
+			Workstation = workstation;
+			OSVersion = osVersion;
 			Domain = domainName;
-			Host = hostName;
 
 			if (osVersion != null)
 				Flags |= NtlmFlags.NegotiateVersion;
@@ -75,8 +75,8 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		public string Host {
-			get { return host; }
+		public string Workstation {
+			get { return workstation; }
 			set {
 				if (string.IsNullOrEmpty (value)) {
 					Flags &= ~NtlmFlags.NegotiateWorkstationSupplied;
@@ -85,7 +85,7 @@ namespace MailKit.Security.Ntlm {
 					Flags |= NtlmFlags.NegotiateWorkstationSupplied;
 				}
 
-				host = value;
+				workstation = value;
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace MailKit.Security.Ntlm {
 			// decode the workstation/host
 			var workstationLength = BitConverterLE.ToUInt16 (message, startIndex + 24);
 			var workstationOffset = BitConverterLE.ToUInt16 (message, startIndex + 28);
-			host = Encoding.UTF8.GetString (message, startIndex + workstationOffset, workstationLength);
+			workstation = Encoding.UTF8.GetString (message, startIndex + workstationOffset, workstationLength);
 
 			if ((Flags & NtlmFlags.NegotiateVersion) != 0 && length >= 40) {
 				// decode the OS Version
@@ -123,10 +123,11 @@ namespace MailKit.Security.Ntlm {
 			if (negotiateVersion = (Flags & NtlmFlags.NegotiateVersion) != 0)
 				versionLength = 8;
 
-			int hostOffset = 32 + versionLength;
-			int domainOffset = hostOffset + host.Length;
+			int workstationOffset = 32 + versionLength;
+			int domainOffset = workstationOffset + workstation.Length;
 
-			var message = PrepareMessage (32 + domain.Length + host.Length + versionLength);
+			var message = PrepareMessage (32 + domain.Length + workstation.Length + versionLength);
+			byte[] buffer;
 
 			message[12] = (byte) Flags;
 			message[13] = (byte)((uint) Flags >> 8);
@@ -140,12 +141,12 @@ namespace MailKit.Security.Ntlm {
 			message[20] = (byte) domainOffset;
 			message[21] = (byte)(domainOffset >> 8);
 
-			message[24] = (byte) host.Length;
-			message[25] = (byte)(host.Length >> 8);
+			message[24] = (byte) workstation.Length;
+			message[25] = (byte)(workstation.Length >> 8);
 			message[26] = message[24];
 			message[27] = message[25];
-			message[28] = (byte) hostOffset;
-			message[29] = (byte)(hostOffset >> 8);
+			message[28] = (byte) workstationOffset;
+			message[29] = (byte)(workstationOffset >> 8);
 
 			if (negotiateVersion) {
 				message[32] = (byte) OSVersion.Major;
@@ -158,11 +159,11 @@ namespace MailKit.Security.Ntlm {
 				message[39] = 0x0f;
 			}
 
-			var hostName = Encoding.UTF8.GetBytes (host.ToUpperInvariant ());
-			Buffer.BlockCopy (hostName, 0, message, hostOffset, hostName.Length);
+			buffer = Encoding.UTF8.GetBytes (workstation.ToUpperInvariant ());
+			Buffer.BlockCopy (buffer, 0, message, workstationOffset, buffer.Length);
 
-			var domainName = Encoding.UTF8.GetBytes (domain.ToUpperInvariant ());
-			Buffer.BlockCopy (domainName, 0, message, domainOffset, domainName.Length);
+			buffer = Encoding.UTF8.GetBytes (domain.ToUpperInvariant ());
+			Buffer.BlockCopy (buffer, 0, message, domainOffset, buffer.Length);
 
 			return message;
 		}

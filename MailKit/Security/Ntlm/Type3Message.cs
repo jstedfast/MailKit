@@ -49,7 +49,7 @@ namespace MailKit.Security.Ntlm {
 			type2 = null;
 		}
 
-		public Type3Message (Type2Message type2, Version osVersion, NtlmAuthLevel level, string userName, string password, string host) : base (3)
+		public Type3Message (Type2Message type2, Version osVersion, NtlmAuthLevel level, string userName, string password, string workstation) : base (3)
 		{
 			this.type2 = type2;
 
@@ -59,7 +59,7 @@ namespace MailKit.Security.Ntlm {
 			Username = userName;
 			Password = password;
 			Level = level;
-			Host = host;
+			Workstation = workstation;
 			Flags = 0;
 
 			if (osVersion != null)
@@ -103,7 +103,7 @@ namespace MailKit.Security.Ntlm {
 			get; set;
 		}
 
-		public string Host {
+		public string Workstation {
 			get; set;
 		}
 
@@ -154,7 +154,7 @@ namespace MailKit.Security.Ntlm {
 
 			int hostLength = BitConverterLE.ToUInt16 (message, startIndex + 44);
 			int hostOffset = BitConverterLE.ToUInt16 (message, startIndex + 48);
-			Host = DecodeString (message, startIndex + hostOffset, hostLength);
+			Workstation = DecodeString (message, startIndex + hostOffset, hostLength);
 
 			// Session key.  We don't use it yet.
 			//int skeyLength = BitConverterLE.ToUInt16 (message, startIndex + 52);
@@ -192,7 +192,7 @@ namespace MailKit.Security.Ntlm {
 		{
 			var target = EncodeString (Domain);
 			var user = EncodeString (Username);
-			var host = EncodeString (Host);
+			var workstation = EncodeString (Workstation);
 			var payloadOffset = 64;
 			bool negotiateVersion;
 			byte[] lm, ntlm;
@@ -205,10 +205,10 @@ namespace MailKit.Security.Ntlm {
 			var lmResponseLength = lm != null ? lm.Length : 0;
 			var ntResponseLength = ntlm != null ? ntlm.Length : 0;
 
-			var message = PrepareMessage (payloadOffset + target.Length + user.Length + host.Length + lmResponseLength + ntResponseLength);
+			var message = PrepareMessage (payloadOffset + target.Length + user.Length + workstation.Length + lmResponseLength + ntResponseLength);
 
 			// LM response
-			short lmResponseOffset = (short) (payloadOffset + target.Length + user.Length + host.Length);
+			short lmResponseOffset = (short) (payloadOffset + target.Length + user.Length + workstation.Length);
 			message[12] = (byte) lmResponseLength;
 			message[13] = (byte) 0x00;
 			message[14] = message[12];
@@ -246,14 +246,14 @@ namespace MailKit.Security.Ntlm {
 			message[41] = (byte) (userOffset >> 8);
 
 			// host
-			short hostLength = (short) host.Length;
-			short hostOffset = (short) (userOffset + userLength);
-			message[44] = (byte) hostLength;
-			message[45] = (byte) (hostLength >> 8);
+			short workstationLength = (short) workstation.Length;
+			short workstationOffset = (short) (userOffset + userLength);
+			message[44] = (byte) workstationLength;
+			message[45] = (byte) (workstationLength >> 8);
 			message[46] = message[44];
 			message[47] = message[45];
-			message[48] = (byte) hostOffset;
-			message[49] = (byte) (hostOffset >> 8);
+			message[48] = (byte) workstationOffset;
+			message[49] = (byte) (workstationOffset >> 8);
 
 			// message length
 			short messageLength = (short) message.Length;
@@ -279,7 +279,7 @@ namespace MailKit.Security.Ntlm {
 
 			Buffer.BlockCopy (target, 0, message, domainOffset, target.Length);
 			Buffer.BlockCopy (user, 0, message, userOffset, user.Length);
-			Buffer.BlockCopy (host, 0, message, hostOffset, host.Length);
+			Buffer.BlockCopy (workstation, 0, message, workstationOffset, workstation.Length);
 
 			if (lm != null) {
 				Buffer.BlockCopy (lm, 0, message, lmResponseOffset, lm.Length);
