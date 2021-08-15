@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Security.Authentication.ExtendedProtection;
 
 using NUnit.Framework;
 
@@ -159,7 +160,7 @@ namespace UnitTests.Security {
 			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
 		}
 
-		static void AssertScramSha512Plus (SaslMechanismScramSha512Plus sasl, string prefix)
+		static void AssertScramSha512PlusTlsServerEndpoint (SaslMechanismScramSha512Plus sasl, string prefix)
 		{
 			const string expected = "c=cD10bHMtc2VydmVyLWVuZC1wb2ludCwsaW1hcDovL2Vsd29vZC5pbm5vc29mdC5jb20v,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=Lrbr64QBLm57rPiUjNzRxRpy5SmWXr9uo1YaZamnGl5eJlvHL+VO3EogXgUmr8ht+aJoS3d2XOSNN6RUiA05sQ==";
 			const string challenge1 = "r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096";
@@ -191,19 +192,66 @@ namespace UnitTests.Security {
 		}
 
 		[Test]
-		public void TestScramSha512Plus ()
+		public void TestScramSha512PlusTlsServerEndpoint ()
 		{
 			var credentials = new NetworkCredential ("user", "pencil");
 			var uri = new Uri ("imap://elwood.innosoft.com");
-			var context = new FakeTransportContext (uri.ToString ());
+			var context = new FakeTransportContext (ChannelBindingKind.Endpoint, uri.ToString ());
 
 			var sasl = new SaslMechanismScramSha512Plus (credentials) { TransportContext = context };
 
-			AssertScramSha512Plus (sasl, "NetworkCredential");
+			AssertScramSha512PlusTlsServerEndpoint (sasl, "NetworkCredential");
 
 			sasl = new SaslMechanismScramSha512Plus ("user", "pencil") { TransportContext = context };
 
-			AssertScramSha512Plus (sasl, "user/pass");
+			AssertScramSha512PlusTlsServerEndpoint (sasl, "user/pass");
+		}
+
+		static void AssertScramSha512PlusTlsUnique (SaslMechanismScramSha512Plus sasl, string prefix)
+		{
+			const string expected = "c=cD10bHMtdW5pcXVlLCxpbWFwOi8vZWx3b29kLmlubm9zb2Z0LmNvbS8=,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=vtgb/B7KLKMSSwhLaJufN0efCR3TIVsLtC2o5bqG0jId/9nFgzKSoc9lG9bIy0J9mi4jiYho8ozV1Uuzkcs2bg==";
+			const string challenge1 = "r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096";
+			const string challenge2 = "v=IvtJ4BHN4D4LGpsg8ciEMV8OP8SJ4J1U8bzOyySnz6LeGADY7r1bKcGnrwvHEA13yjPb0uYJlftSkeyDdxijHA==";
+			const string entropy = "rOprNGfwEbeRWgbNEkqO";
+			string token;
+
+			sasl.cnonce = entropy;
+
+			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
+			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+
+			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
+
+			Assert.AreEqual ("p=tls-unique,,n=user,r=" + entropy, challenge, "{0}: initial SCRAM-SHA-512-PLUS challenge response does not match the expected string.", prefix);
+			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+
+			Assert.AreEqual (expected, challenge, "{0}: second SCRAM-SHA-512-PLUS challenge response does not match the expected string.", prefix);
+			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-512-PLUS challenge should be an empty string.", prefix);
+			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-512-PLUS should be authenticated now.", prefix);
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
+		}
+
+		[Test]
+		public void TestScramSha512PlusTlsUnique ()
+		{
+			var credentials = new NetworkCredential ("user", "pencil");
+			var uri = new Uri ("imap://elwood.innosoft.com");
+			var context = new FakeTransportContext (ChannelBindingKind.Unique, uri.ToString ());
+
+			var sasl = new SaslMechanismScramSha512Plus (credentials) { TransportContext = context };
+
+			AssertScramSha512PlusTlsUnique (sasl, "NetworkCredential");
+
+			sasl = new SaslMechanismScramSha512Plus ("user", "pencil") { TransportContext = context };
+
+			AssertScramSha512PlusTlsUnique (sasl, "user/pass");
 		}
 	}
 }

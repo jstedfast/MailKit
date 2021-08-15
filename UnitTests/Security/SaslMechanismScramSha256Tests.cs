@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Security.Authentication.ExtendedProtection;
 
 using NUnit.Framework;
 
@@ -159,7 +160,7 @@ namespace UnitTests.Security {
 			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
 		}
 
-		static void AssertScramSha256Plus (SaslMechanismScramSha256Plus sasl, string prefix)
+		static void AssertScramSha256PlusTlsServerEndpoint (SaslMechanismScramSha256Plus sasl, string prefix)
 		{
 			const string expected = "c=cD10bHMtc2VydmVyLWVuZC1wb2ludCwsaW1hcDovL2Vsd29vZC5pbm5vc29mdC5jb20v,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=5mTXE52q6omlPLhl1OBywbbmUZoqUb8TZ0rQcSODGrg=";
 			const string challenge1 = "r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096";
@@ -191,19 +192,66 @@ namespace UnitTests.Security {
 		}
 
 		[Test]
-		public void TestScramSha256Plus ()
+		public void TestScramSha256PlusTlsServerEndpoint ()
 		{
 			var credentials = new NetworkCredential ("user", "pencil");
 			var uri = new Uri ("imap://elwood.innosoft.com");
-			var context = new FakeTransportContext (uri.ToString ());
+			var context = new FakeTransportContext (ChannelBindingKind.Endpoint, uri.ToString ());
 
 			var sasl = new SaslMechanismScramSha256Plus (credentials) { TransportContext = context };
 
-			AssertScramSha256Plus (sasl, "NetworkCredential");
+			AssertScramSha256PlusTlsServerEndpoint (sasl, "NetworkCredential");
 
 			sasl = new SaslMechanismScramSha256Plus ("user", "pencil") { TransportContext = context };
 
-			AssertScramSha256Plus (sasl, "user/pass");
+			AssertScramSha256PlusTlsServerEndpoint (sasl, "user/pass");
+		}
+
+		static void AssertScramSha256PlusTlsUnique (SaslMechanismScramSha256Plus sasl, string prefix)
+		{
+			const string expected = "c=cD10bHMtdW5pcXVlLCxpbWFwOi8vZWx3b29kLmlubm9zb2Z0LmNvbS8=,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=r034Wumf+g5Cw9QvuK2TBTWHLa9hsT0TpUvksIr3P0I=";
+			const string challenge1 = "r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096";
+			const string challenge2 = "v=ZfK3fb1tbWoyTuaEXvUTM2va2RSQgBVJ8QYsympnk8o=";
+			const string entropy = "rOprNGfwEbeRWgbNEkqO";
+			string token;
+
+			sasl.cnonce = entropy;
+
+			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
+			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+
+			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
+
+			Assert.AreEqual ("p=tls-unique,,n=user,r=" + entropy, challenge, "{0}: initial SCRAM-SHA-256-PLUS challenge response does not match the expected string.", prefix);
+			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+
+			Assert.AreEqual (expected, challenge, "{0}: second SCRAM-SHA-256-PLUS challenge response does not match the expected string.", prefix);
+			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-256-PLUS challenge should be an empty string.", prefix);
+			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-256-PLUS should be authenticated now.", prefix);
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
+		}
+
+		[Test]
+		public void TestScramSha256PlusTlsUnique ()
+		{
+			var credentials = new NetworkCredential ("user", "pencil");
+			var uri = new Uri ("imap://elwood.innosoft.com");
+			var context = new FakeTransportContext (ChannelBindingKind.Unique, uri.ToString ());
+
+			var sasl = new SaslMechanismScramSha256Plus (credentials) { TransportContext = context };
+
+			AssertScramSha256PlusTlsUnique (sasl, "NetworkCredential");
+
+			sasl = new SaslMechanismScramSha256Plus ("user", "pencil") { TransportContext = context };
+
+			AssertScramSha256PlusTlsUnique (sasl, "user/pass");
 		}
 	}
 }

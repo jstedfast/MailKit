@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Authentication.ExtendedProtection;
@@ -58,16 +59,21 @@ namespace UnitTests.Security
 			}
 		}
 
+		readonly ChannelBindingKind supportedKind;
 		readonly ChannelBinding binding;
 
-		public FakeTransportContext (string channelBindingData)
+		public FakeTransportContext (ChannelBindingKind kind, string channelBindingData)
 		{
 			binding = new FakeChannelBinding (channelBindingData);
+			supportedKind = kind;
 		}
 
 		public override ChannelBinding GetChannelBinding (ChannelBindingKind kind)
 		{
-			return binding;
+			if (kind == supportedKind)
+				return binding;
+
+			throw new NotSupportedException ();
 		}
 	}
 }

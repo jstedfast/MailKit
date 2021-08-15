@@ -214,12 +214,18 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <returns>A buffer containing the channel binding token if available; otherwise, <c>null</c>.</returns>
 		/// <param name="kind">The kind of channel binding.</param>
-		/// <exception cref="NotSupportedException">
-		/// <paramref name="kind"/> is not a supported.
-		/// </exception>
 		protected byte[] GetChannelBindingToken (ChannelBindingKind kind)
 		{
-			var channelBinding = TransportContext?.GetChannelBinding (kind);
+			ChannelBinding channelBinding;
+
+			try {
+				// Note: Documentation for TransportContext.GetChannelBinding() states that it will return null if the
+				// requested channel binding type is not supported, but it also states that it will throw
+				// NotSupportedException, so we handle both.
+				channelBinding = TransportContext?.GetChannelBinding (kind);
+			} catch (NotSupportedException) {
+				channelBinding = null;
+			}
 
 			if (channelBinding == null || channelBinding.IsClosed || channelBinding.IsInvalid || channelBinding.Size <= 0)
 				return null;

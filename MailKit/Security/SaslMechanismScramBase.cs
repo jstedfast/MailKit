@@ -47,6 +47,8 @@ namespace MailKit.Security {
 			Validate
 		}
 
+		ChannelBindingKind channelBindingKind;
+		byte[] channelBindingToken;
 		internal string cnonce;
 		string client, server;
 		byte[] salted, auth;
@@ -81,6 +83,18 @@ namespace MailKit.Security {
 		/// </exception>
 		protected SaslMechanismScramBase (string userName, string password) : base (userName, password)
 		{
+		}
+
+		/// <summary>
+		/// Get or set the authorization identifier.
+		/// </summary>
+		/// <remarks>
+		/// The authorization identifier is the desired user account that the server should use
+		/// for all accesses. This is separate from the user name used for authentication.
+		/// </remarks>
+		/// <value>The authorization identifier.</value>
+		public string AuthorizationId {
+			get; set;
 		}
 
 		/// <summary>
@@ -225,6 +239,27 @@ namespace MailKit.Security {
 			return results;
 		}
 
+		static string GetChannelBindingName (ChannelBindingKind kind)
+		{
+			return kind == ChannelBindingKind.Endpoint ? "tls-server-end-point" : "tls-unique";
+		}
+
+		static string GetChannelBindingInput (ChannelBindingKind kind, string authzid)
+		{
+			string flag;
+
+			if (kind != ChannelBindingKind.Unknown) {
+				flag = "p=" + GetChannelBindingName (kind);
+			} else {
+				flag = "n";
+			}
+
+			if (string.IsNullOrEmpty (authzid))
+				authzid = string.Empty;
+
+			return flag + "," + authzid + ",";
+		}
+
 		/// <summary>
 		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
@@ -247,18 +282,31 @@ namespace MailKit.Security {
 				return null;
 
 			byte[] response, signature;
+			string input;
 
 			switch (state) {
 			case LoginState.Initial:
 				cnonce = cnonce ?? GenerateEntropy (18);
 				client = "n=" + Normalize (Credentials.UserName) + ",r=" + cnonce;
 
-				// Note: The "tls-unique" channel binding type is not considered secure and should no longer be used.
-				if (SupportsChannelBinding)
-					response = Encoding.UTF8.GetBytes ("p=tls-server-end-point,," + client);
-				else
-					response = Encoding.UTF8.GetBytes ("n,," + client);
+				// Note: RFC7677 states:
+				//
+				// After publication of [RFC5802], it was discovered that Transport
+				// Layer Security (TLS) [RFC5246] does not have the expected properties
+				// for the "tls-unique" channel binding to be secure[RFC7627].
+				//
+				// Based on this, we attempt to use "tls-server-end-point" instead of "tls-unique" when available.
+				if (SupportsChannelBinding) {
+					if ((channelBindingToken = GetChannelBindingToken (ChannelBindingKind.Endpoint)) == null) {
+						channelBindingToken = GetChannelBindingToken (ChannelBindingKind.Unique);
+						channelBindingKind = ChannelBindingKind.Unique;
+					} else {
+						channelBindingKind = ChannelBindingKind.Endpoint;
+					}
+				}
 
+				input = GetChannelBindingInput (channelBindingKind, AuthorizationId);
+				response = Encoding.UTF8.GetBytes (input + client);
 				state = LoginState.Final;
 				break;
 			case LoginState.Final:
@@ -286,22 +334,26 @@ namespace MailKit.Security {
 				salted = Hi (password, Convert.FromBase64String (salt), count);
 				Array.Clear (password, 0, password.Length);
 
-				string channelBinding;
+				input = GetChannelBindingInput (channelBindingKind, AuthorizationId);
+				var inputBuffer = Encoding.ASCII.GetBytes (input);
+				string base64;
 
 				if (SupportsChannelBinding) {
-					var bindingType = Encoding.ASCII.GetBytes ("p=tls-server-end-point,,");
-					var bindingToken = GetChannelBindingToken (ChannelBindingKind.Endpoint);
-					var binding = new byte[bindingType.Length + bindingToken.Length];
+					var binding = new byte[inputBuffer.Length + channelBindingToken.Length];
 
-					Buffer.BlockCopy (bindingType, 0, binding, 0, bindingType.Length);
-					Buffer.BlockCopy (bindingToken, 0, binding, bindingType.Length, bindingToken.Length);
+					Buffer.BlockCopy (inputBuffer, 0, binding, 0, inputBuffer.Length);
+					Buffer.BlockCopy (channelBindingToken, 0, binding, inputBuffer.Length, channelBindingToken.Length);
 
-					channelBinding = "c=" + Convert.ToBase64String (binding);
+					// Zero the channel binding token. We don't need it anymore.
+					Array.Clear (channelBindingToken, 0, channelBindingToken.Length);
+					channelBindingToken = null;
+
+					base64 = Convert.ToBase64String (binding);
 				} else {
-					channelBinding = "c=" + Convert.ToBase64String (Encoding.ASCII.GetBytes ("n,,"));
+					base64 = Convert.ToBase64String (inputBuffer);
 				}
 
-				var withoutProof = channelBinding + ",r=" + nonce;
+				var withoutProof = "c=" + base64 + ",r=" + nonce;
 
 				auth = Encoding.UTF8.GetBytes (client + "," + server + "," + withoutProof);
 
@@ -325,11 +377,9 @@ namespace MailKit.Security {
 				if (signature.Length != calculated.Length)
 					throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, "Challenge contained a signature with an invalid length.");
 
-				var expected = Convert.ToBase64String (calculated);
-
 				for (int i = 0; i < signature.Length; i++) {
 					if (signature[i] != calculated[i])
-						throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, $"Challenge contained an invalid signature. Expected: {expected}");
+						throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, $"Challenge contained an invalid signature. Expected: {Convert.ToBase64String (calculated)}");
 				}
 
 				IsAuthenticated = true;
@@ -350,6 +400,12 @@ namespace MailKit.Security {
 		/// </remarks>
 		public override void Reset ()
 		{
+			if (channelBindingToken != null) {
+				Array.Clear (channelBindingToken, 0, channelBindingToken.Length);
+				channelBindingToken = null;
+			}
+
+			channelBindingKind = ChannelBindingKind.Unknown;
 			state = LoginState.Initial;
 			client = null;
 			server = null;
