@@ -112,8 +112,12 @@ namespace MailKit.Security {
 
 		static string Normalize (string str)
 		{
-			var builder = new StringBuilder ();
 			var prepared = SaslPrep (str);
+
+			if (prepared.Length == 0)
+				return prepared;
+
+			var builder = new StringBuilder ();
 
 			for (int i = 0; i < prepared.Length; i++) {
 				switch (prepared[i]) {
@@ -257,7 +261,7 @@ namespace MailKit.Security {
 			if (string.IsNullOrEmpty (authzid))
 				authzid = string.Empty;
 
-			return flag + "," + authzid + ",";
+			return flag + "," + Normalize (authzid) + ",";
 		}
 
 		/// <summary>
