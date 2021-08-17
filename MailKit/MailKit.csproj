@@ -138,14 +138,17 @@
     <Compile Include="Search\UidSearchQuery.cs" />
     <Compile Include="Search\UnarySearchQuery.cs" />
     <Compile Include="Security\Ntlm\BitConverterLE.cs" />
-    <Compile Include="Security\Ntlm\ChallengeResponse2.cs" />
     <Compile Include="Security\Ntlm\DES.cs" Condition=" $(TargetFramework.StartsWith('netstandard1.')) " />
     <Compile Include="Security\Ntlm\HMACMD5.cs" Condition=" $(TargetFramework.StartsWith('netstandard1.')) " />
     <Compile Include="Security\Ntlm\MD4.cs" />
-    <Compile Include="Security\Ntlm\MessageBase.cs" />
-    <Compile Include="Security\Ntlm\NtlmAuthLevel.cs" />
+    <Compile Include="Security\Ntlm\NtlmAttribute.cs" />
+    <Compile Include="Security\Ntlm\NtlmAttributeValuePair.cs" />
     <Compile Include="Security\Ntlm\NtlmFlags.cs" />
-    <Compile Include="Security\Ntlm\TargetInfo.cs" />
+    <Compile Include="Security\Ntlm\NtlmMessageBase.cs" />
+    <Compile Include="Security\Ntlm\NtlmSingleHostData.cs" />
+    <Compile Include="Security\Ntlm\NtlmTargetInfo.cs" />
+    <Compile Include="Security\Ntlm\NtlmUtils.cs" />
+    <Compile Include="Security\Ntlm\RC4.cs" />
     <Compile Include="Security\Ntlm\Type1Message.cs" />
     <Compile Include="Security\Ntlm\Type2Message.cs" />
     <Compile Include="Security\Ntlm\Type3Message.cs" />

@@ -26,14 +26,9 @@
 
 using System;
 
-namespace MailKit.Security.Ntlm
-{
-	sealed class BitConverterLE
+namespace MailKit.Security.Ntlm {
+	static class BitConverterLE
 	{
-		BitConverterLE ()
-		{
-		}
-
 		unsafe static byte[] GetULongBytes (byte *bytes)
 		{
 			if (BitConverter.IsLittleEndian)
@@ -73,7 +68,7 @@ namespace MailKit.Security.Ntlm
 			}
 		}
 
-		unsafe internal static short ToInt16 (byte[] value, int startIndex)
+		public unsafe static short ToInt16 (byte[] value, int startIndex)
 		{
 			short ret;
 
@@ -82,7 +77,7 @@ namespace MailKit.Security.Ntlm
 			return ret;
 		}
 
-		unsafe internal static int ToInt32 (byte[] value, int startIndex)
+		public unsafe static int ToInt32 (byte[] value, int startIndex)
 		{
 			int ret;
 
@@ -91,7 +86,7 @@ namespace MailKit.Security.Ntlm
 			return ret;
 		}
 
-		unsafe internal static ushort ToUInt16 (byte[] value, int startIndex)
+		public unsafe static ushort ToUInt16 (byte[] value, int startIndex)
 		{
 			ushort ret;
 
@@ -100,7 +95,7 @@ namespace MailKit.Security.Ntlm
 			return ret;
 		}
 
-		unsafe internal static uint ToUInt32 (byte[] value, int startIndex)
+		public unsafe static uint ToUInt32 (byte[] value, int startIndex)
 		{
 			uint ret;
 

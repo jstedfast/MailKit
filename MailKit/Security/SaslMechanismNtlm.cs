@@ -24,8 +24,11 @@
 // THE SOFTWARE.
 //
 
+// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4
+
 using System;
 using System.Net;
+using System.Security.Authentication.ExtendedProtection;
 
 using MailKit.Security.Ntlm;
 
@@ -39,10 +42,11 @@ namespace MailKit.Security {
 	public class SaslMechanismNtlm : SaslMechanism
 	{
 		enum LoginState {
-			Initial,
+			Negotiate,
 			Challenge
 		}
 
+		Type1Message type1;
 		LoginState state;
 
 		/// <summary>
@@ -57,7 +61,9 @@ namespace MailKit.Security {
 		/// </exception>
 		public SaslMechanismNtlm (NetworkCredential credentials) : base (credentials)
 		{
-			Level = NtlmAuthLevel.NTLMv2_only;
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				OSVersion = Environment.OSVersion.Version;
+			Workstation = Environment.MachineName;
 		}
 
 		/// <summary>
@@ -75,7 +81,23 @@ namespace MailKit.Security {
 		/// </exception>
 		public SaslMechanismNtlm (string userName, string password) : base (userName, password)
 		{
-			Level = NtlmAuthLevel.NTLMv2_only;
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				OSVersion = Environment.OSVersion.Version;
+			Workstation = Environment.MachineName;
+		}
+
+		/// <summary>
+		/// This is only used for unit testing purposes.
+		/// </summary>
+		internal byte[] Nonce {
+			get; set;
+		}
+
+		/// <summary>
+		/// This is only used for unit testing purposes.
+		/// </summary>
+		internal long? Timestamp {
+			get; set;
 		}
 
 		/// <summary>
@@ -87,6 +109,17 @@ namespace MailKit.Security {
 		/// <value>The name of the SASL mechanism.</value>
 		public override string MechanismName {
 			get { return "NTLM"; }
+		}
+
+		/// <summary>
+		/// Get whether or not the SASL mechanism supports channel binding.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the SASL mechanism supports channel binding.
+		/// </remarks>
+		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+		public override bool SupportsChannelBinding {
+			get { return true; }
 		}
 
 		/// <summary>
@@ -102,16 +135,26 @@ namespace MailKit.Security {
 			get { return true; }
 		}
 
-		internal NtlmAuthLevel Level {
+		/// <summary>
+		/// Get or set a value indicating whether or not the NTLM SASL mechanism should allow channel-binding.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets a value indicating whether or not the NTLM SASL mechanism should allow channel-binding.</para>
+		/// <note type="note">In the future, this option will disappear as channel-binding will become the default. For now,
+		/// it is only an option because this feature has not been thoroughly tested.</note>
+		/// </remarks>
+		/// <value><c>true</c> if the NTLM SASL mechanism should allow channel-binding; otherwise, <c>false</c>.</value>
+		public bool AllowChannelBinding {
 			get; set;
 		}
 
 		/// <summary>
-		/// Get or set the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
+		/// Get or set the Windows OS version to use in the NTLM negotiation (used for debugging purposes).
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
+		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debugging purposes).
 		/// </remarks>
+		/// <value>The Windows OS version.</value>
 		public Version OSVersion {
 			get; set;
 		}
@@ -124,6 +167,29 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <value>The workstation name.</value>
 		public string Workstation {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set the service principal name (SPN) of the service that the client wishes to authenticate with.
+		/// </summary>
+		/// <remarks>
+		/// <para>Get or set the service principal name (SPN) of the service that the client wishes to authenticate with.</para>
+		/// <note type="note">This value is optional.</note>
+		/// </remarks>
+		/// <value>The service principal name (SPN) of the service that the client wishes to authenticate with.</value>
+		public string ServicePrincipalName {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set a value indicating that the caller generated the target's SPN from an untrusted source.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets a value indicating that the caller generated the target's SPN from an untrusted source.
+		/// </remarks>
+		/// <value><c>true</c> if the <see cref="ServicePrincipalName"/> is unverified; otherwise, <c>false</c>.</value>
+		public bool IsUnverifiedServicePrincipalName {
 			get; set;
 		}
 
@@ -147,22 +213,28 @@ namespace MailKit.Security {
 
 			string userName = Credentials.UserName;
 			string domain = Credentials.Domain;
-			MessageBase message = null;
+			NtlmMessageBase message = null;
 
 			if (string.IsNullOrEmpty (domain)) {
-				int index = userName.IndexOf ('\\');
-				if (index == -1)
-					index = userName.IndexOf ('/');
+				int index;
 
-				if (index >= 0) {
-					domain = userName.Substring (0, index);
-					userName = userName.Substring (index + 1);
+				if ((index = userName.LastIndexOf ('@')) != -1) {
+					userName = userName.Substring (0, index);
+					domain = userName.Substring (index + 1);
+				} else {
+					if ((index = userName.IndexOf ('\\')) == -1)
+						index = userName.IndexOf ('/');
+
+					if (index >= 0) {
+						domain = userName.Substring (0, index);
+						userName = userName.Substring (index + 1);
+					}
 				}
 			}
 
 			switch (state) {
-			case LoginState.Initial:
-				message = new Type1Message (Workstation, domain, OSVersion);
+			case LoginState.Negotiate:
+				message = type1 = new Type1Message (domain, Workstation, OSVersion);
 				state = LoginState.Challenge;
 				break;
 			case LoginState.Challenge:
@@ -175,11 +247,24 @@ namespace MailKit.Security {
 			return message?.Encode ();
 		}
 
-		MessageBase GetChallengeResponse (string userName, string password, byte[] token, int startIndex, int length)
+		NtlmMessageBase GetChallengeResponse (string userName, string password, byte[] token, int startIndex, int length)
 		{
 			var type2 = new Type2Message (token, startIndex, length);
+			var type3 = new Type3Message (type1, type2, userName, password, Workstation) {
+				ClientChallenge = Nonce,
+				Timestamp = Timestamp
+			};
+			byte[] channelBinding = null;
 
-			return new Type3Message (type2, OSVersion, Level, userName, password, Workstation);
+			if (AllowChannelBinding && type2.TargetInfo != null) {
+				// Only bother with attempting to channel-bind if the CHALLENGE_MESSAGE's TargetInfo is not NULL.
+				channelBinding = GetChannelBindingToken (ChannelBindingKind.Endpoint);
+			}
+
+			type3.ComputeNtlmV2 (ServicePrincipalName, IsUnverifiedServicePrincipalName, channelBinding);
+			type1 = null;
+
+			return type3;
 		}
 
 		/// <summary>
@@ -190,7 +275,8 @@ namespace MailKit.Security {
 		/// </remarks>
 		public override void Reset ()
 		{
-			state = LoginState.Initial;
+			state = LoginState.Negotiate;
+			type1 = null;
 			base.Reset ();
 		}
 	}

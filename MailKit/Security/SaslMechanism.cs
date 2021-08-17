@@ -243,6 +243,8 @@ namespace MailKit.Security {
 				}
 			}
 
+			channelBinding.Close ();
+
 			return token;
 		}
 

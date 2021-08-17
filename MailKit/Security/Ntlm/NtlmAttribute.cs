@@ -1,10 +1,9 @@
+﻿//
+// NtlmAttribute.cs
 //
-// NtlmAuthLevel.cs
+// Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Author:
-//       Martin Baulig <martin.baulig@xamarin.com>
-//
-// Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
+// Copyright (c) 2013-2021 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,29 +22,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+//
 
-namespace MailKit.Security.Ntlm {
-	/*
-	 * On Windows, this is controlled by a registry setting
-	 * (http://msdn.microsoft.com/en-us/library/ms814176.aspx)
-	 *
-	 * This can be configured by setting the static
-	 * Type3Message.DefaultAuthLevel property, the default value
-	 * is LM_and_NTLM_and_try_NTLMv2_Session.
-	 */
-	enum NtlmAuthLevel {
-		/* Use LM and NTLM, never use NTLMv2 session security. */
-		LM_and_NTLM,
+// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4
 
-		/* Use NTLMv2 session security if the server supports it,
-		 * otherwise fall back to LM and NTLM. */
-		LM_and_NTLM_and_try_NTLMv2_Session,
-
-		/* Use NTLMv2 session security if the server supports it,
-		 * otherwise fall back to NTLM.  Never use LM. */
-		NTLM_only,
-
-		/* Use NTLMv2 only. */
-		NTLMv2_only,
+namespace MailKit.Security.Ntlm
+{
+	enum NtlmAttribute : short
+	{
+		EOL            = 0,
+		ServerName     = 1,
+		DomainName     = 2,
+		DnsServerName  = 3,
+		DnsDomainName  = 4,
+		DnsTreeName    = 5,
+		Flags          = 6,
+		Timestamp      = 7,
+		SingleHost     = 8,
+		TargetName     = 9,
+		ChannelBinding = 10
 	}
 }

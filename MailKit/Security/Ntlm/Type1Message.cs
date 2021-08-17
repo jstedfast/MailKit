@@ -1,92 +1,89 @@
 ﻿//
-// Mono.Security.Protocol.Ntlm.Type1Message - Negotiation
+// Type1Message.cs
 //
-// Authors: Sebastien Pouliot <sebastien@ximian.com>
-//          Jeffrey Stedfast <jeff@xamarin.com>
+// Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (c) 2004 Novell, Inc (http://www.novell.com)
 // Copyright (c) 2013-2021 .NET Foundation and Contributors
 //
-// References
-// a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
-//	http://www.innovation.ch/java/ntlm.html
-// b.	The NTLM Authentication Protocol, Copyright © 2003 Eric Glass
-//	http://davenport.sourceforge.net/ntlm.html
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4
 
 using System;
 using System.Text;
 
 namespace MailKit.Security.Ntlm {
-	class Type1Message : MessageBase
+	class Type1Message : NtlmMessageBase
 	{
-		internal static readonly NtlmFlags DefaultFlags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateUnicode | NtlmFlags.RequestTarget;
+		// System.Net.Mail seems to default to:           NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.NegotiateVersion | NtlmFlags.Negotiate128
+		internal static readonly NtlmFlags DefaultFlags = NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.Negotiate128;
 
-		string workstation;
-		string domain;
+		byte[] cached;
 
-		public Type1Message (string workstation, string domainName, Version osVersion) : base (1)
+		public Type1Message (NtlmFlags flags, string domain, string workstation, Version osVersion = null) : base (1)
 		{
-			Flags = DefaultFlags;
-			Workstation = workstation;
-			OSVersion = osVersion;
-			Domain = domainName;
+			Flags = flags & ~(NtlmFlags.NegotiateDomainSupplied | NtlmFlags.NegotiateWorkstationSupplied | NtlmFlags.NegotiateVersion);
 
-			if (osVersion != null)
+			// Note: If the NTLMSSP_NEGOTIATE_VERSION flag is set by the client application, the Version field
+			// MUST be set to the current version (section 2.2.2.10), the DomainName field MUST be set to
+			// a zero-length string, and the Workstation field MUST be set to a zero-length string.
+			if (osVersion != null) {
 				Flags |= NtlmFlags.NegotiateVersion;
+				Workstation = string.Empty;
+				Domain = string.Empty;
+				OSVersion = osVersion;
+			} else {
+				if (!string.IsNullOrEmpty (workstation)) {
+					Flags |= NtlmFlags.NegotiateWorkstationSupplied;
+					Workstation = workstation.ToUpperInvariant ();
+				} else {
+					Workstation = string.Empty;
+				}
+
+				if (!string.IsNullOrEmpty (domain)) {
+					Flags |= NtlmFlags.NegotiateDomainSupplied;
+					Domain = domain.ToUpperInvariant ();
+				} else {
+					Domain = string.Empty;
+				}
+			}
+		}
+
+		public Type1Message (string domain = null, string workstation = null, Version osVersion = null) : this (DefaultFlags, domain, workstation, osVersion)
+		{
 		}
 
 		public Type1Message (byte[] message, int startIndex, int length) : base (1)
 		{
 			Decode (message, startIndex, length);
+
+			cached = new byte[length];
+			Buffer.BlockCopy (message, startIndex, cached, 0, length);
 		}
 
 		public string Domain {
-			get { return domain; }
-			set {
-				if (string.IsNullOrEmpty (value)) {
-					Flags &= ~NtlmFlags.NegotiateDomainSupplied;
-					value = string.Empty;
-				} else {
-					Flags |= NtlmFlags.NegotiateDomainSupplied;
-				}
-
-				domain = value;
-			}
+			get; private set;
 		}
 
 		public string Workstation {
-			get { return workstation; }
-			set {
-				if (string.IsNullOrEmpty (value)) {
-					Flags &= ~NtlmFlags.NegotiateWorkstationSupplied;
-					value = string.Empty;
-				} else {
-					Flags |= NtlmFlags.NegotiateWorkstationSupplied;
-				}
-
-				workstation = value;
-			}
+			get; private set;
 		}
 
 		void Decode (byte[] message, int startIndex, int length)
@@ -98,12 +95,12 @@ namespace MailKit.Security.Ntlm {
 			// decode the domain
 			var domainLength = BitConverterLE.ToUInt16 (message, startIndex + 16);
 			var domainOffset = BitConverterLE.ToUInt16 (message, startIndex + 20);
-			domain = Encoding.UTF8.GetString (message, startIndex + domainOffset, domainLength);
+			Domain = Encoding.UTF8.GetString (message, startIndex + domainOffset, domainLength);
 
 			// decode the workstation/host
 			var workstationLength = BitConverterLE.ToUInt16 (message, startIndex + 24);
 			var workstationOffset = BitConverterLE.ToUInt16 (message, startIndex + 28);
-			workstation = Encoding.UTF8.GetString (message, startIndex + workstationOffset, workstationLength);
+			Workstation = Encoding.UTF8.GetString (message, startIndex + workstationOffset, workstationLength);
 
 			if ((Flags & NtlmFlags.NegotiateVersion) != 0 && length >= 40) {
 				// decode the OS Version
@@ -117,17 +114,17 @@ namespace MailKit.Security.Ntlm {
 
 		public override byte[] Encode ()
 		{
-			bool negotiateVersion;
-			int versionLength = 0;
+			if (cached != null)
+				return cached;
 
-			if (negotiateVersion = (Flags & NtlmFlags.NegotiateVersion) != 0)
-				versionLength = 8;
-
+			var negotiateVersion = (Flags & NtlmFlags.NegotiateVersion) != 0;
+			var workstation = Encoding.UTF8.GetBytes (Workstation);
+			var domain = Encoding.UTF8.GetBytes (Domain);
+			int versionLength = negotiateVersion ? 8 : 0;
 			int workstationOffset = 32 + versionLength;
 			int domainOffset = workstationOffset + workstation.Length;
 
 			var message = PrepareMessage (32 + domain.Length + workstation.Length + versionLength);
-			byte[] buffer;
 
 			message[12] = (byte) Flags;
 			message[13] = (byte)((uint) Flags >> 8);
@@ -159,11 +156,10 @@ namespace MailKit.Security.Ntlm {
 				message[39] = 0x0f;
 			}
 
-			buffer = Encoding.UTF8.GetBytes (workstation.ToUpperInvariant ());
-			Buffer.BlockCopy (buffer, 0, message, workstationOffset, buffer.Length);
+			Buffer.BlockCopy (workstation, 0, message, workstationOffset, workstation.Length);
+			Buffer.BlockCopy (domain, 0, message, domainOffset, domain.Length);
 
-			buffer = Encoding.UTF8.GetBytes (domain.ToUpperInvariant ());
-			Buffer.BlockCopy (buffer, 0, message, domainOffset, buffer.Length);
+			cached = message;
 
 			return message;
 		}

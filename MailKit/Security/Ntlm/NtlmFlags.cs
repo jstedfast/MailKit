@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4
+
 using System;
 
 namespace MailKit.Security.Ntlm {
@@ -148,13 +150,18 @@ namespace MailKit.Security.Ntlm {
 		R6 = TargetTypeShare,
 
 		/// <summary>
-		/// Indicates that the NTLM2 signing and sealing scheme should be used for
-		/// protecting authenticated communications. Note that this refers to a
-		/// particular session security scheme, and is not related to the use of
-		/// NTLMv2 authentication. This flag can, however, have an effect on the
-		/// response calculations.
+		/// If set, requests usage of the NTLM v2 session security. NTLM v2 session
+		/// security is a misnomer because it is not NTLM v2. It is NTLM v1 using the
+		/// extended session security that is also in NTLM v2. NTLMSSP_NEGOTIATE_LM_KEY
+		/// and NTLMSSP_NEGOTIATE_EXTENDED_SESSIONSECURITY are mutually exclusive. If
+		/// both NTLMSSP_NEGOTIATE_EXTENDED_SESSIONSECURITY and NTLMSSP_NEGOTIATE_LM_KEY
+		/// are requested, NTLMSSP_NEGOTIATE_EXTENDED_SESSIONSECURITY alone MUST be
+		/// returned to the client. NTLM v2 authentication session key generation MUST
+		/// be supported by both the client and the DC in order to be used, and extended
+		/// session security signing and sealing requires support from the client and
+		/// the server in order to be used.
 		/// </summary>
-		NegotiateNtlm2Key = 0x00080000,
+		NegotiateExtendedSessionSecurity = 0x00080000,
 
 		/// <summary>
 		/// This flag's usage has not been identified.

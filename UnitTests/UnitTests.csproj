@@ -79,6 +79,12 @@
     <Compile Include="Search\SearchQueryTests.cs" />
     <Compile Include="Security\FakeTransportContext.cs" />
     <Compile Include="Security\Ntlm\MD4Tests.cs" />
+    <Compile Include="Security\Ntlm\NtlmSingleHostDataTests.cs" />
+    <Compile Include="Security\Ntlm\NtlmTargetInfoTests.cs" />
+    <Compile Include="Security\Ntlm\RC4Tests.cs" />
+    <Compile Include="Security\Ntlm\Type1MessageTests.cs" />
+    <Compile Include="Security\Ntlm\Type2MessageTests.cs" />
+    <Compile Include="Security\Ntlm\Type3MessageTests.cs" />
     <Compile Include="Security\AuthenticationExceptionTests.cs" />
     <Compile Include="Security\SaslExceptionTests.cs" />
     <Compile Include="Security\SaslMechanismAnonymousTests.cs" />
