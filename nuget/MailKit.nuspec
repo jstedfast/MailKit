@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>2.14.0</version>
+    <version>2.15.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,13 +26,9 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Added support for logging timestamps in the ProtocolLogger (see the LogTimestamps and TimestampFormat properties on ProtocolLogger).
-* Added support for automatically redacting user credentials in protocol logs. To enable this, set the ProtocolLogger.RedactSecrets property to true. (issue #1174)
-* Added the GetMessageSizeAsync() method to the IMailSpool interface. (issue #1233)
-* Added a work-around to the IMAP INTERNALDATE parser to handle invalid dates such as "00-Jan-0000 00:00:00 +0000" which appears in Domino IMAP server responses, likely when the INTERNALDATE value is uninitialized in the database. (issue #1236)
-* Make sure to dispose X509Certificates in .NET >= 4.6.
-* Re-added NTLM as one of the default supported SASL mechanisms.
+* Use DebugType=full for .NET Framework v4.x. (issue [#1239](https://github.com/jstedfast/MailKit/issues/1239))
 * Updated GMail SSL certificate serial numbers and fingerprints.
+* Small NTLM code improvements.
 
 API Changes Since 2.0.x:
 
@@ -79,25 +75,25 @@ client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="MimeKit" version="2.14.0" />
+        <dependency id="MimeKit" version="2.15.0" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="2.14.0" />
+        <dependency id="MimeKit" version="2.15.0" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="2.14.0" />
+        <dependency id="MimeKit" version="2.15.0" />
       </group>
       <group targetFramework="net48">
-        <dependency id="MimeKit" version="2.14.0" />
+        <dependency id="MimeKit" version="2.15.0" />
       </group>
       <group targetFramework="net50">
-        <dependency id="MimeKit" version="2.14.0" />
+        <dependency id="MimeKit" version="2.15.0" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="MimeKit" version="2.14.0" />
+        <dependency id="MimeKit" version="2.15.0" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="MimeKit" version="2.14.0" />
+        <dependency id="MimeKit" version="2.15.0" />
       </group>
     </dependencies>
   </metadata>

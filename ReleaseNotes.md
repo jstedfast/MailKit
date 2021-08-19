@@ -1,5 +1,11 @@
 # Release Notes
 
+### MailKit 2.15.0 (2021-08-18)
+
+* Use DebugType=full for .NET Framework v4.x. (issue [#1239](https://github.com/jstedfast/MailKit/issues/1239))
+* Updated GMail SSL certificate serial numbers and fingerprints.
+* Small NTLM code improvements.
+
 ### MailKit 2.14.0 (2021-07-28)
 
 * Added support for logging timestamps in the `ProtocolLogger` (see the `LogTimestamps` and `TimestampFormat`
