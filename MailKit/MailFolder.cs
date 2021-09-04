@@ -2756,18 +2756,17 @@ namespace MailKit {
 		public abstract Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Append the specified message to the folder.
+		/// Append a message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
+		/// Appends a message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The append request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="request"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2777,291 +2776,20 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return Append (FormatOptions.Default, message, flags, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Asynchronously append the specified message to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
-		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return AppendAsync (FormatOptions.Default, message, flags, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Append the specified message to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
-		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return Append (FormatOptions.Default, message, flags, date, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Asynchronously append the specified message to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
-		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return AppendAsync (FormatOptions.Default, message, flags, date, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Append the specified message to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
-		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="annotations">The message annotations.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// One or more <paramref name="annotations"/> does not define any properties.
-		/// </exception>"
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return Append (FormatOptions.Default, message, flags, date, annotations, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Asynchronously append the specified message to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
-		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="annotations">The message annotations.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// One or more <paramref name="annotations"/> does not define any properties.
-		/// </exception>"
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return AppendAsync (FormatOptions.Default, message, flags, date, annotations, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Append the specified message to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
-		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// <para>-or-</para>
+		/// <para>The request included annotations but the folder does not support annotations.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3072,24 +2800,23 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public virtual UniqueId? Append (IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			return Append (FormatOptions.Default, request, cancellationToken, progress);
+		}
 
 		/// <summary>
-		/// Asynchronously append the specified message to the folder.
+		/// Asynchronously append a message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
+		/// Asynchronously appends a message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The append request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <paramref name="request"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3100,17 +2827,19 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// <para>-or-</para>
+		/// <para>The request included annotations but the folder does not support annotations.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3121,25 +2850,26 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public virtual Task<UniqueId?> AppendAsync (IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			return AppendAsync (FormatOptions.Default, request, cancellationToken, progress);
+		}
 
 		/// <summary>
-		/// Append the specified message to the folder.
+		/// Append a message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
+		/// Appends a message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
+		/// <param name="request">The append request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3150,17 +2880,19 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// <para>-or-</para>
+		/// <para>The request included annotations but the folder does not support annotations.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3171,25 +2903,23 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
-		/// Asynchronously append the specified message to the folder.
+		/// Asynchronously append a message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
+		/// Asynchronously appends a message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
+		/// <param name="request">The append request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3200,68 +2930,19 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Append the specified message to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
-		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="annotations">The message annotations.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
+		/// <para>The request included annotations but the folder does not support annotations.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3272,79 +2953,23 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
-		/// Asynchronously append the specified message to the folder.
+		/// Append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
-		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="annotations">The message annotations.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Append the specified messages to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
+		/// Appends multiple messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="requests">The append requests.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <paramref name="requests"/> is <c>null</c>.
 		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="messages"/> is null.</para>
-		/// <para>-or-</para>
-		/// <para>The number of messages does not match the number of flags.</para>
+		/// <exception cref="ArgumentException">
+		/// One or more of the <paramref name="requests"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3355,11 +2980,19 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// <para>-or-</para>
+		/// <para>One ore more requests included annotations but the folder does not support annotations.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3370,31 +3003,26 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual IList<UniqueId> Append (IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Append (FormatOptions.Default, messages, flags, cancellationToken, progress);
+			return Append (FormatOptions.Default, requests, cancellationToken, progress);
 		}
 
 		/// <summary>
-		/// Asynchronously append the specified messages to the folder.
+		/// Asynchronously append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
+		/// Asynchronously appends multiple messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="requests">The append requests.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <paramref name="requests"/> is <c>null</c>.
 		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="messages"/> is null.</para>
-		/// <para>-or-</para>
-		/// <para>The number of messages does not match the number of flags.</para>
+		/// <exception cref="ArgumentException">
+		/// One or more of the <paramref name="requests"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3405,11 +3033,19 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// <para>-or-</para>
+		/// <para>One ore more requests included annotations but the folder does not support annotations.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3420,140 +3056,29 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<IList<UniqueId>> AppendAsync (IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return AppendAsync (FormatOptions.Default, messages, flags, cancellationToken, progress);
+			return AppendAsync (FormatOptions.Default, requests, cancellationToken, progress);
 		}
 
 		/// <summary>
-		/// Append the specified messages to the folder.
+		/// Append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
-		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each of the messages.</param>
-		/// <param name="dates">The received dates to use for each of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="dates"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="messages"/> is null.</para>
-		/// <para>-or-</para>
-		/// <para>The number of messages, flags, and dates do not match.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return Append (FormatOptions.Default, messages, flags, dates, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Asynchronously append the specified messages to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
-		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each of the messages.</param>
-		/// <param name="dates">The received dates to use for each of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="dates"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="messages"/> is null.</para>
-		/// <para>-or-</para>
-		/// <para>The number of messages, flags, and dates do not match.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return AppendAsync (FormatOptions.Default, messages, flags, dates, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Append the specified messages to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
+		/// Appends multiple messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="options">The formatting options.</param>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="requests">The append requests.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="requests"/> is <c>null</c>.</para>
 		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="messages"/> is null.</para>
-		/// <para>-or-</para>
-		/// <para>The number of messages does not match the number of flags.</para>
+		/// <exception cref="ArgumentException">
+		/// One or more of the <paramref name="requests"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3564,17 +3089,19 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// <para>-or-</para>
+		/// <para>One ore more requests included annotations but the folder does not support annotations.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3585,31 +3112,26 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract IList<UniqueId> Append (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
-		/// Asynchronously append the specified messages to the folder.
+		/// Asynchronously append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
+		/// Asynchronously appends multiple messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="options">The formatting options.</param>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="requests">The append requests.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="requests"/> is <c>null</c>.</para>
 		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="messages"/> is null.</para>
-		/// <para>-or-</para>
-		/// <para>The number of messages does not match the number of flags.</para>
+		/// <exception cref="ArgumentException">
+		/// One or more of the <paramref name="requests"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3620,17 +3142,19 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// <para>-or-</para>
+		/// <para>One ore more requests included annotations but the folder does not support annotations.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3641,125 +3165,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Append the specified messages to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
-		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each of the messages.</param>
-		/// <param name="dates">The received dates to use for each of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="dates"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="messages"/> is null.</para>
-		/// <para>-or-</para>
-		/// <para>The number of messages, flags, and dates do not match.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Asynchronously append the specified messages to the folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
-		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each of the messages.</param>
-		/// <param name="dates">The received dates to use for each of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="dates"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="messages"/> is null.</para>
-		/// <para>-or-</para>
-		/// <para>The number of messages, flags, and dates do not match.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Replace a message in the folder.

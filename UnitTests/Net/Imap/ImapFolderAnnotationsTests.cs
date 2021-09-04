@@ -95,32 +95,32 @@ namespace UnitTests.Net.Imap {
 
 				// Store
 				Assert.Throws<ArgumentException> (() => inbox.Store (-1, annotations));
-				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.StoreAsync (-1, annotations));
+				Assert.ThrowsAsync<ArgumentException> (() => inbox.StoreAsync (-1, annotations));
 				Assert.Throws<ArgumentNullException> (() => inbox.Store (0, (IList<Annotation>) null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync (0, (IList<Annotation>) null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync (0, (IList<Annotation>) null));
 
 				Assert.Throws<ArgumentException> (() => inbox.Store (UniqueId.Invalid, annotations));
-				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.StoreAsync (UniqueId.Invalid, annotations));
+				Assert.ThrowsAsync<ArgumentException> (() => inbox.StoreAsync (UniqueId.Invalid, annotations));
 				Assert.Throws<ArgumentNullException> (() => inbox.Store (UniqueId.MinValue, (IList<Annotation>) null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync (UniqueId.MinValue, (IList<Annotation>) null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync (UniqueId.MinValue, (IList<Annotation>) null));
 
 				Assert.Throws<ArgumentNullException> (() => inbox.Store ((IList<int>) null, annotations));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync ((IList<int>) null, annotations));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync ((IList<int>) null, annotations));
 				Assert.Throws<ArgumentNullException> (() => inbox.Store (new int[] { 0 }, (IList<Annotation>) null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync (new int[] { 0 }, (IList<Annotation>) null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync (new int[] { 0 }, (IList<Annotation>) null));
 				Assert.Throws<ArgumentNullException> (() => inbox.Store ((IList<int>) null, 1, annotations));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync ((IList<int>) null, 1, annotations));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync ((IList<int>) null, 1, annotations));
 				Assert.Throws<ArgumentNullException> (() => inbox.Store (new int[] { 0 }, 1, (IList<Annotation>) null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync (new int[] { 0 }, 1, (IList<Annotation>) null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync (new int[] { 0 }, 1, (IList<Annotation>) null));
 
 				Assert.Throws<ArgumentNullException> (() => inbox.Store ((IList<UniqueId>) null, annotations));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync ((IList<UniqueId>) null, annotations));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync ((IList<UniqueId>) null, annotations));
 				Assert.Throws<ArgumentNullException> (() => inbox.Store (UniqueIdRange.All, (IList<Annotation>) null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync (UniqueIdRange.All, (IList<Annotation>) null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync (UniqueIdRange.All, (IList<Annotation>) null));
 				Assert.Throws<ArgumentNullException> (() => inbox.Store ((IList<UniqueId>) null, 1, annotations));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync ((IList<UniqueId>) null, 1, annotations));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync ((IList<UniqueId>) null, 1, annotations));
 				Assert.Throws<ArgumentNullException> (() => inbox.Store (UniqueIdRange.All, 1, (IList<Annotation>) null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.StoreAsync (UniqueIdRange.All, 1, (IList<Annotation>) null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync (UniqueIdRange.All, 1, (IList<Annotation>) null));
 
 				client.Disconnect (false);
 			}
@@ -172,16 +172,16 @@ namespace UnitTests.Net.Imap {
 
 				// verify NotSupportedException for storing annotations
 				Assert.Throws<NotSupportedException> (() => inbox.Store (0, annotations));
-				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.StoreAsync (0, annotations));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.StoreAsync (0, annotations));
 
 				Assert.Throws<NotSupportedException> (() => inbox.Store (UniqueId.MinValue, annotations));
-				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.StoreAsync (UniqueId.MinValue, annotations));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.StoreAsync (UniqueId.MinValue, annotations));
 
 				Assert.Throws<NotSupportedException> (() => inbox.Store (new int[] { 0 }, 1, annotations));
-				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.StoreAsync (new int[] { 0 }, 1, annotations));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.StoreAsync (new int[] { 0 }, 1, annotations));
 
 				Assert.Throws<NotSupportedException> (() => inbox.Store (UniqueIdRange.All, 1, annotations));
-				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.StoreAsync (UniqueIdRange.All, 1, annotations));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.StoreAsync (UniqueIdRange.All, 1, annotations));
 
 				// disable CONDSTORE and verify that we get NotSupportedException when we send modseq
 				client.Capabilities &= ~ImapCapabilities.CondStore;
@@ -192,10 +192,10 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
 
 				Assert.Throws<NotSupportedException> (() => inbox.Store (new int[] { 0 }, 1, annotations));
-				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.StoreAsync (new int[] { 0 }, 1, annotations));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.StoreAsync (new int[] { 0 }, 1, annotations));
 
 				Assert.Throws<NotSupportedException> (() => inbox.Store (UniqueIdRange.All, 1, annotations));
-				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.StoreAsync (UniqueIdRange.All, 1, annotations));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.StoreAsync (UniqueIdRange.All, 1, annotations));
 
 				client.Disconnect (false);
 			}
@@ -412,6 +412,189 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		IList<ImapReplayCommand> CreateMultiAppendWithAnnotationsCommands (bool withInternalDates, out List<IAppendRequest> requests)
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+annotate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+
+			var command = new StringBuilder ("A00000004 APPEND INBOX");
+			var options = FormatOptions.Default.Clone ();
+			options.NewLineFormat = NewLineFormat.Dos;
+			options.EnsureNewLine = true;
+			int id = 5;
+
+			requests = new List<IAppendRequest> ();
+
+			for (int i = 0; i < 8; i++) {
+				MimeMessage message;
+				string latin1;
+				long length;
+
+				using (var resource = GetResourceStream (string.Format ("common.message.{0}.msg", i)))
+					message = MimeMessage.Load (resource);
+
+				var request = new AppendRequest (message, MessageFlags.Seen);
+				requests.Add (request);
+
+				if (withInternalDates)
+					request.InternalDate = message.Date;
+
+				var annotation = new Annotation (AnnotationEntry.AltSubject);
+				annotation.Properties[AnnotationAttribute.PrivateValue] = string.Format ("Alternate subject {0}", i);
+				request.Annotations = new Annotation[] { annotation };
+
+				using (var stream = new MemoryStream ()) {
+					message.WriteTo (options, stream);
+					length = stream.Length;
+					stream.Position = 0;
+
+					using (var reader = new StreamReader (stream, Latin1))
+						latin1 = reader.ReadToEnd ();
+				}
+
+				command.Append (" (\\Seen) ");
+				if (withInternalDates)
+					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
+				command.AppendFormat ("ANNOTATION (/altsubject (value.priv \"Alternate subject {0}\")) ", i);
+				command.Append ('{');
+				command.AppendFormat ("{0}+", length);
+				command.Append ("}\r\n");
+				command.Append (latin1);
+			}
+
+			command.Append ("\r\n");
+			commands.Add (new ImapReplayCommand (command.ToString (), "dovecot.multiappend.txt"));
+
+			for (int i = 0; i < requests.Count; i++) {
+				var message = requests[i];
+				string latin1;
+				long length;
+
+				command.Clear ();
+				command.AppendFormat ("A{0:D8} APPEND INBOX", id++);
+
+				using (var stream = new MemoryStream ()) {
+					requests[i].Message.WriteTo (options, stream);
+					length = stream.Length;
+					stream.Position = 0;
+
+					using (var reader = new StreamReader (stream, Latin1))
+						latin1 = reader.ReadToEnd ();
+				}
+
+				command.Append (" (\\Seen) ");
+				if (withInternalDates)
+					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (requests[i].InternalDate.Value));
+				command.AppendFormat ("ANNOTATION (/altsubject (value.priv \"Alternate subject {0}\")) ", i);
+				command.Append ('{');
+				command.AppendFormat ("{0}+", length);
+				command.Append ("}\r\n");
+				command.Append (latin1);
+				command.Append ("\r\n");
+				commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
+			}
+
+			commands.Add (new ImapReplayCommand (string.Format ("A{0:D8} LOGOUT\r\n", id), "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[TestCase (false, TestName = "TestMultiAppendWithAnnotations")]
+		[TestCase (true, TestName = "TestMultiAppendWithAnnotationsAndInternalDates")]
+		public void TestMultiAppendWithAnnotations (bool withInternalDates)
+		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+			List<IAppendRequest> requests;
+			IList<UniqueId> uids;
+
+			var commands = CreateMultiAppendWithAnnotationsCommands (withInternalDates, out requests);
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// Use MULTIAPPEND to append some test messages
+				uids = client.Inbox.Append (requests);
+				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+
+				// Disable the MULTIAPPEND extension and do it again
+				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				uids = client.Inbox.Append (requests);
+
+				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[TestCase (false, TestName = "TestMultiAppendWithAnnotationsAsync")]
+		[TestCase (true, TestName = "TestMultiAppendWithAnnotationsAndInternalDatesAsync")]
+		public async Task TestMultiAppendWithAnnotationsAsync (bool withInternalDates)
+		{
+			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
+			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
+			List<IAppendRequest> requests;
+			IList<UniqueId> uids;
+
+			var commands = CreateMultiAppendWithAnnotationsCommands (withInternalDates, out requests);
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// Use MULTIAPPEND to append some test messages
+				uids = await client.Inbox.AppendAsync (requests);
+				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+
+				// Disable the MULTIAPPEND extension and do it again
+				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				uids = await client.Inbox.AppendAsync (requests);
+
+				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		[Test]
 		public void TestSelectAnnotateNone ()
 		{
@@ -554,7 +737,7 @@ namespace UnitTests.Net.Imap {
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
 
-				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.SearchAsync (query));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (query));
 
 				await client.DisconnectAsync (false);
 			}
@@ -671,7 +854,7 @@ namespace UnitTests.Net.Imap {
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
 
-				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.SortAsync (SearchQuery.All, new OrderBy[] { orderBy }));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SortAsync (SearchQuery.All, new OrderBy[] { orderBy }));
 
 				await client.DisconnectAsync (false);
 			}

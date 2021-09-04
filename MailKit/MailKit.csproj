@@ -176,6 +176,7 @@
     <Compile Include="AnnotationEntry.cs" />
     <Compile Include="AnnotationsChangedEventArgs.cs" />
     <Compile Include="AnnotationScope.cs" />
+    <Compile Include="AppendRequest.cs" />
     <Compile Include="AuthenticatedEventArgs.cs" />
     <Compile Include="BodyPart.cs" />
     <Compile Include="BodyPartBasic.cs" />
@@ -205,8 +206,12 @@
     <Compile Include="FolderRenamedEventArgs.cs" />
     <Compile Include="HeaderSet.cs" />
     <Compile Include="IAuthenticationSecretDetector.cs" />
+    <Compile Include="IAppendRequest.cs" />
     <Compile Include="IFetchRequest.cs" />
     <Compile Include="IMailFolder.cs" />
+    <Compile Include="IMailFolderAppendExtensions.cs" />
+    <Compile Include="IMailFolderFetchExtensions.cs" />
+    <Compile Include="IMailFolderStoreExtensions.cs" />
     <Compile Include="IMailService.cs" />
     <Compile Include="IMailSpool.cs" />
     <Compile Include="IMailStore.cs" />
@@ -218,8 +223,6 @@
     <Compile Include="IStoreRequest.cs" />
     <Compile Include="ITransferProgress.cs" />
     <Compile Include="MailFolder.cs" />
-    <Compile Include="IMailFolderFetchExtensions.cs" />
-    <Compile Include="IMailFolderStoreExtensions.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="MailSpool.cs" />
     <Compile Include="MailStore.cs" />

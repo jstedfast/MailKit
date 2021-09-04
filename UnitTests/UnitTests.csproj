@@ -96,6 +96,7 @@
     <Compile Include="AnnotationAttributeTests.cs" />
     <Compile Include="AnnotationEntryTests.cs" />
     <Compile Include="AnnotationTests.cs" />
+    <Compile Include="AppendRequestTests.cs" />
     <Compile Include="ArgumentExceptionTests.cs" />
     <Compile Include="BodyPartTests.cs" />
     <Compile Include="CompressedStreamTests.cs" />

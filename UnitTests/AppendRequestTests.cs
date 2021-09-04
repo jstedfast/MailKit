@@ -1,0 +1,121 @@
+﻿//
+// AppendRequestTests.cs
+//
+// Author: Jeffrey Stedfast <jestedfa@microsoft.com>
+//
+// Copyright (c) 2013-2021 .NET Foundation and Contributors
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+using System;
+using System.Collections.Generic;
+
+using NUnit.Framework;
+
+using MimeKit;
+using MailKit;
+
+namespace UnitTests {
+	[TestFixture]
+	public class AppendRequestTests
+	{
+		[Test]
+		public void TestArgumentExceptions ()
+		{
+			var keywords = new string[] { "$Forwarded" };
+			var message = new MimeMessage ();
+
+			Assert.Throws<ArgumentNullException> (() => new AppendRequest (null));
+			Assert.Throws<ArgumentNullException> (() => new AppendRequest (null, MessageFlags.Seen));
+			Assert.Throws<ArgumentNullException> (() => new AppendRequest (null, MessageFlags.Seen, DateTimeOffset.Now));
+			Assert.Throws<ArgumentNullException> (() => new AppendRequest (null, MessageFlags.Seen, keywords));
+			Assert.Throws<ArgumentNullException> (() => new AppendRequest (message, MessageFlags.Seen, null));
+			Assert.Throws<ArgumentNullException> (() => new AppendRequest (null, MessageFlags.Seen, keywords, DateTimeOffset.Now));
+			Assert.Throws<ArgumentNullException> (() => new AppendRequest (message, MessageFlags.Seen, null, DateTimeOffset.Now));
+		}
+
+		[Test]
+		public void TestConstructors ()
+		{
+			//var annotation = new Annotation (AnnotationEntry.AltSubject);
+			//annotation.Properties[AnnotationAttribute.PrivateValue] = string.Format ("Alternate subject");
+			//var annotations = new Annotation[] { annotation };
+			var keywords = new string[] { "$Forwarded", "$Junk" };
+			var keywordSet = new HashSet<string> (keywords);
+			var flags = MessageFlags.Seen | MessageFlags.Draft;
+			var internalDate = DateTimeOffset.Now;
+			var message = new MimeMessage ();
+			AppendRequest request;
+
+			request = new AppendRequest (message);
+			Assert.AreEqual (message, request.Message, "Message #1");
+			Assert.AreEqual (MessageFlags.None, request.Flags, "Flags #1");
+			Assert.IsNull (request.Keywords, "Keywords #1");
+			Assert.IsNull (request.InternalDate, "InternalDate #1");
+			Assert.IsNull (request.Annotations, "Annotations #1");
+
+			request = new AppendRequest (message, flags);
+			Assert.AreEqual (message, request.Message, "Message #2");
+			Assert.AreEqual (flags, request.Flags, "Flags #2");
+			Assert.IsNull (request.Keywords, "Keywords #2");
+			Assert.IsNull (request.InternalDate, "InternalDate #2");
+			Assert.IsNull (request.Annotations, "Annotations #2");
+
+			request = new AppendRequest (message, flags, keywords);
+			Assert.AreEqual (message, request.Message, "Message #3");
+			Assert.AreEqual (flags, request.Flags, "Flags #3");
+			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #3");
+			Assert.AreEqual (keywords.Length, request.Keywords.Count, "Keywords #3");
+			Assert.IsNull (request.InternalDate, "InternalDate #3");
+			Assert.IsNull (request.Annotations, "Annotations #3");
+
+			request = new AppendRequest (message, flags, keywordSet);
+			Assert.AreEqual (message, request.Message, "Message #4");
+			Assert.AreEqual (flags, request.Flags, "Flags #4");
+			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #4");
+			Assert.AreEqual (keywordSet, request.Keywords, "Keywords #4");
+			Assert.IsNull (request.InternalDate, "InternalDate #4");
+			Assert.IsNull (request.Annotations, "Annotations #4");
+
+			request = new AppendRequest (message, flags, internalDate);
+			Assert.AreEqual (message, request.Message, "Message #5");
+			Assert.AreEqual (flags, request.Flags, "Flags #5");
+			Assert.IsNull (request.Keywords, "Keywords #5");
+			Assert.AreEqual (internalDate, request.InternalDate.Value, "InternalDate #5");
+			Assert.IsNull (request.Annotations, "Annotations #5");
+
+			request = new AppendRequest (message, flags, keywords, internalDate);
+			Assert.AreEqual (message, request.Message, "Message #6");
+			Assert.AreEqual (flags, request.Flags, "Flags #6");
+			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #6");
+			Assert.AreEqual (keywords.Length, request.Keywords.Count, "Keywords #6");
+			Assert.AreEqual (internalDate, request.InternalDate.Value, "InternalDate #6");
+			Assert.IsNull (request.Annotations, "Annotations #6");
+
+			request = new AppendRequest (message, flags, keywordSet, internalDate);
+			Assert.AreEqual (message, request.Message, "Message #7");
+			Assert.AreEqual (flags, request.Flags, "Flags #7");
+			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #7");
+			Assert.AreEqual (keywordSet, request.Keywords, "Keywords #7");
+			Assert.AreEqual (internalDate, request.InternalDate.Value, "InternalDate #7");
+			Assert.IsNull (request.Annotations, "Annotations #7");
+		}
+	}
+}
