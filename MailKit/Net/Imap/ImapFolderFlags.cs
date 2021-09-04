@@ -601,6 +601,9 @@ namespace MailKit.Net.Imap
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the Google Mail extensions.");
 
