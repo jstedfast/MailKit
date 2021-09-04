@@ -217,7 +217,8 @@
     <Compile Include="IStoreRequest.cs" />
     <Compile Include="ITransferProgress.cs" />
     <Compile Include="MailFolder.cs" />
-    <Compile Include="IMailFolderExtensions.cs" />
+    <Compile Include="IMailFolderFetchExtensions.cs" />
+    <Compile Include="IMailFolderStoreExtensions.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="MailSpool.cs" />
     <Compile Include="MailStore.cs" />

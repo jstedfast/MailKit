@@ -1,5 +1,5 @@
 ﻿//
-// StoreFLagsRequestTests.cs
+// StoreFlagsRequestTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
