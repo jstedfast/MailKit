@@ -347,6 +347,7 @@ namespace MailKit.Security {
 			case "PLAIN":              return true;
 			case "LOGIN":              return true;
 			case "NTLM":               return true;
+			case "ANONYMOUS":          return true;
 			default:                   return false;
 			}
 		}
@@ -396,6 +397,7 @@ namespace MailKit.Security {
 			case "PLAIN":              return new SaslMechanismPlain (encoding, credentials);
 			case "LOGIN":              return new SaslMechanismLogin (encoding, credentials);
 			case "NTLM":               return new SaslMechanismNtlm (credentials);
+			case "ANONYMOUS":          return new SaslMechanismAnonymous (encoding, credentials);
 			default:                   return null;
 			}
 		}

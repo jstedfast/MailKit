@@ -164,9 +164,6 @@ namespace MailKit.Security {
 		/// <param name="token">The server's challenge token.</param>
 		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
 		/// <param name="length">The length of the server's challenge.</param>
-		/// <exception cref="System.InvalidOperationException">
-		/// The SASL mechanism is already authenticated.
-		/// </exception>
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>

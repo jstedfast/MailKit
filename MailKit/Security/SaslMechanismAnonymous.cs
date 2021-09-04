@@ -1,5 +1,5 @@
 ﻿//
-// SaslMechanismNtlm.cs
+// SaslMechanismAnonymous.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -26,56 +26,88 @@
 
 using System;
 using System.Net;
-
-using MailKit.Security.Ntlm;
+using System.Text;
 
 namespace MailKit.Security {
 	/// <summary>
-	/// The NTLM SASL mechanism.
+	/// The ANONYMOUS SASL mechanism.
 	/// </summary>
 	/// <remarks>
-	/// A SASL mechanism based on NTLM.
+	/// The ANONYMOUS SASL mechanism provides a way to authenticate with servers
+	/// that allow anonymous access.
 	/// </remarks>
-	public class SaslMechanismNtlm : SaslMechanism
+	public class SaslMechanismAnonymous : SaslMechanism
 	{
-		enum LoginState {
-			Initial,
-			Challenge
-		}
-
-		LoginState state;
+		readonly Encoding encoding;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismAnonymous"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new NTLM SASL context.
+		/// Creates a new ANONYMOUS SASL context.
+		/// </remarks>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismAnonymous (Encoding encoding, NetworkCredential credentials) : base (credentials)
+		{
+			if (encoding == null)
+				throw new ArgumentNullException (nameof (encoding));
+
+			this.encoding = encoding;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismAnonymous"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new ANONYMOUS SASL context.
+		/// </remarks>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="userName">The user name.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismAnonymous (Encoding encoding, string userName) : base (userName, string.Empty)
+		{
+			if (encoding == null)
+				throw new ArgumentNullException (nameof (encoding));
+
+			this.encoding = encoding;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismAnonymous"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new ANONYMOUS SASL context.
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
-		public SaslMechanismNtlm (NetworkCredential credentials) : base (credentials)
+		public SaslMechanismAnonymous (NetworkCredential credentials) : this (Encoding.UTF8, credentials)
 		{
-			Level = NtlmAuthLevel.NTLMv2_only;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismAnonymous"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new NTLM SASL context.
+		/// Creates a new ANONYMOUS SASL context.
 		/// </remarks>
 		/// <param name="userName">The user name.</param>
-		/// <param name="password">The password.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <paramref name="userName"/> is <c>null</c>.
 		/// </exception>
-		public SaslMechanismNtlm (string userName, string password) : base (userName, password)
+		public SaslMechanismAnonymous (string userName) : this (Encoding.UTF8, userName)
 		{
-			Level = NtlmAuthLevel.NTLMv2_only;
 		}
 
 		/// <summary>
@@ -86,7 +118,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <value>The name of the SASL mechanism.</value>
 		public override string MechanismName {
-			get { return "NTLM"; }
+			get { return "ANONYMOUS"; }
 		}
 
 		/// <summary>
@@ -100,31 +132,6 @@ namespace MailKit.Security {
 		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
 		public override bool SupportsInitialResponse {
 			get { return true; }
-		}
-
-		internal NtlmAuthLevel Level {
-			get; set;
-		}
-
-		/// <summary>
-		/// Get or set the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets the Windows OS version to use in the NTLM negotiation (used for debuigging purposes).
-		/// </remarks>
-		public Version OSVersion {
-			get; set;
-		}
-
-		/// <summary>
-		/// Get or set the workstation name to use for authentication.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets the workstation name to use for authentication.
-		/// </remarks>
-		/// <value>The workstation name.</value>
-		public string Workstation {
-			get; set;
 		}
 
 		/// <summary>
@@ -145,53 +152,10 @@ namespace MailKit.Security {
 			if (IsAuthenticated)
 				return null;
 
-			string userName = Credentials.UserName;
-			string domain = Credentials.Domain;
-			MessageBase message = null;
+			var buffer = encoding.GetBytes (Credentials.UserName);
+			IsAuthenticated = true;
 
-			if (string.IsNullOrEmpty (domain)) {
-				int index = userName.IndexOf ('\\');
-				if (index == -1)
-					index = userName.IndexOf ('/');
-
-				if (index >= 0) {
-					domain = userName.Substring (0, index);
-					userName = userName.Substring (index + 1);
-				}
-			}
-
-			switch (state) {
-			case LoginState.Initial:
-				message = new Type1Message (Workstation, domain, OSVersion);
-				state = LoginState.Challenge;
-				break;
-			case LoginState.Challenge:
-				var password = Credentials.Password ?? string.Empty;
-				message = GetChallengeResponse (userName, password, token, startIndex, length);
-				IsAuthenticated = true;
-				break;
-			}
-
-			return message?.Encode ();
-		}
-
-		MessageBase GetChallengeResponse (string userName, string password, byte[] token, int startIndex, int length)
-		{
-			var type2 = new Type2Message (token, startIndex, length);
-
-			return new Type3Message (type2, OSVersion, Level, userName, password, Workstation);
-		}
-
-		/// <summary>
-		/// Reset the state of the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// Resets the state of the SASL mechanism.
-		/// </remarks>
-		public override void Reset ()
-		{
-			state = LoginState.Initial;
-			base.Reset ();
+			return buffer;
 		}
 	}
 }

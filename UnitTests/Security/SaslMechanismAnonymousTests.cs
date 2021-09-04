@@ -1,5 +1,5 @@
 ﻿//
-// SaslMechanismPlainTests.cs
+// SaslMechanismAnonymousTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -34,7 +34,7 @@ using MailKit.Security;
 
 namespace UnitTests.Security {
 	[TestFixture]
-	public class SaslMechanismPlainTests
+	public class SaslMechanismAnonymousTests
 	{
 		[Test]
 		public void TestArgumentExceptions ()
@@ -42,22 +42,20 @@ namespace UnitTests.Security {
 			var credentials = new NetworkCredential ("username", "password");
 			SaslMechanism sasl;
 
-			sasl = new SaslMechanismPlain (credentials);
+			sasl = new SaslMechanismAnonymous (credentials);
 			Assert.DoesNotThrow (() => sasl.Challenge (null));
 
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, credentials));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (Encoding.UTF8, null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, "username", "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (Encoding.UTF8, null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (Encoding.UTF8, "username", null));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain (null, "password"));
-			Assert.Throws<ArgumentNullException> (() => new SaslMechanismPlain ("username", null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismAnonymous (null, credentials));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismAnonymous (Encoding.UTF8, (NetworkCredential) null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismAnonymous ((NetworkCredential) null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismAnonymous (null, "username"));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismAnonymous (Encoding.UTF8, (string) null));
+			Assert.Throws<ArgumentNullException> (() => new SaslMechanismAnonymous ((string) null));
 		}
 
-		static void AssertPlain (SaslMechanismPlain sasl, string prefix)
+		static void AssertAnonymous (SaslMechanismAnonymous sasl, string prefix)
 		{
-			const string expected = "AHVzZXJuYW1lAHBhc3N3b3Jk";
+			const string expected = "dXNlcm5hbWU=";
 			string challenge;
 
 			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
@@ -70,32 +68,16 @@ namespace UnitTests.Security {
 		}
 
 		[Test]
-		public void TestPlainAuth ()
+		public void TestAnonymousAuth ()
 		{
 			var credentials = new NetworkCredential ("username", "password");
-			var sasl = new SaslMechanismPlain (credentials);
+			var sasl = new SaslMechanismAnonymous (credentials);
 
-			AssertPlain (sasl, "NetworkCredential");
+			AssertAnonymous (sasl, "NetworkCredential");
 
-			sasl = new SaslMechanismPlain ("username", "password");
+			sasl = new SaslMechanismAnonymous ("username");
 
-			AssertPlain (sasl, "user/pass");
-		}
-
-		[Test]
-		public void TestPlainWithAuthorizationId ()
-		{
-			const string expected = "YXV0aHppZAB1c2VybmFtZQBwYXNzd29yZA==";
-			var sasl = new SaslMechanismPlain ("username", "password") { AuthorizationId = "authzid" };
-			string challenge;
-
-			Assert.IsTrue (sasl.SupportsInitialResponse, "SupportsInitialResponse");
-
-			challenge = sasl.Challenge (string.Empty);
-
-			Assert.AreEqual (expected, challenge, "challenge response does not match the expected string.");
-			Assert.IsTrue (sasl.IsAuthenticated, "should be authenticated.");
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "challenge while authenticated.");
+			AssertAnonymous (sasl, "user");
 		}
 	}
 }

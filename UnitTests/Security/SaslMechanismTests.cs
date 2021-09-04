@@ -48,14 +48,16 @@ namespace UnitTests.Security {
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", null));
 
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.IsSupported (null));
+
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.SaslPrep (null));
 		}
 
 		[Test]
 		public void TestIsSupported ()
 		{
-			var supported = new [] { "PLAIN", "LOGIN", "CRAM-MD5", "DIGEST-MD5", "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-512-PLUS", "NTLM", "OAUTHBEARER", "XOAUTH2" };
-			var unsupported = new [] { "ANONYMOUS", "GSSAPI", "KERBEROS_V4" };
+			var supported = new [] { "PLAIN", "LOGIN", "CRAM-MD5", "DIGEST-MD5", "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-512-PLUS", "NTLM", "OAUTHBEARER", "XOAUTH2", "ANONYMOUS" };
+			var unsupported = new [] { "EXTERNAL", "GSSAPI", "KERBEROS_V4" };
 			var credentials = new NetworkCredential ("username", "password");
 
 			foreach (var mechanism in supported) {
