@@ -403,8 +403,7 @@ namespace MailKit {
 		}
 
 		const string AppleCertificateIssuer = "C=US, S=California, O=Apple Inc., CN=Apple Public Server RSA CA 12 - G1";
-		const string GMailCertificateIssuer = "CN=GTS CA 1O1, O=Google Trust Services, C=US";
-		const string GMailCertificateIssuer2 = "CN=GTS CA 1C3, O=Google Trust Services LLC, C=US";
+		const string GMailCertificateIssuer = "CN=GTS CA 1C3, O=Google Trust Services LLC, C=US";
 		const string OutlookCertificateIssuer = "CN=DigiCert Cloud Services CA-1, O=DigiCert Inc, C=US";
 		const string YahooCertificateIssuer = "CN=DigiCert SHA2 High Assurance Server CA, OU=www.digicert.com, O=DigiCert Inc, C=US";
 		const string GmxDotComCertificateIssuer = "CN=GeoTrust RSA CA 2018, OU=www.digicert.com, O=DigiCert Inc, C=US";
@@ -421,33 +420,31 @@ namespace MailKit {
 			switch (cn) {
 			case "imap.gmail.com":
 				switch (issuer) {
-				case GMailCertificateIssuer2:
-					return (serial == "00B66B3B6D37B3F5B60A00000000E05AF6" && fingerprint == "E7D9D439E4E40C078EFF84ED0A28B9B11C3570BC") // Expires 8/29/2021 11:05:12 PM
-						|| (serial == "00ED027E1C0FD7ACC60A00000000EB5848" && fingerprint == "714CE048CCB0352B166D5AE9B2F2279F7481442A") // Expires 9/19/2021 11:16:30 PM
+				case GMailCertificateIssuer:
+					return (serial == "00ED027E1C0FD7ACC60A00000000EB5848" && fingerprint == "714CE048CCB0352B166D5AE9B2F2279F7481442A") // Expires 9/19/2021 11:16:30 PM
 						|| (serial == "33FF71640CD98A320A00000000F2C2B6" && fingerprint == "76A80201E949827892DB74E4465EC4049CECE204") // Expires 10/3/2021 10:59:11 PM
-						|| (serial == "00D4228FE2A199D8C10A00000000F6EDE5" && fingerprint == "3F9F7FF42A4C149ECB05793325E8A9A5ED194B5D"); // Expires 10/17/2021 11:07:45 PM
+						|| (serial == "00D4228FE2A199D8C10A00000000F6EDE5" && fingerprint == "3F9F7FF42A4C149ECB05793325E8A9A5ED194B5D") // Expires 10/17/2021 11:07:45 PM
+						|| (serial == "00BCB89E0695B636E20A00000000FA6516" && fingerprint == "38AD15CF14B047FE9FB595F5C083F35C9BAFEA2F"); // Expires 11/7/2021 10:04:32 PM
 				default:
 					return false;
 				}
 			case "pop.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "00BB5405B5EECFE18C050000000087EA40" && fingerprint == "6E55F749282332F81AF3292D9EAC6FE329503C51"); // Expires 8/29/2021 11:05:35 PM
-				case GMailCertificateIssuer2:
 					return (serial == "00D62A5751A788CE760A00000000EB585F" && fingerprint == "D501E373FE5EDC142611FB1A5C67AD5D562E81FF") // Expires 9/19/2021 11:17:02 PM
 						|| (serial == "67782B7E5C429E710A00000000F2C2B8" && fingerprint == "D40C001E88244BF11BC16984B06DD82B15F45896") // Expires 10/3/2021 10:59:40 PM
-						|| (serial == "6B027D047DDFCBDA0A00000000F6EDEC" && fingerprint == "B14CB0BFA8C1FA9BC0EF6418FC1A29C3CC5C9560"); // Expires 10/17/2021 11:08:13 PM
+						|| (serial == "6B027D047DDFCBDA0A00000000F6EDEC" && fingerprint == "B14CB0BFA8C1FA9BC0EF6418FC1A29C3CC5C9560") // Expires 10/17/2021 11:08:13 PM
+						|| (serial == "00DBF25C80DBE69E430A00000000FA6519" && fingerprint == "5AD601A312F1DE017D85E667F9B40C50C89B54CE"); // Expires 11/7/2021 10:05:01 PM
 				default:
 					return false;
 				}
 			case "smtp.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "627FD20711D64376050000000087EA44" && fingerprint == "8F81D50252CB00658FD397497066240FC625F3C1"); // Expires 8/29/2021 11:08:11 PM
-				case GMailCertificateIssuer2:
 					return (serial == "00963FC0FB759465C70A00000000EB5901" && fingerprint == "8674A3D46170AF29F77F2BBF7865AB085B10866A") // Expires 9/19/2021 11:19:50 PM
 						|| (serial == "1146A5973D10C2700A00000000F2C2CE" && fingerprint == "14C1D4AC4A04A288A30D854F1F4100AD6852A11B") // Expires 10/3/2021 11:02:05 PM
-						|| (serial == "7FCF9FA362FCB8D20A00000000F6EE15" && fingerprint == "241C76B308F5DF1718E785D6AC35F7A7766CC64D"); // Expires 10/17/2021 11:10:45 PM
+						|| (serial == "7FCF9FA362FCB8D20A00000000F6EE15" && fingerprint == "241C76B308F5DF1718E785D6AC35F7A7766CC64D") // Expires 10/17/2021 11:10:45 PM
+						|| (serial == "009EF7097FA046BFBB0A00000000FA6528" && fingerprint == "08512EBDDFF3D16DC45B433F9969D01EE3D4F77B"); // Expires 11/7/2021 10:07:26 PM
 				default:
 					return false;
 				}
