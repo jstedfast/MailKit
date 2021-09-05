@@ -489,7 +489,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateAppendCommands (bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		List<ImapReplayCommand> CreateAppendCommands (bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -500,6 +500,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 
 			internalDates = withInternalDates ? new List<DateTimeOffset> () : null;
+			keywords = withKeywords ? new List<List<string>> () : null;
 			messages = new List<MimeMessage> ();
 			flags = new List<MessageFlags> ();
 			var command = new StringBuilder ();
@@ -515,6 +516,10 @@ namespace UnitTests.Net.Imap {
 
 				messages.Add (message);
 				flags.Add (MessageFlags.Seen);
+
+				if (withKeywords)
+					keywords.Add (new List<string> { "$NotJunk" });
+
 				if (withInternalDates)
 					internalDates.Add (message.Date);
 
@@ -534,7 +539,10 @@ namespace UnitTests.Net.Imap {
 				var tag = string.Format ("A{0:D8}", id++);
 				command.Clear ();
 
-				command.AppendFormat ("{0} APPEND INBOX (\\Seen) ", tag);
+				if (withKeywords)
+					command.AppendFormat ("{0} APPEND INBOX (\\Seen $NotJunk) ", tag);
+				else
+					command.AppendFormat ("{0} APPEND INBOX (\\Seen) ", tag);
 
 				if (withInternalDates)
 					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
@@ -554,11 +562,13 @@ namespace UnitTests.Net.Imap {
 			return commands;
 		}
 
-		[TestCase (true, TestName = "TestAppendWithInternalDates")]
-		[TestCase (false, TestName = "TestAppendWithoutInternalDates")]
-		public void TestAppend (bool withInternalDates)
+		[TestCase (false, false, TestName = "TestAppend")]
+		[TestCase (true, false, TestName = "TestAppendWithKeywords")]
+		[TestCase (false, true, TestName = "TestAppendWithInternalDates")]
+		[TestCase (true, true, TestName = "TestAppendWithKeywordsAndInternalDates")]
+		public void TestAppend (bool withKeywords, bool withInternalDates)
 		{
-			var commands = CreateAppendCommands (withInternalDates, out var messages, out var flags, out var internalDates);
+			var commands = CreateAppendCommands (withKeywords, withInternalDates, out var messages, out var flags, out var keywords, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -576,10 +586,21 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < messages.Count; i++) {
 					UniqueId? uid;
 
-					if (withInternalDates)
+					if (withKeywords) {
+						AppendRequest request;
+
+						if (withInternalDates) {
+							request = new AppendRequest (messages[i], flags[i], keywords[i], internalDates[i]);
+						} else {
+							request = new AppendRequest (messages[i], flags[i], keywords[i]);
+						}
+
+						uid = client.Inbox.Append (request);
+					} else if (withInternalDates) {
 						uid = client.Inbox.Append (messages[i], flags[i], internalDates[i]);
-					else
+					} else {
 						uid = client.Inbox.Append (messages[i], flags[i]);
+					}
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
@@ -589,11 +610,13 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[TestCase (true, TestName = "TestAppendWithInternalDatesAsync")]
-		[TestCase (false, TestName = "TestAppendWithoutInternalDatesAsync")]
-		public async Task TestAppendAsync (bool withInternalDates)
+		[TestCase (false, false, TestName = "TestAppendAsync")]
+		[TestCase (true, false, TestName = "TestAppendWithKeywordsAsync")]
+		[TestCase (false, true, TestName = "TestAppendWithInternalDatesAsync")]
+		[TestCase (true, true, TestName = "TestAppendWithKeywordsAndInternalDatesAsync")]
+		public async Task TestAppendAsync (bool withKeywords, bool withInternalDates)
 		{
-			var commands = CreateAppendCommands (withInternalDates, out var messages, out var flags, out var internalDates);
+			var commands = CreateAppendCommands (withKeywords, withInternalDates, out var messages, out var flags, out var keywords, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -611,10 +634,21 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < messages.Count; i++) {
 					UniqueId? uid;
 
-					if (withInternalDates)
+					if (withKeywords) {
+						AppendRequest request;
+
+						if (withInternalDates) {
+							request = new AppendRequest (messages[i], flags[i], keywords[i], internalDates[i]);
+						} else {
+							request = new AppendRequest (messages[i], flags[i], keywords[i]);
+						}
+
+						uid = await client.Inbox.AppendAsync (request);
+					} else if (withInternalDates) {
 						uid = await client.Inbox.AppendAsync (messages[i], flags[i], internalDates[i]);
-					else
+					} else {
 						uid = await client.Inbox.AppendAsync (messages[i], flags[i]);
+					}
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
@@ -624,7 +658,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateMultiAppendCommands (bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		List<ImapReplayCommand> CreateMultiAppendCommands (bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -637,6 +671,7 @@ namespace UnitTests.Net.Imap {
 			var now = DateTimeOffset.Now;
 
 			internalDates = withInternalDates ? new List<DateTimeOffset> () : null;
+			keywords = withKeywords ? new List<List<string>> () : null;
 			messages = new List<MimeMessage> ();
 			flags = new List<MessageFlags> ();
 
@@ -654,9 +689,13 @@ namespace UnitTests.Net.Imap {
 				string latin1;
 				long length;
 
+				flags.Add (MessageFlags.Seen);
+
+				if (withKeywords)
+					keywords.Add (new List<string> { "$NotJunk" });
+
 				if (withInternalDates)
 					internalDates.Add (messages[i].Date);
-				flags.Add (MessageFlags.Seen);
 
 				using (var stream = new MemoryStream ()) {
 					var options = FormatOptions.Default.Clone ();
@@ -670,9 +709,14 @@ namespace UnitTests.Net.Imap {
 						latin1 = reader.ReadToEnd ();
 				}
 
-				command.Append (" (\\Seen) ");
+				if (withKeywords)
+					command.Append (" (\\Seen $NotJunk) ");
+				else
+					command.Append (" (\\Seen) ");
+
 				if (withInternalDates)
 					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
+
 				command.Append ('{');
 				command.AppendFormat ("{0}+", length);
 				command.Append ("}\r\n");
@@ -701,9 +745,14 @@ namespace UnitTests.Net.Imap {
 						latin1 = reader.ReadToEnd ();
 				}
 
-				command.Append (" (\\Seen) ");
+				if (withKeywords)
+					command.Append (" (\\Seen $NotJunk) ");
+				else
+					command.Append (" (\\Seen) ");
+
 				if (withInternalDates)
 					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
+
 				command.Append ('{');
 				command.AppendFormat ("{0}+", length);
 				command.Append ("}\r\n");
@@ -717,11 +766,13 @@ namespace UnitTests.Net.Imap {
 			return commands;
 		}
 
-		[TestCase (true, TestName = "TestMultiAppendWithInternalDates")]
-		[TestCase (false, TestName = "TestMultiAppendWithoutInternalDates")]
-		public void TestMultiAppend (bool withInternalDates)
+		[TestCase (false, false, TestName = "TestMultiAppend")]
+		[TestCase (true, false, TestName = "TestMultiAppendWithKeywords")]
+		[TestCase (false, true, TestName = "TestMultiAppendWithInternalDates")]
+		[TestCase (true, true, TestName = "TestMultiAppendWithKeywordsAndInternalDates")]
+		public void TestMultiAppend (bool withKeywords, bool withInternalDates)
 		{
-			var commands = CreateMultiAppendCommands (withInternalDates, out var messages, out var flags, out var internalDates);
+			var commands = CreateMultiAppendCommands (withKeywords, withInternalDates, out var messages, out var flags, out var keywords, out var internalDates);
 			IList<UniqueId> uids;
 
 			using (var client = new ImapClient ()) {
@@ -743,10 +794,24 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), "MULTIAPPEND");
 
 				// Use MULTIAPPEND to append some test messages
-				if (withInternalDates)
+				if (withKeywords) {
+					var requests = new List<IAppendRequest> ();
+
+					for (int i = 0; i < messages.Count; i++) {
+						if (withInternalDates) {
+							requests.Add (new AppendRequest (messages[i], flags[i], keywords[i], internalDates[i]));
+						} else {
+							requests.Add (new AppendRequest (messages[i], flags[i], keywords[i]));
+						}
+					}
+
+					uids = client.Inbox.Append (requests);
+				} else if (withInternalDates) {
 					uids = client.Inbox.Append (messages, flags, internalDates);
-				else
+				} else {
 					uids = client.Inbox.Append (messages, flags);
+				}
+
 				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
@@ -754,10 +819,24 @@ namespace UnitTests.Net.Imap {
 
 				// Disable the MULTIAPPEND extension and do it again
 				client.Capabilities &= ~ImapCapabilities.MultiAppend;
-				if (withInternalDates)
+
+				if (withKeywords) {
+					var requests = new List<IAppendRequest> ();
+
+					for (int i = 0; i < messages.Count; i++) {
+						if (withInternalDates) {
+							requests.Add (new AppendRequest (messages[i], flags[i], keywords[i], internalDates[i]));
+						} else {
+							requests.Add (new AppendRequest (messages[i], flags[i], keywords[i]));
+						}
+					}
+
+					uids = client.Inbox.Append (requests);
+				} else if (withInternalDates) {
 					uids = client.Inbox.Append (messages, flags, internalDates);
-				else
+				} else {
 					uids = client.Inbox.Append (messages, flags);
+				}
 
 				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
 
@@ -768,11 +847,13 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[TestCase (true, TestName = "TestMultiAppendWithInternalDatesAsync")]
-		[TestCase (false, TestName = "TestMultiAppendWithoutInternalDatesAsync")]
-		public async Task TestMultiAppendAsync (bool withInternalDates)
+		[TestCase (false, false, TestName = "TestMultiAppendAsync")]
+		[TestCase (true, false, TestName = "TestMultiAppendWithKeywordsAsync")]
+		[TestCase (false, true, TestName = "TestMultiAppendWithInternalDatesAsync")]
+		[TestCase (true, true, TestName = "TestMultiAppendWithKeywordsAndInternalDatesAsync")]
+		public async Task TestMultiAppendAsync (bool withKeywords, bool withInternalDates)
 		{
-			var commands = CreateMultiAppendCommands (withInternalDates, out var messages, out var flags, out var internalDates);
+			var commands = CreateMultiAppendCommands (withKeywords, withInternalDates, out var messages, out var flags, out var keywords, out var internalDates);
 			IList<UniqueId> uids;
 
 			using (var client = new ImapClient ()) {
@@ -794,10 +875,24 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), "MULTIAPPEND");
 
 				// Use MULTIAPPEND to append some test messages
-				if (withInternalDates)
+				if (withKeywords) {
+					var requests = new List<IAppendRequest> ();
+
+					for (int i = 0; i < messages.Count; i++) {
+						if (withInternalDates) {
+							requests.Add (new AppendRequest (messages[i], flags[i], keywords[i], internalDates[i]));
+						} else {
+							requests.Add (new AppendRequest (messages[i], flags[i], keywords[i]));
+						}
+					}
+
+					uids = await client.Inbox.AppendAsync (requests);
+				} else if (withInternalDates) {
 					uids = await client.Inbox.AppendAsync (messages, flags, internalDates);
-				else
+				} else {
 					uids = await client.Inbox.AppendAsync (messages, flags);
+				}
+
 				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
@@ -805,10 +900,24 @@ namespace UnitTests.Net.Imap {
 
 				// Disable the MULTIAPPEND extension and do it again
 				client.Capabilities &= ~ImapCapabilities.MultiAppend;
-				if (withInternalDates)
+
+				if (withKeywords) {
+					var requests = new List<IAppendRequest> ();
+
+					for (int i = 0; i < messages.Count; i++) {
+						if (withInternalDates) {
+							requests.Add (new AppendRequest (messages[i], flags[i], keywords[i], internalDates[i]));
+						} else {
+							requests.Add (new AppendRequest (messages[i], flags[i], keywords[i]));
+						}
+					}
+
+					uids = await client.Inbox.AppendAsync (requests);
+				} else if (withInternalDates) {
 					uids = await client.Inbox.AppendAsync (messages, flags, internalDates);
-				else
+				} else {
 					uids = await client.Inbox.AppendAsync (messages, flags);
+				}
 
 				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
 
@@ -819,7 +928,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateReplaceCommands (bool clientSide, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		List<ImapReplayCommand> CreateReplaceCommands (bool clientSide, bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -830,6 +939,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
 
 			internalDates = withInternalDates ? new List<DateTimeOffset> () : null;
+			keywords = withKeywords ? new List<List<string>> () : null;
 			messages = new List<MimeMessage> ();
 			flags = new List<MessageFlags> ();
 			var command = new StringBuilder ();
@@ -844,7 +954,12 @@ namespace UnitTests.Net.Imap {
 					message = MimeMessage.Load (resource);
 
 				messages.Add (message);
+
 				flags.Add (MessageFlags.Seen);
+
+				if (withKeywords)
+					keywords.Add (new List<string> { "$NotJunk" });
+
 				if (withInternalDates)
 					internalDates.Add (message.Date);
 
@@ -865,9 +980,14 @@ namespace UnitTests.Net.Imap {
 				command.Clear ();
 
 				if (clientSide)
-					command.AppendFormat ("{0} APPEND INBOX (\\Seen) ", tag);
+					command.AppendFormat ("{0} APPEND INBOX (\\Seen", tag);
 				else
-					command.AppendFormat ("{0} REPLACE {1} INBOX (\\Seen) ", tag, i + 1);
+					command.AppendFormat ("{0} REPLACE {1} INBOX (\\Seen", tag, i + 1);
+
+				if (withKeywords)
+					command.Append (" $NotJunk) ");
+				else
+					command.Append (") ");
 
 				if (withInternalDates)
 					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
@@ -892,13 +1012,17 @@ namespace UnitTests.Net.Imap {
 			return commands;
 		}
 
-		[TestCase (false, true, TestName = "TestReplaceWithInternalDates")]
-		[TestCase (false, false, TestName = "TestReplaceWithoutInternalDates")]
-		[TestCase (true, true, TestName = "TestClientSideReplaceWithInternalDates")]
-		[TestCase (true, false, TestName = "TestClientSideReplaceWithoutInternalDates")]
-		public void TestReplace (bool clientSide, bool withInternalDates)
+		[TestCase (false, false, false, TestName = "TestReplace")]
+		[TestCase (false, true, false, TestName = "TestReplaceWithKeywords")]
+		[TestCase (false, false, true, TestName = "TestReplaceWithInternalDates")]
+		[TestCase (false, true, true, TestName = "TestReplaceWithKeywordsAndInternalDates")]
+		[TestCase (true, false, false, TestName = "TestClientSideReplace")]
+		[TestCase (true, true, false, TestName = "TestClientSideReplaceWithKeywords")]
+		[TestCase (true, false, true, TestName = "TestClientSideReplaceWithInternalDates")]
+		[TestCase (true, true, true, TestName = "TestClientSideReplaceWithKeywordsAndInternalDates")]
+		public void TestReplace (bool clientSide, bool withKeywords, bool withInternalDates)
 		{
-			var commands = CreateReplaceCommands (clientSide, withInternalDates, out var messages, out var flags, out var internalDates);
+			var commands = CreateReplaceCommands (clientSide, withKeywords, withInternalDates, out var messages, out var flags, out var keywords, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -926,10 +1050,21 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < messages.Count; i++) {
 					UniqueId? uid;
 
-					if (withInternalDates)
+					if (withKeywords) {
+						ReplaceRequest request;
+
+						if (withInternalDates) {
+							request = new ReplaceRequest (messages[i], flags[i], keywords[i], internalDates[i]);
+						} else {
+							request = new ReplaceRequest (messages[i], flags[i], keywords[i]);
+						}
+
+						uid = client.Inbox.Replace (i, request);
+					} else if (withInternalDates) {
 						uid = client.Inbox.Replace (i, messages[i], flags[i], internalDates[i]);
-					else
+					} else {
 						uid = client.Inbox.Replace (i, messages[i], flags[i]);
+					}
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
@@ -939,13 +1074,17 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[TestCase (false, true, TestName = "TestReplaceWithInternalDatesAsync")]
-		[TestCase (false, false, TestName = "TestReplaceWithoutInternalDatesAsync")]
-		[TestCase (true, true, TestName = "TestClientSideReplaceWithInternalDatesAsync")]
-		[TestCase (true, false, TestName = "TestClientSideReplaceWithoutInternalDatesAsync")]
-		public async Task TestReplaceAsync (bool clientSide, bool withInternalDates)
+		[TestCase (false, false, false, TestName = "TestReplaceAsync")]
+		[TestCase (false, true, false, TestName = "TestReplaceWithKeywordsAsync")]
+		[TestCase (false, false, true, TestName = "TestReplaceWithInternalDatesAsync")]
+		[TestCase (false, true, true, TestName = "TestReplaceWithKeywordsAndInternalDatesAsync")]
+		[TestCase (true, false, false, TestName = "TestClientSideReplaceAsync")]
+		[TestCase (true, true, false, TestName = "TestClientSideReplaceWithKeywordsAsync")]
+		[TestCase (true, false, true, TestName = "TestClientSideReplaceWithInternalDatesAsync")]
+		[TestCase (true, true, true, TestName = "TestClientSideReplaceWithKeywordsAndInternalDatesAsync")]
+		public async Task TestReplaceAsync (bool clientSide, bool withKeywords, bool withInternalDates)
 		{
-			var commands = CreateReplaceCommands (clientSide, withInternalDates, out var messages, out var flags, out var internalDates);
+			var commands = CreateReplaceCommands (clientSide, withKeywords, withInternalDates, out var messages, out var flags, out var keywords, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -973,10 +1112,21 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < messages.Count; i++) {
 					UniqueId? uid;
 
-					if (withInternalDates)
+					if (withKeywords) {
+						ReplaceRequest request;
+
+						if (withInternalDates) {
+							request = new ReplaceRequest (messages[i], flags[i], keywords[i], internalDates[i]);
+						} else {
+							request = new ReplaceRequest (messages[i], flags[i], keywords[i]);
+						}
+
+						uid = await client.Inbox.ReplaceAsync (i, request);
+					} else if (withInternalDates) {
 						uid = await client.Inbox.ReplaceAsync (i, messages[i], flags[i], internalDates[i]);
-					else
+					} else {
 						uid = await client.Inbox.ReplaceAsync (i, messages[i], flags[i]);
+					}
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
@@ -986,7 +1136,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateReplaceByUidCommands (bool clientSide, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<DateTimeOffset> internalDates)
+		List<ImapReplayCommand> CreateReplaceByUidCommands (bool clientSide, bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -997,6 +1147,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
 
 			internalDates = withInternalDates ? new List<DateTimeOffset> () : null;
+			keywords = withKeywords ? new List<List<string>> () : null;
 			messages = new List<MimeMessage> ();
 			flags = new List<MessageFlags> ();
 			var command = new StringBuilder ();
@@ -1011,7 +1162,12 @@ namespace UnitTests.Net.Imap {
 					message = MimeMessage.Load (resource);
 
 				messages.Add (message);
+
 				flags.Add (MessageFlags.Seen);
+
+				if (withKeywords)
+					keywords.Add (new List<string> { "$NotJunk" });
+
 				if (withInternalDates)
 					internalDates.Add (message.Date);
 
@@ -1032,9 +1188,14 @@ namespace UnitTests.Net.Imap {
 				command.Clear ();
 
 				if (clientSide)
-					command.AppendFormat ("{0} APPEND INBOX (\\Seen) ", tag);
+					command.AppendFormat ("{0} APPEND INBOX (\\Seen", tag);
 				else
-					command.AppendFormat ("{0} UID REPLACE {1} INBOX (\\Seen) ", tag, i + 1);
+					command.AppendFormat ("{0} UID REPLACE {1} INBOX (\\Seen", tag, i + 1);
+
+				if (withKeywords)
+					command.Append (" $NotJunk) ");
+				else
+					command.Append (") ");
 
 				if (withInternalDates)
 					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
@@ -1062,13 +1223,17 @@ namespace UnitTests.Net.Imap {
 			return commands;
 		}
 
-		[TestCase (false, true, TestName = "TestReplaceByUidWithInternalDates")]
-		[TestCase (false, false, TestName = "TestReplaceByUidWithoutInternalDates")]
-		[TestCase (true, true, TestName = "TestClientSideReplaceByUidWithInternalDates")]
-		[TestCase (true, false, TestName = "TestClientSideReplaceByUidWithoutInternalDates")]
-		public void TestReplaceByUid (bool clientSide, bool withInternalDates)
+		[TestCase (false, false, false, TestName = "TestReplaceByUid")]
+		[TestCase (false, true, false, TestName = "TestReplaceByUidWithKeywords")]
+		[TestCase (false, false, true, TestName = "TestReplaceByUidWithInternalDates")]
+		[TestCase (false, true, true, TestName = "TestReplaceByUidWithKeywordsAndInternalDates")]
+		[TestCase (true, false, false, TestName = "TestClientSideReplaceByUid")]
+		[TestCase (true, true, false, TestName = "TestClientSideReplaceByUidWithKeywords")]
+		[TestCase (true, false, true, TestName = "TestClientSideReplaceByUidWithInternalDates")]
+		[TestCase (true, true, true, TestName = "TestClientSideReplaceByUidWithKeywordsAndInternalDates")]
+		public void TestReplaceByUid (bool clientSide, bool withKeywords, bool withInternalDates)
 		{
-			var commands = CreateReplaceByUidCommands (clientSide, withInternalDates, out var messages, out var flags, out var internalDates);
+			var commands = CreateReplaceByUidCommands (clientSide, withKeywords, withInternalDates, out var messages, out var flags, out var keywords, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1096,10 +1261,21 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < messages.Count; i++) {
 					UniqueId? uid;
 
-					if (withInternalDates)
+					if (withKeywords) {
+						ReplaceRequest request;
+
+						if (withInternalDates) {
+							request = new ReplaceRequest (messages[i], flags[i], keywords[i], internalDates[i]);
+						} else {
+							request = new ReplaceRequest (messages[i], flags[i], keywords[i]);
+						}
+
+						uid = client.Inbox.Replace (new UniqueId ((uint) i + 1), request);
+					} else if (withInternalDates) {
 						uid = client.Inbox.Replace (new UniqueId ((uint) i + 1), messages[i], flags[i], internalDates[i]);
-					else
+					} else {
 						uid = client.Inbox.Replace (new UniqueId ((uint) i + 1), messages[i], flags[i]);
+					}
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
@@ -1109,13 +1285,17 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[TestCase (false, true, TestName = "TestReplaceByUidWithInternalDatesAsync")]
-		[TestCase (false, false, TestName = "TestReplaceByUidWithoutInternalDatesAsync")]
-		[TestCase (true, true, TestName = "TestClientSideReplaceByUidWithInternalDatesAsync")]
-		[TestCase (true, false, TestName = "TestClientSideReplaceByUidWithoutInternalDatesAsync")]
-		public async Task TestReplaceByUidAsync (bool clientSide, bool withInternalDates)
+		[TestCase (false, false, false, TestName = "TestReplaceByUidAsync")]
+		[TestCase (false, true, false, TestName = "TestReplaceByUidWithKeywordsAsync")]
+		[TestCase (false, false, true, TestName = "TestReplaceByUidWithInternalDatesAsync")]
+		[TestCase (false, true, true, TestName = "TestReplaceByUidWithKeywordsAndInternalDatesAsync")]
+		[TestCase (true, false, false, TestName = "TestClientSideReplaceByUidAsync")]
+		[TestCase (true, true, false, TestName = "TestClientSideReplaceByUidWithKeywordsAsync")]
+		[TestCase (true, false, true, TestName = "TestClientSideReplaceByUidWithInternalDatesAsync")]
+		[TestCase (true, true, true, TestName = "TestClientSideReplaceByUidWithKeywordsAndInternalDatesAsync")]
+		public async Task TestReplaceByUidAsync (bool clientSide, bool withKeywords, bool withInternalDates)
 		{
-			var commands = CreateReplaceByUidCommands (clientSide, withInternalDates, out var messages, out var flags, out var internalDates);
+			var commands = CreateReplaceByUidCommands (clientSide, withKeywords, withInternalDates, out var messages, out var flags, out var keywords, out var internalDates);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1143,10 +1323,21 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < messages.Count; i++) {
 					UniqueId? uid;
 
-					if (withInternalDates)
+					if (withKeywords) {
+						ReplaceRequest request;
+
+						if (withInternalDates) {
+							request = new ReplaceRequest (messages[i], flags[i], keywords[i], internalDates[i]);
+						} else {
+							request = new ReplaceRequest (messages[i], flags[i], keywords[i]);
+						}
+
+						uid = await client.Inbox.ReplaceAsync (new UniqueId ((uint) i + 1), request);
+					} else if (withInternalDates) {
 						uid = await client.Inbox.ReplaceAsync (new UniqueId ((uint) i + 1), messages[i], flags[i], internalDates[i]);
-					else
+					} else {
 						uid = await client.Inbox.ReplaceAsync (new UniqueId ((uint) i + 1), messages[i], flags[i]);
+					}
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");

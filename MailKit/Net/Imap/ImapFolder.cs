@@ -4296,6 +4296,9 @@ namespace MailKit.Net.Imap {
 			if (request.Destination != null && !(request.Destination is ImapFolder target && target.Engine == Engine))
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (request));
 
+			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+				throw new NotSupportedException ("The IMAP server does not support annotations.");
+
 			CheckState (true, true);
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
@@ -4511,6 +4514,9 @@ namespace MailKit.Net.Imap {
 
 			if (request.Destination != null && !(request.Destination is ImapFolder target && target.Engine == Engine))
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (request));
+
+			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+				throw new NotSupportedException ("The IMAP server does not support annotations.");
 
 			CheckState (true, true);
 
