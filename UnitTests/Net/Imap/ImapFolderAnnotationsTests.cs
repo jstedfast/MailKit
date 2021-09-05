@@ -595,6 +595,194 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		IList<ImapReplayCommand> CreateReplaceWithAnnotationsCommands (bool byUid, out List<ReplaceRequest> requests)
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+annotate+replace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate.txt"));
+			var command = new StringBuilder ();
+			int id = 5;
+
+			requests = new List<ReplaceRequest> ();
+
+			for (int i = 0; i < 8; i++) {
+				MimeMessage message;
+				string latin1;
+				long length;
+
+				using (var resource = GetResourceStream (string.Format ("common.message.{0}.msg", i)))
+					message = MimeMessage.Load (resource);
+
+				var annotation = new Annotation (AnnotationEntry.AltSubject);
+				annotation.Properties[AnnotationAttribute.PrivateValue] = string.Format ("Alternate subject {0}", i);
+				requests.Add (new ReplaceRequest (message, MessageFlags.Seen) {
+					Annotations = new Annotation[] { annotation }
+				});
+
+				using (var stream = new MemoryStream ()) {
+					var options = FormatOptions.Default.Clone ();
+					options.NewLineFormat = NewLineFormat.Dos;
+					options.EnsureNewLine = true;
+
+					message.WriteTo (options, stream);
+					length = stream.Length;
+					stream.Position = 0;
+
+					using (var reader = new StreamReader (stream, Latin1))
+						latin1 = reader.ReadToEnd ();
+				}
+
+				var tag = string.Format ("A{0:D8}", id++);
+				command.Clear ();
+
+				command.AppendFormat ("{0} {1} {2} INBOX (\\Seen) ", tag, byUid ? "UID REPLACE" : "REPLACE", i + 1);
+				command.AppendFormat ("ANNOTATION (/altsubject (value.priv \"Alternate subject {0}\")) ", i);
+
+				command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
+				commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
+			}
+
+			commands.Add (new ImapReplayCommand (string.Format ("A{0:D8} LOGOUT\r\n", id), "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestReplaceWithAnnotations ()
+		{
+			var commands = CreateReplaceWithAnnotationsCommands (false, out var requests);
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				client.Inbox.Open (FolderAccess.ReadWrite);
+
+				for (int i = 0; i < requests.Count; i++) {
+					var uid = client.Inbox.Replace (i, requests[i]);
+
+					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
+					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+				}
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestReplaceWithAnnotationsAsync ()
+		{
+			var commands = CreateReplaceWithAnnotationsCommands (false, out var requests);
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				for (int i = 0; i < requests.Count; i++) {
+					var uid = await client.Inbox.ReplaceAsync (i, requests[i]);
+
+					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
+					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		[Test]
+		public void TestReplaceByUidWithAnnotations ()
+		{
+			var commands = CreateReplaceWithAnnotationsCommands (true, out var requests);
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				client.Inbox.Open (FolderAccess.ReadWrite);
+
+				for (int i = 0; i < requests.Count; i++) {
+					var uid = client.Inbox.Replace (new UniqueId ((uint) i + 1), requests[i]);
+
+					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
+					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+				}
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestReplaceByUidWithAnnotationsAsync ()
+		{
+			var commands = CreateReplaceWithAnnotationsCommands (true, out var requests);
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				for (int i = 0; i < requests.Count; i++) {
+					var uid = await client.Inbox.ReplaceAsync (new UniqueId ((uint) i + 1), requests[i]);
+
+					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
+					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		[Test]
 		public void TestSelectAnnotateNone ()
 		{

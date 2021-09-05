@@ -216,6 +216,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\append.8.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+annotate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+annotate+replace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+gmail-capabilities.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\authenticate+replace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\dovecot\copy.txt" />
