@@ -296,20 +296,36 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (null, 0, messages[0], MessageFlags.None, DateTimeOffset.Now));
 
 				// CopyTo
+				Assert.Throws<ArgumentException> (() => inbox.CopyTo (UniqueId.Invalid, inbox));
+				Assert.ThrowsAsync<ArgumentException> (() => inbox.CopyToAsync (UniqueId.Invalid, inbox));
+				Assert.Throws<ArgumentNullException> (() => inbox.CopyTo (UniqueId.MinValue, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.CopyToAsync (UniqueId.MinValue, null));
 				Assert.Throws<ArgumentNullException> (() => inbox.CopyTo ((IList<UniqueId>) null, inbox));
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.CopyToAsync ((IList<UniqueId>) null, inbox));
 				Assert.Throws<ArgumentNullException> (() => inbox.CopyTo (UniqueIdRange.All, null));
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.CopyToAsync (UniqueIdRange.All, null));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.CopyTo (-1, inbox));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (() => inbox.CopyToAsync (-1, inbox));
+				Assert.Throws<ArgumentNullException> (() => inbox.CopyTo (0, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.CopyToAsync (0, null));
 				Assert.Throws<ArgumentNullException> (() => inbox.CopyTo ((IList<int>) null, inbox));
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.CopyToAsync ((IList<int>) null, inbox));
 				Assert.Throws<ArgumentNullException> (() => inbox.CopyTo (new int [] { 0 }, null));
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.CopyToAsync (new int [] { 0 }, null));
 
 				// MoveTo
+				Assert.Throws<ArgumentException> (() => inbox.MoveTo (UniqueId.Invalid, inbox));
+				Assert.ThrowsAsync<ArgumentException> (() => inbox.MoveToAsync (UniqueId.Invalid, inbox));
+				Assert.Throws<ArgumentNullException> (() => inbox.MoveTo (UniqueId.MinValue, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.MoveToAsync (UniqueId.MinValue, null));
 				Assert.Throws<ArgumentNullException> (() => inbox.MoveTo ((IList<UniqueId>) null, inbox));
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.MoveToAsync ((IList<UniqueId>) null, inbox));
 				Assert.Throws<ArgumentNullException> (() => inbox.MoveTo (UniqueIdRange.All, null));
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.MoveToAsync (UniqueIdRange.All, null));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.MoveTo (-1, inbox));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (() => inbox.MoveToAsync (-1, inbox));
+				Assert.Throws<ArgumentNullException> (() => inbox.MoveTo (0, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.MoveToAsync (0, null));
 				Assert.Throws<ArgumentNullException> (() => inbox.MoveTo ((IList<int>) null, inbox));
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.MoveToAsync ((IList<int>) null, inbox));
 				Assert.Throws<ArgumentNullException> (() => inbox.MoveTo (new int [] { 0 }, null));

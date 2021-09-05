@@ -4082,9 +4082,6 @@ namespace MailKit {
 		/// </exception>
 		public virtual UniqueId? CopyTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
 			var uids = CopyTo (new [] { uid }, destination, cancellationToken);
 
 			if (uids != null && uids.Destination.Count > 0)
@@ -4140,9 +4137,6 @@ namespace MailKit {
 		/// </exception>
 		public virtual async Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
 			var uids = await CopyToAsync (new [] { uid }, destination, cancellationToken).ConfigureAwait (false);
 
 			if (uids != null && uids.Destination.Count > 0)
@@ -4296,9 +4290,6 @@ namespace MailKit {
 		/// </exception>
 		public virtual UniqueId? MoveTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
 			var uids = MoveTo (new [] { uid }, destination, cancellationToken);
 
 			if (uids != null && uids.Destination.Count > 0)
@@ -4354,9 +4345,6 @@ namespace MailKit {
 		/// </exception>
 		public virtual async Task<UniqueId?> MoveToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
 			var uids = await MoveToAsync (new [] { uid }, destination, cancellationToken).ConfigureAwait (false);
 
 			if (uids != null && uids.Destination.Count > 0)
@@ -4510,9 +4498,6 @@ namespace MailKit {
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
 			CopyTo (new [] { index }, destination, cancellationToken);
 		}
 
@@ -4563,9 +4548,6 @@ namespace MailKit {
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
-
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
 
 			return CopyToAsync (new [] { index }, destination, cancellationToken);
 		}
@@ -4708,9 +4690,6 @@ namespace MailKit {
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
 			MoveTo (new [] { index }, destination, cancellationToken);
 		}
 
@@ -4761,9 +4740,6 @@ namespace MailKit {
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
-
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
 
 			return MoveToAsync (new [] { index }, destination, cancellationToken);
 		}
@@ -6137,7 +6113,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			if (uid.Id == 0)
+			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (part == null)
