@@ -41,6 +41,8 @@ using MailKit.Net;
 using MailKit.Net.Proxy;
 using MailKit.Security;
 
+using NetworkStream = MailKit.Net.NetworkStream;
+
 namespace MailKit {
 	/// <summary>
 	/// An abstract mail service implementation.
@@ -50,7 +52,7 @@ namespace MailKit {
 	/// </remarks>
 	public abstract class MailService : IMailService
 	{
-#if NET48 || NET5_0
+#if NET48 || NET5_0_OR_GREATER
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
 #else
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | (SslProtocols) 12288;
@@ -148,7 +150,7 @@ namespace MailKit {
 			get; set;
 		}
 
-#if NET5_0
+#if NET5_0_OR_GREATER
 		/// <summary>
 		/// Gets or sets the cipher suites allowed to be used when negotiating an SSL or TLS connection.
 		/// </summary>
@@ -480,7 +482,7 @@ namespace MailKit {
 			}
 		}
 
-		static bool IsUntrustedRoot (X509Chain chain)
+		internal static bool IsUntrustedRoot (X509Chain chain)
 		{
 			foreach (var status in chain.ChainStatus) {
 				if (status.Status == X509ChainStatusFlags.NoError || status.Status == X509ChainStatusFlags.UntrustedRoot)
@@ -534,7 +536,7 @@ namespace MailKit {
 			return false;
 		}
 
-#if NET5_0 || NETSTANDARD2_1
+#if NET5_0_OR_GREATER || NETSTANDARD2_1
 		/// <summary>
 		/// Gets the SSL/TLS client authentication options for use with .NET5's SslStream.AuthenticateAsClient() API.
 		/// </summary>
@@ -550,7 +552,7 @@ namespace MailKit {
 				CertificateRevocationCheckMode = CheckCertificateRevocation ? X509RevocationMode.Online : X509RevocationMode.NoCheck,
 				ApplicationProtocols = new List<SslApplicationProtocol> { new SslApplicationProtocol (Protocol) },
 				RemoteCertificateValidationCallback = remoteCertificateValidationCallback,
-#if NET5_0
+#if NET5_0_OR_GREATER
 				CipherSuitesPolicy = SslCipherSuitesPolicy,
 #endif
 				ClientCertificates = ClientCertificates,
@@ -560,7 +562,7 @@ namespace MailKit {
 		}
 #endif
 
-		internal async Task<Socket> ConnectSocket (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		internal async Task<Stream> ConnectNetwork (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (ProxyClient != null) {
 				ProxyClient.LocalEndPoint = LocalEndPoint;
@@ -571,7 +573,9 @@ namespace MailKit {
 				return ProxyClient.Connect (host, port, Timeout, cancellationToken);
 			}
 
-			return await SocketUtils.ConnectAsync (host, port, LocalEndPoint, Timeout, doAsync, cancellationToken).ConfigureAwait (false);
+			var socket = await SocketUtils.ConnectAsync (host, port, LocalEndPoint, Timeout, doAsync, cancellationToken).ConfigureAwait (false);
+
+			return new NetworkStream (socket, true);
 		}
 
 		/// <summary>

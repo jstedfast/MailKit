@@ -1,5 +1,5 @@
 ﻿//
-// HttpProxyClientTests.cs
+// HttpsProxyClientTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -28,6 +28,8 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 using NUnit.Framework;
 
@@ -35,34 +37,47 @@ using MailKit.Net.Proxy;
 
 namespace UnitTests.Net.Proxy {
 	[TestFixture]
-	public class HttpProxyClientTests
+	public class HttpsProxyClientTests
 	{
 		const int ConnectTimeout = 5 * 1000; // 5 seconds
+		readonly X509Certificate2 certificate;
+
+		public HttpsProxyClientTests ()
+		{
+			using (var rsa = RSA.Create (4096)) {
+				var req = new CertificateRequest ("cn=MailKit Proxy", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+				req.CertificateExtensions.Add (new X509KeyUsageExtension (X509KeyUsageFlags.DigitalSignature, true));
+
+				var cert = req.CreateSelfSigned (DateTimeOffset.Now, DateTimeOffset.Now.AddYears (5));
+
+				certificate = new X509Certificate2 (cert.Export (X509ContentType.Pfx, "password"), "password", X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
+			}
+		}
 
 		[Test]
 		public void TestArgumentExceptions ()
 		{
 			var credentials = new NetworkCredential ("user", "password");
-			var proxy = new HttpProxyClient ("http.proxy.com", 0, credentials);
+			var proxy = new HttpsProxyClient ("http.proxy.com", 0, credentials);
 
-			Assert.Throws<ArgumentNullException> (() => new HttpProxyClient (null, 1080));
-			Assert.Throws<ArgumentException> (() => new HttpProxyClient (string.Empty, 1080));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new HttpProxyClient (proxy.ProxyHost, -1));
-			Assert.Throws<ArgumentNullException> (() => new HttpProxyClient (proxy.ProxyHost, 1080, null));
+			Assert.Throws<ArgumentNullException> (() => new HttpsProxyClient (null, 1080));
+			Assert.Throws<ArgumentException> (() => new HttpsProxyClient (string.Empty, 1080));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new HttpsProxyClient (proxy.ProxyHost, -1));
+			Assert.Throws<ArgumentNullException> (() => new HttpsProxyClient (proxy.ProxyHost, 1080, null));
 
 			Assert.AreEqual (1080, proxy.ProxyPort);
 			Assert.AreEqual ("http.proxy.com", proxy.ProxyHost);
 			Assert.AreEqual (credentials, proxy.ProxyCredentials);
 
-			Assert.Throws<ArgumentNullException> (() => proxy.Connect (null, 80));
-			Assert.Throws<ArgumentNullException> (() => proxy.Connect (null, 80, ConnectTimeout));
-			Assert.ThrowsAsync<ArgumentNullException> (async () => await proxy.ConnectAsync (null, 80));
-			Assert.ThrowsAsync<ArgumentNullException> (async () => await proxy.ConnectAsync (null, 80, ConnectTimeout));
+			Assert.Throws<ArgumentNullException> (() => proxy.Connect (null, 443));
+			Assert.Throws<ArgumentNullException> (() => proxy.Connect (null, 443, ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentNullException> (async () => await proxy.ConnectAsync (null, 443));
+			Assert.ThrowsAsync<ArgumentNullException> (async () => await proxy.ConnectAsync (null, 443, ConnectTimeout));
 
-			Assert.Throws<ArgumentException> (() => proxy.Connect (string.Empty, 80));
-			Assert.Throws<ArgumentException> (() => proxy.Connect (string.Empty, 80, ConnectTimeout));
-			Assert.ThrowsAsync<ArgumentException> (async () => await proxy.ConnectAsync (string.Empty, 80));
-			Assert.ThrowsAsync<ArgumentException> (async () => await proxy.ConnectAsync (string.Empty, 80, ConnectTimeout));
+			Assert.Throws<ArgumentException> (() => proxy.Connect (string.Empty, 443));
+			Assert.Throws<ArgumentException> (() => proxy.Connect (string.Empty, 443, ConnectTimeout));
+			Assert.ThrowsAsync<ArgumentException> (async () => await proxy.ConnectAsync (string.Empty, 443));
+			Assert.ThrowsAsync<ArgumentException> (async () => await proxy.ConnectAsync (string.Empty, 443, ConnectTimeout));
 
 			Assert.Throws<ArgumentOutOfRangeException> (() => proxy.Connect ("www.google.com", 0));
 			Assert.Throws<ArgumentOutOfRangeException> (() => proxy.Connect ("www.google.com", 0, ConnectTimeout));
@@ -76,15 +91,15 @@ namespace UnitTests.Net.Proxy {
 		[Test]
 		public void TestMethodNotAllowed ()
 		{
-			var proxy = new HttpProxyClient ("www.google.com", 80);
+			var proxy = new HttpsProxyClient ("www.google.com", 443);
 			Stream stream = null;
 
 			try {
-				stream = proxy.Connect ("www.google.com", 80);
+				stream = proxy.Connect ("www.google.com", 443);
 				Assert.Fail ("www.google.com is not an HTTP proxy, so CONNECT should have failed.");
 			} catch (ProxyProtocolException ex) {
 				// This is expected since this proxy does not support Socks4a
-				Assert.AreEqual ("Failed to connect to www.google.com:80: HTTP/1.1 405 Method Not Allowed", ex.Message);
+				Assert.AreEqual ("Failed to connect to www.google.com:443: HTTP/1.1 405 Method Not Allowed", ex.Message);
 			} catch (TimeoutException) {
 				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
@@ -97,15 +112,15 @@ namespace UnitTests.Net.Proxy {
 		[Test]
 		public async Task TestMethodNotAllowedAsync ()
 		{
-			var proxy = new HttpProxyClient ("www.google.com", 80);
+			var proxy = new HttpsProxyClient ("www.google.com", 443);
 			Stream stream = null;
 
 			try {
-				stream = await proxy.ConnectAsync ("www.google.com", 80);
+				stream = await proxy.ConnectAsync ("www.google.com", 443);
 				Assert.Fail ("www.google.com is not an HTTP proxy, so CONNECT should have failed.");
 			} catch (ProxyProtocolException ex) {
 				// This is expected since this proxy does not support Socks4a
-				Assert.AreEqual ("Failed to connect to www.google.com:80: HTTP/1.1 405 Method Not Allowed", ex.Message);
+				Assert.AreEqual ("Failed to connect to www.google.com:443: HTTP/1.1 405 Method Not Allowed", ex.Message);
 			} catch (TimeoutException) {
 				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
@@ -118,11 +133,14 @@ namespace UnitTests.Net.Proxy {
 		[Test]
 		public void TestConnectWithCredentials ()
 		{
-			using (var server = new HttpProxyListener ()) {
+			using (var server = new HttpProxyListener (certificate)) {
 				server.Start (IPAddress.Loopback, 0);
 
 				var credentials = new NetworkCredential ("username", "password");
-				var proxy = new HttpProxyClient (server.IPAddress.ToString (), server.Port, credentials);
+				var proxy = new HttpsProxyClient (server.IPAddress.ToString (), server.Port, credentials) {
+					ServerCertificateValidationCallback = (s, c, ch, e) => true,
+					CheckCertificateRevocation = false
+				};
 				Stream stream = null;
 
 				try {
@@ -140,11 +158,14 @@ namespace UnitTests.Net.Proxy {
 		[Test]
 		public async Task TestConnectWithCredentialsAsync ()
 		{
-			using (var server = new HttpProxyListener ()) {
+			using (var server = new HttpProxyListener (certificate)) {
 				server.Start (IPAddress.Loopback, 0);
 
 				var credentials = new NetworkCredential ("username", "password");
-				var proxy = new HttpProxyClient (server.IPAddress.ToString (), server.Port, credentials);
+				var proxy = new HttpsProxyClient (server.IPAddress.ToString (), server.Port, credentials) {
+					ServerCertificateValidationCallback = (s, c, ch, e) => true,
+					CheckCertificateRevocation = false
+				};
 				Stream stream = null;
 
 				try {

@@ -179,7 +179,7 @@ namespace MailKit.Security
 		}
 #endif
 
-		internal static SslHandshakeException Create (MailService client, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
+		internal static SslHandshakeException Create (ref SslCertificateValidationInfo validationInfo, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
 		{
 			var message = new StringBuilder (DefaultMessage);
 			var aggregate = ex as AggregateException;
@@ -198,10 +198,7 @@ namespace MailKit.Security
 			message.AppendLine ();
 			message.AppendLine ();
 
-			var validationInfo = client?.SslCertificateValidationInfo;
 			if (validationInfo != null) {
-				client.SslCertificateValidationInfo = null;
-
 				try {
 					int rootIndex = validationInfo.ChainElements.Count - 1;
 					if (rootIndex > 0)
@@ -250,6 +247,7 @@ namespace MailKit.Security
 					}
 				} finally {
 					validationInfo.Dispose ();
+					validationInfo = null;
 				}
 			} else if (!starttls && standardPorts.Contains (port)) {
 				string an = "AEHIOS".IndexOf (protocol[0]) != -1 ? "an" : "a";

@@ -25,12 +25,15 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Globalization;
 using System.Threading.Tasks;
+
+using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit.Net.Proxy
 {
@@ -148,7 +151,7 @@ namespace MailKit.Net.Proxy
 			throw new ArgumentException ($"Could not resolve a suitable IPv4 address for '{host}'.", nameof (host));
 		}
 
-		async Task<Socket> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		async Task<Stream> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{
 			byte[] addr, domain = null;
 			IPAddress ip;
@@ -219,7 +222,7 @@ namespace MailKit.Net.Proxy
 
 				// TODO: do we care about BND.ADDR and BND.PORT?
 
-				return socket;
+				return new NetworkStream (socket, true);
 			} catch {
 #if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				if (socket.Connected)
@@ -236,7 +239,7 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Connects to the target host and port through the proxy server.
 		/// </remarks>
-		/// <returns>The connected socket.</returns>
+		/// <returns>The connected network stream.</returns>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -258,7 +261,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Socket Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ConnectAsync (host, port, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -269,7 +272,7 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Asynchronously connects to the target host and port through the proxy server.
 		/// </remarks>
-		/// <returns>The connected socket.</returns>
+		/// <returns>The connected network stream.</returns>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -291,7 +294,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Task<Socket> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ConnectAsync (host, port, true, cancellationToken);
 		}

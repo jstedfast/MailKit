@@ -52,6 +52,7 @@ namespace UnitTests.Security {
 		public void TestSerialization ()
 		{
 			var expected = new SslHandshakeException ("Bad boys, bad boys. Whatcha gonna do?", new IOException ("I/O Error."));
+			SslCertificateValidationInfo info = null;
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -93,7 +94,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
+			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -107,7 +108,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
+			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -121,7 +122,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
+			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -135,7 +136,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 
-			expected = SslHandshakeException.Create (null, new AggregateException ("Aggregate errors.", new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
+			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
 
 			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
 
@@ -224,10 +225,10 @@ namespace UnitTests.Security {
 
 			async Task ConnectAsync (string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
 			{
-				using (var socket = await ConnectSocket (host, port, doAsync, cancellationToken).ConfigureAwait (false)) {
+				using (var stream = await ConnectNetwork (host, port, doAsync, cancellationToken).ConfigureAwait (false)) {
 					hostName = host;
 
-					var ssl = new SslStream (new NetworkStream (socket, false), false, ValidateRemoteCertificate);
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 					try {
 						if (doAsync) {
@@ -238,7 +239,7 @@ namespace UnitTests.Security {
 					} catch (Exception ex) {
 						ssl.Dispose ();
 
-						throw SslHandshakeException.Create (this, ex, false, "HTTP", host, port, 443, 80);
+						throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, false, "HTTP", host, port, 443, 80);
 					}
 				}
 			}

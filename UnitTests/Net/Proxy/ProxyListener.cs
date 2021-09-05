@@ -25,9 +25,11 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 using System.Net.Sockets;
+using System.Net.Security;
 using System.Threading.Tasks;
 using System.Collections;
 
@@ -101,11 +103,18 @@ namespace UnitTests.Net.Proxy {
 			}
 		}
 
-		protected abstract Task<Socket> ClientCommandReceived (NetworkStream client, byte[] buffer, int length, CancellationToken cancellationToken);
+		protected abstract Task<Socket> ClientCommandReceived (Stream client, byte[] buffer, int length, CancellationToken cancellationToken);
+
+		protected virtual Task<Stream> GetClientStreamAsync (Socket socket, CancellationToken cancellationToken)
+		{
+			Stream stream = new NetworkStream (socket, true);
+
+			return Task.FromResult (stream);
+		}
 
 		async Task AcceptProxyConnection (Socket socket, CancellationToken cancellationToken)
 		{
-			using (var client = new NetworkStream (socket, true)) {
+			using (var client = await GetClientStreamAsync (socket, cancellationToken).ConfigureAwait (false)) {
 				var buffer = new byte[4096];
 				Socket remote = null;
 				int nread;
@@ -126,8 +135,8 @@ namespace UnitTests.Net.Proxy {
 				try {
 					using (var server = new NetworkStream (remote, true)) {
 						do {
-							while (client.DataAvailable || server.DataAvailable) {
-								if (client.DataAvailable) {
+							while (socket.Available > 0 || server.DataAvailable) {
+								if (socket.Available > 0) {
 									if ((nread = await client.ReadAsync (buffer, 0, buffer.Length, cancellationToken).ConfigureAwait (false)) > 0)
 										await server.WriteAsync (buffer, 0, nread, cancellationToken).ConfigureAwait (false);
 								}

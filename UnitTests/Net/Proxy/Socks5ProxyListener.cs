@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -32,8 +33,6 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 
 using MailKit.Net;
-
-using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace UnitTests.Net.Proxy {
 	class Socks5ProxyListener : ProxyListener
@@ -362,7 +361,7 @@ namespace UnitTests.Net.Proxy {
 			return GetCommandResponse (reply, null);
 		}
 
-		protected override async Task<Socket> ClientCommandReceived (NetworkStream client, byte[] buffer, int length, CancellationToken cancellationToken)
+		protected override async Task<Socket> ClientCommandReceived (Stream client, byte[] buffer, int length, CancellationToken cancellationToken)
 		{
 			byte[] response = null;
 			Socket server = null;

@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Buffers;
@@ -32,6 +33,8 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Globalization;
 using System.Threading.Tasks;
+
+using NetworkStream = MailKit.Net.NetworkStream;
 
 namespace MailKit.Net.Proxy
 {
@@ -94,36 +97,40 @@ namespace MailKit.Net.Proxy
 		{
 		}
 
-		async Task<Socket> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		internal static byte[] GetConnectCommand (string host, int port, NetworkCredential proxyCredentials)
+		{
+			var builder = new StringBuilder ();
+
+			builder.AppendFormat (CultureInfo.InvariantCulture, "CONNECT {0}:{1} HTTP/1.1\r\n", host, port);
+			builder.AppendFormat (CultureInfo.InvariantCulture, "Host: {0}:{1}\r\n", host, port);
+			if (proxyCredentials != null) {
+				var token = Encoding.UTF8.GetBytes (string.Format (CultureInfo.InvariantCulture, "{0}:{1}", proxyCredentials.UserName, proxyCredentials.Password));
+				var base64 = Convert.ToBase64String (token);
+				builder.AppendFormat (CultureInfo.InvariantCulture, "Proxy-Authorization: Basic {0}\r\n", base64);
+			}
+			builder.Append ("\r\n");
+
+			return Encoding.UTF8.GetBytes (builder.ToString ());
+		}
+
+		async Task<Stream> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{
 			ValidateArguments (host, port);
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
 			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
-			var builder = new StringBuilder ();
-
-			builder.AppendFormat (CultureInfo.InvariantCulture, "CONNECT {0}:{1} HTTP/1.1\r\n", host, port);
-			builder.AppendFormat (CultureInfo.InvariantCulture, "Host: {0}:{1}\r\n", host, port);
-			if (ProxyCredentials != null) {
-				var token = Encoding.UTF8.GetBytes (string.Format (CultureInfo.InvariantCulture, "{0}:{1}", ProxyCredentials.UserName, ProxyCredentials.Password));
-				var base64 = Convert.ToBase64String (token);
-				builder.AppendFormat (CultureInfo.InvariantCulture, "Proxy-Authorization: Basic {0}\r\n", base64);
-			}
-			builder.Append ("\r\n");
-
-			var command = Encoding.UTF8.GetBytes (builder.ToString ());
+			var command = GetConnectCommand (host, port, ProxyCredentials);
 
 			try {
 				await SendAsync (socket, command, 0, command.Length, doAsync, cancellationToken).ConfigureAwait (false);
 
 				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
+				var builder = new StringBuilder ();
 
 				try {
 					var endOfHeaders = false;
 					var newline = false;
-
-					builder.Clear ();
 
 					// read until we consume the end of the headers (it's ok if we read some of the content)
 					do {
@@ -173,7 +180,7 @@ namespace MailKit.Net.Proxy
 					(response[7] == '1' || response[7] == '0') && response[8] == ' ' &&
 					response[9] == '2' && response[10] == '0' && response[11] == '0' &&
 					response[12] == ' ') {
-					return socket;
+					return new NetworkStream (socket, true);
 				}
 
 				throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, response));
@@ -193,7 +200,7 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Connects to the target host and port through the proxy server.
 		/// </remarks>
-		/// <returns>The connected socket.</returns>
+		/// <returns>The connected network stream.</returns>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -215,7 +222,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Socket Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ConnectAsync (host, port, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -226,7 +233,7 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Asynchronously connects to the target host and port through the proxy server.
 		/// </remarks>
-		/// <returns>The connected socket.</returns>
+		/// <returns>The connected network stream.</returns>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -248,7 +255,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Task<Socket> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ConnectAsync (host, port, true, cancellationToken);
 		}

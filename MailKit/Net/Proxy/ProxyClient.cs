@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 using System.Net.Sockets;
@@ -247,7 +248,7 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Connects to the target host and port through the proxy server.
 		/// </remarks>
-		/// <returns>The connected socket.</returns>
+		/// <returns>The connected network stream.</returns>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -269,7 +270,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public abstract Socket Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously connect to the target host.
@@ -277,7 +278,7 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Asynchronously connects to the target host and port through the proxy server.
 		/// </remarks>
-		/// <returns>The connected socket.</returns>
+		/// <returns>The connected network stream.</returns>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -299,7 +300,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public abstract Task<Socket> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Connect to the target host.
@@ -307,7 +308,7 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Connects to the target host and port through the proxy server.
 		/// </remarks>
-		/// <returns>The connected socket.</returns>
+		/// <returns>The connected network stream.</returns>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="timeout">The timeout, in milliseconds.</param>
@@ -335,7 +336,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public virtual Socket Connect (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Stream Connect (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ValidateArguments (host, port, timeout);
 
@@ -358,7 +359,7 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Asynchronously connects to the target host and port through the proxy server.
 		/// </remarks>
-		/// <returns>The connected socket.</returns>
+		/// <returns>The connected network stream.</returns>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="timeout">The timeout, in milliseconds.</param>
@@ -386,7 +387,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async virtual Task<Socket> ConnectAsync (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken))
+		public async virtual Task<Stream> ConnectAsync (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ValidateArguments (host, port, timeout);
 

@@ -27,6 +27,7 @@
 // Note: Find Socks5 proxy list here: http://www.gatherproxy.com/sockslist/country/?c=United%20States
 
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -134,18 +135,16 @@ namespace UnitTests.Net.Proxy {
 				proxy.Start (IPAddress.Loopback, 0);
 
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
-				Socket socket = null;
+				Stream stream = null;
 
 				try {
-					socket = socks.Connect ("www.google.com", 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = socks.Connect ("www.google.com", 80, ConnectTimeout);
 				} catch (TimeoutException) {
 					Assert.Inconclusive ("Timed out.");
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -157,18 +156,16 @@ namespace UnitTests.Net.Proxy {
 				proxy.Start (IPAddress.Loopback, 0);
 
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
-				Socket socket = null;
+				Stream stream = null;
 
 				try {
-					socket = await socks.ConnectAsync ("www.google.com", 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = await socks.ConnectAsync ("www.google.com", 80, ConnectTimeout);
 				} catch (TimeoutException) {
 					Assert.Inconclusive ("Timed out.");
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -181,11 +178,10 @@ namespace UnitTests.Net.Proxy {
 
 				var credentials = new NetworkCredential ("username", "password");
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port, credentials);
-				Socket socket = null;
+				Stream stream = null;
 
 				try {
-					socket = socks.Connect ("www.google.com", 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = socks.Connect ("www.google.com", 80, ConnectTimeout);
 				} catch (AuthenticationException) {
 					// this is what we expect to get
 					Assert.Pass ("Got an AuthenticationException just as expected");
@@ -194,8 +190,7 @@ namespace UnitTests.Net.Proxy {
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -208,11 +203,10 @@ namespace UnitTests.Net.Proxy {
 
 				var credentials = new NetworkCredential ("username", "password");
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port, credentials);
-				Socket socket = null;
+				Stream stream = null;
 
 				try {
-					socket = await socks.ConnectAsync ("www.google.com", 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = await socks.ConnectAsync ("www.google.com", 80, ConnectTimeout);
 				} catch (AuthenticationException) {
 					// this is what we expect to get
 					Assert.Pass ("Got an AuthenticationException just as expected");
@@ -221,8 +215,7 @@ namespace UnitTests.Net.Proxy {
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -235,11 +228,10 @@ namespace UnitTests.Net.Proxy {
 
 				var credentials = new NetworkCredential ("username", "bad");
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port, credentials);
-				Socket socket = null;
+				Stream stream = null;
 
 				try {
-					socket = socks.Connect ("www.google.com", 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = socks.Connect ("www.google.com", 80, ConnectTimeout);
 					Assert.Fail ("Expected AuthenticationException");
 				} catch (AuthenticationException) {
 					// this is what we expect to get
@@ -249,8 +241,7 @@ namespace UnitTests.Net.Proxy {
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -263,11 +254,10 @@ namespace UnitTests.Net.Proxy {
 
 				var credentials = new NetworkCredential ("username", "bad");
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port, credentials);
-				Socket socket = null;
+				Stream stream = null;
 
 				try {
-					socket = await socks.ConnectAsync ("www.google.com", 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = await socks.ConnectAsync ("www.google.com", 80, ConnectTimeout);
 					Assert.Fail ("Expected AuthenticationException");
 				} catch (AuthenticationException) {
 					// this is what we expect to get
@@ -277,8 +267,7 @@ namespace UnitTests.Net.Proxy {
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -291,21 +280,19 @@ namespace UnitTests.Net.Proxy {
 
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
 				var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
-				Socket socket = null;
+				Stream stream = null;
 
 				if (host == null)
 					return;
 
 				try {
-					socket = socks.Connect (host, 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = socks.Connect (host, 80, ConnectTimeout);
 				} catch (TimeoutException) {
 					Assert.Inconclusive ("Timed out.");
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -318,21 +305,19 @@ namespace UnitTests.Net.Proxy {
 
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
 				var host = "74.125.197.99"; // ResolveIPv4 ("www.google.com");
-				Socket socket = null;
+				Stream stream = null;
 
 				if (host == null)
 					return;
 
 				try {
-					socket = await socks.ConnectAsync (host, 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = await socks.ConnectAsync (host, 80, ConnectTimeout);
 				} catch (TimeoutException) {
 					Assert.Inconclusive ("Timed out.");
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -345,14 +330,13 @@ namespace UnitTests.Net.Proxy {
 
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
 				var host = "2607:f8b0:400e:c03::69"; // ResolveIPv6 ("www.google.com");
-				Socket socket = null;
+				Stream stream = null;
 
 				if (host == null)
 					return;
 
 				try {
-					socket = socks.Connect (host, 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = socks.Connect (host, 80, ConnectTimeout);
 				} catch (ProxyProtocolException ex) {
 					Assert.IsTrue (ex.Message.StartsWith ($"Failed to connect to {host}:80: ", StringComparison.Ordinal), ex.Message);
 					Assert.Inconclusive (ex.Message);
@@ -361,8 +345,7 @@ namespace UnitTests.Net.Proxy {
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -375,14 +358,13 @@ namespace UnitTests.Net.Proxy {
 
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
 				var host = "2607:f8b0:400e:c03::69"; // ResolveIPv6 ("www.google.com");
-				Socket socket = null;
+				Stream stream = null;
 
 				if (host == null)
 					return;
 
 				try {
-					socket = await socks.ConnectAsync (host, 80, ConnectTimeout);
-					socket.Disconnect (false);
+					stream = await socks.ConnectAsync (host, 80, ConnectTimeout);
 				} catch (ProxyProtocolException ex) {
 					Assert.IsTrue (ex.Message.StartsWith ($"Failed to connect to {host}:80: ", StringComparison.Ordinal), ex.Message);
 					Assert.Inconclusive (ex.Message);
@@ -391,8 +373,7 @@ namespace UnitTests.Net.Proxy {
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
@@ -404,18 +385,16 @@ namespace UnitTests.Net.Proxy {
 				proxy.Start (IPAddress.Loopback, 0);
 
 				var socks = new Socks5Client (proxy.IPAddress.ToString (), proxy.Port);
-				Socket socket = null;
+				Stream stream = null;
 
 				try {
-					socket = await socks.ConnectAsync ("example.com", 25, 1000);
-					socket.Disconnect (false);
+					stream = await socks.ConnectAsync ("example.com", 25, 1000);
 				} catch (TimeoutException) {
 					Assert.Pass ();
 				} catch (Exception ex) {
 					Assert.Fail (ex.Message);
 				} finally {
-					if (socket != null)
-						socket.Dispose ();
+					stream?.Dispose ();
 				}
 			}
 		}
