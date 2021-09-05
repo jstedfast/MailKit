@@ -113,6 +113,7 @@
     <Compile Include="MetadataTests.cs" />
     <Compile Include="ProgressStreamTests.cs" />
     <Compile Include="ProtocolLoggerTests.cs" />
+    <Compile Include="ReplaceRequestTests.cs" />
     <Compile Include="StoreFlagsRequestTests.cs" />
     <Compile Include="StoreLabelsRequestTests.cs" />
     <Compile Include="UniqueIdMapTests.cs" />

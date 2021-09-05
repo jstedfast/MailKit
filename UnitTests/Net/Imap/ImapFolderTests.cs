@@ -105,6 +105,7 @@ namespace UnitTests.Net.Imap {
 				var flags = new List<MessageFlags> ();
 				var now = DateTimeOffset.Now;
 				var uid = new UniqueId (1);
+				ReplaceRequest replace = null;
 
 				messages.Add (CreateThreadableMessage ("A", "<a@mimekit.net>", null, now.AddMinutes (-7)));
 				messages.Add (CreateThreadableMessage ("B", "<b@mimekit.net>", "<a@mimekit.net>", now.AddMinutes (-6)));
@@ -119,6 +120,7 @@ namespace UnitTests.Net.Imap {
 					dates.Add (DateTimeOffset.Now);
 					flags.Add (MessageFlags.Seen);
 					multiappend.Add (new AppendRequest (messages[i], flags[i], dates[i]));
+					replace = replace ?? new ReplaceRequest (messages[i], flags[i], dates[i]);
 				}
 
 				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
@@ -294,6 +296,26 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (null, 0, messages[0]));
 				Assert.Throws<ArgumentNullException> (() => inbox.Replace (null, 0, messages[0], MessageFlags.None, DateTimeOffset.Now));
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (null, 0, messages[0], MessageFlags.None, DateTimeOffset.Now));
+				Assert.Throws<ArgumentException> (() => inbox.Replace (UniqueId.Invalid, replace));
+				Assert.ThrowsAsync<ArgumentException> (() => inbox.ReplaceAsync (UniqueId.Invalid, replace));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (UniqueId.MinValue, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (UniqueId.MinValue, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (null, UniqueId.MinValue, replace));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (null, UniqueId.MinValue, replace));
+				Assert.Throws<ArgumentException> (() => inbox.Replace (FormatOptions.Default, UniqueId.Invalid, replace));
+				Assert.ThrowsAsync<ArgumentException> (() => inbox.ReplaceAsync (FormatOptions.Default, UniqueId.Invalid, replace));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (FormatOptions.Default, UniqueId.MinValue, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (FormatOptions.Default, UniqueId.MinValue, null));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Replace (-1, replace));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (() => inbox.ReplaceAsync (-1, replace));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (0, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (0, null));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (null, 0, replace));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (null, 0, replace));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Replace (FormatOptions.Default, -1, replace));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (() => inbox.ReplaceAsync (FormatOptions.Default, -1, replace));
+				Assert.Throws<ArgumentNullException> (() => inbox.Replace (FormatOptions.Default, 0, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.ReplaceAsync (FormatOptions.Default, 0, null));
 
 				// CopyTo
 				Assert.Throws<ArgumentException> (() => inbox.CopyTo (UniqueId.Invalid, inbox));

@@ -31,10 +31,10 @@ using MimeKit;
 
 namespace MailKit {
 	/// <summary>
-	/// A request for ppending a message to a folder.
+	/// A request for appending a message to a folder.
 	/// </summary>
 	/// <remarks>
-	/// A request for ppending a message to a folder.
+	/// A request for appending a message to a folder.
 	/// </remarks>
 	public interface IAppendRequest
 	{

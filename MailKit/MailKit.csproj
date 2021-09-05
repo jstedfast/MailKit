@@ -218,6 +218,7 @@
     <Compile Include="IMailTransport.cs" />
     <Compile Include="IMessageSummary.cs" />
     <Compile Include="IProtocolLogger.cs" />
+    <Compile Include="IReplaceRequest.cs" />
     <Compile Include="IStoreFlagsRequest.cs" />
     <Compile Include="IStoreLabelsRequest.cs" />
     <Compile Include="IStoreRequest.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="ProgressStream.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
+    <Compile Include="ReplaceRequest.cs" />
     <Compile Include="ServiceNotAuthenticatedException.cs" />
     <Compile Include="ServiceNotConnectedException.cs" />
     <Compile Include="SpecialFolder.cs" />

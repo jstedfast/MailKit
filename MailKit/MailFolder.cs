@@ -3171,19 +3171,20 @@ namespace MailKit {
 		/// Replace a message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
+		/// Replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
 		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="uid">The UID of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>The destination folder does not belong to this <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3215,28 +3216,29 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual UniqueId? Replace (UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual UniqueId? Replace (UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Replace (FormatOptions.Default, uid, message, flags, cancellationToken, progress);
+			return Replace (FormatOptions.Default, uid, request, cancellationToken, progress);
 		}
 
 		/// <summary>
 		/// Asynchronously replace a message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
+		/// Asynchronously replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="uid">The UID of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>The destination folder does not belong to this <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3268,133 +3270,32 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task<UniqueId?> ReplaceAsync (UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<UniqueId?> ReplaceAsync (UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return ReplaceAsync (FormatOptions.Default, uid, message, flags, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Replace a message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
-		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="uid">The UID of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public virtual UniqueId? Replace (UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return Replace (FormatOptions.Default, uid, message, flags, date, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Asynchronously replace a message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
-		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="uid">The UID of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public virtual Task<UniqueId?> ReplaceAsync (UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return ReplaceAsync (FormatOptions.Default, uid, message, flags, date, cancellationToken, progress);
+			return ReplaceAsync (FormatOptions.Default, uid, request, cancellationToken, progress);
 		}
 
 		/// <summary>
 		/// Replace a message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
+		/// Replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
 		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>The destination folder does not belong to this <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3429,28 +3330,29 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public abstract UniqueId? Replace (FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract UniqueId? Replace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously replace a message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
+		/// Asynchronously replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
 		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>The destination folder does not belong to this <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3485,139 +3387,27 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Replace a message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
-		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="uid">The UID of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public abstract UniqueId? Replace (FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Asynchronously replace a message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
-		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="uid">The UID of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Replace a message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
+		/// Replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
 		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="index">The index of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="index"/> is out of range.
+		/// The destination folder does not belong to this <see cref="IMailStore"/>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3649,28 +3439,30 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual UniqueId? Replace (int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual UniqueId? Replace (int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Replace (FormatOptions.Default, index, message, flags, cancellationToken, progress);
+			return Replace (FormatOptions.Default, index, request, cancellationToken, progress);
 		}
 
 		/// <summary>
 		/// Asynchronously replace a message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
+		/// Asynchronously replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="index">The index of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The destination folder does not belong to this <see cref="IMailStore"/>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3702,29 +3494,33 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task<UniqueId?> ReplaceAsync (int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<UniqueId?> ReplaceAsync (int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return ReplaceAsync (FormatOptions.Default, index, message, flags, cancellationToken, progress);
+			return ReplaceAsync (FormatOptions.Default, index, request, cancellationToken, progress);
 		}
 
 		/// <summary>
 		/// Replace a message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
+		/// Replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
 		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
+		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The destination folder does not belong to this <see cref="IMailStore"/>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3735,6 +3531,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
@@ -3743,6 +3542,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -3753,82 +3555,30 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual UniqueId? Replace (int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return Replace (FormatOptions.Default, index, message, flags, date, cancellationToken, progress);
-		}
+		public abstract UniqueId? Replace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously replace a message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
-		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="index">The index of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public virtual Task<UniqueId?> ReplaceAsync (int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			return ReplaceAsync (FormatOptions.Default, index, message, flags, date, cancellationToken, progress);
-		}
-
-		/// <summary>
-		/// Replace a message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
+		/// Asynchronously replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
 		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
+		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The destination folder does not belong to this <see cref="IMailStore"/>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3863,177 +3613,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public abstract UniqueId? Replace (FormatOptions options, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Asynchronously replace a message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
-		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="index">The index of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Replace a message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
-		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="index">The index of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public abstract UniqueId? Replace (FormatOptions options, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
-
-		/// <summary>
-		/// Asynchronously replace a message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
-		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="index">The index of the message to be replaced.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Internationalized formatting was requested but has not been enabled.
-		/// </exception>
-		/// <exception cref="FolderNotFoundException">
-		/// The <see cref="MailFolder"/> does not exist.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Copy the specified message to the destination folder.
