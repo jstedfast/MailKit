@@ -215,7 +215,7 @@ namespace MailKit.Net.Proxy {
 			return valid;
 		}
 
-#if NET5_0_OR_GREATER || NETSTANDARD2_1
+#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
 		/// <summary>
 		/// Gets the SSL/TLS client authentication options for use with .NET5's SslStream.AuthenticateAsClient() API.
 		/// </summary>
@@ -252,7 +252,7 @@ namespace MailKit.Net.Proxy {
 
 			try {
 				if (doAsync) {
-#if NET5_0_OR_GREATER || NETSTANDARD2_1
+#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
 					await ssl.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
 #else
 					await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
