@@ -313,7 +313,7 @@ namespace UnitTests.Security {
 			}
 		}
 
-		static void AssertServerCertificate (X509Certificate2 certificate)
+		public static void AssertServerCertificate (X509Certificate2 certificate)
 		{
 			Assert.AreEqual ("*.badssl.com", certificate.GetNameInfo (X509NameType.SimpleName, false), "CommonName");
 			Assert.AreEqual ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US", certificate.Issuer, "Issuer");
@@ -321,7 +321,7 @@ namespace UnitTests.Security {
 			Assert.AreEqual ("69D6DC42A2D60A20CF2B384D3A7763EDABC2E144", certificate.Thumbprint, "Thumbprint");
 		}
 
-		static void AssertRootCertificate (X509Certificate2 certificate)
+		public static void AssertRootCertificate (X509Certificate2 certificate)
 		{
 			Assert.AreEqual ("BadSSL Untrusted Root Certificate Authority", certificate.GetNameInfo (X509NameType.SimpleName, false), "CommonName");
 			Assert.AreEqual ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US", certificate.Issuer, "Issuer");
