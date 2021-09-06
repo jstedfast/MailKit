@@ -153,6 +153,7 @@ namespace UnitTests.Security {
 
 		class FakeClient : MailService
 		{
+			SslCertificateValidationInfo sslValidationInfo;
 			int timeout = 2 * 60 * 1000;
 			string hostName;
 
@@ -217,10 +218,27 @@ namespace UnitTests.Security {
 
 			bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 			{
-				if (ServerCertificateValidationCallback != null)
-					return ServerCertificateValidationCallback (hostName, certificate, chain, sslPolicyErrors);
+				bool valid;
 
-				return DefaultServerCertificateValidationCallback (hostName, certificate, chain, sslPolicyErrors);
+				sslValidationInfo?.Dispose ();
+				sslValidationInfo = null;
+
+				if (ServerCertificateValidationCallback != null) {
+					valid = ServerCertificateValidationCallback (hostName, certificate, chain, sslPolicyErrors);
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
+				} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
+					valid = ServicePointManager.ServerCertificateValidationCallback (hostName, certificate, chain, sslPolicyErrors);
+#endif
+				} else {
+					valid = DefaultServerCertificateValidationCallback (hostName, certificate, chain, sslPolicyErrors);
+				}
+
+				if (!valid) {
+					// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
+					sslValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
+				}
+
+				return valid;
 			}
 
 			async Task ConnectAsync (string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
@@ -239,7 +257,7 @@ namespace UnitTests.Security {
 					} catch (Exception ex) {
 						ssl.Dispose ();
 
-						throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, false, "HTTP", host, port, 443, 80);
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "HTTP", host, port, 443, 80);
 					}
 				}
 			}

@@ -73,6 +73,7 @@ namespace MailKit.Net.Pop3 {
 		readonly Pop3AuthenticationSecretDetector detector = new Pop3AuthenticationSecretDetector ();
 		readonly MimeParser parser = new MimeParser (Stream.Null);
 		readonly Pop3Engine engine;
+		SslCertificateValidationInfo sslValidationInfo;
 		ProbedCapabilities probed;
 		bool disposed, disconnecting, secure, utf8;
 		int timeout = 2 * 60 * 1000;
@@ -229,15 +230,27 @@ namespace MailKit.Net.Pop3 {
 
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			if (ServerCertificateValidationCallback != null)
-				return ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+			bool valid;
 
+			sslValidationInfo?.Dispose ();
+			sslValidationInfo = null;
+
+			if (ServerCertificateValidationCallback != null) {
+				valid = ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 #if !NETSTANDARD1_3 && !NETSTANDARD1_6
-			if (ServicePointManager.ServerCertificateValidationCallback != null)
-				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
+				valid = ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 #endif
+			} else {
+				valid = DefaultServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+			}
 
-			return DefaultServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+			if (!valid) {
+				// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
+				sslValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
+			}
+
+			return valid;
 		}
 
 		static Exception CreatePop3Exception (Pop3Command pc)
@@ -1081,7 +1094,7 @@ namespace MailKit.Net.Pop3 {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, false, "POP3", host, port, 995, 110);
+					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "POP3", host, port, 995, 110);
 				}
 
 				secure = true;
@@ -1136,7 +1149,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 						}
 					} catch (Exception ex) {
-						throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, true, "POP3", host, port, 995, 110);
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
 					}
 
 					secure = true;
@@ -1272,7 +1285,7 @@ namespace MailKit.Net.Pop3 {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, false, "POP3", host, port, 995, 110);
+					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "POP3", host, port, 995, 110);
 				}
 
 				network = ssl;
@@ -1332,7 +1345,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 						}
 					} catch (Exception ex) {
-						throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, true, "POP3", host, port, 995, 110);
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
 					}
 
 					secure = true;

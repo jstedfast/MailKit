@@ -482,7 +482,7 @@ namespace MailKit {
 			}
 		}
 
-		internal static bool IsUntrustedRoot (X509Chain chain)
+		static bool IsUntrustedRoot (X509Chain chain)
 		{
 			foreach (var status in chain.ChainStatus) {
 				if (status.Status == X509ChainStatusFlags.NoError || status.Status == X509ChainStatusFlags.UntrustedRoot)
@@ -493,9 +493,6 @@ namespace MailKit {
 
 			return true;
 		}
-
-		// Note: This is used by SslHandshakeException to build the exception message.
-		internal SslCertificateValidationInfo SslCertificateValidationInfo;
 
 		/// <summary>
 		/// The default server certificate validation callback used when connecting via SSL or TLS.
@@ -514,9 +511,6 @@ namespace MailKit {
 		{
 			const SslPolicyErrors mask = SslPolicyErrors.RemoteCertificateNotAvailable | SslPolicyErrors.RemoteCertificateNameMismatch;
 
-			SslCertificateValidationInfo?.Dispose ();
-			SslCertificateValidationInfo = null;
-
 			if (sslPolicyErrors == SslPolicyErrors.None)
 				return true;
 
@@ -529,9 +523,6 @@ namespace MailKit {
 						return true;
 				}
 			}
-
-			// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
-			SslCertificateValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
 
 			return false;
 		}
@@ -1749,11 +1740,8 @@ namespace MailKit {
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing) {
-				SslCertificateValidationInfo?.Dispose ();
-				SslCertificateValidationInfo = null;
+			if (disposing)
 				ProtocolLogger.Dispose ();
-			}
 		}
 
 		/// <summary>

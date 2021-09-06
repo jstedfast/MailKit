@@ -78,6 +78,7 @@ namespace MailKit.Net.Smtp {
 		readonly HashSet<string> authenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
 		readonly SmtpAuthenticationSecretDetector detector = new SmtpAuthenticationSecretDetector ();
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
+		SslCertificateValidationInfo sslValidationInfo;
 		SmtpCapabilities capabilities;
 		int timeout = 2 * 60 * 1000;
 		bool authenticated;
@@ -480,15 +481,27 @@ namespace MailKit.Net.Smtp {
 
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			if (ServerCertificateValidationCallback != null)
-				return ServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
+			bool valid;
 
+			sslValidationInfo?.Dispose ();
+			sslValidationInfo = null;
+
+			if (ServerCertificateValidationCallback != null) {
+				valid = ServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
 #if !NETSTANDARD1_3 && !NETSTANDARD1_6
-			if (ServicePointManager.ServerCertificateValidationCallback != null)
-				return ServicePointManager.ServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
+			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
+				valid = ServicePointManager.ServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
 #endif
+			} else {
+				valid = DefaultServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
+			}
 
-			return DefaultServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
+			if (!valid) {
+				// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
+				sslValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
+			}
+
+			return valid;
 		}
 
 		async Task QueueCommandAsync (SmtpCommand type, string command, bool doAsync, CancellationToken cancellationToken)
@@ -1197,7 +1210,7 @@ namespace MailKit.Net.Smtp {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
+					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
 				}
 
 				secure = true;
@@ -1253,7 +1266,7 @@ namespace MailKit.Net.Smtp {
 #endif
 						}
 					} catch (Exception ex) {
-						throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, true, "SMTP", host, port, 465, 25, 587);
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "SMTP", host, port, 465, 25, 587);
 					}
 
 					secure = true;
@@ -1400,7 +1413,7 @@ namespace MailKit.Net.Smtp {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
+					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
 				}
 
 				network = ssl;
@@ -1460,7 +1473,7 @@ namespace MailKit.Net.Smtp {
 #endif
 						}
 					} catch (Exception ex) {
-						throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, true, "SMTP", host, port, 465, 25, 587);
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "SMTP", host, port, 465, 25, 587);
 					}
 
 					secure = true;

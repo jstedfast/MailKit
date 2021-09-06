@@ -67,6 +67,7 @@ namespace MailKit.Net.Imap {
 
 		readonly ImapAuthenticationSecretDetector detector = new ImapAuthenticationSecretDetector ();
 		readonly ImapEngine engine;
+		SslCertificateValidationInfo sslValidationInfo;
 		int timeout = 2 * 60 * 1000;
 		string identifier;
 		bool disconnecting;
@@ -254,15 +255,27 @@ namespace MailKit.Net.Imap {
 
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			if (ServerCertificateValidationCallback != null)
-				return ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+			bool valid;
 
+			sslValidationInfo?.Dispose ();
+			sslValidationInfo = null;
+
+			if (ServerCertificateValidationCallback != null) {
+				valid = ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 #if !NETSTANDARD1_3 && !NETSTANDARD1_6
-			if (ServicePointManager.ServerCertificateValidationCallback != null)
-				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
+				valid = ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 #endif
+			} else {
+				valid = DefaultServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+			}
 
-			return DefaultServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+			if (!valid) {
+				// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
+				sslValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
+			}
+
+			return valid;
 		}
 
 		async Task CompressAsync (bool doAsync, CancellationToken cancellationToken)
@@ -1406,7 +1419,7 @@ namespace MailKit.Net.Imap {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, false, "IMAP", host, port, 993, 143);
+					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "IMAP", host, port, 993, 143);
 				}
 
 				secure = true;
@@ -1467,7 +1480,7 @@ namespace MailKit.Net.Imap {
 #endif
 							}
 						} catch (Exception ex) {
-							throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, true, "IMAP", host, port, 993, 143);
+							throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "IMAP", host, port, 993, 143);
 						}
 
 						secure = true;
@@ -1612,7 +1625,7 @@ namespace MailKit.Net.Imap {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
-					throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, false, "IMAP", host, port, 993, 143);
+					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "IMAP", host, port, 993, 143);
 				}
 
 				network = ssl;
@@ -1678,7 +1691,7 @@ namespace MailKit.Net.Imap {
 #endif
 							}
 						} catch (Exception ex) {
-							throw SslHandshakeException.Create (ref SslCertificateValidationInfo, ex, true, "IMAP", host, port, 993, 143);
+							throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "IMAP", host, port, 993, 143);
 						}
 
 						secure = true;

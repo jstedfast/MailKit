@@ -190,43 +190,29 @@ namespace MailKit.Net.Proxy {
 		// Note: This is used by SslHandshakeException to build the exception message.
 		SslCertificateValidationInfo SslCertificateValidationInfo;
 
-		bool DefaultServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			const SslPolicyErrors mask = SslPolicyErrors.RemoteCertificateNotAvailable | SslPolicyErrors.RemoteCertificateNameMismatch;
+			bool valid;
 
 			SslCertificateValidationInfo?.Dispose ();
 			SslCertificateValidationInfo = null;
 
-			if (sslPolicyErrors == SslPolicyErrors.None)
-				return true;
-
-			if ((sslPolicyErrors & mask) == 0) {
-				// At this point, all that is left is SslPolicyErrors.RemoteCertificateChainErrors
-
-				// If the problem is an untrusted root, then compare the certificate to a list of known mail server certificates.
-				if (MailService.IsUntrustedRoot (chain) && certificate is X509Certificate2 certificate2) {
-					if (MailService.IsKnownMailServerCertificate (certificate2))
-						return true;
-				}
+			if (ServerCertificateValidationCallback != null) {
+				valid = ServerCertificateValidationCallback (ProxyHost, certificate, chain, sslPolicyErrors);
+#if !NETSTANDARD1_3 && !NETSTANDARD1_6
+			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
+				valid = ServicePointManager.ServerCertificateValidationCallback (ProxyHost, certificate, chain, sslPolicyErrors);
+#endif
+			} else {
+				valid = sslPolicyErrors == SslPolicyErrors.None;
 			}
 
-			// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
-			SslCertificateValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
+			if (!valid) {
+				// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
+				SslCertificateValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
+			}
 
-			return false;
-		}
-
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-		{
-			if (ServerCertificateValidationCallback != null)
-				return ServerCertificateValidationCallback (ProxyHost, certificate, chain, sslPolicyErrors);
-
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-			if (ServicePointManager.ServerCertificateValidationCallback != null)
-				return ServicePointManager.ServerCertificateValidationCallback (ProxyHost, certificate, chain, sslPolicyErrors);
-#endif
-
-			return DefaultServerCertificateValidationCallback (ProxyHost, certificate, chain, sslPolicyErrors);
+			return valid;
 		}
 
 #if NET5_0_OR_GREATER || NETSTANDARD2_1
