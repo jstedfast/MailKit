@@ -31,6 +31,12 @@ using System.Collections.Generic;
 using MimeKit;
 using MimeKit.Utils;
 
+#if NET5_0_OR_GREATER
+using IReadOnlySetOfStrings = System.Collections.Generic.IReadOnlySet<string>;
+#else
+using IReadOnlySetOfStrings = System.Collections.Generic.ISet<string>;
+#endif
+
 namespace MailKit {
 	/// <summary>
 	/// A summary of a message.
@@ -62,7 +68,7 @@ namespace MailKit {
 			if (index < 0)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			Keywords = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			Keywords = new HashSet<string> (StringComparer.Ordinal);
 			Index = index;
 		}
 
@@ -499,7 +505,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The user-defined message flags.</value>
-		public HashSet<string> Keywords {
+		public IReadOnlySetOfStrings Keywords {
 			get; set;
 		}
 
@@ -515,7 +521,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The message annotations.</value>
-		public IList<Annotation> Annotations {
+		public IReadOnlyList<Annotation> Annotations {
 			get; set;
 		}
 

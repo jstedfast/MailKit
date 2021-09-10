@@ -1029,7 +1029,7 @@ namespace UnitTests.Net.Imap {
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Annotations);
 				Assert.AreEqual (3, messages.Count, "Count");
 
-				IList<Annotation> annotations;
+				IReadOnlyList<Annotation> annotations;
 
 				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
 				annotations = messages[0].Annotations;
@@ -1098,7 +1098,7 @@ namespace UnitTests.Net.Imap {
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Annotations);
 				Assert.AreEqual (3, messages.Count, "Count");
 
-				IList<Annotation> annotations;
+				IReadOnlyList<Annotation> annotations;
 
 				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
 				annotations = messages[0].Annotations;

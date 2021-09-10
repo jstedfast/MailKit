@@ -324,10 +324,8 @@ Welcome to Netscape
 			Assert.IsNull (node.Envelope, "Envelope");
 			Assert.IsFalse (node.Flags.HasValue, "Flags");
 			Assert.IsNull (node.Keywords, "Keywords");
-			Assert.IsNull (node.UserFlags, "UserFlags");
 			Assert.IsNull (node.Headers, "Headers");
 			Assert.IsFalse (node.InternalDate.HasValue, "InternalDate");
-			Assert.IsNull (node.Id, "Id");
 			Assert.IsNull (node.EmailId, "EmailId");
 			Assert.IsNull (node.ThreadId, "ThreadId");
 			Assert.IsFalse (node.GMailMessageId.HasValue, "GMailMessageId");

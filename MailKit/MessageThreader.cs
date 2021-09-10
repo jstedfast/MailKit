@@ -33,6 +33,12 @@ using MimeKit.Utils;
 
 using MailKit.Search;
 
+#if NET5_0_OR_GREATER
+using IReadOnlySetOfStrings = System.Collections.Generic.IReadOnlySet<string>;
+#else
+using IReadOnlySetOfStrings = System.Collections.Generic.ISet<string>;
+#endif
+
 namespace MailKit {
 	/// <summary>
 	/// Threads messages according to the algorithms defined in rfc5256.
@@ -97,12 +103,9 @@ namespace MailKit {
 
 			public MessageFlags? Flags => null;
 
-			public HashSet<string> Keywords => null;
+			public IReadOnlySetOfStrings Keywords => null;
 
-			[Obsolete]
-			public HashSet<string> UserFlags => null;
-
-			public IList<Annotation> Annotations {
+			public IReadOnlyList<Annotation> Annotations {
 				get { return Message != null ? Message.Annotations : Children[0].Annotations; }
 			}
 
@@ -125,9 +128,6 @@ namespace MailKit {
 			}
 
 			public string EmailId => null;
-
-			[Obsolete]
-			public string Id => null;
 
 			public string ThreadId => null;
 

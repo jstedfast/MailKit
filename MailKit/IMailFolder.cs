@@ -33,6 +33,12 @@ using System.Collections.Generic;
 using MimeKit;
 using MailKit.Search;
 
+#if NET5_0_OR_GREATER
+using IReadOnlySetOfStrings = System.Collections.Generic.IReadOnlySet<string>;
+#else
+using IReadOnlySetOfStrings = System.Collections.Generic.ISet<string>;
+#endif
+
 namespace MailKit {
 	/// <summary>
 	/// An interface for a mailbox folder as used by <see cref="IMailStore"/>.
@@ -108,6 +114,17 @@ namespace MailKit {
 		MessageFlags PermanentFlags { get; }
 
 		/// <summary>
+		/// Get the permanent keywords.
+		/// </summary>
+		/// <remarks>
+		/// <para>The permanent keywords are the keywords that will persist between sessions.</para>
+		/// <para>If the <see cref="MessageFlags.UserDefined"/> flag is set in <see cref="PermanentFlags"/>,
+		/// then the folder allows storing of user-defined keywords as well.</para>
+		/// </remarks>
+		/// <value>The permanent keywords.</value>
+		IReadOnlySetOfStrings PermanentKeywords { get; }
+
+		/// <summary>
 		/// Get the accepted flags.
 		/// </summary>
 		/// <remarks>
@@ -117,6 +134,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The accepted flags.</value>
 		MessageFlags AcceptedFlags { get; }
+
+		/// <summary>
+		/// Get the accepted keywords.
+		/// </summary>
+		/// <remarks>
+		/// The accepted keywords are the keywords that will be accepted and persist
+		/// for the current session. For the set of keywords that will persist between
+		/// sessions, see the <see cref="PermanentKeywords"/> property.
+		/// </remarks>
+		/// <value>The accepted keywords.</value>
+		IReadOnlySetOfStrings AcceptedKeywords { get; }
 
 		/// <summary>
 		/// Get the directory separator.

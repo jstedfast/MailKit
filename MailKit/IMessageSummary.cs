@@ -29,6 +29,12 @@ using System.Collections.Generic;
 
 using MimeKit;
 
+#if NET5_0_OR_GREATER
+using IReadOnlySetOfStrings = System.Collections.Generic.IReadOnlySet<string>;
+#else
+using IReadOnlySetOfStrings = System.Collections.Generic.ISet<string>;
+#endif
+
 namespace MailKit {
 	/// <summary>
 	/// A summary of a message.
@@ -234,7 +240,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The user-defined message flags.</value>
-		HashSet<string> Keywords { get; }
+		IReadOnlySetOfStrings Keywords { get; }
 
 		/// <summary>
 		/// Gets the message annotations, if available.
@@ -248,7 +254,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The message annotations.</value>
-		IList<Annotation> Annotations { get; }
+		IReadOnlyList<Annotation> Annotations { get; }
 
 		/// <summary>
 		/// Gets the list of headers, if available.

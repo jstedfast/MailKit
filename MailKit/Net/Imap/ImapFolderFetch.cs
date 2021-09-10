@@ -315,7 +315,7 @@ namespace MailKit.Net.Imap
 					message.Fields |= MessageSummaryItems.Envelope;
 					break;
 				case "FLAGS":
-					message.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, message.Keywords, doAsync, cancellationToken).ConfigureAwait (false);
+					message.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) message.Keywords, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Flags;
 					break;
 				case "MODSEQ":
@@ -1684,7 +1684,7 @@ namespace MailKit.Net.Imap
 				case "FLAGS":
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
-					flags.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, flags.Keywords, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					flags.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) flags.Keywords, doAsync, ic.CancellationToken).ConfigureAwait (false);
 					flagsChanged = true;
 					break;
 				case "X-GM-LABELS":

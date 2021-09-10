@@ -599,8 +599,8 @@ namespace MailKit.Net.Imap {
 
 			if (folder != null || engine.GetCachedFolder (encodedName, out folder)) {
 				if ((attrs & FolderAttributes.NonExistent) != 0) {
-					folder.UpdatePermanentFlags (MessageFlags.None);
-					folder.UpdateAcceptedFlags (MessageFlags.None);
+					folder.UnsetPermanentFlags ();
+					folder.UnsetAcceptedFlags ();
 					folder.UpdateUidNext (UniqueId.Invalid);
 					folder.UpdateHighestModSeq (0);
 					folder.UpdateUidValidity (0);

@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 
 namespace MailKit.Net.Imap {
 	enum ImapResponseCodeType : byte {
@@ -218,10 +219,12 @@ namespace MailKit.Net.Imap {
 
 	class PermanentFlagsResponseCode : ImapResponseCode
 	{
+		public HashSet<string> Keywords;
 		public MessageFlags Flags;
 
 		internal PermanentFlagsResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
+			Keywords = new HashSet<string> (StringComparer.Ordinal);
 		}
 	}
 

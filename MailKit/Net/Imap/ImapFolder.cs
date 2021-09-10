@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Globalization;
@@ -34,6 +35,12 @@ using System.Collections.Generic;
 using MimeKit;
 
 using MailKit.Search;
+
+#if NET5_0_OR_GREATER
+using IReadOnlySetOfStrings = System.Collections.Generic.IReadOnlySet<string>;
+#else
+using IReadOnlySetOfStrings = System.Collections.Generic.ISet<string>;
+#endif
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -70,6 +77,9 @@ namespace MailKit.Net.Imap {
 		{
 			if (args == null)
 				throw new ArgumentNullException (nameof (args));
+
+			PermanentKeywords = new HashSet<string> (StringComparer.Ordinal);
+			AcceptedKeywords = new HashSet<string> (StringComparer.Ordinal);
 
 			InitializeProperties (args);
 		}
@@ -184,6 +194,8 @@ namespace MailKit.Net.Imap {
 		internal void Reset ()
 		{
 			// basic state
+			((HashSet<string>) PermanentKeywords).Clear ();
+			((HashSet<string>) AcceptedKeywords).Clear ();
 			PermanentFlags = MessageFlags.None;
 			AcceptedFlags = MessageFlags.None;
 			Access = FolderAccess.None;
@@ -228,7 +240,9 @@ namespace MailKit.Net.Imap {
 			foreach (var code in ic.RespCodes) {
 				switch (code.Type) {
 				case ImapResponseCodeType.PermanentFlags:
-					PermanentFlags = ((PermanentFlagsResponseCode) code).Flags;
+					var permanent = (PermanentFlagsResponseCode) code;
+					PermanentKeywords = permanent.Keywords;
+					PermanentFlags = permanent.Flags;
 					break;
 				case ImapResponseCodeType.ReadOnly:
 					if (code.IsTagged)
@@ -5402,7 +5416,7 @@ namespace MailKit.Net.Imap {
 				uid = message.UniqueId;
 
 			if ((message.Fields & MessageSummaryItems.Flags) != 0) {
-				var args = new MessageFlagsChangedEventArgs (index, message.Flags.Value, message.Keywords);
+				var args = new MessageFlagsChangedEventArgs (index, message.Flags.Value, (HashSet<string>) message.Keywords);
 				args.ModSeq = message.ModSeq;
 				args.UniqueId = uid;
 
@@ -5506,14 +5520,22 @@ namespace MailKit.Net.Imap {
 				OnDeleted ();
 		}
 
-		internal void UpdateAcceptedFlags (MessageFlags flags)
+		internal void UpdateAcceptedFlags (MessageFlags flags, IReadOnlySetOfStrings keywords)
 		{
+			AcceptedKeywords = keywords;
 			AcceptedFlags = flags;
 		}
 
-		internal void UpdatePermanentFlags (MessageFlags flags)
+		internal void UnsetAcceptedFlags ()
 		{
-			PermanentFlags = flags;
+			((HashSet<string>) AcceptedKeywords).Clear ();
+			AcceptedFlags = MessageFlags.None;
+		}
+
+		internal void UnsetPermanentFlags ()
+		{
+			((HashSet<string>) PermanentKeywords).Clear ();
+			PermanentFlags = MessageFlags.None;
 		}
 
 		internal void UpdateIsNamespace (bool value)

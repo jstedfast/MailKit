@@ -27,6 +27,12 @@
 using System;
 using System.Collections.Generic;
 
+#if NET5_0_OR_GREATER
+using IReadOnlySetOfStrings = System.Collections.Generic.IReadOnlySet<string>;
+#else
+using IReadOnlySetOfStrings = System.Collections.Generic.ISet<string>;
+#endif
+
 namespace MailKit {
 	/// <summary>
 	/// Event args for the <see cref="IMailFolder.MessageFlagsChanged"/> event.
@@ -45,7 +51,7 @@ namespace MailKit {
 		/// <param name="index">The message index.</param>
 		internal MessageFlagsChangedEventArgs (int index) : base (index)
 		{
-			Keywords = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			Keywords = new HashSet<string> (StringComparer.Ordinal);
 		}
 
 		/// <summary>
@@ -58,7 +64,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		public MessageFlagsChangedEventArgs (int index, MessageFlags flags) : base (index)
 		{
-			Keywords = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			Keywords = new HashSet<string> (StringComparer.Ordinal);
 			Flags = flags;
 		}
 
@@ -70,14 +76,14 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The message index.</param>
 		/// <param name="flags">The message flags.</param>
-		/// <param name="keywords">The user-defined message flags.</param>
+		/// <param name="keywords">The user-defined keywords.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="keywords"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
-		public MessageFlagsChangedEventArgs (int index, MessageFlags flags, HashSet<string> keywords) : base (index)
+		public MessageFlagsChangedEventArgs (int index, MessageFlags flags, IReadOnlySetOfStrings keywords) : base (index)
 		{
 			if (keywords == null)
 				throw new ArgumentNullException (nameof (keywords));
@@ -100,7 +106,7 @@ namespace MailKit {
 		/// </exception>
 		public MessageFlagsChangedEventArgs (int index, MessageFlags flags, ulong modseq) : base (index)
 		{
-			Keywords = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			Keywords = new HashSet<string> (StringComparer.Ordinal);
 			ModSeq = modseq;
 			Flags = flags;
 		}
@@ -113,7 +119,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The message index.</param>
 		/// <param name="flags">The message flags.</param>
-		/// <param name="keywords">The user-defined message flags.</param>
+		/// <param name="keywords">The user-defined keywords.</param>
 		/// <param name="modseq">The modification sequence value.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="keywords"/> is <c>null</c>.
@@ -121,7 +127,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
-		public MessageFlagsChangedEventArgs (int index, MessageFlags flags, HashSet<string> keywords, ulong modseq) : base (index)
+		public MessageFlagsChangedEventArgs (int index, MessageFlags flags, IReadOnlySetOfStrings keywords, ulong modseq) : base (index)
 		{
 			if (keywords == null)
 				throw new ArgumentNullException (nameof (keywords));
@@ -145,7 +151,7 @@ namespace MailKit {
 		/// </exception>
 		public MessageFlagsChangedEventArgs (int index, UniqueId uid, MessageFlags flags) : base (index, uid)
 		{
-			Keywords = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			Keywords = new HashSet<string> (StringComparer.Ordinal);
 			Flags = flags;
 		}
 
@@ -158,14 +164,14 @@ namespace MailKit {
 		/// <param name="index">The message index.</param>
 		/// <param name="uid">The unique id of the message.</param>
 		/// <param name="flags">The message flags.</param>
-		/// <param name="keywords">The user-defined message flags.</param>
+		/// <param name="keywords">The user-defined keywords.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="keywords"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
-		public MessageFlagsChangedEventArgs (int index, UniqueId uid, MessageFlags flags, HashSet<string> keywords) : base (index, uid)
+		public MessageFlagsChangedEventArgs (int index, UniqueId uid, MessageFlags flags, IReadOnlySetOfStrings keywords) : base (index, uid)
 		{
 			if (keywords == null)
 				throw new ArgumentNullException (nameof (keywords));
@@ -189,7 +195,7 @@ namespace MailKit {
 		/// </exception>
 		public MessageFlagsChangedEventArgs (int index, UniqueId uid, MessageFlags flags, ulong modseq) : base (index, uid)
 		{
-			Keywords = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			Keywords = new HashSet<string> (StringComparer.Ordinal);
 			ModSeq = modseq;
 			Flags = flags;
 		}
@@ -211,7 +217,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
-		public MessageFlagsChangedEventArgs (int index, UniqueId uid, MessageFlags flags, HashSet<string> keywords, ulong modseq) : base (index, uid)
+		public MessageFlagsChangedEventArgs (int index, UniqueId uid, MessageFlags flags, IReadOnlySetOfStrings keywords, ulong modseq) : base (index, uid)
 		{
 			if (keywords == null)
 				throw new ArgumentNullException (nameof (keywords));
@@ -239,7 +245,7 @@ namespace MailKit {
 		/// Gets the updated user-defined message flags.
 		/// </remarks>
 		/// <value>The updated user-defined message flags.</value>
-		public HashSet<string> Keywords {
+		public IReadOnlySetOfStrings Keywords {
 			get; private set;
 		}
 

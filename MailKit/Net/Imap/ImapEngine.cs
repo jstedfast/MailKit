@@ -1501,7 +1501,7 @@ namespace MailKit.Net.Imap {
 				var perm = (PermanentFlagsResponseCode) code;
 
 				Stream.UngetToken (token);
-				perm.Flags = await ImapUtils.ParseFlagsListAsync (this, "PERMANENTFLAGS", null, doAsync, cancellationToken).ConfigureAwait (false);
+				perm.Flags = await ImapUtils.ParseFlagsListAsync (this, "PERMANENTFLAGS", perm.Keywords, doAsync, cancellationToken).ConfigureAwait (false);
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.UidNext:
@@ -1992,7 +1992,9 @@ namespace MailKit.Net.Imap {
 				} while (true);
 				break;
 			case "FLAGS":
-				folder.UpdateAcceptedFlags (await ImapUtils.ParseFlagsListAsync (this, atom, null, doAsync, cancellationToken).ConfigureAwait (false));
+				var keywords = new HashSet<string> (StringComparer.Ordinal);
+				var flags = await ImapUtils.ParseFlagsListAsync (this, atom, keywords, doAsync, cancellationToken).ConfigureAwait (false);
+				folder.UpdateAcceptedFlags (flags, keywords);
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
