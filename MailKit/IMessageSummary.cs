@@ -255,13 +255,10 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the list of headers, if available.</para>
-		/// <para>This property will only be set if <see cref="MessageSummaryItems.Headers"/>
-		/// is specified in a call to one of the
-		/// <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
-		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
-		/// methods or specific headers are requested via a one of the Fetch or FetchAsync methods
-		/// that accept list of specific headers to request for each message such as
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Collections.Generic.IEnumerable&lt;MimeKit.HeaderId&gt;,System.Threading.CancellationToken)"/>.
+		/// <para>This property will only be set if the <see cref="IFetchRequest"/> used with
+		/// <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a> or
+		/// <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a> has the <see cref="MessageSummaryItems.Headers"/>
+		/// flag set on <see cref="IFetchRequest.Items"/> or if the <see cref="IFetchRequest.Headers"/> list is non-empty.
 		/// </para>
 		/// </remarks>
 		/// <value>The list of headers.</value>
