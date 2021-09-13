@@ -85,7 +85,10 @@ namespace UnitTests.Security {
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-256 challenge should be an empty string.", prefix);
 			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-256 should be authenticated now.", prefix);
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
+			Assert.IsFalse (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
 		}
 
 		[Test]
@@ -157,7 +160,7 @@ namespace UnitTests.Security {
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 			Assert.AreEqual (string.Empty, challenge, "third SCRAM-SHA-256 challenge should be an empty string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-256 should be authenticated now.");
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "challenge while authenticated.");
 		}
 
 		static void AssertScramSha256PlusTlsServerEndpoint (SaslMechanismScramSha256Plus sasl, string prefix)
@@ -188,7 +191,10 @@ namespace UnitTests.Security {
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-256-PLUS challenge should be an empty string.", prefix);
 			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-256-PLUS should be authenticated now.", prefix);
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
+			Assert.IsTrue (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
 		}
 
 		[Test]
@@ -235,7 +241,10 @@ namespace UnitTests.Security {
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-256-PLUS challenge should be an empty string.", prefix);
 			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-256-PLUS should be authenticated now.", prefix);
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty));
+			Assert.IsTrue (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+
+			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
 		}
 
 		[Test]

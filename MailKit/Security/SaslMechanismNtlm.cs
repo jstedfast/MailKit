@@ -233,8 +233,8 @@ namespace MailKit.Security {
 				int index;
 
 				if ((index = userName.LastIndexOf ('@')) != -1) {
-					userName = userName.Substring (0, index);
 					domain = userName.Substring (index + 1);
+					userName = userName.Substring (0, index);
 				} else {
 					if ((index = userName.IndexOf ('\\')) == -1)
 						index = userName.IndexOf ('/');

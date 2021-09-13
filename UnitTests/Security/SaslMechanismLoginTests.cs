@@ -60,6 +60,7 @@ namespace UnitTests.Security {
 			const string expected2 = "cGFzc3dvcmQ=";
 			string challenge;
 
+			Assert.IsFalse (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
 			Assert.IsFalse (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
 
 			challenge = sasl.Challenge (string.Empty);
@@ -71,6 +72,9 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (expected2, challenge, "{0}: final challenge response does not match the expected string.", prefix);
 			Assert.IsTrue (sasl.IsAuthenticated, "{0}: should be authenticated.", prefix);
+			Assert.IsFalse (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+
 			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
 		}
 

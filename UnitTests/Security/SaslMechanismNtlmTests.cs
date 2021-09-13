@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Security.Authentication.ExtendedProtection;
 
 using NUnit.Framework;
 
@@ -420,6 +421,7 @@ namespace UnitTests.Security {
 		{
 			string challenge;
 
+			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
 			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
 
 			challenge = sasl.Challenge (string.Empty);
@@ -450,6 +452,7 @@ namespace UnitTests.Security {
 			var initialFlags = Type1Message.DefaultFlags | NtlmFlags.NegotiateDomainSupplied;
 			string challenge;
 
+			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
 			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
 
 			challenge = sasl.Challenge (string.Empty);
@@ -475,8 +478,24 @@ namespace UnitTests.Security {
 			AssertNtlmAuthWithDomain (sasl, "user/pass");
 		}
 
+		[Test]
+		public void TestNtlmAuthWithAtDomain ()
+		{
+			var credentials = new NetworkCredential ("username@domain", "password");
+			var sasl = new SaslMechanismNtlm (credentials) { OSVersion = null, Workstation = null };
+
+			AssertNtlmAuthWithDomain (sasl, "NetworkCredential");
+
+			sasl = new SaslMechanismNtlm ("username@domain", "password") { OSVersion = null, Workstation = null };
+
+			AssertNtlmAuthWithDomain (sasl, "user/pass");
+		}
+
 		static void AssertNtlmv2 (SaslMechanismNtlm sasl, string challenge1, string challenge2)
 		{
+			Assert.IsTrue (sasl.SupportsChannelBinding, "SupportsChannelBinding");
+			Assert.IsTrue (sasl.SupportsInitialResponse, "SupportsInitialResponse");
+
 			var challenge = sasl.Challenge (string.Empty);
 			var timestamp = DateTime.UtcNow.Ticks;
 			var nonce = NtlmUtils.NONCE (8);
@@ -506,6 +525,8 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected[i], actual[i], "Final challenge differs at index {0}", i);
 
 			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
+			Assert.IsFalse (sasl.NegotiatedChannelBinding, "NegotiatedChannelBinding");
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "NegotiatedSecurityLayer");
 		}
 
 		[Test]
@@ -654,6 +675,70 @@ namespace UnitTests.Security {
 			/// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
 			for (int i = 0; i < ExampleNtlmV2AuthenticateMessage.Length - 16; i++)
 				Assert.AreEqual (ExampleNtlmV2AuthenticateMessage[i], actual[i], $"Messages differ at index [{i}]");
+		}
+
+		static readonly byte[] ExampleNtlmV2AuthenticateMessageWithChannelBinding = {
+			0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x03, 0x00, 0x00, 0x00, 0x18, 0x00, 0x18, 0x00,
+			0x6c, 0x00, 0x00, 0x00, 0x6c, 0x00, 0x6c, 0x00, 0x84, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x0c, 0x00,
+			0x48, 0x00, 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x54, 0x00, 0x00, 0x00, 0x10, 0x00, 0x10, 0x00,
+			0x5c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x00, 0x05, 0x82, 0x08, 0xa2,
+			0x0a, 0x00, 0x63, 0x4a, 0x00, 0x00, 0x00, 0x0f, 0x44, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00,
+			0x69, 0x00, 0x6e, 0x00, 0x55, 0x00, 0x73, 0x00, 0x65, 0x00, 0x72, 0x00, 0x43, 0x00, 0x4f, 0x00,
+			0x4d, 0x00, 0x50, 0x00, 0x55, 0x00, 0x54, 0x00, 0x45, 0x00, 0x52, 0x00, 0x86, 0xc3, 0x50, 0x97,
+			0xac, 0x9c, 0xec, 0x10, 0x25, 0x54, 0x76, 0x4a, 0x57, 0xcc, 0xcc, 0x19, 0xaa, 0xaa, 0xaa, 0xaa,
+			0xaa, 0xaa, 0xaa, 0xaa, 0x67, 0xcf, 0xbb, 0x4d, 0x65, 0xaf, 0x3f, 0x67, 0x3e, 0x51, 0x16, 0x22,
+			0x6c, 0x30, 0xd9, 0x84, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x00, 0x00, 0x00, 0x00,
+			0x02, 0x00, 0x0c, 0x00, 0x44, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00, 0x69, 0x00, 0x6e, 0x00,
+			0x01, 0x00, 0x0c, 0x00, 0x53, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00, 0x65, 0x00, 0x72, 0x00,
+			0x09, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x10, 0x00, 0xf5, 0x09, 0xe7, 0xac, 0xfd, 0xee, 0x20, 0x13,
+			0x98, 0xbb, 0xbf, 0xa1, 0x48, 0x63, 0x2a, 0x8c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+		};
+
+
+		[Test]
+		public void TestNtlmv2ExampleWithChannelBinding ()
+		{
+			// Note: Had to reverse engineer these values from the example. The nonce is the last 8 bytes of the lmChallengeResponse
+			// and the timestamp was bytes 8-16 of the 'temp' buffer.
+			var nonce = new byte[] { 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa };
+			var timestamp = DateTime.FromFileTimeUtc (0).Ticks;
+			var uri = new Uri ("imap://elwood.innosoft.com");
+			var sasl = new SaslMechanismNtlm ("User", "Password") {
+				ChannelBindingContext = new ChannelBindingContext (ChannelBindingKind.Endpoint, uri.ToString ()),
+				IsUnverifiedServicePrincipalName = false,
+				ServicePrincipalName = null,
+				AllowChannelBinding = true,
+				Workstation = "COMPUTER",
+				Timestamp = timestamp,
+				Nonce = nonce
+			};
+			string challenge;
+
+			// initial challenge
+			sasl.Challenge (null);
+
+			var type2 = new Type2Message (ExampleNtlmV2ChallengeMessage, 0, ExampleNtlmV2ChallengeMessage.Length);
+			challenge = sasl.Challenge (Convert.ToBase64String (type2.Encode ()));
+
+			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
+			Assert.IsTrue (sasl.NegotiatedChannelBinding, "NegotiatedChannelBinding");
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "NegotiatedSecurityLayer");
+
+			var expectedType3 = new Type3Message (ExampleNtlmV2AuthenticateMessage, 0, ExampleNtlmV2AuthenticateMessage.Length);
+			var expectedTargetInfo = GetNtChallengeResponseTargetInfo (expectedType3.NtChallengeResponse);
+
+			var actual = Convert.FromBase64String (challenge);
+			var actualType3 = DecodeType3Message (challenge);
+			var actualTargetInfo = GetNtChallengeResponseTargetInfo (actualType3.NtChallengeResponse);
+
+			//var initializer = ToCSharpByteArrayInitializer ("ExampleNtlmV2AuthenticateMessage", actual);
+
+			Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length, actual.Length, "Raw message lengths differ.");
+
+			/// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
+			for (int i = 0; i < ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length - 16; i++)
+				Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding[i], actual[i], $"Messages differ at index [{i}]");
 		}
 
 		[Test]

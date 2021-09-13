@@ -60,12 +60,16 @@ namespace UnitTests.Security {
 			const string expected = "AHVzZXJuYW1lAHBhc3N3b3Jk";
 			string challenge;
 
+			Assert.IsFalse (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
 			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
 
 			challenge = sasl.Challenge (string.Empty);
 
 			Assert.AreEqual (expected, challenge, "{0}: challenge response does not match the expected string.", prefix);
 			Assert.IsTrue (sasl.IsAuthenticated, "{0}: should be authenticated.", prefix);
+			Assert.IsFalse (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+
 			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
 		}
 
@@ -89,12 +93,16 @@ namespace UnitTests.Security {
 			var sasl = new SaslMechanismPlain ("username", "password") { AuthorizationId = "authzid" };
 			string challenge;
 
+			Assert.IsFalse (sasl.SupportsChannelBinding, "SupportsChannelBinding");
 			Assert.IsTrue (sasl.SupportsInitialResponse, "SupportsInitialResponse");
 
 			challenge = sasl.Challenge (string.Empty);
 
 			Assert.AreEqual (expected, challenge, "challenge response does not match the expected string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "should be authenticated.");
+			Assert.IsFalse (sasl.NegotiatedChannelBinding, "NegotiatedChannelBinding");
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "NegotiatedSecurityLayer");
+
 			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "challenge while authenticated.");
 		}
 	}

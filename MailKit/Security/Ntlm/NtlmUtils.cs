@@ -35,12 +35,12 @@ using SSCMD5 = System.Security.Cryptography.MD5;
 namespace MailKit.Security.Ntlm {
 	static class NtlmUtils
 	{
-		internal static readonly byte[] ClientSealMagic = Encoding.ASCII.GetBytes ("session key to client-to-server sealing key magic constant");
-		static readonly byte[] ServerSealMagic = Encoding.ASCII.GetBytes ("session key to server-to-client sealing key magic constant");
-		static readonly byte[] ClientSignMagic = Encoding.ASCII.GetBytes ("session key to client-to-server signing key magic constant");
-		static readonly byte[] ServerSignMagic = Encoding.ASCII.GetBytes ("session key to server-to-client signing key magic constant");
-		static readonly byte[] SealKeySuffix40 = new byte[] { 0xe5, 0x38, 0xb0 };
-		static readonly byte[] SealKeySuffix56 = new byte[] { 0xa0 };
+		//static readonly byte[] ClientSealMagic = Encoding.ASCII.GetBytes ("session key to client-to-server sealing key magic constant");
+		//static readonly byte[] ServerSealMagic = Encoding.ASCII.GetBytes ("session key to server-to-client sealing key magic constant");
+		//static readonly byte[] ClientSignMagic = Encoding.ASCII.GetBytes ("session key to client-to-server signing key magic constant");
+		//static readonly byte[] ServerSignMagic = Encoding.ASCII.GetBytes ("session key to server-to-client signing key magic constant");
+		//static readonly byte[] SealKeySuffix40 = new byte[] { 0xe5, 0x38, 0xb0 };
+		//static readonly byte[] SealKeySuffix56 = new byte[] { 0xa0 };
 		static readonly byte[] Responserversion = new byte[] { 1 };
 		static readonly byte[] HiResponserversion = new byte[] { 1 };
 		static readonly byte[] Z24 = new byte[24];
@@ -132,6 +132,7 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
+#if false
 		public static byte[] SEALKEY (NtlmFlags flags, byte[] exportedSessionKey, bool client = true)
 		{
 			if ((flags & NtlmFlags.NegotiateExtendedSessionSecurity) != 0) {
@@ -175,7 +176,9 @@ namespace MailKit.Security.Ntlm {
 				return exportedSessionKey;
 			}
 		}
+#endif
 
+#if false
 		public static byte[] SIGNKEY (NtlmFlags flags, byte[] exportedSessionKey, bool client = true)
 		{
 			if ((flags & NtlmFlags.NegotiateExtendedSessionSecurity) != 0) {
@@ -185,6 +188,7 @@ namespace MailKit.Security.Ntlm {
 				return null;
 			}
 		}
+#endif
 
 		static byte[] NTOWFv2 (string domain, string userName, string password)
 		{

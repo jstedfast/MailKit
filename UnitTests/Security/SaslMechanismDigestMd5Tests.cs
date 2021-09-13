@@ -61,6 +61,7 @@ namespace UnitTests.Security {
 
 			sasl.cnonce = entropy;
 
+			Assert.IsFalse (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
 			Assert.IsFalse (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
 
 			token = Encoding.ASCII.GetBytes (serverToken1);
@@ -78,6 +79,9 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (string.Empty, result, "{0}: second DIGEST-MD5 challenge should be an empty string.", prefix);
 			Assert.IsTrue (sasl.IsAuthenticated, "{0}: should be authenticated now.", prefix);
+			Assert.IsFalse (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
+			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+
 			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
 		}
 

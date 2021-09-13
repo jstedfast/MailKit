@@ -231,6 +231,11 @@ namespace UnitTests.Security.Ntlm {
 			for (int i = 0; i < channelBinding.Length; i++)
 				Assert.AreEqual (channelBinding[i], targetInfo.ChannelBinding[i], $"ChannelBinding[{i}]");
 
+			targetInfo.ServerName = null;
+			Assert.IsNull (targetInfo.ServerName, "SserverName remove attempt #1");
+			targetInfo.ServerName = null;
+			Assert.IsNull (targetInfo.ServerName, "ServerNamet remove attempt #2");
+
 			targetInfo.SingleHost = null;
 			Assert.IsNull (targetInfo.SingleHost, "SingleHost remove attempt #1");
 			targetInfo.SingleHost = null;
@@ -277,6 +282,9 @@ namespace UnitTests.Security.Ntlm {
 
 			for (int i = 0; i < channelBinding.Length; i++)
 				Assert.AreEqual (channelBinding[i], targetInfo.ChannelBinding[i], $"ChannelBinding[{i}]");
+
+			targetInfo.ServerName = "NewServerName";
+			Assert.AreEqual ("NewServerName", targetInfo.ServerName, "Updated ServerName");
 
 			targetInfo.SingleHost = updatedSingleHost.Encode ();
 			AssertSingleHost (updatedSingleHost, targetInfo.SingleHost, "Updated SingleHost");
