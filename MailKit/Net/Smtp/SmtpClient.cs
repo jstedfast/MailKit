@@ -785,7 +785,7 @@ namespace MailKit.Net.Smtp {
 			string challenge;
 			string command;
 
-			mechanism.TransportContext = (Stream.Stream as SslStream)?.TransportContext;
+			mechanism.ChannelBindingContext = Stream.Stream as IChannelBindingContext;
 			mechanism.Uri = new Uri ($"smtp://{uri.Host}");
 
 			// send an initial challenge if the mechanism supports it
@@ -919,7 +919,7 @@ namespace MailKit.Net.Smtp {
 				if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
 					continue;
 
-				sasl.TransportContext = (Stream.Stream as SslStream)?.TransportContext;
+				sasl.ChannelBindingContext = Stream.Stream as IChannelBindingContext;
 				sasl.Uri = saslUri;
 
 				tried = true;

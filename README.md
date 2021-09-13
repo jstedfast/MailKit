@@ -35,15 +35,15 @@ motivate me to continue working on the project.
   * [LOGIN](https://tools.ietf.org/html/draft-murchison-sasl-login-00)
   * [NTLM](http://davenport.sourceforge.net/ntlm.html)
   * [PLAIN](https://tools.ietf.org/html/rfc2595)
-  * [SCRAM-SHA-1](https://tools.ietf.org/html/rfc5802)
-  * [SCRAM-SHA-256](https://tools.ietf.org/html/rfc5802)
-  * [SCRAM-SHA-512](https://tools.ietf.org/html/draft-melnikov-scram-sha-512-00)
+  * [SCRAM-SHA-1[-PLUS]](https://tools.ietf.org/html/rfc5802)
+  * [SCRAM-SHA-256[-PLUS]](https://tools.ietf.org/html/rfc5802)
+  * [SCRAM-SHA-512[-PLUS]](https://tools.ietf.org/html/draft-melnikov-scram-sha-512-01)
   * [OAUTHBEARER](https://tools.ietf.org/html/rfc7628) (partial support - you need to fetch the auth tokens yourself)
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
 * Proxy Support
   * [SOCKS4/4a](http://www.openssh.com/txt/socks4.protocol)
   * [SOCKS5](https://tools.ietf.org/html/rfc1928)
-  * [HTTP](https://tools.ietf.org/html/rfc2616)
+  * [HTTP/S](https://tools.ietf.org/html/rfc2616)
 * SMTP Client
   * Supports all of the SASL mechanisms listed above.
   * Supports SSL-wrapped connections via the "smtps" protocol.

@@ -30,6 +30,8 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Security.Authentication.ExtendedProtection;
 
+using MailKit.Net;
+
 #if NETSTANDARD1_3 || NETSTANDARD1_6
 using MD5 = MimeKit.Cryptography.MD5;
 #endif
@@ -172,6 +174,19 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
+		/// Get whether or not channel-binding was negotiated by the SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not channel-binding has been negotiated by the SASL mechanism.</para>
+		/// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
+		/// channel-bindings.</note>
+		/// </remarks>
+		/// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
+		public virtual bool NegotiatedChannelBinding {
+			get { return false; }
+		}
+
+		/// <summary>
 		/// Get whether or not a security layer was negotiated by the SASL mechanism.
 		/// </summary>
 		/// <remarks>
@@ -185,13 +200,13 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Get or set the transport context.
+		/// Get or set the channel-binding context.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the transport context.
+		/// Gets or sets the channel-binding context.
 		/// </remarks>
-		/// <value>The transport context.</value>
-		internal TransportContext TransportContext {
+		/// <value>The channel-binding context.</value>
+		internal IChannelBindingContext ChannelBindingContext {
 			get; set;
 		}
 
@@ -207,45 +222,22 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Get the channel binding token, if available.
+		/// Try to get a channel-binding token.
 		/// </summary>
 		/// <remarks>
-		/// Gets the channel binding token, if available.
+		/// Tries to get the specified channel-binding.
 		/// </remarks>
-		/// <returns>A buffer containing the channel binding token if available; otherwise, <c>null</c>.</returns>
-		/// <param name="kind">The kind of channel binding.</param>
-		protected byte[] GetChannelBindingToken (ChannelBindingKind kind)
+		/// <param name="kind">The kind of channel-binding desired.</param>
+		/// <param name="token">A buffer containing the channel-binding token.</param>
+		/// <returns><c>true</c> if the channel-binding token was acquired; otherwise, <c>false</c>.</returns>
+		protected bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token)
 		{
-			ChannelBinding channelBinding;
-
-			try {
-				// Note: Documentation for TransportContext.GetChannelBinding() states that it will return null if the
-				// requested channel binding type is not supported, but it also states that it will throw
-				// NotSupportedException, so we handle both.
-				channelBinding = TransportContext?.GetChannelBinding (kind);
-			} catch (NotSupportedException) {
-				channelBinding = null;
+			if (ChannelBindingContext == null) {
+				token = null;
+				return false;
 			}
 
-			if (channelBinding == null || channelBinding.IsClosed || channelBinding.IsInvalid || channelBinding.Size <= 0)
-				return null;
-
-			byte[] token = new byte[channelBinding.Size];
-
-			unsafe {
-				fixed (byte* outbuf = token) {
-					byte* inbuf = (byte*) channelBinding.DangerousGetHandle ().ToPointer ();
-					byte* outptr = outbuf;
-					byte* inptr = inbuf;
-
-					for (int i = 0; i < token.Length; i++)
-						*outptr++ = *inptr++;
-				}
-			}
-
-			channelBinding.Close ();
-
-			return token;
+			return ChannelBindingContext.TryGetChannelBindingToken (kind, out token);
 		}
 
 		/// <summary>

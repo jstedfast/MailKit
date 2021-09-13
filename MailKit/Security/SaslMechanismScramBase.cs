@@ -48,6 +48,7 @@ namespace MailKit.Security {
 		}
 
 		ChannelBindingKind channelBindingKind;
+		bool negotiatedChannelBinding;
 		byte[] channelBindingToken;
 		internal string cnonce;
 		string client, server;
@@ -108,6 +109,19 @@ namespace MailKit.Security {
 		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
 		public override bool SupportsInitialResponse {
 			get { return true; }
+		}
+
+		/// <summary>
+		/// Get whether or not channel-binding was negotiated by the SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not channel-binding has been negotiated by the SASL mechanism.</para>
+		/// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
+		/// channel-bindings.</note>
+		/// </remarks>
+		/// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
+		public override bool NegotiatedChannelBinding {
+			get { return negotiatedChannelBinding; }
 		}
 
 		static string Normalize (string str)
@@ -298,11 +312,12 @@ namespace MailKit.Security {
 				//
 				// Based on this, we attempt to use "tls-server-end-point" instead of "tls-unique" when available.
 				if (SupportsChannelBinding) {
-					if ((channelBindingToken = GetChannelBindingToken (ChannelBindingKind.Endpoint)) == null) {
-						channelBindingToken = GetChannelBindingToken (ChannelBindingKind.Unique);
+					if (TryGetChannelBindingToken (ChannelBindingKind.Endpoint, out channelBindingToken)) {
+						channelBindingKind = ChannelBindingKind.Endpoint;
+					} else if (TryGetChannelBindingToken (ChannelBindingKind.Unique, out channelBindingToken)) {
 						channelBindingKind = ChannelBindingKind.Unique;
 					} else {
-						channelBindingKind = ChannelBindingKind.Endpoint;
+						channelBindingKind = ChannelBindingKind.Unknown;
 					}
 				}
 
@@ -339,7 +354,7 @@ namespace MailKit.Security {
 				var inputBuffer = Encoding.ASCII.GetBytes (input);
 				string base64;
 
-				if (SupportsChannelBinding) {
+				if (SupportsChannelBinding && channelBindingKind != ChannelBindingKind.Unknown) {
 					var binding = new byte[inputBuffer.Length + channelBindingToken.Length];
 
 					Buffer.BlockCopy (inputBuffer, 0, binding, 0, inputBuffer.Length);
@@ -383,6 +398,7 @@ namespace MailKit.Security {
 						throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, $"Challenge contained an invalid signature. Expected: {Convert.ToBase64String (calculated)}");
 				}
 
+				negotiatedChannelBinding = channelBindingKind != ChannelBindingKind.Unknown;
 				IsAuthenticated = true;
 				response = new byte[0];
 				break;
@@ -407,6 +423,7 @@ namespace MailKit.Security {
 			}
 
 			channelBindingKind = ChannelBindingKind.Unknown;
+			negotiatedChannelBinding = false;
 			state = LoginState.Initial;
 			client = null;
 			server = null;

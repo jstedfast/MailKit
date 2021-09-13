@@ -989,7 +989,7 @@ namespace MailKit.Net.Imap {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			mechanism.TransportContext = (engine.Stream.Stream as SslStream)?.TransportContext;
+			mechanism.ChannelBindingContext = engine.Stream.Stream as IChannelBindingContext;
 			mechanism.Uri = uri;
 
 			var command = string.Format ("AUTHENTICATE {0}", mechanism.MechanismName);
@@ -1121,7 +1121,7 @@ namespace MailKit.Net.Imap {
 				if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
 					continue;
 
-				sasl.TransportContext = (engine.Stream.Stream as SslStream)?.TransportContext;
+				sasl.ChannelBindingContext = engine.Stream.Stream as IChannelBindingContext;
 				sasl.Uri = uri;
 
 				cancellationToken.ThrowIfCancellationRequested ();

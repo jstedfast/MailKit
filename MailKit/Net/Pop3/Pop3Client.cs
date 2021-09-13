@@ -720,7 +720,7 @@ namespace MailKit.Net.Pop3 {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			mechanism.TransportContext = (engine.Stream.Stream as SslStream)?.TransportContext;
+			mechanism.ChannelBindingContext = engine.Stream.Stream as IChannelBindingContext;
 			mechanism.Uri = new Uri ("pop://" + engine.Uri.Host);
 
 			var ctx = new SaslAuthContext (this, mechanism);
@@ -854,7 +854,7 @@ namespace MailKit.Net.Pop3 {
 					if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
 						continue;
 
-					sasl.TransportContext = (engine.Stream.Stream as SslStream)?.TransportContext;
+					sasl.ChannelBindingContext = engine.Stream.Stream as IChannelBindingContext;
 					sasl.Uri = saslUri;
 
 					cancellationToken.ThrowIfCancellationRequested ();

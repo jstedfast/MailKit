@@ -115,6 +115,7 @@
     <Compile Include="Net\Smtp\SmtpResponse.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
+    <Compile Include="Net\IChannelBindingContext.cs" />
     <Compile Include="Net\NetworkStream.cs" />
     <Compile Include="Net\SocketUtils.cs" />
     <Compile Include="Net\SslStream.cs" />

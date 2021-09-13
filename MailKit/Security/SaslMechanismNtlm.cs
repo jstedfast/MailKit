@@ -46,6 +46,7 @@ namespace MailKit.Security {
 			Challenge
 		}
 
+		bool negotiatedChannelBinding;
 		Type1Message type1;
 		LoginState state;
 
@@ -120,6 +121,19 @@ namespace MailKit.Security {
 		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
 		public override bool SupportsChannelBinding {
 			get { return true; }
+		}
+
+		/// <summary>
+		/// Get whether or not channel-binding was negotiated by the SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not channel-binding has been negotiated by the SASL mechanism.</para>
+		/// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
+		/// channel-bindings.</note>
+		/// </remarks>
+		/// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
+		public override bool NegotiatedChannelBinding {
+			get { return negotiatedChannelBinding; }
 		}
 
 		/// <summary>
@@ -254,14 +268,18 @@ namespace MailKit.Security {
 				ClientChallenge = Nonce,
 				Timestamp = Timestamp
 			};
-			byte[] channelBinding = null;
+			byte[] channelBindingToken = null;
 
 			if (AllowChannelBinding && type2.TargetInfo != null) {
 				// Only bother with attempting to channel-bind if the CHALLENGE_MESSAGE's TargetInfo is not NULL.
-				channelBinding = GetChannelBindingToken (ChannelBindingKind.Endpoint);
+				negotiatedChannelBinding = TryGetChannelBindingToken (ChannelBindingKind.Endpoint, out channelBindingToken);
 			}
 
-			type3.ComputeNtlmV2 (ServicePrincipalName, IsUnverifiedServicePrincipalName, channelBinding);
+			type3.ComputeNtlmV2 (ServicePrincipalName, IsUnverifiedServicePrincipalName, channelBindingToken);
+
+			if (channelBindingToken != null)
+				Array.Clear (channelBindingToken, 0, channelBindingToken.Length);
+
 			type1 = null;
 
 			return type3;
@@ -275,6 +293,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		public override void Reset ()
 		{
+			negotiatedChannelBinding = false;
 			state = LoginState.Negotiate;
 			type1 = null;
 			base.Reset ();

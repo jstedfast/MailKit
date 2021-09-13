@@ -196,13 +196,13 @@ namespace UnitTests.Security {
 		{
 			var credentials = new NetworkCredential ("user", "pencil");
 			var uri = new Uri ("imap://elwood.innosoft.com");
-			var context = new FakeTransportContext (ChannelBindingKind.Endpoint, uri.ToString ());
+			var context = new ChannelBindingContext (ChannelBindingKind.Endpoint, uri.ToString ());
 
-			var sasl = new SaslMechanismScramSha512Plus (credentials) { TransportContext = context };
+			var sasl = new SaslMechanismScramSha512Plus (credentials) { ChannelBindingContext = context };
 
 			AssertScramSha512PlusTlsServerEndpoint (sasl, "NetworkCredential");
 
-			sasl = new SaslMechanismScramSha512Plus ("user", "pencil") { TransportContext = context };
+			sasl = new SaslMechanismScramSha512Plus ("user", "pencil") { ChannelBindingContext = context };
 
 			AssertScramSha512PlusTlsServerEndpoint (sasl, "user/pass");
 		}
@@ -243,13 +243,13 @@ namespace UnitTests.Security {
 		{
 			var credentials = new NetworkCredential ("user", "pencil");
 			var uri = new Uri ("imap://elwood.innosoft.com");
-			var context = new FakeTransportContext (ChannelBindingKind.Unique, uri.ToString ());
+			var context = new ChannelBindingContext (ChannelBindingKind.Unique, uri.ToString ());
 
-			var sasl = new SaslMechanismScramSha512Plus (credentials) { TransportContext = context };
+			var sasl = new SaslMechanismScramSha512Plus (credentials) { ChannelBindingContext = context };
 
 			AssertScramSha512PlusTlsUnique (sasl, "NetworkCredential");
 
-			sasl = new SaslMechanismScramSha512Plus ("user", "pencil") { TransportContext = context };
+			sasl = new SaslMechanismScramSha512Plus ("user", "pencil") { ChannelBindingContext = context };
 
 			AssertScramSha512PlusTlsUnique (sasl, "user/pass");
 		}

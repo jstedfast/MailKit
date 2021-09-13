@@ -1,5 +1,5 @@
 ﻿//
-// FakeTransportContext.cs
+// IChannelBindingContext.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,56 +24,26 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Net;
-using System.Runtime.InteropServices;
 using System.Security.Authentication.ExtendedProtection;
 
-namespace UnitTests.Security
-{
-	class FakeTransportContext : TransportContext
+namespace MailKit.Net {
+	/// <summary>
+	/// An interface for resources that support acquiring channel-binding tokens.
+	/// </summary>
+	/// <remarks>
+	/// An interface for resources that support acquiring channel-binding tokens.
+	/// </remarks>
+	interface IChannelBindingContext
 	{
-		class FakeChannelBinding : ChannelBinding
-		{
-			readonly int size;
-
-			public FakeChannelBinding (string data) : base (true)
-			{
-				size = data.Length;
-
-				handle = Marshal.StringToHGlobalAnsi (data);
-			}
-
-			public override bool IsInvalid {
-				get { return false; }
-			}
-
-			public override int Size {
-				get { return size; }
-			}
-
-			protected override bool ReleaseHandle ()
-			{
-				Marshal.FreeHGlobal (handle);
-				return true;
-			}
-		}
-
-		readonly ChannelBindingKind supportedKind;
-		readonly ChannelBinding binding;
-
-		public FakeTransportContext (ChannelBindingKind kind, string channelBindingData)
-		{
-			binding = new FakeChannelBinding (channelBindingData);
-			supportedKind = kind;
-		}
-
-		public override ChannelBinding GetChannelBinding (ChannelBindingKind kind)
-		{
-			if (kind == supportedKind)
-				return binding;
-
-			throw new NotSupportedException ();
-		}
+		/// <summary>
+		/// Try to get a channel-binding token.
+		/// </summary>
+		/// <remarks>
+		/// Tries to get the specified channel-binding.
+		/// </remarks>
+		/// <param name="kind">The kind of channel-binding desired.</param>
+		/// <param name="token">The channel-binding token.</param>
+		/// <returns><c>true</c> if the channel-binding token was acquired; otherwise, <c>false</c>.</returns>
+		bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token);
 	}
 }
