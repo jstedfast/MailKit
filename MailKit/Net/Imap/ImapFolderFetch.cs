@@ -1093,7 +1093,7 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 			CheckAllowIndexes ();
 
-			if (IsEmptyFetchRequest (request))
+			if (Count == 0 || IsEmptyFetchRequest (request))
 				return new IMessageSummary[0];
 
 			var query = FormatSummaryItems (Engine, request, out var previewText);
