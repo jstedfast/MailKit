@@ -3149,7 +3149,6 @@ namespace UnitTests.Net.Smtp {
 		{
 			public DsnSmtpClient ()
 			{
-				DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
 			}
 
 			protected override string GetEnvelopeId (MimeMessage message)
@@ -3161,13 +3160,17 @@ namespace UnitTests.Net.Smtp {
 				return message.MessageId;
 			}
 
+			public DeliveryStatusNotification? DeliveryStatusNotifications {
+				get; set;
+			}
+
 			protected override DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
 			{
 				var notify = base.GetDeliveryStatusNotifications (message, mailbox);
 
 				Assert.IsFalse (notify.HasValue);
 
-				return DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
+				return DeliveryStatusNotifications;
 			}
 		}
 
@@ -3218,6 +3221,9 @@ namespace UnitTests.Net.Smtp {
 
 				// disable pipelining
 				client.Capabilities &= ~SmtpCapabilities.Pipelining;
+
+				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
+				client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
 
 				try {
 					client.Send (message);
@@ -3283,6 +3289,9 @@ namespace UnitTests.Net.Smtp {
 				// disable pipelining
 				client.Capabilities &= ~SmtpCapabilities.Pipelining;
 
+				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
+				client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
+
 				try {
 					await client.SendAsync (message);
 				} catch (Exception ex) {
@@ -3312,8 +3321,8 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+dsn.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=HDRS\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=FULL\r\n", "comcast-mail-from.txt"));
+			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=NEVER ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
 			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
@@ -3348,6 +3357,9 @@ namespace UnitTests.Net.Smtp {
 				// disable pipelining
 				client.Capabilities &= ~SmtpCapabilities.Pipelining;
 
+				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.Full;
+				client.DeliveryStatusNotifications = DeliveryStatusNotification.Never;
+
 				try {
 					client.Send (message);
 				} catch (Exception ex) {
@@ -3377,8 +3389,8 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+dsn.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=HDRS\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=FULL\r\n", "comcast-mail-from.txt"));
+			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=NEVER ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
 			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
@@ -3412,6 +3424,9 @@ namespace UnitTests.Net.Smtp {
 
 				// disable pipelining
 				client.Capabilities &= ~SmtpCapabilities.Pipelining;
+
+				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.Full;
+				client.DeliveryStatusNotifications = DeliveryStatusNotification.Never;
 
 				try {
 					await client.SendAsync (message);
