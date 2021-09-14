@@ -29,6 +29,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Text;
+using System.Buffers;
 using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
@@ -1894,6 +1895,47 @@ namespace MailKit.Net.Smtp {
 			get; set;
 		}
 
+		static void AppendHexEncoded (StringBuilder builder, string value)
+		{
+			int index = 0;
+
+			while (index < value.Length) {
+				char c = value[index];
+
+				if (c < 33 || c > 126 || c == (byte) '+' || c == (byte) '=')
+					break;
+
+				index++;
+			}
+
+			builder.Append (value, 0, index);
+
+			if (index == value.Length)
+				return;
+
+			int length = value.Length - index;
+			var buffer = ArrayPool<byte>.Shared.Rent (length * 3);
+
+			try {
+				int n = Encoding.UTF8.GetBytes (value, index, length, buffer, 0);
+				const string HexAlphabet = "0123456789ABCDEF";
+
+				for (index = 0; index < n; index++) {
+					byte c = buffer[index];
+
+					if (c >= 33 && c <= 126 && c != (byte) '+' && c != (byte) '=') {
+						builder.Append ((char) c);
+					} else {
+						builder.Append ('+');
+						builder.Append (HexAlphabet[(c >> 4) & 0xF]);
+						builder.Append (HexAlphabet[c & 0xF]);
+					}
+				}
+			} finally {
+				ArrayPool<byte>.Shared.Return (buffer);
+			}
+		}
+
 		async Task MailFromAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, long size, bool doAsync, CancellationToken cancellationToken)
 		{
 			var idnEncode = (extensions & SmtpExtension.UTF8) == 0;
@@ -1919,7 +1961,7 @@ namespace MailKit.Net.Smtp {
 
 				if (!string.IsNullOrEmpty (envid)) {
 					builder.Append (" ENVID=");
-					builder.Append (envid);
+					AppendHexEncoded (builder, envid);
 				}
 
 				switch (DeliveryStatusNotificationType) {
@@ -1997,10 +2039,41 @@ namespace MailKit.Net.Smtp {
 		/// </example>
 		/// <returns>The desired delivery status notification type.</returns>
 		/// <param name="message">The message being sent.</param>
-		/// <param name="mailbox">The mailbox.</param>
+		/// <param name="mailbox">The recipient mailbox.</param>
 		protected virtual DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
 		{
 			return null;
+		}
+
+		class OriginalRecipient
+		{
+			public readonly string AddrType;
+			public readonly string Address;
+
+			public OriginalRecipient (string addrType, string address)
+			{
+				AddrType = addrType;
+				Address = address;
+			}
+		}
+
+		/// <summary>
+		/// Get the original intended recipient address and address type.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the original intended recipient address and address type for the purpose of delivery status notification.</para>
+		/// <para>When initially submitting a message via SMTP, the address returned by this method MUST be identical to the <paramref name="mailbox"/>
+		/// address. Likewise, when a mailing list submits a message via SMTP to be distributed to the list subscribers, the address returned by
+		/// this method MUST match the new RCPT TO address of each recipient, not the address specified by the original sender of the message.)</para>
+		/// </remarks>
+		/// <param name="message">The message being sent.</param>
+		/// <param name="mailbox">The recipient mailbox.</param>
+		/// <returns>The original recipient address and the address type.</returns>
+		OriginalRecipient GetOriginalRecipientAddress (MimeMessage message, MailboxAddress mailbox)
+		{
+			var idnEncode = (Capabilities & SmtpCapabilities.UTF8) == 0;
+
+			return new OriginalRecipient ("rfc822", mailbox.GetAddress (idnEncode));
 		}
 
 		static string GetNotifyString (DeliveryStatusNotification notify)
@@ -2025,21 +2098,32 @@ namespace MailKit.Net.Smtp {
 		async Task<bool> RcptToAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, bool doAsync, CancellationToken cancellationToken)
 		{
 			var idnEncode = (Capabilities & SmtpCapabilities.UTF8) == 0;
-			var command = string.Format ("RCPT TO:<{0}>", mailbox.GetAddress (idnEncode));
+			var command = new StringBuilder ("RCPT TO:<");
+
+			command.Append (mailbox.GetAddress (idnEncode));
+			command.Append ('>');
 
 			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
 				var notify = GetDeliveryStatusNotifications (message, mailbox);
 
-				if (notify.HasValue)
-					command += " NOTIFY=" + GetNotifyString (notify.Value);
+				if (notify.HasValue) {
+					command.Append (" NOTIFY=");
+					command.Append (GetNotifyString (notify.Value));
+				}
+
+				var orcpt = GetOriginalRecipientAddress (message, mailbox);
+				command.Append (" ORCPT=");
+				command.Append (orcpt.AddrType);
+				command.Append (';');
+				AppendHexEncoded (command, orcpt.Address);
 			}
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
-				await QueueCommandAsync (SmtpCommand.RcptTo, command, doAsync, cancellationToken).ConfigureAwait (false);
+				await QueueCommandAsync (SmtpCommand.RcptTo, command.ToString (), doAsync, cancellationToken).ConfigureAwait (false);
 				return false;
 			}
 
-			var response = await SendCommandAsync (command, doAsync, cancellationToken).ConfigureAwait (false);
+			var response = await SendCommandAsync (command.ToString (), doAsync, cancellationToken).ConfigureAwait (false);
 
 			return ProcessRcptToResponse (message, mailbox, response);
 		}

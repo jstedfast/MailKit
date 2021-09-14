@@ -3184,7 +3184,7 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+dsn.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
 			commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
 			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
@@ -3248,7 +3248,137 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+dsn.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
 			commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
+			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var client = new DsnSmtpClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// disable pipelining
+				client.Capabilities &= ~SmtpCapabilities.Pipelining;
+
+				try {
+					await client.SendAsync (message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+				}
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public void TestDeliveryStatusNotificationWithHexEncode ()
+		{
+			var message = CreateEightBitMessage ();
+			message.MessageId = "123456789+=abc@名がドメイン.com";
+
+			message.To.Clear ();
+			message.To.Add (new MailboxAddress ("", "recipient@名がドメイン.com"));
+
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+dsn.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=HDRS\r\n", "comcast-mail-from.txt"));
+			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"));
+			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
+			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var client = new DsnSmtpClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				// disable pipelining
+				client.Capabilities &= ~SmtpCapabilities.Pipelining;
+
+				try {
+					client.Send (message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+				}
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async Task TestDeliveryStatusNotificationWithHexEncodeAsync ()
+		{
+			var message = CreateEightBitMessage ();
+			message.MessageId = "123456789+=abc@名がドメイン.com";
+
+			message.To.Clear ();
+			message.To.Add (new MailboxAddress ("", "recipient@名がドメイン.com"));
+
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+dsn.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=HDRS\r\n", "comcast-mail-from.txt"));
+			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
 			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
