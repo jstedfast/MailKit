@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D5001AA9-4C61-475F-8EA3-4C15949D849F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MimeKitLite", "submodules\MimeKit\MimeKit\MimeKitLite.csproj", "{23F999AF-CF50-42FF-A011-D56D68E60FB9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKitLite", "MailKit\MailKitLite.csproj", "{D6EBFBF3-5806-43A0-B3B3-02EF25C47A9C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23F999AF-CF50-42FF-A011-D56D68E60FB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23F999AF-CF50-42FF-A011-D56D68E60FB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23F999AF-CF50-42FF-A011-D56D68E60FB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23F999AF-CF50-42FF-A011-D56D68E60FB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6EBFBF3-5806-43A0-B3B3-02EF25C47A9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6EBFBF3-5806-43A0-B3B3-02EF25C47A9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6EBFBF3-5806-43A0-B3B3-02EF25C47A9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6EBFBF3-5806-43A0-B3B3-02EF25C47A9C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80311676-045A-4523-8BD6-AEAD1F21474C}
+	EndGlobalSection
+EndGlobal

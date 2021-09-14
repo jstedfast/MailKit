@@ -289,6 +289,10 @@ namespace MailKit.Net.Imap {
 			if (engine.State >= ImapEngineState.Selected)
 				throw new InvalidOperationException ("Compression must be enabled before selecting a folder.");
 
+#if MAILKIT_LITE
+			await Task.Delay (0).ConfigureAwait (false);
+			throw new NotSupportedException ("MailKitLite does not support the COMPRESS extension.");
+#else
 			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
 
@@ -304,6 +308,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			engine.Stream.Stream = new CompressedStream (engine.Stream.Stream);
+#endif
 		}
 
 		/// <summary>

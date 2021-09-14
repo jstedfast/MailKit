@@ -1,0 +1,275 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
+    <AssemblyTitle>MailKit</AssemblyTitle>
+    <VersionPrefix>2.15.0</VersionPrefix>
+    <Authors>Jeffrey Stedfast</Authors>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net45;net46;net47;net48;net50</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AssemblyName>MailKitLite</AssemblyName>
+    <PackageId>MailKitLite</PackageId>
+    <PackageTags>smtp;pop3;imap;mime;security;dkim;smime;s/mime;openpgp;pgp;mbox;mail;email;parser;tnef;net45;net46;net47;net48;net50;netstandard;netstandard2.0</PackageTags>
+    <PackageProjectUrl>https://github.com/jstedfast/MailKit</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/jstedfast/MailKit/blob/master/License.md</PackageLicenseUrl>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <RootNamespace>MailKit</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyOriginatorKeyFile>mailkit.snk</AssemblyOriginatorKeyFile>
+    <DefineConstants>$(DefineConstants);MAILKIT_LITE</DefineConstants>
+    <SignAssembly>true</SignAssembly>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And $(TargetFramework.StartsWith('net4')) ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5')) ">
+    <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
+  </PropertyGroup>
+
+  <!--ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
+    <Reference Include="System.Net" />
+  </ItemGroup-->
+
+  <ItemGroup>
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKitLite.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Net\SelectMode.cs;Security\KeyedHashAlgorithm.cs;Security\RandomNumberGenerator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Net\Imap\AsyncImapClient.cs" />
+    <Compile Include="Net\Imap\IImapClient.cs" />
+    <Compile Include="Net\Imap\IImapFolder.cs" />
+    <Compile Include="Net\Imap\ImapAuthenticationSecretDetector.cs" />
+    <Compile Include="Net\Imap\ImapCallbacks.cs" />
+    <Compile Include="Net\Imap\ImapCapabilities.cs" />
+    <Compile Include="Net\Imap\ImapClient.cs" />
+    <Compile Include="Net\Imap\ImapCommand.cs" />
+    <Compile Include="Net\Imap\ImapCommandException.cs" />
+    <Compile Include="Net\Imap\ImapCommandResponse.cs" />
+    <Compile Include="Net\Imap\ImapEncoding.cs" />
+    <Compile Include="Net\Imap\ImapEngine.cs" />
+    <Compile Include="Net\Imap\ImapEventGroup.cs" />
+    <Compile Include="Net\Imap\ImapFolder.cs" />
+    <Compile Include="Net\Imap\ImapFolderAnnotations.cs" />
+    <Compile Include="Net\Imap\ImapFolderConstructorArgs.cs" />
+    <Compile Include="Net\Imap\ImapFolderFetch.cs" />
+    <Compile Include="Net\Imap\ImapFolderFlags.cs" />
+    <Compile Include="Net\Imap\ImapFolderSearch.cs" />
+    <Compile Include="Net\Imap\ImapImplementation.cs" />
+    <Compile Include="Net\Imap\ImapProtocolException.cs" />
+    <Compile Include="Net\Imap\ImapResponseCode.cs" />
+    <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs" />
+    <Compile Include="Net\Imap\ImapStream.cs" />
+    <Compile Include="Net\Imap\ImapToken.cs" />
+    <Compile Include="Net\Imap\ImapUtils.cs" />
+    <Compile Include="Net\Pop3\AsyncPop3Client.cs" />
+    <Compile Include="Net\Pop3\IPop3Client.cs" />
+    <Compile Include="Net\Pop3\Pop3AuthenticationSecretDetector.cs" />
+    <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
+    <Compile Include="Net\Pop3\Pop3Client.cs" />
+    <Compile Include="Net\Pop3\Pop3Command.cs" />
+    <Compile Include="Net\Pop3\Pop3CommandException.cs" />
+    <Compile Include="Net\Pop3\Pop3Engine.cs" />
+    <Compile Include="Net\Pop3\Pop3Language.cs" />
+    <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
+    <Compile Include="Net\Pop3\Pop3Stream.cs" />
+    <Compile Include="Net\Proxy\HttpProxyClient.cs" />
+    <Compile Include="Net\Proxy\HttpsProxyClient.cs" />
+    <Compile Include="Net\Proxy\IProxyClient.cs" />
+    <Compile Include="Net\Proxy\ProxyClient.cs" />
+    <Compile Include="Net\Proxy\ProxyProtocolException.cs" />
+    <Compile Include="Net\Proxy\Socks4aClient.cs" />
+    <Compile Include="Net\Proxy\Socks4Client.cs" />
+    <Compile Include="Net\Proxy\Socks5Client.cs" />
+    <Compile Include="Net\Proxy\SocksClient.cs" />
+    <Compile Include="Net\Smtp\AsyncSmtpClient.cs" />
+    <Compile Include="Net\Smtp\ISmtpClient.cs" />
+    <Compile Include="Net\Smtp\SmtpAuthenticationSecretDetector.cs" />
+    <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
+    <Compile Include="Net\Smtp\SmtpClient.cs" />
+    <Compile Include="Net\Smtp\SmtpCommandException.cs" />
+    <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
+    <Compile Include="Net\Smtp\SmtpProtocolException.cs" />
+    <Compile Include="Net\Smtp\SmtpResponse.cs" />
+    <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
+    <Compile Include="Net\Smtp\SmtpStream.cs" />
+    <Compile Include="Net\IChannelBindingContext.cs" />
+    <Compile Include="Net\NetworkStream.cs" />
+    <Compile Include="Net\SocketUtils.cs" />
+    <Compile Include="Net\SslStream.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\AnnotationSearchQuery.cs" />
+    <Compile Include="Search\BinarySearchQuery.cs" />
+    <Compile Include="Search\DateSearchQuery.cs" />
+    <Compile Include="Search\FilterSearchQuery.cs" />
+    <Compile Include="Search\HeaderSearchQuery.cs" />
+    <Compile Include="Search\ISearchQueryOptimizer.cs" />
+    <Compile Include="Search\NumericSearchQuery.cs" />
+    <Compile Include="Search\OrderBy.cs" />
+    <Compile Include="Search\OrderByAnnotation.cs" />
+    <Compile Include="Search\OrderByType.cs" />
+    <Compile Include="Search\SearchOptions.cs" />
+    <Compile Include="Search\SearchQuery.cs" />
+    <Compile Include="Search\SearchResults.cs" />
+    <Compile Include="Search\SearchTerm.cs" />
+    <Compile Include="Search\SortOrder.cs" />
+    <Compile Include="Search\TextSearchQuery.cs" />
+    <Compile Include="Search\UidSearchQuery.cs" />
+    <Compile Include="Search\UnarySearchQuery.cs" />
+    <Compile Include="Security\Ntlm\BitConverterLE.cs" />
+    <Compile Include="Security\Ntlm\DES.cs" Condition=" $(TargetFramework.StartsWith('netstandard1.')) " />
+    <Compile Include="Security\Ntlm\HMACMD5.cs" Condition=" $(TargetFramework.StartsWith('netstandard1.')) " />
+    <Compile Include="Security\Ntlm\MD4.cs" />
+    <Compile Include="Security\Ntlm\NtlmAttribute.cs" />
+    <Compile Include="Security\Ntlm\NtlmAttributeValuePair.cs" />
+    <Compile Include="Security\Ntlm\NtlmFlags.cs" />
+    <Compile Include="Security\Ntlm\NtlmMessageBase.cs" />
+    <Compile Include="Security\Ntlm\NtlmSingleHostData.cs" />
+    <Compile Include="Security\Ntlm\NtlmTargetInfo.cs" />
+    <Compile Include="Security\Ntlm\NtlmUtils.cs" />
+    <Compile Include="Security\Ntlm\RC4.cs" />
+    <Compile Include="Security\Ntlm\Type1Message.cs" />
+    <Compile Include="Security\Ntlm\Type2Message.cs" />
+    <Compile Include="Security\Ntlm\Type3Message.cs" />
+    <Compile Include="Security\AuthenticationException.cs" />
+    <Compile Include="Security\SaslException.cs" />
+    <Compile Include="Security\SaslMechanism.cs" />
+    <Compile Include="Security\SaslMechanismAnonymous.cs" />
+    <Compile Include="Security\SaslMechanismCramMd5.cs" />
+    <Compile Include="Security\SaslMechanismDigestMd5.cs" />
+    <Compile Include="Security\SaslMechanismLogin.cs" />
+    <Compile Include="Security\SaslMechanismNtlm.cs" />
+    <Compile Include="Security\SaslMechanismOAuth2.cs" />
+    <Compile Include="Security\SaslMechanismOAuthBearer.cs" />
+    <Compile Include="Security\SaslMechanismPlain.cs" />
+    <Compile Include="Security\SaslMechanismScramBase.cs" />
+    <Compile Include="Security\SaslMechanismScramSha1.cs" />
+    <Compile Include="Security\SaslMechanismScramSha256.cs" />
+    <Compile Include="Security\SaslMechanismScramSha512.cs" />
+    <Compile Include="Security\SecureSocketOptions.cs" />
+    <Compile Include="Security\SslHandshakeException.cs" />
+    <Compile Include="AccessControl.cs" />
+    <Compile Include="AccessControlList.cs" />
+    <Compile Include="AccessRight.cs" />
+    <Compile Include="AccessRights.cs" />
+    <Compile Include="AlertEventArgs.cs" />
+    <Compile Include="Annotation.cs" />
+    <Compile Include="AnnotationAccess.cs" />
+    <Compile Include="AnnotationAttribute.cs" />
+    <Compile Include="AnnotationEntry.cs" />
+    <Compile Include="AnnotationsChangedEventArgs.cs" />
+    <Compile Include="AnnotationScope.cs" />
+    <Compile Include="AppendRequest.cs" />
+    <Compile Include="AuthenticatedEventArgs.cs" />
+    <Compile Include="BodyPart.cs" />
+    <Compile Include="BodyPartBasic.cs" />
+    <Compile Include="BodyPartCollection.cs" />
+    <Compile Include="BodyPartMessage.cs" />
+    <Compile Include="BodyPartMultipart.cs" />
+    <Compile Include="BodyPartText.cs" />
+    <Compile Include="BodyPartVisitor.cs" />
+    <Compile Include="CommandException.cs" />
+    <Compile Include="ConnectedEventArgs.cs" />
+    <Compile Include="DeliveryStatusNotification.cs" />
+    <Compile Include="DeliveryStatusNotificationType.cs" />
+    <Compile Include="DisconnectedEventArgs.cs" />
+    <Compile Include="Envelope.cs" />
+    <Compile Include="FetchRequest.cs" />
+    <Compile Include="FolderAccess.cs" />
+    <Compile Include="FolderAttributes.cs" />
+    <Compile Include="FolderCreatedEventArgs.cs" />
+    <Compile Include="FolderFeature.cs" />
+    <Compile Include="FolderNamespace.cs" />
+    <Compile Include="FolderNamespaceCollection.cs" />
+    <Compile Include="FolderNotFoundException.cs" />
+    <Compile Include="FolderNotOpenException.cs" />
+    <Compile Include="FolderQuota.cs" />
+    <Compile Include="FolderRenamedEventArgs.cs" />
+    <Compile Include="HeaderSet.cs" />
+    <Compile Include="IAuthenticationSecretDetector.cs" />
+    <Compile Include="IAppendRequest.cs" />
+    <Compile Include="IFetchRequest.cs" />
+    <Compile Include="IMailFolder.cs" />
+    <Compile Include="IMailFolderAppendExtensions.cs" />
+    <Compile Include="IMailFolderFetchExtensions.cs" />
+    <Compile Include="IMailFolderStoreExtensions.cs" />
+    <Compile Include="IMailService.cs" />
+    <Compile Include="IMailSpool.cs" />
+    <Compile Include="IMailStore.cs" />
+    <Compile Include="IMailTransport.cs" />
+    <Compile Include="IMessageSummary.cs" />
+    <Compile Include="IProtocolLogger.cs" />
+    <Compile Include="IReplaceRequest.cs" />
+    <Compile Include="IStoreFlagsRequest.cs" />
+    <Compile Include="IStoreLabelsRequest.cs" />
+    <Compile Include="IStoreRequest.cs" />
+    <Compile Include="ITransferProgress.cs" />
+    <Compile Include="MailFolder.cs" />
+    <Compile Include="MailService.cs" />
+    <Compile Include="MailSpool.cs" />
+    <Compile Include="MailStore.cs" />
+    <Compile Include="MailTransport.cs" />
+    <Compile Include="MessageEventArgs.cs" />
+    <Compile Include="MessageFlags.cs" />
+    <Compile Include="MessageFlagsChangedEventArgs.cs" />
+    <Compile Include="MessageLabelsChangedEventArgs.cs" />
+    <Compile Include="MessageNotFoundException.cs" />
+    <Compile Include="MessageSentEventArgs.cs" />
+    <Compile Include="MessageSorter.cs" />
+    <Compile Include="MessageSummary.cs" />
+    <Compile Include="MessageSummaryFetchedEventArgs.cs" />
+    <Compile Include="MessageSummaryItems.cs" />
+    <Compile Include="MessagesVanishedEventArgs.cs" />
+    <Compile Include="MessageThread.cs" />
+    <Compile Include="MessageThreader.cs" />
+    <Compile Include="Metadata.cs" />
+    <Compile Include="MetadataChangedEventArgs.cs" />
+    <Compile Include="MetadataCollection.cs" />
+    <Compile Include="MetadataOptions.cs" />
+    <Compile Include="MetadataTag.cs" />
+    <Compile Include="ModSeqChangedEventArgs.cs" />
+    <Compile Include="NullProtocolLogger.cs" />
+    <Compile Include="ProgressStream.cs" />
+    <Compile Include="ProtocolException.cs" />
+    <Compile Include="ProtocolLogger.cs" />
+    <Compile Include="ReplaceRequest.cs" />
+    <Compile Include="ServiceNotAuthenticatedException.cs" />
+    <Compile Include="ServiceNotConnectedException.cs" />
+    <Compile Include="SpecialFolder.cs" />
+    <Compile Include="StatusItems.cs" />
+    <Compile Include="StoreAction.cs" />
+    <Compile Include="StoreFlagsRequest.cs" />
+    <Compile Include="StoreLabelsRequest.cs" />
+    <Compile Include="ThreadingAlgorithm.cs" />
+    <Compile Include="UniqueId.cs" />
+    <Compile Include="UniqueIdMap.cs" />
+    <Compile Include="UniqueIdRange.cs" />
+    <Compile Include="UniqueIdSet.cs" />
+    <Compile Include="UriExtensions.cs" />
+    <Compile Include="WebAlertEventArgs.cs" />
+  </ItemGroup>
+
+</Project>

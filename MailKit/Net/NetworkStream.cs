@@ -261,8 +261,10 @@ namespace MailKit.Net
 
 		public static NetworkStream Get (Stream stream)
 		{
+#if !MAILKIT_LITE
 			if (stream is CompressedStream compressed)
 				stream = compressed.InnerStream;
+#endif
 
 			if (stream is SslStream ssl)
 				stream = ssl.InnerStream;

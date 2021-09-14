@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata minClientVersion="2.12">
+    <id>MailKitLite</id>
+    <version>2.15.0</version>
+    <title>MailKit</title>
+    <authors>Jeffrey Stedfast</authors>
+    <owners>Jeffrey Stedfast</owners>
+    <license type="expression">MIT</license>
+    <projectUrl>http://www.mimekit.net</projectUrl>
+    <repository type="git" url="https://github.com/jstedfast/MailKit" />
+    <icon>icons\mailkit-50.png</icon>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>MailKit is an Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.
+
+Features include:
+* HTTP, Socks4, Socks4a and Socks5 proxy support.
+* SASL Authentication via CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, OAUTHBEARER, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, SCRAM-SHA-512 and XOAUTH2.
+* A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME, ENHANCEDSTATUSCODES, SIZE, DSN, PIPELINING and SMTPUTF8.
+* A fully-cancellable Pop3Client with support for STLS, UIDL, APOP, PIPELINING, UTF8, and LANG.
+* A fully-cancellable ImapClient with support for ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, WITHIN, ENABLE, QRESYNC, SORT, THREAD, ANNOTATE, LIST-EXTENDED, ESORT, METADATA / METADATA-SERVER, NOTIFY, FILTERS, LIST-STATUS, SORT=DISPLAY, SPECIAL-USE / CREATE-SPECIAL-USE, SEARCH=FUZZY, MOVE, UTF8=ACCEPT / UTF8=ONLY, LITERAL-, APPENDLIMIT, STATUS=SIZE, OBJECTID, REPLACE, SAVEDATE, XLIST, and X-GM-EXT1.
+* Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
+* Asynchronous versions of all methods that hit the network.
+* S/MIME, OpenPGP, DKIM and ARC support via MimeKit.
+* Microsoft TNEF support via MimeKit.
+    </description>
+    <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
+    <releaseNotes>
+* Use DebugType=full for .NET Framework v4.x. (issue [#1239](https://github.com/jstedfast/MailKit/issues/1239))
+* Updated GMail SSL certificate serial numbers and fingerprints.
+* Small NTLM code improvements.
+
+API Changes Since 2.0.x:
+
+* Obsoleted SearchQuery.HasCustomFlags() and SearchQuery.DoesNotHaveCustomFlags(). These are now SearchQuery.HasKeywords() and SearchQuery.NotKeywords(), respectively.
+* Obsoleted SearchQuery.DoesNotHaveFlags() in favor of SearchQuery.NotFlags().
+* Obsoleted the IMessageSummary.UserFlags property in favor of IMessageSummary.Keywords.
+* Obsoleted the MessageFlagsChangedEventArgs.UserFlags property in favor of MessageFlagsChangedEventArgs.Keywords.
+* All IMailFolder.Fetch and IMailFolder.FetchAsync methods that took a HashSet&lt;string&gt; userFlags argument now take an IEnumerable&lt;string&gt; keywords argument. Note: this only affects you if your code used named method parameters (e.g. userFlags: myUserFlags).
+
+Note to users upgrading from MailKit 1.x:
+
+In order to authenticate using the XOAUTH2 SASL mechanism, you must now use the following approach:
+
+client.Authenticate (new SaslMechanismOAuth2 (username, auth_token));
+    </releaseNotes>
+    <copyright>.NET Foundation and Contributors</copyright>
+    <language>en-US</language>
+    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net45 net46 net47 net48 net50 netstandard netstandard2.0</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.7" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.7" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.8" />
+      <frameworkAssembly assemblyName="System" targetFramework="monoandroid" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="monoandroid" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="monoandroid" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="monoandroid" />
+      <frameworkAssembly assemblyName="System" targetFramework="xamarinios" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="xamarinios" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="xamarinios" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="xamarinios" />
+    </frameworkAssemblies>
+    <dependencies>
+      <group targetFramework="net45">
+        <dependency id="MimeKit" version="2.15.0" />
+      </group>
+      <group targetFramework="net46">
+        <dependency id="MimeKit" version="2.15.0" />
+      </group>
+      <group targetFramework="net47">
+        <dependency id="MimeKit" version="2.15.0" />
+      </group>
+      <group targetFramework="net48">
+        <dependency id="MimeKit" version="2.15.0" />
+      </group>
+      <group targetFramework="net50">
+        <dependency id="MimeKit" version="2.15.0" />
+      </group>
+      <group targetFramework="netstandard2.0">
+        <dependency id="MimeKit" version="2.15.0" />
+      </group>
+      <group targetFramework="netstandard2.1">
+        <dependency id="MimeKit" version="2.15.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.dll" target="lib\netstandard2.1\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.pdb" target="lib\netstandard2.1\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.xml" target="lib\netstandard2.1\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net45\MailKit.pdb" target="lib\net45\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net46\MailKit.dll" target="lib\net46\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net46\MailKit.pdb" target="lib\net46\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\net46\MailKit.xml" target="lib\net46\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net47\MailKit.dll" target="lib\net47\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net47\MailKit.pdb" target="lib\net47\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\net47\MailKit.xml" target="lib\net47\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net48\MailKit.dll" target="lib\net48\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net48\MailKit.pdb" target="lib\net48\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\net48\MailKit.xml" target="lib\net48\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net50\MailKit.dll" target="lib\net50\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net50\MailKit.pdb" target="lib\net50\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\net50\MailKit.xml" target="lib\net50\MailKit.xml" />
+    <file src="mailkit-50.png" target="icons\mailkit-50.png" />
+  </files>
+</package>
