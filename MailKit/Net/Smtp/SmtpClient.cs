@@ -911,10 +911,7 @@ namespace MailKit.Net.Smtp {
 			string challenge;
 			string command;
 
-			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
-				if (!AuthenticationMechanisms.Contains (authmech))
-					continue;
-
+			foreach (var authmech in SaslMechanism.Rank (AuthenticationMechanisms)) {
 				var cred = credentials.GetCredential (uri, authmech);
 
 				if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)

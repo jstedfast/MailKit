@@ -1117,10 +1117,7 @@ namespace MailKit.Net.Imap {
 			SaslMechanism sasl;
 			string id;
 
-			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
-				if (!engine.AuthenticationMechanisms.Contains (authmech))
-					continue;
-
+			foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
 				cred = credentials.GetCredential (uri, authmech);
 
 				if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)

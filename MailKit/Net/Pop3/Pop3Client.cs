@@ -843,11 +843,8 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
-				foreach (var authmech in SaslMechanism.AuthMechanismRank) {
+				foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
 					SaslMechanism sasl;
-
-					if (!engine.AuthenticationMechanisms.Contains (authmech))
-						continue;
 
 					cred = credentials.GetCredential (saslUri, authmech);
 

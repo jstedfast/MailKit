@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Authentication.ExtendedProtection;
 
@@ -59,9 +60,7 @@ namespace MailKit.Security {
 		/// missing functionality to make it 100% compatible with all NTLM server
 		/// implementations.</note>
 		/// </remarks>
-		public static readonly string[] AuthMechanismRank = {
-			"SCRAM-SHA-512-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-1", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN", "NTLM"
-		};
+		static readonly string[] RankedAuthenticationMechanisms;
 		static readonly bool md5supported;
 
 		static SaslMechanism ()
@@ -72,6 +71,50 @@ namespace MailKit.Security {
 			} catch {
 				md5supported = false;
 			}
+
+			// Note: It's probably arguable that NTLM is more secure than SCRAM but the odds of a server supporting both is probably low.
+			var supported = new List<string> {
+				"SCRAM-SHA-512",
+				"SCRAM-SHA-256",
+				"SCRAM-SHA-1",
+				"NTLM"
+			};
+			if (md5supported) {
+				supported.Add ("DIGEST-MD5");
+				supported.Add ("CRAM-MD5");
+			}
+			supported.Add ("PLAIN");
+			supported.Add ("LOGIN");
+
+			RankedAuthenticationMechanisms = supported.ToArray ();
+		}
+
+		/// <summary>
+		/// Rank authentication mechanisms in order of security.
+		/// </summary>
+		/// <remarks>
+		/// <para>Ranks authentication machisms in order of security.</para>
+		/// </remarks>
+		/// <param name="authenticationMechanisms">The server-supported authentication mechanisms.</param>
+		/// <returns>The supported authentication mechanisms in ranked order.</returns>
+		internal static IEnumerable<string> Rank (HashSet<string> authenticationMechanisms)
+		{
+			foreach (var mechanism in RankedAuthenticationMechanisms) {
+				if (mechanism.StartsWith ("SCRAM-SHA", StringComparison.Ordinal)) {
+					var plus = mechanism + "-PLUS";
+
+					if (authenticationMechanisms.Contains (plus)) {
+						// Note: If the server supports SCRAM-SHA-#-PLUS, we opt for the -PLUS variant and do not include the non-PLUS variant.
+						yield return plus;
+						continue;
+					}
+				}
+
+				if (authenticationMechanisms.Contains (mechanism))
+					yield return mechanism;
+			}
+
+			yield break;
 		}
 
 		/// <summary>
