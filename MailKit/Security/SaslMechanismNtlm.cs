@@ -272,7 +272,9 @@ namespace MailKit.Security {
 
 			if (AllowChannelBinding && type2.TargetInfo != null) {
 				// Only bother with attempting to channel-bind if the CHALLENGE_MESSAGE's TargetInfo is not NULL.
-				negotiatedChannelBinding = TryGetChannelBindingToken (ChannelBindingKind.Endpoint, out channelBindingToken);
+				// Not sure which channel-binding types are supported by NTLM, but I am told that supposedly the
+				// System.Net.Mail.SmtpClient uses tls-unique, so we'll go with that...
+				negotiatedChannelBinding = TryGetChannelBindingToken (ChannelBindingKind.Unique, out channelBindingToken);
 			}
 
 			type3.ComputeNtlmV2 (ServicePrincipalName, IsUnverifiedServicePrincipalName, channelBindingToken);
