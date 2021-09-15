@@ -705,7 +705,7 @@ namespace UnitTests.Security {
 			var timestamp = DateTime.FromFileTimeUtc (0).Ticks;
 			var uri = new Uri ("imap://elwood.innosoft.com");
 			var sasl = new SaslMechanismNtlm ("User", "Password") {
-				ChannelBindingContext = new ChannelBindingContext (ChannelBindingKind.Endpoint, uri.ToString ()),
+				ChannelBindingContext = new ChannelBindingContext (ChannelBindingKind.Unique, uri.ToString ()),
 				IsUnverifiedServicePrincipalName = false,
 				ServicePrincipalName = null,
 				AllowChannelBinding = true,

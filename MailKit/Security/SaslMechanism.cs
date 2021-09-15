@@ -95,7 +95,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// <para>Ranks authentication machisms in order of security.</para>
 		/// </remarks>
-		/// <param name="authenticationMechanisms">The server-supported authentication mechanisms.</param>
+		/// <param name="authenticationMechanisms">The authentication mechanisms supported by the server.</param>
 		/// <returns>The supported authentication mechanisms in ranked order.</returns>
 		internal static IEnumerable<string> Rank (HashSet<string> authenticationMechanisms)
 		{
