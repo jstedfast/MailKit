@@ -1000,7 +1000,13 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("AUTHENTICATE {0}", mechanism.MechanismName);
 
 			if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && mechanism.SupportsInitialResponse) {
-				var ir = mechanism.Challenge (null);
+				string ir;
+
+				if (doAsync)
+					ir = await mechanism.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
+				else
+					ir = mechanism.Challenge (null, cancellationToken);
+
 				command += " " + ir + "\r\n";
 			} else {
 				command += "\r\n";
@@ -1008,7 +1014,13 @@ namespace MailKit.Net.Imap {
 
 			ic = engine.QueueCommand (cancellationToken, null, command);
 			ic.ContinuationHandler = async (imap, cmd, text, xdoAsync) => {
-				var challenge = mechanism.Challenge (text);
+				string challenge;
+
+				if (xdoAsync)
+					challenge = await mechanism.ChallengeAsync (text, cmd.CancellationToken).ConfigureAwait (false);
+				else
+					challenge = mechanism.Challenge (text, cmd.CancellationToken);
+
 				var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 
 				if (xdoAsync) {
@@ -1131,7 +1143,13 @@ namespace MailKit.Net.Imap {
 				var command = string.Format ("AUTHENTICATE {0}", sasl.MechanismName);
 
 				if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && sasl.SupportsInitialResponse) {
-					var ir = sasl.Challenge (null);
+					string ir;
+
+					if (doAsync)
+						ir = await sasl.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
+					else
+						ir = sasl.Challenge (null, cancellationToken);
+
 					command += " " + ir + "\r\n";
 				} else {
 					command += "\r\n";
@@ -1139,7 +1157,13 @@ namespace MailKit.Net.Imap {
 
 				ic = engine.QueueCommand (cancellationToken, null, command);
 				ic.ContinuationHandler = async (imap, cmd, text, xdoAsync) => {
-					var challenge = sasl.Challenge (text);
+					string challenge;
+
+					if (xdoAsync)
+						challenge = await sasl.ChallengeAsync (text, cmd.CancellationToken).ConfigureAwait (false);
+					else
+						challenge = sasl.Challenge (text, cmd.CancellationToken);
+
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 
 					if (xdoAsync) {

@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Threading;
 
 #if NETSTANDARD1_3 || NETSTANDARD1_6
 using MD5 = MimeKit.Cryptography.MD5;
@@ -100,13 +101,17 @@ namespace MailKit.Security {
 		/// <param name="token">The server's challenge token.</param>
 		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
 		/// <param name="length">The length of the server's challenge.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.NotSupportedException">
 		/// The SASL mechanism does not support SASL-IR.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length)
+		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
 		{
 			if (token == null)
 				throw new NotSupportedException ("CRAM-MD5 does not support SASL-IR.");

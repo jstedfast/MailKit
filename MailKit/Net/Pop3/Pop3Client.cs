@@ -654,7 +654,12 @@ namespace MailKit.Net.Pop3 {
 			async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
 			{
 				while (pc.Status == Pop3CommandStatus.Continue && !mechanism.IsAuthenticated) {
-					var challenge = mechanism.Challenge (text);
+					string challenge;
+
+					if (doAsync)
+						challenge = await mechanism.ChallengeAsync (text, pc.CancellationToken).ConfigureAwait (false);
+					else
+						challenge = mechanism.Challenge (text, pc.CancellationToken);
 
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 					string response;

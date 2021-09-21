@@ -791,7 +791,10 @@ namespace MailKit.Net.Smtp {
 
 			// send an initial challenge if the mechanism supports it
 			if (mechanism.SupportsInitialResponse) {
-				challenge = mechanism.Challenge (null);
+				if (doAsync)
+					challenge = await mechanism.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
+				else
+					challenge = mechanism.Challenge (null, cancellationToken);
 				command = string.Format ("AUTH {0} {1}", mechanism.MechanismName, challenge);
 			} else {
 				command = string.Format ("AUTH {0}", mechanism.MechanismName);
@@ -807,7 +810,11 @@ namespace MailKit.Net.Smtp {
 
 				try {
 					while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
-						challenge = mechanism.Challenge (response.Response);
+						if (doAsync)
+							challenge = await mechanism.ChallengeAsync (response.Response, cancellationToken).ConfigureAwait (false);
+						else
+							challenge = mechanism.Challenge (response.Response, cancellationToken);
+
 						response = await SendCommandAsync (challenge, doAsync, cancellationToken).ConfigureAwait (false);
 					}
 
@@ -926,7 +933,11 @@ namespace MailKit.Net.Smtp {
 
 				// send an initial challenge if the mechanism supports it
 				if (sasl.SupportsInitialResponse) {
-					challenge = sasl.Challenge (null);
+					if (doAsync)
+						challenge = await sasl.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
+					else
+						challenge = sasl.Challenge (null, cancellationToken);
+
 					command = string.Format ("AUTH {0} {1}", authmech, challenge);
 				} else {
 					command = string.Format ("AUTH {0}", authmech);
@@ -946,7 +957,11 @@ namespace MailKit.Net.Smtp {
 							if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
 								break;
 
-							challenge = sasl.Challenge (response.Response);
+							if (doAsync)
+								challenge = await sasl.ChallengeAsync (response.Response, cancellationToken).ConfigureAwait (false);
+							else
+								challenge = sasl.Challenge (response.Response, cancellationToken);
+
 							response = await SendCommandAsync (challenge, doAsync, cancellationToken).ConfigureAwait (false);
 						}
 

@@ -27,6 +27,8 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Authentication.ExtendedProtection;
@@ -45,7 +47,7 @@ namespace MailKit.Security {
 	/// Authenticating via a SASL mechanism may be a multi-step process.
 	/// To determine if the mechanism has completed the necessary steps
 	/// to authentication, check the <see cref="IsAuthenticated"/> after
-	/// each call to <see cref="Challenge(string)"/>.
+	/// each call to <see cref="Challenge(string,CancellationToken)"/>.
 	/// </remarks>
 	public abstract class SaslMechanism
 	{
@@ -283,6 +285,31 @@ namespace MailKit.Security {
 			return ChannelBindingContext.TryGetChannelBindingToken (kind, out token);
 		}
 
+		static byte[] Base64Decode (string token, out int length)
+		{
+			byte[] decoded = null;
+
+			length = 0;
+
+			if (!string.IsNullOrEmpty (token)) {
+				try {
+					decoded = Convert.FromBase64String (token);
+					length = decoded.Length;
+				} catch (FormatException) {
+				}
+			}
+
+			return decoded;
+		}
+
+		static string Base64Encode (byte[] challenge)
+		{
+			if (challenge == null || challenge.Length == 0)
+				return string.Empty;
+
+			return Convert.ToBase64String (challenge);
+		}
+
 		/// <summary>
 		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
@@ -293,16 +320,17 @@ namespace MailKit.Security {
 		/// <param name="token">The server's challenge token.</param>
 		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
 		/// <param name="length">The length of the server's challenge.</param>
-		/// <exception cref="System.InvalidOperationException">
-		/// The SASL mechanism is already authenticated.
-		/// </exception>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.NotSupportedException">
-		/// THe SASL mechanism does not support SASL-IR.
+		/// The SASL mechanism does not support SASL-IR.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected abstract byte[] Challenge (byte[] token, int startIndex, int length);
+		protected abstract byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Decode the base64-encoded server challenge and return the next challenge response encoded in base64.
@@ -312,34 +340,79 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <returns>The next base64-encoded challenge response.</returns>
 		/// <param name="token">The server's base64-encoded challenge token.</param>
-		/// <exception cref="System.InvalidOperationException">
-		/// The SASL mechanism is already authenticated.
-		/// </exception>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.NotSupportedException">
-		/// THe SASL mechanism does not support SASL-IR.
+		/// The SASL mechanism does not support SASL-IR.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		public string Challenge (string token)
+		public string Challenge (string token, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			byte[] decoded = null;
-			int length = 0;
+			cancellationToken.ThrowIfCancellationRequested ();
 
-			if (token != null) {
-				try {
-					decoded = Convert.FromBase64String (token.Trim ());
-					length = decoded.Length;
-				} catch (FormatException) {
-				}
-			}
+			byte[] decoded = Base64Decode (token?.Trim (), out int length);
 
-			var challenge = Challenge (decoded, 0, length);
+			var challenge = Challenge (decoded, 0, length, cancellationToken);
 
-			if (challenge == null || challenge.Length == 0)
-				return string.Empty;
+			return Base64Encode (challenge);
+		}
 
-			return Convert.ToBase64String (challenge);
+		/// <summary>
+		/// Asynchronously parse the server's challenge token and return the next challenge response.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously parses the server's challenge token and returns the next challenge response.
+		/// </remarks>
+		/// <returns>The next challenge response.</returns>
+		/// <param name="token">The server's challenge token.</param>
+		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
+		/// <param name="length">The length of the server's challenge.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.NotSupportedException">
+		/// The SASL mechanism does not support SASL-IR.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="SaslException">
+		/// An error has occurred while parsing the server's challenge token.
+		/// </exception>
+		protected virtual Task<byte[]> ChallengeAsync (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+		{
+			return Task.FromResult (Challenge (token, startIndex, length, cancellationToken));
+		}
+
+		/// <summary>
+		/// Asynchronously decode the base64-encoded server challenge and return the next challenge response encoded in base64.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
+		/// </remarks>
+		/// <returns>The next base64-encoded challenge response.</returns>
+		/// <param name="token">The server's base64-encoded challenge token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.NotSupportedException">
+		/// The SASL mechanism does not support SASL-IR.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="SaslException">
+		/// An error has occurred while parsing the server's challenge token.
+		/// </exception>
+		public async Task<string> ChallengeAsync (string token, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			byte[] decoded = Base64Decode (token?.Trim (), out int length);
+
+			var challenge = await ChallengeAsync (decoded, 0, length, cancellationToken).ConfigureAwait (false);
+
+			return Base64Encode (challenge);
 		}
 
 		/// <summary>
