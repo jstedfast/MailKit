@@ -291,7 +291,7 @@ namespace MailKit.Security {
 
 			length = 0;
 
-			if (!string.IsNullOrEmpty (token)) {
+			if (token != null) {
 				try {
 					decoded = Convert.FromBase64String (token);
 					length = decoded.Length;
