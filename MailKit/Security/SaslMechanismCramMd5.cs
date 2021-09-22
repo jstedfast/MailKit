@@ -123,20 +123,17 @@ namespace MailKit.Security {
 			var password = Encoding.UTF8.GetBytes (Credentials.Password);
 			var ipad = new byte[64];
 			var opad = new byte[64];
-			byte[] digest;
+			byte[] digest, passwd;
 
 			if (password.Length > 64) {
-				byte[] checksum;
-
 				using (var md5 = MD5.Create ())
-					checksum = md5.ComputeHash (password);
-
-				Array.Copy (checksum, ipad, checksum.Length);
-				Array.Copy (checksum, opad, checksum.Length);
+					passwd = md5.ComputeHash (password);
 			} else {
-				Array.Copy (password, ipad, password.Length);
-				Array.Copy (password, opad, password.Length);
+				passwd = password;
 			}
+
+			Array.Copy (passwd, ipad, passwd.Length);
+			Array.Copy (passwd, opad, passwd.Length);
 
 			Array.Clear (password, 0, password.Length);
 
