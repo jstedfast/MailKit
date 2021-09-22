@@ -276,6 +276,9 @@ namespace MailKit.Security.Ntlm {
 					// If there is an AV_PAIR structure (section 2.2.2.1) with the AvId field set to MsvAvFlags, then in the Value field, set bit 0x2 to 1.
 					// Else add an AV_PAIR structure and set the AvId field to MsvAvFlags and the Value field bit 0x2 to 1.
 					targetInfo.Flags = avFlags |= 0x2;
+
+					// Temporarily set the MIC to Z16.
+					Mic = Z16;
 				}
 
 				// If ClientSuppliedTargetName (section 3.1.1.2) is not NULL
