@@ -46,8 +46,8 @@ namespace MailKit.Security {
 			Challenge
 		}
 
+		NtlmNegotiateMessage negotiate;
 		bool negotiatedChannelBinding;
-		Type1Message type1;
 		LoginState state;
 
 		/// <summary>
@@ -248,7 +248,7 @@ namespace MailKit.Security {
 
 			switch (state) {
 			case LoginState.Negotiate:
-				message = type1 = new Type1Message (domain, Workstation, OSVersion);
+				message = negotiate = new NtlmNegotiateMessage (domain, Workstation, OSVersion);
 				state = LoginState.Challenge;
 				break;
 			case LoginState.Challenge:
@@ -261,30 +261,30 @@ namespace MailKit.Security {
 			return message?.Encode ();
 		}
 
-		NtlmMessageBase GetChallengeResponse (string userName, string password, byte[] token, int startIndex, int length)
+		NtlmAuthenticateMessage GetChallengeResponse (string userName, string password, byte[] token, int startIndex, int length)
 		{
-			var type2 = new Type2Message (token, startIndex, length);
-			var type3 = new Type3Message (type1, type2, userName, password, Workstation) {
+			var challenge = new NtlmChallengeMessage (token, startIndex, length);
+			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, userName, password, Workstation) {
 				ClientChallenge = Nonce,
 				Timestamp = Timestamp
 			};
 			byte[] channelBindingToken = null;
 
-			if (AllowChannelBinding && type2.TargetInfo != null) {
+			if (AllowChannelBinding && challenge.TargetInfo != null) {
 				// Only bother with attempting to channel-bind if the CHALLENGE_MESSAGE's TargetInfo is not NULL.
 				// Not sure which channel-binding types are supported by NTLM, but I am told that supposedly the
 				// System.Net.Mail.SmtpClient uses tls-unique, so we'll go with that...
 				negotiatedChannelBinding = TryGetChannelBindingToken (ChannelBindingKind.Endpoint, out channelBindingToken);
 			}
 
-			type3.ComputeNtlmV2 (ServicePrincipalName, IsUnverifiedServicePrincipalName, channelBindingToken);
+			authenticate.ComputeNtlmV2 (ServicePrincipalName, IsUnverifiedServicePrincipalName, channelBindingToken);
 
 			if (channelBindingToken != null)
 				Array.Clear (channelBindingToken, 0, channelBindingToken.Length);
 
-			type1 = null;
+			negotiate = null;
 
-			return type3;
+			return authenticate;
 		}
 
 		/// <summary>
@@ -297,7 +297,7 @@ namespace MailKit.Security {
 		{
 			negotiatedChannelBinding = false;
 			state = LoginState.Negotiate;
-			type1 = null;
+			negotiate = null;
 			base.Reset ();
 		}
 	}

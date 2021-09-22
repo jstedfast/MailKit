@@ -1,5 +1,5 @@
 ﻿//
-// Type1Message.cs
+// NtlmNegotiateMessage.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -30,14 +30,14 @@ using System;
 using System.Text;
 
 namespace MailKit.Security.Ntlm {
-	class Type1Message : NtlmMessageBase
+	class NtlmNegotiateMessage : NtlmMessageBase
 	{
 		// System.Net.Mail seems to default to:           NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.NegotiateVersion | NtlmFlags.Negotiate128
 		internal static readonly NtlmFlags DefaultFlags = NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.Negotiate128;
 
 		byte[] cached;
 
-		public Type1Message (NtlmFlags flags, string domain, string workstation, Version osVersion = null) : base (1)
+		public NtlmNegotiateMessage (NtlmFlags flags, string domain, string workstation, Version osVersion = null) : base (1)
 		{
 			Flags = flags & ~(NtlmFlags.NegotiateDomainSupplied | NtlmFlags.NegotiateWorkstationSupplied | NtlmFlags.NegotiateVersion);
 
@@ -66,11 +66,11 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		public Type1Message (string domain = null, string workstation = null, Version osVersion = null) : this (DefaultFlags, domain, workstation, osVersion)
+		public NtlmNegotiateMessage (string domain = null, string workstation = null, Version osVersion = null) : this (DefaultFlags, domain, workstation, osVersion)
 		{
 		}
 
-		public Type1Message (byte[] message, int startIndex, int length) : base (1)
+		public NtlmNegotiateMessage (byte[] message, int startIndex, int length) : base (1)
 		{
 			Decode (message, startIndex, length);
 

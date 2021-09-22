@@ -205,7 +205,7 @@ namespace MailKit.Security.Ntlm {
 			return responseKey;
 		}
 
-		public static void ComputeNtlmV2 (Type2Message type2, string domain, string userName, string password, byte[] targetInfo, byte[] clientChallenge, long? time, out byte[] ntChallengeResponse, out byte[] lmChallengeResponse, out byte[] sessionBaseKey)
+		public static void ComputeNtlmV2 (NtlmChallengeMessage type2, string domain, string userName, string password, byte[] targetInfo, byte[] clientChallenge, long? time, out byte[] ntChallengeResponse, out byte[] lmChallengeResponse, out byte[] sessionBaseKey)
 		{
 			if (userName.Length == 0 && password.Length == 0) {
 				// Special case for anonymous authentication

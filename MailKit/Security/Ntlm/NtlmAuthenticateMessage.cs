@@ -1,5 +1,5 @@
 ﻿//
-// Type3Message.cs
+// NtlmAuthenticateMessage.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -30,21 +30,21 @@ using System;
 using System.Text;
 
 namespace MailKit.Security.Ntlm {
-	class Type3Message : NtlmMessageBase
+	class NtlmAuthenticateMessage : NtlmMessageBase
 	{
 		static readonly byte[] Z16 = new byte[16];
 
-		readonly Type1Message type1;
-		readonly Type2Message type2;
+		readonly NtlmNegotiateMessage negotiate;
+		readonly NtlmChallengeMessage challenge;
 		byte[] clientChallenge;
 
-		public Type3Message (Type1Message type1, Type2Message type2, string userName, string password, string workstation) : base (3)
+		public NtlmAuthenticateMessage (NtlmNegotiateMessage negotiate, NtlmChallengeMessage challenge, string userName, string password, string workstation) : base (3)
 		{
-			if (type1 == null)
-				throw new ArgumentNullException (nameof (type1));
+			if (negotiate == null)
+				throw new ArgumentNullException (nameof (negotiate));
 
-			if (type2 == null)
-				throw new ArgumentNullException (nameof (type2));
+			if (challenge == null)
+				throw new ArgumentNullException (nameof (challenge));
 
 			if (userName == null)
 				throw new ArgumentNullException (nameof (userName));
@@ -53,15 +53,15 @@ namespace MailKit.Security.Ntlm {
 				throw new ArgumentNullException (nameof (password));
 
 			clientChallenge = NtlmUtils.NONCE (8);
-			this.type1 = type1;
-			this.type2 = type2;
+			this.negotiate = negotiate;
+			this.challenge = challenge;
 
-			if ((type2.Flags & NtlmFlags.TargetTypeDomain) != 0) {
+			if ((challenge.Flags & NtlmFlags.TargetTypeDomain) != 0) {
 				// The server is domain-joined, so the TargetName will be the domain.
-				Domain = type2.TargetName;
+				Domain = challenge.TargetName;
 			} else {
 				// The server is not domain-joined, so the TargetName will be the machine name of the server.
-				Domain = type2.TargetInfo?.DomainName;
+				Domain = challenge.TargetInfo?.DomainName;
 
 				// TODO: throw if TargetInfo is null?
 			}
@@ -71,7 +71,7 @@ namespace MailKit.Security.Ntlm {
 			Password = password;
 
 			// Use only the features supported by both the client and server.
-			Flags = type1.Flags & type2.Flags;
+			Flags = negotiate.Flags & challenge.Flags;
 
 			// If the client and server both support NEGOTIATE_UNICODE, disable NEGOTIATE_OEM.
 			if ((Flags & NtlmFlags.NegotiateUnicode) != 0)
@@ -87,21 +87,21 @@ namespace MailKit.Security.Ntlm {
 				Flags &= ~NtlmFlags.NegotiateKeyExchange;
 
 			// If we had RequestTarget in our initial NEGOTIATE_MESSAGE, include it again in this message(?)
-			if ((type1.Flags & NtlmFlags.RequestTarget) != 0)
+			if ((negotiate.Flags & NtlmFlags.RequestTarget) != 0)
 				Flags |= NtlmFlags.RequestTarget;
 
 			// If NEGOTIATE_VERSION is set, grab the OSVersion from our original negotiate message.
 			if ((Flags & NtlmFlags.NegotiateVersion) != 0)
-				OSVersion = type1.OSVersion ?? OSVersion;
+				OSVersion = negotiate.OSVersion ?? OSVersion;
 		}
 
-		public Type3Message (byte[] message, int startIndex, int length) : base (3)
+		public NtlmAuthenticateMessage (byte[] message, int startIndex, int length) : base (3)
 		{
 			Decode (message, startIndex, length);
-			type2 = null;
+			challenge = null;
 		}
 
-		~Type3Message ()
+		~NtlmAuthenticateMessage ()
 		{
 			if (clientChallenge != null)
 				Array.Clear (clientChallenge, 0, clientChallenge.Length);
@@ -265,14 +265,14 @@ namespace MailKit.Security.Ntlm {
 			int avFlags = 0;
 
 			// If the CHALLENGE_MESSAGE contains a TargetInfo field
-			if (type2.TargetInfo != null) {
-				type2.TargetInfo.CopyTo (targetInfo);
+			if (challenge.TargetInfo != null) {
+				challenge.TargetInfo.CopyTo (targetInfo);
 
 				if (targetInfo.Flags.HasValue)
 					avFlags = targetInfo.Flags.Value;
 
 				// If the CHALLENGE_MESSAGE TargetInfo field (section 2.2.1.2) has an MsvAvTimestamp present, the client SHOULD provide a MIC.
-				if (type2.TargetInfo?.Timestamp != null) {
+				if (challenge.TargetInfo?.Timestamp != null) {
 					// If there is an AV_PAIR structure (section 2.2.2.1) with the AvId field set to MsvAvFlags, then in the Value field, set bit 0x2 to 1.
 					// Else add an AV_PAIR structure and set the AvId field to MsvAvFlags and the Value field bit 0x2 to 1.
 					targetInfo.Flags = avFlags |= 0x2;
@@ -309,7 +309,7 @@ namespace MailKit.Security.Ntlm {
 			var encodedTargetInfo = targetInfo.Encode ((Flags & NtlmFlags.NegotiateUnicode) != 0);
 
 			// Note: For NTLMv2, the sessionBaseKey is the same as the keyExchangeKey.
-			NtlmUtils.ComputeNtlmV2 (type2, Domain, UserName, Password, encodedTargetInfo, clientChallenge, Timestamp, out var ntChallengeResponse, out var lmChallengeResponse, out var keyExchangeKey);
+			NtlmUtils.ComputeNtlmV2 (challenge, Domain, UserName, Password, encodedTargetInfo, clientChallenge, Timestamp, out var ntChallengeResponse, out var lmChallengeResponse, out var keyExchangeKey);
 
 			NtChallengeResponse = ntChallengeResponse;
 			LmChallengeResponse = lmChallengeResponse;
@@ -324,7 +324,7 @@ namespace MailKit.Security.Ntlm {
 
 			// If the CHALLENGE_MESSAGE TargetInfo field (section 2.2.1.2) has an MsvAvTimestamp present, the client SHOULD provide a MIC.
 			if ((avFlags & 0x2) != 0)
-				Mic = NtlmUtils.HMACMD5 (ExportedSessionKey, NtlmUtils.ConcatenationOf (type1.Encode (), type2.Encode (), Encode ()));
+				Mic = NtlmUtils.HMACMD5 (ExportedSessionKey, NtlmUtils.ConcatenationOf (negotiate.Encode (), challenge.Encode (), Encode ()));
 		}
 
 		public override byte[] Encode ()
@@ -335,7 +335,7 @@ namespace MailKit.Security.Ntlm {
 			int payloadOffset = 64, micOffset = -1;
 			bool negotiateVersion;
 
-			if (negotiateVersion = ((type2.Flags & NtlmFlags.NegotiateVersion) != 0 && OSVersion != null))
+			if (negotiateVersion = ((challenge.Flags & NtlmFlags.NegotiateVersion) != 0 && OSVersion != null))
 				payloadOffset += 8;
 
 			if (Mic != null) {

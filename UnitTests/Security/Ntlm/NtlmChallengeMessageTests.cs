@@ -1,5 +1,5 @@
 ﻿//
-// Type2MessageTests.cs
+// NtlmChallengeMessageTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -32,7 +32,7 @@ using MailKit.Security.Ntlm;
 
 namespace UnitTests.Security.Ntlm {
 	[TestFixture]
-	public class Type2MessageTests
+	public class NtlmChallengeMessageTests
 	{
 		static byte[] DavenportExampleNonce = new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef };
 		static byte[] JavaExampleNonce = { 0x53, 0x72, 0x76, 0x4e, 0x6f, 0x6e, 0x63, 0x65 };
@@ -41,12 +41,12 @@ namespace UnitTests.Security.Ntlm {
 		public void TestArgumentExceptions ()
 		{
 			byte[] badMessageData = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x01, 0x00, 0x00, 0x00, 0x00 };
-			var type2 = new Type2Message ();
+			var type2 = new NtlmChallengeMessage ();
 
-			Assert.Throws<ArgumentNullException> (() => new Type2Message (null, 0, 16));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new Type2Message (new byte[8], 0, 8));
-			Assert.Throws<ArgumentOutOfRangeException> (() => new Type2Message (new byte[8], -1, 8));
-			Assert.Throws<ArgumentException> (() => new Type2Message (badMessageData, 0, badMessageData.Length));
+			Assert.Throws<ArgumentNullException> (() => new NtlmChallengeMessage (null, 0, 16));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new NtlmChallengeMessage (new byte[8], 0, 8));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new NtlmChallengeMessage (new byte[8], -1, 8));
+			Assert.Throws<ArgumentException> (() => new NtlmChallengeMessage (badMessageData, 0, badMessageData.Length));
 
 			Assert.Throws<ArgumentNullException> (() => type2.ServerChallenge = null);
 			Assert.Throws<ArgumentException> (() => type2.ServerChallenge = new byte[9]);
@@ -56,7 +56,7 @@ namespace UnitTests.Security.Ntlm {
 		// Example from http://www.innovation.ch/java/ntlm.html
 		public void TestEncodeJavaExample ()
 		{
-			var type2 = new Type2Message (NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign) { ServerChallenge = JavaExampleNonce };
+			var type2 = new NtlmChallengeMessage (NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign) { ServerChallenge = JavaExampleNonce };
 
 			Assert.AreEqual (2, type2.Type, "Type");
 			Assert.AreEqual ((NtlmFlags) 0x8201, type2.Flags, "Flags");
@@ -68,7 +68,7 @@ namespace UnitTests.Security.Ntlm {
 		public void TestDecodeJavaExample ()
 		{
 			byte[] rawData = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x82, 0x00, 0x00, 0x53, 0x72, 0x76, 0x4e, 0x6f, 0x6e, 0x63, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-			var type2 = new Type2Message (rawData, 0, rawData.Length);
+			var type2 = new NtlmChallengeMessage (rawData, 0, rawData.Length);
 
 			Assert.AreEqual (2, type2.Type, "Type");
 			Assert.AreEqual ((NtlmFlags) 0x8201, type2.Flags, "Flags");
@@ -76,10 +76,10 @@ namespace UnitTests.Security.Ntlm {
 		}
 
 		[Test]
-		// Example from http://davenport.sourceforge.net/ntlm.html#type2MessageExample
+		// Example from http://davenport.sourceforge.net/ntlm.html#NtlmChallengeMessageExample
 		public void TestEncodeDavenportExample ()
 		{
-			var type2 = new Type2Message (NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo) {
+			var type2 = new NtlmChallengeMessage (NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo) {
 				TargetInfo = new NtlmTargetInfo () {
 					DomainName = "DOMAIN",
 					ServerName = "SERVER",
@@ -102,11 +102,11 @@ namespace UnitTests.Security.Ntlm {
 		}
 
 		[Test]
-		// Example from http://davenport.sourceforge.net/ntlm.html#type2MessageExample
+		// Example from http://davenport.sourceforge.net/ntlm.html#NtlmChallengeMessageExample
 		public void TestDecodeDavenportExample ()
 		{
 			byte[] rawData = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x0c, 0x00, 0x30, 0x00, 0x00, 0x00, 0x01, 0x02, 0x81, 0x00, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x62, 0x00, 0x62, 0x00, 0x3c, 0x00, 0x00, 0x00, 0x44, 0x00, 0x4f, 0x00, 0x4d, 0x00, 0x41, 0x00, 0x49, 0x00, 0x4e, 0x00, 0x02, 0x00, 0x0c, 0x00, 0x44, 0x00, 0x4f, 0x00, 0x4d, 0x00, 0x41, 0x00, 0x49, 0x00, 0x4e, 0x00, 0x01, 0x00, 0x0c, 0x00, 0x53, 0x00, 0x45, 0x00, 0x52, 0x00, 0x56, 0x00, 0x45, 0x00, 0x52, 0x00, 0x04, 0x00, 0x14, 0x00, 0x64, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x2e, 0x00, 0x63, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x03, 0x00, 0x22, 0x00, 0x73, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00, 0x65, 0x00, 0x72, 0x00, 0x2e, 0x00, 0x64, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x2e, 0x00, 0x63, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x00, 0x00, 0x00, 0x00 };
-			var type2 = new Type2Message (rawData, 0, rawData.Length);
+			var type2 = new NtlmChallengeMessage (rawData, 0, rawData.Length);
 
 			Assert.AreEqual (2, type2.Type, "Type");
 			Assert.AreEqual ((NtlmFlags) 0x00810201, type2.Flags, "Flags");

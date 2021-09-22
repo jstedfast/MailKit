@@ -1,5 +1,5 @@
 ﻿//
-// Type2Message.cs
+// NtlmChallengeMessage.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -30,24 +30,24 @@ using System;
 using System.Text;
 
 namespace MailKit.Security.Ntlm {
-	class Type2Message : NtlmMessageBase
+	class NtlmChallengeMessage : NtlmMessageBase
 	{
 		static readonly NtlmFlags DefaultFlags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateUnicode /*| NtlmFlags.NegotiateAlwaysSign*/;
 		byte[] serverChallenge;
 		byte[] cached;
 
-		public Type2Message (NtlmFlags flags, Version osVersion = null) : base (2)
+		public NtlmChallengeMessage (NtlmFlags flags, Version osVersion = null) : base (2)
 		{
 			serverChallenge = NtlmUtils.NONCE (8);
 			OSVersion = osVersion;
 			Flags = flags;
 		}
 
-		public Type2Message (Version osVersion = null) : this (DefaultFlags, osVersion)
+		public NtlmChallengeMessage (Version osVersion = null) : this (DefaultFlags, osVersion)
 		{
 		}
 
-		public Type2Message (byte[] message, int startIndex, int length) : base (2)
+		public NtlmChallengeMessage (byte[] message, int startIndex, int length) : base (2)
 		{
 			serverChallenge = new byte[8];
 			Decode (message, startIndex, length);
@@ -56,7 +56,7 @@ namespace MailKit.Security.Ntlm {
 			Buffer.BlockCopy (message, startIndex, cached, 0, length);
 		}
 
-		~Type2Message ()
+		~NtlmChallengeMessage ()
 		{
 			if (serverChallenge != null)
 				Array.Clear (serverChallenge, 0, serverChallenge.Length);
