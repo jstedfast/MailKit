@@ -28,7 +28,9 @@
 
 using System;
 using System.Net;
+using System.Security;
 using System.Threading;
+using System.Runtime.InteropServices;
 using System.Security.Authentication.ExtendedProtection;
 
 using MailKit.Security.Ntlm;
@@ -50,6 +52,16 @@ namespace MailKit.Security {
 		NtlmNegotiateMessage negotiate;
 		bool negotiatedChannelBinding;
 		LoginState state;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new SASL context using the default network credentials.
+		/// </remarks>
+		public SaslMechanismNtlm () : this (CredentialCache.DefaultNetworkCredentials)
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
@@ -208,6 +220,32 @@ namespace MailKit.Security {
 			get; set;
 		}
 
+		static string GetSecurePassword (NetworkCredential credential)
+		{
+			if (!string.IsNullOrEmpty (credential.Password))
+				return credential.Password;
+
+#if NET48_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+			try {
+				var secure = credential.SecurePassword;
+
+				if (secure != null) {
+					var unicode = SecureStringMarshal.SecureStringToGlobalAllocUnicode (secure);
+
+					unsafe {
+						var value = (char*) unicode.ToPointer ();
+						var password = new string (value, 0, secure.Length);
+						Marshal.FreeHGlobal (unicode);
+						return password;
+					}
+				}
+			} catch (NotSupportedException) {
+			}
+#endif
+
+			return string.Empty;
+		}
+
 		/// <summary>
 		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
@@ -260,7 +298,7 @@ namespace MailKit.Security {
 				state = LoginState.Challenge;
 				break;
 			case LoginState.Challenge:
-				var password = Credentials.Password ?? string.Empty;
+				var password = GetSecurePassword (Credentials);
 				message = GetChallengeResponse (userName, password, token, startIndex, length);
 				IsAuthenticated = true;
 				break;
