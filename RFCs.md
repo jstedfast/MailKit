@@ -65,6 +65,7 @@ MailKit implements the following IETF specifications:
 * [4315](https://tools.ietf.org/html/rfc4315): Internet Message Access Protocol (IMAP) - UIDPLUS extension (Obsoletes rfc2359)
 * [4466](https://tools.ietf.org/html/rfc4466): Collected Extensions to IMAP4 ABNF (Updates rfc2088, rfc2342, rfc3501, rfc3502, rfc3516)
 * [4469](https://tools.ietf.org/html/rfc4469): Internet Message Access Protocol (IMAP) CATENATE Extension (Updates rfc3501, rfc3502)
+* [4505](https://tools.ietf.org/html/rfc4505): Anonymous Simple Authentication and Security Layer (SASL) Mechanism (Obsoletes rfc2245)
 * [4551](https://tools.ietf.org/html/rfc4551): IMAP Extension for Conditional STORE Operation or Quick Flag Changes Resynchronization (Updates rfc3501)
 * [4616](https://tools.ietf.org/html/rfc4616): The PLAIN Simple Authentication and Security Layer (SASL) Mechanism (Updates rfc2595)
 * [4731](https://tools.ietf.org/html/rfc4731): IMAP4 Extension to SEARCH Command for Controlling What Kind of Information Is Returned
