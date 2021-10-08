@@ -828,14 +828,12 @@ namespace MailKit {
 				yield break;
 			}
 
-			var range = uids as UniqueIdRange;
-			if (range != null) {
+			if (uids is UniqueIdRange range) {
 				yield return range.ToString ();
 				yield break;
 			}
 
-			var set = uids as UniqueIdSet;
-			if (set != null) {
+			if (uids is UniqueIdSet set) {
 				foreach (var subset in set.EnumerateSerializedSubsets (maxLength))
 					yield return subset;
 				yield break;
@@ -914,18 +912,17 @@ namespace MailKit {
 
 			var order = SortOrder.None;
 			bool sorted = true;
-			uint start, end;
 			uint prev = 0;
 			int index = 0;
 
 			do {
-				if (!UniqueId.TryParse (token, ref index, out start))
+				if (!UniqueId.TryParse (token, ref index, out uint start))
 					return false;
 
 				if (index < token.Length && token[index] == ':') {
 					index++;
 
-					if (!UniqueId.TryParse (token, ref index, out end))
+					if (!UniqueId.TryParse (token, ref index, out uint end))
 						return false;
 
 					var range = new Range (start, end);
@@ -934,7 +931,7 @@ namespace MailKit {
 
 					if (sorted) {
 						switch (order) {
-						default: sorted = true; order = start <= end ? SortOrder.Ascending : SortOrder.Descending; break;
+						default: order = start <= end ? SortOrder.Ascending : SortOrder.Descending; break;
 						case SortOrder.Descending: sorted = start >= end && start <= prev; break;
 						case SortOrder.Ascending: sorted = start <= end && start >= prev; break;
 						}
@@ -947,7 +944,7 @@ namespace MailKit {
 
 					if (sorted && uids.ranges.Count > 1) {
 						switch (order) {
-						default: sorted = true; order = start >= prev ? SortOrder.Ascending : SortOrder.Descending; break;
+						default: order = start >= prev ? SortOrder.Ascending : SortOrder.Descending; break;
 						case SortOrder.Descending: sorted = start <= prev; break;
 						case SortOrder.Ascending: sorted = start >= prev; break;
 						}
