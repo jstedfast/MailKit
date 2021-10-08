@@ -286,8 +286,6 @@ namespace MailKit.Security {
 
 			int startIndex = index;
 
-			value = null;
-
 			while (index < text.Length && !char.IsWhiteSpace (text[index]) && text[index] != ',')
 				index++;
 
@@ -495,13 +493,13 @@ namespace MailKit.Security {
 		{
 			var quoted = new StringBuilder ();
 
-			quoted.Append ("\"");
+			quoted.Append ('\"');
 			for (int i = 0; i < text.Length; i++) {
 				if (text[i] == '\\' || text[i] == '"')
 					quoted.Append ('\\');
 				quoted.Append (text[i]);
 			}
-			quoted.Append ("\"");
+			quoted.Append ('\"');
 
 			return quoted.ToString ();
 		}

@@ -240,11 +240,10 @@ namespace MailKit.Net.Proxy
 		async Task<Stream> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{
 			Socks5AddressType addrType;
-			IPAddress ip;
 
 			ValidateArguments (host, port);
 
-			addrType = GetAddressType (host, out ip);
+			addrType = GetAddressType (host, out var ip);
 
 			cancellationToken.ThrowIfCancellationRequested ();
 

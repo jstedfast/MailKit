@@ -221,7 +221,7 @@ namespace MailKit {
 		/// <see cref="MailKit.AnnotationAttribute"/>; otherwise, <c>false</c>.</returns>
 		public override bool Equals (object obj)
 		{
-			return obj is AnnotationAttribute && ((AnnotationAttribute) obj).Specifier == Specifier;
+			return obj is AnnotationAttribute attribute && attribute.Specifier == Specifier;
 		}
 
 		/// <summary>

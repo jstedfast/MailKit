@@ -179,9 +179,7 @@ namespace MailKit {
 
 				ThreadableNode parent = null;
 				foreach (var reference in message.References) {
-					ThreadableNode referenced;
-
-					if (!ids.TryGetValue (reference, out referenced)) {
+					if (!ids.TryGetValue (reference, out var referenced)) {
 						// create a dummy container for the referenced message
 						referenced = new ThreadableNode (null);
 						ids.Add (reference, referenced);
@@ -520,8 +518,7 @@ namespace MailKit {
 
 			int endIndex = subject.Length;
 			int startIndex = 0;
-			int index, count;
-			int left;
+			int index, left;
 
 			do {
 				SkipWhiteSpace (subject, ref startIndex);
@@ -552,7 +549,7 @@ namespace MailKit {
 						index += 3;
 
 						// if this is followed by "###]:" or "###):", then it's a condensed "Re:"
-						if (SkipDigits (subject, ref index, out count) && (endIndex - index) >= 2 &&
+						if (SkipDigits (subject, ref index, out int count) && (endIndex - index) >= 2 &&
 							subject[index] == close && subject[index + 1] == ':') {
 							startIndex = index + 2;
 							replyDepth += count;

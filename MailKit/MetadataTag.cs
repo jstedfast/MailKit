@@ -115,7 +115,7 @@ namespace MailKit {
 		/// <see cref="MailKit.MetadataTag"/>; otherwise, <c>false</c>.</returns>
 		public override bool Equals (object obj)
 		{
-			return obj is MetadataTag && ((MetadataTag) obj).Id == Id;
+			return obj is MetadataTag tag && tag.Id == Id;
 		}
 
 		/// <summary>

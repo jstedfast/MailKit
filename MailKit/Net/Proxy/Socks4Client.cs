@@ -129,7 +129,7 @@ namespace MailKit.Net.Proxy
 			}
 		}
 
-		async Task<IPAddress> ResolveAsync (string host, bool doAsync, CancellationToken cancellationToken)
+		static async Task<IPAddress> ResolveAsync (string host, bool doAsync, CancellationToken cancellationToken)
 		{
 			IPAddress[] ipAddresses;
 
@@ -154,11 +154,10 @@ namespace MailKit.Net.Proxy
 		async Task<Stream> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
 		{
 			byte[] addr, domain = null;
-			IPAddress ip;
 
 			ValidateArguments (host, port);
 
-			if (!IPAddress.TryParse (host, out ip)) {
+			if (!IPAddress.TryParse (host, out var ip)) {
 				if (IsSocks4a) {
 					domain = Encoding.UTF8.GetBytes (host);
 					addr = InvalidIPAddress;

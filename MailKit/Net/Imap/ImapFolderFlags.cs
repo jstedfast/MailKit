@@ -39,7 +39,7 @@ namespace MailKit.Net.Imap
 		static readonly IStoreFlagsRequest AddDeletedFlag = new StoreFlagsRequest (StoreAction.Add, MessageFlags.Deleted) { Silent = true };
 		static readonly IStoreFlagsRequest RemoveDeletedFlag = new StoreFlagsRequest (StoreAction.Remove, MessageFlags.Deleted) { Silent = true };
 
-		void ProcessUnmodified (ImapCommand ic, ref UniqueIdSet uids, ulong? modseq)
+		static void ProcessUnmodified (ImapCommand ic, ref UniqueIdSet uids, ulong? modseq)
 		{
 			if (modseq.HasValue) {
 				foreach (var rc in ic.RespCodes.OfType<ModifiedResponseCode> ()) {
@@ -51,7 +51,7 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		IList<int> GetUnmodified (ImapCommand ic, ulong? modseq)
+		static IList<int> GetUnmodified (ImapCommand ic, ulong? modseq)
 		{
 			if (modseq.HasValue) {
 				var rc = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();

@@ -225,7 +225,7 @@ namespace MailKit {
 				builder.Append (namespaces[i].DirectorySeparator);
 				builder.Append ("\" ");
 				MimeUtils.AppendQuoted (builder, namespaces[i].Path);
-				builder.Append (")");
+				builder.Append (')');
 			}
 			builder.Append (')');
 

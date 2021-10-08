@@ -269,7 +269,7 @@ namespace MailKit {
 		/// otherwise, <c>false</c>.</returns>
 		public override bool Equals (object obj)
 		{
-			return obj is UniqueId && ((UniqueId) obj).Id == Id;
+			return obj is UniqueId uid && uid.Id == Id;
 		}
 
 		/// <summary>
@@ -351,9 +351,7 @@ namespace MailKit {
 			if (token == null)
 				throw new ArgumentNullException (nameof (token));
 
-			uint id;
-
-			if (!uint.TryParse (token, NumberStyles.None, CultureInfo.InvariantCulture, out id) || id == 0) {
+			if (!uint.TryParse (token, NumberStyles.None, CultureInfo.InvariantCulture, out uint id) || id == 0) {
 				uid = Invalid;
 				return false;
 			}

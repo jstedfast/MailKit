@@ -1696,9 +1696,8 @@ namespace MailKit.Net.Imap {
 			var fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
 			var encodedName = Engine.EncodeMailboxName (fullName);
 			List<ImapFolder> list;
-			ImapFolder folder;
 
-			if (Engine.GetCachedFolder (encodedName, out folder))
+			if (Engine.GetCachedFolder (encodedName, out var folder))
 				return folder;
 
 			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
@@ -3353,9 +3352,8 @@ namespace MailKit.Net.Imap {
 			for (int i = 0; i < ctx.QuotaRoots.Count; i++) {
 				var encodedName = ctx.QuotaRoots[i];
 				ImapFolder quotaRoot;
-				Quota quota;
 
-				if (!ctx.Quotas.TryGetValue (encodedName, out quota))
+				if (!ctx.Quotas.TryGetValue (encodedName, out var quota))
 					continue;
 
 				quotaRoot = await Engine.GetQuotaRootFolderAsync (encodedName, doAsync, cancellationToken).ConfigureAwait (false);

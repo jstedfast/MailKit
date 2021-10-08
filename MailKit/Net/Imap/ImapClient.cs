@@ -1622,10 +1622,8 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The ImapClient is already connected.");
 
 			Stream network;
-			bool starttls;
-			Uri uri;
 
-			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
+			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
 			engine.Uri = uri;
 
@@ -2394,9 +2392,8 @@ namespace MailKit.Net.Imap {
 			CheckAuthenticated ();
 
 			var encodedName = engine.EncodeMailboxName (@namespace.Path);
-			ImapFolder folder;
 
-			if (engine.GetCachedFolder (encodedName, out folder))
+			if (engine.GetCachedFolder (encodedName, out var folder))
 				return folder;
 
 			throw new FolderNotFoundException (@namespace.Path);
@@ -2826,10 +2823,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		protected virtual void OnWebAlert (Uri uri, string message)
 		{
-			var handler = WebAlert;
-
-			if (handler != null)
-				handler (this, new WebAlertEventArgs (uri, message));
+			WebAlert?.Invoke (this, new WebAlertEventArgs (uri, message));
 		}
 
 		void OnEngineDisconnected (object sender, EventArgs e)

@@ -502,10 +502,7 @@ namespace MailKit {
 		/// <param name="e">The message sent event args.</param>
 		protected virtual void OnMessageSent (MessageSentEventArgs e)
 		{
-			var handler = MessageSent;
-
-			if (handler != null)
-				handler (this, e);
+			MessageSent?.Invoke (this, e);
 		}
 	}
 }

@@ -202,38 +202,36 @@ namespace MailKit.Net.Imap {
 		/// <param name="text">The text to parse.</param>
 		public static DateTimeOffset ParseInternalDate (string text)
 		{
-			int day, month, year, hour, minute, second;
-			TimeSpan timezone;
 			int index = 0;
 
 			while (index < text.Length && char.IsWhiteSpace (text[index]))
 				index++;
 
-			if (index >= text.Length || !TryGetInt32 (text, ref index, '-', out day) || day < 1 || day > 31)
+			if (index >= text.Length || !TryGetInt32 (text, ref index, '-', out int day) || day < 1 || day > 31)
 				return DateTimeOffset.MinValue;
 
 			index++;
-			if (index >= text.Length || !TryGetMonth (text, ref index, '-', out month))
+			if (index >= text.Length || !TryGetMonth (text, ref index, '-', out int month))
 				return DateTimeOffset.MinValue;
 
 			index++;
-			if (index >= text.Length || !TryGetInt32 (text, ref index, ' ', out year) || year < 1969)
+			if (index >= text.Length || !TryGetInt32 (text, ref index, ' ', out int year) || year < 1969)
 				return DateTimeOffset.MinValue;
 
 			index++;
-			if (index >= text.Length || !TryGetInt32 (text, ref index, ':', out hour) || hour > 23)
+			if (index >= text.Length || !TryGetInt32 (text, ref index, ':', out int hour) || hour > 23)
 				return DateTimeOffset.MinValue;
 
 			index++;
-			if (index >= text.Length || !TryGetInt32 (text, ref index, ':', out minute) || minute > 59)
+			if (index >= text.Length || !TryGetInt32 (text, ref index, ':', out int minute) || minute > 59)
 				return DateTimeOffset.MinValue;
 
 			index++;
-			if (index >= text.Length || !TryGetInt32 (text, ref index, ' ', out second) || second > 59)
+			if (index >= text.Length || !TryGetInt32 (text, ref index, ' ', out int second) || second > 59)
 				return DateTimeOffset.MinValue;
 
 			index++;
-			if (index >= text.Length || !TryGetTimeZone (text, ref index, out timezone))
+			if (index >= text.Length || !TryGetTimeZone (text, ref index, out var timezone))
 				return DateTimeOffset.MinValue;
 
 			while (index < text.Length && char.IsWhiteSpace (text[index]))
@@ -549,7 +547,7 @@ namespace MailKit.Net.Imap {
 				var renamed = false;
 
 				// read the '(' token
-				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				do {
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -743,7 +741,7 @@ namespace MailKit.Net.Imap {
 				var atom = (string) token.Value;
 
 				if (atom.Length > 0 && atom[0] == '-') {
-					if (!int.TryParse (atom, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var negative))
+					if (!int.TryParse (atom, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out _))
 						throw ImapEngine.UnexpectedToken (format, token);
 
 					// Note: since Octets & Lines are the only 2 values this method is responsible for parsing,
@@ -800,7 +798,6 @@ namespace MailKit.Net.Imap {
 		{
 			var type = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false) ?? "application";
 			var token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			ContentType contentType;
 			string subtype;
 
 			if (token.Type == ImapTokenType.OpenParen || token.Type == ImapTokenType.Nil) {
@@ -843,7 +840,7 @@ namespace MailKit.Net.Imap {
 
 			await ParseParameterListAsync (builder, engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (!ContentType.TryParse (builder.ToString (), out contentType))
+			if (!ContentType.TryParse (builder.ToString (), out var contentType))
 				contentType = new ContentType (type, subtype);
 
 			return contentType;
@@ -868,7 +865,6 @@ namespace MailKit.Net.Imap {
 			// Exchange bug: ... (NIL NIL) ...
 			var dsp = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
 			var builder = new StringBuilder ();
-			ContentDisposition disposition;
 			bool isNil = false;
 
 			// Note: These are work-arounds for some bugs in some mail clients that
@@ -896,7 +892,7 @@ namespace MailKit.Net.Imap {
 			if (dsp == null && isNil)
 				return null;
 
-			ContentDisposition.TryParse (builder.ToString (), out disposition);
+			ContentDisposition.TryParse (builder.ToString (), out var disposition);
 
 			return disposition;
 		}
@@ -1020,14 +1016,13 @@ namespace MailKit.Net.Imap {
 				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapTokenType.Nil, format, token);
 
 				var builder = new StringBuilder ();
-				ContentType contentType;
 
 				builder.AppendFormat ("{0}/{1}", body.ContentType.MediaType, body.ContentType.MediaSubtype);
 
 				if (token.Type == ImapTokenType.OpenParen)
 					await ParseParameterListAsync (builder, engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (ContentType.TryParse (builder.ToString (), out contentType))
+				if (ContentType.TryParse (builder.ToString (), out var contentType))
 					body.ContentType = contentType;
 
 				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1065,7 +1060,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			// read the ')'
-			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			return body;
 		}
@@ -1094,10 +1089,10 @@ namespace MailKit.Net.Imap {
 
 			var result = await ParseContentTypeAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (result is string) {
+			if (result is string subtype) {
 				// GMail breakage... yay! What we have is a nested multipart with
 				// the same boundary as its parent.
-				return await ParseMultipartAsync (engine, format, path, (string) result, doAsync, cancellationToken).ConfigureAwait (false);
+				return await ParseMultipartAsync (engine, format, path, subtype, doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
 			var id = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
@@ -1181,7 +1176,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			// read the ')'
-			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			return body;
 		}
@@ -1233,9 +1228,8 @@ namespace MailKit.Net.Imap {
 					mailbox = mailbox.TrimStart ('<');
 
 				string address = domain != null ? mailbox + "@" + domain : mailbox;
-				DomainList route;
 
-				if (Route != null && DomainList.TryParse (Route, out route))
+				if (Route != null && DomainList.TryParse (Route, out var route))
 					return new MailboxAddress (name, route, address);
 
 				return new MailboxAddress (name, address);
@@ -1345,7 +1339,6 @@ namespace MailKit.Net.Imap {
 		static async Task<DateTimeOffset?> ParseEnvelopeDateAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			DateTimeOffset date;
 			string value;
 
 			switch (token.Type) {
@@ -1362,7 +1355,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			if (!DateUtils.TryParse (value, out date))
+			if (!DateUtils.TryParse (value, out var date))
 				return null;
 
 			return date;

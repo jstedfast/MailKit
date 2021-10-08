@@ -128,7 +128,7 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		void CheckInput (byte[] inputBuffer, int inputOffset, int inputCount)
+		static void CheckInput (byte[] inputBuffer, int inputOffset, int inputCount)
 		{
 			if (inputBuffer == null)
 				throw new ArgumentNullException (nameof (inputBuffer));

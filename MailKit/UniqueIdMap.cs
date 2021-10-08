@@ -181,9 +181,7 @@ namespace MailKit {
 		/// </exception>
 		public UniqueId this [UniqueId index] {
 			get {
-				UniqueId uid;
-
-				if (!TryGetValue (index, out uid))
+				if (!TryGetValue (index, out var uid))
 					throw new ArgumentOutOfRangeException (nameof (index));
 
 				return uid;

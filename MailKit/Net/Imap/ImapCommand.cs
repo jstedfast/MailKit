@@ -409,7 +409,8 @@ namespace MailKit.Net.Imap {
 
 		readonly List<ImapCommandPart> parts = new List<ImapCommandPart> ();
 		readonly ImapEngine Engine;
-		long totalSize, nwritten;
+		readonly long totalSize;
+		long nwritten;
 		int current;
 
 		/// <summary>

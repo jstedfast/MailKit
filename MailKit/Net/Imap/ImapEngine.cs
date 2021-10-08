@@ -573,11 +573,9 @@ namespace MailKit.Net.Imap {
 
 		internal static uint ParseNumber (ImapToken token, bool nonZero, string format, params object[] args)
 		{
-			uint value;
-
 			AssertToken (token, ImapTokenType.Atom, format, args);
 
-			if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out value) || (nonZero && value == 0))
+			if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value) || (nonZero && value == 0))
 				throw UnexpectedToken (format, args);
 
 			return value;
@@ -585,11 +583,9 @@ namespace MailKit.Net.Imap {
 
 		internal static ulong ParseNumber64 (ImapToken token, bool nonZero, string format, params object[] args)
 		{
-			ulong value;
-
 			AssertToken (token, ImapTokenType.Atom, format, args);
 
-			if (!ulong.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out value) || (nonZero && value == 0))
+			if (!ulong.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value) || (nonZero && value == 0))
 				throw UnexpectedToken (format, args);
 
 			return value;
@@ -597,11 +593,9 @@ namespace MailKit.Net.Imap {
 
 		internal static UniqueIdSet ParseUidSet (ImapToken token, uint validity, out UniqueId? minValue, out UniqueId? maxValue, string format, params object[] args)
 		{
-			UniqueIdSet uids;
-
 			AssertToken (token, ImapTokenType.Atom, format, args);
 
-			if (!UniqueIdSet.TryParse ((string) token.Value, validity, out uids, out minValue, out maxValue))
+			if (!UniqueIdSet.TryParse ((string) token.Value, validity, out var uids, out minValue, out maxValue))
 				throw UnexpectedToken (format, args);
 
 			return uids;
@@ -1118,9 +1112,7 @@ namespace MailKit.Net.Imap {
 				if (atom.StartsWith ("AUTH=", StringComparison.OrdinalIgnoreCase)) {
 					AuthenticationMechanisms.Add (atom.Substring ("AUTH=".Length));
 				} else if (atom.StartsWith ("APPENDLIMIT=", StringComparison.OrdinalIgnoreCase)) {
-					uint limit;
-
-					if (uint.TryParse (atom.Substring ("APPENDLIMIT=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out limit))
+					if (uint.TryParse (atom.Substring ("APPENDLIMIT=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out uint limit))
 						AppendLimit = limit;
 
 					Capabilities |= ImapCapabilities.AppendLimit;
@@ -1131,9 +1123,7 @@ namespace MailKit.Net.Imap {
 					SupportedContexts.Add (atom.Substring ("CONTEXT=".Length));
 					Capabilities |= ImapCapabilities.Context;
 				} else if (atom.StartsWith ("I18NLEVEL=", StringComparison.OrdinalIgnoreCase)) {
-					int level;
-
-					int.TryParse (atom.Substring ("I18NLEVEL=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out level);
+					int.TryParse (atom.Substring ("I18NLEVEL=".Length), NumberStyles.None, CultureInfo.InvariantCulture, out int level);
 					I18NLevel = level;
 
 					Capabilities |= ImapCapabilities.I18NLevel;
@@ -1241,7 +1231,6 @@ namespace MailKit.Net.Imap {
 			var namespaces = new List<FolderNamespaceCollection> {
 				PersonalNamespaces, OtherNamespaces, SharedNamespaces
 			};
-			ImapFolder folder;
 			ImapToken token;
 			string path;
 			char delim;
@@ -1284,7 +1273,7 @@ namespace MailKit.Net.Imap {
 
 						namespaces[n].Add (new FolderNamespace (delim, DecodeMailboxName (path)));
 
-						if (!GetCachedFolder (path, out folder)) {
+						if (!GetCachedFolder (path, out var folder)) {
 							folder = CreateImapFolder (path, FolderAttributes.None, delim);
 							CacheFolder (folder);
 						}
@@ -1352,11 +1341,10 @@ namespace MailKit.Net.Imap {
 		void EmitMetadataChanged (Metadata metadata)
 		{
 			var encodedName = metadata.EncodedName;
-			ImapFolder folder;
 
 			if (encodedName.Length == 0) {
 				OnMetadataChanged (metadata);
-			} else if (FolderCache.TryGetValue (encodedName, out folder)) {
+			} else if (FolderCache.TryGetValue (encodedName, out var folder)) {
 				folder.OnMetadataChanged (metadata);
 			}
 		}
@@ -1783,7 +1771,6 @@ namespace MailKit.Net.Imap {
 		async Task UpdateStatusAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
-			ImapFolder folder;
 			uint count, uid;
 			ulong modseq;
 			string name;
@@ -1806,7 +1793,7 @@ namespace MailKit.Net.Imap {
 
 			// Note: if the folder is null, then it probably means the user is using NOTIFY
 			// and hasn't yet requested the folder. That's ok.
-			GetCachedFolder (name, out folder);
+			GetCachedFolder (name, out var folder);
 
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1928,7 +1915,6 @@ namespace MailKit.Net.Imap {
 			var folder = current.Folder ?? Selected;
 			var result = ImapUntaggedResult.Handled;
 			ImapUntaggedHandler handler;
-			uint number;
 			string atom;
 
 			// Note: work around broken IMAP servers such as home.pl which sends "* [COPYUID ...]" resp-codes
@@ -2024,7 +2010,7 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			default:
-				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out number)) {
+				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out uint number)) {
 					// we probably have something like "* 1 EXISTS"
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -2326,7 +2312,6 @@ namespace MailKit.Net.Imap {
 		{
 			var list = new List<ImapFolder> (folders);
 			string encodedName, pattern;
-			ImapFolder parent;
 			int index;
 
 			// Note: we use a for-loop instead of foreach because we conditionally add items to the list.
@@ -2347,7 +2332,7 @@ namespace MailKit.Net.Imap {
 					encodedName = string.Empty;
 				}
 
-				if (GetCachedFolder (encodedName, out parent)) {
+				if (GetCachedFolder (encodedName, out var parent)) {
 					folder.ParentFolder = parent;
 					continue;
 				}
@@ -2491,7 +2476,6 @@ namespace MailKit.Net.Imap {
 			var command = new StringBuilder ("LIST \"\" \"INBOX\"");
 			var list = new List<ImapFolder> ();
 			var returnsSubscribed = false;
-			ImapFolder folder;
 			ImapCommand ic;
 
 			if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
@@ -2510,7 +2494,7 @@ namespace MailKit.Net.Imap {
 
 			await RunAsync (ic, doAsync).ConfigureAwait (false);
 
-			GetCachedFolder ("INBOX", out folder);
+			GetCachedFolder ("INBOX", out var folder);
 			Inbox = folder;
 
 			list.Clear ();
@@ -2571,9 +2555,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapFolder> GetQuotaRootFolderAsync (string quotaRoot, bool doAsync, CancellationToken cancellationToken)
 		{
-			ImapFolder folder;
-
-			if (GetCachedFolder (quotaRoot, out folder))
+			if (GetCachedFolder (quotaRoot, out var folder))
 				return folder;
 
 			var command = new StringBuilder ("LIST \"\" %S");
@@ -2620,9 +2602,8 @@ namespace MailKit.Net.Imap {
 		public async Task<ImapFolder> GetFolderAsync (string path, bool doAsync, CancellationToken cancellationToken)
 		{
 			var encodedName = EncodeMailboxName (path);
-			ImapFolder folder;
 
-			if (GetCachedFolder (encodedName, out folder))
+			if (GetCachedFolder (encodedName, out var folder))
 				return folder;
 
 			var command = new StringBuilder ("LIST \"\" %S");
@@ -2717,9 +2698,8 @@ namespace MailKit.Net.Imap {
 			var command = new StringBuilder ();
 			var returnsSubscribed = false;
 			var lsub = subscribedOnly;
-			ImapFolder folder;
 
-			if (!GetCachedFolder (encodedName, out folder))
+			if (!GetCachedFolder (encodedName, out var folder))
 				throw new FolderNotFoundException (@namespace.Path);
 
 			if (subscribedOnly) {
@@ -2838,7 +2818,7 @@ namespace MailKit.Net.Imap {
 			if (parser == null)
 				parser = new MimeParser (ParserOptions.Default, stream, persistent);
 			else
-				parser.SetStream (ParserOptions.Default, stream, persistent);
+				parser.SetStream (stream, persistent);
 		}
 
 		public async Task<HeaderList> ParseHeadersAsync (Stream stream, bool doAsync, CancellationToken cancellationToken)
@@ -2878,10 +2858,7 @@ namespace MailKit.Net.Imap {
 
 		internal void OnAlert (string message)
 		{
-			var handler = Alert;
-
-			if (handler != null)
-				handler (this, new AlertEventArgs (message));
+			Alert?.Invoke (this, new AlertEventArgs (message));
 		}
 
 		/// <summary>
@@ -2891,10 +2868,7 @@ namespace MailKit.Net.Imap {
 
 		internal void OnWebAlert (Uri uri, string message)
 		{
-			var handler = WebAlert;
-
-			if (handler != null)
-				handler (this, new WebAlertEventArgs (uri, message));
+			WebAlert?.Invoke (this, new WebAlertEventArgs (uri, message));
 		}
 
 		/// <summary>
@@ -2904,10 +2878,7 @@ namespace MailKit.Net.Imap {
 
 		internal void OnFolderCreated (IMailFolder folder)
 		{
-			var handler = FolderCreated;
-
-			if (handler != null)
-				handler (this, new FolderCreatedEventArgs (folder));
+			FolderCreated?.Invoke (this, new FolderCreatedEventArgs (folder));
 		}
 
 		/// <summary>
@@ -2917,10 +2888,7 @@ namespace MailKit.Net.Imap {
 
 		internal void OnMetadataChanged (Metadata metadata)
 		{
-			var handler = MetadataChanged;
-
-			if (handler != null)
-				handler (this, new MetadataChangedEventArgs (metadata));
+			MetadataChanged?.Invoke (this, new MetadataChangedEventArgs (metadata));
 		}
 
 		/// <summary>
@@ -2933,20 +2901,14 @@ namespace MailKit.Net.Imap {
 			// [NOTIFICATIONOVERFLOW] will reset to NOTIFY NONE
 			NotifySelectedNewExpunge = false;
 
-			var handler = NotificationOverflow;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			NotificationOverflow?.Invoke (this, EventArgs.Empty);
 		}
 
 		public event EventHandler<EventArgs> Disconnected;
 
 		void OnDisconnected ()
 		{
-			var handler = Disconnected;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			Disconnected?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>

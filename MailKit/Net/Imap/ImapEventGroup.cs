@@ -711,7 +711,7 @@ namespace MailKit.Net.Imap {
 					throw new InvalidOperationException ("The MessageNew event cannot have any parameters for mailbox filters other than SELECTED and SELECTED-DELAYED.");
 
 				command.Append (" ");
-				command.Append (ImapFolder.FormatSummaryItems (engine, request, out var previewText, isNotify: true));
+				command.Append (ImapFolder.FormatSummaryItems (engine, request, out _, isNotify: true));
 			}
 		}
 	}

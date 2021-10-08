@@ -507,7 +507,7 @@ namespace MailKit {
 		/// <param name="certificate">The server's SSL certificate.</param>
 		/// <param name="chain">The server's SSL certificate chain.</param>
 		/// <param name="sslPolicyErrors">The SSL policy errors.</param>
-		protected bool DefaultServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		protected static bool DefaultServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			const SslPolicyErrors mask = SslPolicyErrors.RemoteCertificateNotAvailable | SslPolicyErrors.RemoteCertificateNameMismatch;
 
@@ -825,7 +825,6 @@ namespace MailKit {
 		{
 			var query = uri.ParsedQuery ();
 			var protocol = uri.Scheme;
-			string value;
 
 			// Note: early versions of MailKit used "pop3" and "pop3s"
 			if (protocol.Equals ("pop3s", StringComparison.OrdinalIgnoreCase))
@@ -839,7 +838,7 @@ namespace MailKit {
 			if (!protocol.Equals (Protocol, StringComparison.OrdinalIgnoreCase))
 				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
 
-			if (query.TryGetValue ("starttls", out value)) {
+			if (query.TryGetValue ("starttls", out string value)) {
 				switch (value.ToLowerInvariant ()) {
 				default:
 					return SecureSocketOptions.StartTlsWhenAvailable;
@@ -1671,10 +1670,7 @@ namespace MailKit {
 		/// <param name="options">The SSL/TLS options that were used when connecting.</param>
 		protected virtual void OnConnected (string host, int port, SecureSocketOptions options)
 		{
-			var handler = Connected;
-
-			if (handler != null)
-				handler (this, new ConnectedEventArgs (host, port, options));
+			Connected?.Invoke (this, new ConnectedEventArgs (host, port, options));
 		}
 
 		/// <summary>
@@ -1698,10 +1694,7 @@ namespace MailKit {
 		/// <param name="requested"><c>true</c> if the disconnect was explicitly requested; otherwise, <c>false</c>.</param>
 		protected virtual void OnDisconnected (string host, int port, SecureSocketOptions options, bool requested)
 		{
-			var handler = Disconnected;
-
-			if (handler != null)
-				handler (this, new DisconnectedEventArgs (host, port, options, requested));
+			Disconnected?.Invoke (this, new DisconnectedEventArgs (host, port, options, requested));
 		}
 
 		/// <summary>
@@ -1722,10 +1715,7 @@ namespace MailKit {
 		/// <param name="message">The notification sent by the server when the client successfully authenticates.</param>
 		protected virtual void OnAuthenticated (string message)
 		{
-			var handler = Authenticated;
-
-			if (handler != null)
-				handler (this, new AuthenticatedEventArgs (message));
+			Authenticated?.Invoke (this, new AuthenticatedEventArgs (message));
 		}
 
 		/// <summary>

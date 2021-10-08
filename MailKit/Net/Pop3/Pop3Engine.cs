@@ -282,10 +282,7 @@ namespace MailKit.Net.Pop3 {
 
 		void OnDisconnected ()
 		{
-			var handler = Disconnected;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
+			Disconnected?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -429,7 +426,7 @@ namespace MailKit.Net.Pop3 {
 
 		async Task ReadResponseAsync (Pop3Command pc, bool doAsync)
 		{
-			string response, text;
+			string response;
 
 			try {
 				response = (await ReadLineAsync (doAsync, pc.CancellationToken).ConfigureAwait (false)).TrimEnd ();
@@ -439,7 +436,7 @@ namespace MailKit.Net.Pop3 {
 				throw;
 			}
 
-			pc.Status = GetCommandStatus (response, out text);
+			pc.Status = GetCommandStatus (response, out string text);
 			pc.StatusText = text;
 
 			switch (pc.Status) {

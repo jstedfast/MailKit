@@ -737,14 +737,13 @@ namespace MailKit.Net.Smtp {
 						}
 					} else if (capability.StartsWith ("SIZE", StringComparison.Ordinal)) {
 						int index = 4;
-						uint size;
 
 						capabilities |= SmtpCapabilities.Size;
 
 						while (index < capability.Length && char.IsWhiteSpace (capability[index]))
 							index++;
 
-						if (uint.TryParse (capability.Substring (index), NumberStyles.None, CultureInfo.InvariantCulture, out size))
+						if (uint.TryParse (capability.Substring (index), NumberStyles.None, CultureInfo.InvariantCulture, out uint size))
 							MaxSize = size;
 					} else {
 						switch (capability) {
@@ -1400,9 +1399,8 @@ namespace MailKit.Net.Smtp {
 
 			SmtpResponse response;
 			Stream network;
-			bool starttls;
 
-			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
+			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
@@ -2626,9 +2624,7 @@ namespace MailKit.Net.Smtp {
 			var list = new InternetAddressList ();
 
 			for (int i = 0; i < lines.Length; i++) {
-				InternetAddress address;
-
-				if (InternetAddress.TryParse (lines[i], out address))
+				if (InternetAddress.TryParse (lines[i], out var address))
 					list.Add (address);
 			}
 

@@ -182,11 +182,10 @@ namespace MailKit.Security
 		internal static SslHandshakeException Create (ref SslCertificateValidationInfo validationInfo, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
 		{
 			var message = new StringBuilder (DefaultMessage);
-			var aggregate = ex as AggregateException;
 			X509Certificate certificate = null;
 			X509Certificate root = null;
 
-			if (aggregate != null) {
+			if (ex is AggregateException aggregate) {
 				aggregate = aggregate.Flatten ();
 
 				if (aggregate.InnerExceptions.Count == 1)

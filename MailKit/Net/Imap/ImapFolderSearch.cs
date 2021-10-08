@@ -347,8 +347,6 @@ namespace MailKit.Net.Imap
 				builder.Append ("X-GM-RAW ");
 				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
-			default:
-				throw new ArgumentOutOfRangeException ();
 			}
 		}
 
@@ -402,7 +400,6 @@ namespace MailKit.Net.Imap
 				case OrderByType.Size:        builder.Append ("SIZE"); break;
 				case OrderByType.Subject:     builder.Append ("SUBJECT"); break;
 				case OrderByType.To:          builder.Append ("TO"); break;
-				default: throw new ArgumentOutOfRangeException ();
 				}
 			}
 			builder.Append (')');

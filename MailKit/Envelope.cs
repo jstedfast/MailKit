@@ -211,12 +211,9 @@ namespace MailKit {
 		static void EncodeInternetAddressListAddresses (StringBuilder builder, InternetAddressList addresses)
 		{
 			foreach (var addr in addresses) {
-				var mailbox = addr as MailboxAddress;
-				var group = addr as GroupAddress;
-
-				if (mailbox != null)
+				if (addr is MailboxAddress mailbox)
 					EncodeMailbox (builder, mailbox);
-				else if (group != null)
+				else if (addr is GroupAddress group)
 					EncodeGroup (builder, group);
 			}
 		}
@@ -393,9 +390,6 @@ namespace MailKit {
 
 		static bool TryParse (string text, ref int index, out InternetAddress addr)
 		{
-			string name, route, user, domain;
-			DomainList domains;
-
 			addr = null;
 
 			if (text[index] != '(')
@@ -403,16 +397,16 @@ namespace MailKit {
 
 			index++;
 
-			if (!TryParse (text, ref index, out name))
+			if (!TryParse (text, ref index, out string name))
 				return false;
 
-			if (!TryParse (text, ref index, out route))
+			if (!TryParse (text, ref index, out string route))
 				return false;
 
-			if (!TryParse (text, ref index, out user))
+			if (!TryParse (text, ref index, out string user))
 				return false;
 
-			if (!TryParse (text, ref index, out domain))
+			if (!TryParse (text, ref index, out string domain))
 				return false;
 
 			while (index < text.Length && text[index] == ' ')
@@ -426,7 +420,7 @@ namespace MailKit {
 			if (domain != null) {
 				var address = user + "@" + domain;
 
-				if (route != null && DomainList.TryParse (route, out domains))
+				if (route != null && DomainList.TryParse (route, out var domains))
 					addr = new MailboxAddress (name, domains, address);
 				else
 					addr = new MailboxAddress (name, address);
@@ -476,11 +470,9 @@ namespace MailKit {
 					return false;
 
 				if (addr != null) {
-					var group = addr as GroupAddress;
-
 					stack[sp].Add (addr);
 
-					if (group != null) {
+					if (addr is GroupAddress group) {
 						stack.Add (group.Members);
 						sp++;
 					}
@@ -506,8 +498,6 @@ namespace MailKit {
 
 		internal static bool TryParse (string text, ref int index, out Envelope envelope)
 		{
-			InternetAddressList from, sender, replyto, to, cc, bcc;
-			string inreplyto, messageid, subject, nstring;
 			DateTimeOffset? date = null;
 
 			envelope = null;
@@ -526,43 +516,41 @@ namespace MailKit {
 
 			index++;
 
-			if (!TryParse (text, ref index, out nstring))
+			if (!TryParse (text, ref index, out string nstring))
 				return false;
 
 			if (nstring != null) {
-				DateTimeOffset value;
-
-				if (!DateUtils.TryParse (nstring, out value))
+				if (!DateUtils.TryParse (nstring, out DateTimeOffset value))
 					return false;
 
 				date = value;
 			}
 
-			if (!TryParse (text, ref index, out subject))
+			if (!TryParse (text, ref index, out string subject))
 				return false;
 
-			if (!TryParse (text, ref index, out from))
+			if (!TryParse (text, ref index, out InternetAddressList from))
 				return false;
 
-			if (!TryParse (text, ref index, out sender))
+			if (!TryParse (text, ref index, out InternetAddressList sender))
 				return false;
 
-			if (!TryParse (text, ref index, out replyto))
+			if (!TryParse (text, ref index, out InternetAddressList replyto))
 				return false;
 
-			if (!TryParse (text, ref index, out to))
+			if (!TryParse (text, ref index, out InternetAddressList to))
 				return false;
 
-			if (!TryParse (text, ref index, out cc))
+			if (!TryParse (text, ref index, out InternetAddressList cc))
 				return false;
 
-			if (!TryParse (text, ref index, out bcc))
+			if (!TryParse (text, ref index, out InternetAddressList bcc))
 				return false;
 
-			if (!TryParse (text, ref index, out inreplyto))
+			if (!TryParse (text, ref index, out string inreplyto))
 				return false;
 
-			if (!TryParse (text, ref index, out messageid))
+			if (!TryParse (text, ref index, out string messageid))
 				return false;
 
 			if (index >= text.Length || text[index] != ')')

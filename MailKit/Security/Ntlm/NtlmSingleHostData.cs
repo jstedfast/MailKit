@@ -75,13 +75,13 @@ namespace MailKit.Security.Ntlm {
 				throw new ArgumentNullException (nameof (customData));
 
 			if (customData.Length != 8)
-				throw new ArgumentException (nameof (customData));
+				throw new ArgumentException ("The custom data must be 8 bytes.", nameof (customData));
 
 			if (machineId == null)
 				throw new ArgumentNullException (nameof (machineId));
 
 			if (machineId.Length != 32)
-				throw new ArgumentException (nameof (machineId));
+				throw new ArgumentException ("The machine id must be 32 bytes.", nameof (machineId));
 
 			CustomData = customData;
 			MachineId = machineId;

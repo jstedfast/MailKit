@@ -26,6 +26,7 @@
 
 using System;
 using System.Text;
+using System.Globalization;
 using System.Collections.Generic;
 
 using MimeKit;
@@ -99,7 +100,7 @@ namespace MailKit {
 
 		internal static void Encode (StringBuilder builder, uint value)
 		{
-			builder.Append (value.ToString ());
+			builder.Append (value.ToString (CultureInfo.InvariantCulture));
 		}
 
 		internal static void Encode (StringBuilder builder, string value)
@@ -335,13 +336,12 @@ namespace MailKit {
 				return false;
 
 			var list = new List<string> ();
-			string value;
 
 			do {
 				if (text[index] == ')')
 					break;
 
-				if (!TryParse (text, ref index, out value))
+				if (!TryParse (text, ref index, out string value))
 					return false;
 
 				list.Add (value);
@@ -358,11 +358,9 @@ namespace MailKit {
 
 		static bool TryParse (string text, ref int index, out Uri uri)
 		{
-			string nstring;
-
 			uri = null;
 
-			if (!TryParse (text, ref index, out nstring))
+			if (!TryParse (text, ref index, out string nstring))
 				return false;
 
 			if (!string.IsNullOrEmpty (nstring)) {
@@ -377,8 +375,6 @@ namespace MailKit {
 
 		static bool TryParse (string text, ref int index, out IList<Parameter> parameters)
 		{
-			string name, value;
-
 			parameters = null;
 
 			while (index < text.Length && text[index] == ' ')
@@ -408,10 +404,10 @@ namespace MailKit {
 				if (text[index] == ')')
 					break;
 
-				if (!TryParse (text, ref index, out name))
+				if (!TryParse (text, ref index, out string name))
 					return false;
 
-				if (!TryParse (text, ref index, out value))
+				if (!TryParse (text, ref index, out string value))
 					return false;
 
 				parameters.Add (new Parameter (name, value));
@@ -539,9 +535,7 @@ namespace MailKit {
 			ContentDisposition disposition;
 			ContentType contentType;
 			string[] array;
-			string nstring;
 			Uri location;
-			uint number;
 
 			part = null;
 
@@ -598,6 +592,8 @@ namespace MailKit {
 				BodyPartMessage message = null;
 				BodyPartText txt = null;
 				BodyPartBasic basic;
+				string nstring;
+				uint number;
 
 				if (!TryParse (text, ref index, false, out contentType))
 					return false;

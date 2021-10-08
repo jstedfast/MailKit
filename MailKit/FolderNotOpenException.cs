@@ -60,9 +60,8 @@ namespace MailKit {
 		protected FolderNotOpenException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			var value = info.GetString ("FolderAccess");
-			FolderAccess access;
 
-			if (!Enum.TryParse (value, out access))
+			if (!Enum.TryParse (value, out FolderAccess access))
 				FolderAccess = FolderAccess.ReadOnly;
 			else
 				FolderAccess = access;

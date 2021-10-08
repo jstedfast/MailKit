@@ -426,9 +426,8 @@ namespace MailKit.Net.Imap
 		async Task FetchSummaryItemsAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var ctx = (FetchSummaryContext) ic.UserData;
-			MessageSummary message;
 
-			if (!ctx.TryGetValue (index, out message)) {
+			if (!ctx.TryGetValue (index, out var message)) {
 				message = new MessageSummary (this, index);
 				ctx.Add (index, message);
 			}
@@ -613,15 +612,13 @@ namespace MailKit.Net.Imap
 				var charset = body.ContentType.Charset ?? "utf-8";
 				ContentEncoding encoding;
 
-				if (!string.IsNullOrEmpty (body.ContentTransferEncoding))
-					MimeUtils.TryParse (body.ContentTransferEncoding, out encoding);
-				else
+				if (string.IsNullOrEmpty (body.ContentTransferEncoding) || !MimeUtils.TryParse (body.ContentTransferEncoding, out encoding))
 					encoding = ContentEncoding.Default;
 
 				using (var memory = new MemoryStream ()) {
 					var content = new MimeContent (section.Stream, encoding);
 
-					content.DecodeTo (memory);
+					content.DecodeTo (memory, cancellationToken);
 					memory.Position = 0;
 
 					try {
@@ -695,7 +692,6 @@ namespace MailKit.Net.Imap
 				Dictionary<string, UniqueIdSet> bodies;
 				var message = (MessageSummary) item;
 				var body = message.TextBody;
-				UniqueIdSet uids;
 
 				if (body == null) {
 					body = message.HtmlBody;
@@ -711,7 +707,7 @@ namespace MailKit.Net.Imap
 					continue;
 				}
 
-				if (!bodies.TryGetValue (body.PartSpecifier, out uids)) {
+				if (!bodies.TryGetValue (body.PartSpecifier, out var uids)) {
 					uids = new UniqueIdSet (SortOrder.Ascending);
 					bodies.Add (body.PartSpecifier, uids);
 				}

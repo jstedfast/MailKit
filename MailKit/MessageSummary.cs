@@ -283,17 +283,11 @@ namespace MailKit {
 		/// <value>The text body if it exists; otherwise, <c>null</c>.</value>
 		public BodyPartText TextBody {
 			get {
-				var multipart = Body as BodyPartMultipart;
-
-				if (multipart != null) {
-					BodyPartText plain;
-
-					if (TryGetMessageBody (multipart, false, out plain))
+				if (Body is BodyPartMultipart multipart) {
+					if (TryGetMessageBody (multipart, false, out BodyPartText plain))
 						return plain;
 				} else {
-					var text = Body as BodyPartText;
-
-					if (text != null && text.IsPlain)
+					if (Body is BodyPartText text && text.IsPlain)
 						return text;
 				}
 
@@ -315,17 +309,11 @@ namespace MailKit {
 		/// <value>The html body if it exists; otherwise, <c>null</c>.</value>
 		public BodyPartText HtmlBody {
 			get {
-				var multipart = Body as BodyPartMultipart;
-
-				if (multipart != null) {
-					BodyPartText html;
-
-					if (TryGetMessageBody (multipart, true, out html))
+				if (Body is BodyPartMultipart multipart) {
+					if (TryGetMessageBody (multipart, true, out BodyPartText html))
 						return html;
 				} else {
-					var text = Body as BodyPartText;
-
-					if (text != null && text.IsHtml)
+					if (Body is BodyPartText text && text.IsHtml)
 						return text;
 				}
 
@@ -338,9 +326,7 @@ namespace MailKit {
 			if (entity == null)
 				yield break;
 
-			var multipart = entity as BodyPartMultipart;
-
-			if (multipart != null) {
+			if (entity is BodyPartMultipart multipart) {
 				foreach (var subpart in multipart.BodyParts) {
 					foreach (var part in EnumerateBodyParts (subpart, attachmentsOnly))
 						yield return part;

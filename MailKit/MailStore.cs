@@ -817,10 +817,7 @@ namespace MailKit {
 		/// </exception>
 		protected virtual void OnAlert (string message)
 		{
-			var handler = Alert;
-
-			if (handler != null)
-				handler (this, new AlertEventArgs (message));
+			Alert?.Invoke (this, new AlertEventArgs (message));
 		}
 
 		/// <summary>
@@ -840,10 +837,7 @@ namespace MailKit {
 		/// <param name="folder">The folder that was just created.</param>
 		protected virtual void OnFolderCreated (IMailFolder folder)
 		{
-			var handler = FolderCreated;
-
-			if (handler != null)
-				handler (this, new FolderCreatedEventArgs (folder));
+			FolderCreated?.Invoke (this, new FolderCreatedEventArgs (folder));
 		}
 
 		/// <summary>
@@ -863,10 +857,7 @@ namespace MailKit {
 		/// <param name="metadata">The metadata that changed.</param>
 		protected virtual void OnMetadataChanged (Metadata metadata)
 		{
-			var handler = MetadataChanged;
-
-			if (handler != null)
-				handler (this, new MetadataChangedEventArgs (metadata));
+			MetadataChanged?.Invoke (this, new MetadataChangedEventArgs (metadata));
 		}
 	}
 }

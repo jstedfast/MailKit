@@ -463,9 +463,7 @@ namespace MailKit.Net.Smtp {
 						int startIndex = inputIndex;
 
 						if (newLine && inputIndex < inputEnd) {
-							int value;
-
-							if (!TryParseInt32 (input, ref inputIndex, inputEnd, out value))
+							if (!TryParseInt32 (input, ref inputIndex, inputEnd, out int value))
 								throw new SmtpProtocolException ("Unable to parse status code returned by the server.");
 
 							if (inputIndex == inputEnd) {
