@@ -186,9 +186,11 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadWrite);
 
 				var matches = inbox.Search ("SUBJECT {13+}\r\nComunicação");
-				Assert.IsFalse (matches.Max.HasValue, "MAX should not be set");
-				Assert.IsFalse (matches.Min.HasValue, "MIN should not be set");
-				Assert.AreEqual (0, matches.Count, "COUNT should not be set");
+				Assert.IsTrue (matches.Max.HasValue, "MAX should always be set");
+				Assert.AreEqual (14, matches.Max.Value.Id, "Unexpected MAX value");
+				Assert.IsTrue (matches.Min.HasValue, "MIN should always be set");
+				Assert.AreEqual (1, matches.Min.Value.Id, "Unexpected MIN value");
+				Assert.AreEqual (14, matches.Count, "COUNT should always be set");
 				Assert.AreEqual (14, matches.UniqueIds.Count);
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);

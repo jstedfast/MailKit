@@ -411,8 +411,9 @@ namespace MailKit.Net.Imap
 		{
 			var results = (SearchResults) ic.UserData;
 			var uids = results.UniqueIds;
+			uint min = uint.MaxValue;
+			uint uid, max = 0;
 			ImapToken token;
-			uint uid;
 
 			do {
 				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
@@ -425,6 +426,8 @@ namespace MailKit.Net.Imap
 
 				uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "SEARCH", token);
 				uids.Add (new UniqueId (ic.Folder.UidValidity, uid));
+				min = Math.Min (min, uid);
+				max = Math.Max (max, uid);
 			} while (true);
 
 			if (token.Type == ImapTokenType.OpenParen) {
@@ -455,9 +458,8 @@ namespace MailKit.Net.Imap
 			results.UniqueIds = uids;
 			results.Count = uids.Count;
 			if (uids.Count > 0) {
-				// Note: This only works because we force ascending sort-order for the uids.
-				results.Max = uids[uids.Count - 1];
-				results.Min = uids[0];
+				results.Min = new UniqueId (ic.Folder.UidValidity, min);
+				results.Max = new UniqueId (ic.Folder.UidValidity, max);
 			}
 		}
 
