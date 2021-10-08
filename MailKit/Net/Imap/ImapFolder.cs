@@ -5484,7 +5484,7 @@ namespace MailKit.Net.Imap {
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
 
-			vanished = ImapEngine.ParseUidSet (token, UidValidity, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
+			vanished = ImapEngine.ParseUidSet (token, UidValidity, out _, out _, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
 
 			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));
 
