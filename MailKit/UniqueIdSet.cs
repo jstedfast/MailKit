@@ -900,17 +900,22 @@ namespace MailKit {
 		/// <param name="token">The token containing the set of unique identifiers.</param>
 		/// <param name="validity">The UIDVALIDITY value.</param>
 		/// <param name="uids">The set of unique identifiers.</param>
+		/// <param name="minValue">The minimum unique identifier value parsed.</param>
+		/// <param name="maxValue">The maximum unique identifier value parsed.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="token"/> is <c>null</c>.
 		/// </exception>
-		public static bool TryParse (string token, uint validity, out UniqueIdSet uids)
+		internal static bool TryParse (string token, uint validity, out UniqueIdSet uids, out UniqueId? minValue, out UniqueId? maxValue)
 		{
 			if (token == null)
 				throw new ArgumentNullException (nameof (token));
 
 			uids = new UniqueIdSet (validity);
+			minValue = maxValue = null;
 
 			var order = SortOrder.None;
+			uint min = uint.MaxValue;
+			uint max = 0;
 			bool sorted = true;
 			uint prev = 0;
 			int index = 0;
@@ -919,11 +924,17 @@ namespace MailKit {
 				if (!UniqueId.TryParse (token, ref index, out uint start))
 					return false;
 
+				min = Math.Min (min, start);
+				max = Math.Max (max, start);
+
 				if (index < token.Length && token[index] == ':') {
 					index++;
 
 					if (!UniqueId.TryParse (token, ref index, out uint end))
 						return false;
+
+					min = Math.Min (min, end);
+					max = Math.Max (max, end);
 
 					var range = new Range (start, end);
 					uids.count += range.Count;
@@ -962,7 +973,30 @@ namespace MailKit {
 
 			uids.SortOrder = sorted ? order : SortOrder.None;
 
+			if (min <= max) {
+				minValue = new UniqueId (validity, min);
+				maxValue = new UniqueId (validity, max);
+			}
+
 			return true;
+		}
+
+		/// <summary>
+		/// Attempt to parse the specified token as a set of unique identifiers.
+		/// </summary>
+		/// <remarks>
+		/// Attempts to parse the specified token as a set of unique identifiers.
+		/// </remarks>
+		/// <returns><c>true</c> if the set of unique identifiers were successfully parsed; otherwise, <c>false</c>.</returns>
+		/// <param name="token">The token containing the set of unique identifiers.</param>
+		/// <param name="validity">The UIDVALIDITY value.</param>
+		/// <param name="uids">The set of unique identifiers.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		public static bool TryParse (string token, uint validity, out UniqueIdSet uids)
+		{
+			return TryParse (token, validity, out uids, out _, out _);
 		}
 
 		/// <summary>
@@ -979,7 +1013,7 @@ namespace MailKit {
 		/// </exception>
 		public static bool TryParse (string token, out UniqueIdSet uids)
 		{
-			return TryParse (token, 0, out uids);
+			return TryParse (token, 0, out uids, out _, out _);
 		}
 	}
 }

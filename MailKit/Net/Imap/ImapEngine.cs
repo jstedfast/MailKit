@@ -595,13 +595,13 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
-		internal static UniqueIdSet ParseUidSet (ImapToken token, uint validity, string format, params object[] args)
+		internal static UniqueIdSet ParseUidSet (ImapToken token, uint validity, out UniqueId? minValue, out UniqueId? maxValue, string format, params object[] args)
 		{
 			UniqueIdSet uids;
 
 			AssertToken (token, ImapTokenType.Atom, format, args);
 
-			if (!UniqueIdSet.TryParse ((string) token.Value, validity, out uids))
+			if (!UniqueIdSet.TryParse ((string) token.Value, validity, out uids, out minValue, out maxValue))
 				throw UnexpectedToken (format, args);
 
 			return uids;

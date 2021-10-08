@@ -456,16 +456,23 @@ namespace MailKit.Net.Imap
 			}
 
 			results.UniqueIds = uids;
+			results.Count = uids.Count;
+			if (uids.Count > 0) {
+				// Note: This only works because we force ascending sort-order for the uids.
+				results.Max = uids[uids.Count - 1];
+				results.Min = uids[0];
+			}
 		}
 
 		static async Task ESearchMatchesAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 			var results = (SearchResults) ic.UserData;
+			UniqueId? minValue = null, maxValue = null;
+			bool hasCount = false;
 			int parenDepth = 0;
 			//bool uid = false;
-			string atom;
-			string tag;
+			string atom, tag;
 
 			if (token.Type == ImapTokenType.OpenParen) {
 				// optional search correlator
@@ -556,6 +563,7 @@ namespace MailKit.Net.Imap
 					var count = ImapEngine.ParseNumber (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Count = (int) count;
+					hasCount = true;
 					break;
 				case "MIN":
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
@@ -574,9 +582,11 @@ namespace MailKit.Net.Imap
 				case "ALL":
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
-					var uids = ImapEngine.ParseUidSet (token, ic.Folder.UidValidity, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					var uids = ImapEngine.ParseUidSet (token, ic.Folder.UidValidity, out minValue, out maxValue, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					results.Count = uids.Count;
+					if (!hasCount)
+						results.Count = uids.Count;
+
 					results.UniqueIds = uids;
 					break;
 				default:
@@ -585,6 +595,12 @@ namespace MailKit.Net.Imap
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 			} while (true);
+
+			if (!results.Min.HasValue)
+				results.Min = minValue;
+
+			if (!results.Max.HasValue)
+				results.Max = maxValue;
 		}
 
 		async Task<SearchResults> SearchAsync (string query, bool doAsync, CancellationToken cancellationToken)
