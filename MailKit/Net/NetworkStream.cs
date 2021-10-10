@@ -188,13 +188,13 @@ namespace MailKit.Net
 							return recv.BytesTransferred;
 						} catch (OperationCanceledException) {
 							Disconnect ();
+							if (timeout.IsCancellationRequested)
+								throw new TimeoutException ($"Operation timed out after {ReadTimeout} milliseconds", ex);
 							throw;
 						} catch (Exception ex) {
 							Disconnect ();
 							if (ex is SocketException)
 								throw new IOException (ex.Message, ex);
-							if (timeout.IsCancellationRequested)
-								throw new TimeoutException ($"Operation timed out after {ReadTimeout} milliseconds", ex);
 							throw;
 						}
 					}
@@ -230,13 +230,13 @@ namespace MailKit.Net
 							await tcs.Task.ConfigureAwait (false);
 						} catch (OperationCanceledException) {
 							Disconnect ();
+							if (timeout.IsCancellationRequested)
+								throw new TimeoutException ($"Operation timed out after {WriteTimeout} milliseconds", ex);
 							throw;
 						} catch (Exception ex) {
 							Disconnect ();
 							if (ex is SocketException)
 								throw new IOException (ex.Message, ex);
-							if (timeout.IsCancellationRequested)
-								throw new TimeoutException ($"Operation timed out after {WriteTimeout} milliseconds", ex);
 							throw;
 						}
 					}
