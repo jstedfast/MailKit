@@ -317,8 +317,8 @@ namespace UnitTests.Security {
 		{
 			Assert.AreEqual ("*.badssl.com", certificate.GetNameInfo (X509NameType.SimpleName, false), "CommonName");
 			Assert.AreEqual ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US", certificate.Issuer, "Issuer");
-			Assert.AreEqual ("00ECB00B04F4E12D3C", certificate.SerialNumber, "SerialNumber");
-			Assert.AreEqual ("69D6DC42A2D60A20CF2B384D3A7763EDABC2E144", certificate.Thumbprint, "Thumbprint");
+			Assert.AreEqual ("009E0CEA72D09A0F09", certificate.SerialNumber, "SerialNumber");
+			Assert.AreEqual ("68F8B787819C021652B81A9DC78B0C08D0419517", certificate.Thumbprint, "Thumbprint");
 		}
 
 		public static void AssertRootCertificate (X509Certificate2 certificate)
