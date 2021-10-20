@@ -186,7 +186,7 @@ namespace MailKit.Net
 						try {
 							await tcs.Task.ConfigureAwait (false);
 							return recv.BytesTransferred;
-						} catch (OperationCanceledException) {
+						} catch (OperationCanceledException ex) {
 							Disconnect ();
 							if (timeout.IsCancellationRequested)
 								throw new TimeoutException ($"Operation timed out after {ReadTimeout} milliseconds", ex);
@@ -228,7 +228,7 @@ namespace MailKit.Net
 
 						try {
 							await tcs.Task.ConfigureAwait (false);
-						} catch (OperationCanceledException) {
+						} catch (OperationCanceledException ex) {
 							Disconnect ();
 							if (timeout.IsCancellationRequested)
 								throw new TimeoutException ($"Operation timed out after {WriteTimeout} milliseconds", ex);
