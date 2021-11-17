@@ -631,7 +631,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-				Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 				Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
 				Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
@@ -689,7 +689,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-				Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 				Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
 				Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
@@ -763,7 +763,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 					Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
@@ -838,7 +838,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 					Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
@@ -903,7 +903,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-				Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 				Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
 				Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
@@ -967,7 +967,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-				Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 				Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
 				Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
@@ -1027,7 +1027,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
@@ -1086,7 +1086,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
@@ -1145,7 +1145,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
@@ -1204,7 +1204,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
 					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.AreEqual (client.SslProtocol, SslProtocols.Tls12, "Expected a TLS v1.2 connection");
+					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
@@ -3588,6 +3588,15 @@ namespace UnitTests.Net.Smtp {
 				Assert.NotNull (response, "EXPN result");
 				Assert.AreEqual (SmtpStatusCode.Ok, response.StatusCode, "EXPN response code");
 				Assert.AreEqual ("Jon Postel <Postel@USC-ISIF.ARPA>\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\n<joe@foo-unix.ARPA>\n<xyz@bar-unix.ARPA>", response.Response, "EXPN response");
+			}
+		}
+
+		[Test]
+		public void TestYanniMail ()
+		{
+			using (var client = new SmtpClient (new ProtocolLogger ("smtp.log"))) {
+				client.Connect ("smtp.yaanimail.com", 465, true);
+				client.Authenticate ("example@yaani.com", "RhCz<y4+.*8+ua-;");
 			}
 		}
 	}
