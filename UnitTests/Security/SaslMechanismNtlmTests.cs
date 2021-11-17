@@ -673,7 +673,7 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (ExampleNtlmV2AuthenticateMessage.Length, actual.Length, "Raw message lengths differ.");
 
-			/// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
+			// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
 			for (int i = 0; i < ExampleNtlmV2AuthenticateMessage.Length - 16; i++)
 				Assert.AreEqual (ExampleNtlmV2AuthenticateMessage[i], actual[i], $"Messages differ at index [{i}]");
 		}
@@ -737,7 +737,7 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length, actual.Length, "Raw message lengths differ.");
 
-			/// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
+			// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
 			for (int i = 0; i < ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length - 16; i++)
 				Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding[i], actual[i], $"Messages differ at index [{i}]");
 		}
@@ -788,7 +788,7 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length, actual.Length, "Raw message lengths differ.");
 
-			/// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
+			// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
 			for (int i = 0; i < ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length - 16; i++)
 				Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding[i], actual[i], $"Messages differ at index [{i}]");
 		}

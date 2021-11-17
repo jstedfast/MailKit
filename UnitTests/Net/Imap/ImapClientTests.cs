@@ -455,8 +455,8 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-				Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
-				Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
+				Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
+				Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
@@ -513,8 +513,8 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-				Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
-				Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
+				Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
+				Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
@@ -587,8 +587,8 @@ namespace UnitTests.Net.Imap {
 					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
+					Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
+					Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
 					Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
@@ -663,8 +663,8 @@ namespace UnitTests.Net.Imap {
 					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
+					Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
+					Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
 					Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
@@ -728,8 +728,8 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-				Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
-				Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
+				Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
+				Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
@@ -792,8 +792,8 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
 				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
 				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-				Assert.AreEqual (GMailCipherAlgorithm, client.SslCipherAlgorithm);
-				Assert.AreEqual (GMailCipherStrength, client.SslCipherStrength);
+				Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
+				Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
