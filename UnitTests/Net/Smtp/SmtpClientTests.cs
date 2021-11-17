@@ -56,14 +56,14 @@ namespace UnitTests.Net.Smtp {
 	[TestFixture]
 	public class SmtpClientTests
 	{
-		const CipherAlgorithmType GMailCipherAlgorithm = CipherAlgorithmType.Aes128;
-		const int GMailCipherStrength = 128;
-		const HashAlgorithmType GMailHashAlgorithm = HashAlgorithmType.Sha256;
-		const ExchangeAlgorithmType GMailKeyExchangeAlgorithm = (ExchangeAlgorithmType) 44550;
+		const CipherAlgorithmType GMailCipherAlgorithm = CipherAlgorithmType.Aes256;
+		const int GMailCipherStrength = 256;
+		const HashAlgorithmType GMailHashAlgorithm = HashAlgorithmType.Sha384;
+		const ExchangeAlgorithmType GMailKeyExchangeAlgorithm = ExchangeAlgorithmType.None;
 		const CipherAlgorithmType YahooCipherAlgorithm = CipherAlgorithmType.Aes128;
 		const int YahooCipherStrength = 128;
 		const HashAlgorithmType YahooHashAlgorithm = HashAlgorithmType.Sha256;
-		const ExchangeAlgorithmType YahooKeyExchangeAlgorithm = (ExchangeAlgorithmType) 44550;
+		const ExchangeAlgorithmType YahooKeyExchangeAlgorithm = ExchangeAlgorithmType.None;
 
 		class MyProgress : ITransferProgress
 		{
@@ -637,7 +637,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (255, client.SslKeyExchangeStrength);
+				Assert.AreEqual (0, client.SslKeyExchangeStrength);
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -695,7 +695,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (255, client.SslKeyExchangeStrength);
+				Assert.AreEqual (0, client.SslKeyExchangeStrength);
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -769,7 +769,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -844,7 +844,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -909,7 +909,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (255, client.SslKeyExchangeStrength);
+				Assert.AreEqual (0, client.SslKeyExchangeStrength);
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -973,7 +973,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (255, client.SslKeyExchangeStrength);
+				Assert.AreEqual (0, client.SslKeyExchangeStrength);
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -1033,7 +1033,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (YahooKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -1092,7 +1092,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (YahooKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -1151,7 +1151,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (YahooKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -1210,7 +1210,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (YahooKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -3588,15 +3588,6 @@ namespace UnitTests.Net.Smtp {
 				Assert.NotNull (response, "EXPN result");
 				Assert.AreEqual (SmtpStatusCode.Ok, response.StatusCode, "EXPN response code");
 				Assert.AreEqual ("Jon Postel <Postel@USC-ISIF.ARPA>\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\n<joe@foo-unix.ARPA>\n<xyz@bar-unix.ARPA>", response.Response, "EXPN response");
-			}
-		}
-
-		[Test]
-		public void TestYanniMail ()
-		{
-			using (var client = new SmtpClient (new ProtocolLogger ("smtp.log"))) {
-				client.Connect ("smtp.yaanimail.com", 465, true);
-				client.Authenticate ("example@yaani.com", "RhCz<y4+.*8+ua-;");
 			}
 		}
 	}

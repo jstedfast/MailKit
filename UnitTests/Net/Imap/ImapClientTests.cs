@@ -83,14 +83,14 @@ namespace UnitTests.Net.Imap {
 		static readonly ImapCapabilities AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Acl;
 		static readonly ImapCapabilities MetadataInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Metadata;
 		static readonly ImapCapabilities MetadataAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Metadata;
-		const CipherAlgorithmType GMailCipherAlgorithm = CipherAlgorithmType.Aes128;
-		const int GMailCipherStrength = 128;
-		const HashAlgorithmType GMailHashAlgorithm = HashAlgorithmType.Sha256;
-		const ExchangeAlgorithmType GMailKeyExchangeAlgorithm = (ExchangeAlgorithmType) 44550;
+		const CipherAlgorithmType GMailCipherAlgorithm = CipherAlgorithmType.Aes256;
+		const int GMailCipherStrength = 256;
+		const HashAlgorithmType GMailHashAlgorithm = HashAlgorithmType.Sha384;
+		const ExchangeAlgorithmType GMailKeyExchangeAlgorithm = ExchangeAlgorithmType.None;
 		const CipherAlgorithmType GmxDeCipherAlgorithm = CipherAlgorithmType.Aes256;
 		const int GmxDeCipherStrength = 256;
 		const HashAlgorithmType GmxDeHashAlgorithm = HashAlgorithmType.Sha384;
-		const ExchangeAlgorithmType GmxDeKeyExchangeAlgorithm = (ExchangeAlgorithmType) 44550;
+		const ExchangeAlgorithmType GmxDeKeyExchangeAlgorithm = ExchangeAlgorithmType.None;
 
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
 		{
@@ -460,7 +460,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (255, client.SslKeyExchangeStrength);
+				Assert.AreEqual (0, client.SslKeyExchangeStrength);
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -518,7 +518,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (255, client.SslKeyExchangeStrength);
+				Assert.AreEqual (0, client.SslKeyExchangeStrength);
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -592,7 +592,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -668,7 +668,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -733,7 +733,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (255, client.SslKeyExchangeStrength);
+				Assert.AreEqual (0, client.SslKeyExchangeStrength);
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -797,7 +797,7 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (GMailHashAlgorithm, client.SslHashAlgorithm);
 				Assert.AreEqual (0, client.SslHashStrength);
 				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (255, client.SslKeyExchangeStrength);
+				Assert.AreEqual (0, client.SslKeyExchangeStrength);
 				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -857,7 +857,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GmxDeKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -916,7 +916,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GmxDeKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -975,7 +975,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GmxDeKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -1034,7 +1034,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
 					Assert.AreEqual (GmxDeKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (255, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
