@@ -5475,7 +5475,7 @@ namespace MailKit.Net.Imap {
 
 					var atom = (string) token.Value;
 
-					if (atom == "EARLIER")
+					if (atom.Equals ("EARLIER", StringComparison.OrdinalIgnoreCase))
 						earlier = true;
 				} while (true);
 
