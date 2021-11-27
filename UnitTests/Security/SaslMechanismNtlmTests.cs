@@ -707,6 +707,7 @@ namespace UnitTests.Security {
 			var uri = new Uri ("imap://elwood.innosoft.com");
 			var sasl = new SaslMechanismNtlm ("User", "Password") {
 				ChannelBindingContext = new ChannelBindingContext (ChannelBindingKind.Endpoint, uri.ToString ()),
+				OSVersion = new Version (10, 0, 19043, 0),
 				IsUnverifiedServicePrincipalName = false,
 				ServicePrincipalName = null,
 				AllowChannelBinding = true,
@@ -735,6 +736,8 @@ namespace UnitTests.Security {
 
 			//var initializer = ToCSharpByteArrayInitializer ("ExampleNtlmV2AuthenticateMessage", actual);
 
+			//var expected = DecodeAuthenticateMessage (Convert.ToBase64String (ExampleNtlmV2AuthenticateMessageWithChannelBinding));
+
 			Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length, actual.Length, "Raw message lengths differ.");
 
 			// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
@@ -758,6 +761,7 @@ namespace UnitTests.Security {
 
 			var sasl = new SaslMechanismNtlm (new NetworkCredential ("User", password)) {
 				ChannelBindingContext = new ChannelBindingContext (ChannelBindingKind.Endpoint, uri.ToString ()),
+				OSVersion = new Version (10, 0, 19043, 0),
 				IsUnverifiedServicePrincipalName = false,
 				ServicePrincipalName = null,
 				AllowChannelBinding = true,
