@@ -490,30 +490,51 @@ namespace MailKit.Net.Imap {
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom) {
-				var atom = ((string) token.Value);
+				var atom = (string) token.Value;
 
-				if      (atom.Equals ("\\noinferiors", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.NoInferiors;
-				else if (atom.Equals ("\\noselect", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.NoSelect;
-				else if (atom.Equals ("\\marked", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Marked;
-				else if (atom.Equals ("\\unmarked", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Unmarked;
-				else if (atom.Equals ("\\nonexistent", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.NonExistent;
-				else if (atom.Equals ("\\subscribed", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Subscribed;
-				else if (atom.Equals ("\\remote", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Remote;
-				else if (atom.Equals ("\\haschildren", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.HasChildren;
-				else if (atom.Equals ("\\hasnochildren", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.HasNoChildren;
-				else if (atom.Equals ("\\all", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.All;
-				else if (atom.Equals ("\\archive", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Archive;
-				else if (atom.Equals ("\\drafts", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Drafts;
-				else if (atom.Equals ("\\flagged", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Flagged;
-				else if (atom.Equals ("\\important", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Important;
-				else if (atom.Equals ("\\junk", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Junk;
-				else if (atom.Equals ("\\sent", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Sent;
-				else if (atom.Equals ("\\trash", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Trash;
+				if (atom.Equals ("\\noinferiors", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.NoInferiors;
+				else if (atom.Equals ("\\noselect", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.NoSelect;
+				else if (atom.Equals ("\\marked", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Marked;
+				else if (atom.Equals ("\\unmarked", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Unmarked;
+				else if (atom.Equals ("\\nonexistent", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.NonExistent;
+				else if (atom.Equals ("\\subscribed", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Subscribed;
+				else if (atom.Equals ("\\remote", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Remote;
+				else if (atom.Equals ("\\haschildren", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.HasChildren;
+				else if (atom.Equals ("\\hasnochildren", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.HasNoChildren;
+				else if (atom.Equals ("\\all", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.All;
+				else if (atom.Equals ("\\archive", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Archive;
+				else if (atom.Equals ("\\drafts", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Drafts;
+				else if (atom.Equals ("\\flagged", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Flagged;
+				else if (atom.Equals ("\\important", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Important;
+				else if (atom.Equals ("\\junk", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Junk;
+				else if (atom.Equals ("\\sent", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Sent;
+				else if (atom.Equals ("\\trash", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Trash;
 				// XLIST flags:
-				else if (atom.Equals ("\\allmail", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.All;
-				else if (atom.Equals ("\\inbox", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Inbox;
-				else if (atom.Equals ("\\spam", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Junk;
-				else if (atom.Equals ("\\starred", StringComparison.OrdinalIgnoreCase)) attrs |= FolderAttributes.Flagged;
+				else if (atom.Equals ("\\allmail", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.All;
+				else if (atom.Equals ("\\inbox", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Inbox;
+				else if (atom.Equals ("\\spam", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Junk;
+				else if (atom.Equals ("\\starred", StringComparison.OrdinalIgnoreCase))
+					attrs |= FolderAttributes.Flagged;
 
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
@@ -1468,20 +1489,24 @@ namespace MailKit.Net.Imap {
 
 			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.QString || token.Type == ImapTokenType.Nil) {
 				if (token.Type != ImapTokenType.Nil) {
-					var flag = ((string) token.Value).ToLowerInvariant ();
+					var flag = (string) token.Value;
 
-					if		(flag.Equals ("\\answered", StringComparison.OrdinalIgnoreCase)) flags |= MessageFlags.Answered;
-					else if (flag.Equals ("\\deleted", StringComparison.OrdinalIgnoreCase)) flags |= MessageFlags.Deleted;
-					else if (flag.Equals ("\\draft", StringComparison.OrdinalIgnoreCase)) flags |= MessageFlags.Draft;
-					else if (flag.Equals ("\\flagged", StringComparison.OrdinalIgnoreCase)) flags |= MessageFlags.Flagged;
-					else if (flag.Equals ("\\seen", StringComparison.OrdinalIgnoreCase)) flags |= MessageFlags.Seen;
-					else if (flag.Equals ("\\recent", StringComparison.OrdinalIgnoreCase)) flags |= MessageFlags.Recent;
-					else if (flag.Equals ("\\*", StringComparison.OrdinalIgnoreCase)) flags |= MessageFlags.UserDefined;
-					else {
-						if (keywords != null)
-							keywords.Add (flag);
-						break;
-					}
+					if (flag.Equals ("\\answered", StringComparison.OrdinalIgnoreCase))
+						flags |= MessageFlags.Answered;
+					else if (flag.Equals ("\\deleted", StringComparison.OrdinalIgnoreCase))
+						flags |= MessageFlags.Deleted;
+					else if (flag.Equals ("\\draft", StringComparison.OrdinalIgnoreCase))
+						flags |= MessageFlags.Draft;
+					else if (flag.Equals ("\\flagged", StringComparison.OrdinalIgnoreCase))
+						flags |= MessageFlags.Flagged;
+					else if (flag.Equals ("\\seen", StringComparison.OrdinalIgnoreCase))
+						flags |= MessageFlags.Seen;
+					else if (flag.Equals ("\\recent", StringComparison.OrdinalIgnoreCase))
+						flags |= MessageFlags.Recent;
+					else if (flag.Equals ("\\*", StringComparison.OrdinalIgnoreCase))
+						flags |= MessageFlags.UserDefined;
+					else if (keywords != null)
+						keywords.Add (flag);
 				}
 
 				token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
