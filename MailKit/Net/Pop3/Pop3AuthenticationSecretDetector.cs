@@ -68,10 +68,10 @@ namespace MailKit.Net.Pop3 {
 
 		static Pop3AuthenticationSecretDetector ()
 		{
-#if NET45
-			EmptyAuthSecrets = new AuthenticationSecret[0];
-#else
+#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
 			EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
+#else
+			EmptyAuthSecrets = new AuthenticationSecret[0];
 #endif
 		}
 
