@@ -5387,9 +5387,6 @@ namespace MailKit.Net.Imap {
 
 		internal void OnExists (int count)
 		{
-			if (Count == count)
-				return;
-
 			Count = count;
 
 			OnCountChanged ();
@@ -5397,10 +5394,7 @@ namespace MailKit.Net.Imap {
 
 		internal void OnExpunge (int index)
 		{
-			Count--;
-
 			OnMessageExpunged (new MessageEventArgs (index));
-			OnCountChanged ();
 		}
 
 		internal async Task OnFetchAsync (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)

@@ -2004,7 +2004,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (moved.Source.Count, moved.Destination.Count, "Source and Destination UID counts do not match");
 				Assert.AreEqual (21, expunged, "Expunged event");
-				Assert.AreEqual (22, changed, "CountChanged event"); // FIXME: should we work more like IMAP and only emit this once?
+				Assert.AreEqual (1, changed, "CountChanged event");
 
 				if (disableMove)
 					client.Capabilities &= ~ImapCapabilities.Move;
@@ -2017,7 +2017,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (moved.Source.Count, moved.Destination.Count, "Source and Destination UID counts do not match");
 				Assert.AreEqual (21, expunged, "Expunged event");
-				Assert.AreEqual (22, changed, "CountChanged event");
+				Assert.AreEqual (1, changed, "CountChanged event");
 
 				client.Disconnect (true);
 			}
@@ -2063,7 +2063,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (moved.Source.Count, moved.Destination.Count, "Source and Destination UID counts do not match");
 				Assert.AreEqual (21, expunged, "Expunged event");
-				Assert.AreEqual (22, changed, "CountChanged event");
+				Assert.AreEqual (1, changed, "CountChanged event");
 
 				if (disableMove)
 					client.Capabilities &= ~ImapCapabilities.Move;
@@ -2076,7 +2076,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.AreEqual (moved.Source.Count, moved.Destination.Count, "Source and Destination UID counts do not match");
 				Assert.AreEqual (21, expunged, "Expunged event");
-				Assert.AreEqual (22, changed, "CountChanged event");
+				Assert.AreEqual (1, changed, "CountChanged event");
 
 				await client.DisconnectAsync (true);
 			}
@@ -2147,7 +2147,7 @@ namespace UnitTests.Net.Imap {
 				inbox.Expunge (uids);
 
 				Assert.AreEqual (3, expunged, "Unexpected number of Expunged events");
-				Assert.AreEqual (4, changed, "Unexpected number of CountChanged events");
+				Assert.AreEqual (1, changed, "Unexpected number of CountChanged events");
 				Assert.AreEqual (18, inbox.Count, "Count");
 
 				client.Disconnect (true);
@@ -2193,7 +2193,7 @@ namespace UnitTests.Net.Imap {
 				await inbox.ExpungeAsync (uids);
 
 				Assert.AreEqual (3, expunged, "Unexpected number of Expunged events");
-				Assert.AreEqual (4, changed, "Unexpected number of CountChanged events");
+				Assert.AreEqual (1, changed, "Unexpected number of CountChanged events");
 				Assert.AreEqual (18, inbox.Count, "Count");
 
 				await client.DisconnectAsync (true);
