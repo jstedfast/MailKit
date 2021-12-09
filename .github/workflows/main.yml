@@ -139,7 +139,7 @@ jobs:
         continue-on-error: true
         shell: pwsh
         run: |
-          $NUnitConsoleRunner = Join-Path $Home ".nuget/packages/nunit.consolerunner/3.12.0/tools/nunit3-console.exe"
+          $NUnitConsoleRunner = Join-Path $Home ".nuget/packages/nunit.consolerunner/3.13.0/tools/nunit3-console.exe"
 
           & $NUnitConsoleRunner --domain:single "UnitTests/bin/Release/net48/UnitTests.dll"
 
