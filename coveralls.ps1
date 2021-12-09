@@ -1,4 +1,4 @@
-$NUnitConsoleRunner = Join-Path $Home ".nuget\packages\nunit.consolerunner\3.12.0\tools\nunit3-console.exe"
+$NUnitConsoleRunner = Join-Path $Home ".nuget\packages\nunit.consolerunner\3.13.0\tools\nunit3-console.exe"
 $Coveralls = Join-Path $Home ".nuget\packages\coveralls.net\0.7.0\tools\csmacnz.Coveralls.exe"
 $OpenCoverDir = Join-Path $Home ".nuget\packages\opencover\4.6.519\tools"
 $OpenCoverProfiler32 = Join-Path $OpenCoverDir "x86\OpenCover.Profiler.dll"
