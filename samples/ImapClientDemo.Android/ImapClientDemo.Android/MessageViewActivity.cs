@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2020 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2021 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,31 +30,31 @@ using Android.Widget;
 
 namespace ImapClientDemo
 {
-    [Activity (Label = "Details")]			
-    public class MessageViewActivity : Activity
-    {
-        TextView textSubject;
-        TextView textFrom;
-        TextView textDate;
-        TextView textBody;
+	[Activity (Label = "Details")]
+	public class MessageViewActivity : Activity
+	{
+		TextView textSubject;
+		TextView textFrom;
+		TextView textDate;
+		TextView textBody;
 
-        protected override void OnCreate (Bundle bundle)
-        {
-            base.OnCreate (bundle);
+		protected override void OnCreate (Bundle bundle)
+		{
+			base.OnCreate (bundle);
 
-            SetContentView (Resource.Layout.ViewMessageLayout);
-         
-            textSubject = FindViewById<TextView> (Resource.Id.textSubject);
-            textFrom = FindViewById<TextView> (Resource.Id.textFrom);
-            textDate = FindViewById<TextView> (Resource.Id.textDate);
-            textBody = FindViewById<TextView> (Resource.Id.textBody);
+			SetContentView (Resource.Layout.ViewMessageLayout);
 
-            var msg = Mail.CurrentMessage;
+			textSubject = FindViewById<TextView> (Resource.Id.textSubject);
+			textFrom = FindViewById<TextView> (Resource.Id.textFrom);
+			textDate = FindViewById<TextView> (Resource.Id.textDate);
+			textBody = FindViewById<TextView> (Resource.Id.textBody);
 
-            textSubject.Text = msg.Subject;
-            textFrom.Text = msg.From.ToString ();
-            textDate.Text = msg.Date.LocalDateTime.ToString ();
-            textBody.Text = msg.TextBody;
-        }
-    }
+			var msg = Mail.CurrentMessage;
+
+			textSubject.Text = msg.Subject;
+			textFrom.Text = msg.From.ToString ();
+			textDate.Text = msg.Date.LocalDateTime.ToString ();
+			textBody.Text = msg.TextBody;
+		}
+	}
 }

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2020 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2021 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,17 +29,17 @@ using MailKit.Net.Imap;
 
 namespace ImapClientDemo
 {
-    public static class Mail
-    {
-        static Mail ()
-        {
-            Client = new ImapClient ();
-        }
+	public static class Mail
+	{
+		static Mail ()
+		{
+			Client = new ImapClient ();
+		}
 
-        public static ImapClient Client { get; set; }
+		public static ImapClient Client { get; set; }
 
-        public static IMailFolder CurrentFolder { get;set; }
+		public static IMailFolder CurrentFolder { get;set; }
 
-        public static MimeKit.MimeMessage CurrentMessage { get; set; }
-    }
+		public static MimeKit.MimeMessage CurrentMessage { get; set; }
+	}
 }

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2020 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2021 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,24 +37,24 @@ using MimeKit;
 
 namespace ImapClientDemo.iOS
 {
-    public class MessageViewController : DialogViewController
-    {
-        public MessageViewController (MimeMessage msg) : base (UITableViewStyle.Grouped, null, true)
-        {
-            Root = new RootElement ("Details") {
-                new Section {
-                    new StyledMultilineElement (msg.Subject),
-                    new StyledMultilineElement ("From:", msg.From.ToString ()),
-                    new StyledStringElement (msg.Date.LocalDateTime.ToString ()) {
-                        Font = UIFont.SystemFontOfSize (12f)
-                    },
-                },
-                new Section {
-                    new StyledMultilineElement (msg.TextBody) {
-                        Font = UIFont.SystemFontOfSize (12f)
-                    }
-                },
-            };
-        }
-    }
+	public class MessageViewController : DialogViewController
+	{
+		public MessageViewController (MimeMessage msg) : base (UITableViewStyle.Grouped, null, true)
+		{
+			Root = new RootElement ("Details") {
+				new Section {
+					new StyledMultilineElement (msg.Subject),
+					new StyledMultilineElement ("From:", msg.From.ToString ()),
+					new StyledStringElement (msg.Date.LocalDateTime.ToString ()) {
+						Font = UIFont.SystemFontOfSize (12f)
+					},
+				},
+				new Section {
+					new StyledMultilineElement (msg.TextBody) {
+						Font = UIFont.SystemFontOfSize (12f)
+					}
+				},
+			};
+		}
+	}
 }

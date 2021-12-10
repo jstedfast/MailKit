@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2020 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2021 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,51 +37,51 @@ using MailKit;
 
 namespace ImapClientDemo.iOS
 {
-    public class FoldersViewController : DialogViewController
-    {
+	public class FoldersViewController : DialogViewController
+	{
 		MessageListViewController messageListViewController;
 
-        public FoldersViewController () : base (UITableViewStyle.Grouped, null, true)
-        {
-            Root = new RootElement ("Folders");
-        }
+		public FoldersViewController () : base (UITableViewStyle.Grouped, null, true)
+		{
+			Root = new RootElement ("Folders");
+		}
 
-        public async override void ViewDidLoad ()
-        {
-            base.ViewDidLoad ();
+		public async override void ViewDidLoad ()
+		{
+			base.ViewDidLoad ();
 
-            var foldersSection = new Section ();
+			var foldersSection = new Section ();
 
-            var personal = Mail.Client.GetFolder (Mail.Client.PersonalNamespaces[0]); 
+			var personal = Mail.Client.GetFolder (Mail.Client.PersonalNamespaces[0]);
 
-            // Recursively load all folders and subfolders
-            await LoadChildFolders (foldersSection, personal);
+			// Recursively load all folders and subfolders
+			await LoadChildFolders (foldersSection, personal);
 
-            Root.Clear ();
-            Root.Add (foldersSection);
-        }
+			Root.Clear ();
+			Root.Add (foldersSection);
+		}
 
-        // Recursive function to load all folders and their subfolders
-        async Task LoadChildFolders (Section foldersSection, IMailFolder folder)
-        {
-            if (!folder.IsNamespace) {
-                foldersSection.Add (new StyledStringElement (folder.FullName, () =>
-                    OpenFolder (folder)));
-            }
+		// Recursive function to load all folders and their subfolders
+		async Task LoadChildFolders (Section foldersSection, IMailFolder folder)
+		{
+			if (!folder.IsNamespace) {
+				foldersSection.Add (new StyledStringElement (folder.FullName, () =>
+					OpenFolder (folder)));
+			}
 
 			if (folder.Attributes.HasFlag (FolderAttributes.HasNoChildren))
 				return;
 
-            var subfolders = await folder.GetSubfoldersAsync ();
+			var subfolders = await folder.GetSubfoldersAsync ();
 
-            foreach (var sf in subfolders)
-                await LoadChildFolders (foldersSection, sf);
-        }
+			foreach (var sf in subfolders)
+				await LoadChildFolders (foldersSection, sf);
+		}
 
-        void OpenFolder (IMailFolder folder)
-        {
-            messageListViewController = new MessageListViewController (folder);
-            NavigationController.PushViewController (messageListViewController, true);
-        }
-    }
+		void OpenFolder (IMailFolder folder)
+		{
+			messageListViewController = new MessageListViewController (folder);
+			NavigationController.PushViewController (messageListViewController, true);
+		}
+	}
 }
