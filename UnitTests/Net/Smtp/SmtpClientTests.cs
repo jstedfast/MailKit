@@ -608,9 +608,9 @@ namespace UnitTests.Net.Smtp {
 			Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
 			Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
 			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
-			Assert.AreEqual (0, client.SslHashStrength);
+			Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
 			Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-			Assert.AreEqual (0, client.SslKeyExchangeStrength);
+			Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
 			Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 		}
 
@@ -933,9 +933,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength);
+					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
 					Assert.AreEqual (YahooKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (0, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -982,9 +982,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength);
+					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
 					Assert.AreEqual (YahooKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (0, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -1031,9 +1031,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength);
+					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
 					Assert.AreEqual (YahooKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (0, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
@@ -1080,9 +1080,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
 					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength);
+					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
 					Assert.AreEqual (YahooKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (0, client.SslKeyExchangeStrength);
+					Assert.AreEqual (0, client.SslKeyExchangeStrength, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
