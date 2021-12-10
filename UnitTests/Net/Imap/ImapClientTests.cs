@@ -83,14 +83,10 @@ namespace UnitTests.Net.Imap {
 		static readonly ImapCapabilities AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Acl;
 		static readonly ImapCapabilities MetadataInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Metadata;
 		static readonly ImapCapabilities MetadataAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Metadata;
-		const CipherAlgorithmType GMailCipherAlgorithm = CipherAlgorithmType.Aes256;
-		const int GMailCipherStrength = 256;
-		const HashAlgorithmType GMailHashAlgorithm = HashAlgorithmType.Sha384;
-		const ExchangeAlgorithmType GMailKeyExchangeAlgorithm = ExchangeAlgorithmType.None;
 		const CipherAlgorithmType GmxDeCipherAlgorithm = CipherAlgorithmType.Aes256;
 		const int GmxDeCipherStrength = 256;
 		const HashAlgorithmType GmxDeHashAlgorithm = HashAlgorithmType.Sha384;
-		const ExchangeAlgorithmType GmxDeKeyExchangeAlgorithm = ExchangeAlgorithmType.None;
+		const ExchangeAlgorithmType EcdhEphemeral = (ExchangeAlgorithmType) 44550;
 
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
 		{
@@ -424,6 +420,37 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		void AssertGMailIsConnected (IMailService client)
+		{
+			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
+			Assert.IsTrue (client.IsSecure, "Expected a secure connection");
+			Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
+			Assert.IsTrue (client.IsSigned, "Expected a signed connection");
+			Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
+			Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
+			Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
+			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
+			Assert.AreEqual (0, client.SslHashStrength);
+			Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
+			Assert.AreEqual (0, client.SslKeyExchangeStrength);
+			Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+		}
+
+		void AssertClientIsDisconnected (IMailService client)
+		{
+			Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
+			Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
+			Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
+			Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
+			Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
+			Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
+			Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
+			Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
+			Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
+			Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
+			Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+		}
+
 		[Test]
 		public void TestConnectGMail ()
 		{
@@ -450,34 +477,13 @@ namespace UnitTests.Net.Imap {
 				};
 
 				client.Connect (host, 0, options);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-				Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
-				Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
-				Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
-				Assert.AreEqual (0, client.SslHashStrength);
-				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (0, client.SslKeyExchangeStrength);
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				AssertGMailIsConnected (client);
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
 
 				client.Disconnect (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-				Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-				Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-				Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-				Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-				Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-				Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+				AssertClientIsDisconnected (client);
 				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
@@ -508,34 +514,13 @@ namespace UnitTests.Net.Imap {
 				};
 
 				await client.ConnectAsync (host, 0, options);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-				Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
-				Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
-				Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
-				Assert.AreEqual (0, client.SslHashStrength);
-				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (0, client.SslKeyExchangeStrength);
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				AssertGMailIsConnected (client);
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
 
 				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-				Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-				Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-				Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-				Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-				Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-				Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+				AssertClientIsDisconnected (client);
 				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
@@ -582,34 +567,13 @@ namespace UnitTests.Net.Imap {
 					} catch (Exception ex) {
 						Assert.Fail (ex.Message);
 					}
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
-					Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
-					Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength);
-					Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (0, client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					AssertGMailIsConnected (client);
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
 
 					client.Disconnect (true);
-					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-					Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-					Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-					Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+					AssertClientIsDisconnected (client);
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -658,34 +622,13 @@ namespace UnitTests.Net.Imap {
 					} catch (Exception ex) {
 						Assert.Fail (ex.Message);
 					}
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
-					Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
-					Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength);
-					Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-					Assert.AreEqual (0, client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+					AssertGMailIsConnected (client);
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
 
 					await client.DisconnectAsync (true);
-					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-					Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-					Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-					Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+					AssertClientIsDisconnected (client);
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -723,34 +666,13 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect (socket, host, -1, SecureSocketOptions.Auto));
 
 				client.Connect (socket, host, port, SecureSocketOptions.Auto);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-				Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
-				Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
-				Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
-				Assert.AreEqual (0, client.SslHashStrength);
-				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (0, client.SslKeyExchangeStrength);
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				AssertGMailIsConnected (client);
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect (socket, host, port, SecureSocketOptions.Auto));
 
 				client.Disconnect (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-				Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-				Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-				Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-				Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-				Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-				Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+				AssertClientIsDisconnected (client);
 				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
@@ -787,34 +709,13 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await client.ConnectAsync (socket, host, -1, SecureSocketOptions.Auto));
 
 				await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto);
-				Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-				Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-				Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-				Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-				Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-				Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
-				Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
-				Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
-				Assert.AreEqual (0, client.SslHashStrength);
-				Assert.AreEqual (GMailKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
-				Assert.AreEqual (0, client.SslKeyExchangeStrength);
-				Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+				AssertGMailIsConnected (client);
 				Assert.AreEqual (1, connected, "ConnectedEvent");
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto));
 
 				await client.DisconnectAsync (true);
-				Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-				Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-				Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-				Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-				Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-				Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-				Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-				Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-				Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+				AssertClientIsDisconnected (client);
 				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 			}
 		}
@@ -856,23 +757,13 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GmxDeCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
-					Assert.AreEqual (GmxDeKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
+					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
 					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					client.Disconnect (true);
-					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-					Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-					Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-					Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+					AssertClientIsDisconnected (client);
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -915,23 +806,13 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GmxDeCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
-					Assert.AreEqual (GmxDeKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
+					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
 					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					await client.DisconnectAsync (true);
-					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-					Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-					Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-					Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+					AssertClientIsDisconnected (client);
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -974,23 +855,13 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GmxDeCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
-					Assert.AreEqual (GmxDeKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
+					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
 					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					client.Disconnect (true);
-					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-					Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-					Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-					Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+					AssertClientIsDisconnected (client);
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
@@ -1033,23 +904,13 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (GmxDeCipherStrength, client.SslCipherStrength);
 					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
 					Assert.AreEqual (0, client.SslHashStrength);
-					Assert.AreEqual (GmxDeKeyExchangeAlgorithm, client.SslKeyExchangeAlgorithm);
+					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
 					Assert.AreEqual (0, client.SslKeyExchangeStrength);
 					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 					Assert.AreEqual (1, connected, "ConnectedEvent");
 
 					await client.DisconnectAsync (true);
-					Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-					Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-					Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-					Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-					Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-					Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-					Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-					Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+					AssertClientIsDisconnected (client);
 					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
 				}
 			}
