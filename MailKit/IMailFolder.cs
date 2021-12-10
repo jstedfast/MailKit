@@ -2136,6 +2136,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Updates the message flags and keywords for a set of messages.
 		/// </remarks>
+		/// <returns>The indexes of the messages that were not updated.</returns>
 		/// <param name="indexes">The message indexes.</param>
 		/// <param name="request">The message flags and keywords to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2231,6 +2232,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Updates the GMail-style labels for a set of messages.
 		/// </remarks>
+		/// <returns>The indexes of the messages that were not updated.</returns>
 		/// <param name="indexes">The message indexes.</param>
 		/// <param name="request">The labels to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

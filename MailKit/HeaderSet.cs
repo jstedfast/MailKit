@@ -51,7 +51,7 @@ namespace MailKit {
 		public static readonly HeaderSet All = new HeaderSet () { Exclude = true, IsReadOnly = true };
 
 		/// <summary>
-		/// A set of headers that only includes only the standard envelope headers.
+		/// A set of headers that only includes the standard envelope headers.
 		/// </summary>
 		/// <remarks>
 		/// When used with a <see cref="IFetchRequest"/>, this pre-computed set of headers can be used
@@ -101,6 +101,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="HeaderSet"/>.
 		/// </remarks>
+		/// <param name="headers">The headers to include.</param>
 		public HeaderSet (IEnumerable<HeaderId> headers)
 		{
 			AddRange (headers);
@@ -112,6 +113,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="HeaderSet"/>.
 		/// </remarks>
+		/// <param name="headers">The headers to include.</param>
 		public HeaderSet (IEnumerable<string> headers)
 		{
 			AddRange (headers);
