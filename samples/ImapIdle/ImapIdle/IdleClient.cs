@@ -40,12 +40,14 @@ namespace ImapIdle
 		List<IMessageSummary> messages;
 		CancellationTokenSource cancel;
 		CancellationTokenSource done;
+		FetchRequest request;
 		bool messagesArrived;
 		ImapClient client;
 
 		public IdleClient ()
 		{
 			client = new ImapClient (new ProtocolLogger (Console.OpenStandardError ()));
+			request = new FetchRequest (MessageSummaryItems.Full | MessageSummaryItems.UniqueId);
 			messages = new List<IMessageSummary> ();
 			cancel = new CancellationTokenSource ();
 		}
@@ -71,7 +73,7 @@ namespace ImapIdle
 					// fetch summary information for messages that we don't already have
 					int startIndex = messages.Count;
 
-					fetched = client.Inbox.Fetch (startIndex, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId, cancel.Token);
+					fetched = client.Inbox.Fetch (startIndex, -1, request, cancel.Token);
 					break;
 				} catch (ImapProtocolException) {
 					// protocol exceptions often result in the client getting disconnected

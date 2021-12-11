@@ -1,5 +1,44 @@
 # Release Notes
 
+### MailKit 3.0.0 (2021-12-11)
+
+* Removed APIs marked as \[Obsolete\] in 2.x.
+* Simplify Fetch()/FetchAsync() APIs by using a new IFetchRequest parameter instead. Made previous APIs into
+  extension methods to aid in porting from 2.x.
+* Replaced Add/Remove/SetFlags() APIs with Store()/StoreAsync() and simplified the APIs by using a new
+  IStoreFlagsRequest parameter. Made previous APIs into extension methods to aid in porting from 2.x.
+* Replaced Add/Remove/SetLabels() APIs with Store()/StoreAsync() and simplified the APIs by using a new
+  IStoreLabelsRequest parameter. Made previous APIs into extension methods to aid in porting from 2.x.
+* Simplify Append()/AppendAsync() APIs by using a new IAppendRequest parameter instead. Made previous APIs into
+  extension methods to aid in porting from 2.x.
+* Simplify Replace()/ReplaceAsync() APIs by using a new IReplaceRequest parameterinstead. Made previous APIs into
+  extension methods to aid in porting from 2.x.
+* Updated SmtpClient.Send()/SendAsync() methods to return a string.
+  (issue [#1161](https://github.com/jstedfast/MailKit/issues/1161))
+* Added support for the SCRAM-SHA*-PLUS SASL mechanisms.
+  (issue [#950](https://github.com/jstedfast/MailKit/issues/950))
+* Added authzid support for SCRAM SASL mechanisms.
+* Added support for the ANONYMOUS SASL mechanism.
+* Added support for an HttpsProxyClient. (issue [#1251](https://github.com/jstedfast/MailKit/issues/1251))
+* Added AcceptedKeywords and PermanentKeywords to IMailFolder.
+  (issue [#1256](https://github.com/jstedfast/MailKit/issues/1256))
+* Rewrote NTLM support based on official specs. Now supports channel-binding and using the default system credentials.
+* Modified ImapFolder.Fetch(int, int, ...) to shortcut if ImapFolder.Count == 0.
+* Updated SmtpClient to append an ORCPT arg to RCPT TO commands and to hex-encode the ENVID parameter value.
+* Improved/simplified logic for ranking SASL authentication mechisms for each client.
+* Added SaslMechanism.ChallengeAsync() to facilitate future SASL mechanisms that may need to make network requests
+  such as Kerberos/GSSAPI and perhaps even future/custom OAuth2 implementations.
+* Always set SearchResults.Count/Min/Max properties if we can.
+* Throw TimeoutException is case of a network time out.
+  (issue [#1269](https://github.com/jstedfast/MailKit/issues/1269))
+* Fixed parsing of IMAP flag lists to handle lowercase flag names.
+  (issue [#1277](https://github.com/jstedfast/MailKit/issues/1277))
+* Use OrdinalIgnoreCase when comparing "EARLIER" atom token.
+* Avoid unnecessary string copies. (issue [#1292](https://github.com/jstedfast/MailKit/issues/1292))
+* Drop support for .NET 4.5 and replace it with .NET 4.5.2
+* Simplified event emissions based on EXISTS and EXPUNGED notifications. A CountChanged event is now *always*
+  emitted when the server sends an EXISTS notification.
+
 ### MailKit 2.15.0 (2021-08-18)
 
 * Use DebugType=full for .NET Framework v4.x. (issue [#1239](https://github.com/jstedfast/MailKit/issues/1239))

@@ -29,7 +29,7 @@
     <Reference Include="System.Security" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.15.0" />
+    <PackageReference Include="MailKit" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
