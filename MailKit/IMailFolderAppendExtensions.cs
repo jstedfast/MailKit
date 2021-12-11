@@ -34,6 +34,8 @@ using MimeKit;
 namespace MailKit {
 	public static partial class IMailFolderExtensions
 	{
+		#pragma warning disable CA1068 // CancellationToken parameters must come last
+
 		#region Append Extensions
 
 		/// <summary>
@@ -362,9 +364,11 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new AppendRequest (message, flags);
+			var request = new AppendRequest (message, flags) {
+				TransferProgress = progress
+			};
 
-			return folder.Append (options, request, cancellationToken, progress);
+			return folder.Append (options, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -417,9 +421,11 @@ namespace MailKit {
 		/// </exception>
 		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new AppendRequest (message, flags);
+			var request = new AppendRequest (message, flags) {
+				TransferProgress = progress
+			};
 
-			return folder.AppendAsync (options, request, cancellationToken, progress);
+			return folder.AppendAsync (options, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -473,9 +479,11 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new AppendRequest (message, flags, date);
+			var request = new AppendRequest (message, flags, date) {
+				TransferProgress = progress
+			};
 
-			return folder.Append (options, request, cancellationToken, progress);
+			return folder.Append (options, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -529,9 +537,11 @@ namespace MailKit {
 		/// </exception>
 		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new AppendRequest (message, flags, date);
+			var request = new AppendRequest (message, flags, date) {
+				TransferProgress = progress
+			};
 
-			return folder.AppendAsync (options, request, cancellationToken, progress);
+			return folder.AppendAsync (options, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -587,11 +597,12 @@ namespace MailKit {
 		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			var request = new AppendRequest (message, flags) {
+				TransferProgress = progress,
 				Annotations = annotations,
 				InternalDate = date
 			};
 
-			return folder.Append (options, request, cancellationToken, progress);
+			return folder.Append (options, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -647,11 +658,12 @@ namespace MailKit {
 		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			var request = new AppendRequest (message, flags) {
+				TransferProgress = progress,
 				Annotations = annotations,
 				InternalDate = date
 			};
 
-			return folder.AppendAsync (options, request, cancellationToken, progress);
+			return folder.AppendAsync (options, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -939,10 +951,13 @@ namespace MailKit {
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
 
 			var requests = new AppendRequest[messages.Count];
-			for (int i = 0; i < messages.Count; i++)
-				requests[i] = new AppendRequest (messages[i], flags[i]);
+			for (int i = 0; i < messages.Count; i++) {
+				requests[i] = new AppendRequest (messages[i], flags[i]) {
+					TransferProgress = progress
+				};
+			}
 
-			return folder.Append (options, requests, cancellationToken, progress);
+			return folder.Append (options, requests, cancellationToken);
 		}
 
 		/// <summary>
@@ -1020,10 +1035,13 @@ namespace MailKit {
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
 
 			var requests = new AppendRequest[messages.Count];
-			for (int i = 0; i < messages.Count; i++)
-				requests[i] = new AppendRequest (messages[i], flags[i]);
+			for (int i = 0; i < messages.Count; i++) {
+				requests[i] = new AppendRequest (messages[i], flags[i]) {
+					TransferProgress = progress
+				};
+			}
 
-			return folder.AppendAsync (options, requests, cancellationToken, progress);
+			return folder.AppendAsync (options, requests, cancellationToken);
 		}
 
 		/// <summary>
@@ -1110,10 +1128,13 @@ namespace MailKit {
 				throw new ArgumentException ("The number of messages and the number of dates must be equal.");
 
 			var requests = new AppendRequest[messages.Count];
-			for (int i = 0; i < messages.Count; i++)
-				requests[i] = new AppendRequest (messages[i], flags[i], dates[i]);
+			for (int i = 0; i < messages.Count; i++) {
+				requests[i] = new AppendRequest (messages[i], flags[i], dates[i]) {
+					TransferProgress = progress
+				};
+			}
 
-			return folder.Append (options, requests, cancellationToken, progress);
+			return folder.Append (options, requests, cancellationToken);
 		}
 
 		/// <summary>
@@ -1200,10 +1221,13 @@ namespace MailKit {
 				throw new ArgumentException ("The number of messages and the number of dates must be equal.");
 
 			var requests = new AppendRequest[messages.Count];
-			for (int i = 0; i < messages.Count; i++)
-				requests[i] = new AppendRequest (messages[i], flags[i], dates[i]);
+			for (int i = 0; i < messages.Count; i++) {
+				requests[i] = new AppendRequest (messages[i], flags[i], dates[i]) {
+					TransferProgress = progress
+				};
+			}
 
-			return folder.AppendAsync (options, requests, cancellationToken, progress);
+			return folder.AppendAsync (options, requests, cancellationToken);
 		}
 
 		#endregion Append Extensions
@@ -1479,9 +1503,11 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new ReplaceRequest (message, flags);
+			var request = new ReplaceRequest (message, flags) {
+				TransferProgress = progress
+			};
 
-			return folder.Replace (options, uid, request, cancellationToken, progress);
+			return folder.Replace (options, uid, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -1541,9 +1567,11 @@ namespace MailKit {
 		/// </exception>
 		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new ReplaceRequest (message, flags);
+			var request = new ReplaceRequest (message, flags) {
+				TransferProgress = progress
+			};
 
-			return folder.ReplaceAsync (options, uid, request, cancellationToken, progress);
+			return folder.ReplaceAsync (options, uid, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -1604,9 +1632,11 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new ReplaceRequest (message, flags, date);
+			var request = new ReplaceRequest (message, flags, date) {
+				TransferProgress = progress
+			};
 
-			return folder.Replace (options, uid, request, cancellationToken, progress);
+			return folder.Replace (options, uid, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -1667,9 +1697,11 @@ namespace MailKit {
 		/// </exception>
 		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new ReplaceRequest (message, flags, date);
+			var request = new ReplaceRequest (message, flags, date) {
+				TransferProgress = progress
+			};
 
-			return folder.ReplaceAsync (options, uid, request, cancellationToken, progress);
+			return folder.ReplaceAsync (options, uid, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -1941,9 +1973,11 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new ReplaceRequest (message, flags);
+			var request = new ReplaceRequest (message, flags) {
+				TransferProgress = progress
+			};
 
-			return folder.Replace (options, index, request, cancellationToken, progress);
+			return folder.Replace (options, index, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -2003,9 +2037,11 @@ namespace MailKit {
 		/// </exception>
 		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new ReplaceRequest (message, flags);
+			var request = new ReplaceRequest (message, flags) {
+				TransferProgress = progress
+			};
 
-			return folder.ReplaceAsync (options, index, request, cancellationToken, progress);
+			return folder.ReplaceAsync (options, index, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -2066,9 +2102,11 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new ReplaceRequest (message, flags, date);
+			var request = new ReplaceRequest (message, flags, date) {
+				TransferProgress = progress
+			};
 
-			return folder.Replace (options, index, request, cancellationToken, progress);
+			return folder.Replace (options, index, request, cancellationToken);
 		}
 
 		/// <summary>
@@ -2129,11 +2167,15 @@ namespace MailKit {
 		/// </exception>
 		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			var request = new ReplaceRequest (message, flags, date);
+			var request = new ReplaceRequest (message, flags, date) {
+				TransferProgress = progress
+			};
 
-			return folder.ReplaceAsync (options, index, request, cancellationToken, progress);
+			return folder.ReplaceAsync (options, index, request, cancellationToken);
 		}
 
 		#endregion Replace Extensions
+
+		#pragma warning restore CA1068 // CancellationToken parameters must come last
 	}
 }

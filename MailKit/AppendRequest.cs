@@ -195,5 +195,16 @@ namespace MailKit {
 		public IList<Annotation> Annotations {
 			get; set;
 		}
+
+		/// <summary>
+		/// Get or set the transfer progress reporting mechanism.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the transfer progress reporting mechanism.
+		/// </remarks>
+		/// <value>The transfer progress mechanism.</value>
+		public ITransferProgress TransferProgress {
+			get; set;
+		}
 	}
 }

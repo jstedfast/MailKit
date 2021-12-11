@@ -3837,7 +3837,7 @@ namespace MailKit.Net.Imap {
 			return ExpungeAsync (uids, true, cancellationToken);
 		}
 
-		ImapCommand QueueAppend (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken, ITransferProgress progress)
+		ImapCommand QueueAppend (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken)
 		{
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ("APPEND %F ");
@@ -3870,14 +3870,14 @@ namespace MailKit.Net.Imap {
 			var args = list.ToArray ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args);
-			ic.Progress = progress;
+			ic.Progress = request.TransferProgress;
 
 			Engine.QueueCommand (ic);
 
 			return ic;
 		}
 
-		async Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		async Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -3903,7 +3903,7 @@ namespace MailKit.Net.Imap {
 			if (format.International && !Engine.UTF8Enabled)
 				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
 
-			var ic = QueueAppend (format, request, cancellationToken, progress);
+			var ic = QueueAppend (format, request, cancellationToken);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
@@ -3930,7 +3930,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="request">The append request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -3968,9 +3967,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return AppendAsync (options, request, false, cancellationToken, progress).GetAwaiter ().GetResult ();
+			return AppendAsync (options, request, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -3983,7 +3982,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="request">The append request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -4021,12 +4019,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return AppendAsync (options, request, true, cancellationToken, progress);
+			return AppendAsync (options, request, true, cancellationToken);
 		}
 
-		ImapCommand QueueMultiAppend (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken, ITransferProgress progress)
+		ImapCommand QueueMultiAppend (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken)
 		{
 			var builder = new StringBuilder ("APPEND %F");
 			var list = new List<object> ();
@@ -4066,14 +4064,14 @@ namespace MailKit.Net.Imap {
 			var args = list.ToArray ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args);
-			ic.Progress = progress;
+			ic.Progress = requests[0].TransferProgress;
 
 			Engine.QueueCommand (ic);
 
 			return ic;
 		}
 
-		async Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		async Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -4113,7 +4111,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppend (format, requests, cancellationToken, progress);
+				var ic = QueueMultiAppend (format, requests, cancellationToken);
 
 				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
@@ -4138,7 +4136,7 @@ namespace MailKit.Net.Imap {
 			var uids = new List<UniqueId> ();
 
 			for (int i = 0; i < requests.Count; i++) {
-				var uid = await AppendAsync (format, requests[i], doAsync, cancellationToken, progress).ConfigureAwait (false);
+				var uid = await AppendAsync (format, requests[i], doAsync, cancellationToken).ConfigureAwait (false);
 				if (uids != null && uid.HasValue)
 					uids.Add (uid.Value);
 				else
@@ -4166,7 +4164,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="requests">The append requests.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -4207,9 +4204,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> Append (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override IList<UniqueId> Append (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return AppendAsync (options, requests, false, cancellationToken, progress).GetAwaiter ().GetResult ();
+			return AppendAsync (options, requests, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -4222,7 +4219,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="requests">The append requests.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -4263,12 +4259,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return AppendAsync (options, requests, true, cancellationToken, progress);
+			return AppendAsync (options, requests, true, cancellationToken);
 		}
 
-		ImapCommand QueueReplace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken, ITransferProgress progress)
+		ImapCommand QueueReplace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken)
 		{
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ($"UID REPLACE {uid} %F ");
@@ -4301,14 +4297,14 @@ namespace MailKit.Net.Imap {
 			var args = list.ToArray ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args);
-			ic.Progress = progress;
+			ic.Progress = request.TransferProgress;
 
 			Engine.QueueCommand (ic);
 
 			return ic;
 		}
 
-		async Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		async Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -4329,7 +4325,7 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
 				var destination = request.Destination as ImapFolder ?? this;
-				var appended = await destination.AppendAsync (options, request, doAsync, cancellationToken, progress).ConfigureAwait (false);
+				var appended = await destination.AppendAsync (options, request, doAsync, cancellationToken).ConfigureAwait (false);
 				await StoreAsync (new[] { uid }, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
 					await ExpungeAsync (new[] { uid }, doAsync, cancellationToken).ConfigureAwait (false);
@@ -4349,7 +4345,7 @@ namespace MailKit.Net.Imap {
 			if (format.International && !Engine.UTF8Enabled)
 				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
 
-			var ic = QueueReplace (format, uid, request, cancellationToken, progress);
+			var ic = QueueReplace (format, uid, request, cancellationToken);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
@@ -4377,7 +4373,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="uid">The UID of the message to be replaced.</param>
 		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -4421,9 +4416,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Replace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override UniqueId? Replace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
-			return ReplaceAsync (options, uid, request, false, cancellationToken, progress).GetAwaiter ().GetResult ();
+			return ReplaceAsync (options, uid, request, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -4437,7 +4432,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="uid">The UID of the message to be replaced.</param>
 		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -4481,12 +4475,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
-			return ReplaceAsync (options, uid, request, true, cancellationToken, progress);
+			return ReplaceAsync (options, uid, request, true, cancellationToken);
 		}
 
-		ImapCommand QueueReplace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken, ITransferProgress progress)
+		ImapCommand QueueReplace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken)
 		{
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ($"REPLACE %d %F ");
@@ -4520,14 +4514,14 @@ namespace MailKit.Net.Imap {
 			var args = list.ToArray ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args);
-			ic.Progress = progress;
+			ic.Progress = request.TransferProgress;
 
 			Engine.QueueCommand (ic);
 
 			return ic;
 		}
 
-		async Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		async Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -4548,7 +4542,7 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
 				var destination = request.Destination as ImapFolder ?? this;
-				var uid = await destination.AppendAsync (options, request, doAsync, cancellationToken, progress).ConfigureAwait (false);
+				var uid = await destination.AppendAsync (options, request, doAsync, cancellationToken).ConfigureAwait (false);
 				await StoreAsync (new[] { index }, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				return uid;
 			}
@@ -4566,7 +4560,7 @@ namespace MailKit.Net.Imap {
 			if (format.International && !Engine.UTF8Enabled)
 				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
 
-			var ic = QueueReplace (format, index, request, cancellationToken, progress);
+			var ic = QueueReplace (format, index, request, cancellationToken);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
@@ -4594,7 +4588,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="index">The index of the message to be replaced.</param>
 		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -4639,9 +4632,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Replace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override UniqueId? Replace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ReplaceAsync (options, index, request, false, cancellationToken, progress).GetAwaiter ().GetResult ();
+			return ReplaceAsync (options, index, request, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -4655,7 +4648,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="index">The index of the message to be replaced.</param>
 		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -4700,9 +4692,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ReplaceAsync (options, index, request, true, cancellationToken, progress);
+			return ReplaceAsync (options, index, request, true, cancellationToken);
 		}
 
 		async Task<IList<int>> GetIndexesAsync (IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)

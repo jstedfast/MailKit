@@ -612,7 +612,7 @@ namespace MailKit.Net.Imap {
 		/// <see cref="IMailFolder.MessageSummaryFetched"/> event containing the information requested by the client.</para>
 		/// <note type="note">These events will not be emitted for any message created by the client on this particular folder
 		/// as a result of, for example, a call to
-		/// <see cref="IMailFolder.Append(IAppendRequest, System.Threading.CancellationToken, ITransferProgress)"/>
+		/// <see cref="IMailFolder.Append(IAppendRequest, System.Threading.CancellationToken)"/>
 		/// or <see cref="IMailFolder.CopyTo(IList{UniqueId}, IMailFolder, System.Threading.CancellationToken)"/>.</note>
 		/// </remarks>
 		public class MessageNew : ImapEvent
