@@ -34,10 +34,11 @@
 * Fixed parsing of IMAP flag lists to handle lowercase flag names.
   (issue [#1277](https://github.com/jstedfast/MailKit/issues/1277))
 * Use OrdinalIgnoreCase when comparing "EARLIER" atom token.
-* Avoid unnecessary string copies. (issue [#1292](https://github.com/jstedfast/MailKit/issues/1292))
+* Avoid unnecessary string copies. (issue [#1292](https://github.com/jstedfast/MailKit/pull/1292))
 * Drop support for .NET 4.5 and replace it with .NET 4.5.2
 * Simplified event emissions based on EXISTS and EXPUNGED notifications. A CountChanged event is now *always*
   emitted when the server sends an EXISTS notification.
+  (issue [#1288](https://github.com/jstedfast/MailKit/issues/1288))
 
 ### MailKit 2.15.0 (2021-08-18)
 
