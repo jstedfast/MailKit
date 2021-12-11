@@ -16,7 +16,7 @@
                 <para>SASL Authentication</para>
                 <list class="bullet">
                   <listItem>
-                    <para>Supports the CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, OAUTHBEARER, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, SCRAM-SHA-512, and XOAUTH2 mechanisms.</para>
+                    <para>Supports the ANONYMOUS, CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, OAUTHBEARER, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, SCRAM-SHA-512, and XOAUTH2 mechanisms.</para>
                   </listItem>
                 </list>
               </listItem>
@@ -71,17 +71,17 @@
               </listItem>
             </list>
           </listItem>
-          <listitem>
+          <listItem>
             <para>Proxy Support</para>
             <list class="bullet">
-              <listitem>
-                <para>Supports HTTP, SOCKS4, SOCKS4a, and SOCKS5.</para>
-              </listitem>
-              <listitem>
+              <listItem>
+                <para>Supports HTTP(S), SOCKS4, SOCKS4a, and SOCKS5.</para>
+              </listItem>
+              <listItem>
                 <para>Fully cancellable and asynchronous Connect methods.</para>
-              </listitem>
+              </listItem>
             </list>
-          </listitem>
+          </listItem>
           <listItem>
             <para>MIME Parser</para>
             <list class="bullet">
@@ -108,7 +108,7 @@
             <para>Client-side sorting and threading of messages.</para>
           </listItem>
           <listItem>
-            <para>Supports .NET 4.5, .NET 4.6, .NET 4.7, .NET 4.8, .NET 5.0, .NETStandard 2.0, Xamarin.Android, Xamarin.iOS, Windows Phone 8.1, and more.</para>
+            <para>Supports .NET 4.5.2, .NET 4.6, .NET 4.7, .NET 4.8, .NET 5.0, .NETStandard 2.0, Xamarin.Android, Xamarin.iOS, Windows Phone 8.1, and more.</para>
           </listItem>
         </list>
       </content>
