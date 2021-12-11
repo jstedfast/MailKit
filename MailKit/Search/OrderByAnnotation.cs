@@ -40,6 +40,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Search.OrderByAnnotation"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="OrderByAnnotation"/>.
+		/// </remarks>
 		/// <param name="entry">The annotation entry to sort by.</param>
 		/// <param name="attribute">The annotation attribute to use for sorting.</param>
 		/// <param name="order">The sort order.</param>

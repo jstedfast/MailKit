@@ -31,9 +31,9 @@ namespace MailKit.Net.Proxy
 	/// <summary>
 	/// A SOCKS4a proxy client.
 	/// </summary>
-	/// <remarkas>
+	/// <remarks>
 	/// A SOCKS4a proxy client.
-	/// </remarkas>
+	/// </remarks>
 	public class Socks4aClient : Socks4Client
 	{
 		/// <summary>

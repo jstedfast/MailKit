@@ -101,6 +101,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.AnnotationAttribute"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="AnnotationAttribute"/>.
+		/// </remarks>
 		/// <param name="specifier">The annotation attribute specifier.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="specifier"/> is <c>null</c>.
@@ -140,6 +143,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the name of the annotation attribute.
 		/// </remarks>
+		/// <value>The name of the annotation attribute.</value>
 		public string Name {
 			get; private set;
 		}
@@ -150,6 +154,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the scope of the annotation attribute.
 		/// </remarks>
+		/// <value>The scope of the annotation attribute.</value>
 		public AnnotationScope Scope {
 			get; private set;
 		}
@@ -160,6 +165,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the annotation attribute specifier.
 		/// </remarks>
+		/// <value>The annotation attribute specifier.</value>
 		public string Specifier {
 			get; private set;
 		}

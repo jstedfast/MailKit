@@ -42,6 +42,7 @@ namespace MailKit {
 		/// state will have their flags updated by the <a href="Overload_MailKit_IMailFolder_Store.htm">Store</a>
 		/// or <a href="Overload_MailKit_IMailFolder_StoreAsync.htm">StoreAsync</a> mnethods.</para>
 		/// </remarks>
+		/// <value>The mod-sequence value that indicates the last known state of the message(s) being updated.</value>
 		ulong? UnchangedSince { get; set; }
 	}
 }

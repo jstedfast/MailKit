@@ -42,9 +42,9 @@ namespace MailKit.Net.Proxy
 	/// <summary>
 	/// A SOCKS5 proxy client.
 	/// </summary>
-	/// <remarkas>
+	/// <remarks>
 	/// A SOCKS5 proxy client.
-	/// </remarkas>
+	/// </remarks>
 	public class Socks5Client : SocksClient
 	{
 		/// <summary>

@@ -289,6 +289,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the part-specifier component of the annotation entry.
 		/// </remarks>
+		/// <value>The part-specifier.</value>
 		public string PartSpecifier {
 			get; private set;
 		}
@@ -299,6 +300,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the path component of the annotation entry.
 		/// </remarks>
+		/// <value>The path.</value>
 		public string Path {
 			get; private set;
 		}
@@ -309,6 +311,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the scope of the annotation.
 		/// </remarks>
+		/// <value>The scope.</value>
 		public AnnotationScope Scope {
 			get; private set;
 		}

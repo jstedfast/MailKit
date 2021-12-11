@@ -40,9 +40,9 @@ namespace MailKit.Net.Proxy
 	/// <summary>
 	/// A SOCKS4 proxy client.
 	/// </summary>
-	/// <remarkas>
+	/// <remarks>
 	/// A SOCKS4 proxy client.
-	/// </remarkas>
+	/// </remarks>
 	public class Socks4Client : SocksClient
 	{
 		static readonly byte[] InvalidIPAddress = { 0, 0, 0, 1 };

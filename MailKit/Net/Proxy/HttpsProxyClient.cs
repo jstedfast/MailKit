@@ -46,9 +46,9 @@ namespace MailKit.Net.Proxy {
 	/// <summary>
 	/// An HTTPS proxy client.
 	/// </summary>
-	/// <remarkas>
+	/// <remarks>
 	/// An HTTPS proxy client.
-	/// </remarkas>
+	/// </remarks>
 	public class HttpsProxyClient : ProxyClient
 	{
 #if NET48 || NET5_0_OR_GREATER

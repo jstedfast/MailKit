@@ -42,6 +42,9 @@ namespace MailKit
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MailKit.ConnectedEventArgs"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ConnectedEventArgs"/>.
+		/// </remarks>
 		/// <param name="host">The name of the host that the client connected to.</param>
 		/// <param name="port">The port that the client connected to on the remote host.</param>
 		/// <param name="options">The SSL/TLS options that were used when connecting to the remote host.</param>

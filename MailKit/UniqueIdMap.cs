@@ -176,6 +176,7 @@ namespace MailKit {
 		/// Gets the remapped unique identifier.
 		/// </remarks>
 		/// <param name="index">The unique identifier of the message in the source folder.</param>
+		/// <value>The remapped unique identifier.</value>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>

@@ -41,9 +41,9 @@ namespace MailKit.Net.Proxy
 	/// <summary>
 	/// An HTTP proxy client.
 	/// </summary>
-	/// <remarkas>
+	/// <remarks>
 	/// An HTTP proxy client.
-	/// </remarkas>
+	/// </remarks>
 	public class HttpProxyClient : ProxyClient
 	{
 		const int BufferSize = 4096;

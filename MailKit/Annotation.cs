@@ -74,6 +74,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the annotation properties.
 		/// </remarks>
+		/// <value>The annotation properties.</value>
 		public Dictionary<AnnotationAttribute, string> Properties {
 			get; private set;
 		}

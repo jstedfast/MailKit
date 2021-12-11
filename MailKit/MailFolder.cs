@@ -123,6 +123,7 @@ namespace MailKit {
 		/// If annotations are supported, this property can be used to determine whether or not
 		/// the <see cref="IMailFolder"/> supports reading and writing annotations.
 		/// </remarks>
+		/// <value>The annotation access level.</value>
 		public AnnotationAccess AnnotationAccess {
 			get; internal protected set;
 		}
@@ -134,6 +135,7 @@ namespace MailKit {
 		/// If annotations are supported, this property can be used to determine which
 		/// annotation scopes are supported by the <see cref="IMailFolder"/>.
 		/// </remarks>
+		/// <value>The supported annotation scopes.</value>
 		public AnnotationScope AnnotationScopes {
 			get; internal protected set;
 		}
@@ -145,6 +147,7 @@ namespace MailKit {
 		/// If annotations are supported, this property can be used to determine the
 		/// maximum size of annotation values supported by the <see cref="IMailFolder"/>.
 		/// </remarks>
+		/// <value>The maximum size of annotation values supported by the folder.</value>
 		public uint MaxAnnotationSize {
 			get; internal protected set;
 		}

@@ -50,6 +50,7 @@ namespace MailKit {
 		/// additional fields on a <see cref="IMessageSummary"/> for messages that were requested as well as summaries for
 		/// messages that were not requested at all.</para>
 		/// </remarks>
+		/// <value>The mod-sequence value that indicates the last known state of the messages being requested.</value>
 		ulong? ChangedSince { get; set; }
 
 		/// <summary>
@@ -58,6 +59,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets the message summary items to fetch.
 		/// </remarks>
+		/// <value>The message summary items.</value>
 		MessageSummaryItems Items { get; set; }
 
 		/// <summary>
