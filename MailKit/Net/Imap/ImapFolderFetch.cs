@@ -743,8 +743,13 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			if (uids.Count == 0 || IsEmptyFetchRequest (request))
+			if (uids.Count == 0 || IsEmptyFetchRequest (request)) {
+#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
+				return Array.Empty<IMessageSummary> ();
+#else
 				return new IMessageSummary[0];
+#endif
+			}
 
 			var query = FormatSummaryItems (Engine, request, out var previewText);
 			var changedSince = string.Empty;
@@ -916,8 +921,13 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 			CheckAllowIndexes ();
 
-			if (indexes.Count == 0 || IsEmptyFetchRequest (request))
+			if (indexes.Count == 0 || IsEmptyFetchRequest (request)) {
+#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
+				return Array.Empty<IMessageSummary> ();
+#else
 				return new IMessageSummary[0];
+#endif
+			}
 
 			var query = FormatSummaryItems (Engine, request, out var previewText);
 			var set = ImapUtils.FormatIndexSet (Engine, indexes);
@@ -1089,8 +1099,13 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 			CheckAllowIndexes ();
 
-			if (Count == 0 || IsEmptyFetchRequest (request))
+			if (Count == 0 || IsEmptyFetchRequest (request)) {
+#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
+				return Array.Empty<IMessageSummary> ();
+#else
 				return new IMessageSummary[0];
+#endif
+			}
 
 			var query = FormatSummaryItems (Engine, request, out var previewText);
 			var set = GetFetchRange (min, max);

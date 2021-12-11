@@ -4104,8 +4104,13 @@ namespace MailKit.Net.Imap {
 			if (format.International && !Engine.UTF8Enabled)
 				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
 
-			if (requests.Count == 0)
+			if (requests.Count == 0) {
+#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
+				return Array.Empty<UniqueId> ();
+#else
 				return new UniqueId[0];
+#endif
+			}
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
 				var ic = QueueMultiAppend (format, requests, cancellationToken, progress);
@@ -4122,7 +4127,11 @@ namespace MailKit.Net.Imap {
 				if (append != null)
 					return append.UidSet;
 
+#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
+				return Array.Empty<UniqueId> ();
+#else
 				return new UniqueId[0];
+#endif
 			}
 
 			// FIXME: use an aggregate progress reporter
@@ -4136,8 +4145,13 @@ namespace MailKit.Net.Imap {
 					uids = null;
 			}
 
-			if (uids == null)
+			if (uids == null) {
+#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
+				return Array.Empty<UniqueId> ();
+#else
 				return new UniqueId[0];
+#endif
+			}
 
 			return uids;
 		}
