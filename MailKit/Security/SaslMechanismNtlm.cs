@@ -273,7 +273,7 @@ namespace MailKit.Security {
 				break;
 			case LoginState.Challenge:
 				var password = Credentials.Password;
-				message = GetChallengeResponse (userName, password, token, startIndex, length);
+				message = GetChallengeResponse (domain, userName, password, token, startIndex, length);
 				IsAuthenticated = true;
 				break;
 			}
@@ -281,10 +281,10 @@ namespace MailKit.Security {
 			return message?.Encode ();
 		}
 
-		NtlmAuthenticateMessage GetChallengeResponse (string userName, string password, byte[] token, int startIndex, int length)
+		NtlmAuthenticateMessage GetChallengeResponse (string domain, string userName, string password, byte[] token, int startIndex, int length)
 		{
 			var challenge = new NtlmChallengeMessage (token, startIndex, length);
-			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, userName, password, Workstation) {
+			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, userName, password, domain, Workstation) {
 				ClientChallenge = Nonce,
 				Timestamp = Timestamp
 			};

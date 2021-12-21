@@ -38,7 +38,7 @@ namespace MailKit.Security.Ntlm {
 		readonly NtlmChallengeMessage challenge;
 		byte[] clientChallenge;
 
-		public NtlmAuthenticateMessage (NtlmNegotiateMessage negotiate, NtlmChallengeMessage challenge, string userName, string password, string workstation) : base (3)
+		public NtlmAuthenticateMessage (NtlmNegotiateMessage negotiate, NtlmChallengeMessage challenge, string userName, string password, string domain, string workstation) : base (3)
 		{
 			if (negotiate == null)
 				throw new ArgumentNullException (nameof (negotiate));
@@ -56,14 +56,14 @@ namespace MailKit.Security.Ntlm {
 			this.negotiate = negotiate;
 			this.challenge = challenge;
 
-			if ((challenge.Flags & NtlmFlags.TargetTypeDomain) != 0) {
+			if (!string.IsNullOrEmpty (domain)) {
+				Domain = domain;
+			} else if ((challenge.Flags & NtlmFlags.TargetTypeDomain) != 0) {
 				// The server is domain-joined, so the TargetName will be the domain.
 				Domain = challenge.TargetName;
-			} else {
+			} else if (challenge.TargetInfo != null) {
 				// The server is not domain-joined, so the TargetName will be the machine name of the server.
-				Domain = challenge.TargetInfo?.DomainName;
-
-				// TODO: throw if TargetInfo is null?
+				Domain = challenge.TargetInfo.DomainName;
 			}
 
 			Workstation = workstation;

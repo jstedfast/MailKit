@@ -40,12 +40,12 @@ namespace UnitTests.Security.Ntlm {
 			byte[] badMessageData = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x01, 0x00, 0x00, 0x00, 0x00 };
 			var NtlmNegotiate = new NtlmNegotiateMessage ();
 			var NtlmChallenge = new NtlmChallengeMessage ();
-			var NtlmAuthenticate = new NtlmAuthenticateMessage (NtlmNegotiate, NtlmChallenge, "username", "password", "workstation");
+			var NtlmAuthenticate = new NtlmAuthenticateMessage (NtlmNegotiate, NtlmChallenge, "username", "password", "domain", "workstation");
 
-			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (null, NtlmChallenge, "username", "password", "workstation"));
-			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (NtlmNegotiate, null, "username", "password", "workstation"));
-			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (NtlmNegotiate, NtlmChallenge, null, "password", "workstation"));
-			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (NtlmNegotiate, NtlmChallenge, "username", null, "workstation"));
+			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (null, NtlmChallenge, "username", "password", "domain", "workstation"));
+			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (NtlmNegotiate, null, "username", "password", "domain", "workstation"));
+			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (NtlmNegotiate, NtlmChallenge, null, "password", "domain", "workstation"));
+			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (NtlmNegotiate, NtlmChallenge, "username", null, "domain", "workstation"));
 
 			Assert.Throws<ArgumentNullException> (() => new NtlmAuthenticateMessage (null, 0, 16));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new NtlmAuthenticateMessage (new byte[8], 0, 8));

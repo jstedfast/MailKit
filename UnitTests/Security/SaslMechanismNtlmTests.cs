@@ -386,7 +386,7 @@ namespace UnitTests.Security {
 			var nonce = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x05, 0x06, 0x07 };
 			var negotiate = new NtlmNegotiateMessage (flags, null, null, new Version (10, 0, 19043));
 			var challenge = DecodeChallengeMessage (challenge2);
-			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, "user", "password", "WORKSTATION") {
+			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, "user", "password", null, "WORKSTATION") {
 				ClientChallenge = nonce,
 				Timestamp = timestamp
 			};
@@ -511,7 +511,7 @@ namespace UnitTests.Security {
 
 			var negotiate = DecodeNegotiateMessage (challenge1);
 			var challenge = DecodeChallengeMessage (challenge2);
-			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, sasl.Credentials.UserName, sasl.Credentials.Password, sasl.Workstation) {
+			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, sasl.Credentials.UserName, sasl.Credentials.Password, null, sasl.Workstation) {
 				ClientChallenge = nonce,
 				Timestamp = timestamp
 			};
@@ -660,7 +660,7 @@ namespace UnitTests.Security {
 
 			//var expectedType3 = new NtlmAuthenticateMessage (ExampleNtlmV2AuthenticateMessage, 0, ExampleNtlmV2AuthenticateMessage.Length);
 			//var expectedTargetInfo = GetNtChallengeResponseTargetInfo (expectedType3.NtChallengeResponse);
-			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, "User", "Password", "COMPUTER") {
+			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, "User", "Password", null, "COMPUTER") {
 				ClientChallenge = nonce,
 				Timestamp = timestamp
 			};
