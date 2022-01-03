@@ -280,6 +280,17 @@ namespace MailKit {
 		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
 		int? SslKeyExchangeStrength { get; }
 
+#if NET5_0_OR_GREATER
+		/// <summary>
+		/// Get the negotiated cipher suite.
+		/// </summary>
+		/// <remarks>
+		/// Get the negotiated cipher suite once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated cipher suite</value>
+		TlsCipherSuite? NegotiatedCipherSuite { get; }
+#endif
+
 		/// <summary>
 		/// Get or set the timeout for network streaming operations, in milliseconds.
 		/// </summary>

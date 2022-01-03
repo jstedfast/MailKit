@@ -466,6 +466,21 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+#if NET5_0_OR_GREATER
+		/// <summary>
+		/// Get the negotiated cipher suite once an SSL or TLS connection has been made.
+		/// </summary>
+		/// <value>The negotiated cipher suite</value>
+		public override TlsCipherSuite? NegotiatedCipherSuite {
+			get {
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
+					return sslStream.NegotiatedCipherSuite;
+
+				return null;
+			}
+		} 
+#endif
+
 		/// <summary>
 		/// Get whether or not the client is currently authenticated with the SMTP server.
 		/// </summary>

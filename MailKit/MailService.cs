@@ -378,6 +378,16 @@ namespace MailKit {
 			get;
 		}
 
+#if NET5_0_OR_GREATER
+		/// <summary>
+		/// Get the negotiated cipher suite once an SSL or TLS connection has been made.
+		/// </summary>
+		/// <value>The negotiated cipher suite</value>
+		public abstract TlsCipherSuite? NegotiatedCipherSuite {
+			get;
+		} 
+#endif
+
 		/// <summary>
 		/// Get whether or not the client is currently authenticated with the mail server.
 		/// </summary>

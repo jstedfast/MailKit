@@ -554,6 +554,21 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
+#if NET5_0_OR_GREATER
+		/// <summary>
+		/// Get the negotiated cipher suite once an SSL or TLS connection has been made.
+		/// </summary>
+		/// <value>The negotiated cipher suite</value>
+		public override TlsCipherSuite? NegotiatedCipherSuite {
+			get {
+				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+					return sslStream.NegotiatedCipherSuite;
+
+				return null;
+			}
+		} 
+#endif
+
 		/// <summary>
 		/// Get whether or not the client is currently authenticated with the POP3 server.
 		/// </summary>
