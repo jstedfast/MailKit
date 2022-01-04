@@ -390,6 +390,24 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+#if NET5_0_OR_GREATER
+		/// <summary>
+		/// Get the negotiated SSL or TLS cipher suite.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS cipher suite once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS cipher suite.</value>
+		public override TlsCipherSuite? SslCipherSuite {
+			get {
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
+					return sslStream.NegotiatedCipherSuite;
+
+				return null;
+			}
+		}
+#endif
+
 		/// <summary>
 		/// Get the negotiated SSL or TLS hash algorithm.
 		/// </summary>

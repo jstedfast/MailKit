@@ -53,7 +53,7 @@ namespace MailKit {
 	public interface IMailService : IDisposable
 	{
 		/// <summary>
-		/// Gets an object that can be used to synchronize access to the folder.
+		/// Get an object that can be used to synchronize access to the folder.
 		/// </summary>
 		/// <remarks>
 		/// Gets an object that can be used to synchronize access to the folder.
@@ -62,7 +62,7 @@ namespace MailKit {
 		object SyncRoot { get; }
 
 		/// <summary>
-		/// Gets or sets the set of enabled SSL and/or TLS protocol versions that the client is allowed to use.
+		/// Get or set the set of enabled SSL and/or TLS protocol versions that the client is allowed to use.
 		/// </summary>
 		/// <remarks>
 		/// <para>By default, MailKit initializes this value to enable only TLS v1.2 and greater.
@@ -76,7 +76,7 @@ namespace MailKit {
 
 #if NET5_0_OR_GREATER
 		/// <summary>
-		/// Gets or sets the cipher suites allowed to be used when negotiating an SSL or TLS connection.
+		/// Get or set the cipher suites allowed to be used when negotiating an SSL or TLS connection.
 		/// </summary>
 		/// <remarks>
 		/// Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
@@ -84,9 +84,16 @@ namespace MailKit {
 		/// changing this setting.
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
-		public CipherSuitesPolicy SslCipherSuitesPolicy {
-			get; set;
-		}
+		CipherSuitesPolicy SslCipherSuitesPolicy { get; set; }
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS cipher suite.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS cipher suite once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS cipher suite.</value>
+		TlsCipherSuite? SslCipherSuite { get; }
 #endif
 
 		/// <summary>
@@ -120,7 +127,7 @@ namespace MailKit {
 		bool CheckCertificateRevocation { get; set; }
 
 		/// <summary>
-		/// Get or sets a callback function to validate the server certificate.
+		/// Get or set a callback function to validate the server certificate.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets a callback function to validate the server certificate.</para>

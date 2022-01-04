@@ -102,7 +102,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets an object that can be used to synchronize access to the service.
+		/// Get an object that can be used to synchronize access to the service.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets an object that can be used to synchronize access to the service.</para>
@@ -113,7 +113,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the protocol supported by the message service.
+		/// Get the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>
 		/// Gets the protocol supported by the message service.
@@ -135,7 +135,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets or sets the set of enabled SSL and/or TLS protocol versions that the client is allowed to use.
+		/// Get or set the set of enabled SSL and/or TLS protocol versions that the client is allowed to use.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets the enabled SSL and/or TLS protocol versions that the client is allowed to use.</para>
@@ -152,7 +152,7 @@ namespace MailKit {
 
 #if NET5_0_OR_GREATER
 		/// <summary>
-		/// Gets or sets the cipher suites allowed to be used when negotiating an SSL or TLS connection.
+		/// Get or set the cipher suites allowed to be used when negotiating an SSL or TLS connection.
 		/// </summary>
 		/// <remarks>
 		/// Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
@@ -163,10 +163,21 @@ namespace MailKit {
 		public CipherSuitesPolicy SslCipherSuitesPolicy {
 			get; set;
 		}
+
+		/// <summary>
+		/// Get the negotiated SSL or TLS cipher suite.
+		/// </summary>
+		/// <remarks>
+		/// Gets the negotiated SSL or TLS cipher suite once an SSL or TLS connection has been made.
+		/// </remarks>
+		/// <value>The negotiated SSL or TLS cipher suite.</value>
+		public abstract TlsCipherSuite? SslCipherSuite {
+			get;
+		}
 #endif
 
 		/// <summary>
-		/// Gets or sets the client SSL certificates.
+		/// Get or set the client SSL certificates.
 		/// </summary>
 		/// <remarks>
 		/// <para>Some servers may require the client SSL certificates in order
@@ -200,7 +211,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Get or sets a callback function to validate the server certificate.
+		/// Get or set a callback function to validate the server certificate.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets a callback function to validate the server certificate.</para>
