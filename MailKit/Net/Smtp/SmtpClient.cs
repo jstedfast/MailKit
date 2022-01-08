@@ -715,6 +715,80 @@ namespace MailKit.Net.Smtp {
 			return await SendCommandAsync (command, doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
+		static bool ReadNextLine (string text, ref int index, out int lineStartIndex, out int lineEndIndex)
+		{
+			lineStartIndex = 0;
+			lineEndIndex = 0;
+
+			if (index >= text.Length)
+				return false;
+
+			lineStartIndex = index;
+			lineEndIndex = index;
+
+			do {
+				char c = text[index++];
+
+				if (c == '\n')
+					break;
+
+				// Only update lineEndIndex when we see a non-whitespace character. This effectively Trim()'s the end.
+				if (!char.IsWhiteSpace (c))
+					lineEndIndex = index;
+			} while (index < text.Length);
+
+			return true;
+		}
+
+		static bool IsCapability (string capability, string text, int startIndex, int endIndex, bool hasValue = false)
+		{
+			int index = startIndex + capability.Length;
+			int length = endIndex - startIndex;
+
+			if (length < capability.Length)
+				return false;
+
+			if (string.Compare (text, startIndex, capability, 0, capability.Length, StringComparison.OrdinalIgnoreCase) != 0)
+				return false;
+
+			if (hasValue)
+				return length > capability.Length && (text[index] == ' ' || text[index] == '=');
+
+			return true;
+		}
+
+		void AddAuthenticationMechanisms (string mechanisms, int startIndex, int endIndex)
+		{
+			int index = startIndex;
+
+			do {
+				while (index < endIndex && char.IsWhiteSpace (mechanisms[index]))
+					index++;
+
+				int mechanismIndex = index;
+
+				while (index < endIndex && !char.IsWhiteSpace (mechanisms[index]))
+					index++;
+
+				if (index > mechanismIndex) {
+					var mechanism = mechanisms.Substring (mechanismIndex, index - mechanismIndex);
+
+					AuthenticationMechanisms.Add (mechanism);
+				}
+			} while (index < endIndex);
+		}
+
+		void SetMaxSize (string capability, int startIndex, int endIndex)
+		{
+			int index = startIndex;
+
+			while (index < endIndex && char.IsWhiteSpace (capability[index]))
+				index++;
+
+			if (index < endIndex && uint.TryParse (capability.Substring (index, endIndex - index), NumberStyles.None, CultureInfo.InvariantCulture, out uint size))
+				MaxSize = size;
+		}
+
 		async Task EhloAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			SmtpResponse response;
@@ -736,45 +810,43 @@ namespace MailKit.Net.Smtp {
 				AuthenticationMechanisms.Clear ();
 				MaxSize = 0;
 
-				var lines = response.Response.Split ('\n');
-				for (int i = 0; i < lines.Length; i++) {
-					// Outlook.com replies with "250-8bitmime" instead of "250-8BITMIME"
-					// (strangely, it correctly capitalizes all other extensions...)
-					var capability = lines[i].Trim ().ToUpperInvariant ();
+				string text = response.Response;
+				int index = 0;
 
-					if (capability.StartsWith ("AUTH", StringComparison.Ordinal) || capability.StartsWith ("X-EXPS", StringComparison.Ordinal)) {
-						int index = capability[0] == 'A' ? "AUTH".Length : "X-EXPS".Length;
+				while (ReadNextLine (text, ref index, out int lineStartIndex, out int lineEndIndex)) {
+					if (IsCapability ("AUTH", text, lineStartIndex, lineEndIndex, true)) {
+						int startIndex = lineStartIndex + 5;
 
-						if (index < capability.Length && (capability[index] == ' ' || capability[index] == '=')) {
-							capabilities |= SmtpCapabilities.Authentication;
-							index++;
+						AddAuthenticationMechanisms (text, startIndex, lineEndIndex);
+						capabilities |= SmtpCapabilities.Authentication;
+					} else if (IsCapability ("X-EXPS", text, lineStartIndex, lineEndIndex, true)) {
+						int startIndex = lineStartIndex + 7;
 
-							var mechanisms = capability.Substring (index);
-							foreach (var mechanism in mechanisms.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-								AuthenticationMechanisms.Add (mechanism);
-						}
-					} else if (capability.StartsWith ("SIZE", StringComparison.Ordinal)) {
-						int index = 4;
+						AddAuthenticationMechanisms (text, startIndex, lineEndIndex);
+						capabilities |= SmtpCapabilities.Authentication;
+					} else if (IsCapability ("SIZE", text, lineStartIndex, lineEndIndex, true)) {
+						int startIndex = lineStartIndex + 5;
 
+						SetMaxSize (text, startIndex, lineEndIndex);
 						capabilities |= SmtpCapabilities.Size;
-
-						while (index < capability.Length && char.IsWhiteSpace (capability[index]))
-							index++;
-
-						if (uint.TryParse (capability.Substring (index), NumberStyles.None, CultureInfo.InvariantCulture, out uint size))
-							MaxSize = size;
-					} else {
-						switch (capability) {
-						case "DSN":                 capabilities |= SmtpCapabilities.Dsn; break;
-						case "BINARYMIME":          capabilities |= SmtpCapabilities.BinaryMime; break;
-						case "CHUNKING":            capabilities |= SmtpCapabilities.Chunking; break;
-						case "ENHANCEDSTATUSCODES": capabilities |= SmtpCapabilities.EnhancedStatusCodes; break;
-						case "8BITMIME":            capabilities |= SmtpCapabilities.EightBitMime; break;
-						case "PIPELINING":          capabilities |= SmtpCapabilities.Pipelining; break;
-						case "STARTTLS":            capabilities |= SmtpCapabilities.StartTLS; break;
-						case "SMTPUTF8":            capabilities |= SmtpCapabilities.UTF8; break;
-						case "REQUIRETLS":          capabilities |= SmtpCapabilities.RequireTLS; break;
-						}
+					} else if (IsCapability ("DSN", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.Dsn;
+					} else if (IsCapability ("BINARYMIME", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.BinaryMime;
+					} else if (IsCapability ("CHUNKING", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.Chunking;
+					} else if (IsCapability ("ENHANCEDSTATUSCODES", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.EnhancedStatusCodes;
+					} else if (IsCapability ("8BITMIME", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.EightBitMime;
+					} else if (IsCapability ("PIPELINING", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.Pipelining;
+					} else if (IsCapability ("STARTTLS", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.StartTLS;
+					} else if (IsCapability ("SMTPUTF8", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.UTF8;
+					} else if (IsCapability ("REQUIRETLS", text, lineStartIndex, lineEndIndex)) {
+						capabilities |= SmtpCapabilities.RequireTLS;
 					}
 				}
 			}
