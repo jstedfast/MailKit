@@ -1,4 +1,10 @@
-$NUnitConsoleRunner = Join-Path $Home ".nuget\packages\nunit.consolerunner\3.13.0\tools\nunit3-console.exe"
+[xml]$project = Get-Content UnitTests\UnitTests.csproj
+$packageReference = $project.SelectSingleNode("/Project/ItemGroup/PackageReference[@Include='NUnit.ConsoleRunner']")
+$consoleRunnerVersion = $packageReference.GetAttribute("Version")
+$consoleRunnerBasePackageDir = Join-Path $Home ".nuget\packages\nunit.consolerunner"
+$consoleRunnerPackageDir = Join-Path $consoleRunnerBasePackageDir $consoleRunnerVersion
+
+$NUnitConsoleRunner = Join-Path $consoleRunnerPackageDir "tools\nunit3-console.exe"
 $Coveralls = Join-Path $Home ".nuget\packages\coveralls.net\0.7.0\tools\csmacnz.Coveralls.exe"
 $OpenCoverDir = Join-Path $Home ".nuget\packages\opencover\4.6.519\tools"
 $OpenCoverProfiler32 = Join-Path $OpenCoverDir "x86\OpenCover.Profiler.dll"
