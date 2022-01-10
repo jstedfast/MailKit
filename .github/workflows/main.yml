@@ -136,9 +136,18 @@ jobs:
         continue-on-error: true
         shell: pwsh
         run: |
-          $NUnitConsoleRunner = Join-Path $Home ".nuget/packages/nunit.consolerunner/3.13.2/tools/nunit3-console.exe"
-
-          & $NUnitConsoleRunner --domain:single "UnitTests/bin/Release/net48/UnitTests.dll"
+          [xml]$project = Get-Content UnitTests/UnitTests.csproj
+          
+          $packageReference = $project.SelectSingleNode("/Project/ItemGroup/PackageReference[@Include='NUnit.ConsoleRunner']")
+          
+          $consoleRunnerVersion = $packageReference.GetAttribute("Version")
+          
+          $consoleRunnerBasePackageDir = Join-Path $Home ".nuget/packages/nunit.consolerunner"
+          
+          $consoleRunnerPackageDir = Join-Path $consoleRunnerBasePackageDir $consoleRunnerVersion
+          
+          $consoleRunner = Join-Path $consoleRunnerPackageDir "tools/nunit3-console.exe"
+          & $consoleRunner --domain:single "UnitTests/bin/Release/net48/UnitTests.dll"
 
       - if: steps.configure.outputs.is_release == 'true'
         name: Upload unit test results as artifact
