@@ -58,6 +58,7 @@ namespace MailKit {
 		ProtocolLogger ()
 		{
 			TimestampFormat = DefaultTimestampFormat;
+			RedactSecrets = true;
 		}
 
 		/// <summary>
