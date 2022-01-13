@@ -1225,6 +1225,21 @@ namespace MailKit.Net.Imap {
 
 			public MailboxAddress ToMailboxAddress (ImapEngine engine)
 			{
+				if (engine.QuirksMode == ImapQuirksMode.GMail && Name != null && Name[0] == '<' && Name[Name.Length - 1] == '>' && Mailbox != null && Domain == null) {
+					// For whatever reason, GMail seems to sometimes break by reversing the Name and Mailbox tokens.
+					// For an example, see the second error report in https://github.com/jstedfast/MailKit/issues/494
+					// where the Sender: address in the ENVELOPE has the name and address tokens flipped.
+					//
+					// Another example can be seen in https://github.com/jstedfast/MailKit/pull/1319.
+					var reversed = string.Format ("{0} {1}", Mailbox, Name);
+
+					try {
+						return MailboxAddress.Parse (reversed);
+					} catch (ParseException) {
+						// fall through to normal processing
+					}
+				}
+
 				var mailbox = Mailbox;
 				var domain = Domain;
 				string name = null;
