@@ -496,6 +496,53 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// This tests a work-around for a bug in Gmail in which the sender header is in a correct format
+		// (Sender: Name <sender@domain.com>) but in the FETCH response is not ((("<sender@domain.com>" NIL "Name" NIL)))
+		[Test]
+		public void TestParseGMailMalformedSenderInEnvelope ()
+		{
+			const string text = "(\"Mon, 10 Apr 2017 06:04:00 -0700\" \"This is the subject\" ((\"From_DisplayName\" NIL \"from\" \"domain.com\")) ((\"<sender@domain.com>\" NIL \"=?UTF-8?Q?\"Dummy=C3=ADa_Pa=C3=A1ndez_Algo\"?=\" NIL)) NIL ((\"To_DisplayName\" NIL \"to\" \"domain.com\")) NIL NIL NIL \"<bvqyalstpemxt9y3afoqh4an62b2arcd@message.id>\")";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						Envelope envelope;
+
+						engine.SetStream (tokenizer);
+						engine.QuirksMode = ImapQuirksMode.GMail;
+
+						try {
+							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							return;
+						}
+
+						Assert.IsTrue (envelope.Date.HasValue, "Parsed ENVELOPE date is null.");
+						Assert.AreEqual ("Mon, 10 Apr 2017 06:04:00 -0700", DateUtils.FormatDate (envelope.Date.Value), "Date does not match.");
+						Assert.AreEqual ("This is the subject", envelope.Subject, "Subject does not match.");
+
+						Assert.AreEqual (1, envelope.From.Count, "From counts do not match.");
+						Assert.AreEqual ("\"From_DisplayName\" <from@domain.com>", envelope.From.ToString (), "From does not match.");
+
+						Assert.AreEqual (1, envelope.Sender.Count, "Sender counts do not match.");
+						Assert.AreEqual ("\"Dummyía Paández Algo\" <sender@domain.com>", envelope.Sender.ToString (), "Sender does not match.");
+
+						Assert.AreEqual (1, envelope.To.Count, "To counts do not match.");
+						Assert.AreEqual ("\"To_DisplayName\" <to@domain.com>", envelope.To.ToString (), "To does not match.");
+
+						Assert.AreEqual (0, envelope.ReplyTo.Count, "Reply-To counts do not match.");
+						Assert.AreEqual (0, envelope.Cc.Count, "Cc counts do not match.");
+						Assert.AreEqual (0, envelope.Bcc.Count, "Bcc counts do not match.");
+
+						Assert.IsNull (envelope.InReplyTo, "In-Reply-To is not null.");
+
+						Assert.AreEqual ("bvqyalstpemxt9y3afoqh4an62b2arcd@message.id", envelope.MessageId, "Message-Id does not match.");
+					}
+				}
+			}
+		}
+
 		[Test]
 		public void TestParseEnvelopeWithRoutedMailboxes ()
 		{
