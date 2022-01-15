@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,30 +26,13 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Removed APIs marked as [Obsolete] in 2.x.
-* Simplify Fetch()/FetchAsync() APIs by using a new IFetchRequest parameter instead. Made previous APIs into extension methods to aid in porting from 2.x.
-* Replaced Add/Remove/SetFlags() APIs with Store()/StoreAsync() and simplified the APIs by using a new IStoreFlagsRequest parameter. Made previous APIs into extension methods to aid in porting from 2.x.
-* Replaced Add/Remove/SetLabels() APIs with Store()/StoreAsync() and simplified the APIs by using a new IStoreLabelsRequest parameter. Made previous APIs into extension methods to aid in porting from 2.x.
-* Simplify Append()/AppendAsync() APIs by using a new IAppendRequest parameter instead. Made previous APIs into extension methods to aid in porting from 2.x.
-* Simplify Replace()/ReplaceAsync() APIs by using a new IReplaceRequest parameterinstead. Made previous APIs into extension methods to aid in porting from 2.x.
-* Updated SmtpClient.Send()/SendAsync() methods to return a string. (issue #1161)
-* Added support for the SCRAM-SHA*-PLUS SASL mechanisms. (issue #950)
-* Added authzid support for SCRAM SASL mechanisms.
-* Added support for the ANONYMOUS SASL mechanism.
-* Added support for an HttpsProxyClient. (issue #1251)
-* Added AcceptedKeywords and PermanentKeywords to IMailFolder. (issue #1256)
-* Rewrote NTLM support based on official specs. Now supports channel-binding and using the default system credentials.
-* Modified ImapFolder.Fetch(int, int, ...) to shortcut if ImapFolder.Count == 0.
-* Updated SmtpClient to append an ORCPT arg to RCPT TO commands and to hex-encode the ENVID parameter value.
-* Improved/simplified logic for ranking SASL authentication mechisms for each client.
-* Added SaslMechanism.ChallengeAsync() to facilitate future SASL mechanisms that may need to make network requests such as Kerberos/GSSAPI and perhaps even future/custom OAuth2 implementations.
-* Always set SearchResults.Count/Min/Max properties if we can.
-* Throw TimeoutException is case of a network time out. (issue #1269)
-* Fixed parsing of IMAP flag lists to handle lowercase flag names. (issue #1277)
-* Use OrdinalIgnoreCase when comparing "EARLIER" atom token.
-* Avoid unnecessary string copies. (issue #1292)
-* Drop support for .NET 4.5 and replace it with .NET 4.5.2
-* Simplified event emissions based on EXISTS and EXPUNGED notifications. A CountChanged event is now *always* emitted when the server sends an EXISTS notification.
+* Fixed NTLM to always prefer the supplied domain over the TargetName or TargetInfo.DomainName. (issue #582)
+* Updated GMail and Outlook.com SSL certificate info.
+* Added a new SslCipherSuite property to each client that allows developers to get information about the SSL/TLS cipher suite that was negotiated with the server. (pull #1312)
+* Reduced string allocations in SmtpClient's EHLO capability parsing logic.
+* Default ProtocolLogger.RedactSecrets to true for added added security.
+* Added work-around for parsing malformed GMail ENVELOPE responses that reverse the name and address components of the Sender address. (pull #1319)
+* Added net6.0 to the list of TargetFrameworks.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -82,28 +65,28 @@ Features include:
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="MimeKit" version="3.0.0" />
+        <dependency id="MimeKit" version="3.1.0" />
       </group>
       <group targetFramework="net46">
-        <dependency id="MimeKit" version="3.0.0" />
+        <dependency id="MimeKit" version="3.1.0" />
       </group>
       <group targetFramework="net47">
-        <dependency id="MimeKit" version="3.0.0" />
+        <dependency id="MimeKit" version="3.1.0" />
       </group>
       <group targetFramework="net48">
-        <dependency id="MimeKit" version="3.0.0" />
+        <dependency id="MimeKit" version="3.1.0" />
       </group>
       <group targetFramework="net5.0">
-        <dependency id="MimeKit" version="3.0.0" />
+        <dependency id="MimeKit" version="3.1.0" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKit" version="3.0.0" />
+        <dependency id="MimeKit" version="3.1.0" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="MimeKit" version="3.0.0" />
+        <dependency id="MimeKit" version="3.1.0" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="MimeKit" version="3.0.0" />
+        <dependency id="MimeKit" version="3.1.0" />
       </group>
     </dependencies>
   </metadata>

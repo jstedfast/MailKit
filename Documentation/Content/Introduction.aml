@@ -16,7 +16,7 @@
                 <para>SASL Authentication</para>
                 <list class="bullet">
                   <listItem>
-                    <para>Supports the ANONYMOUS, CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, OAUTHBEARER, PLAIN, SCRAM-SHA-1, SCRAM-SHA-256, SCRAM-SHA-512, and XOAUTH2 mechanisms.</para>
+                    <para>Supports the ANONYMOUS, CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, OAUTHBEARER, PLAIN, SCRAM-SHA-1(-PLUS), SCRAM-SHA-256(-PLUS), SCRAM-SHA-512(-PLUS), and XOAUTH2 mechanisms.</para>
                   </listItem>
                 </list>
               </listItem>
@@ -187,21 +187,21 @@
           MimeKit and MailKit are personal open source projects that I have put thousands of hours into perfecting
           by continuously improving the API based on feedback from developers like yourself, writing documentation,
           and optimizing with the goal of making them the very best email frameworks for .NET. I need your help to
-	  achieve this.
+          achieve this.
         </para>
-	<para>
-	  Donating helps pay for things such as web hosting, domain registration and licenses for developer tools
-	  such as a performance profiler, memory profiler, a static code analysis tool, and more.
-	</para>
+        <para>
+          Donating helps pay for things such as web hosting, domain registration and licenses for developer tools
+          such as a performance profiler, memory profiler, a static code analysis tool, and more.
+        </para>
         <para>
           If MimeKit and/or MailKit have been helpful to you, please consider donating. Your contributions will be
           greatly appreciated.
         </para>
         <markup>
           <p>
-	    <a href="https://paypal.me/pools/c/857bnxBTXg" _target="blank">
-	      <img src="https://www.paypal.com/en_US/i/btn/x-click-but21.gif" alt="Click here to lend your support to MimeKit by making a donation!" border="0" />
-	    </a>
+            <a href="https://github.com/sponsors/jstedfast" _target="blank">
+              <img src="https://www.paypal.com/en_US/i/btn/x-click-but21.gif" alt="Click here to lend your support to MimeKit and MailKit by making a donation!" border="0" />
+            </a>
           </p>
         </markup>
       </content>

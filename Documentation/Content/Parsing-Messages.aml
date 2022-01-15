@@ -29,7 +29,7 @@
         <code language="c#" source="Examples\MimeMessageLoad.cs" />
       </content>
     </section>
-    
+
     <section address="MimeParser">
       <title>Using MimeParser directly</title>
       <content>

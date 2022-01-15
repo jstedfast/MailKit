@@ -13,7 +13,7 @@
     <introduction>
       <autoOutline />
     </introduction>
-    
+
     <section address="CreatingYourOwnPGPContext">
       <title>Creating your own OpenPGP Context</title>
       <content>

@@ -1,5 +1,19 @@
 # Release Notes
 
+### MailKit 3.1.0 (2022-01-14)
+
+* Fixed NTLM to always prefer the supplied domain over the TargetName or TargetInfo.DomainName.
+  (issue [#582](https://github.com/jstedfast/MailKit/issues/582))
+* Updated GMail and Outlook.com SSL certificate info.
+* Added a new SslCipherSuite property to each client that allows developers to get information
+  about the SSL/TLS cipher suite that was negotiated with the server.
+  (pull [#1312](https://github.com/jstedfast/MailKit/pull/1312))
+* Reduced string allocations in SmtpClient's EHLO capability parsing logic.
+* Default ProtocolLogger.RedactSecrets to true for added added security.
+* Added work-around for parsing malformed GMail ENVELOPE responses that reverse the name and address components
+  of the Sender address. (pull [#1319](https://github.com/jstedfast/MailKit/pull/1319))
+* Added net6.0 to the list of TargetFrameworks.
+
 ### MailKit 3.0.0 (2021-12-11)
 
 * Removed APIs marked as \[Obsolete\] in 2.x.

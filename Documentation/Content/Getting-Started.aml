@@ -59,8 +59,8 @@
         <list class="bullet">
           <listItem>
             <para>
-              <application>MailKit.sln</application> includes projects for .NET 4.5.2, .NET 4.6,
-              .NET 4.7, .NET 4.8, .NET 5.0, .NETStandard 2.0, .NETStandard 2.1, and the unit tests.
+              <application>MailKit.sln</application> includes projects for .NET 4.5.2, .NET 4.6, .NET 4.7,
+              .NET 4.8, .NET 5.0, .NET 6.0, .NETStandard 2.0, .NETStandard 2.1, and the unit tests.
             </para>
           </listItem>
           <listItem>
@@ -75,7 +75,7 @@
           file in either <application>Xamarin Studio</application> or
           <application>Visual Studio</application> (either will work), you can
           choose the <application>Debug</application> or <application>Release</application>
-	  build configuration and then build.
+          build configuration and then build.
         </para>
       </content>
     </section>
