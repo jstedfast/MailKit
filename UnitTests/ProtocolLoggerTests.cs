@@ -69,7 +69,7 @@ namespace UnitTests {
 				Assert.AreEqual ("S: ", logger.ServerPrefix, "ServerPrefix");
 				Assert.AreEqual ("yyyy-MM-ddTHH:mm:ssZ", logger.TimestampFormat, "TimestampFormat");
 				Assert.IsFalse (logger.LogTimestamps, "LogTimestamps");
-				Assert.IsFalse (logger.RedactSecrets, "RedactSecrets");
+				Assert.IsTrue (logger.RedactSecrets, "RedactSecrets");
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace UnitTests {
 				ProtocolLogger.DefaultClientPrefix = "C> ";
 				ProtocolLogger.DefaultServerPrefix = "S> ";
 
-				using (var logger = new ProtocolLogger (new MemoryStream ())) {
+				using (var logger = new ProtocolLogger (new MemoryStream ()) { RedactSecrets = false }) {
 					Assert.AreEqual ("C> ", logger.ClientPrefix, "ClientPrefix");
 					Assert.AreEqual ("S> ", logger.ServerPrefix, "ServerPrefix");
 					Assert.AreEqual ("yyyy-MM-ddTHH:mm:ssZ", logger.TimestampFormat, "TimestampFormat");
@@ -97,7 +97,7 @@ namespace UnitTests {
 		public void TestLogging ()
 		{
 			using (var stream = new MemoryStream ()) {
-				using (var logger = new ProtocolLogger (stream, true)) {
+				using (var logger = new ProtocolLogger (stream, true) { RedactSecrets = false }) {
 					logger.LogConnect (new Uri ("pop://pop.skyfall.net:110"));
 
 					var cmd = Encoding.ASCII.GetBytes ("RETR 1\r\n");
@@ -146,7 +146,7 @@ namespace UnitTests {
 		public void TestLogConnectMidline ()
 		{
 			using (var stream = new MemoryStream ()) {
-				using (var logger = new ProtocolLogger (stream, true)) {
+				using (var logger = new ProtocolLogger (stream, true) { RedactSecrets = false }) {
 					byte[] buf;
 
 					buf = Encoding.ASCII.GetBytes ("PARTIAL LINE");
@@ -172,7 +172,7 @@ namespace UnitTests {
 		public void TestLoggingWithCustomPrefixes ()
 		{
 			using (var stream = new MemoryStream ()) {
-				using (var logger = new ProtocolLogger (stream, true) { ClientPrefix = "C> ", ServerPrefix = "S> " }) {
+				using (var logger = new ProtocolLogger (stream, true) { ClientPrefix = "C> ", ServerPrefix = "S> ", RedactSecrets = false }) {
 					logger.LogConnect (new Uri ("pop://pop.skyfall.net:110"));
 
 					var cmd = Encoding.ASCII.GetBytes ("RETR 1\r\n");
@@ -241,7 +241,7 @@ namespace UnitTests {
 			string format;
 
 			using (var stream = new MemoryStream ()) {
-				using (var logger = new ProtocolLogger (stream, true) { LogTimestamps = true }) {
+				using (var logger = new ProtocolLogger (stream, true) { LogTimestamps = true, RedactSecrets = false }) {
 					format = logger.TimestampFormat;
 
 					logger.LogConnect (new Uri ("pop://pop.skyfall.net:110"));
