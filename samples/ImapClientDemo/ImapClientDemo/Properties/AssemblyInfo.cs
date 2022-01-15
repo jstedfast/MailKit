@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
 [assembly: AssemblyProduct ("ImapClientDemo")]
-[assembly: AssemblyCopyright ("Copyright © 2014 Jeffrey Stedfast")]
+[assembly: AssemblyCopyright ("Copyright © 2014-2022 Jeffrey Stedfast")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 

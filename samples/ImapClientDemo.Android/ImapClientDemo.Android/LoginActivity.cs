@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2021 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2022 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ using Android.Widget;
 
 namespace ImapClientDemo
 {
-	[Activity (Label = "Login")]			
+	[Activity (Label = "Login")]
 	public class LoginActivity : Activity
 	{
 		TextView textServer;
