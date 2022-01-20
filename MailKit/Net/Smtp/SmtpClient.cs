@@ -36,6 +36,7 @@ using System.Net.Security;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -69,6 +70,7 @@ namespace MailKit.Net.Smtp {
 	public partial class SmtpClient : MailTransport, ISmtpClient
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes (".\r\n");
+		internal static string DefaultLocalDomain;
 		const int MaxLineLength = 998;
 
 		enum SmtpCommand {
@@ -87,6 +89,31 @@ namespace MailKit.Net.Smtp {
 		bool disposed;
 		bool secure;
 		Uri uri;
+
+		static SmtpClient ()
+		{
+			string hostName = IPGlobalProperties.GetIPGlobalProperties ().HostName;
+			var idn = new IdnMapping ();
+
+			if (!string.IsNullOrEmpty (hostName)) {
+				try {
+					hostName = idn.GetAscii (hostName);
+				} catch (ArgumentException) {
+					// This can happen if the hostName contains illegal unicode characters.
+					var ascii = new StringBuilder ();
+					for (int i = 0; i < hostName.Length; i++) {
+						if (hostName[i] <= 0x7F)
+							ascii.Append (hostName[i]);
+					}
+
+					hostName = ascii.Length > 0 ? ascii.ToString () : null;
+				}
+			} else {
+				hostName = null;
+			}
+
+			DefaultLocalDomain = hostName ?? "localhost";
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpClient"/> class.
@@ -676,38 +703,28 @@ namespace MailKit.Net.Smtp {
 
 		async Task<SmtpResponse> SendEhloAsync (bool ehlo, bool doAsync, CancellationToken cancellationToken)
 		{
-			var network = NetworkStream.Get (Stream.Stream);
 			string command = ehlo ? "EHLO " : "HELO ";
-			string domain = null;
-			IPAddress ip = null;
+			string domain;
 
 			if (!string.IsNullOrEmpty (LocalDomain)) {
-				if (!IPAddress.TryParse (LocalDomain, out ip))
-					domain = LocalDomain;
-			} else if (network != null) {
-				var ipEndPoint = network.Socket.LocalEndPoint as IPEndPoint;
-
-				if (ipEndPoint == null)
-					domain = ((DnsEndPoint) network.Socket.LocalEndPoint).Host;
-				else
-					ip = ipEndPoint.Address;
-			} else {
-				domain = "[127.0.0.1]";
-			}
-
-			if (ip != null) {
-				if (ip.IsIPv4MappedToIPv6) {
-					try {
-						ip = ip.MapToIPv4 ();
-					} catch (ArgumentOutOfRangeException) {
-						// .NET 4.5.2 bug on Windows 7 SP1 (issue #814)
+				if (IPAddress.TryParse (LocalDomain, out var ip)) {
+					if (ip.IsIPv4MappedToIPv6) {
+						try {
+							ip = ip.MapToIPv4 ();
+						} catch (ArgumentOutOfRangeException) {
+							// .NET 4.5.2 bug on Windows 7 SP1 (issue #814)
+						}
 					}
-				}
 
-				if (ip.AddressFamily == AddressFamily.InterNetworkV6)
-					domain = "[IPv6:" + ip + "]";
-				else
-					domain = "[" + ip + "]";
+					if (ip.AddressFamily == AddressFamily.InterNetworkV6)
+						domain = "[IPv6:" + ip + "]";
+					else
+						domain = "[" + ip + "]";
+				} else {
+					domain = LocalDomain;
+				}
+			} else {
+				domain = DefaultLocalDomain;
 			}
 
 			command += domain;
