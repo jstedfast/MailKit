@@ -759,17 +759,24 @@ namespace MailKit.Net.Smtp {
 
 		static bool IsCapability (string capability, string text, int startIndex, int endIndex, bool hasValue = false)
 		{
-			int index = startIndex + capability.Length;
 			int length = endIndex - startIndex;
 
-			if (length < capability.Length)
-				return false;
+			if (hasValue) {
+				if (length <= capability.Length)
+					return false;
+			} else {
+				if (length != capability.Length)
+					return false;
+			}
 
 			if (string.Compare (text, startIndex, capability, 0, capability.Length, StringComparison.OrdinalIgnoreCase) != 0)
 				return false;
 
-			if (hasValue)
+			if (hasValue) {
+				int index = startIndex + capability.Length;
+
 				return length > capability.Length && (text[index] == ' ' || text[index] == '=');
+			}
 
 			return true;
 		}
@@ -802,7 +809,13 @@ namespace MailKit.Net.Smtp {
 			while (index < endIndex && char.IsWhiteSpace (capability[index]))
 				index++;
 
-			if (index < endIndex && uint.TryParse (capability.Substring (index, endIndex - index), NumberStyles.None, CultureInfo.InvariantCulture, out uint size))
+#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
+			var value = capability.AsSpan (index, endIndex - index);
+#else
+			var value = capability.Substring (index, endIndex - index);
+#endif
+
+			if (index < endIndex && uint.TryParse (value, NumberStyles.None, CultureInfo.InvariantCulture, out uint size))
 				MaxSize = size;
 		}
 
@@ -1860,9 +1873,9 @@ namespace MailKit.Net.Smtp {
 				OnDisconnected (host, port, options, requested);
 		}
 
-		#endregion
+#endregion
 
-		#region IMailTransport implementation
+#region IMailTransport implementation
 
 		static MailboxAddress GetMessageSender (MimeMessage message)
 		{
@@ -2704,7 +2717,7 @@ namespace MailKit.Net.Smtp {
 			return SendAsync (options, message, sender, rcpts, false, cancellationToken, progress).GetAwaiter ().GetResult ();
 		}
 
-		#endregion
+#endregion
 
 		async Task<InternetAddressList> ExpandAsync (string alias, bool doAsync, CancellationToken cancellationToken)
 		{
