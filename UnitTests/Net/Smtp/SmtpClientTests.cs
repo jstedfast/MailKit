@@ -652,6 +652,46 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		[Test]
+		public void TestServiceNotReady ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "greeting-not-ready.txt"));
+
+			using (var client = new SmtpClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					Assert.Fail ("Connect is expected to fail.");
+				} catch (SmtpCommandException ex) {
+					Assert.AreEqual (SmtpErrorCode.UnexpectedStatusCode, ex.ErrorCode, "ErrorCode");
+					Assert.AreEqual (SmtpStatusCode.ServiceClosingTransmissionChannel, ex.StatusCode, "StatusCode");
+					Assert.AreEqual ("ESMTP server not ready", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception: {0}", ex);
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestServiceNotReadyAsync ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "greeting-not-ready.txt"));
+
+			using (var client = new SmtpClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					Assert.Fail ("Connect is expected to fail.");
+				} catch (SmtpCommandException ex) {
+					Assert.AreEqual (SmtpErrorCode.UnexpectedStatusCode, ex.ErrorCode, "ErrorCode");
+					Assert.AreEqual (SmtpStatusCode.ServiceClosingTransmissionChannel, ex.StatusCode, "StatusCode");
+					Assert.AreEqual ("ESMTP server not ready", ex.Message);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception: {0}", ex);
+				}
+			}
+		}
+
 		void AssertGMailIsConnected (IMailService client)
 		{
 			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
