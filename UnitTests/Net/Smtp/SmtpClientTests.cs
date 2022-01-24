@@ -3015,6 +3015,7 @@ namespace UnitTests.Net.Smtp {
 
 			protected override void OnNoRecipientsAccepted (MimeMessage message)
 			{
+				base.OnNoRecipientsAccepted (message);
 				NoRecipientsAccepted = true;
 			}
 		}
