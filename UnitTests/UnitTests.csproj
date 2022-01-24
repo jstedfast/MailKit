@@ -556,6 +556,7 @@
     <EmbeddedResource Include="Net\Smtp\Resources\greeting-not-ready.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\helo.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\mailbox-unavailable.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\pipelined-mailbox-unavailable.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\pipelined-mail-from-rcpt-to.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-expn.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\rfc0821-vrfy.txt" />

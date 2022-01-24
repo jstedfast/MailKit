@@ -1,0 +1,2 @@
+250 2.1.0 sender ok
+550 5.1.0 mailbox unavailable

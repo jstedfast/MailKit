@@ -575,7 +575,7 @@ namespace MailKit.Net.Smtp {
 		{
 		}
 
-		async Task FlushCommandQueueAsync (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, bool doAsync, CancellationToken cancellationToken)
+		async Task<int> FlushCommandQueueAsync (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, bool doAsync, CancellationToken cancellationToken)
 		{
 			try {
 				// Note: Queued commands are buffered by the stream
@@ -636,8 +636,7 @@ namespace MailKit.Net.Smtp {
 			if (rex != null)
 				throw rex;
 
-			if (accepted == 0)
-				OnNoRecipientsAccepted (message);
+			return accepted;
 		}
 
 		async Task<SmtpResponse> SendCommandAsync (string command, bool doAsync, CancellationToken cancellationToken)
@@ -2546,9 +2545,12 @@ namespace MailKit.Net.Smtp {
 					// Note: if PIPELINING is supported, this will flush all outstanding
 					// MAIL FROM and RCPT TO commands to the server and then process all
 					// of their responses.
-					await FlushCommandQueueAsync (message, sender, recipients, doAsync, cancellationToken).ConfigureAwait (false);
-				} else if (accepted == 0) {
+					accepted = await FlushCommandQueueAsync (message, sender, recipients, doAsync, cancellationToken).ConfigureAwait (false);
+				}
+
+				if (accepted == 0) {
 					OnNoRecipientsAccepted (message);
+					throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.TransactionFailed, "No recipients were accepted.");
 				}
 
 				if ((extensions & SmtpExtension.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & SmtpCapabilities.BinaryMime) != 0))
