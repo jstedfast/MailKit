@@ -30,9 +30,6 @@ I just wanted to let you know that Monica and I were going to go play some paint
 			};
 
 			using (var client = new SmtpClient ()) {
-				// For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
-
 				client.Connect ("smtp.friends.com", 587, false);
 
 				// Note: only needed if the SMTP server requires authentication
@@ -63,9 +60,6 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new Pop3Client ()) {
-				// For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
-
 				client.Connect ("pop.friends.com", 110, false);
 
 				client.Authenticate ("joey", "password");
@@ -84,7 +78,7 @@ namespace TestClient {
 
 ## Using IMAP
 
-More important than POP3 support is the IMAP support. Here's a simple use-case of retreiving messages from an IMAP server:
+More important than POP3 support is the IMAP support. Here's a simple use-case of retrieving messages from an IMAP server:
 
 ```csharp
 using System;
@@ -100,9 +94,6 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new ImapClient ()) {
-				// For demo-purposes, accept all SSL certificates
-				client.ServerCertificateValidationCallback = (s,c,h,e) => true;
-
 				client.Connect ("imap.friends.com", 993, true);
 
 				client.Authenticate ("joey", "password");
@@ -126,17 +117,21 @@ namespace TestClient {
 }
 ```
 
-However, you probably want to do more complicated things with IMAP such as fetching summary information
-so that you can display a list of messages in a mail client without having to first download all of the
-messages from the server:
+### Fetching Information About the Messages in an IMAP Folder
+
+One of the advantages of IMAP over POP3 is that the IMAP protocol allows clients to retrieve information about
+the messages in a folder without having to first download all of them.
+
+Using the [Fetch](http://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_Fetch.htm) method overloads,
+it's possible to obtain any subset of summary information for any range of messages in a given folder.
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId)) {
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full)) {
 	Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
 }
 ```
 
-The results of a Fetch command can also be used to download individual MIME parts rather
+The results of a Fetch method can also be used to download individual MIME parts rather
 than downloading the entire message. For example:
 
 ```csharp
@@ -164,6 +159,31 @@ foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | Messa
 }
 ```
 
+### Setting Message Flags in IMAP
+
+In order to set or update the flags on a particular message, what is actually needed is the UID or index of the message and
+the folder that it belongs to.
+
+An obvious reason to want to update message flags is to mark a message as "read" (aka "seen") after a user has opened a
+message and read it.
+
+```csharp
+folder.Store (uid, new StoreFlagsRequest (StoreAction.Add, MessageFlags.Seen) { Silent = true });
+```
+
+### Deleting Messages in IMAP
+
+Deleting messages in IMAP involves setting a `\Deleted` flag on a message and, optionally, expunging it from the folder.
+
+The way to mark a message as `\Deleted` works the same way as marking a message as `\Seen`.
+
+```csharp
+folder.Store (uid, new StoreFlagsRequest (StoreAction.Add, MessageFlags.Deleted) { Silent = true });
+folder.Expunge ();
+```
+
+### Searching an IMAP Folder
+
 You may also be interested in sorting and searching...
 
 ```csharp
@@ -178,7 +198,7 @@ foreach (var uid in inbox.Search (query)) {
 
 // let's do the same search, but this time sort them in reverse arrival order
 var orderBy = new [] { OrderBy.ReverseArrival };
-foreach (var uid in inbox.Search (query, orderBy)) {
+foreach (var uid in inbox.Sort (query, orderBy)) {
 	var message = inbox.GetMessage (uid);
 	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
@@ -186,7 +206,7 @@ foreach (var uid in inbox.Search (query, orderBy)) {
 // you'll notice that the orderBy argument is an array... this is because you
 // can actually sort the search results based on multiple columns:
 orderBy = new [] { OrderBy.ReverseArrival, OrderBy.Subject };
-foreach (var uid in inbox.Search (query, orderBy)) {
+foreach (var uid in inbox.Sort (query, orderBy)) {
 	var message = inbox.GetMessage (uid);
 	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
@@ -194,6 +214,8 @@ foreach (var uid in inbox.Search (query, orderBy)) {
 
 Of course, instead of downloading the message, you could also fetch the summary information for the matching messages
 or do any of a number of other things with the UIDs that are returned.
+
+### Navigating Folders in IMAP
 
 How about navigating folders? MailKit can do that, too:
 
@@ -228,7 +250,7 @@ static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationT
 
     foreach (var folder in personal.GetSubfolders (false, cancellationToken)) {
         foreach (var name in CommonSentFolderNames) {
-            if (folder.Name == commonName)
+            if (folder.Name == name)
                 return folder;
         }
     }
@@ -250,7 +272,8 @@ static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationT
 }
 ```
 
-Another option might be to allow the user of your application to configure which folder he or she wants to use as their Sent folder, Drafts folder, Trash folder, etc.
+Another option might be to allow the user of your application to configure which folder he or she wants to use as their
+Sent folder, Drafts folder, Trash folder, etc.
 
 How you handle this is up to you.
 
@@ -267,9 +290,22 @@ motivate me to continue working on the project.
 
 ## Reporting Bugs
 
-Have a bug or a feature request? [Please open a new issue](https://github.com/jstedfast/MailKit/issues).
+Have a bug or a feature request? Please open a new
+[bug report](https://github.com/jstedfast/MailKit/issues/new?template=bug_report.md)
+or
+[feature request](https://github.com/jstedfast/MailKit/issues/new?template=feature_request.md).
 
-Before opening a new issue, please search for existing issues to avoid submitting duplicates.
+Before opening a new issue, please search through any [existing issues](https://github.com/jstedfast/MailKit/issues)
+to avoid submitting duplicates. It may also be worth checking the
+[FAQ](https://github.com/jstedfast/MailKit/blob/master/FAQ.md) for common questions that other developers
+have had.
+
+If MailKit does not work with your mail server, please include a [protocol
+log](https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog) in your bug report, otherwise
+there is nothing I can do to fix the problem.
+
+If you are getting an exception from somewhere within MailKit, don't just provide the `Exception.Message`
+string. Please include the `Exception.StackTrace` as well. The `Message`, by itself, is often useless.
 
 ## Documentation
 
