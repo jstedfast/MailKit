@@ -416,7 +416,7 @@ An obvious reason to want to update message flags is to mark a message as "read"
 message and read it.
 
 ```csharp
-folder.AddFlags (uid, MessageFlags.Seen, true);
+folder.Store (uid, new StoreFlagsRequest (StoreAction.Add, MessageFlags.Seen) { Silent = true });
 ```
 
 ### Deleting Messages in IMAP
@@ -426,7 +426,7 @@ Deleting messages in IMAP involves setting a `\Deleted` flag on a message and, o
 The way to mark a message as `\Deleted` works the same way as marking a message as `\Seen`.
 
 ```csharp
-folder.AddFlags (uid, MessageFlags.Deleted, true);
+folder.Store (uid, new StoreFlagsRequest (StoreAction.Add, MessageFlags.Deleted) { Silent = true });
 folder.Expunge ();
 ```
 
