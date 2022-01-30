@@ -260,34 +260,34 @@ using MailKit;
 using MimeKit;
 
 namespace TestClient {
-	class Program
-	{
-		public static void Main (string[] args)
-		{
-			var message = new MimeMessage ();
-			message.From.Add (new MailboxAddress ("Joey Tribbiani", "joey@friends.com"));
-			message.To.Add (new MailboxAddress ("Mrs. Chanandler Bong", "chandler@friends.com"));
-			message.Subject = "How you doin'?";
+    class Program
+    {
+        public static void Main (string[] args)
+        {
+            var message = new MimeMessage ();
+            message.From.Add (new MailboxAddress ("Joey Tribbiani", "joey@friends.com"));
+            message.To.Add (new MailboxAddress ("Mrs. Chanandler Bong", "chandler@friends.com"));
+            message.Subject = "How you doin'?";
 
-			message.Body = new TextPart ("plain") {
-				Text = @"Hey Chandler,
+            message.Body = new TextPart ("plain") {
+                Text = @"Hey Chandler,
 
 I just wanted to let you know that Monica and I were going to go play some paintball, you in?
 
 -- Joey"
-			};
+            };
 
-			using (var client = new SmtpClient ()) {
-				client.Connect ("smtp.friends.com", 587, false);
+            using (var client = new SmtpClient ()) {
+                client.Connect ("smtp.friends.com", 587, false);
 
-				// Note: only needed if the SMTP server requires authentication
-				client.Authenticate ("joey", "password");
+                // Note: only needed if the SMTP server requires authentication
+                client.Authenticate ("joey", "password");
 
-				client.Send (message);
-				client.Disconnect (true);
-			}
-		}
-	}
+                client.Send (message);
+                client.Disconnect (true);
+            }
+        }
+    }
 }
 ```
 
@@ -303,24 +303,24 @@ using MailKit;
 using MimeKit;
 
 namespace TestClient {
-	class Program
-	{
-		public static void Main (string[] args)
-		{
-			using (var client = new Pop3Client ()) {
-				client.Connect ("pop.friends.com", 110, false);
+    class Program
+    {
+        public static void Main (string[] args)
+        {
+            using (var client = new Pop3Client ()) {
+                client.Connect ("pop.friends.com", 110, false);
 
-				client.Authenticate ("joey", "password");
+                client.Authenticate ("joey", "password");
 
-				for (int i = 0; i < client.Count; i++) {
-					var message = client.GetMessage (i);
-					Console.WriteLine ("Subject: {0}", message.Subject);
-				}
+                for (int i = 0; i < client.Count; i++) {
+                    var message = client.GetMessage (i);
+                    Console.WriteLine ("Subject: {0}", message.Subject);
+                }
 
-				client.Disconnect (true);
-			}
-		}
-	}
+                client.Disconnect (true);
+            }
+        }
+    }
 }
 ```
 
@@ -331,37 +331,37 @@ More important than POP3 support is the IMAP support. Here's a simple use-case o
 ```csharp
 using System;
 
-using MailKit.Net.Imap;
-using MailKit.Search;
-using MailKit;
 using MimeKit;
+using MailKit;
+using MailKit.Search;
+using MailKit.Net.Imap;
 
 namespace TestClient {
-	class Program
-	{
-		public static void Main (string[] args)
-		{
-			using (var client = new ImapClient ()) {
-				client.Connect ("imap.friends.com", 993, true);
+    class Program
+    {
+        public static void Main (string[] args)
+        {
+            using (var client = new ImapClient ()) {
+                client.Connect ("imap.friends.com", 993, true);
 
-				client.Authenticate ("joey", "password");
+                client.Authenticate ("joey", "password");
 
-				// The Inbox folder is always available on all IMAP servers...
-				var inbox = client.Inbox;
-				inbox.Open (FolderAccess.ReadOnly);
+                // The Inbox folder is always available on all IMAP servers...
+                var inbox = client.Inbox;
+                inbox.Open (FolderAccess.ReadOnly);
 
-				Console.WriteLine ("Total messages: {0}", inbox.Count);
-				Console.WriteLine ("Recent messages: {0}", inbox.Recent);
+                Console.WriteLine ("Total messages: {0}", inbox.Count);
+                Console.WriteLine ("Recent messages: {0}", inbox.Recent);
 
-				for (int i = 0; i < inbox.Count; i++) {
-					var message = inbox.GetMessage (i);
-					Console.WriteLine ("Subject: {0}", message.Subject);
-				}
+                for (int i = 0; i < inbox.Count; i++) {
+                    var message = inbox.GetMessage (i);
+                    Console.WriteLine ("Subject: {0}", message.Subject);
+                }
 
-				client.Disconnect (true);
-			}
-		}
-	}
+                client.Disconnect (true);
+            }
+        }
+    }
 }
 ```
 
@@ -375,7 +375,7 @@ it's possible to obtain any subset of summary information for any range of messa
 
 ```csharp
 foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full)) {
-	Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
+    Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
 }
 ```
 
@@ -385,19 +385,19 @@ than downloading the entire message. For example:
 ```csharp
 foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure)) {
     if (summary.TextBody != null) {
-	// this will download *just* the text/plain part
-	var text = inbox.GetBodyPart (summary.UniqueId, summary.TextBody);
+        // this will download *just* the text/plain part
+        var text = inbox.GetBodyPart (summary.UniqueId, summary.TextBody);
     }
-    
+
     if (summary.HtmlBody != null) {
         // this will download *just* the text/html part
-	var html = inbox.GetBodyPart (summary.UniqueId, summary.HtmlBody);
+        var html = inbox.GetBodyPart (summary.UniqueId, summary.HtmlBody);
     }
-    
+
     // if you'd rather grab, say, an image attachment... it might look something like this:
     if (summary.Body is BodyPartMultipart) {
         var multipart = (BodyPartMultipart) summary.Body;
-        
+
         var attachment = multipart.BodyParts.OfType<BodyPartBasic> ().FirstOrDefault (x => x.FileName == "logo.jpg");
         if (attachment != null) {
             // this will download *just* the attachment
@@ -440,23 +440,23 @@ var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12"))
     .And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
 
 foreach (var uid in inbox.Search (query)) {
-	var message = inbox.GetMessage (uid);
-	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
+    var message = inbox.GetMessage (uid);
+    Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 
 // let's do the same search, but this time sort them in reverse arrival order
 var orderBy = new [] { OrderBy.ReverseArrival };
 foreach (var uid in inbox.Sort (query, orderBy)) {
-	var message = inbox.GetMessage (uid);
-	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
+    var message = inbox.GetMessage (uid);
+    Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 
 // you'll notice that the orderBy argument is an array... this is because you
 // can actually sort the search results based on multiple columns:
 orderBy = new [] { OrderBy.ReverseArrival, OrderBy.Subject };
 foreach (var uid in inbox.Sort (query, orderBy)) {
-	var message = inbox.GetMessage (uid);
-	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
+    var message = inbox.GetMessage (uid);
+    Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 ```
 
@@ -471,7 +471,7 @@ How about navigating folders? MailKit can do that, too:
 // Get the first personal namespace and list the toplevel folders under it.
 var personal = client.GetFolder (client.PersonalNamespaces[0]);
 foreach (var folder in personal.GetSubfolders (false))
-	Console.WriteLine ("[folder] {0}", folder.Name);
+    Console.WriteLine ("[folder] {0}", folder.Name);
 ```
 
 If the IMAP server supports the SPECIAL-USE or the XLIST (GMail) extension, you can get ahold of
@@ -479,9 +479,9 @@ the pre-defined All, Drafts, Flagged (aka Important), Junk, Sent, Trash, etc fol
 
 ```csharp
 if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0) {
-	var drafts = client.GetFolder (SpecialFolder.Drafts);
+    var drafts = client.GetFolder (SpecialFolder.Drafts);
 } else {
-	// maybe check the user's preferences for the Drafts folder?
+    // maybe check the user's preferences for the Drafts folder?
 }
 ```
 
@@ -515,7 +515,7 @@ static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", "Sent Messa
 static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
 {
     var personal = client.GetFolder (client.PersonalNamespaces[0]);
-    
+
     return personal.GetSubfolders (false, cancellationToken).FirstOrDefault (x => CommonSentFolderNames.Contains (x.Name));
 }
 ```
