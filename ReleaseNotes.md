@@ -1,5 +1,12 @@
 # Release Notes
 
+### MailKit 3.1.1 (2022-01-30)
+
+* Reduced string allocations in Pop3Engine's capability parser.
+* Updated GMail and Outlook.com SSL certificates.
+* Modified SmtpClient to try and use the system hostname in EHLO/HELO commands.
+  (issue [#1314](https://github.com/jstedfast/MailKit/issues/1314))
+
 ### MailKit 3.1.0 (2022-01-14)
 
 * Fixed NTLM to always prefer the supplied domain over the TargetName or TargetInfo.DomainName.
