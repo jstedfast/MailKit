@@ -742,7 +742,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (rfc2047) {
-				var encoding = engine.UTF8Enabled ? ImapEngine.UTF8 : ImapEngine.Latin1;
+				var encoding = engine.UTF8Enabled ? TextEncodings.UTF8 : TextEncodings.Latin1;
 
 				return Rfc2047.DecodeText (encoding.GetBytes (value));
 			}
@@ -1245,7 +1245,7 @@ namespace MailKit.Net.Imap {
 				string name = null;
 
 				if (Name != null) {
-					var encoding = engine.UTF8Enabled ? ImapEngine.UTF8 : ImapEngine.Latin1;
+					var encoding = engine.UTF8Enabled ? TextEncodings.UTF8 : TextEncodings.Latin1;
 
 					name = Rfc2047.DecodePhrase (encoding.GetBytes (Name));
 				}
@@ -1274,7 +1274,7 @@ namespace MailKit.Net.Imap {
 				var name = string.Empty;
 
 				if (Mailbox != null) {
-					var encoding = engine.UTF8Enabled ? ImapEngine.UTF8 : ImapEngine.Latin1;
+					var encoding = engine.UTF8Enabled ? TextEncodings.UTF8 : TextEncodings.Latin1;
 
 					name = Rfc2047.DecodePhrase (encoding.GetBytes (Mailbox));
 				}

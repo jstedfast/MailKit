@@ -46,8 +46,6 @@ namespace MailKit.Net.Smtp {
 	/// </remarks>
 	class SmtpStream : Stream, ICancellableStream
 	{
-		static readonly Encoding Latin1;
-		static readonly Encoding UTF8;
 		const int BlockSize = 4096;
 
 		// I/O buffering
@@ -58,17 +56,6 @@ namespace MailKit.Net.Smtp {
 		readonly IProtocolLogger logger;
 		int inputIndex, inputEnd;
 		bool disposed;
-
-		static SmtpStream ()
-		{
-			UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
-
-			try {
-				Latin1 = Encoding.GetEncoding (28591);
-			} catch (NotSupportedException) {
-				Latin1 = Encoding.GetEncoding (1252);
-			}
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpStream"/> class.
@@ -513,15 +500,15 @@ namespace MailKit.Net.Smtp {
 
 				try {
 #if !NETSTANDARD1_3 && !NETSTANDARD1_6
-					message = UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+					message = TextEncodings.UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
-					message = UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
+					message = TextEncodings.UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
 				} catch (DecoderFallbackException) {
 #if !NETSTANDARD1_3 && !NETSTANDARD1_6
-					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+					message = TextEncodings.Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
-					message = Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);
+					message = TextEncodings.Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
 				}
 

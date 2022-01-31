@@ -140,8 +140,6 @@ namespace MailKit.Net.Imap {
 		const string GreetingSyntaxErrorFormat = "Syntax error in IMAP server greeting. {0}";
 		const int BufferSize = 4096;
 
-		internal static readonly Encoding Latin1;
-		internal static readonly Encoding UTF8;
 		static int TagPrefixIndex;
 
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
@@ -154,17 +152,6 @@ namespace MailKit.Net.Imap {
 		MimeParser parser;
 		internal int Tag;
 		bool disposed;
-
-		static ImapEngine ()
-		{
-			UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
-
-			try {
-				Latin1 = Encoding.GetEncoding (28591);
-			} catch (NotSupportedException) {
-				Latin1 = Encoding.GetEncoding (1252);
-			}
-		}
 
 		public ImapEngine (CreateImapFolderDelegate createImapFolderDelegate)
 		{
@@ -780,9 +767,9 @@ namespace MailKit.Net.Imap {
 #endif
 
 				try {
-					return UTF8.GetString (buf, 0, count);
+					return TextEncodings.UTF8.GetString (buf, 0, count);
 				} catch (DecoderFallbackException) {
-					return Latin1.GetString (buf, 0, count);
+					return TextEncodings.Latin1.GetString (buf, 0, count);
 				}
 			}
 		}
@@ -1021,7 +1008,7 @@ namespace MailKit.Net.Imap {
 				buf = memory.ToArray ();
 #endif
 
-				return Latin1.GetString (buf, 0, nread);
+				return TextEncodings.Latin1.GetString (buf, 0, nread);
 			}
 		}
 

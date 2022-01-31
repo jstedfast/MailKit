@@ -264,6 +264,7 @@
     <Compile Include="StoreAction.cs" />
     <Compile Include="StoreFlagsRequest.cs" />
     <Compile Include="StoreLabelsRequest.cs" />
+    <Compile Include="TextEncodings.cs" />
     <Compile Include="ThreadingAlgorithm.cs" />
     <Compile Include="UniqueId.cs" />
     <Compile Include="UniqueIdMap.cs" />

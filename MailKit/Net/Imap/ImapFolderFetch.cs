@@ -626,7 +626,7 @@ namespace MailKit.Net.Imap
 					} catch (DecoderFallbackException) {
 						memory.Position = 0;
 
-						message.PreviewText = previewer.GetPreviewText (memory, ImapEngine.Latin1);
+						message.PreviewText = previewer.GetPreviewText (memory, TextEncodings.Latin1);
 					}
 
 					message.Fields |= MessageSummaryItems.PreviewText;

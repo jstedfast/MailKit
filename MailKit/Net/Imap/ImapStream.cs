@@ -67,9 +67,6 @@ namespace MailKit.Net.Imap {
 		const int BlockSize = 4096;
 		const int PadSize = 4;
 
-		static readonly Encoding Latin1;
-		static readonly Encoding UTF8;
-
 		// I/O buffering
 		readonly byte[] input = new byte[ReadAheadSize + BlockSize + PadSize];
 		const int inputStart = ReadAheadSize;
@@ -83,17 +80,6 @@ namespace MailKit.Net.Imap {
 		int literalDataLeft;
 		ImapToken nextToken;
 		bool disposed;
-
-		static ImapStream ()
-		{
-			UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
-
-			try {
-				Latin1 = Encoding.GetEncoding (28591);
-			} catch (NotSupportedException) {
-				Latin1 = Encoding.GetEncoding (1252);
-			}
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
@@ -585,9 +571,9 @@ namespace MailKit.Net.Imap {
 #endif
 
 				try {
-					return UTF8.GetString (buf, 0, count);
+					return TextEncodings.UTF8.GetString (buf, 0, count);
 				} catch (DecoderFallbackException) {
-					return Latin1.GetString (buf, 0, count);
+					return TextEncodings.Latin1.GetString (buf, 0, count);
 				}
 			}
 		}

@@ -47,8 +47,6 @@ namespace MailKit.Security {
 	/// </remarks>
 	public class SaslMechanismDigestMd5 : SaslMechanism
 	{
-		static readonly Encoding Latin1;
-
 		enum LoginState {
 			Auth,
 			Final
@@ -59,15 +57,6 @@ namespace MailKit.Security {
 		internal string cnonce;
 		Encoding encoding;
 		LoginState state;
-
-		static SaslMechanismDigestMd5 ()
-		{
-			try {
-				Latin1 = Encoding.GetEncoding (28591);
-			} catch (NotSupportedException) {
-				Latin1 = Encoding.GetEncoding (1252);
-			}
-		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
@@ -157,7 +146,7 @@ namespace MailKit.Security {
 					throw new SaslException (MechanismName, SaslErrorCode.ChallengeTooLong, "Server challenge too long.");
 
 				challenge = DigestChallenge.Parse (Encoding.UTF8.GetString (token, startIndex, length));
-				encoding = challenge.Charset != null ? Encoding.UTF8 : Latin1;
+				encoding = challenge.Charset != null ? Encoding.UTF8 : TextEncodings.Latin1;
 				cnonce = cnonce ?? GenerateEntropy (15);
 
 				response = new DigestResponse (challenge, encoding, Uri.Scheme, Uri.DnsSafeHost, AuthorizationId, Credentials.UserName, Credentials.Password, cnonce);
