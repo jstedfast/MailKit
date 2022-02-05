@@ -248,6 +248,11 @@ namespace MailKit {
 			return builder.ToString ();
 		}
 
+		static bool IsNIL (string text, int index)
+		{
+			return string.Compare (text, index, "NIL", 0, 3, StringComparison.Ordinal) == 0;
+		}
+
 		static bool TryParse (string text, ref int index, out uint value)
 		{
 			while (index < text.Length && text[index] == ' ')
@@ -274,7 +279,7 @@ namespace MailKit {
 				return false;
 
 			if (text[index] != '"') {
-				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+				if (index + 3 <= text.Length && IsNIL (text, index)) {
 					index += 3;
 					return true;
 				}
@@ -322,7 +327,7 @@ namespace MailKit {
 				return false;
 
 			if (text[index] != '(') {
-				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+				if (index + 3 <= text.Length && IsNIL (text, index)) {
 					index += 3;
 					return true;
 				}
@@ -384,7 +389,7 @@ namespace MailKit {
 				return false;
 
 			if (text[index] != '(') {
-				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+				if (index + 3 <= text.Length && IsNIL (text, index)) {
 					parameters = new List<Parameter> ();
 					index += 3;
 					return true;
@@ -435,7 +440,7 @@ namespace MailKit {
 				return false;
 
 			if (text[index] != '(') {
-				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+				if (index + 3 <= text.Length && IsNIL (text, index)) {
 					index += 3;
 					return true;
 				}
@@ -543,7 +548,7 @@ namespace MailKit {
 				index++;
 
 			if (index >= text.Length || text[index] != '(') {
-				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+				if (index + 3 <= text.Length && IsNIL (text, index)) {
 					index += 3;
 					return true;
 				}
