@@ -174,7 +174,10 @@ namespace MailKit.Net
 
 			var tcs = new TaskCompletionSource<bool> ();
 
-			using (var timeout = new CancellationTokenSource (ReadTimeout)) {
+			// Capture the ReadTimeout so even if we get an exception and disconnect the socket, we still have it.
+			int readTimeout = ReadTimeout;
+
+			using (var timeout = new CancellationTokenSource (readTimeout)) {
 				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, timeout.Token)) {
 					using (var registration = linked.Token.Register (() => tcs.TrySetCanceled (), false)) {
 						recv.SetBuffer (buffer, offset, count);
@@ -189,7 +192,7 @@ namespace MailKit.Net
 						} catch (OperationCanceledException ex) {
 							Disconnect ();
 							if (timeout.IsCancellationRequested)
-								throw new TimeoutException ($"Operation timed out after {ReadTimeout} milliseconds", ex);
+								throw new TimeoutException ($"Operation timed out after {readTimeout} milliseconds", ex);
 							throw;
 						} catch (Exception ex) {
 							Disconnect ();
@@ -217,7 +220,10 @@ namespace MailKit.Net
 
 			var tcs = new TaskCompletionSource<bool> ();
 
-			using (var timeout = new CancellationTokenSource (WriteTimeout)) {
+			// Capture the WriteTimeout so even if we get an exception and disconnect the socket, we still have it.
+			int writeTimeout = WriteTimeout;
+
+			using (var timeout = new CancellationTokenSource (writeTimeout)) {
 				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, timeout.Token)) {
 					using (var registration = linked.Token.Register (() => tcs.TrySetCanceled (), false)) {
 						send.SetBuffer (buffer, offset, count);
@@ -231,7 +237,7 @@ namespace MailKit.Net
 						} catch (OperationCanceledException ex) {
 							Disconnect ();
 							if (timeout.IsCancellationRequested)
-								throw new TimeoutException ($"Operation timed out after {WriteTimeout} milliseconds", ex);
+								throw new TimeoutException ($"Operation timed out after {writeTimeout} milliseconds", ex);
 							throw;
 						} catch (Exception ex) {
 							Disconnect ();
