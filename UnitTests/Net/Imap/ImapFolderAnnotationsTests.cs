@@ -362,6 +362,8 @@ namespace UnitTests.Net.Imap {
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+
+					messages[i].Dispose ();
 				}
 
 				client.Disconnect (true);
@@ -406,6 +408,8 @@ namespace UnitTests.Net.Imap {
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+
+					messages[i].Dispose ();
 				}
 
 				await client.DisconnectAsync (true);
@@ -546,6 +550,9 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
 
 				client.Disconnect (true);
+
+				foreach (var request in requests)
+					request.Message.Dispose ();
 			}
 		}
 
@@ -592,6 +599,9 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
 
 				await client.DisconnectAsync (true);
+
+				foreach (var request in requests)
+					request.Message.Dispose ();
 			}
 		}
 
@@ -678,6 +688,8 @@ namespace UnitTests.Net.Imap {
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+
+					requests[i].Message.Dispose ();
 				}
 
 				client.Disconnect (true);
@@ -711,6 +723,8 @@ namespace UnitTests.Net.Imap {
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+
+					requests[i].Message.Dispose ();
 				}
 
 				await client.DisconnectAsync (true);
@@ -744,6 +758,8 @@ namespace UnitTests.Net.Imap {
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+
+					requests[i].Message.Dispose ();
 				}
 
 				client.Disconnect (true);
@@ -777,6 +793,8 @@ namespace UnitTests.Net.Imap {
 
 					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
 					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+
+					requests[i].Message.Dispose ();
 				}
 
 				await client.DisconnectAsync (true);

@@ -3903,11 +3903,11 @@ namespace UnitTests.Net.Imap {
 					uids.Add (fetched[i].UniqueId);
 				}
 
-				var entity = destination.GetBodyPart (fetched[0].UniqueId, fetched[0].TextBody);
-				Assert.IsInstanceOf<TextPart> (entity);
+				using (var entity = destination.GetBodyPart (fetched[0].UniqueId, fetched[0].TextBody))
+					Assert.IsInstanceOf<TextPart> (entity);
 
-				entity = destination.GetBodyPart (fetched[0].Index, fetched[0].TextBody);
-				Assert.IsInstanceOf<TextPart> (entity);
+				using (var entity = destination.GetBodyPart (fetched[0].Index, fetched[0].TextBody))
+					Assert.IsInstanceOf<TextPart> (entity);
 
 				var headers =  destination.GetHeaders (fetched[0].UniqueId);
 				Assert.AreEqual ("Unit Tests <unit-tests@mimekit.net>", headers[HeaderId.From], "GetHeaders(UniqueId) failed to match From header");
@@ -4537,11 +4537,11 @@ namespace UnitTests.Net.Imap {
 					uids.Add (fetched[i].UniqueId);
 				}
 
-				var entity = await destination.GetBodyPartAsync (fetched[0].UniqueId, fetched[0].TextBody);
-				Assert.IsInstanceOf<TextPart> (entity);
+				using (var entity = await destination.GetBodyPartAsync (fetched[0].UniqueId, fetched[0].TextBody))
+					Assert.IsInstanceOf<TextPart> (entity);
 
-				entity = await destination.GetBodyPartAsync (fetched[0].Index, fetched[0].TextBody);
-				Assert.IsInstanceOf<TextPart> (entity);
+				using (var entity = await destination.GetBodyPartAsync (fetched[0].Index, fetched[0].TextBody))
+					Assert.IsInstanceOf<TextPart> (entity);
 
 				var headers = await destination.GetHeadersAsync (fetched[0].UniqueId);
 				Assert.AreEqual ("Unit Tests <unit-tests@mimekit.net>", headers[HeaderId.From], "GetHeaders(UniqueId) failed to match From header");
@@ -4789,6 +4789,8 @@ namespace UnitTests.Net.Imap {
 					using (var reader = new StreamReader (stream, Latin1))
 						latin1 = reader.ReadToEnd ();
 				}
+
+				message.Dispose ();
 
 				var tag = string.Format ("A{0:D8}", i + 9);
 				var command = string.Format ("{0} APPEND UnitTests (\\Seen) ", tag);

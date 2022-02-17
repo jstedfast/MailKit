@@ -232,6 +232,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.VerifyAsync (null));
 				Assert.ThrowsAsync<ArgumentException> (async () => await client.VerifyAsync (string.Empty));
 				Assert.ThrowsAsync<ArgumentException> (async () => await client.VerifyAsync ("line1\r\nline2"));
+
+				message.Dispose ();
 			}
 		}
 
@@ -471,21 +473,21 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new SmtpClient ()) {
-				var message = CreateSimpleMessage ();
+					try {
+						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
 
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				using (var message = CreateSimpleMessage ()) {
+					message.From.Clear ();
+					message.Sender = null;
+					Assert.Throws<InvalidOperationException> (() => client.Send (message));
+
+					message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
+					message.To.Clear ();
+					Assert.Throws<InvalidOperationException> (() => client.Send (message));
 				}
-
-				message.From.Clear ();
-				message.Sender = null;
-				Assert.Throws<InvalidOperationException> (() => client.Send (message));
-
-				message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
-				message.To.Clear ();
-				Assert.Throws<InvalidOperationException> (() => client.Send (message));
 
 				client.Disconnect (true);
 			}
@@ -500,21 +502,21 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new SmtpClient ()) {
-				var message = CreateSimpleMessage ();
-
 				try {
 					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
 
-				message.From.Clear ();
-				message.Sender = null;
-				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.SendAsync (message));
+				using (var message = CreateSimpleMessage ()) {
+					message.From.Clear ();
+					message.Sender = null;
+					Assert.ThrowsAsync<InvalidOperationException> (async () => await client.SendAsync (message));
 
-				message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
-				message.To.Clear ();
-				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.SendAsync (message));
+					message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
+					message.To.Clear ();
+					Assert.ThrowsAsync<InvalidOperationException> (async () => await client.SendAsync (message));
+				}
 
 				await client.DisconnectAsync (true);
 			}
@@ -583,6 +585,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<InvalidOperationException> (() => client.Authenticate (new SaslMechanismPlain ("username", "password")));
 
 				client.Disconnect (true);
+
+				message.Dispose ();
 			}
 		}
 
@@ -649,6 +653,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password")));
 
 				await client.DisconnectAsync (true);
+
+				message.Dispose ();
 			}
 		}
 
@@ -1877,45 +1883,46 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
 				}
 
-				var message = CreateSimpleMessage ();
-				var options = FormatOptions.Default;
-				string response;
+				using (var message = CreateSimpleMessage ()) {
+					var options = FormatOptions.Default;
+					string response;
 
-				try {
-					response = client.Send (message);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-					return;
+					try {
+						response = client.Send (message);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						return;
+					}
+
+					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
+					try {
+						response = client.Send (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						return;
+					}
+
+					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
+					try {
+						response = client.Send (options, message);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						return;
+					}
+
+					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
+					try {
+						response = client.Send (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						return;
+					}
+
+					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
 				}
-
-				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
-
-				try {
-					response = client.Send (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-					return;
-				}
-
-				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
-
-				try {
-					response = client.Send (options, message);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-					return;
-				}
-
-				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
-
-				try {
-					response = client.Send (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-					return;
-				}
-
-				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
 
 				try {
 					client.Disconnect (true);
@@ -2038,45 +2045,46 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
 				}
 
-				var message = CreateSimpleMessage ();
-				var options = FormatOptions.Default;
-				string response;
+				using (var message = CreateSimpleMessage ()) {
+					var options = FormatOptions.Default;
+					string response;
 
-				try {
-					response = await client.SendAsync (message);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-					return;
+					try {
+						response = await client.SendAsync (message);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						return;
+					}
+
+					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
+					try {
+						response = await client.SendAsync (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						return;
+					}
+
+					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
+					try {
+						response = await client.SendAsync (options, message);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						return;
+					}
+
+					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+
+					try {
+						response = await client.SendAsync (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						return;
+					}
+
+					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
 				}
-
-				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
-
-				try {
-					response = await client.SendAsync (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-					return;
-				}
-
-				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
-
-				try {
-					response = await client.SendAsync (options, message);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-					return;
-				}
-
-				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
-
-				try {
-					response = await client.SendAsync (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-					return;
-				}
-
-				Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2247,7 +2255,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Send (CreateEightBitMessage ());
+					using (var message = CreateEightBitMessage ())
+						client.Send (message);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -2301,7 +2310,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					await client.SendAsync (CreateEightBitMessage ());
+					using (var message = CreateEightBitMessage ())
+						await client.SendAsync (message);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -2356,27 +2366,27 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
-				var message = CreateEightBitMessage ();
-
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				try {
-					client.Send (message, mailbox, new MailboxAddress[] { mailbox });
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
+				using (var message = CreateEightBitMessage ()) {
+					try {
+						client.Send (message, mailbox, new MailboxAddress[] { mailbox });
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					}
 
-				// Disable SMTPUTF8
-				client.Capabilities &= ~SmtpCapabilities.UTF8;
+					// Disable SMTPUTF8
+					client.Capabilities &= ~SmtpCapabilities.UTF8;
 
-				try {
-					client.Send (message, mailbox, new MailboxAddress[] { mailbox });
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					try {
+						client.Send (message, mailbox, new MailboxAddress[] { mailbox });
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					}
 				}
 
 				try {
@@ -2429,27 +2439,27 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
-				var message = CreateEightBitMessage ();
-
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				try {
-					await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
+				using (var message = CreateEightBitMessage ()) {
+					try {
+						await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					}
 
-				// Disable SMTPUTF8
-				client.Capabilities &= ~SmtpCapabilities.UTF8;
+					// Disable SMTPUTF8
+					client.Capabilities &= ~SmtpCapabilities.UTF8;
 
-				try {
-					await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					try {
+						await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					}
 				}
 
 				try {
@@ -2479,83 +2489,84 @@ namespace UnitTests.Net.Smtp {
 		[TestCase (true, TestName = "TestBinaryMimeWithProgress")]
 		public void TestBinaryMime (bool showProgress)
 		{
-			var message = CreateBinaryMessage ();
-			var size = Measure (message);
-			string bdat;
+			using (var message = CreateBinaryMessage ()) {
+				var size = Measure (message);
+				string bdat;
 
-			using (var memory = new MemoryStream ()) {
-				var options = FormatOptions.Default.Clone ();
+				using (var memory = new MemoryStream ()) {
+					var options = FormatOptions.Default.Clone ();
 
-				options.NewLineFormat = NewLineFormat.Dos;
-				options.EnsureNewLine = true;
+					options.NewLineFormat = NewLineFormat.Dos;
+					options.EnsureNewLine = true;
 
-				var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
-				memory.Write (bytes, 0, bytes.Length);
-				message.WriteTo (options, memory);
+					var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
+					memory.Write (bytes, 0, bytes.Length);
+					message.WriteTo (options, memory);
 
-				bytes = memory.GetBuffer ();
+					bytes = memory.GetBuffer ();
 
-				bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
-			}
-
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+binarymime.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand (bdat, "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
-
-			using (var client = new SmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				var commands = new List<SmtpReplayCommand> ();
+				commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+				commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+binarymime.txt"));
+				commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+				commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"));
+				commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
+				commands.Add (new SmtpReplayCommand (bdat, "comcast-data-done.txt"));
+				commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					client.Authenticate ("username", "password");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
-
-				try {
-					if (showProgress) {
-						var progress = new MyProgress ();
-
-						client.Send (message, progress: progress);
-
-						Assert.AreEqual (size, progress.BytesTransferred, "BytesTransferred");
-					} else {
-						client.Send (message);
+				using (var client = new SmtpClient ()) {
+					try {
+						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
 
-				try {
-					client.Disconnect (true);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+					Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+					try {
+						client.Authenticate ("username", "password");
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
+
+					try {
+						if (showProgress) {
+							var progress = new MyProgress ();
+
+							client.Send (message, progress: progress);
+
+							Assert.AreEqual (size, progress.BytesTransferred, "BytesTransferred");
+						} else {
+							client.Send (message);
+						}
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					}
+
+					try {
+						client.Disconnect (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				}
 			}
 		}
 
@@ -2563,83 +2574,84 @@ namespace UnitTests.Net.Smtp {
 		[TestCase (true, TestName = "TestBinaryMimeAsyncWithProgress")]
 		public async Task TestBinaryMimeAsync (bool showProgress)
 		{
-			var message = CreateBinaryMessage ();
-			var size = Measure (message);
-			string bdat;
+			using (var message = CreateBinaryMessage ()) {
+				var size = Measure (message);
+				string bdat;
 
-			using (var memory = new MemoryStream ()) {
-				var options = FormatOptions.Default.Clone ();
+				using (var memory = new MemoryStream ()) {
+					var options = FormatOptions.Default.Clone ();
 
-				options.NewLineFormat = NewLineFormat.Dos;
-				options.EnsureNewLine = true;
+					options.NewLineFormat = NewLineFormat.Dos;
+					options.EnsureNewLine = true;
 
-				var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
-				memory.Write (bytes, 0, bytes.Length);
-				message.WriteTo (options, memory);
+					var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
+					memory.Write (bytes, 0, bytes.Length);
+					message.WriteTo (options, memory);
 
-				bytes = memory.GetBuffer ();
+					bytes = memory.GetBuffer ();
 
-				bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
-			}
-
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+binarymime.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand (bdat, "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
-
-			using (var client = new SmtpClient ()) {
-				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				var commands = new List<SmtpReplayCommand> ();
+				commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+				commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+binarymime.txt"));
+				commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+				commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"));
+				commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
+				commands.Add (new SmtpReplayCommand (bdat, "comcast-data-done.txt"));
+				commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					await client.AuthenticateAsync ("username", "password");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
-
-				try {
-					if (showProgress) {
-						var progress = new MyProgress ();
-
-						await client.SendAsync (message, progress: progress);
-
-						Assert.AreEqual (size, progress.BytesTransferred, "BytesTransferred");
-					} else {
-						await client.SendAsync (message);
+				using (var client = new SmtpClient ()) {
+					try {
+						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
 
-				try {
-					await client.DisconnectAsync (true);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+					Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+					try {
+						await client.AuthenticateAsync ("username", "password");
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
+
+					try {
+						if (showProgress) {
+							var progress = new MyProgress ();
+
+							await client.SendAsync (message, progress: progress);
+
+							Assert.AreEqual (size, progress.BytesTransferred, "BytesTransferred");
+						} else {
+							await client.SendAsync (message);
+						}
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					}
+
+					try {
+						await client.DisconnectAsync (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				}
 			}
 		}
 
@@ -2683,16 +2695,16 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					var message = CreateEightBitMessage ();
+					using (var message = CreateEightBitMessage ()) {
+						if (showProgress) {
+							var progress = new MyProgress ();
 
-					if (showProgress) {
-						var progress = new MyProgress ();
+							client.Send (message, progress: progress);
 
-						client.Send (message, progress: progress);
-
-						Assert.AreEqual (Measure (message), progress.BytesTransferred, "BytesTransferred");
-					} else {
-						client.Send (message);
+							Assert.AreEqual (Measure (message), progress.BytesTransferred, "BytesTransferred");
+						} else {
+							client.Send (message);
+						}
 					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
@@ -2748,16 +2760,16 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					var message = CreateEightBitMessage ();
+					using (var message = CreateEightBitMessage ()) {
+						if (showProgress) {
+							var progress = new MyProgress ();
 
-					if (showProgress) {
-						var progress = new MyProgress ();
+							await client.SendAsync (message, progress: progress);
 
-						await client.SendAsync (message, progress: progress);
-
-						Assert.AreEqual (Measure (message), progress.BytesTransferred, "BytesTransferred");
-					} else {
-						await client.SendAsync (message);
+							Assert.AreEqual (Measure (message), progress.BytesTransferred, "BytesTransferred");
+						} else {
+							await client.SendAsync (message);
+						}
 					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
@@ -2810,7 +2822,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Send (CreateSimpleMessage ());
+					using (var message = CreateSimpleMessage ())
+						client.Send (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
@@ -2867,7 +2880,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					await client.SendAsync (CreateSimpleMessage ());
+					using (var message = CreateSimpleMessage ())
+						await client.SendAsync (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
@@ -2925,7 +2939,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Send (CreateSimpleMessage ());
+					using (var message = CreateSimpleMessage ())
+						client.Send (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
@@ -2983,7 +2998,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					await client.SendAsync (CreateSimpleMessage ());
+					using (var message = CreateSimpleMessage ())
+						await client.SendAsync (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
@@ -3033,8 +3049,6 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
-				var message = CreateSimpleMessage ();
-
 				try {
 					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
@@ -3060,7 +3074,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Send (message);
+					using (var message = CreateSimpleMessage ())
+						client.Send (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
@@ -3097,8 +3112,6 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
-				var message = CreateSimpleMessage ();
-
 				try {
 					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
@@ -3124,7 +3137,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					await client.SendAsync (message);
+					using (var message = CreateSimpleMessage ())
+						await client.SendAsync (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
@@ -3160,8 +3174,6 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
-				var message = CreateSimpleMessage ();
-
 				try {
 					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
@@ -3187,7 +3199,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Send (message);
+					using (var message = CreateSimpleMessage ())
+						client.Send (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
@@ -3223,8 +3236,6 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
-				var message = CreateSimpleMessage ();
-
 				try {
 					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
@@ -3250,7 +3261,8 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					await client.SendAsync (message);
+					using (var message = CreateSimpleMessage ())
+						await client.SendAsync (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
@@ -3303,7 +3315,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					client.Send (CreateSimpleMessage ());
+					using (var message = CreateSimpleMessage ())
+						client.Send (message);
 					Assert.Fail ("Expected an ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// this is the expected exception
@@ -3352,7 +3365,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					await client.SendAsync (CreateSimpleMessage ());
+					using (var message = CreateSimpleMessage ())
+						await client.SendAsync (message);
 					Assert.Fail ("Expected an ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// this is the expected exception
@@ -3404,146 +3418,142 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestDeliveryStatusNotification ()
 		{
-			var message = CreateEightBitMessage ();
-			message.MessageId = MimeUtils.GenerateMessageId ();
+			using (var message = CreateEightBitMessage ()) {
+				message.MessageId = MimeUtils.GenerateMessageId ();
 
-			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
+				var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
 
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+				var commands = new List<SmtpReplayCommand> ();
+				commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+				commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
+				commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+				commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
+				commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"));
+				commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
+				commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
+				commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
-			using (var client = new DsnSmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				using (var client = new DsnSmtpClient ()) {
+					try {
+						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
+
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+					Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+					try {
+						client.Authenticate ("username", "password");
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					// disable pipelining
+					client.Capabilities &= ~SmtpCapabilities.Pipelining;
+
+					client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
+					client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
+
+					try {
+						client.Send (message);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					}
+
+					try {
+						client.Disconnect (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
 				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					client.Authenticate ("username", "password");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				// disable pipelining
-				client.Capabilities &= ~SmtpCapabilities.Pipelining;
-
-				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
-				client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
-
-				try {
-					client.Send (message);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
-
-				try {
-					client.Disconnect (true);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
 			}
 		}
 
 		[Test]
 		public async Task TestDeliveryStatusNotificationAsync ()
 		{
-			var message = CreateEightBitMessage ();
-			message.MessageId = MimeUtils.GenerateMessageId ();
+			using (var message = CreateEightBitMessage ()) {
+				message.MessageId = MimeUtils.GenerateMessageId ();
 
-			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
+				var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
 
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+				var commands = new List<SmtpReplayCommand> ();
+				commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+				commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
+				commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+				commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
+				commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"));
+				commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
+				commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
+				commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
-			using (var client = new DsnSmtpClient ()) {
-				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				using (var client = new DsnSmtpClient ()) {
+					try {
+						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					}
+
+					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+					Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+					try {
+						await client.AuthenticateAsync ("username", "password");
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					}
+
+					// disable pipelining
+					client.Capabilities &= ~SmtpCapabilities.Pipelining;
+
+					client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
+					client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
+
+					try {
+						await client.SendAsync (message);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					}
+
+					try {
+						await client.DisconnectAsync (true);
+					} catch (Exception ex) {
+						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					}
+
+					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
 				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					await client.AuthenticateAsync ("username", "password");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				// disable pipelining
-				client.Capabilities &= ~SmtpCapabilities.Pipelining;
-
-				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
-				client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
-
-				try {
-					await client.SendAsync (message);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
-
-				try {
-					await client.DisconnectAsync (true);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
 			}
 		}
 
 		[Test]
 		public void TestDeliveryStatusNotificationWithHexEncode ()
 		{
-			var message = CreateEightBitMessage ();
-			message.MessageId = "123456789+=abc@名がドメイン.com";
-
-			message.To.Clear ();
-			message.To.Add (new MailboxAddress ("", "recipient@名がドメイン.com"));
-
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
@@ -3588,7 +3598,14 @@ namespace UnitTests.Net.Smtp {
 				client.DeliveryStatusNotifications = DeliveryStatusNotification.Never;
 
 				try {
-					client.Send (message);
+					using (var message = CreateEightBitMessage ()) {
+						message.MessageId = "123456789+=abc@名がドメイン.com";
+
+						message.To.Clear ();
+						message.To.Add (new MailboxAddress ("", "recipient@名がドメイン.com"));
+
+						client.Send (message);
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
@@ -3606,12 +3623,6 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestDeliveryStatusNotificationWithHexEncodeAsync ()
 		{
-			var message = CreateEightBitMessage ();
-			message.MessageId = "123456789+=abc@名がドメイン.com";
-
-			message.To.Clear ();
-			message.To.Add (new MailboxAddress ("", "recipient@名がドメイン.com"));
-
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
@@ -3656,7 +3667,14 @@ namespace UnitTests.Net.Smtp {
 				client.DeliveryStatusNotifications = DeliveryStatusNotification.Never;
 
 				try {
-					await client.SendAsync (message);
+					using (var message = CreateEightBitMessage ()) {
+						message.MessageId = "123456789+=abc@名がドメイン.com";
+
+						message.To.Clear ();
+						message.To.Add (new MailboxAddress ("", "recipient@名がドメイン.com"));
+
+						await client.SendAsync (message);
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
