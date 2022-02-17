@@ -3598,6 +3598,8 @@ namespace UnitTests.Net.Imap {
 				// Use MULTIAPPEND to append some test messages
 				var appended = folder.Append (messages, flags, internalDates);
 				Assert.AreEqual (8, appended.Count, "Unexpected number of messages appended");
+				foreach (var message in messages)
+					message.Dispose ();
 
 				// SELECT the folder so that we can test some stuff
 				var access = folder.Open (FolderAccess.ReadWrite);
@@ -4236,6 +4238,8 @@ namespace UnitTests.Net.Imap {
 				// Use MULTIAPPEND to append some test messages
 				var appended = await folder.AppendAsync (messages, flags, internalDates);
 				Assert.AreEqual (8, appended.Count, "Unexpected number of messages appended");
+				foreach (var message in messages)
+					message.Dispose ();
 
 				// SELECT the folder so that we can test some stuff
 				var access = await folder.OpenAsync (FolderAccess.ReadWrite);
@@ -4928,11 +4932,11 @@ namespace UnitTests.Net.Imap {
 
 				for (int i = 0; i < 50; i++) {
 					using (var stream = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
-						var message = MimeMessage.Load (stream);
-
-						var uid = created.Append (message, MessageFlags.Seen);
-						Assert.IsTrue (uid.HasValue, "Expected a UID to be returned from folder.Append().");
-						Assert.AreEqual ((uint) (i + 1), uid.Value.Id, "The UID returned from the APPEND command does not match the expected UID.");
+						using (var message = MimeMessage.Load (stream)) {
+							var uid = created.Append (message, MessageFlags.Seen);
+							Assert.IsTrue (uid.HasValue, "Expected a UID to be returned from folder.Append().");
+							Assert.AreEqual ((uint) (i + 1), uid.Value.Id, "The UID returned from the APPEND command does not match the expected UID.");
+						}
 					}
 				}
 
@@ -5093,11 +5097,11 @@ namespace UnitTests.Net.Imap {
 
 				for (int i = 0; i < 50; i++) {
 					using (var stream = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
-						var message = MimeMessage.Load (stream);
-
-						var uid = await created.AppendAsync (message, MessageFlags.Seen);
-						Assert.IsTrue (uid.HasValue, "Expected a UID to be returned from folder.Append().");
-						Assert.AreEqual ((uint) (i + 1), uid.Value.Id, "The UID returned from the APPEND command does not match the expected UID.");
+						using (var message = MimeMessage.Load (stream)) {
+							var uid = await created.AppendAsync (message, MessageFlags.Seen);
+							Assert.IsTrue (uid.HasValue, "Expected a UID to be returned from folder.Append().");
+							Assert.AreEqual ((uint) (i + 1), uid.Value.Id, "The UID returned from the APPEND command does not match the expected UID.");
+						}
 					}
 				}
 

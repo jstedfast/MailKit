@@ -786,18 +786,18 @@ namespace UnitTests.Net.Imap {
 
 				client.Inbox.Open (FolderAccess.ReadOnly);
 
-				var message = client.Inbox.GetMessage (269);
+				using (var message = client.Inbox.GetMessage (269)) {
+					using (var jpeg = new MemoryStream ()) {
+						var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-				using (var jpeg = new MemoryStream ()) {
-					var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
+						attachment.Content.DecodeTo (jpeg);
+						jpeg.Position = 0;
 
-					attachment.Content.DecodeTo (jpeg);
-					jpeg.Position = 0;
+						using (var md5 = new MD5CryptoServiceProvider ()) {
+							var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-					using (var md5 = new MD5CryptoServiceProvider ()) {
-						var md5sum = HexEncode (md5.ComputeHash (jpeg));
-
-						Assert.AreEqual ("167a46aa81e881da2ea8a840727384d3", md5sum, "MD5 checksums do not match.");
+							Assert.AreEqual ("167a46aa81e881da2ea8a840727384d3", md5sum, "MD5 checksums do not match.");
+						}
 					}
 				}
 
@@ -863,18 +863,18 @@ namespace UnitTests.Net.Imap {
 
 				await client.Inbox.OpenAsync (FolderAccess.ReadOnly);
 
-				var message = await client.Inbox.GetMessageAsync (269);
+				using (var message = await client.Inbox.GetMessageAsync (269)) {
+					using (var jpeg = new MemoryStream ()) {
+						var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-				using (var jpeg = new MemoryStream ()) {
-					var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
+						attachment.Content.DecodeTo (jpeg);
+						jpeg.Position = 0;
 
-					attachment.Content.DecodeTo (jpeg);
-					jpeg.Position = 0;
+						using (var md5 = new MD5CryptoServiceProvider ()) {
+							var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-					using (var md5 = new MD5CryptoServiceProvider ()) {
-						var md5sum = HexEncode (md5.ComputeHash (jpeg));
-
-						Assert.AreEqual ("167a46aa81e881da2ea8a840727384d3", md5sum, "MD5 checksums do not match.");
+							Assert.AreEqual ("167a46aa81e881da2ea8a840727384d3", md5sum, "MD5 checksums do not match.");
+						}
 					}
 				}
 

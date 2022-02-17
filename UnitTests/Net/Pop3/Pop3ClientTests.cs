@@ -1133,8 +1133,9 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					var message = client.GetMessage (0);
-					// TODO: assert that the message is byte-identical to what we expect
+					using (var message = client.GetMessage (0)) {
+						// TODO: assert that the message is byte-identical to what we expect
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
@@ -1220,8 +1221,9 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					var message = await client.GetMessageAsync (0);
-					// TODO: assert that the message is byte-identical to what we expect
+					using (var message = await client.GetMessageAsync (0)) {
+						// TODO: assert that the message is byte-identical to what we expect
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
@@ -1304,8 +1306,9 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					var message = client.GetMessage (0);
-					// TODO: assert that the message is byte-identical to what we expect
+					using (var message = client.GetMessage (0)) {
+						// TODO: assert that the message is byte-identical to what we expect
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
@@ -1388,8 +1391,9 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					var message = await client.GetMessageAsync (0);
-					// TODO: assert that the message is byte-identical to what we expect
+					using (var message = await client.GetMessageAsync (0)) {
+						// TODO: assert that the message is byte-identical to what we expect
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
@@ -2786,8 +2790,9 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					var message = client.GetMessage (0);
-					// TODO: assert that the message is byte-identical to what we expect
+					using (var message = client.GetMessage (0)) {
+						// TODO: assert that the message is byte-identical to what we expect
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
@@ -2861,8 +2866,9 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					var message = await client.GetMessageAsync (0);
-					// TODO: assert that the message is byte-identical to what we expect
+					using (var message = await client.GetMessageAsync (0)) {
+						// TODO: assert that the message is byte-identical to what we expect
+					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
@@ -2971,18 +2977,18 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					var message = client.GetMessage (0);
+					using (var message = client.GetMessage (0)) {
+						using (var jpeg = new MemoryStream ()) {
+							var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-					using (var jpeg = new MemoryStream ()) {
-						var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
+							attachment.Content.DecodeTo (jpeg);
+							jpeg.Position = 0;
 
-						attachment.Content.DecodeTo (jpeg);
-						jpeg.Position = 0;
+							using (var md5 = new MD5CryptoServiceProvider ()) {
+								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-						using (var md5 = new MD5CryptoServiceProvider ()) {
-							var md5sum = HexEncode (md5.ComputeHash (jpeg));
-
-							Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+							}
 						}
 					}
 				} catch (Exception ex) {
@@ -3005,6 +3011,8 @@ namespace UnitTests.Net.Pop3 {
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
 							}
 						}
+
+						message.Dispose ();
 					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
@@ -3026,6 +3034,8 @@ namespace UnitTests.Net.Pop3 {
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
 							}
 						}
+
+						message.Dispose ();
 					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
@@ -3246,6 +3256,8 @@ namespace UnitTests.Net.Pop3 {
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
 							}
 						}
+
+						message.Dispose ();
 					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
@@ -3267,6 +3279,8 @@ namespace UnitTests.Net.Pop3 {
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
 							}
 						}
+
+						message.Dispose ();
 					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
