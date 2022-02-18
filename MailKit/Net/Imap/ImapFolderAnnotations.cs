@@ -58,8 +58,11 @@ namespace MailKit.Net.Imap
 			var values = new List<object> ();
 			UniqueIdSet unmodified = null;
 
-			if (modseq.HasValue)
-				builder.AppendFormat (CultureInfo.InvariantCulture, "(UNCHANGEDSINCE {0}) ", modseq.Value);
+			if (modseq.HasValue) {
+				builder.Append ("(UNCHANGEDSINCE ");
+				builder.Append (modseq.Value.ToString (CultureInfo.InvariantCulture));
+				builder.Append (") ");
+			}
 
 			ImapUtils.FormatAnnotations (builder, annotations, values, true);
 			builder.Append ("\r\n");
@@ -320,14 +323,17 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0 || annotations.Count == 0)
 				return new int[0];
 
-			var set = ImapUtils.FormatIndexSet (Engine, indexes);
 			var builder = new StringBuilder ("STORE ");
 			var values = new List<object> ();
 
-			builder.AppendFormat ("{0} ", set);
+			ImapUtils.FormatIndexSet (Engine, builder, indexes);
+			builder.Append (' ');
 
-			if (modseq.HasValue)
-				builder.AppendFormat (CultureInfo.InvariantCulture, "(UNCHANGEDSINCE {0}) ", modseq.Value);
+			if (modseq.HasValue) {
+				builder.Append ("(UNCHANGEDSINCE ");
+				builder.Append (modseq.Value.ToString (CultureInfo.InvariantCulture));
+				builder.Append (") ");
+			}
 
 			ImapUtils.FormatAnnotations (builder, annotations, values, true);
 			builder.Append ("\r\n");

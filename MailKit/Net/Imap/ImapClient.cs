@@ -2621,10 +2621,16 @@ namespace MailKit.Net.Imap {
 
 			if (options.MaxSize.HasValue || options.Depth != 0) {
 				command.Append (" (");
-				if (options.MaxSize.HasValue)
-					command.AppendFormat ("MAXSIZE {0} ", options.MaxSize.Value);
-				if (options.Depth > 0)
-					command.AppendFormat ("DEPTH {0} ", options.Depth == int.MaxValue ? "infinity" : "1");
+				if (options.MaxSize.HasValue) {
+					command.Append ("MAXSIZE ");
+					command.Append (options.MaxSize.Value.ToString (CultureInfo.InvariantCulture));
+					command.Append (' ');
+				}
+				if (options.Depth > 0) {
+					command.Append ("DEPTH ");
+					command.Append (options.Depth == int.MaxValue ? "infinity" : "1");
+					command.Append (' ');
+				}
 				command[command.Length - 1] = ')';
 				command.Append (' ');
 				hasOptions = true;

@@ -227,8 +227,10 @@ namespace MailKit.Security
 								message.AppendLine ("\u2022 An intermediate certificate has the following errors:");
 							}
 
-							foreach (var status in element.ChainElementStatus)
-								message.AppendFormat ("  \u2022 {0}{1}", status.StatusInformation, Environment.NewLine);
+							foreach (var status in element.ChainElementStatus) {
+								message.Append ("  \u2022 ");
+								message.AppendLine (status.StatusInformation);
+							}
 
 							haveReason = true;
 						}

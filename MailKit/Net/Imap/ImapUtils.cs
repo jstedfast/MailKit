@@ -272,7 +272,8 @@ namespace MailKit.Net.Imap {
 				command.Append (" (");
 
 				foreach (var property in annotation.Properties) {
-					command.AppendFormat ("{0} %S ", property.Key);
+					command.Append (property.Key);
+					command.Append (" %S ");
 					args.Add (property.Value);
 				}
 
@@ -291,21 +292,26 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Formats the array of indexes as a string suitable for use with IMAP commands.
 		/// </summary>
-		/// <returns>The index set.</returns>
 		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="builder">The string builder.</param>
 		/// <param name="indexes">The indexes.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="engine"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="builder"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// One or more of the indexes has a negative value.
 		/// </exception>
-		public static string FormatIndexSet (ImapEngine engine, IList<int> indexes)
+		public static void FormatIndexSet (ImapEngine engine, StringBuilder builder, IList<int> indexes)
 		{
 			if (engine == null)
 				throw new ArgumentNullException (nameof (engine));
+
+			if (builder == null)
+				throw new ArgumentNullException (nameof (builder));
 
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -313,7 +319,6 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				throw new ArgumentException ("No indexes were specified.", nameof (indexes));
 
-			var builder = new StringBuilder ();
 			int index = 0;
 
 			while (index < indexes.Count) {
@@ -342,16 +347,39 @@ namespace MailKit.Net.Imap {
 					}
 				}
 
-				if (builder.Length > 0)
+				if (index > 0)
 					builder.Append (',');
 
-				if (begin != end)
-					builder.AppendFormat (CultureInfo.InvariantCulture, "{0}:{1}", begin + 1, end + 1);
-				else
-					builder.Append ((begin + 1).ToString (CultureInfo.InvariantCulture));
+				builder.Append ((begin + 1).ToString (CultureInfo.InvariantCulture));
+
+				if (begin != end) {
+					builder.Append (':');
+					builder.Append ((end + 1).ToString (CultureInfo.InvariantCulture));
+				}
 
 				index = i;
 			}
+		}
+
+		/// <summary>
+		/// Formats the array of indexes as a string suitable for use with IMAP commands.
+		/// </summary>
+		/// <returns>The index set.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="indexes">The indexes.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="engine"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// One or more of the indexes has a negative value.
+		/// </exception>
+		public static string FormatIndexSet (ImapEngine engine, IList<int> indexes)
+		{
+			var builder = new StringBuilder ();
+
+			FormatIndexSet (engine, builder, indexes);
 
 			return builder.ToString ();
 		}
@@ -855,7 +883,9 @@ namespace MailKit.Net.Imap {
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			var builder = new StringBuilder ();
-			builder.AppendFormat ("{0}/{1}", type, subtype);
+			builder.Append (type);
+			builder.Append ('/');
+			builder.Append (subtype);
 
 			await ParseParameterListAsync (builder, engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1035,8 +1065,9 @@ namespace MailKit.Net.Imap {
 				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapTokenType.Nil, format, token);
 
 				var builder = new StringBuilder ();
-
-				builder.AppendFormat ("{0}/{1}", body.ContentType.MediaType, body.ContentType.MediaSubtype);
+				builder.Append (body.ContentType.MediaType);
+				builder.Append ('/');
+				builder.Append (body.ContentType.MediaSubtype);
 
 				if (token.Type == ImapTokenType.OpenParen)
 					await ParseParameterListAsync (builder, engine, format, doAsync, cancellationToken).ConfigureAwait (false);
@@ -1453,13 +1484,11 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Formats a flags list suitable for use with the APPEND command.
 		/// </summary>
-		/// <returns>The flags list string.</returns>
 		/// <param name="flags">The message flags.</param>
+		/// <param name="builder">The string builder.</param>
 		/// <param name="numKeywords">The number of keywords.</param>
-		public static string FormatFlagsList (MessageFlags flags, int numKeywords)
+		public static void FormatFlagsList (StringBuilder builder, MessageFlags flags, int numKeywords)
 		{
-			var builder = new StringBuilder ();
-
 			builder.Append ('(');
 
 			if ((flags & MessageFlags.Answered) != 0)
@@ -1480,6 +1509,19 @@ namespace MailKit.Net.Imap {
 				builder.Length--;
 
 			builder.Append (')');
+		}
+
+		/// <summary>
+		/// Formats a flags list suitable for use with the APPEND command.
+		/// </summary>
+		/// <returns>The flags list string.</returns>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="numKeywords">The number of keywords.</param>
+		public static string FormatFlagsList (MessageFlags flags, int numKeywords)
+		{
+			var builder = new StringBuilder ();
+
+			FormatFlagsList (builder, flags, numKeywords);
 
 			return builder.ToString ();
 		}

@@ -32,6 +32,8 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
+using MimeKit.Utils;
+
 #if NETSTANDARD1_3 || NETSTANDARD1_6
 using MD5 = MimeKit.Cryptography.MD5;
 #endif
@@ -478,25 +480,11 @@ namespace MailKit.Security {
 			return HexEncode (digest);
 		}
 
-		static string Quote (string text)
-		{
-			var quoted = new StringBuilder ();
-
-			quoted.Append ('\"');
-			for (int i = 0; i < text.Length; i++) {
-				if (text[i] == '\\' || text[i] == '"')
-					quoted.Append ('\\');
-				quoted.Append (text[i]);
-			}
-			quoted.Append ('\"');
-
-			return quoted.ToString ();
-		}
-
 		public byte[] Encode (Encoding encoding)
 		{
 			var builder = new StringBuilder ();
-			builder.AppendFormat ("username={0}", Quote (UserName));
+			builder.Append ("username=");
+			MimeUtils.AppendQuoted (builder, UserName);
 			builder.AppendFormat (",realm=\"{0}\"", Realm);
 			builder.AppendFormat (",nonce=\"{0}\"", Nonce);
 			builder.AppendFormat (",cnonce=\"{0}\"", CNonce);

@@ -2715,8 +2715,9 @@ namespace MailKit.Net.Imap {
 						command.Append ("CHILDREN ");
 					}
 
-					command.AppendFormat ("STATUS ({0})", GetStatusQuery (items));
-					command.Append (')');
+					command.Append ("STATUS (");
+					command.Append (GetStatusQuery (items));
+					command.Append ("))");
 					status = false;
 				} else if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
 					command.Append (" RETURN (");

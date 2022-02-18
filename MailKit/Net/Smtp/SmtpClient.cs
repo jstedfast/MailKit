@@ -2077,8 +2077,10 @@ namespace MailKit.Net.Smtp {
 			if (!idnEncode)
 				builder.Append (" SMTPUTF8");
 
-			if ((Capabilities & SmtpCapabilities.Size) != 0 && size != -1)
-				builder.AppendFormat (CultureInfo.InvariantCulture, " SIZE={0}", size);
+			if ((Capabilities & SmtpCapabilities.Size) != 0 && size != -1) {
+				builder.Append (" SIZE=");
+				builder.Append (size.ToString (CultureInfo.InvariantCulture));
+			}
 
 			if ((extensions & SmtpExtension.BinaryMime) != 0)
 				builder.Append (" BODY=BINARYMIME");

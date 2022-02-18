@@ -238,10 +238,13 @@ namespace MailKit {
 		{
 			builder.Append ('(');
 
-			if (Date.HasValue)
-				builder.AppendFormat ("\"{0}\" ", DateUtils.FormatDate (Date.Value));
-			else
+			if (Date.HasValue) {
+				builder.Append ('"');
+				builder.Append (DateUtils.FormatDate (Date.Value));
+				builder.Append ("\" ");
+			} else {
 				builder.Append ("NIL ");
+			}
 
 			if (Subject != null) {
 				MimeUtils.AppendQuoted (builder, Subject);

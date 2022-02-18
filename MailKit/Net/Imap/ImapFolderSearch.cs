@@ -116,7 +116,11 @@ namespace MailKit.Net.Imap
 					throw new NotSupportedException ("The ANNOTATION search term is not supported by the IMAP server.");
 
 				annotation = (AnnotationSearchQuery) query;
-				builder.AppendFormat ("ANNOTATION {0} {1} %S", annotation.Entry, annotation.Attribute);
+				builder.Append ("ANNOTATION ");
+				builder.Append (annotation.Entry);
+				builder.Append (' ');
+				builder.Append (annotation.Attribute);
+				builder.Append (" %S");
 				args.Add (annotation.Value);
 				break;
 			case SearchTerm.Answered:
@@ -142,15 +146,18 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.DeliveredAfter:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SINCE {0}", FormatDateTime (date.Date));
+				builder.Append ("SINCE ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.DeliveredBefore:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("BEFORE {0}", FormatDateTime (date.Date));
+				builder.Append ("BEFORE ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.DeliveredOn:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("ON {0}", FormatDateTime (date.Date));
+				builder.Append ("ON ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.Draft:
 				builder.Append ("DRAFT");
@@ -181,7 +188,9 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.HeaderContains:
 				header = (HeaderSearchQuery) query;
-				builder.AppendFormat ("HEADER {0} ", header.Field);
+				builder.Append ("HEADER ");
+				builder.Append (header.Field);
+				builder.Append (' ');
 				AddTextArgument (builder, args, header.Value, ref charset);
 				break;
 			case SearchTerm.Keyword:
@@ -191,7 +200,8 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.LargerThan:
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat (CultureInfo.InvariantCulture, "LARGER {0}", numeric.Value);
+				builder.Append ("LARGER ");
+				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.MessageContains:
 				text = (TextSearchQuery) query;
@@ -200,7 +210,8 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.ModSeq:
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat (CultureInfo.InvariantCulture, "MODSEQ {0}", numeric.Value);
+				builder.Append ("MODSEQ ");
+				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.New:
 				builder.Append ("NEW");
@@ -238,7 +249,8 @@ namespace MailKit.Net.Imap
 					throw new NotSupportedException ("The OLDER search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat (CultureInfo.InvariantCulture, "OLDER {0}", numeric.Value);
+				builder.Append ("OLDER ");
+				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.Or:
 				builder.Append ("OR ");
@@ -261,40 +273,47 @@ namespace MailKit.Net.Imap
 					throw new NotSupportedException ("The SAVEDBEFORE search term is not supported by the IMAP server.");
 
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SAVEDBEFORE {0}", FormatDateTime (date.Date));
+				builder.Append ("SAVEDBEFORE ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SavedOn:
 				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
 					throw new NotSupportedException ("The SAVEDON search term is not supported by the IMAP server.");
 
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SAVEDON {0}", FormatDateTime (date.Date));
+				builder.Append ("SAVEDON ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SavedSince:
 				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
 					throw new NotSupportedException ("The SAVEDSINCE search term is not supported by the IMAP server.");
 
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SAVEDSINCE {0}", FormatDateTime (date.Date));
+				builder.Append ("SAVEDSINCE ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.Seen:
 				builder.Append ("SEEN");
 				break;
 			case SearchTerm.SentBefore:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SENTBEFORE {0}", FormatDateTime (date.Date));
+				builder.Append ("SENTBEFORE ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SentOn:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SENTON {0}", FormatDateTime (date.Date));
+				builder.Append ("SENTON ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SentSince:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SENTSINCE {0}", FormatDateTime (date.Date));
+				builder.Append ("SENTSINCE ");
+				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SmallerThan:
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat (CultureInfo.InvariantCulture, "SMALLER {0}", numeric.Value);
+				builder.Append ("SMALLER ");
+				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.SubjectContains:
 				text = (TextSearchQuery) query;
@@ -308,28 +327,32 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.Uid:
 				uid = (UidSearchQuery) query;
-				builder.AppendFormat ("UID {0}", UniqueIdSet.ToString (uid.Uids));
+				builder.Append ("UID ");
+				builder.Append (UniqueIdSet.ToString (uid.Uids));
 				break;
 			case SearchTerm.Younger:
 				if ((Engine.Capabilities & ImapCapabilities.Within) == 0)
 					throw new NotSupportedException ("The YOUNGER search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat (CultureInfo.InvariantCulture, "YOUNGER {0}", numeric.Value);
+				builder.Append ("YOUNGER ");
+				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.GMailMessageId:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 					throw new NotSupportedException ("The X-GM-MSGID search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat (CultureInfo.InvariantCulture, "X-GM-MSGID {0}", numeric.Value);
+				builder.Append ("X-GM-MSGID ");
+				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.GMailThreadId:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 					throw new NotSupportedException ("The X-GM-THRID search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
-				builder.AppendFormat (CultureInfo.InvariantCulture, "X-GM-THRID {0}", numeric.Value);
+				builder.Append ("X-GM-THRID ");
+				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.GMailLabels:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
@@ -379,7 +402,10 @@ namespace MailKit.Net.Imap
 						throw new NotSupportedException ("The ANNOTATION search term is not supported by the IMAP server.");
 
 					var annotation = (OrderByAnnotation) orderBy[i];
-					builder.AppendFormat ("ANNOTATION {0} {1}", annotation.Entry, annotation.Attribute);
+					builder.Append ("ANNOTATION ");
+					builder.Append (annotation.Entry);
+					builder.Append (' ');
+					builder.Append (annotation.Attribute);
 					break;
 				case OrderByType.Arrival:     builder.Append ("ARRIVAL"); break;
 				case OrderByType.Cc:          builder.Append ("CC"); break;

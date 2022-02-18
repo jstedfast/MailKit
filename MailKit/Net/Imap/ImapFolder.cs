@@ -1541,8 +1541,9 @@ namespace MailKit.Net.Imap {
 						command.Append ("CHILDREN ");
 					}
 
-					command.AppendFormat ("STATUS ({0})", Engine.GetStatusQuery (items));
-					command.Append (')');
+					command.Append ("STATUS (");
+					command.Append (Engine.GetStatusQuery (items));
+					command.Append ("))");
 					status = false;
 				} else if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
 					command.Append (" RETURN (");
@@ -2971,10 +2972,16 @@ namespace MailKit.Net.Imap {
 
 			if (options.MaxSize.HasValue || options.Depth != 0) {
 				command.Append (" (");
-				if (options.MaxSize.HasValue)
-					command.AppendFormat ("MAXSIZE {0} ", options.MaxSize.Value);
-				if (options.Depth > 0)
-					command.AppendFormat ("DEPTH {0} ", options.Depth == int.MaxValue ? "infinity" : "1");
+				if (options.MaxSize.HasValue) {
+					command.Append ("MAXSIZE ");
+					command.Append (options.MaxSize.Value.ToString (CultureInfo.InvariantCulture));
+					command.Append (' ');
+				}
+				if (options.Depth > 0) {
+					command.Append ("DEPTH ");
+					command.Append (options.Depth == int.MaxValue ? "infinity" : "1");
+					command.Append (' ');
+				}
 				command[command.Length - 1] = ')';
 				command.Append (' ');
 				hasOptions = true;
@@ -3455,10 +3462,16 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the QUOTA extension.");
 
 			var command = new StringBuilder ("SETQUOTA %F (");
-			if (messageLimit.HasValue)
-				command.AppendFormat ("MESSAGE {0} ", messageLimit.Value);
-			if (storageLimit.HasValue)
-				command.AppendFormat ("STORAGE {0} ", storageLimit.Value);
+			if (messageLimit.HasValue) {
+				command.Append ("MESSAGE ");
+				command.Append (messageLimit.Value.ToString (CultureInfo.InvariantCulture));
+				command.Append (' ');
+			}
+			if (storageLimit.HasValue) {
+				command.Append ("STORAGE ");
+				command.Append (storageLimit.Value.ToString (CultureInfo.InvariantCulture));
+				command.Append (' ');
+			}
 			command[command.Length - 1] = ')';
 			command.Append ("\r\n");
 
@@ -3845,16 +3858,21 @@ namespace MailKit.Net.Imap {
 
 			list.Add (this);
 
-			if ((request.Flags & SettableFlags) != 0 || numKeywords > 0)
-				builder.AppendFormat ("{0} ", ImapUtils.FormatFlagsList (request.Flags, numKeywords));
+			if ((request.Flags & SettableFlags) != 0 || numKeywords > 0) {
+				ImapUtils.FormatFlagsList (builder, request.Flags, numKeywords);
+				builder.Append (' ');
+			}
 
 			if (request.Keywords != null) {
 				foreach (var keyword in request.Keywords)
 					list.Add (keyword);
 			}
 
-			if (request.InternalDate.HasValue)
-				builder.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (request.InternalDate.Value));
+			if (request.InternalDate.HasValue) {
+				builder.Append ('"');
+				builder.Append (ImapUtils.FormatInternalDate (request.InternalDate.Value));
+				builder.Append ("\" ");
+			}
 
 			if (request.Annotations != null && request.Annotations.Count > 0) {
 				ImapUtils.FormatAnnotations (builder, request.Annotations, list, false);
@@ -4036,16 +4054,21 @@ namespace MailKit.Net.Imap {
 
 				builder.Append (' ');
 
-				if ((requests[i].Flags & SettableFlags) != 0 || numKeywords > 0)
-					builder.AppendFormat ("{0} ", ImapUtils.FormatFlagsList (requests[i].Flags, numKeywords));
+				if ((requests[i].Flags & SettableFlags) != 0 || numKeywords > 0) {
+					ImapUtils.FormatFlagsList (builder, requests[i].Flags, numKeywords);
+					builder.Append (' ');
+				}
 
 				if (requests[i].Keywords != null) {
 					foreach (var keyword in requests[i].Keywords)
 						list.Add (keyword);
 				}
 
-				if (requests[i].InternalDate.HasValue)
-					builder.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (requests[i].InternalDate.Value));
+				if (requests[i].InternalDate.HasValue) {
+					builder.Append ('"');
+					builder.Append (ImapUtils.FormatInternalDate (requests[i].InternalDate.Value));
+					builder.Append ("\" ");
+				}
 
 				if (requests[i].Annotations != null && requests[i].Annotations.Count > 0) {
 					ImapUtils.FormatAnnotations (builder, requests[i].Annotations, list, false);
@@ -4272,16 +4295,21 @@ namespace MailKit.Net.Imap {
 
 			list.Add (request.Destination ?? this);
 
-			if ((request.Flags & SettableFlags) != 0 || numKeywords > 0)
-				builder.AppendFormat ("{0} ", ImapUtils.FormatFlagsList (request.Flags, numKeywords));
+			if ((request.Flags & SettableFlags) != 0 || numKeywords > 0) {
+				ImapUtils.FormatFlagsList (builder, request.Flags, numKeywords);
+				builder.Append (' ');
+			}
 
 			if (request.Keywords != null) {
 				foreach (var keyword in request.Keywords)
 					list.Add (keyword);
 			}
 
-			if (request.InternalDate.HasValue)
-				builder.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (request.InternalDate.Value));
+			if (request.InternalDate.HasValue) {
+				builder.Append ('"');
+				builder.Append (ImapUtils.FormatInternalDate (request.InternalDate.Value));
+				builder.Append ("\" ");
+			}
 
 			if (request.Annotations != null && request.Annotations.Count > 0) {
 				ImapUtils.FormatAnnotations (builder, request.Annotations, list, false);
@@ -4489,16 +4517,21 @@ namespace MailKit.Net.Imap {
 			list.Add (index + 1);
 			list.Add (request.Destination ?? this);
 
-			if ((request.Flags & SettableFlags) != 0)
-				builder.AppendFormat ("{0} ", ImapUtils.FormatFlagsList (request.Flags, numKeywords));
+			if ((request.Flags & SettableFlags) != 0) {
+				ImapUtils.FormatFlagsList (builder, request.Flags, numKeywords);
+				builder.Append (' ');
+			}
 
 			if (request.Keywords != null) {
 				foreach (var keyword in request.Keywords)
 					list.Add (keyword);
 			}
 
-			if (request.InternalDate.HasValue)
-				builder.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (request.InternalDate.Value));
+			if (request.InternalDate.HasValue) {
+				builder.Append ('"');
+				builder.Append (ImapUtils.FormatInternalDate (request.InternalDate.Value));
+				builder.Append ("\" ");
+			}
 
 			if (request.Annotations != null && request.Annotations.Count > 0) {
 				ImapUtils.FormatAnnotations (builder, request.Annotations, list, false);
