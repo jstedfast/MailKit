@@ -5122,9 +5122,11 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return;
 
-			var set = ImapUtils.FormatIndexSet (Engine, indexes);
-			var command = string.Format ("COPY {0} %F\r\n", set);
-			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
+			var command = new StringBuilder ("COPY ");
+			ImapUtils.FormatIndexSet (Engine, command, indexes);
+			command.Append (" %F\r\n");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), destination);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
@@ -5266,9 +5268,11 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return;
 
-			var set = ImapUtils.FormatIndexSet (Engine, indexes);
-			var command = string.Format ("MOVE {0} %F\r\n", set);
-			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
+			var command = new StringBuilder ("MOVE ");
+			ImapUtils.FormatIndexSet (Engine, command, indexes);
+			command.Append (" %F\r\n");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), destination);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 

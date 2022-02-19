@@ -4318,9 +4318,11 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0)
 				return;
 
-			var set = ImapUtils.FormatIndexSet (Engine, indexes);
-			var command = string.Format ("FETCH {0} (UID BODY.PEEK[])\r\n", set);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var command = new StringBuilder ("FETCH ");
+			ImapUtils.FormatIndexSet (Engine, command, indexes);
+			command.Append (" (UID BODY.PEEK[])\r\n");
+
+			var ic = new ImapCommand (Engine, cancellationToken, this, command.ToString ());
 			var ctx = new FetchStreamCallbackContext (this, callback, progress);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);

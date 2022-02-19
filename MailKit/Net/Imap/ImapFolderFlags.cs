@@ -271,16 +271,23 @@ namespace MailKit.Net.Imap
 				break;
 			}
 
-			var flaglist = ImapUtils.FormatFlagsList (request.Flags & PermanentFlags, request.Keywords != null ? request.Keywords.Count : 0);
 			var keywordList = request.Keywords != null ? request.Keywords.ToArray () : new object[0];
-			var set = ImapUtils.FormatIndexSet (Engine, indexes);
-			var @params = string.Empty;
+			var command = new StringBuilder ("STORE ");
+			ImapUtils.FormatIndexSet (Engine, command, indexes);
+			command.Append (' ');
 
-			if (request.UnchangedSince.HasValue)
-				@params = string.Format (CultureInfo.InvariantCulture, " (UNCHANGEDSINCE {0})", request.UnchangedSince.Value);
+			if (request.UnchangedSince.HasValue) {
+				command.Append ("(UNCHANGEDSINCE ");
+				command.Append (request.UnchangedSince.Value.ToString (CultureInfo.InvariantCulture));
+				command.Append (") ");
+			}
 
-			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
-			var ic = Engine.QueueCommand (cancellationToken, this, format, keywordList);
+			command.Append (action);
+			command.Append (' ');
+			ImapUtils.FormatFlagsList (command, request.Flags & PermanentFlags, request.Keywords != null ? request.Keywords.Count : 0);
+			command.Append ("\r\n");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), keywordList);
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
@@ -394,17 +401,21 @@ namespace MailKit.Net.Imap
 			return StoreAsync (indexes, request, true, cancellationToken);
 		}
 
-		string LabelListToString (ISet<string> labels, ICollection<object> args)
+		void AppendLabelList (StringBuilder command, ISet<string> labels, ICollection<object> args)
 		{
-			var list = new StringBuilder ("(");
+			command.Append ('(');
 
 			if (labels != null) {
+				int index = 0;
+
 				foreach (var label in labels) {
-					if (list.Length > 1)
-						list.Append (' ');
+					if (index > 0)
+						command.Append (' ');
+
+					index++;
 
 					if (label == null) {
-						list.Append ("NIL");
+						command.Append ("NIL");
 						continue;
 					}
 
@@ -417,19 +428,17 @@ namespace MailKit.Net.Imap
 					case "\\Sent":
 					case "\\Starred":
 					case "\\Trash":
-						list.Append (label);
+						command.Append (label);
 						break;
 					default:
-						list.Append ("%S");
+						command.Append ("%S");
 						args.Add (Engine.EncodeMailboxName (label));
 						break;
 					}
 				}
 			}
 
-			list.Append (')');
-
-			return list.ToString ();
+			command.Append (')');
 		}
 
 		async Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreLabelsRequest request, bool doAsync, CancellationToken cancellationToken)
@@ -448,7 +457,6 @@ namespace MailKit.Net.Imap
 			if (uids.Count == 0)
 				return new UniqueId[0];
 
-			var @params = string.Empty;
 			string action;
 
 			switch (request.Action) {
@@ -469,15 +477,22 @@ namespace MailKit.Net.Imap
 				break;
 			}
 
-			if (request.UnchangedSince.HasValue)
-				@params = string.Format (CultureInfo.InvariantCulture, " (UNCHANGEDSINCE {0})", request.UnchangedSince.Value);
-
+			var command = new StringBuilder ("UID STORE %s ");
 			var args = new List<object> ();
-			var list = LabelListToString (request.Labels, args);
-			var command = string.Format ("UID STORE %s{0} {1} {2}\r\n", @params, action, list);
 			UniqueIdSet unmodified = null;
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, command, uids, args.ToArray ())) {
+			if (request.UnchangedSince.HasValue) {
+				command.Append ("(UNCHANGEDSINCE ");
+				command.Append (request.UnchangedSince.Value.ToString (CultureInfo.InvariantCulture));
+				command.Append (") ");
+			}
+
+			command.Append (action);
+			command.Append (' ');
+			AppendLabelList (command, request.Labels, args);
+			command.Append ("\r\n");
+
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, command.ToString (), uids, args.ToArray ())) {
 				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
 				ProcessResponseCodes (ic, null);
@@ -632,16 +647,24 @@ namespace MailKit.Net.Imap
 				break;
 			}
 
-			var set = ImapUtils.FormatIndexSet (Engine, indexes);
-			var @params = string.Empty;
-
-			if (request.UnchangedSince.HasValue)
-				@params = string.Format (CultureInfo.InvariantCulture, " (UNCHANGEDSINCE {0})", request.UnchangedSince.Value);
-
+			var command = new StringBuilder ("STORE ");
 			var args = new List<object> ();
-			var list = LabelListToString (request.Labels, args);
-			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, list);
-			var ic = Engine.QueueCommand (cancellationToken, this, format, args.ToArray ());
+
+			ImapUtils.FormatIndexSet (Engine, command, indexes);
+			command.Append (' ');
+
+			if (request.UnchangedSince.HasValue) {
+				command.Append ("(UNCHANGEDSINCE ");
+				command.Append (request.UnchangedSince.Value.ToString (CultureInfo.InvariantCulture));
+				command.Append (") ");
+			}
+
+			command.Append (action);
+			command.Append (' ');
+			AppendLabelList (command, request.Labels, args);
+			command.Append ("\r\n");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 

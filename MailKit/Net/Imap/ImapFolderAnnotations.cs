@@ -323,25 +323,22 @@ namespace MailKit.Net.Imap
 			if (indexes.Count == 0 || annotations.Count == 0)
 				return new int[0];
 
-			var builder = new StringBuilder ("STORE ");
-			var values = new List<object> ();
+			var command = new StringBuilder ("STORE ");
+			var args = new List<object> ();
 
-			ImapUtils.FormatIndexSet (Engine, builder, indexes);
-			builder.Append (' ');
+			ImapUtils.FormatIndexSet (Engine, command, indexes);
+			command.Append (' ');
 
 			if (modseq.HasValue) {
-				builder.Append ("(UNCHANGEDSINCE ");
-				builder.Append (modseq.Value.ToString (CultureInfo.InvariantCulture));
-				builder.Append (") ");
+				command.Append ("(UNCHANGEDSINCE ");
+				command.Append (modseq.Value.ToString (CultureInfo.InvariantCulture));
+				command.Append (") ");
 			}
 
-			ImapUtils.FormatAnnotations (builder, annotations, values, true);
-			builder.Append ("\r\n");
+			ImapUtils.FormatAnnotations (command, annotations, args, true);
+			command.Append ("\r\n");
 
-			var command = builder.ToString ();
-			var args = values.ToArray ();
-
-			var ic = Engine.QueueCommand (cancellationToken, this, command, args);
+			var ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
 
 			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
 
