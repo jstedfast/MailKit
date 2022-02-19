@@ -921,14 +921,13 @@ namespace MailKit.Net.Imap {
 
 		internal static string UnescapeUserName (string escaped)
 		{
-			StringBuilder userName;
-			int startIndex, index;
+			int index;
 
 			if ((index = escaped.IndexOf ('%')) == -1)
 				return escaped;
 
-			userName = new StringBuilder ();
-			startIndex = 0;
+			var userName = new StringBuilder (escaped.Length);
+			int startIndex = 0;
 
 			do {
 				userName.Append (escaped, startIndex, index - startIndex);
@@ -954,14 +953,13 @@ namespace MailKit.Net.Imap {
 
 		internal static string EscapeUserName (string userName)
 		{
-			StringBuilder escaped;
-			int startIndex, index;
+			int index;
 
 			if ((index = userName.IndexOfAny (ReservedUriCharacters)) == -1)
 				return userName;
 
-			escaped = new StringBuilder ();
-			startIndex = 0;
+			var escaped = new StringBuilder ();
+			int startIndex = 0;
 
 			do {
 				escaped.Append (userName, startIndex, index - startIndex);
