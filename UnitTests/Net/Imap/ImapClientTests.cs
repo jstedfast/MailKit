@@ -247,7 +247,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestEscapeUserName ()
 		{
-			var escaped = ImapClient.EscapeUserName ("user:/?@&=+$%,;name");
+			var builder = new StringBuilder ();
+			ImapClient.EscapeUserName (builder, "user:/?@&=+$%,;name");
+			var escaped = builder.ToString ();
 
 			Assert.AreEqual ("user%3A%2F%3F%40%26%3D%2B%24%25%2C%3Bname", escaped);
 		}
