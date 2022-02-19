@@ -582,7 +582,7 @@ namespace MailKit.Net.Imap {
 		{
 			var atom = await ReadAtomStringAsync (false, specials, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return atom == "NIL" ? new ImapToken (ImapTokenType.Nil, atom) : new ImapToken (ImapTokenType.Atom, atom);
+			return atom.Equals ("NIL", StringComparison.OrdinalIgnoreCase) ? new ImapToken (ImapTokenType.Nil, atom) : new ImapToken (ImapTokenType.Atom, atom);
 		}
 
 		async Task<ImapToken> ReadFlagTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
