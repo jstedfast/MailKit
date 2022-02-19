@@ -498,7 +498,13 @@ namespace MailKit {
 			case "smtp.mail.me.com":
 				return issuer == AppleCertificateIssuer && serial == "46A537AD83083BCCBDA20D1D8657F573" && fingerprint == "83AA1EF97EE9AC0EAD8B2C88C62C83F8EDBF2BDB"; // Expires 10/30/2022 4:11:38 PM
 			case "*.imap.mail.yahoo.com":
-				return issuer == YahooCertificateIssuer && serial == "07E7B4CB914FFC7FB3E03105C9DA0BE1" && fingerprint == "D7D39A265E914ADC8B443BF24DB684354D50B000"; // Expires 3/16/2022 7:59:59 PM
+				switch (issuer) {
+				case YahooCertificateIssuer:
+					return (serial == "07E7B4CB914FFC7FB3E03105C9DA0BE1" && fingerprint == "D7D39A265E914ADC8B443BF24DB684354D50B000") // Expires 3/16/2022 7:59:59 PM
+						|| (serial == "0C67CECFD49B2BA3430DBE354BAAFD6B" && fingerprint == "0976270BA2651AF827987F1A91741B1D7B48AB7A"); // Expires 8/10/2022 7:59:59 PM
+				default:
+					return false;
+				}
 			case "legacy.pop.mail.yahoo.com":
 				switch (issuer) {
 				case YahooCertificateIssuer:
