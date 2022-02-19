@@ -946,43 +946,46 @@ namespace MailKit.Net.Imap {
 			return userName.ToString ();
 		}
 
-		static string HexEscape (char c)
+		static void HexEscape (StringBuilder builder, char c)
 		{
-			return "%" + HexAlphabet[(c >> 4) & 0xF] + HexAlphabet[c & 0xF];
+			builder.Append ('%');
+			builder.Append (HexAlphabet[(c >> 4) & 0xF]);
+			builder.Append (HexAlphabet[c & 0xF]);
 		}
 
-		internal static string EscapeUserName (string userName)
+		internal static void EscapeUserName (StringBuilder builder, string userName)
 		{
-			int index;
-
-			if ((index = userName.IndexOfAny (ReservedUriCharacters)) == -1)
-				return userName;
-
-			var escaped = new StringBuilder ();
+			int index = userName.IndexOfAny (ReservedUriCharacters);
 			int startIndex = 0;
 
-			do {
-				escaped.Append (userName, startIndex, index - startIndex);
-				escaped.Append (HexEscape (userName[index++]));
+			while (index != -1) {
+				builder.Append (userName, startIndex, index - startIndex);
+				HexEscape (builder, userName[index++]);
 				startIndex = index;
 
 				if (startIndex >= userName.Length)
 					break;
 
 				index = userName.IndexOfAny (ReservedUriCharacters, startIndex);
-			} while (index != -1);
+			}
 
-			if (index == -1)
-				escaped.Append (userName, startIndex, userName.Length - startIndex);
-
-			return escaped.ToString ();
+			builder.Append (userName, startIndex, userName.Length - startIndex);
 		}
 
 		string GetSessionIdentifier (string userName)
 		{
+			var builder = new StringBuilder ();
 			var uri = engine.Uri;
 
-			return string.Format (CultureInfo.InvariantCulture, "{0}://{1}@{2}:{3}", uri.Scheme, EscapeUserName (userName), uri.Host, uri.Port);
+			builder.Append (uri.Scheme);
+			builder.Append ("://");
+			EscapeUserName (builder, userName);
+			builder.Append ('@');
+			builder.Append (uri.Host);
+			builder.Append (':');
+			builder.Append (uri.Port.ToString (CultureInfo.InvariantCulture));
+
+			return builder.ToString ();
 		}
 
 		async Task OnAuthenticatedAsync (string message, bool doAsync, CancellationToken cancellationToken)
