@@ -545,13 +545,16 @@ namespace MailKit.Net.Imap {
 		async Task<string> ReadAtomStringAsync (bool flag, string specials, bool doAsync, CancellationToken cancellationToken)
 		{
 			using (var memory = new MemoryStream ()) {
+				if (flag)
+					memory.WriteByte ((byte) '\\');
+
 				do {
 					input[inputEnd] = (byte) '\n';
 
-					if (flag && memory.Length == 0 && input[inputIndex] == (byte) '*') {
+					if (flag && memory.Length == 1 && input[inputIndex] == (byte) '*') {
 						// this is a special wildcard flag
 						inputIndex++;
-						return "*";
+						return "\\*";
 					}
 
 					while (IsAtom (input[inputIndex], specials))
@@ -589,7 +592,7 @@ namespace MailKit.Net.Imap {
 		{
 			inputIndex++;
 
-			var flag = "\\" + await ReadAtomStringAsync (true, specials, doAsync, cancellationToken).ConfigureAwait (false);
+			var flag = await ReadAtomStringAsync (true, specials, doAsync, cancellationToken).ConfigureAwait (false);
 
 			return new ImapToken (ImapTokenType.Flag, flag);
 		}
