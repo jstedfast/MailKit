@@ -44,7 +44,7 @@ namespace MailKit.Net.Imap {
 
 		public static string Decode (string text)
 		{
-			var decoded = new StringBuilder ();
+			var decoded = new StringBuilder (text.Length);
 			bool shifted = false;
 			int bits = 0, v = 0;
 			int index = 0;
@@ -106,7 +106,7 @@ namespace MailKit.Net.Imap {
 
 		public static string Encode (string text)
 		{
-			var encoded = new StringBuilder ();
+			var encoded = new StringBuilder (text.Length * 2);
 			bool shifted = false;
 			int bits = 0, u = 0;
 
