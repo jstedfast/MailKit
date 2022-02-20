@@ -131,26 +131,21 @@ namespace UnitTests.Net.Imap {
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;
 
-				using (var memory = new MemoryStream ()) {
-					while (!stream.ReadLine (memory, CancellationToken.None))
+				using (var builder = new ByteArrayBuilder (64)) {
+					while (!stream.ReadLine (builder, CancellationToken.None))
 						;
 
-					var buffer = memory.GetBuffer ();
-					int n = (int) memory.Length;
+					var text = builder.ToString ();
 
-					var text = Encoding.ASCII.GetString (buffer, 0, n);
 					Assert.AreEqual (line1, text, "Line1");
+				}
 
-					memory.SetLength (0);
-					memory.Position = 0;
-
-					while (!stream.ReadLine (memory, CancellationToken.None))
+				using (var builder = new ByteArrayBuilder (64)) {
+					while (!stream.ReadLine (builder, CancellationToken.None))
 						;
 
-					buffer = memory.GetBuffer ();
-					n = (int) memory.Length;
+					var text = builder.ToString ();
 
-					text = Encoding.ASCII.GetString (buffer, 0, n);
 					Assert.AreEqual (line2, text, "Line2");
 				}
 			}
@@ -168,26 +163,21 @@ namespace UnitTests.Net.Imap {
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;
 
-				using (var memory = new MemoryStream ()) {
-					while (!await stream.ReadLineAsync (memory, CancellationToken.None))
+				using (var builder = new ByteArrayBuilder (64)) {
+					while (!await stream.ReadLineAsync (builder, CancellationToken.None))
 						;
 
-					var buffer = memory.GetBuffer ();
-					int n = (int) memory.Length;
+					var text = builder.ToString ();
 
-					var text = Encoding.ASCII.GetString (buffer, 0, n);
 					Assert.AreEqual (line1, text, "Line1");
+				}
 
-					memory.SetLength (0);
-					memory.Position = 0;
-
-					while (!await stream.ReadLineAsync (memory, CancellationToken.None))
+				using (var builder = new ByteArrayBuilder (64)) {
+					while (!await stream.ReadLineAsync (builder, CancellationToken.None))
 						;
 
-					buffer = memory.GetBuffer ();
-					n = (int) memory.Length;
+					var text = builder.ToString ();
 
-					text = Encoding.ASCII.GetString (buffer, 0, n);
 					Assert.AreEqual (line2, text, "Line2");
 				}
 			}

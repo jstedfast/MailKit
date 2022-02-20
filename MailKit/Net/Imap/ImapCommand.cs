@@ -436,7 +436,7 @@ namespace MailKit.Net.Imap {
 			Engine = engine;
 			Folder = folder;
 
-			using (var builder = new MemoryStream ()) {
+			using (var builder = new ByteArrayBuilder (1024)) {
 				byte[] buf, utf8 = new byte[8];
 				int argc = 0;
 				string str;
@@ -445,22 +445,22 @@ namespace MailKit.Net.Imap {
 					if (format[i] == '%') {
 						switch (format[++i]) {
 						case '%': // a literal %
-							builder.WriteByte ((byte) '%');
+							builder.Append ((byte) '%');
 							break;
 						case 'd': // an integer
 							str = ((int) args[argc++]).ToString (CultureInfo.InvariantCulture);
 							buf = Encoding.ASCII.GetBytes (str);
-							builder.Write (buf, 0, buf.Length);
+							builder.Append (buf, 0, buf.Length);
 							break;
 						case 'u': // an unsigned integer
 							str = ((uint) args[argc++]).ToString (CultureInfo.InvariantCulture);
 							buf = Encoding.ASCII.GetBytes (str);
-							builder.Write (buf, 0, buf.Length);
+							builder.Append (buf, 0, buf.Length);
 							break;
 						case 's':
 							str = (string) args[argc++];
 							buf = Encoding.ASCII.GetBytes (str);
-							builder.Write (buf, 0, buf.Length);
+							builder.Append (buf, 0, buf.Length);
 							break;
 						case 'F': // an ImapFolder
 							var utf7 = ((ImapFolder) args[argc++]).EncodedName;
@@ -482,24 +482,24 @@ namespace MailKit.Net.Imap {
 							var length = literal.Length;
 							bool wait = true;
 
-							builder.Write (prefix, 0, prefix.Length);
+							builder.Append (prefix, 0, prefix.Length);
 							buf = Encoding.ASCII.GetBytes (length.ToString (CultureInfo.InvariantCulture));
-							builder.Write (buf, 0, buf.Length);
+							builder.Append (buf, 0, buf.Length);
 
 							if (CanUseNonSynchronizedLiteral (Engine, length)) {
-								builder.WriteByte ((byte) '+');
+								builder.Append ((byte) '+');
 								wait = false;
 							}
 
-							builder.Write (LiteralTokenSuffix, 0, LiteralTokenSuffix.Length);
+							builder.Append (LiteralTokenSuffix, 0, LiteralTokenSuffix.Length);
 
 							totalSize += length;
 
 							parts.Add (new ImapCommandPart (builder.ToArray (), literal, wait));
-							builder.SetLength (0);
+							builder.Clear ();
 
 							if (prefix == UTF8LiteralTokenPrefix)
-								builder.WriteByte ((byte) ')');
+								builder.Append ((byte) ')');
 							break;
 						case 'S': // a string which may need to be quoted or made into a literal
 							AppendString (options, true, builder, (string) args[argc++]);
@@ -511,11 +511,11 @@ namespace MailKit.Net.Imap {
 							throw new FormatException ();
 						}
 					} else if (format[i] < 128) {
-						builder.WriteByte ((byte) format[i]);
+						builder.Append ((byte) format[i]);
 					} else {
 						int nchars = char.IsSurrogate (format[i]) ? 2 : 1;
 						int nbytes = Encoding.UTF8.GetBytes (format, i, nchars, utf8, 0);
-						builder.Write (utf8, 0, nbytes);
+						builder.Append (utf8, 0, nbytes);
 						i += nchars - 1;
 					}
 				}
@@ -696,7 +696,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void AppendString (FormatOptions options, bool allowAtom, MemoryStream builder, string value)
+		void AppendString (FormatOptions options, bool allowAtom, ByteArrayBuilder builder, string value)
 		{
 			byte[] buf;
 
@@ -707,31 +707,31 @@ namespace MailKit.Net.Imap {
 				var length = literal.Length.ToString (CultureInfo.InvariantCulture);
 				buf = Encoding.ASCII.GetBytes (length);
 
-				builder.WriteByte ((byte) '{');
-				builder.Write (buf, 0, buf.Length);
+				builder.Append ((byte) '{');
+				builder.Append (buf, 0, buf.Length);
 				if (plus)
-					builder.WriteByte ((byte) '+');
-				builder.WriteByte ((byte) '}');
-				builder.WriteByte ((byte) '\r');
-				builder.WriteByte ((byte) '\n');
+					builder.Append ((byte) '+');
+				builder.Append ((byte) '}');
+				builder.Append ((byte) '\r');
+				builder.Append ((byte) '\n');
 
 				if (plus) {
-					builder.Write (literal, 0, literal.Length);
+					builder.Append (literal, 0, literal.Length);
 				} else {
 					parts.Add (new ImapCommandPart (builder.ToArray (), new ImapLiteral (options, literal)));
-					builder.SetLength (0);
+					builder.Clear ();
 				}
 				break;
 			case ImapStringType.QString:
 				buf = Encoding.UTF8.GetBytes (MimeUtils.Quote (value));
-				builder.Write (buf, 0, buf.Length);
+				builder.Append (buf, 0, buf.Length);
 				break;
 			case ImapStringType.Atom:
 				buf = Encoding.UTF8.GetBytes (value);
-				builder.Write (buf, 0, buf.Length);
+				builder.Append (buf, 0, buf.Length);
 				break;
 			case ImapStringType.Nil:
-				builder.Write (Nil, 0, Nil.Length);
+				builder.Append (Nil, 0, Nil.Length);
 				break;
 			}
 		}

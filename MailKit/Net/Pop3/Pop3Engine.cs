@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.IO;
 using System.Text;
 using System.Threading;
 using System.Globalization;
@@ -295,38 +294,20 @@ namespace MailKit.Net.Pop3 {
 			if (stream == null)
 				throw new InvalidOperationException ();
 
-			using (var memory = new MemoryStream ()) {
+			using (var builder = new ByteArrayBuilder (64)) {
 				bool complete;
-				byte[] buf;
-				int count;
 
 				do {
 					if (doAsync)
-						complete = await stream.ReadLineAsync (memory, cancellationToken).ConfigureAwait (false);
+						complete = await stream.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
 					else
-						complete = stream.ReadLine (memory, cancellationToken);
+						complete = stream.ReadLine (builder, cancellationToken);
 				} while (!complete);
 
-				count = (int) memory.Length;
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-				buf = memory.GetBuffer ();
-#else
-				buf = memory.ToArray ();
-#endif
+				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
+				builder.TrimNewLine ();
 
-				// Trim the <CR><LF> sequence from the end of the line.
-				if (buf[count - 1] == (byte) '\n') {
-					count--;
-
-					if (buf[count - 1] == (byte) '\r')
-						count--;
-				}
-
-				try {
-					return TextEncodings.UTF8.GetString (buf, 0, count);
-				} catch (DecoderFallbackException) {
-					return TextEncodings.Latin1.GetString (buf, 0, count);
-				}
+				return builder.ToString ();
 			}
 		}
 

@@ -192,6 +192,7 @@
     <Compile Include="BodyPartMultipart.cs" />
     <Compile Include="BodyPartText.cs" />
     <Compile Include="BodyPartVisitor.cs" />
+    <Compile Include="ByteArrayBuilder.cs" />
     <Compile Include="CommandException.cs" />
     <Compile Include="CompressedStream.cs" />
     <Compile Include="ConnectedEventArgs.cs" />

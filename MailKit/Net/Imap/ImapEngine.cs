@@ -747,30 +747,20 @@ namespace MailKit.Net.Imap {
 
 		internal async Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			using (var memory = new MemoryStream ()) {
+			using (var builder = new ByteArrayBuilder (64)) {
 				bool complete;
-				byte[] buf;
-				int count;
 
 				do {
 					if (doAsync)
-						complete = await Stream.ReadLineAsync (memory, cancellationToken).ConfigureAwait (false);
+						complete = await Stream.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
 					else
-						complete = Stream.ReadLine (memory, cancellationToken);
+						complete = Stream.ReadLine (builder, cancellationToken);
 				} while (!complete);
 
-				count = (int) memory.Length;
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-				buf = memory.GetBuffer ();
-#else
-				buf = memory.ToArray ();
-#endif
+				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
+				builder.TrimNewLine ();
 
-				try {
-					return TextEncodings.UTF8.GetString (buf, 0, count);
-				} catch (DecoderFallbackException) {
-					return TextEncodings.Latin1.GetString (buf, 0, count);
-				}
+				return builder.ToString ();
 			}
 		}
 

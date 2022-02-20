@@ -26,7 +26,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
@@ -415,23 +414,11 @@ namespace MailKit.Net.Smtp {
 #endif
 		}
 
-		static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
-		{
-			int startIndex = index;
-
-			value = 0;
-
-			while (index < endIndex && text[index] >= (byte) '0' && text[index] <= (byte) '9')
-				value = (value * 10) + (text[index++] - (byte) '0');
-
-			return index > startIndex;
-		}
-
 		async Task<SmtpResponse> ReadResponseAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
-			using (var memory = new MemoryStream ()) {
+			using (var builder = new ByteArrayBuilder (256)) {
 				bool needInput = inputIndex == inputEnd;
 				bool complete = false;
 				bool newLine = true;
@@ -450,7 +437,7 @@ namespace MailKit.Net.Smtp {
 						int startIndex = inputIndex;
 
 						if (newLine && inputIndex < inputEnd) {
-							if (!TryParseInt32 (input, ref inputIndex, inputEnd, out int value))
+							if (!ByteArrayBuilder.TryParse (input, ref inputIndex, inputEnd, out int value))
 								throw new SmtpProtocolException ("Unable to parse status code returned by the server.");
 
 							if (inputIndex == inputEnd) {
@@ -478,14 +465,14 @@ namespace MailKit.Net.Smtp {
 						while (inputIndex < inputEnd && input[inputIndex] != (byte) '\r' && input[inputIndex] != (byte) '\n')
 							inputIndex++;
 
-						memory.Write (input, startIndex, inputIndex - startIndex);
+						builder.Append (input, startIndex, inputIndex - startIndex);
 
 						if (inputIndex < inputEnd && input[inputIndex] == (byte) '\r')
 							inputIndex++;
 
 						if (inputIndex < inputEnd && input[inputIndex] == (byte) '\n') {
 							if (more)
-								memory.WriteByte (input[inputIndex]);
+								builder.Append (input[inputIndex]);
 							complete = true;
 							newLine = true;
 							inputIndex++;
@@ -496,21 +483,7 @@ namespace MailKit.Net.Smtp {
 						needInput = true;
 				} while (more || !complete);
 
-				string message = null;
-
-				try {
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-					message = TextEncodings.UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
-#else
-					message = TextEncodings.UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
-#endif
-				} catch (DecoderFallbackException) {
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-					message = TextEncodings.Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
-#else
-					message = TextEncodings.Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);
-#endif
-				}
+				var message = builder.ToString ();
 
 				return new SmtpResponse ((SmtpStatusCode) code, message);
 			}

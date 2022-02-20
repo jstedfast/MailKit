@@ -494,7 +494,7 @@ namespace MailKit.Net.Imap {
 			// skip over the opening '"'
 			inputIndex++;
 
-			using (var memory = new MemoryStream ()) {
+			using (var builder = new ByteArrayBuilder (64)) {
 				do {
 					while (inputIndex < inputEnd) {
 						if (input[inputIndex] == (byte) '"' && !escaped)
@@ -503,7 +503,7 @@ namespace MailKit.Net.Imap {
 						if (input[inputIndex] == (byte) '\\' && !escaped) {
 							escaped = true;
 						} else {
-							memory.WriteByte (input[inputIndex]);
+							builder.Append (input[inputIndex]);
 							escaped = false;
 						}
 
@@ -524,41 +524,36 @@ namespace MailKit.Net.Imap {
 						if ("]) \r\n".IndexOf ((char) input[inputIndex]) != -1)
 							break;
 
-						memory.WriteByte ((byte) '"');
+						builder.Append ((byte) '"');
 						continue;
 					}
 
 					await ReadAheadAsync (2, doAsync, cancellationToken).ConfigureAwait (false);
 				} while (true);
 
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-				var buffer = memory.GetBuffer ();
-#else
-				var buffer = memory.ToArray ();
-#endif
-				int length = (int) memory.Length;
+				var qstring = builder.ToString ();
 
-				return new ImapToken (ImapTokenType.QString, Encoding.UTF8.GetString (buffer, 0, length));
+				return new ImapToken (ImapTokenType.QString, qstring);
 			}
 		}
 
 		async Task<string> ReadAtomStringAsync (bool flag, string specials, bool doAsync, CancellationToken cancellationToken)
 		{
-			using (var memory = new MemoryStream ()) {
+			using (var builder = new ByteArrayBuilder (32)) {
 				if (flag)
-					memory.WriteByte ((byte) '\\');
+					builder.Append ((byte) '\\');
 
 				do {
 					input[inputEnd] = (byte) '\n';
 
-					if (flag && memory.Length == 1 && input[inputIndex] == (byte) '*') {
+					if (flag && builder.Length == 1 && input[inputIndex] == (byte) '*') {
 						// this is a special wildcard flag
 						inputIndex++;
 						return "\\*";
 					}
 
 					while (IsAtom (input[inputIndex], specials))
-						memory.WriteByte (input[inputIndex++]);
+						builder.Append (input[inputIndex++]);
 
 					if (inputIndex < inputEnd)
 						break;
@@ -566,18 +561,7 @@ namespace MailKit.Net.Imap {
 					await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
 				} while (true);
 
-				var count = (int) memory.Length;
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-				var buf = memory.GetBuffer ();
-#else
-				var buf = memory.ToArray ();
-#endif
-
-				try {
-					return TextEncodings.UTF8.GetString (buf, 0, count);
-				} catch (DecoderFallbackException) {
-					return TextEncodings.Latin1.GetString (buf, 0, count);
-				}
+				return builder.ToString ();
 			}
 		}
 
@@ -599,35 +583,53 @@ namespace MailKit.Net.Imap {
 
 		async Task<ImapToken> ReadLiteralTokenAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			var builder = new StringBuilder ();
+			using (var builder = new ByteArrayBuilder (16)) {
+				// skip over the '{'
+				builder.Append (input[inputIndex++]);
 
-			// skip over the '{'
-			inputIndex++;
-
-			do {
-				input[inputEnd] = (byte) '}';
-
-				while (input[inputIndex] != (byte) '}' && input[inputIndex] != '+')
-					builder.Append ((char) input[inputIndex++]);
-
-				if (inputIndex < inputEnd)
-					break;
-
-				await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
-			} while (true);
-
-			if (input[inputIndex] == (byte) '+')
-				inputIndex++;
-
-			// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
-			await ReadAheadAsync (2, doAsync, cancellationToken).ConfigureAwait (false);
-
-			if (input[inputIndex] != (byte) '}') {
-				// PROTOCOL ERROR... but maybe we can work around it?
 				do {
 					input[inputEnd] = (byte) '}';
 
-					while (input[inputIndex] != (byte) '}')
+					while (input[inputIndex] != (byte) '}' && input[inputIndex] != '+')
+						builder.Append (input[inputIndex++]);
+
+					if (inputIndex < inputEnd)
+						break;
+
+					await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
+				} while (true);
+
+				int endIndex = builder.Length;
+
+				if (input[inputIndex] == (byte) '+')
+					builder.Append (input[inputIndex++]);
+
+				// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
+				await ReadAheadAsync (2, doAsync, cancellationToken).ConfigureAwait (false);
+
+				if (input[inputIndex] != (byte) '}') {
+					// PROTOCOL ERROR... but maybe we can work around it?
+					do {
+						input[inputEnd] = (byte) '}';
+
+						while (input[inputIndex] != (byte) '}')
+							builder.Append (input[inputIndex++]);
+
+						if (inputIndex < inputEnd)
+							break;
+
+						await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
+					} while (true);
+				}
+
+				// skip over the '}'
+				builder.Append (input[inputIndex++]);
+
+				// read until we get a new line...
+				do {
+					input[inputEnd] = (byte) '\n';
+
+					while (input[inputIndex] != (byte) '\n')
 						inputIndex++;
 
 					if (inputIndex < inputEnd)
@@ -635,33 +637,17 @@ namespace MailKit.Net.Imap {
 
 					await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
 				} while (true);
+
+				// skip over the '\n'
+				inputIndex++;
+
+				if (!builder.TryParse (1, endIndex, out literalDataLeft) || literalDataLeft < 0)
+					return new ImapToken (ImapTokenType.Error, builder.ToString ());
+
+				Mode = ImapStreamMode.Literal;
+
+				return new ImapToken (ImapTokenType.Literal, literalDataLeft);
 			}
-
-			// skip over the '}'
-			inputIndex++;
-
-			// read until we get a new line...
-			do {
-				input[inputEnd] = (byte) '\n';
-
-				while (input[inputIndex] != (byte) '\n')
-					inputIndex++;
-
-				if (inputIndex < inputEnd)
-					break;
-
-				await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
-			} while (true);
-
-			// skip over the '\n'
-			inputIndex++;
-
-			if (!int.TryParse (builder.ToString (), NumberStyles.None, CultureInfo.InvariantCulture, out literalDataLeft) || literalDataLeft < 0)
-				return new ImapToken (ImapTokenType.Error, builder.ToString ());
-
-			Mode = ImapStreamMode.Literal;
-
-			return new ImapToken (ImapTokenType.Literal, literalDataLeft);
 		}
 
 		internal async Task<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
@@ -764,7 +750,7 @@ namespace MailKit.Net.Imap {
 			nextToken = token;
 		}
 
-		async Task<bool> ReadLineAsync (Stream ostream, bool doAsync, CancellationToken cancellationToken)
+		async Task<bool> ReadLineAsync (ByteArrayBuilder builder, bool doAsync, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -790,7 +776,7 @@ namespace MailKit.Net.Imap {
 					count = (int) (inptr - start);
 
 					if (inptr == inend) {
-						ostream.Write (input, offset, count);
+						builder.Append (input, offset, count);
 						return false;
 					}
 
@@ -798,7 +784,7 @@ namespace MailKit.Net.Imap {
 					inputIndex++;
 					count++;
 
-					ostream.Write (input, offset, count);
+					builder.Append (input, offset, count);
 
 					return true;
 				}
@@ -812,7 +798,7 @@ namespace MailKit.Net.Imap {
 		/// This method should be called in a loop until it returns <c>true</c>.
 		/// </remarks>
 		/// <returns><c>true</c>, if reading the line is complete, <c>false</c> otherwise.</returns>
-		/// <param name="ostream">The output stream to write the line data into.</param>
+		/// <param name="builder">The output buffer to write the line data into.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -823,9 +809,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal bool ReadLine (Stream ostream, CancellationToken cancellationToken)
+		internal bool ReadLine (ByteArrayBuilder builder, CancellationToken cancellationToken)
 		{
-			return ReadLineAsync (ostream, false, cancellationToken).GetAwaiter ().GetResult ();
+			return ReadLineAsync (builder, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -835,7 +821,7 @@ namespace MailKit.Net.Imap {
 		/// This method should be called in a loop until it returns <c>true</c>.
 		/// </remarks>
 		/// <returns><c>true</c>, if reading the line is complete, <c>false</c> otherwise.</returns>
-		/// <param name="ostream">The output stream to write the line data into.</param>
+		/// <param name="builder">The output buffer to write the line data into.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -846,9 +832,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal Task<bool> ReadLineAsync (Stream ostream, CancellationToken cancellationToken)
+		internal Task<bool> ReadLineAsync (ByteArrayBuilder builder, CancellationToken cancellationToken)
 		{
-			return ReadLineAsync (ostream, true, cancellationToken);
+			return ReadLineAsync (builder, true, cancellationToken);
 		}
 
 		async Task WriteAsync (byte[] buffer, int offset, int count, bool doAsync, CancellationToken cancellationToken)
