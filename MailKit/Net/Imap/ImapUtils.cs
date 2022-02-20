@@ -472,7 +472,7 @@ namespace MailKit.Net.Imap {
 				//
 				// See https://github.com/jstedfast/MailKit/issues/945 for details.
 				if (engine.QuirksMode == ImapQuirksMode.Exchange) {
-					var line = await engine.ReadLineAsync (doAsync, cancellationToken);
+					var line = await engine.ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					// unget the \r\n sequence
 					engine.Stream.UngetToken (ImapToken.Eoln);
