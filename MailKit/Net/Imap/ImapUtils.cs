@@ -475,8 +475,7 @@ namespace MailKit.Net.Imap {
 					var line = await engine.ReadLineAsync (doAsync, cancellationToken);
 
 					// unget the \r\n sequence
-					token = new ImapToken (ImapTokenType.Eoln);
-					engine.Stream.UngetToken (token);
+					engine.Stream.UngetToken (ImapToken.Eoln);
 
 					encodedName += line;
 				}

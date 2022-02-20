@@ -49,15 +49,36 @@ namespace MailKit.Net.Imap {
 
 	class ImapToken
 	{
+		public static readonly ImapToken Asterisk = new ImapToken (ImapTokenType.Asterisk, '*');
+		public static readonly ImapToken OpenParen = new ImapToken (ImapTokenType.OpenParen, '(');
+		public static readonly ImapToken CloseParen = new ImapToken (ImapTokenType.CloseParen, ')');
+		public static readonly ImapToken OpenBracket = new ImapToken (ImapTokenType.OpenBracket, '[');
+		public static readonly ImapToken CloseBracket = new ImapToken (ImapTokenType.CloseBracket, ']');
+		public static readonly ImapToken Eoln = new ImapToken (ImapTokenType.Eoln);
+
 		public readonly ImapTokenType Type;
 		public readonly object Value;
 
-		public ImapToken (ImapTokenType type, object value = null)
+		ImapToken (ImapTokenType type, object value = null)
 		{
 			Value = value;
 			Type = type;
 
 			//System.Console.WriteLine ("token: {0}", this);
+		}
+
+		public static ImapToken Create (ImapTokenType type, object value = null)
+		{
+			switch (type) {
+			case ImapTokenType.Asterisk: return Asterisk;
+			case ImapTokenType.OpenParen: return OpenParen;
+			case ImapTokenType.CloseParen: return CloseParen;
+			case ImapTokenType.OpenBracket: return OpenBracket;
+			case ImapTokenType.CloseBracket: return CloseBracket;
+			case ImapTokenType.Eoln: return Eoln;
+			}
+
+			return new ImapToken (type, value);
 		}
 
 		public override string ToString ()

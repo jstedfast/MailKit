@@ -533,7 +533,7 @@ namespace MailKit.Net.Imap {
 
 				var qstring = builder.ToString ();
 
-				return new ImapToken (ImapTokenType.QString, qstring);
+				return ImapToken.Create (ImapTokenType.QString, qstring);
 			}
 		}
 
@@ -569,7 +569,7 @@ namespace MailKit.Net.Imap {
 		{
 			var atom = await ReadAtomStringAsync (false, specials, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return atom.Equals ("NIL", StringComparison.OrdinalIgnoreCase) ? new ImapToken (ImapTokenType.Nil, atom) : new ImapToken (ImapTokenType.Atom, atom);
+			return atom.Equals ("NIL", StringComparison.OrdinalIgnoreCase) ? ImapToken.Create (ImapTokenType.Nil, atom) : ImapToken.Create (ImapTokenType.Atom, atom);
 		}
 
 		async Task<ImapToken> ReadFlagTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
@@ -578,7 +578,7 @@ namespace MailKit.Net.Imap {
 
 			var flag = await ReadAtomStringAsync (true, specials, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return new ImapToken (ImapTokenType.Flag, flag);
+			return ImapToken.Create (ImapTokenType.Flag, flag);
 		}
 
 		async Task<ImapToken> ReadLiteralTokenAsync (bool doAsync, CancellationToken cancellationToken)
@@ -642,11 +642,11 @@ namespace MailKit.Net.Imap {
 				inputIndex++;
 
 				if (!builder.TryParse (1, endIndex, out literalDataLeft) || literalDataLeft < 0)
-					return new ImapToken (ImapTokenType.Error, builder.ToString ());
+					return ImapToken.Create (ImapTokenType.Error, builder.ToString ());
 
 				Mode = ImapStreamMode.Literal;
 
-				return new ImapToken (ImapTokenType.Literal, literalDataLeft);
+				return ImapToken.Create (ImapTokenType.Literal, literalDataLeft);
 			}
 		}
 
@@ -692,7 +692,7 @@ namespace MailKit.Net.Imap {
 			// special character token
 			inputIndex++;
 
-			return new ImapToken ((ImapTokenType) c, c);
+			return ImapToken.Create ((ImapTokenType) c, c);
 		}
 
 		internal Task<ImapToken> ReadTokenAsync (bool doAsync, CancellationToken cancellationToken)
