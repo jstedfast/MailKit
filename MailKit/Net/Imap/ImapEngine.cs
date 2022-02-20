@@ -975,30 +975,27 @@ namespace MailKit.Net.Imap {
 			if (Stream.Mode != ImapStreamMode.Literal)
 				throw new InvalidOperationException ();
 
-			using (var memory = new MemoryStream (Stream.LiteralLength)) {
-				var buf = ArrayPool<byte>.Shared.Rent (BufferSize);
-				int nread;
+			int literalLength = Stream.LiteralLength;
+			var buf = ArrayPool<byte>.Shared.Rent (literalLength);
 
-				try {
-					if (doAsync) {
-						while ((nread = await Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false)) > 0)
-							memory.Write (buf, 0, nread);
-					} else {
-						while ((nread = Stream.Read (buf, 0, BufferSize, cancellationToken)) > 0)
-							memory.Write (buf, 0, nread);
-					}
-				} finally {
-					ArrayPool<byte>.Shared.Return (buf);
+			try {
+				int n, nread = 0;
+
+				if (doAsync) {
+					do {
+						if ((n = await Stream.ReadAsync (buf, nread, literalLength - nread, cancellationToken).ConfigureAwait (false)) > 0)
+							nread += n;
+					} while (nread < literalLength);
+				} else {
+					do {
+						if ((n = Stream.Read (buf, nread, literalLength - nread, cancellationToken)) > 0)
+							nread += n;
+					} while (nread < literalLength);
 				}
 
-				nread = (int) memory.Length;
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-				buf = memory.GetBuffer ();
-#else
-				buf = memory.ToArray ();
-#endif
-
 				return TextEncodings.Latin1.GetString (buf, 0, nread);
+			} finally {
+				ArrayPool<byte>.Shared.Return (buf);
 			}
 		}
 
