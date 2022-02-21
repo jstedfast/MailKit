@@ -96,6 +96,23 @@ namespace MailKit
 			return ToString (TextEncodings.UTF8, TextEncodings.Latin1);
 		}
 
+		public bool Equals (string value, bool ignoreCase = false)
+		{
+			if (length == value.Length) {
+				for (int i = 0; i < length; i++) {
+					char c = (char) buffer[i];
+					char v = value[i];
+
+					if (c != v && (!ignoreCase || char.ToUpperInvariant (c) != char.ToUpperInvariant (v)))
+						return false;
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
 		public void TrimNewLine ()
 		{
 			// Trim the <CR><LF> sequence from the end of the line.

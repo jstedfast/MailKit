@@ -25,6 +25,7 @@
 //
 
 using System.Globalization;
+using System.Collections.Generic;
 
 using MimeKit.Utils;
 
@@ -54,7 +55,23 @@ namespace MailKit.Net.Imap {
 		public static readonly ImapToken CloseParen = new ImapToken (ImapTokenType.CloseParen, ')');
 		public static readonly ImapToken OpenBracket = new ImapToken (ImapTokenType.OpenBracket, '[');
 		public static readonly ImapToken CloseBracket = new ImapToken (ImapTokenType.CloseBracket, ']');
-		public static readonly ImapToken Eoln = new ImapToken (ImapTokenType.Eoln);
+		public static readonly ImapToken Eoln = new ImapToken (ImapTokenType.Eoln, '\n');
+
+		static readonly ImapToken[] CommonMessageFlagTokens = new ImapToken[] {
+			new ImapToken (ImapTokenType.Flag, "\\Answered"),
+			new ImapToken (ImapTokenType.Flag, "\\Deleted"),
+			new ImapToken (ImapTokenType.Flag, "\\Draft"),
+			new ImapToken (ImapTokenType.Flag, "\\Flagged"),
+			new ImapToken (ImapTokenType.Flag, "\\Recent"),
+			new ImapToken (ImapTokenType.Flag, "\\Seen"),
+			new ImapToken (ImapTokenType.Flag, "\\*")
+		};
+
+		static readonly List<ImapToken> NilTokens = new List<ImapToken> (6) {
+			new ImapToken (ImapTokenType.Nil, "NIL")
+		};
+
+		static readonly Dictionary<string, int> Statistics = new Dictionary<string, int> ();
 
 		public readonly ImapTokenType Type;
 		public readonly object Value;
@@ -67,7 +84,7 @@ namespace MailKit.Net.Imap {
 			//System.Console.WriteLine ("token: {0}", this);
 		}
 
-		public static ImapToken Create (ImapTokenType type, object value = null)
+		public static ImapToken Create (ImapTokenType type, char c)
 		{
 			switch (type) {
 			case ImapTokenType.Asterisk: return Asterisk;
@@ -78,6 +95,49 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Eoln: return Eoln;
 			}
 
+			return new ImapToken (type, c);
+		}
+
+		public static ImapToken Create (ImapTokenType type, int literalLength)
+		{
+			return new ImapToken (type, literalLength);
+		}
+
+		public static ImapToken Create (ImapTokenType type, ByteArrayBuilder builder)
+		{
+			string value;
+
+			if (type == ImapTokenType.Flag) {
+				foreach (var token in CommonMessageFlagTokens) {
+					value = (string) token.Value;
+
+					if (builder.Equals (value, true))
+						return token;
+				}
+			} else if (builder.Equals ("NIL", true)) {
+				foreach (var token in NilTokens) {
+					value = (string) token.Value;
+
+					if (builder.Equals (value))
+						return token;
+				}
+
+				var nil = new ImapToken (ImapTokenType.Nil, builder.ToString ());
+				NilTokens.Add (nil);
+
+				return nil;
+			}
+
+			value = builder.ToString ();
+
+			Statistics.TryGetValue (value, out int instances);
+			Statistics[value] = instances + 1;
+
+			return new ImapToken (type, value);
+		}
+
+		public static ImapToken Create (ImapTokenType type, string value)
+		{
 			return new ImapToken (type, value);
 		}
 
@@ -85,7 +145,7 @@ namespace MailKit.Net.Imap {
 		{
 			switch (Type) {
 			case ImapTokenType.NoData:       return "<no data>";
-			case ImapTokenType.Nil:          return "NIL";
+			case ImapTokenType.Nil:          return (string) Value;
 			case ImapTokenType.Atom:         return (string) Value;
 			case ImapTokenType.Flag:         return (string) Value;
 			case ImapTokenType.QString:      return MimeUtils.Quote ((string) Value);

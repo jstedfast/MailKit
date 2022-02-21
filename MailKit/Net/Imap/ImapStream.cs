@@ -26,7 +26,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Globalization;
@@ -251,16 +250,14 @@ namespace MailKit.Net.Imap {
 			get { return Stream.Length; }
 		}
 
-		async Task<int> ReadAheadAsync (int atleast, bool doAsync, CancellationToken cancellationToken)
+		bool AlignReadAheadBuffer (int atleast, out int left, out int start, out int end)
 		{
-			int left = inputEnd - inputIndex;
+			left = inputEnd - inputIndex;
+			start = inputStart;
+			end = inputEnd;
 
 			if (left >= atleast)
-				return left;
-
-			int start = inputStart;
-			int end = inputEnd;
-			int nread;
+				return false;
 
 			if (left > 0) {
 				int index = inputIndex;
@@ -290,19 +287,23 @@ namespace MailKit.Net.Imap {
 
 			end = input.Length - PadSize;
 
+			return true;
+		}
+
+		int ReadAhead (int atleast, CancellationToken cancellationToken)
+		{
+			if (!AlignReadAheadBuffer (atleast, out int left, out int start, out int end))
+				return left;
+
 			try {
 				var network = Stream as NetworkStream;
+				int nread;
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				if (doAsync) {
-					nread = await Stream.ReadAsync (input, start, end - start, cancellationToken).ConfigureAwait (false);
-				} else {
-					network?.Poll (SelectMode.SelectRead, cancellationToken);
-					nread = Stream.Read (input, start, end - start);
-				}
+				network?.Poll (SelectMode.SelectRead, cancellationToken);
 
-				if (nread > 0) {
+				if ((nread = Stream.Read (input, start, end - start)) > 0) {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
 				} else {
@@ -310,6 +311,33 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (network == null)
+					cancellationToken.ThrowIfCancellationRequested ();
+			} catch {
+				IsConnected = false;
+				throw;
+			}
+
+			return inputEnd - inputIndex;
+		}
+
+		async Task<int> ReadAheadAsync (int atleast, CancellationToken cancellationToken)
+		{
+			if (!AlignReadAheadBuffer (atleast, out int left, out int start, out int end))
+				return left;
+
+			try {
+				int nread;
+
+				cancellationToken.ThrowIfCancellationRequested ();
+
+				if ((nread = await Stream.ReadAsync (input, start, end - start, cancellationToken).ConfigureAwait (false)) > 0) {
+					logger.LogServer (input, start, nread);
+					inputEnd += nread;
+				} else {
+					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.");
+				}
+
+				if (!(Stream is NetworkStream))
 					cancellationToken.ThrowIfCancellationRequested ();
 			} catch {
 				IsConnected = false;
@@ -335,36 +363,6 @@ namespace MailKit.Net.Imap {
 		{
 			if (disposed)
 				throw new ObjectDisposedException (nameof (ImapStream));
-		}
-
-		async Task<int> ReadAsync (byte[] buffer, int offset, int count, bool doAsync, CancellationToken cancellationToken)
-		{
-			CheckDisposed ();
-
-			ValidateArguments (buffer, offset, count);
-
-			if (Mode != ImapStreamMode.Literal)
-				return 0;
-
-			count = Math.Min (count, literalDataLeft);
-
-			int length = inputEnd - inputIndex;
-			int n;
-
-			if (length < count && length <= ReadAheadSize)
-				await ReadAheadAsync (BlockSize, doAsync, cancellationToken).ConfigureAwait (false);
-
-			length = inputEnd - inputIndex;
-			n = Math.Min (count, length);
-
-			Buffer.BlockCopy (input, inputIndex, buffer, offset, n);
-			literalDataLeft -= n;
-			inputIndex += n;
-
-			if (literalDataLeft == 0)
-				Mode = ImapStreamMode.Token;
-
-			return n;
 		}
 
 		/// <summary>
@@ -400,7 +398,32 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			return ReadAsync (buffer, offset, count, false, cancellationToken).GetAwaiter ().GetResult ();
+			CheckDisposed ();
+
+			ValidateArguments (buffer, offset, count);
+
+			if (Mode != ImapStreamMode.Literal)
+				return 0;
+
+			count = Math.Min (count, literalDataLeft);
+
+			int length = inputEnd - inputIndex;
+			int n;
+
+			if (length < count && length <= ReadAheadSize)
+				ReadAhead (BlockSize, cancellationToken);
+
+			length = inputEnd - inputIndex;
+			n = Math.Min (count, length);
+
+			Buffer.BlockCopy (input, inputIndex, buffer, offset, n);
+			literalDataLeft -= n;
+			inputIndex += n;
+
+			if (literalDataLeft == 0)
+				Mode = ImapStreamMode.Token;
+
+			return n;
 		}
 
 		/// <summary>
@@ -467,9 +490,34 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public override async Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			return ReadAsync (buffer, offset, count, true, cancellationToken);
+			CheckDisposed ();
+
+			ValidateArguments (buffer, offset, count);
+
+			if (Mode != ImapStreamMode.Literal)
+				return 0;
+
+			count = Math.Min (count, literalDataLeft);
+
+			int length = inputEnd - inputIndex;
+			int n;
+
+			if (length < count && length <= ReadAheadSize)
+				await ReadAheadAsync (BlockSize, cancellationToken).ConfigureAwait (false);
+
+			length = inputEnd - inputIndex;
+			n = Math.Min (count, length);
+
+			Buffer.BlockCopy (input, inputIndex, buffer, offset, n);
+			literalDataLeft -= n;
+			inputIndex += n;
+
+			if (literalDataLeft == 0)
+				Mode = ImapStreamMode.Token;
+
+			return n;
 		}
 
 		static bool IsAtom (byte c, string specials)
@@ -487,7 +535,46 @@ namespace MailKit.Net.Imap {
 			return c == (byte) ' ' || c == (byte) '\t' || c == (byte) '\r';
 		}
 
-		async Task<ImapToken> ReadQuotedStringTokenAsync (bool doAsync, CancellationToken cancellationToken)
+		bool TryReadQuotedString (ByteArrayBuilder builder, ref bool escaped)
+		{
+			do {
+				while (inputIndex < inputEnd) {
+					if (input[inputIndex] == (byte) '"' && !escaped)
+						break;
+
+					if (input[inputIndex] == (byte) '\\' && !escaped) {
+						escaped = true;
+					} else {
+						builder.Append (input[inputIndex]);
+						escaped = false;
+					}
+
+					inputIndex++;
+				}
+
+				if (inputIndex + 1 < inputEnd) {
+					// skip over closing '"'
+					inputIndex++;
+
+					// Note: Some IMAP servers do not properly escape double-quotes inside
+					// of a qstring token and so, as an attempt at working around this
+					// problem, check that the closing '"' character is not immediately
+					// followed by any character that we would expect immediately following
+					// a qstring token.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/485 for details.
+					if ("]) \r\n".IndexOf ((char) input[inputIndex]) != -1)
+						return true;
+
+					builder.Append ((byte) '"');
+					continue;
+				}
+
+				return false;
+			} while (true);
+		}
+
+		ImapToken ReadQuotedStringToken (CancellationToken cancellationToken)
 		{
 			bool escaped = false;
 
@@ -495,41 +582,8 @@ namespace MailKit.Net.Imap {
 			inputIndex++;
 
 			using (var builder = new ByteArrayBuilder (64)) {
-				do {
-					while (inputIndex < inputEnd) {
-						if (input[inputIndex] == (byte) '"' && !escaped)
-							break;
-
-						if (input[inputIndex] == (byte) '\\' && !escaped) {
-							escaped = true;
-						} else {
-							builder.Append (input[inputIndex]);
-							escaped = false;
-						}
-
-						inputIndex++;
-					}
-
-					if (inputIndex + 1 < inputEnd) {
-						// skip over closing '"'
-						inputIndex++;
-
-						// Note: Some IMAP servers do not properly escape double-quotes inside
-						// of a qstring token and so, as an attempt at working around this
-						// problem, check that the closing '"' character is not immediately
-						// followed by any character that we would expect immediately following
-						// a qstring token.
-						//
-						// See https://github.com/jstedfast/MailKit/issues/485 for details.
-						if ("]) \r\n".IndexOf ((char) input[inputIndex]) != -1)
-							break;
-
-						builder.Append ((byte) '"');
-						continue;
-					}
-
-					await ReadAheadAsync (2, doAsync, cancellationToken).ConfigureAwait (false);
-				} while (true);
+				while (!TryReadQuotedString (builder, ref escaped))
+					ReadAhead (2, cancellationToken);
 
 				var qstring = builder.ToString ();
 
@@ -537,67 +591,126 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		async Task<string> ReadAtomStringAsync (bool flag, string specials, bool doAsync, CancellationToken cancellationToken)
+		async Task<ImapToken> ReadQuotedStringTokenAsync (CancellationToken cancellationToken)
 		{
-			using (var builder = new ByteArrayBuilder (32)) {
-				if (flag)
-					builder.Append ((byte) '\\');
+			bool escaped = false;
 
-				do {
-					input[inputEnd] = (byte) '\n';
+			// skip over the opening '"'
+			inputIndex++;
 
-					if (flag && builder.Length == 1 && input[inputIndex] == (byte) '*') {
-						// this is a special wildcard flag
-						inputIndex++;
-						return "\\*";
-					}
+			using (var builder = new ByteArrayBuilder (64)) {
+				while (!TryReadQuotedString (builder, ref escaped))
+					await ReadAheadAsync (2, cancellationToken).ConfigureAwait (false);
 
-					while (IsAtom (input[inputIndex], specials))
-						builder.Append (input[inputIndex++]);
+				var qstring = builder.ToString (TextEncodings.UTF8, TextEncodings.Latin1);
 
-					if (inputIndex < inputEnd)
-						break;
-
-					await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
-				} while (true);
-
-				return builder.ToString ();
+				return ImapToken.Create (ImapTokenType.QString, qstring);
 			}
 		}
 
-		async Task<ImapToken> ReadAtomTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
+		bool TryReadAtomString (ImapTokenType type, ByteArrayBuilder builder, string specials)
 		{
-			var atom = await ReadAtomStringAsync (false, specials, doAsync, cancellationToken).ConfigureAwait (false);
+			input[inputEnd] = (byte) '\n';
 
-			return atom.Equals ("NIL", StringComparison.OrdinalIgnoreCase) ? ImapToken.Create (ImapTokenType.Nil, atom) : ImapToken.Create (ImapTokenType.Atom, atom);
+			if (type == ImapTokenType.Flag && builder.Length == 1 && input[inputIndex] == (byte) '*') {
+				// this is a special wildcard flag
+				builder.Append (input[inputIndex++]);
+			}
+
+			while (IsAtom (input[inputIndex], specials))
+				builder.Append (input[inputIndex++]);
+
+			return inputIndex < inputEnd;
 		}
 
-		async Task<ImapToken> ReadFlagTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
+		ImapToken ReadAtomString (ImapTokenType type, string specials, CancellationToken cancellationToken)
+		{
+			using (var builder = new ByteArrayBuilder (32)) {
+				if (type == ImapTokenType.Flag)
+					builder.Append ((byte) '\\');
+
+				while (!TryReadAtomString (type, builder, specials))
+					ReadAhead (1, cancellationToken);
+
+				return ImapToken.Create (type, builder);
+			}
+		}
+
+		async Task<ImapToken> ReadAtomStringAsync (ImapTokenType type, string specials, CancellationToken cancellationToken)
+		{
+			using (var builder = new ByteArrayBuilder (32)) {
+				if (type == ImapTokenType.Flag)
+					builder.Append ((byte) '\\');
+
+				while (!TryReadAtomString (type, builder, specials))
+					await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+
+				return ImapToken.Create (type, builder);
+			}
+		}
+
+		ImapToken ReadAtomToken (string specials, CancellationToken cancellationToken)
+		{
+			return ReadAtomString (ImapTokenType.Atom, specials, cancellationToken);
+		}
+
+		Task<ImapToken> ReadAtomTokenAsync (string specials, CancellationToken cancellationToken)
+		{
+			return ReadAtomStringAsync (ImapTokenType.Atom, specials, cancellationToken);
+		}
+
+		ImapToken ReadFlagToken (string specials, CancellationToken cancellationToken)
 		{
 			inputIndex++;
 
-			var flag = await ReadAtomStringAsync (true, specials, doAsync, cancellationToken).ConfigureAwait (false);
-
-			return ImapToken.Create (ImapTokenType.Flag, flag);
+			return ReadAtomString (ImapTokenType.Flag, specials, cancellationToken);
 		}
 
-		async Task<ImapToken> ReadLiteralTokenAsync (bool doAsync, CancellationToken cancellationToken)
+		Task<ImapToken> ReadFlagTokenAsync (string specials, CancellationToken cancellationToken)
+		{
+			inputIndex++;
+
+			return ReadAtomStringAsync (ImapTokenType.Flag, specials, cancellationToken);
+		}
+
+		bool TryReadLiteralTokenValue (ByteArrayBuilder builder)
+		{
+			input[inputEnd] = (byte) '}';
+
+			while (input[inputIndex] != (byte) '}' && input[inputIndex] != '+')
+				builder.Append (input[inputIndex++]);
+
+			return inputIndex < inputEnd;
+		}
+
+		bool TryReadUntilCloseCurlyBrace (ByteArrayBuilder builder)
+		{
+			input[inputEnd] = (byte) '}';
+
+			while (input[inputIndex] != (byte) '}')
+				builder.Append (input[inputIndex++]);
+
+			return inputIndex < inputEnd;
+		}
+
+		bool TrySkipUntilNewLine ()
+		{
+			input[inputEnd] = (byte) '\n';
+
+			while (input[inputIndex] != (byte) '\n')
+				inputIndex++;
+
+			return inputIndex < inputEnd;
+		}
+
+		ImapToken ReadLiteralToken (CancellationToken cancellationToken)
 		{
 			using (var builder = new ByteArrayBuilder (16)) {
 				// skip over the '{'
 				builder.Append (input[inputIndex++]);
 
-				do {
-					input[inputEnd] = (byte) '}';
-
-					while (input[inputIndex] != (byte) '}' && input[inputIndex] != '+')
-						builder.Append (input[inputIndex++]);
-
-					if (inputIndex < inputEnd)
-						break;
-
-					await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
-				} while (true);
+				while (!TryReadLiteralTokenValue (builder))
+					ReadAhead (1, cancellationToken);
 
 				int endIndex = builder.Length;
 
@@ -605,38 +718,20 @@ namespace MailKit.Net.Imap {
 					builder.Append (input[inputIndex++]);
 
 				// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
-				await ReadAheadAsync (2, doAsync, cancellationToken).ConfigureAwait (false);
+				ReadAhead (2, cancellationToken);
 
 				if (input[inputIndex] != (byte) '}') {
 					// PROTOCOL ERROR... but maybe we can work around it?
-					do {
-						input[inputEnd] = (byte) '}';
-
-						while (input[inputIndex] != (byte) '}')
-							builder.Append (input[inputIndex++]);
-
-						if (inputIndex < inputEnd)
-							break;
-
-						await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
-					} while (true);
+					while (!TryReadUntilCloseCurlyBrace (builder))
+						ReadAhead (1, cancellationToken);
 				}
 
 				// skip over the '}'
 				builder.Append (input[inputIndex++]);
 
 				// read until we get a new line...
-				do {
-					input[inputEnd] = (byte) '\n';
-
-					while (input[inputIndex] != (byte) '\n')
-						inputIndex++;
-
-					if (inputIndex < inputEnd)
-						break;
-
-					await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
-				} while (true);
+				while (!TrySkipUntilNewLine ())
+					ReadAhead (1, cancellationToken);
 
 				// skip over the '\n'
 				inputIndex++;
@@ -650,7 +745,74 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal async Task<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
+		async Task<ImapToken> ReadLiteralTokenAsync (CancellationToken cancellationToken)
+		{
+			using (var builder = new ByteArrayBuilder (16)) {
+				// skip over the '{'
+				builder.Append (input[inputIndex++]);
+
+				while (!TryReadLiteralTokenValue (builder))
+					await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+
+				int endIndex = builder.Length;
+
+				if (input[inputIndex] == (byte) '+')
+					builder.Append (input[inputIndex++]);
+
+				// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
+				await ReadAheadAsync (2, cancellationToken).ConfigureAwait (false);
+
+				if (input[inputIndex] != (byte) '}') {
+					// PROTOCOL ERROR... but maybe we can work around it?
+					while (!TryReadUntilCloseCurlyBrace (builder))
+						await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+				}
+
+				// skip over the '}'
+				builder.Append (input[inputIndex++]);
+
+				// read until we get a new line...
+				while (!TrySkipUntilNewLine ())
+					await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+
+				// skip over the '\n'
+				inputIndex++;
+
+				if (!builder.TryParse (1, endIndex, out literalDataLeft) || literalDataLeft < 0)
+					return ImapToken.Create (ImapTokenType.Error, builder.ToString ());
+
+				Mode = ImapStreamMode.Literal;
+
+				return ImapToken.Create (ImapTokenType.Literal, literalDataLeft);
+			}
+		}
+
+		bool TrySkipWhiteSpace ()
+		{
+			input[inputEnd] = (byte) '\n';
+
+			while (IsWhiteSpace (input[inputIndex]))
+				inputIndex++;
+
+			return inputIndex < inputEnd;
+		}
+
+		/// <summary>
+		/// Reads the next available token from the stream.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="specials">The special characters that are not allowed in an atom token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public ImapToken ReadToken (string specials, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -660,34 +822,23 @@ namespace MailKit.Net.Imap {
 				return token;
 			}
 
-			input[inputEnd] = (byte) '\n';
-
 			// skip over white space between tokens...
-			do {
-				while (IsWhiteSpace (input[inputIndex]))
-					inputIndex++;
-
-				if (inputIndex < inputEnd)
-					break;
-
-				await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
-
-				input[inputEnd] = (byte) '\n';
-			} while (true);
+			while (!TrySkipWhiteSpace ())
+				ReadAhead (1, cancellationToken);
 
 			char c = (char) input[inputIndex];
 
 			if (c == '"')
-				return await ReadQuotedStringTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				return ReadQuotedStringToken (cancellationToken);
 
 			if (c == '{')
-				return await ReadLiteralTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				return ReadLiteralToken (cancellationToken);
 
 			if (c == '\\')
-				return await ReadFlagTokenAsync (specials, doAsync, cancellationToken).ConfigureAwait (false);
+				return ReadFlagToken (specials, cancellationToken);
 
 			if (IsAtom (input[inputIndex], specials))
-				return await ReadAtomTokenAsync (specials, doAsync, cancellationToken).ConfigureAwait (false);
+				return ReadAtomToken (specials, cancellationToken);
 
 			// special character token
 			inputIndex++;
@@ -695,9 +846,53 @@ namespace MailKit.Net.Imap {
 			return ImapToken.Create ((ImapTokenType) c, c);
 		}
 
-		internal Task<ImapToken> ReadTokenAsync (bool doAsync, CancellationToken cancellationToken)
+		/// <summary>
+		/// Asynchronously reads the next available token from the stream.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="specials">The special characters that are not allowed in an atom token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public async Task<ImapToken> ReadTokenAsync (string specials, CancellationToken cancellationToken)
 		{
-			return ReadTokenAsync (DefaultSpecials, doAsync, cancellationToken);
+			CheckDisposed ();
+
+			if (nextToken != null) {
+				var token = nextToken;
+				nextToken = null;
+				return token;
+			}
+
+			// skip over white space between tokens...
+			while (!TrySkipWhiteSpace ())
+				await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+
+			char c = (char) input[inputIndex];
+
+			if (c == '"')
+				return await ReadQuotedStringTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			if (c == '{')
+				return await ReadLiteralTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			if (c == '\\')
+				return await ReadFlagTokenAsync (specials, cancellationToken).ConfigureAwait (false);
+
+			if (IsAtom (input[inputIndex], specials))
+				return await ReadAtomTokenAsync (specials, cancellationToken).ConfigureAwait (false);
+
+			// special character token
+			inputIndex++;
+
+			return ImapToken.Create ((ImapTokenType) c, c);
 		}
 
 		/// <summary>
@@ -716,7 +911,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken ReadToken (CancellationToken cancellationToken)
 		{
-			return ReadTokenAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			return ReadToken (DefaultSpecials, cancellationToken);
 		}
 
 		/// <summary>
@@ -735,7 +930,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public Task<ImapToken> ReadTokenAsync (CancellationToken cancellationToken)
 		{
-			return ReadTokenAsync (true, cancellationToken);
+			return ReadTokenAsync (DefaultSpecials, cancellationToken);
 		}
 
 		/// <summary>
@@ -750,44 +945,37 @@ namespace MailKit.Net.Imap {
 			nextToken = token;
 		}
 
-		async Task<bool> ReadLineAsync (ByteArrayBuilder builder, bool doAsync, CancellationToken cancellationToken)
+		unsafe bool TryReadLine (ByteArrayBuilder builder)
 		{
-			CheckDisposed ();
+			fixed (byte* inbuf = input) {
+				byte* start, inptr, inend;
+				int offset = inputIndex;
+				int count;
 
-			if (inputIndex == inputEnd)
-				await ReadAheadAsync (1, doAsync, cancellationToken).ConfigureAwait (false);
+				start = inbuf + inputIndex;
+				inend = inbuf + inputEnd;
+				*inend = (byte) '\n';
+				inptr = start;
 
-			unsafe {
-				fixed (byte* inbuf = input) {
-					byte* start, inptr, inend;
-					int offset = inputIndex;
-					int count;
+				// FIXME: use SIMD to optimize this
+				while (*inptr != (byte) '\n')
+					inptr++;
 
-					start = inbuf + inputIndex;
-					inend = inbuf + inputEnd;
-					*inend = (byte) '\n';
-					inptr = start;
+				inputIndex = (int) (inptr - inbuf);
+				count = (int) (inptr - start);
 
-					// FIXME: use SIMD to optimize this
-					while (*inptr != (byte) '\n')
-						inptr++;
-
-					inputIndex = (int) (inptr - inbuf);
-					count = (int) (inptr - start);
-
-					if (inptr == inend) {
-						builder.Append (input, offset, count);
-						return false;
-					}
-
-					// consume the '\n'
-					inputIndex++;
-					count++;
-
+				if (inptr == inend) {
 					builder.Append (input, offset, count);
-
-					return true;
+					return false;
 				}
+
+				// consume the '\n'
+				inputIndex++;
+				count++;
+
+				builder.Append (input, offset, count);
+
+				return true;
 			}
 		}
 
@@ -798,7 +986,7 @@ namespace MailKit.Net.Imap {
 		/// This method should be called in a loop until it returns <c>true</c>.
 		/// </remarks>
 		/// <returns><c>true</c>, if reading the line is complete, <c>false</c> otherwise.</returns>
-		/// <param name="builder">The output buffer to write the line data into.</param>
+		/// <param name="builder">The output buffer write the line data into.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -811,7 +999,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		internal bool ReadLine (ByteArrayBuilder builder, CancellationToken cancellationToken)
 		{
-			return ReadLineAsync (builder, false, cancellationToken).GetAwaiter ().GetResult ();
+			CheckDisposed ();
+
+			if (inputIndex == inputEnd)
+				ReadAhead (1, cancellationToken);
+
+			return TryReadLine (builder);
 		}
 
 		/// <summary>
@@ -821,7 +1014,7 @@ namespace MailKit.Net.Imap {
 		/// This method should be called in a loop until it returns <c>true</c>.
 		/// </remarks>
 		/// <returns><c>true</c>, if reading the line is complete, <c>false</c> otherwise.</returns>
-		/// <param name="builder">The output buffer to write the line data into.</param>
+		/// <param name="builder">The output buffer write the line data into.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -832,65 +1025,26 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal Task<bool> ReadLineAsync (ByteArrayBuilder builder, CancellationToken cancellationToken)
-		{
-			return ReadLineAsync (builder, true, cancellationToken);
-		}
-
-		async Task WriteAsync (byte[] buffer, int offset, int count, bool doAsync, CancellationToken cancellationToken)
+		internal async Task<bool> ReadLineAsync (ByteArrayBuilder builder, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
-			ValidateArguments (buffer, offset, count);
+			if (inputIndex == inputEnd)
+				await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
 
-			try {
-				var network = NetworkStream.Get (Stream);
-				int index = offset;
-				int left = count;
+			return TryReadLine (builder);
+		}
 
-				while (left > 0) {
-					int n = Math.Min (BlockSize - outputIndex, left);
+		void AppendToOutputBuffer (byte[] buffer, ref int index, ref int left)
+		{
+			int n = Math.Min (BlockSize - outputIndex, left);
 
-					if (outputIndex > 0 || n < BlockSize) {
-						// append the data to the output buffer
-						Buffer.BlockCopy (buffer, index, output, outputIndex, n);
-						outputIndex += n;
-						index += n;
-						left -= n;
-					}
-
-					if (outputIndex == BlockSize) {
-						// flush the output buffer
-						if (doAsync) {
-							await Stream.WriteAsync (output, 0, BlockSize, cancellationToken).ConfigureAwait (false);
-						} else {
-							network?.Poll (SelectMode.SelectWrite, cancellationToken);
-							Stream.Write (output, 0, BlockSize);
-						}
-						logger.LogClient (output, 0, BlockSize);
-						outputIndex = 0;
-					}
-
-					if (outputIndex == 0) {
-						// write blocks of data to the stream without buffering
-						while (left >= BlockSize) {
-							if (doAsync) {
-								await Stream.WriteAsync (buffer, index, BlockSize, cancellationToken).ConfigureAwait (false);
-							} else {
-								network?.Poll (SelectMode.SelectWrite, cancellationToken);
-								Stream.Write (buffer, index, BlockSize);
-							}
-							logger.LogClient (buffer, index, BlockSize);
-							index += BlockSize;
-							left -= BlockSize;
-						}
-					}
-				}
-			} catch (Exception ex) {
-				IsConnected = false;
-				if (!(ex is OperationCanceledException))
-					cancellationToken.ThrowIfCancellationRequested ();
-				throw;
+			if (outputIndex > 0 || n < BlockSize) {
+				// append the data to the output buffer
+				Buffer.BlockCopy (buffer, index, output, outputIndex, n);
+				outputIndex += n;
+				index += n;
+				left -= n;
 			}
 		}
 
@@ -929,7 +1083,45 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			WriteAsync (buffer, offset, count, false, cancellationToken).GetAwaiter ().GetResult ();
+			CheckDisposed ();
+
+			ValidateArguments (buffer, offset, count);
+
+			try {
+				var network = NetworkStream.Get (Stream);
+				int index = offset;
+				int left = count;
+
+				while (left > 0) {
+					AppendToOutputBuffer (buffer, ref index, ref left);
+
+					if (outputIndex == BlockSize) {
+						// flush the output buffer
+						network?.Poll (SelectMode.SelectWrite, cancellationToken);
+						Stream.Write (output, 0, BlockSize);
+
+						logger.LogClient (output, 0, BlockSize);
+						outputIndex = 0;
+					}
+
+					if (outputIndex == 0) {
+						// write blocks of data to the stream without buffering
+						while (left >= BlockSize) {
+							network?.Poll (SelectMode.SelectWrite, cancellationToken);
+							Stream.Write (buffer, index, BlockSize);
+
+							logger.LogClient (buffer, index, BlockSize);
+							index += BlockSize;
+							left -= BlockSize;
+						}
+					}
+				}
+			} catch (Exception ex) {
+				IsConnected = false;
+				if (!(ex is OperationCanceledException))
+					cancellationToken.ThrowIfCancellationRequested ();
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -1000,31 +1192,36 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
-		{
-			return WriteAsync (buffer, offset, count, true, cancellationToken);
-		}
-
-		async Task FlushAsync (bool doAsync, CancellationToken cancellationToken)
+		public override async Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
-			if (outputIndex == 0)
-				return;
+			ValidateArguments (buffer, offset, count);
 
 			try {
-				if (doAsync) {
-					await Stream.WriteAsync (output, 0, outputIndex, cancellationToken).ConfigureAwait (false);
-					await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
-				} else {
-					var network = NetworkStream.Get (Stream);
+				int index = offset;
+				int left = count;
 
-					network?.Poll (SelectMode.SelectWrite, cancellationToken);
-					Stream.Write (output, 0, outputIndex);
-					Stream.Flush ();
+				while (left > 0) {
+					AppendToOutputBuffer (buffer, ref index, ref left);
+
+					if (outputIndex == BlockSize) {
+						// flush the output buffer
+						await Stream.WriteAsync (output, 0, BlockSize, cancellationToken).ConfigureAwait (false);
+						logger.LogClient (output, 0, BlockSize);
+						outputIndex = 0;
+					}
+
+					if (outputIndex == 0) {
+						// write blocks of data to the stream without buffering
+						while (left >= BlockSize) {
+							await Stream.WriteAsync (buffer, index, BlockSize, cancellationToken).ConfigureAwait (false);
+							logger.LogClient (buffer, index, BlockSize);
+							index += BlockSize;
+							left -= BlockSize;
+						}
+					}
 				}
-				logger.LogClient (output, 0, outputIndex);
-				outputIndex = 0;
 			} catch (Exception ex) {
 				IsConnected = false;
 				if (!(ex is OperationCanceledException))
@@ -1056,7 +1253,26 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Flush (CancellationToken cancellationToken)
 		{
-			FlushAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			CheckDisposed ();
+
+			if (outputIndex == 0)
+				return;
+
+			try {
+				var network = NetworkStream.Get (Stream);
+
+				network?.Poll (SelectMode.SelectWrite, cancellationToken);
+				Stream.Write (output, 0, outputIndex);
+				Stream.Flush ();
+
+				logger.LogClient (output, 0, outputIndex);
+				outputIndex = 0;
+			} catch (Exception ex) {
+				IsConnected = false;
+				if (!(ex is OperationCanceledException))
+					cancellationToken.ThrowIfCancellationRequested ();
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -1103,9 +1319,25 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Task FlushAsync (CancellationToken cancellationToken)
+		public override async Task FlushAsync (CancellationToken cancellationToken)
 		{
-			return FlushAsync (true, cancellationToken);
+			CheckDisposed ();
+
+			if (outputIndex == 0)
+				return;
+
+			try {
+				await Stream.WriteAsync (output, 0, outputIndex, cancellationToken).ConfigureAwait (false);
+				await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+
+				logger.LogClient (output, 0, outputIndex);
+				outputIndex = 0;
+			} catch (Exception ex) {
+				IsConnected = false;
+				if (!(ex is OperationCanceledException))
+					cancellationToken.ThrowIfCancellationRequested ();
+				throw;
+			}
 		}
 
 		/// <summary>

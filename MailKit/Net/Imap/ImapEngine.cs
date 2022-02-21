@@ -812,17 +812,28 @@ namespace MailKit.Net.Imap {
 
 		internal Task<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
 		{
-			return Stream.ReadTokenAsync (specials, doAsync, cancellationToken);
+			if (doAsync)
+				return Stream.ReadTokenAsync (specials, cancellationToken);
+
+			return Task.FromResult (Stream.ReadToken (specials, cancellationToken));
 		}
 
 		internal Task<ImapToken> ReadTokenAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			return Stream.ReadTokenAsync (ImapStream.DefaultSpecials, doAsync, cancellationToken);
+			if (doAsync)
+				return Stream.ReadTokenAsync (ImapStream.DefaultSpecials, cancellationToken);
+
+			return Task.FromResult (Stream.ReadToken (ImapStream.DefaultSpecials, cancellationToken));
 		}
 
 		internal async Task<ImapToken> PeekTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
 		{
-			var token = await ReadTokenAsync (specials, doAsync, cancellationToken).ConfigureAwait (false);
+			ImapToken token;
+
+			if (doAsync)
+				token = await Stream.ReadTokenAsync (specials, cancellationToken).ConfigureAwait (false);
+			else
+				token = Stream.ReadToken (specials, cancellationToken);
 
 			Stream.UngetToken (token);
 
