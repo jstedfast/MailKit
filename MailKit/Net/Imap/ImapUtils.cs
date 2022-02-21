@@ -1544,17 +1544,17 @@ namespace MailKit.Net.Imap {
 				if (token.Type != ImapTokenType.Nil) {
 					var flag = (string) token.Value;
 
-					if (flag.Equals ("\\answered", StringComparison.OrdinalIgnoreCase))
+					if (flag.Equals ("\\Answered", StringComparison.OrdinalIgnoreCase))
 						flags |= MessageFlags.Answered;
-					else if (flag.Equals ("\\deleted", StringComparison.OrdinalIgnoreCase))
+					else if (flag.Equals ("\\Deleted", StringComparison.OrdinalIgnoreCase))
 						flags |= MessageFlags.Deleted;
-					else if (flag.Equals ("\\draft", StringComparison.OrdinalIgnoreCase))
+					else if (flag.Equals ("\\Draft", StringComparison.OrdinalIgnoreCase))
 						flags |= MessageFlags.Draft;
-					else if (flag.Equals ("\\flagged", StringComparison.OrdinalIgnoreCase))
+					else if (flag.Equals ("\\Flagged", StringComparison.OrdinalIgnoreCase))
 						flags |= MessageFlags.Flagged;
-					else if (flag.Equals ("\\seen", StringComparison.OrdinalIgnoreCase))
+					else if (flag.Equals ("\\Seen", StringComparison.OrdinalIgnoreCase))
 						flags |= MessageFlags.Seen;
-					else if (flag.Equals ("\\recent", StringComparison.OrdinalIgnoreCase))
+					else if (flag.Equals ("\\Recent", StringComparison.OrdinalIgnoreCase))
 						flags |= MessageFlags.Recent;
 					else if (flag.Equals ("\\*", StringComparison.OrdinalIgnoreCase))
 						flags |= MessageFlags.UserDefined;
