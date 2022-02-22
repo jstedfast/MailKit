@@ -731,7 +731,7 @@ namespace MailKit.Net.Imap {
 			return ParseMetadataAsync (engine, metadata, doAsync, ic.CancellationToken);
 		}
 
-		internal static async Task<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		internal static async ValueTask<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -746,7 +746,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static async Task<string> ReadNStringTokenAsync (ImapEngine engine, string format, bool rfc2047, bool doAsync, CancellationToken cancellationToken)
+		static async ValueTask<string> ReadNStringTokenAsync (ImapEngine engine, string format, bool rfc2047, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			string value;
@@ -774,7 +774,7 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
-		static async Task<uint> ReadNumberAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		static async ValueTask<uint> ReadNumberAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 

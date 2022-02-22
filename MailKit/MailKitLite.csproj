@@ -48,9 +48,9 @@
     <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 
-  <!--ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
-    <Reference Include="System.Net" />
-  </ItemGroup-->
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKitLite.csproj" />

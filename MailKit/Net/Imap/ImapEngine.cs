@@ -805,23 +805,27 @@ namespace MailKit.Net.Imap {
 		}
 #endif
 
-		internal Task<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
+		internal ValueTask<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (doAsync)
 				return Stream.ReadTokenAsync (specials, cancellationToken);
 
-			return Task.FromResult (Stream.ReadToken (specials, cancellationToken));
+			var token = Stream.ReadToken (specials, cancellationToken);
+
+			return new ValueTask<ImapToken> (token);
 		}
 
-		internal Task<ImapToken> ReadTokenAsync (bool doAsync, CancellationToken cancellationToken)
+		internal ValueTask<ImapToken> ReadTokenAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			if (doAsync)
 				return Stream.ReadTokenAsync (ImapStream.DefaultSpecials, cancellationToken);
 
-			return Task.FromResult (Stream.ReadToken (ImapStream.DefaultSpecials, cancellationToken));
+			var token = Stream.ReadToken (ImapStream.DefaultSpecials, cancellationToken);
+
+			return new ValueTask<ImapToken> (token);
 		}
 
-		internal async Task<ImapToken> PeekTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
+		internal async ValueTask<ImapToken> PeekTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
 		{
 			ImapToken token;
 
@@ -835,7 +839,7 @@ namespace MailKit.Net.Imap {
 			return token;
 		}
 
-		internal Task<ImapToken> PeekTokenAsync (bool doAsync, CancellationToken cancellationToken)
+		internal ValueTask<ImapToken> PeekTokenAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			return PeekTokenAsync (ImapStream.DefaultSpecials, doAsync, cancellationToken);
 		}
@@ -880,7 +884,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task<ImapToken> ReadTokenAsync (CancellationToken cancellationToken)
+		public ValueTask<ImapToken> ReadTokenAsync (CancellationToken cancellationToken)
 		{
 			return Stream.ReadTokenAsync (cancellationToken);
 		}
@@ -926,7 +930,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task<ImapToken> PeekTokenAsync (string specials, CancellationToken cancellationToken)
+		public ValueTask<ImapToken> PeekTokenAsync (string specials, CancellationToken cancellationToken)
 		{
 			return PeekTokenAsync (specials, true, cancellationToken);
 		}
@@ -970,7 +974,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task<ImapToken> PeekTokenAsync (CancellationToken cancellationToken)
+		public ValueTask<ImapToken> PeekTokenAsync (CancellationToken cancellationToken)
 		{
 			return PeekTokenAsync (true, cancellationToken);
 		}
@@ -1045,7 +1049,7 @@ namespace MailKit.Net.Imap {
 		}
 #endif
 
-		async Task SkipLineAsync (bool doAsync, CancellationToken cancellationToken)
+		async ValueTask SkipLineAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			ImapToken token;
 

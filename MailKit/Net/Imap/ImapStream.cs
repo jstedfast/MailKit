@@ -320,7 +320,7 @@ namespace MailKit.Net.Imap {
 			return inputEnd - inputIndex;
 		}
 
-		async Task<int> ReadAheadAsync (int atleast, CancellationToken cancellationToken)
+		async ValueTask<int> ReadAheadAsync (int atleast, CancellationToken cancellationToken)
 		{
 			if (!AlignReadAheadBuffer (atleast, out int left, out int start, out int end))
 				return left;
@@ -591,7 +591,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		async Task<ImapToken> ReadQuotedStringTokenAsync (CancellationToken cancellationToken)
+		async ValueTask<ImapToken> ReadQuotedStringTokenAsync (CancellationToken cancellationToken)
 		{
 			bool escaped = false;
 
@@ -636,7 +636,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		async Task<ImapToken> ReadAtomStringAsync (ImapTokenType type, string specials, CancellationToken cancellationToken)
+		async ValueTask<ImapToken> ReadAtomStringAsync (ImapTokenType type, string specials, CancellationToken cancellationToken)
 		{
 			using (var builder = new ByteArrayBuilder (32)) {
 				if (type == ImapTokenType.Flag)
@@ -654,7 +654,7 @@ namespace MailKit.Net.Imap {
 			return ReadAtomString (ImapTokenType.Atom, specials, cancellationToken);
 		}
 
-		Task<ImapToken> ReadAtomTokenAsync (string specials, CancellationToken cancellationToken)
+		ValueTask<ImapToken> ReadAtomTokenAsync (string specials, CancellationToken cancellationToken)
 		{
 			return ReadAtomStringAsync (ImapTokenType.Atom, specials, cancellationToken);
 		}
@@ -666,7 +666,7 @@ namespace MailKit.Net.Imap {
 			return ReadAtomString (ImapTokenType.Flag, specials, cancellationToken);
 		}
 
-		Task<ImapToken> ReadFlagTokenAsync (string specials, CancellationToken cancellationToken)
+		ValueTask<ImapToken> ReadFlagTokenAsync (string specials, CancellationToken cancellationToken)
 		{
 			inputIndex++;
 
@@ -745,7 +745,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		async Task<ImapToken> ReadLiteralTokenAsync (CancellationToken cancellationToken)
+		async ValueTask<ImapToken> ReadLiteralTokenAsync (CancellationToken cancellationToken)
 		{
 			using (var builder = new ByteArrayBuilder (16)) {
 				// skip over the '{'
@@ -861,7 +861,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async Task<ImapToken> ReadTokenAsync (string specials, CancellationToken cancellationToken)
+		public async ValueTask<ImapToken> ReadTokenAsync (string specials, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -928,7 +928,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public Task<ImapToken> ReadTokenAsync (CancellationToken cancellationToken)
+		public ValueTask<ImapToken> ReadTokenAsync (CancellationToken cancellationToken)
 		{
 			return ReadTokenAsync (DefaultSpecials, cancellationToken);
 		}
@@ -1025,7 +1025,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal async Task<bool> ReadLineAsync (ByteArrayBuilder builder, CancellationToken cancellationToken)
+		internal async ValueTask<bool> ReadLineAsync (ByteArrayBuilder builder, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
