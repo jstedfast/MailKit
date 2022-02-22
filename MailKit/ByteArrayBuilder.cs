@@ -99,12 +99,24 @@ namespace MailKit
 		public bool Equals (string value, bool ignoreCase = false)
 		{
 			if (length == value.Length) {
-				for (int i = 0; i < length; i++) {
-					char c = (char) buffer[i];
-					char v = value[i];
+				if (ignoreCase) {
+					for (int i = 0; i < length; i++) {
+						uint a = (uint) buffer[i];
+						uint b = (uint) value[i];
 
-					if (c != v && (!ignoreCase || char.ToUpperInvariant (c) != char.ToUpperInvariant (v)))
-						return false;
+						if ((a - 'a') <= 'z' - 'a')
+							a -= 0x20;
+						if ((b - 'a') <= 'z' - 'a')
+							b -= 0x20;
+
+						if (a != b)
+							return false;
+					}
+				} else {
+					for (int i = 0; i < length; i++) {
+						if (value[i] != (char) buffer[i])
+							return false;
+					}
 				}
 
 				return true;
