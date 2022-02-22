@@ -602,7 +602,7 @@ namespace MailKit.Net.Imap {
 				while (!TryReadQuotedString (builder, ref escaped))
 					await ReadAheadAsync (2, cancellationToken).ConfigureAwait (false);
 
-				var qstring = builder.ToString (TextEncodings.UTF8, TextEncodings.Latin1);
+				var qstring = builder.ToString ();
 
 				return ImapToken.Create (ImapTokenType.QString, qstring);
 			}
