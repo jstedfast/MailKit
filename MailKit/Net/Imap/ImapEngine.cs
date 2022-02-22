@@ -651,17 +651,13 @@ namespace MailKit.Net.Imap {
 				var state = State;
 				var bye = false;
 
-				switch (atom.ToUpperInvariant ()) {
-				case "BYE":
-					bye = true;
-					break;
-				case "PREAUTH":
-					state = ImapEngineState.Authenticated;
-					break;
-				case "OK":
+				if (atom.Equals ("OK", StringComparison.OrdinalIgnoreCase)) {
 					state = ImapEngineState.Connected;
-					break;
-				default:
+				} else if (atom.Equals ("BYE", StringComparison.OrdinalIgnoreCase)) {
+					bye = true;
+				} else if (atom.Equals ("PREAUTH", StringComparison.OrdinalIgnoreCase)) {
+					state = ImapEngineState.Authenticated;
+				} else {
 					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
 				}
 
@@ -1417,66 +1413,122 @@ namespace MailKit.Net.Imap {
 
 		internal static ImapResponseCodeType GetResponseCodeType (string atom)
 		{
-			switch (atom.ToUpperInvariant ()) {
-			case "ALERT":                return ImapResponseCodeType.Alert;
-			case "BADCHARSET":           return ImapResponseCodeType.BadCharset;
-			case "CAPABILITY":           return ImapResponseCodeType.Capability;
-			case "NEWNAME":              return ImapResponseCodeType.NewName;
-			case "PARSE":                return ImapResponseCodeType.Parse;
-			case "PERMANENTFLAGS":       return ImapResponseCodeType.PermanentFlags;
-			case "READ-ONLY":            return ImapResponseCodeType.ReadOnly;
-			case "READ-WRITE":           return ImapResponseCodeType.ReadWrite;
-			case "TRYCREATE":            return ImapResponseCodeType.TryCreate;
-			case "UIDNEXT":              return ImapResponseCodeType.UidNext;
-			case "UIDVALIDITY":          return ImapResponseCodeType.UidValidity;
-			case "UNSEEN":               return ImapResponseCodeType.Unseen;
-			case "REFERRAL":             return ImapResponseCodeType.Referral;
-			case "UNKNOWN-CTE":          return ImapResponseCodeType.UnknownCte;
-			case "APPENDUID":            return ImapResponseCodeType.AppendUid;
-			case "COPYUID":              return ImapResponseCodeType.CopyUid;
-			case "UIDNOTSTICKY":         return ImapResponseCodeType.UidNotSticky;
-			case "URLMECH":              return ImapResponseCodeType.UrlMech;
-			case "BADURL":               return ImapResponseCodeType.BadUrl;
-			case "TOOBIG":               return ImapResponseCodeType.TooBig;
-			case "HIGHESTMODSEQ":        return ImapResponseCodeType.HighestModSeq;
-			case "MODIFIED":             return ImapResponseCodeType.Modified;
-			case "NOMODSEQ":             return ImapResponseCodeType.NoModSeq;
-			case "COMPRESSIONACTIVE":    return ImapResponseCodeType.CompressionActive;
-			case "CLOSED":               return ImapResponseCodeType.Closed;
-			case "NOTSAVED":             return ImapResponseCodeType.NotSaved;
-			case "BADCOMPARATOR":        return ImapResponseCodeType.BadComparator;
-			case "ANNOTATE":             return ImapResponseCodeType.Annotate;
-			case "ANNOTATIONS":          return ImapResponseCodeType.Annotations;
-			case "MAXCONVERTMESSAGES":   return ImapResponseCodeType.MaxConvertMessages;
-			case "MAXCONVERTPARTS":      return ImapResponseCodeType.MaxConvertParts;
-			case "TEMPFAIL":             return ImapResponseCodeType.TempFail;
-			case "NOUPDATE":             return ImapResponseCodeType.NoUpdate;
-			case "METADATA":             return ImapResponseCodeType.Metadata;
-			case "NOTIFICATIONOVERFLOW": return ImapResponseCodeType.NotificationOverflow;
-			case "BADEVENT":             return ImapResponseCodeType.BadEvent;
-			case "UNDEFINED-FILTER":     return ImapResponseCodeType.UndefinedFilter;
-			case "UNAVAILABLE":          return ImapResponseCodeType.Unavailable;
-			case "AUTHENTICATIONFAILED": return ImapResponseCodeType.AuthenticationFailed;
-			case "AUTHORIZATIONFAILED":  return ImapResponseCodeType.AuthorizationFailed;
-			case "EXPIRED":              return ImapResponseCodeType.Expired;
-			case "PRIVACYREQUIRED":      return ImapResponseCodeType.PrivacyRequired;
-			case "CONTACTADMIN":         return ImapResponseCodeType.ContactAdmin;
-			case "NOPERM":               return ImapResponseCodeType.NoPerm;
-			case "INUSE":                return ImapResponseCodeType.InUse;
-			case "EXPUNGEISSUED":        return ImapResponseCodeType.ExpungeIssued;
-			case "CORRUPTION":           return ImapResponseCodeType.Corruption;
-			case "SERVERBUG":            return ImapResponseCodeType.ServerBug;
-			case "CLIENTBUG":            return ImapResponseCodeType.ClientBug;
-			case "CANNOT":               return ImapResponseCodeType.CanNot;
-			case "LIMIT":                return ImapResponseCodeType.Limit;
-			case "OVERQUOTA":            return ImapResponseCodeType.OverQuota;
-			case "ALREADYEXISTS":        return ImapResponseCodeType.AlreadyExists;
-			case "NONEXISTENT":          return ImapResponseCodeType.NonExistent;
-			case "USEATTR":              return ImapResponseCodeType.UseAttr;
-			case "MAILBOXID":            return ImapResponseCodeType.MailboxId;
-			case "WEBALERT":             return ImapResponseCodeType.WebAlert;
-			default:                     return ImapResponseCodeType.Unknown;
-			}
+			if (atom.Equals ("ALERT", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Alert;
+			if (atom.Equals ("BADCHARSET", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.BadCharset;
+			if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Capability;
+			if (atom.Equals ("NEWNAME", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.NewName;
+			if (atom.Equals ("PARSE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Parse;
+			if (atom.Equals ("PERMANENTFLAGS", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.PermanentFlags;
+			if (atom.Equals ("READ-ONLY", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.ReadOnly;
+			if (atom.Equals ("READ-WRITE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.ReadWrite;
+			if (atom.Equals ("TRYCREATE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.TryCreate;
+			if (atom.Equals ("UIDNEXT", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.UidNext;
+			if (atom.Equals ("UIDVALIDITY", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.UidValidity;
+			if (atom.Equals ("UNSEEN", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Unseen;
+			if (atom.Equals ("REFERRAL", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Referral;
+			if (atom.Equals ("UNKNOWN-CTE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.UnknownCte;
+			if (atom.Equals ("APPENDUID", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.AppendUid;
+			if (atom.Equals ("COPYUID", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.CopyUid;
+			if (atom.Equals ("UIDNOTSTICKY", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.UidNotSticky;
+			if (atom.Equals ("URLMECH", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.UrlMech;
+			if (atom.Equals ("BADURL", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.BadUrl;
+			if (atom.Equals ("TOOBIG", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.TooBig;
+			if (atom.Equals ("HIGHESTMODSEQ", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.HighestModSeq;
+			if (atom.Equals ("MODIFIED", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Modified;
+			if (atom.Equals ("NOMODSEQ", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.NoModSeq;
+			if (atom.Equals ("COMPRESSIONACTIVE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.CompressionActive;
+			if (atom.Equals ("CLOSED", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Closed;
+			if (atom.Equals ("NOTSAVED", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.NotSaved;
+			if (atom.Equals ("BADCOMPARATOR", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.BadComparator;
+			if (atom.Equals ("ANNOTATE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Annotate;
+			if (atom.Equals ("ANNOTATIONS", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Annotations;
+			if (atom.Equals ("MAXCONVERTMESSAGES", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.MaxConvertMessages;
+			if (atom.Equals ("MAXCONVERTPARTS", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.MaxConvertParts;
+			if (atom.Equals ("TEMPFAIL", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.TempFail;
+			if (atom.Equals ("NOUPDATE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.NoUpdate;
+			if (atom.Equals ("METADATA", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Metadata;
+			if (atom.Equals ("NOTIFICATIONOVERFLOW", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.NotificationOverflow;
+			if (atom.Equals ("BADEVENT", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.BadEvent;
+			if (atom.Equals ("UNDEFINED-FILTER", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.UndefinedFilter;
+			if (atom.Equals ("UNAVAILABLE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Unavailable;
+			if (atom.Equals ("AUTHENTICATIONFAILED", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.AuthenticationFailed;
+			if (atom.Equals ("AUTHORIZATIONFAILED", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.AuthorizationFailed;
+			if (atom.Equals ("EXPIRED", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Expired;
+			if (atom.Equals ("PRIVACYREQUIRED", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.PrivacyRequired;
+			if (atom.Equals ("CONTACTADMIN", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.ContactAdmin;
+			if (atom.Equals ("NOPERM", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.NoPerm;
+			if (atom.Equals ("INUSE", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.InUse;
+			if (atom.Equals ("EXPUNGEISSUED", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.ExpungeIssued;
+			if (atom.Equals ("CORRUPTION", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Corruption;
+			if (atom.Equals ("SERVERBUG", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.ServerBug;
+			if (atom.Equals ("CLIENTBUG", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.ClientBug;
+			if (atom.Equals ("CANNOT", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.CanNot;
+			if (atom.Equals ("LIMIT", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.Limit;
+			if (atom.Equals ("OVERQUOTA", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.OverQuota;
+			if (atom.Equals ("ALREADYEXISTS", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.AlreadyExists;
+			if (atom.Equals ("NONEXISTENT", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.NonExistent;
+			if (atom.Equals ("USEATTR", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.UseAttr;
+			if (atom.Equals ("MAILBOXID", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.MailboxId;
+			if (atom.Equals ("WEBALERT", StringComparison.OrdinalIgnoreCase))
+				return ImapResponseCodeType.WebAlert;
+
+			return ImapResponseCodeType.Unknown;
 		}
 
 		/// <summary>
@@ -1490,8 +1542,8 @@ namespace MailKit.Net.Imap {
 		{
 			uint validity = Selected != null ? Selected.UidValidity : 0;
 			ImapResponseCode code;
+			string atom, value;
 			ImapToken token;
-			string atom;
 
 //			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 //
@@ -1683,14 +1735,11 @@ namespace MailKit.Net.Imap {
 
 				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATE", token);
 
-				switch (((string) token.Value).ToUpperInvariant ()) {
-				case "TOOBIG":
+				value = (string) token.Value;
+				if (value.Equals ("TOOBIG", StringComparison.OrdinalIgnoreCase))
 					annotate.SubType = AnnotateResponseCodeSubType.TooBig;
-					break;
-				case "TOOMANY":
+				else if (value.Equals ("TOOMANY", StringComparison.OrdinalIgnoreCase))
 					annotate.SubType = AnnotateResponseCodeSubType.TooMany;
-					break;
-				}
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				break;
@@ -1699,15 +1748,14 @@ namespace MailKit.Net.Imap {
 
 				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
 
-				switch (((string) token.Value).ToUpperInvariant ()) {
-				case "NONE": break;
-				case "READ-ONLY":
+				value = (string) token.Value;
+				if (value.Equals ("NONE", StringComparison.OrdinalIgnoreCase)) {
+					// nothing
+				} else if (value.Equals ("READ-ONLY", StringComparison.OrdinalIgnoreCase)) {
 					annotations.Access = AnnotationAccess.ReadOnly;
-					break;
-				default:
+				} else {
 					annotations.Access = AnnotationAccess.ReadWrite;
 					annotations.MaxSize = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
-					break;
 				}
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1731,28 +1779,24 @@ namespace MailKit.Net.Imap {
 
 				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "METADATA", token);
 
-				switch (((string) token.Value).ToUpperInvariant ()) {
-				case "LONGENTRIES":
+				value = (string) token.Value;
+				if (value.Equals ("LONGENTRIES", StringComparison.OrdinalIgnoreCase)) {
 					metadata.SubType = MetadataResponseCodeSubType.LongEntries;
 					metadata.IsError = false;
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					metadata.Value = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "METADATA LONGENTRIES", token);
-					break;
-				case "MAXSIZE":
+				} else if (value.Equals ("MAXSIZE", StringComparison.OrdinalIgnoreCase)) {
 					metadata.SubType = MetadataResponseCodeSubType.MaxSize;
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					metadata.Value = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "METADATA MAXSIZE", token);
-					break;
-				case "TOOMANY":
+				} else if (value.Equals ("TOOMANY", StringComparison.OrdinalIgnoreCase)) {
 					metadata.SubType = MetadataResponseCodeSubType.TooMany;
-					break;
-				case "NOPRIVATE":
+				} else if (value.Equals ("NOPRIVATE", StringComparison.OrdinalIgnoreCase)) {
 					metadata.SubType = MetadataResponseCodeSubType.NoPrivate;
-					break;
 				}
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1817,9 +1861,9 @@ namespace MailKit.Net.Imap {
 		async Task UpdateStatusAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
+			string name, value;
 			uint count, uid;
 			ulong modseq;
-			string name;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
@@ -1831,7 +1875,7 @@ namespace MailKit.Net.Imap {
 				break;
 			case ImapTokenType.Nil:
 				// Note: according to rfc3501, section 4.5, NIL is acceptable as a mailbox name.
-				name = "NIL";
+				name = (string) token.Value;
 				break;
 			default:
 				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
@@ -1857,56 +1901,49 @@ namespace MailKit.Net.Imap {
 
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				switch (atom.ToUpperInvariant ()) {
-				case "HIGHESTMODSEQ":
+				if (atom.Equals ("HIGHESTMODSEQ", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					modseq = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateHighestModSeq (modseq);
-					break;
-				case "MESSAGES":
+				} else if (atom.Equals ("MESSAGES", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.OnExists ((int) count);
-					break;
-				case "RECENT":
+				} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.OnRecent ((int) count);
-					break;
-				case "UIDNEXT":
+				} else if (atom.Equals ("UIDNEXT", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateUidNext (uid > 0 ? new UniqueId (uid) : UniqueId.Invalid);
-					break;
-				case "UIDVALIDITY":
+				} else if (atom.Equals ("UIDVALIDITY", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateUidValidity (uid);
-					break;
-				case "UNSEEN":
+				} else if (atom.Equals ("UNSEEN", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateUnread ((int) count);
-					break;
-				case "APPENDLIMIT":
+				} else if (atom.Equals ("APPENDLIMIT", StringComparison.OrdinalIgnoreCase)) {
 					if (token.Type == ImapTokenType.Atom) {
 						var limit = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
@@ -1918,16 +1955,14 @@ namespace MailKit.Net.Imap {
 						if (folder != null)
 							folder.UpdateAppendLimit (null);
 					}
-					break;
-				case "SIZE":
+				} else if (atom.Equals ("SIZE", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					var size = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 					if (folder != null)
 						folder.UpdateSize (size);
-					break;
-				case "MAILBOXID":
+				} else if (atom.Equals ("MAILBOXID", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1940,13 +1975,34 @@ namespace MailKit.Net.Imap {
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					AssertToken (token, ImapTokenType.CloseParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-					break;
 				}
 			} while (true);
 
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 			AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+		}
+
+		static bool IsOkNoOrBad (string atom, out ImapUntaggedResult result)
+		{
+			if (atom.Equals ("OK", StringComparison.OrdinalIgnoreCase)) {
+				result = ImapUntaggedResult.Ok;
+				return true;
+			}
+			
+			if (atom.Equals ("NO", StringComparison.OrdinalIgnoreCase)) {
+				result = ImapUntaggedResult.No;
+				return true;
+			}
+
+			if (atom.Equals ("BAD", StringComparison.OrdinalIgnoreCase)) {
+				result = ImapUntaggedResult.Bad;
+				return true;
+			}
+
+			result = ImapUntaggedResult.Ok;
+
+			return false;
 		}
 
 		/// <summary>
@@ -1978,8 +2034,7 @@ namespace MailKit.Net.Imap {
 				atom = (string) token.Value;
 			}
 
-			switch (atom.ToUpperInvariant ()) {
-			case "BYE":
+			if (atom.Equals ("BYE", StringComparison.OrdinalIgnoreCase)) {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
@@ -2000,14 +2055,12 @@ namespace MailKit.Net.Imap {
 				// See https://github.com/jstedfast/MailKit/issues/938 for details.
 				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
 					current.Status = ImapCommandStatus.Complete;
-				break;
-			case "CAPABILITY":
+			} else if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase)) {
 				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync, cancellationToken);
 
 				// read the eoln token
 				await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				break;
-			case "ENABLED":
+			} else if (atom.Equals ("ENABLED", StringComparison.OrdinalIgnoreCase)) {
 				do {
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -2017,34 +2070,23 @@ namespace MailKit.Net.Imap {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 
 					var feature = (string) token.Value;
-					switch (feature.ToUpperInvariant ()) {
-					case "UTF8=ACCEPT": UTF8Enabled = true; break;
-					case "QRESYNC": QResyncEnabled = true; break;
-					}
+					if (feature.Equals ("UTF8=ACCEPT", StringComparison.OrdinalIgnoreCase))
+						UTF8Enabled = true;
+					else if (feature.Equals ("QRESYNC", StringComparison.OrdinalIgnoreCase))
+						QResyncEnabled = true;
 				} while (true);
-				break;
-			case "FLAGS":
+			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
 				var flags = await ImapUtils.ParseFlagsListAsync (this, atom, keywords, doAsync, cancellationToken).ConfigureAwait (false);
 				folder.UpdateAcceptedFlags (flags, keywords);
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
-				break;
-			case "NAMESPACE":
+			} else if (atom.Equals ("NAMESPACE", StringComparison.OrdinalIgnoreCase)) {
 				await UpdateNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				break;
-			case "STATUS":
+			} else if (atom.Equals ("STATUS", StringComparison.OrdinalIgnoreCase)) {
 				await UpdateStatusAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				break;
-			case "OK": case "NO": case "BAD":
-				if (atom.Equals ("OK", StringComparison.OrdinalIgnoreCase))
-					result = ImapUntaggedResult.Ok;
-				else if (atom.Equals ("NO", StringComparison.OrdinalIgnoreCase))
-					result = ImapUntaggedResult.No;
-				else
-					result = ImapUntaggedResult.Bad;
-
+			} else if (IsOkNoOrBad (atom, out result)) {
 				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
@@ -2054,8 +2096,7 @@ namespace MailKit.Net.Imap {
 					var text = ((string) token.Value) + await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					current.ResponseText = text.TrimEnd ();
 				}
-				break;
-			default:
+			} else {
 				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out uint number)) {
 					// we probably have something like "* 1 EXISTS"
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -2068,30 +2109,24 @@ namespace MailKit.Net.Imap {
 						// the command registered an untagged handler for this atom...
 						await handler (this, current, (int) number - 1, doAsync).ConfigureAwait (false);
 					} else if (folder != null) {
-						switch (atom.ToUpperInvariant ()) {
-						case "EXISTS":
+						if (atom.Equals ("EXISTS", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnExists ((int) number);
-							break;
-						case "EXPUNGE":
+						} else if (atom.Equals ("EXPUNGE", StringComparison.OrdinalIgnoreCase)) {
 							if (number == 0)
 								throw UnexpectedToken ("Syntax error in untagged EXPUNGE response. Unexpected message index: 0");
 
 							folder.OnExpunge ((int) number - 1);
-							break;
-						case "FETCH":
+						} else if (atom.Equals ("FETCH", StringComparison.OrdinalIgnoreCase)) {
 							// Apparently Courier-IMAP (2004) will reply with "* 0 FETCH ..." sometimes.
 							// See https://github.com/jstedfast/MailKit/issues/428 for details.
 							//if (number == 0)
 							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
 							await folder.OnFetchAsync (this, (int) number - 1, doAsync, cancellationToken).ConfigureAwait (false);
-							break;
-						case "RECENT":
+						} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnRecent ((int) number);
-							break;
-						default:
+						} else {
 							//Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
-							break;
 						}
 					} else {
 						//Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
@@ -2122,7 +2157,6 @@ namespace MailKit.Net.Imap {
 					// don't know how to handle this... eat it?
 					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
 				}
-				break;
 			}
 
 			return result;
