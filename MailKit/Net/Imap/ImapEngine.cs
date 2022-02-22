@@ -2055,7 +2055,7 @@ namespace MailKit.Net.Imap {
 				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
 					current.Status = ImapCommandStatus.Complete;
 			} else if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase)) {
-				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync, cancellationToken);
+				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync, cancellationToken).ConfigureAwait (false);
 
 				// read the eoln token
 				await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
