@@ -38,10 +38,10 @@ Features include:
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5.2" />
       <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5.2" />
       <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6" />
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.6" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.6.1" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.7" />
@@ -63,7 +63,7 @@ Features include:
       <group targetFramework="net452">
         <dependency id="MimeKit" version="3.1.1" />
       </group>
-      <group targetFramework="net46">
+      <group targetFramework="net461">
         <dependency id="MimeKit" version="3.1.1" />
       </group>
       <group targetFramework="net47">
@@ -96,9 +96,9 @@ Features include:
     <file src="..\MailKit\bin\Release\net452\MailKit.dll" target="lib\net452\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net452\MailKit.pdb" target="lib\net452\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net452\MailKit.xml" target="lib\net452\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\net46\MailKit.dll" target="lib\net46\MailKit.dll" />
-    <file src="..\MailKit\bin\Release\net46\MailKit.pdb" target="lib\net46\MailKit.pdb" />
-    <file src="..\MailKit\bin\Release\net46\MailKit.xml" target="lib\net46\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net461\MailKit.dll" target="lib\net461\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net461\MailKit.pdb" target="lib\net461\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\net461\MailKit.xml" target="lib\net461\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net47\MailKit.dll" target="lib\net47\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net47\MailKit.pdb" target="lib\net47\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net47\MailKit.xml" target="lib\net47\MailKit.xml" />
