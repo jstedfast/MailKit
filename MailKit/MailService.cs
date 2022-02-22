@@ -865,6 +865,16 @@ namespace MailKit {
 		/// </exception>
 		public abstract Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
+		static bool IsAny (string value, params string[] anyOf)
+		{
+			foreach (var item in anyOf) {
+				if (value.Equals (item, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
+		}
+
 		internal SecureSocketOptions GetSecureSocketOptions (Uri uri)
 		{
 			var query = uri.ParsedQuery ();
@@ -883,14 +893,13 @@ namespace MailKit {
 				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
 
 			if (query.TryGetValue ("starttls", out string value)) {
-				switch (value.ToLowerInvariant ()) {
-				default:
-					return SecureSocketOptions.StartTlsWhenAvailable;
-				case "always": case "true": case "yes":
+				if (IsAny (value, "always", "true", "yes"))
 					return SecureSocketOptions.StartTls;
-				case "never": case "false": case "no":
+
+				if (IsAny (value, "never", "false", "no"))
 					return SecureSocketOptions.None;
-				}
+
+				return SecureSocketOptions.StartTlsWhenAvailable;
 			}
 
 			return SecureSocketOptions.StartTlsWhenAvailable;

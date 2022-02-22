@@ -206,27 +206,22 @@ namespace MailKit.Net.Imap
 				uint value;
 				int idx;
 
-				switch (atom.ToUpperInvariant ()) {
-				case "INTERNALDATE":
+				if (atom.Equals ("INTERNALDATE", StringComparison.OrdinalIgnoreCase)) {
 					message.InternalDate = await ReadDateTimeOffsetTokenAsync (engine, atom, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.InternalDate;
-					break;
-				case "SAVEDATE":
+				} else if (atom.Equals ("SAVEDATE", StringComparison.OrdinalIgnoreCase)) {
 					message.SaveDate = await ReadDateTimeOffsetTokenAsync (engine, atom, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.SaveDate;
-					break;
-				case "RFC822.SIZE":
+				} else if (atom.Equals ("RFC822.SIZE", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					message.Size = ImapEngine.ParseNumber (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					message.Fields |= MessageSummaryItems.Size;
-					break;
-				case "BODYSTRUCTURE":
+				} else if (atom.Equals ("BODYSTRUCTURE", StringComparison.OrdinalIgnoreCase)) {
 					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODYSTRUCTURE", "{0}");
 					message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.BodyStructure;
-					break;
-				case "BODY":
+				} else if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					format = ImapEngine.FetchBodySyntaxErrorFormat;
 
@@ -309,16 +304,13 @@ namespace MailKit.Net.Imap
 						message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, doAsync, cancellationToken).ConfigureAwait (false);
 						message.Fields |= MessageSummaryItems.Body;
 					}
-					break;
-				case "ENVELOPE":
+				} else if (atom.Equals ("ENVELOPE", StringComparison.OrdinalIgnoreCase)) {
 					message.Envelope = await ImapUtils.ParseEnvelopeAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Envelope;
-					break;
-				case "FLAGS":
+				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 					message.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) message.Keywords, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Flags;
-					break;
-				case "MODSEQ":
+				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
@@ -336,16 +328,14 @@ namespace MailKit.Net.Imap
 
 					if (value64 > HighestModSeq)
 						UpdateHighestModSeq (value64);
-					break;
-				case "UID":
+				} else if (atom.Equals ("UID", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					value = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					message.UniqueId = new UniqueId (UidValidity, value);
 					message.Fields |= MessageSummaryItems.UniqueId;
-					break;
-				case "EMAILID":
+				} else if (atom.Equals ("EMAILID", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
@@ -360,8 +350,7 @@ namespace MailKit.Net.Imap
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-					break;
-				case "THREADID":
+				} else if (atom.Equals ("THREADID", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					if (token.Type == ImapTokenType.OpenParen) {
@@ -381,36 +370,30 @@ namespace MailKit.Net.Imap
 						message.Fields |= MessageSummaryItems.ThreadId;
 						message.ThreadId = null;
 					}
-					break;
-				case "X-GM-MSGID":
+				} else if (atom.Equals ("X-GM-MSGID", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					value64 = ImapEngine.ParseNumber64 (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					message.Fields |= MessageSummaryItems.GMailMessageId;
 					message.GMailMessageId = value64;
-					break;
-				case "X-GM-THRID":
+				} else if (atom.Equals ("X-GM-THRID", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					value64 = ImapEngine.ParseNumber64 (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					message.Fields |= MessageSummaryItems.GMailThreadId;
 					message.GMailThreadId = value64;
-					break;
-				case "X-GM-LABELS":
+				} else if (atom.Equals ("X-GM-LABELS", StringComparison.OrdinalIgnoreCase)) {
 					message.GMailLabels = await ImapUtils.ParseLabelsListAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.GMailLabels;
-					break;
-				case "ANNOTATION":
+				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
 					message.Annotations = await ImapUtils.ParseAnnotationsAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Annotations;
-					break;
-				default:
+				} else {
 					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					if (token.Type == ImapTokenType.OpenParen)
 						await SkipParenthesizedList (engine, doAsync, cancellationToken).ConfigureAwait (false);
-					break;
 				}
 
 				if (parenthesized) {
@@ -1518,8 +1501,7 @@ namespace MailKit.Net.Imap
 				ulong modseq;
 				uint value;
 
-				switch (atom.ToUpperInvariant ()) {
-				case "BODY":
+				if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
 					ImapEngine.AssertToken (token, ImapTokenType.OpenBracket, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
@@ -1656,8 +1638,7 @@ namespace MailKit.Net.Imap
 
 					section = new Section (stream, index, uid, name, offset, length);
 					await ctx.AddAsync (section, doAsync, ic.CancellationToken).ConfigureAwait (false);
-					break;
-				case "UID":
+				} else if (atom.Equals ("UID", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
 					value = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
@@ -1669,8 +1650,7 @@ namespace MailKit.Net.Imap
 					modSeq.UniqueId = uid.Value;
 					labels.UniqueId = uid.Value;
 					flags.UniqueId = uid.Value;
-					break;
-				case "MODSEQ":
+				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
 					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
@@ -1691,32 +1671,27 @@ namespace MailKit.Net.Imap
 					labels.ModSeq = modseq;
 					flags.ModSeq = modseq;
 					modSeqChanged = true;
-					break;
-				case "FLAGS":
+				} else if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
 					flags.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) flags.Keywords, doAsync, ic.CancellationToken).ConfigureAwait (false);
 					flagsChanged = true;
-					break;
-				case "X-GM-LABELS":
+				} else if (atom.Equals ("X-GM-LABELS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message labels.
 					labels.Labels = await ImapUtils.ParseLabelsListAsync (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
 					labelsChanged = true;
-					break;
-				case "ANNOTATION":
+				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message annotations.
 					annotations.Annotations = await ImapUtils.ParseAnnotationsAsync (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
 					annotationsChanged = true;
-					break;
-				default:
+				} else {
 					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
 					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
 					if (token.Type == ImapTokenType.OpenParen)
 						await SkipParenthesizedList (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
-					break;
 				}
 			} while (true);
 

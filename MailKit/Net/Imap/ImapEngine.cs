@@ -674,9 +674,8 @@ namespace MailKit.Net.Imap {
 						text = code.Message;
 					}
 				} else if (token.Type != ImapTokenType.Eoln) {
-					text = (string) token.Value;
-					text += await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					text = text.TrimEnd ();
+					text = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					text = ((string) token.Value) + text;
 
 					if (bye)
 						throw new ImapProtocolException (text);
@@ -2041,8 +2040,8 @@ namespace MailKit.Net.Imap {
 					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
 					current.RespCodes.Add (code);
 				} else {
-					var text = token.Value.ToString () + await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					current.ResponseText = text.TrimEnd ();
+					var text = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					current.ResponseText = ((string) token.Value) + text;
 				}
 
 				current.Bye = true;
@@ -2093,8 +2092,8 @@ namespace MailKit.Net.Imap {
 					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
 					current.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
-					var text = ((string) token.Value) + await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					current.ResponseText = text.TrimEnd ();
+					var text = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					current.ResponseText = ((string) token.Value) + text;
 				}
 			} else {
 				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out uint number)) {

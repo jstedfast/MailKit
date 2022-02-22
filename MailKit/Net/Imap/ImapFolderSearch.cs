@@ -469,12 +469,10 @@ namespace MailKit.Net.Imap
 
 					var atom = (string) token.Value;
 
-					switch (atom.ToUpperInvariant ()) {
-					case "MODSEQ":
+					if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
 						token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
 						results.ModSeq = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-						break;
 					}
 
 					token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
@@ -557,8 +555,7 @@ namespace MailKit.Net.Imap
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-				switch (atom.ToUpperInvariant ()) {
-				case "RELEVANCY":
+				if (atom.Equals ("RELEVANCY", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					results.Relevancy = new List<byte> ();
@@ -576,35 +573,30 @@ namespace MailKit.Net.Imap
 
 						results.Relevancy.Add ((byte) score);
 					} while (true);
-					break;
-				case "MODSEQ":
+				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					results.ModSeq = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-					break;
-				case "COUNT":
+				} else if (atom.Equals ("COUNT", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					var count = ImapEngine.ParseNumber (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Count = (int) count;
 					hasCount = true;
-					break;
-				case "MIN":
+				} else if (atom.Equals ("MIN", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					var min = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Min = new UniqueId (ic.Folder.UidValidity, min);
-					break;
-				case "MAX":
+				} else if (atom.Equals ("MAX", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					var max = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Max = new UniqueId (ic.Folder.UidValidity, max);
-					break;
-				case "ALL":
+				} else if (atom.Equals ("ALL", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					var uids = ImapEngine.ParseUidSet (token, ic.Folder.UidValidity, out minValue, out maxValue, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
@@ -613,8 +605,7 @@ namespace MailKit.Net.Imap
 						results.Count = uids.Count;
 
 					results.UniqueIds = uids;
-					break;
-				default:
+				} else {
 					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 				}
 

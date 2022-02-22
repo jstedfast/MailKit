@@ -763,6 +763,28 @@ namespace MailKit.Net.Imap {
 			UntaggedHandlers.Add (atom, handler);
 		}
 
+		static bool IsOkNoOrBad (string atom, out ImapCommandResponse response)
+		{
+			if (atom.Equals ("OK", StringComparison.OrdinalIgnoreCase)) {
+				response = ImapCommandResponse.Ok;
+				return true;
+			}
+
+			if (atom.Equals ("NO", StringComparison.OrdinalIgnoreCase)) {
+				response = ImapCommandResponse.No;
+				return true;
+			}
+
+			if (atom.Equals ("BAD", StringComparison.OrdinalIgnoreCase)) {
+				response = ImapCommandResponse.Bad;
+				return true;
+			}
+
+			response = ImapCommandResponse.None;
+
+			return false;
+		}
+
 		/// <summary>
 		/// Sends the next part of the command to the server.
 		/// </summary>
@@ -778,8 +800,8 @@ namespace MailKit.Net.Imap {
 		public async Task<bool> StepAsync (bool doAsync)
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
+			var response = ImapCommandResponse.None;
 			var idle = UserData as ImapIdleContext;
-			var result = ImapCommandResponse.None;
 			ImapToken token;
 
 			// construct and write the command tag if this is the initial state
@@ -841,6 +863,7 @@ namespace MailKit.Net.Imap {
 					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 				}
 
+				// FIXME: can we have a '+' token instead of using an Atom?
 				if (token.Type == ImapTokenType.Atom && token.Value.ToString () == "+") {
 					// we've gotten a continuation response from the server
 					var text = (await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false)).Trim ();
@@ -871,12 +894,8 @@ namespace MailKit.Net.Imap {
 
 					string atom = (string) token.Value;
 
-					switch (atom) {
-					case "BAD": result = ImapCommandResponse.Bad; break;
-					case "OK": result = ImapCommandResponse.Ok; break;
-					case "NO": result = ImapCommandResponse.No; break;
-					default: throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. {0}", token);
-					}
+					if (!IsOkNoOrBad (atom, out response))
+						throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. {0}", token);
 
 					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
 					if (token.Type == ImapTokenType.OpenBracket) {
@@ -887,8 +906,8 @@ namespace MailKit.Net.Imap {
 
 					if (token.Type != ImapTokenType.Eoln) {
 						// consume the rest of the line...
-						var line = await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false);
-						ResponseText = (((string) token.Value) + line).TrimEnd ();
+						var line = (await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false)).TrimEnd ();
+						ResponseText = ((string) token.Value) + line;
 						break;
 					}
 				} else if (token.Type == ImapTokenType.OpenBracket) {
@@ -906,9 +925,9 @@ namespace MailKit.Net.Imap {
 			if (Status == ImapCommandStatus.Active) {
 				current++;
 
-				if (current >= parts.Count || result != ImapCommandResponse.None) {
+				if (current >= parts.Count || response != ImapCommandResponse.None) {
 					Status = ImapCommandStatus.Complete;
-					Response = result;
+					Response = response;
 					return false;
 				}
 

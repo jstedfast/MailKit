@@ -3313,15 +3313,12 @@ namespace MailKit.Net.Imap {
 
 				limit = ImapEngine.ParseNumber (token, false, format, token);
 
-				switch (resource.ToUpperInvariant ()) {
-				case "MESSAGE":
+				if (resource.Equals ("MESSAGE", StringComparison.OrdinalIgnoreCase)) {
 					quota.CurrentMessageCount = used;
 					quota.MessageLimit = limit;
-					break;
-				case "STORAGE":
+				} else if (resource.Equals ("STORAGE", StringComparison.OrdinalIgnoreCase)) {
 					quota.CurrentStorageSize = used;
 					quota.StorageLimit = limit;
-					break;
 				}
 
 				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
