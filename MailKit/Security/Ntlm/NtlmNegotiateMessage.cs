@@ -117,10 +117,9 @@ namespace MailKit.Security.Ntlm {
 			if (cached != null)
 				return cached;
 
-			var negotiateVersion = (Flags & NtlmFlags.NegotiateVersion) != 0;
 			var workstation = Encoding.UTF8.GetBytes (Workstation);
 			var domain = Encoding.UTF8.GetBytes (Domain);
-			int versionLength = negotiateVersion ? 8 : 0;
+			const int versionLength = 8;
 			int workstationOffset = 32 + versionLength;
 			int domainOffset = workstationOffset + workstation.Length;
 
@@ -145,7 +144,7 @@ namespace MailKit.Security.Ntlm {
 			message[28] = (byte) workstationOffset;
 			message[29] = (byte)(workstationOffset >> 8);
 
-			if (negotiateVersion) {
+			if ((Flags & NtlmFlags.NegotiateVersion) != 0) {
 				message[32] = (byte) OSVersion.Major;
 				message[33] = (byte) OSVersion.Minor;
 				message[34] = (byte) OSVersion.Build;

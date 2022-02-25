@@ -60,7 +60,7 @@ namespace UnitTests.Security.Ntlm {
 
 			Assert.AreEqual (2, type2.Type, "Type");
 			Assert.AreEqual ((NtlmFlags) 0x8201, type2.Flags, "Flags");
-			Assert.AreEqual ("4E-54-4C-4D-53-53-50-00-02-00-00-00-00-00-00-00-00-00-00-00-01-82-00-00-53-72-76-4E-6F-6E-63-65-00-00-00-00-00-00-00-00", BitConverter.ToString (type2.Encode ()), "Encode");
+			Assert.AreEqual ("TlRMTVNTUAACAAAAAAAAAAAAAAABggAAU3J2Tm9uY2UAAAAAAAAAAAAAAAAAAAAA", Convert.ToBase64String (type2.Encode ()), "Encode");
 		}
 
 		[Test]
@@ -98,7 +98,7 @@ namespace UnitTests.Security.Ntlm {
 			Assert.AreEqual ("server.domain.com", type2.TargetInfo.DnsServerName, "DnsServerName");
 			Assert.AreEqual ("domain.com", type2.TargetInfo.DnsDomainName, "DnsDomainName");
 			Assert.AreEqual ("01-23-45-67-89-AB-CD-EF", BitConverter.ToString (type2.ServerChallenge), "ServerChallenge");
-			Assert.AreEqual ("4E-54-4C-4D-53-53-50-00-02-00-00-00-0C-00-0C-00-30-00-00-00-01-02-81-00-01-23-45-67-89-AB-CD-EF-00-00-00-00-00-00-00-00-62-00-62-00-3C-00-00-00-44-00-4F-00-4D-00-41-00-49-00-4E-00-02-00-0C-00-44-00-4F-00-4D-00-41-00-49-00-4E-00-01-00-0C-00-53-00-45-00-52-00-56-00-45-00-52-00-04-00-14-00-64-00-6F-00-6D-00-61-00-69-00-6E-00-2E-00-63-00-6F-00-6D-00-03-00-22-00-73-00-65-00-72-00-76-00-65-00-72-00-2E-00-64-00-6F-00-6D-00-61-00-69-00-6E-00-2E-00-63-00-6F-00-6D-00-00-00-00-00", BitConverter.ToString (type2.Encode ()), "Encode");
+			Assert.AreEqual ("TlRMTVNTUAACAAAADAAMADgAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgBEAAAAAAAAAAAAAABEAE8ATQBBAEkATgACAAwARABPAE0AQQBJAE4AAQAMAFMARQBSAFYARQBSAAQAFABkAG8AbQBhAGkAbgAuAGMAbwBtAAMAIgBzAGUAcgB2AGUAcgAuAGQAbwBtAGEAaQBuAC4AYwBvAG0AAAAAAA==", Convert.ToBase64String (type2.Encode ()), "Encode");
 		}
 
 		[Test]

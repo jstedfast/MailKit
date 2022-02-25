@@ -332,11 +332,7 @@ namespace MailKit.Security.Ntlm {
 			var target = EncodeString (Domain);
 			var user = EncodeString (UserName);
 			var workstation = EncodeString (Workstation);
-			int payloadOffset = 64, micOffset = -1;
-			bool negotiateVersion;
-
-			if (negotiateVersion = ((challenge.Flags & NtlmFlags.NegotiateVersion) != 0 && OSVersion != null))
-				payloadOffset += 8;
+			int payloadOffset = 72, micOffset = -1;
 
 			if (Mic != null) {
 				micOffset = payloadOffset;
@@ -424,11 +420,11 @@ namespace MailKit.Security.Ntlm {
 			message[62] = (byte)((uint) Flags >> 16);
 			message[63] = (byte)((uint) Flags >> 24);
 
-			if (negotiateVersion) {
+			if ((challenge.Flags & NtlmFlags.NegotiateVersion) != 0 && OSVersion != null) {
 				message[64] = (byte) OSVersion.Major;
 				message[65] = (byte) OSVersion.Minor;
 				message[66] = (byte) OSVersion.Build;
-				message[67] = (byte) (OSVersion.Build >> 8);
+				message[67] = (byte)(OSVersion.Build >> 8);
 				message[68] = 0x00;
 				message[69] = 0x00;
 				message[70] = 0x00;

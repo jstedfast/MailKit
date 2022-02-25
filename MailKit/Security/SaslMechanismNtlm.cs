@@ -42,6 +42,8 @@ namespace MailKit.Security {
 	/// </remarks>
 	public class SaslMechanismNtlm : SaslMechanism
 	{
+		static readonly Version DefaultOSVersion;
+
 		enum LoginState {
 			Negotiate,
 			Challenge
@@ -50,6 +52,14 @@ namespace MailKit.Security {
 		NtlmNegotiateMessage negotiate;
 		bool negotiatedChannelBinding;
 		LoginState state;
+
+		static SaslMechanismNtlm ()
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				DefaultOSVersion = Environment.OSVersion.Version;
+			else
+				DefaultOSVersion = new Version (10, 0, 22000, 0);
+		}
 
 #if NET48_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 		/// <summary>
@@ -75,8 +85,7 @@ namespace MailKit.Security {
 		/// </exception>
 		public SaslMechanismNtlm (NetworkCredential credentials) : base (credentials)
 		{
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-				OSVersion = Environment.OSVersion.Version;
+			OSVersion = DefaultOSVersion;
 			Workstation = Environment.MachineName;
 		}
 
@@ -95,8 +104,7 @@ namespace MailKit.Security {
 		/// </exception>
 		public SaslMechanismNtlm (string userName, string password) : base (userName, password)
 		{
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-				OSVersion = Environment.OSVersion.Version;
+			OSVersion = DefaultOSVersion;
 			Workstation = Environment.MachineName;
 		}
 

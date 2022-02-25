@@ -131,11 +131,10 @@ namespace MailKit.Security.Ntlm {
 				return cached;
 
 			var targetInfo = GetEncodedTargetInfo ();
-			int targetNameOffset = 40;
-			int targetInfoOffset = 48;
+			int targetNameOffset = 48;
+			int targetInfoOffset = 56;
 			byte[] targetName = null;
-			bool negotiateVersion;
-			int size = 40;
+			int size = 48;
 
 			if (TargetName != null) {
 				var encoding = (Flags & NtlmFlags.NegotiateUnicode) != 0 ? Encoding.Unicode : Encoding.UTF8;
@@ -148,12 +147,6 @@ namespace MailKit.Security.Ntlm {
 			if (targetInfo != null) {
 				size += 8 + targetInfo.Length;
 				targetNameOffset += 8;
-			}
-
-			if (negotiateVersion = (Flags & NtlmFlags.NegotiateVersion) != 0) {
-				targetNameOffset += 8;
-				targetInfoOffset += 8;
-				size += 8;
 			}
 
 			// 12 bytes
@@ -198,11 +191,11 @@ namespace MailKit.Security.Ntlm {
 				Buffer.BlockCopy (targetInfo, 0, message, targetInfoOffset, targetInfo.Length);
 			}
 
-			if (negotiateVersion) {
+			if ((Flags & NtlmFlags.NegotiateVersion) != 0) {
 				message[48] = (byte) OSVersion.Major;
 				message[49] = (byte) OSVersion.Minor;
 				message[50] = (byte) OSVersion.Build;
-				message[51] = (byte) (OSVersion.Build >> 8);
+				message[51] = (byte)(OSVersion.Build >> 8);
 				message[52] = 0x00;
 				message[53] = 0x00;
 				message[54] = 0x00;
