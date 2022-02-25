@@ -1085,7 +1085,7 @@ namespace MailKit.Net.Imap {
 			return uint.TryParse (token, NumberStyles.None, CultureInfo.InvariantCulture, out value);
 		}
 
-		async Task UpdateCapabilitiesAsync (ImapTokenType sentinel, bool doAsync, CancellationToken cancellationToken)
+		async ValueTask UpdateCapabilitiesAsync (ImapTokenType sentinel, bool doAsync, CancellationToken cancellationToken)
 		{
 			// Clear the extensions except STARTTLS so that this capability stays set after a STARTTLS command.
 			ProtocolVersion = ImapProtocolVersion.Unknown;
@@ -1271,7 +1271,7 @@ namespace MailKit.Net.Imap {
 				Capabilities |= ImapCapabilities.UTF8Accept;
 		}
 
-		async Task UpdateNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
+		async ValueTask UpdateNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var namespaces = new List<FolderNamespaceCollection> {
 				PersonalNamespaces, OtherNamespaces, SharedNamespaces
@@ -1541,7 +1541,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="isTagged">Whether or not the resp-code is tagged vs untagged.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task<ImapResponseCode> ParseResponseCodeAsync (bool isTagged, bool doAsync, CancellationToken cancellationToken)
+		public async ValueTask<ImapResponseCode> ParseResponseCodeAsync (bool isTagged, bool doAsync, CancellationToken cancellationToken)
 		{
 			uint validity = Selected != null ? Selected.UidValidity : 0;
 			ImapResponseCode code;
@@ -1861,7 +1861,7 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
-		async Task UpdateStatusAsync (bool doAsync, CancellationToken cancellationToken)
+		async ValueTask UpdateStatusAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 			string name, value;
