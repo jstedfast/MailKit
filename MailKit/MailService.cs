@@ -1746,10 +1746,10 @@ namespace MailKit {
 		/// <param name="port">The port that the client was connected to on the remote host.</param>
 		/// <param name="options">The SSL/TLS options that were used by the client.</param>
 		/// <param name="requested"><c>true</c> if the disconnect was explicitly requested; otherwise, <c>false</c>.</param>
-		/// <param name="smtpCommandException">The exception that caused the disconnect if relevant</param>
-		protected virtual void OnDisconnected (string host, int port, SecureSocketOptions options, bool requested, SmtpCommandException smtpCommandException = null)
+		/// <param name="exception">The exception that caused that disconnect if relevant</param>
+		protected virtual void OnDisconnected (string host, int port, SecureSocketOptions options, bool requested, Exception exception = null)
 		{
-			Disconnected?.Invoke (this, new DisconnectedEventArgs (host, port, options, requested, smtpCommandException));
+			Disconnected?.Invoke (this, new DisconnectedEventArgs (host, port, options, requested, exception));
 		}
 
 		/// <summary>

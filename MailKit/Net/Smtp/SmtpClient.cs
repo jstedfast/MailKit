@@ -1818,8 +1818,8 @@ namespace MailKit.Net.Smtp {
 
 			try {
 				response = await SendCommandAsync ("NOOP", doAsync, cancellationToken).ConfigureAwait (false);
-			} catch {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+			} catch (Exception exception) {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false, exception);
 				throw;
 			}
 
@@ -1855,7 +1855,7 @@ namespace MailKit.Net.Smtp {
 			NoOpAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		void Disconnect (string host, int port, SecureSocketOptions options, bool requested, SmtpCommandException smtpCommandException = null)
+		void Disconnect (string host, int port, SecureSocketOptions options, bool requested, Exception exception = null)
 		{
 			capabilities = SmtpCapabilities.None;
 			authenticated = false;
@@ -1869,7 +1869,7 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if (host != null)
-				OnDisconnected (host, port, options, requested, smtpCommandException);
+				OnDisconnected (host, port, options, requested, exception);
 		}
 
 #endregion
@@ -2565,8 +2565,8 @@ namespace MailKit.Net.Smtp {
 			} catch (SmtpCommandException smtpCommandException) {
 				await ResetAsync (doAsync, smtpCommandException, cancellationToken).ConfigureAwait (false);
 				throw;
-			} catch {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+			} catch (Exception exception) {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false, exception);
 				throw;
 			}
 		}

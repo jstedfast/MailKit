@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 using MailKit.Net.Smtp;
 using MailKit.Security;
 
@@ -48,12 +50,12 @@ namespace MailKit
 		/// <param name="port">The port that the client was connected to.</param>
 		/// <param name="options">The SSL/TLS options that were used by the client.</param>
 		/// <param name="requested">If <c>true</c>, the <see cref="IMailService"/> was disconnected via the
-		/// <param name="smtpCommandException">The exception that caused the disconnect if relevant</param>
+		/// <param name="exception">The exception that caused the disconnect if relevant</param>
 		/// <see cref="IMailService.Disconnect(bool, System.Threading.CancellationToken)"/> method.</param>
-		public DisconnectedEventArgs (string host, int port, SecureSocketOptions options, bool requested, SmtpCommandException smtpCommandException) : base (host, port, options)
+		public DisconnectedEventArgs (string host, int port, SecureSocketOptions options, bool requested, Exception exception) : base (host, port, options)
 		{
 			IsRequested = requested;
-			SmtpCommandException = smtpCommandException;
+			Exception = exception;
 		}
 
 		/// <summary>
@@ -73,6 +75,6 @@ namespace MailKit
 		/// <summary>
 		/// The exception that caused the disconnect if relevant
 		/// </summary>
-		public SmtpCommandException SmtpCommandException { get; }
+		public Exception Exception { get; }
 	}
 }
