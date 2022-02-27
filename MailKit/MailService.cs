@@ -42,6 +42,7 @@ using MailKit.Net.Proxy;
 using MailKit.Security;
 
 using NetworkStream = MailKit.Net.NetworkStream;
+using MailKit.Net.Smtp;
 
 namespace MailKit {
 	/// <summary>
@@ -1745,9 +1746,10 @@ namespace MailKit {
 		/// <param name="port">The port that the client was connected to on the remote host.</param>
 		/// <param name="options">The SSL/TLS options that were used by the client.</param>
 		/// <param name="requested"><c>true</c> if the disconnect was explicitly requested; otherwise, <c>false</c>.</param>
-		protected virtual void OnDisconnected (string host, int port, SecureSocketOptions options, bool requested)
+		/// <param name="smtpCommandException">The exception that caused the disconnect if relevant</param>
+		protected virtual void OnDisconnected (string host, int port, SecureSocketOptions options, bool requested, SmtpCommandException smtpCommandException = null)
 		{
-			Disconnected?.Invoke (this, new DisconnectedEventArgs (host, port, options, requested));
+			Disconnected?.Invoke (this, new DisconnectedEventArgs (host, port, options, requested, smtpCommandException));
 		}
 
 		/// <summary>
