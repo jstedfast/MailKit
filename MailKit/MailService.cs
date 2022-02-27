@@ -25,26 +25,26 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Threading;
-using System.Net.Sockets;
 using System.Net.Security;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using SslProtocols = System.Security.Authentication.SslProtocols;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 using MailKit.Net;
 using MailKit.Net.Proxy;
 using MailKit.Security;
 
 using NetworkStream = MailKit.Net.NetworkStream;
-using MailKit.Net.Smtp;
+using SslProtocols = System.Security.Authentication.SslProtocols;
 
-namespace MailKit {
+namespace MailKit
+{
 	/// <summary>
 	/// An abstract mail service implementation.
 	/// </summary>

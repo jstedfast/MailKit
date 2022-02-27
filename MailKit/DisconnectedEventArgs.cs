@@ -26,7 +26,6 @@
 
 using System;
 
-using MailKit.Net.Smtp;
 using MailKit.Security;
 
 namespace MailKit
