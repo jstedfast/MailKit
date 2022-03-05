@@ -50,6 +50,7 @@ namespace MailKit {
 	/// </remarks>
 	public class MessageSummary : IMessageSummary
 	{
+		IReadOnlySetOfStrings keywords;
 		int threadableReplyDepth = -1;
 		string normalizedSubject;
 
@@ -68,7 +69,6 @@ namespace MailKit {
 			if (index < 0)
 				throw new ArgumentOutOfRangeException (nameof (index));
 
-			Keywords = new HashSet<string> (StringComparer.Ordinal);
 			Index = index;
 		}
 
@@ -492,7 +492,15 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The user-defined message flags.</value>
 		public IReadOnlySetOfStrings Keywords {
-			get; set;
+			get {
+				if (keywords == null)
+					keywords = new HashSet<string> (StringComparer.Ordinal);
+
+				return keywords;
+			}
+			set {
+				keywords = value;
+			}
 		}
 
 		/// <summary>
