@@ -71,7 +71,24 @@ namespace MailKit.Net.Imap {
 			new ImapToken (ImapTokenType.Nil, "NIL")
 		};
 
-		static readonly Dictionary<string, int> Statistics = new Dictionary<string, int> ();
+		static readonly ImapToken Fetch = new ImapToken (ImapTokenType.Atom, "FETCH");
+		//static readonly ImapToken Annotation = new ImapToken (ImapTokenType.Atom, "ANNOTATION");
+		static readonly ImapToken Body = new ImapToken (ImapTokenType.Atom, "BODY");
+		static readonly ImapToken BodyStructure = new ImapToken (ImapTokenType.Atom, "BODYSTRUCTURE");
+		//static readonly ImapToken EmailId = new ImapToken (ImapTokenType.Atom, "EMAILID");
+		static readonly ImapToken Envelope = new ImapToken (ImapTokenType.Atom, "ENVELOPE");
+		static readonly ImapToken Flags = new ImapToken (ImapTokenType.Atom, "FLAGS");
+		//static readonly ImapToken Header = new ImapToken (ImapTokenType.Atom, "HEADER");
+		//static readonly ImapToken HeaderFields = new ImapToken (ImapTokenType.Atom, "HEADER.FIELDS");
+		static readonly ImapToken InternalDate = new ImapToken (ImapTokenType.Atom, "INTERNALDATE");
+		static readonly ImapToken ModSeq = new ImapToken (ImapTokenType.Atom, "MODSEQ");
+		static readonly ImapToken Rfc822Size = new ImapToken (ImapTokenType.Atom, "RFC822.SIZE");
+		//static readonly ImapToken SaveDate = new ImapToken (ImapTokenType.Atom, "SAVEDATE");
+		//static readonly ImapToken ThreadId = new ImapToken (ImapTokenType.Atom, "THREADID");
+		static readonly ImapToken Uid = new ImapToken (ImapTokenType.Atom, "UID");
+		static readonly ImapToken XGMLabels = new ImapToken (ImapTokenType.Atom, "X-GM-LABELS");
+		static readonly ImapToken XGMMsgId = new ImapToken (ImapTokenType.Atom, "X-GM-MSGID");
+		static readonly ImapToken XGMThrId = new ImapToken (ImapTokenType.Atom, "X-GM-THRID");
 
 		public readonly ImapTokenType Type;
 		public readonly object Value;
@@ -126,12 +143,34 @@ namespace MailKit.Net.Imap {
 				NilTokens.Add (nil);
 
 				return nil;
+			} else {
+				if (builder.Equals ("FETCH", false))
+					return Fetch;
+				if (builder.Equals ("BODY", false))
+					return Body;
+				if (builder.Equals ("BODYSTRUCTURE", false))
+					return BodyStructure;
+				if (builder.Equals ("ENVELOPE", false))
+					return Envelope;
+				if (builder.Equals ("FLAGS", false))
+					return Flags;
+				if (builder.Equals ("INTERNALDATE", false))
+					return InternalDate;
+				if (builder.Equals ("MODSEQ", false))
+					return ModSeq;
+				if (builder.Equals ("RFC822.SIZE", false))
+					return Rfc822Size;
+				if (builder.Equals ("UID", false))
+					return Uid;
+				if (builder.Equals ("X-GM-LABELS", false))
+					return XGMLabels;
+				if (builder.Equals ("X-GM-MSGID", false))
+					return XGMMsgId;
+				if (builder.Equals ("X-GM-THRID", false))
+					return XGMThrId;
 			}
 
 			value = builder.ToString ();
-
-			Statistics.TryGetValue (value, out int instances);
-			Statistics[value] = instances + 1;
 
 			return new ImapToken (type, value);
 		}
