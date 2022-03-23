@@ -587,7 +587,8 @@ namespace MailKit {
 		{
 			return new SslClientAuthenticationOptions {
 				CertificateRevocationCheckMode = CheckCertificateRevocation ? X509RevocationMode.Online : X509RevocationMode.NoCheck,
-				ApplicationProtocols = new List<SslApplicationProtocol> { new SslApplicationProtocol (Protocol) },
+				// Note: Not all servers support Application Protocols, so this will break in some cases.
+				//ApplicationProtocols = new List<SslApplicationProtocol> { new SslApplicationProtocol (Protocol) },
 				RemoteCertificateValidationCallback = remoteCertificateValidationCallback,
 #if NET5_0_OR_GREATER
 				CipherSuitesPolicy = SslCipherSuitesPolicy,
