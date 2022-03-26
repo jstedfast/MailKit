@@ -1,5 +1,23 @@
 # Release Notes
 
+### MailKit 3.2.0 (2022-03-26)
+
+* Do not use ApplicationProtocols with SSL. (issue [#1352](https://github.com/jstedfast/MailKit/issues/1352))
+* Updated GMail, Yahoo, and Outlook.com certificates.
+* Lazy-initialize MessageSummary.Keywords. This reduces memory usage when the client isn't requesting Flags/Keywords.
+* Hard-cache some IMAP FETCH-related tokens in order to relieve GC pressure for commands like FETCH where there can
+  be a LOT of responses containing the same tokens over and over again.
+* Converted some IMAP async Task methods to use ValueTask to reduce GC pressure.
+* Reduced string allocations in the IMAP logic by avoiding use of ToUpperInvariant().
+* Added non-async implementations for ImapStream APIs to be used by the synchronous public APIs to avoid some async overhead.
+* Reduce MemoryStream (and thus byte[]) allocations by using a new ByteArrayBuilder.
+* Rewrote the IMAP CAPABILITY parser to avoid allocating strings.
+* Fixed some cases where IMAP NIL tokens were not compared case insensitively.
+* Always include the VERSION block in NTLM messages. (issue [#1340](https://github.com/jstedfast/MailKit/issues/1340))
+* Target .NET Framework v4.6.1 instead of v4.6 to match the changes in MimeKit.
+* Capture the Socket timeout value in Read/WriteAsync() to have it in case of exceptions.
+  (issue [#1327](https://github.com/jstedfast/MailKit/issues/1327))
+
 ### MailKit 3.1.1 (2022-01-30)
 
 * Reduced string allocations in Pop3Engine's capability parser.

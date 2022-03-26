@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>3.1.1</version>
+    <version>3.2.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,9 +26,19 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Reduced string allocations in Pop3Engine's capability parser.
-* Updated GMail and Outlook.com SSL certificates.
-* Modified SmtpClient to try and use the system hostname in EHLO/HELO commands. (issue #1314)
+* Do not use ApplicationProtocols with SSL. (issue #1352)
+* Updated GMail, Yahoo, and Outlook.com certificates.
+* Lazy-initialize MessageSummary.Keywords. This reduces memory usage when the client isn't requesting Flags/Keywords.
+* Hard-cache some IMAP FETCH-related tokens in order to relieve GC pressure for commands like FETCH where there can be a LOT of responses containing the same tokens over and over again.
+* Converted some IMAP async Task methods to use ValueTask to reduce GC pressure.
+* Reduced string allocations in the IMAP logic by avoiding use of ToUpperInvariant().
+* Added non-async implementations for ImapStream APIs to be used by the synchronous public APIs to avoid some async overhead.
+* Reduce MemoryStream (and thus byte[]) allocations by using a new ByteArrayBuilder.
+* Rewrote the IMAP CAPABILITY parser to avoid allocating strings.
+* Fixed some cases where IMAP NIL tokens were not compared case insensitively.
+* Always include the VERSION block in NTLM messages. (issue #1340)
+* Target .NET Framework v4.6.1 instead of v4.6 to match the changes in MimeKit.
+* Capture the Socket timeout value in Read/WriteAsync() to have it in case of exceptions. (issue #1327)
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -62,32 +72,32 @@ Features include:
     <dependencies>
       <group targetFramework="net452">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.1.1" />
+        <dependency id="MimeKit" version="3.2.0" />
       </group>
       <group targetFramework="net461">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.1.1" />
+        <dependency id="MimeKit" version="3.2.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.1.1" />
+        <dependency id="MimeKit" version="3.2.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.1.1" />
+        <dependency id="MimeKit" version="3.2.0" />
       </group>
       <group targetFramework="net5.0">
-        <dependency id="MimeKit" version="3.1.1" />
+        <dependency id="MimeKit" version="3.2.0" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKit" version="3.1.1" />
+        <dependency id="MimeKit" version="3.2.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.1.1" />
+        <dependency id="MimeKit" version="3.2.0" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="MimeKit" version="3.1.1" />
+        <dependency id="MimeKit" version="3.2.0" />
       </group>
     </dependencies>
   </metadata>
