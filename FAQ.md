@@ -35,6 +35,7 @@
 * [How can I re-synchronize the cache for an IMAP folder?](#ImapFolderResync)
 
 ### SmtpClient
+* [Why doesn't the message show up in the IMAP "Sent" folder after sending it?](#SmtpSentFolder)
 * [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
 * [How can I request a notification when the message is read by the user?](#SmtpRequestReadReceipt)
 * [How can I process a read receipt notification?](#SmtpProcessReadReceipt)
@@ -1652,6 +1653,59 @@ static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref 
 ```
 
 ## SmtpClient
+
+### <a name="SmtpSentFolder">Q: Why doesn't the message show up in the "Sent Mail" folder after sending it?</a>
+
+It seems to be a common misunderstanding that messages sent via SMTP will magically show up in the account's "Sent Mail" folder.
+
+In order for the message to show up in the "Sent Mail" folder, you will need to append the message to the "Sent Mail" folder
+yourself because the SMTP protocol does not support doing this automatically.
+
+If the "Sent Mail" folder is a local mbox folder, you'll need to append it like this:
+
+```csharp
+using (var mbox = File.Open ("C:\\path\\to\\Sent Mail.mbox", FileMode.Append, FIleAccess.Write)) {
+    var marker = string.Format ("From MAILER-DAEMON {0}{1}", DateTime.Now.ToString (CultureInfo.InvariantCulture, "ddd MMM d HH:mm:ss yyyy"), Environment.NewLine);
+    var bytes = Encoding.ASCII.GetBytes (marker);
+    
+    // Write the mbox marker bytes.
+    mbox.Write (bytes, 0, bytes.Length);
+    
+    // Write the message, making sure to escape any line that looks like an mbox From-marker.
+    using (var filtered = new FilteredStream (stream)) {
+        filtered.Add (new MboxFromMarker ());
+        message.WriteTo (filtered);
+        filtered.Flush ();
+    }
+    
+    mbox.Flush ();
+}
+```
+
+If the "Sent Mail" folder exists on an IMAP server, you would need to do something more like this:
+
+```csharp
+using (var client = new ImapClient ()) {
+    client.Connect ("imap.server.com", 993, SecujreSocketOptions.SslOnConnect);
+    client.Authenticate ("username", "password");
+    
+    IMailFolder sentMail;
+    
+    if (client.Capabilities.HasFLag (ImapCapabilities.SpecialUse)) {
+        sentMail = client.GetFolder (SpecialFolder.Sent);
+    } else {
+        var personal = client.GetFolder (client.PersonalNamespaces[0]);
+        
+        // Note: This assumes that the "Sent Mail" folder lives at the root of the folder hierarchy
+        // and is named "Sent Mail" as opposed to "Sent" or "Sent Items" or any other variation.
+        sentMail = personal.GetSubfolder ("Sent Mail");
+    }
+    
+    sentMail.Append (message, MessageFlags.Seen);
+    
+    client.Disconnect (true);
+}
+```
 
 ### <a name="SpecifiedPickupDirectory">Q: How can I send email to a SpecifiedPickupDirectory?</a>
 
