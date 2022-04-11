@@ -1664,7 +1664,7 @@ yourself because the SMTP protocol does not support doing this automatically.
 If the "Sent Mail" folder is a local mbox folder, you'll need to append it like this:
 
 ```csharp
-using (var mbox = File.Open ("C:\\path\\to\\Sent Mail.mbox", FileMode.Append, FIleAccess.Write)) {
+using (var mbox = File.Open ("C:\\path\\to\\Sent Mail.mbox", FileMode.Append, FileAccess.Write)) {
     var marker = string.Format ("From MAILER-DAEMON {0}{1}", DateTime.Now.ToString (CultureInfo.InvariantCulture, "ddd MMM d HH:mm:ss yyyy"), Environment.NewLine);
     var bytes = Encoding.ASCII.GetBytes (marker);
     
