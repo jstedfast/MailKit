@@ -35,7 +35,7 @@
 * [How can I re-synchronize the cache for an IMAP folder?](#ImapFolderResync)
 
 ### SmtpClient
-* [Why doesn't the message show up in the IMAP "Sent" folder after sending it?](#SmtpSentFolder)
+* [Why doesn't the message show up in the "Sent" folder after sending it?](#SmtpSentFolder)
 * [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
 * [How can I request a notification when the message is read by the user?](#SmtpRequestReadReceipt)
 * [How can I process a read receipt notification?](#SmtpProcessReadReceipt)
