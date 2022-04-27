@@ -765,11 +765,8 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			if (rfc2047) {
-				var encoding = engine.UTF8Enabled ? TextEncodings.UTF8 : TextEncodings.Latin1;
-
-				return Rfc2047.DecodeText (encoding.GetBytes (value));
-			}
+			if (rfc2047)
+				return Rfc2047.DecodeText (TextEncodings.UTF8.GetBytes (value));
 
 			return value;
 		}
@@ -1271,11 +1268,8 @@ namespace MailKit.Net.Imap {
 				var domain = Domain;
 				string name = null;
 
-				if (Name != null) {
-					var encoding = engine.UTF8Enabled ? TextEncodings.UTF8 : TextEncodings.Latin1;
-
-					name = Rfc2047.DecodePhrase (encoding.GetBytes (Name));
-				}
+				if (Name != null)
+					name = Rfc2047.DecodePhrase (TextEncodings.UTF8.GetBytes (Name));
 
 				// Note: When parsing mailbox addresses w/o a domain, Dovecot will
 				// use "MISSING_DOMAIN" as the domain string to prevent it from
@@ -1300,11 +1294,8 @@ namespace MailKit.Net.Imap {
 			{
 				var name = string.Empty;
 
-				if (Mailbox != null) {
-					var encoding = engine.UTF8Enabled ? TextEncodings.UTF8 : TextEncodings.Latin1;
-
-					name = Rfc2047.DecodePhrase (encoding.GetBytes (Mailbox));
-				}
+				if (Mailbox != null)
+					name = Rfc2047.DecodePhrase (TextEncodings.UTF8.GetBytes (Mailbox));
 
 				return new GroupAddress (name);
 			}

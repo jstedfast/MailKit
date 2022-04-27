@@ -1003,7 +1003,11 @@ namespace MailKit.Net.Imap {
 					} while (nread < literalLength);
 				}
 
-				return TextEncodings.Latin1.GetString (buf, 0, nread);
+				try {
+					return TextEncodings.UTF8.GetString (buf, 0, nread);
+				} catch {
+					return TextEncodings.Latin1.GetString (buf, 0, nread);
+				}
 			} finally {
 				ArrayPool<byte>.Shared.Return (buf);
 			}
