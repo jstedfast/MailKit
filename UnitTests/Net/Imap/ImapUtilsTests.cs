@@ -355,6 +355,54 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// This tests the work-around for issue #1369
+		[Test]
+		public void TestParseEnvelopeWithMiscalculatedLiteralMailboxName ()
+		{
+			const string text = "(\"Thu, 29 Apr 2021 10:57:07 +0000\" \"=?utf-8?B?0J/QsNGA0LrQuNC90LMg0L3QsCDQlNCw0L3QsNC40Lsg0JTQtdGH0LXQsg==?=\" (({38}\r\nРецепция Офис сграда \"Данаил Дечев\" №6 NIL \"facility\" \"xxxxxxxxxxx.com\")) NIL NIL ((\"Team\" NIL \"team\" \"xxxxxxxxxxx.com\")) NIL NIL NIL \"<d0f6ca6608cfb0b680b7b90824c79118@xxxxxxxxxxx.com>\")\r\n";
+
+			// Note: The server appears to have calculated the literal length as the number of unicode *characters* as opposed to *bytes*. The actual literal length *should be* 69, not 38.
+			using (var memory = new MemoryStream (Encoding.UTF8.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						Envelope envelope;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsTrue (envelope.Date.HasValue, "Parsed ENVELOPE date is null.");
+						Assert.AreEqual ("Thu, 29 Apr 2021 10:57:07 +0000", DateUtils.FormatDate (envelope.Date.Value), "Date does not match.");
+						Assert.AreEqual ("Паркинг на Данаил Дечев", envelope.Subject, "Subject does not match.");
+
+						Assert.AreEqual (1, envelope.From.Count, "From counts do not match.");
+						Assert.AreEqual ("\"Рецепция Офис сграда \\\"Данаил Дечев\\\" №6\" <facility@xxxxxxxxxxx.com>", envelope.From.ToString (), "From does not match.");
+
+						Assert.AreEqual (0, envelope.Sender.Count, "Sender counts do not match.");
+						Assert.AreEqual (0, envelope.ReplyTo.Count, "Reply-To counts do not match.");
+
+						Assert.AreEqual (1, envelope.To.Count, "To counts do not match.");
+						Assert.AreEqual ("\"Team\" <team@xxxxxxxxxxx.com>", envelope.To.ToString (), "To does not match.");
+
+						Assert.AreEqual (0, envelope.Cc.Count, "Cc counts do not match.");
+						Assert.AreEqual (0, envelope.Bcc.Count, "Bcc counts do not match.");
+
+						Assert.IsNull (envelope.InReplyTo, "In-Reply-To is not null.");
+
+						Assert.AreEqual ("d0f6ca6608cfb0b680b7b90824c79118@xxxxxxxxxxx.com", envelope.MessageId, "Message-Id does not match.");
+					}
+				}
+			}
+		}
+
 		// This tests the work-around for issue #669
 		[Test]
 		public void TestParseEnvelopeWithMissingMessageId ()

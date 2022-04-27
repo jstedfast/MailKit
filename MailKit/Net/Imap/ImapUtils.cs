@@ -1304,30 +1304,57 @@ namespace MailKit.Net.Imap {
 		static async ValueTask<EnvelopeAddress> ParseEnvelopeAddressAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var values = new string[4];
+			var qstrings = new bool[4];
 			ImapToken token;
 			int index = 0;
 
 			do {
 				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				// This is a work-around for mail servers which output too many tokens for an ENVELOPE address. In at least 1 case, this happened
+				// because the server sent a literal token as the name component and miscalculated the literal length as 38 when it was actually 69
+				// (likely using Unicode characters instead of UTF-8 bytes).
+				//
+				// The work-around is to keep merging tokens at the beginning of the list until we end up with only 4 tokens.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/1369 for details.
+				if (index >= 4) {
+					if (qstrings[0])
+						values[0] = MimeUtils.Quote (values[0]);
+					if (qstrings[1])
+						values[1] = MimeUtils.Quote (values[1]);
+					values[0] = values[0] + ' ' + values[1];
+					qstrings[0] = false;
+					qstrings[1] = qstrings[2];
+					values[1] = values[2];
+					qstrings[2] = qstrings[3];
+					values[2] = values[3];
+					index = 3;
+				}
+
 				switch (token.Type) {
 				case ImapTokenType.Literal:
 					values[index] = await engine.ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					break;
 				case ImapTokenType.QString:
+					values[index] = (string) token.Value;
+					qstrings[index] = true;
+					break;
 				case ImapTokenType.Atom:
 					values[index] = (string) token.Value;
 					break;
 				case ImapTokenType.Nil:
+					values[index] = null;
 					break;
 				default:
 					throw ImapEngine.UnexpectedToken (format, token);
 				}
 
 				index++;
-			} while (index < 4);
-
-			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			} while (true);
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
 
