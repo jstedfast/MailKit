@@ -42,16 +42,12 @@ Features include:
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
-    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net452 net46 net47 net48 net5.0 net6.0 netstandard netstandard2.0 netstandard2.1</tags>
+    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net462 net47 net48 net5.0 net6.0 netstandard netstandard2.0 netstandard2.1</tags>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.2" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.2" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6.2" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.6.2" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.7" />
@@ -70,11 +66,7 @@ Features include:
       <frameworkAssembly assemblyName="System.Net.Http" targetFramework="xamarinios" />
     </frameworkAssemblies>
     <dependencies>
-      <group targetFramework="net452">
-        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="3.2.0" />
-      </group>
-      <group targetFramework="net461">
+      <group targetFramework="net462">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
         <dependency id="MimeKitLite" version="3.2.0" />
       </group>
@@ -108,12 +100,9 @@ Features include:
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKitLite.dll" target="lib\netstandard2.1\MailKitLite.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKitLite.pdb" target="lib\netstandard2.1\MailKitLite.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKitLite.xml" target="lib\netstandard2.1\MailKitLite.xml" />
-    <file src="..\MailKit\bin\Release\net452\MailKitLite.dll" target="lib\net452\MailKitLite.dll" />
-    <file src="..\MailKit\bin\Release\net452\MailKitLite.pdb" target="lib\net452\MailKitLite.pdb" />
-    <file src="..\MailKit\bin\Release\net452\MailKitLite.xml" target="lib\net452\MailKitLite.xml" />
-    <file src="..\MailKit\bin\Release\net461\MailKitLite.dll" target="lib\net461\MailKitLite.dll" />
-    <file src="..\MailKit\bin\Release\net461\MailKitLite.pdb" target="lib\net461\MailKitLite.pdb" />
-    <file src="..\MailKit\bin\Release\net461\MailKitLite.xml" target="lib\net461\MailKitLite.xml" />
+    <file src="..\MailKit\bin\Release\net462\MailKitLite.dll" target="lib\net462\MailKitLite.dll" />
+    <file src="..\MailKit\bin\Release\net462\MailKitLite.pdb" target="lib\net462\MailKitLite.pdb" />
+    <file src="..\MailKit\bin\Release\net462\MailKitLite.xml" target="lib\net462\MailKitLite.xml" />
     <file src="..\MailKit\bin\Release\net47\MailKitLite.dll" target="lib\net47\MailKitLite.dll" />
     <file src="..\MailKit\bin\Release\net47\MailKitLite.pdb" target="lib\net47\MailKitLite.pdb" />
     <file src="..\MailKit\bin\Release\net47\MailKitLite.xml" target="lib\net47\MailKitLite.xml" />
