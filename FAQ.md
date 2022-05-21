@@ -94,7 +94,14 @@ installed anti-virus software replaces the certificate in order to scan web traf
 When your system is unable to validate the mail server's certificate because it is not signed
 by a known and trusted Certificate Authority, the above error will occur.
 
-You can work around this problem by supplying a custom [RemoteCertificateValidationCallback](https://msdn.microsoft.com/en-us/library/ms145054)
+If you are on a Linux system or are running a web service in a Linux container, it might be possible to use the following command to install
+the standard set of Certificate AUthority root certificates using the following command:
+
+```
+apt update && apt install -y ca-certificates
+```
+
+Another option is to work around this problem by supplying a custom [RemoteCertificateValidationCallback](https://msdn.microsoft.com/en-us/library/ms145054)
 and setting it on the client's [ServerCertificateValidationCallback](http://mimekit.net/docs/html/P_MailKit_MailService_ServerCertificateValidationCallback.htm)
 property.
 
