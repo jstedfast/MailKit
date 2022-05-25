@@ -31,6 +31,8 @@ using System.Text;
 using NUnit.Framework;
 
 using MailKit.Security;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests.Security {
 	[TestFixture]
@@ -72,6 +74,34 @@ namespace UnitTests.Security {
 
 			foreach (var mechanism in unsupported)
 				Assert.IsFalse (SaslMechanism.IsSupported (mechanism), mechanism);
+		}
+
+		[Test]
+		public void TestRank ()
+		{
+			var supportedNonScram = new HashSet<string> () { "PLAIN", "LOGIN", "CRAM-MD5", "DIGEST-MD5", "NTLM", "OAUTHBEARER", "XOAUTH2" };
+			var supportedScramNonPlus = new HashSet<string> () { "SCRAM-SHA-1", "SCRAM-SHA-256", "SCRAM-SHA-512" };
+			var supportedScramPlus = new HashSet<string> () { "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-512-PLUS" };
+
+			var supportedScram = new HashSet<string> (supportedScramNonPlus.Union (supportedScramPlus));
+			var supportedAll = new HashSet<string> (supportedNonScram.Union (supportedScram));
+
+			// ANONYMOUS *is* supported, but is not part of ranking as it's the absence of authentication, and may cause breaking changes if included
+			var unsupported = new HashSet<string>() { "EXTERNAL", "GSSAPI", "KERBEROS_V4", "ANONYMOUS" };
+
+			var result = SaslMechanism.Rank (supportedNonScram);
+			Assert.That (result, Is.EquivalentTo (supportedNonScram), "Supported mechanisms should all be present after ranking.");
+
+			result = SaslMechanism.Rank (supportedScram);
+			Assert.That (result, Is.EquivalentTo (supportedScramPlus), "If SCRAM-SHA-*-PLUS mechanisms are present, non-PLUS mechanisms should be removed.");
+			result = SaslMechanism.Rank (supportedAll);
+			Assert.That (result, Is.EquivalentTo (supportedScramPlus.Union (supportedNonScram)), "If SCRAM-SHA-*-PLUS mechanisms are present amongst all supported mechanisms, only non-PLUS mechanisms will be removed.");
+
+			result = SaslMechanism.Rank (supportedScramNonPlus);
+			Assert.That (result, Is.EquivalentTo (supportedScramNonPlus), "If SCRAM-SHA-*-PLUS mechanisms are not present, non-PLUS mechanisms should not be removed.");
+
+			result = SaslMechanism.Rank (unsupported);
+			Assert.IsEmpty (result, "Unsupported mechanisms should be removed");
 		}
 
 		[Test]

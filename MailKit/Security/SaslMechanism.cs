@@ -57,10 +57,6 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// <para>Used by the various clients when authenticating via SASL to determine
 		/// which order the SASL mechanisms supported by the server should be tried.</para>
-		/// <note type="note">Even though NTLM is more secure than PLAIN or LOGIN (and
-		/// probably others), it is tried last only because it is less reliable due to
-		/// missing functionality to make it 100% compatible with all NTLM server
-		/// implementations.</note>
 		/// </remarks>
 		static readonly string[] RankedAuthenticationMechanisms;
 		static readonly bool md5supported;
@@ -85,18 +81,18 @@ namespace MailKit.Security {
 				supported.Add ("DIGEST-MD5");
 				supported.Add ("CRAM-MD5");
 			}
+			supported.Add ("OAUTHBEARER");
+			supported.Add ("XOAUTH2");
 			supported.Add ("PLAIN");
 			supported.Add ("LOGIN");
+			// supported.Add ("ANONYMOUS");
 
 			RankedAuthenticationMechanisms = supported.ToArray ();
 		}
 
 		/// <summary>
-		/// Rank authentication mechanisms in order of security.
+		/// Rank authentication mechanisms in order of security, whilst removing unsupported or unnecessary mechanisms.
 		/// </summary>
-		/// <remarks>
-		/// <para>Ranks authentication machisms in order of security.</para>
-		/// </remarks>
 		/// <param name="authenticationMechanisms">The authentication mechanisms supported by the server.</param>
 		/// <returns>The supported authentication mechanisms in ranked order.</returns>
 		internal static IEnumerable<string> Rank (HashSet<string> authenticationMechanisms)
