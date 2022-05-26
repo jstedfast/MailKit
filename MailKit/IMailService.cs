@@ -627,9 +627,9 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Authenticates using the supplied credentials.</para>
 		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
+		/// the SASL mechanisms that both the client and server support (not including any
+		/// OAUTH mechanisms) are tried in order of greatest security to weakest security.
+		/// Once a SASL authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
@@ -671,9 +671,9 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Asynchronously authenticates using the supplied credentials.</para>
 		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
+		/// the SASL mechanisms that both the client and server support (not including any
+		/// OAUTH mechanisms) are tried in order of greatest security to weakest security.
+		/// Once a SASL authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
@@ -716,9 +716,9 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Authenticates using the supplied credentials.</para>
 		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
+		/// the SASL mechanisms that both the client and server support (not including any
+		/// OAUTH mechanisms) are tried in order of greatest security to weakest security.
+		/// Once a SASL authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
@@ -763,9 +763,9 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Asynchronously authenticates using the supplied credentials.</para>
 		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
+		/// the SASL mechanisms that both the client and server support (not including any
+		/// OAUTH mechanisms) are tried in order of greatest security to weakest security.
+		/// Once a SASL authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
@@ -809,10 +809,11 @@ namespace MailKit {
 		/// Authenticate using the specified user name and password.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms,
-		/// then the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
+		/// <para>Authenticates using the supplied credentials.</para>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support (not including any
+		/// OAUTH mechanisms) are tried in order of greatest security to weakest security.
+		/// Once a SASL authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
@@ -858,10 +859,11 @@ namespace MailKit {
 		/// Asynchronously authenticate using the specified user name and password.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms,
-		/// then the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
+		/// <para>Asynchronously authenticates using the supplied credentials.</para>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support (not including any
+		/// OAUTH mechanisms) are tried in order of greatest security to weakest security.
+		/// Once a SASL authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
@@ -908,10 +910,11 @@ namespace MailKit {
 		/// Authenticate using the specified user name and password.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms,
-		/// then the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
+		/// <para>Authenticates using the supplied credentials.</para>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support (not including any
+		/// OAUTH mechanisms) are tried in order of greatest security to weakest security.
+		/// Once a SASL authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
@@ -957,10 +960,11 @@ namespace MailKit {
 		/// Asynchronously authenticate using the specified user name and password.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms,
-		/// then the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
+		/// <para>Asynchronously authenticates using the supplied credentials.</para>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support (not including any
+		/// OAUTH mechanisms) are tried in order of greatest security to weakest security.
+		/// Once a SASL authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>

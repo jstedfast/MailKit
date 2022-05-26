@@ -1122,11 +1122,12 @@ namespace MailKit.Net.Smtp {
 		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
+		/// <para>Authenticates using the supplied credentials.</para>
 		/// <para>If the SMTP server supports authentication, then the SASL mechanisms
-		/// that both the client and server support are tried in order of greatest
-		/// security to weakest security. Once a SASL authentication mechanism is
-		/// found that both client and server support, the credentials are used to
-		/// authenticate.</para>
+		/// that both the client and server support (not including any OAUTH mechanisms)
+		/// are tried in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support, the
+		/// credentials are used to authenticate.</para>
 		/// <para>If, on the other hand, authentication is not supported by the SMTP
 		/// server, then this method will throw <see cref="System.NotSupportedException"/>.
 		/// The <see cref="Capabilities"/> property can be checked for the

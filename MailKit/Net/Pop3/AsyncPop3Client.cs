@@ -92,14 +92,15 @@ namespace MailKit.Net.Pop3
 		/// Asynchronously authenticates using the supplied credentials.
 		/// </summary>
 		/// <remarks>
+		/// <para>Asynchronously authenticates using the supplied credentials.</para>
 		/// <para>If the POP3 server supports the APOP authentication mechanism,
 		/// then APOP is used.</para>
 		/// <para>If the APOP authentication mechanism is not supported and the
 		/// server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
-		/// the credentials are used to authenticate.</para>
+		/// the SASL mechanisms that both the client and server support (not including
+		/// any OAUTH mechanisms) are tried in order of greatest security to weakest
+		/// security. Once a SASL authentication mechanism is found that both client
+		/// and server support, the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the <c>USER</c> and <c>PASS</c> commands are used as a
 		/// fallback.</para>
