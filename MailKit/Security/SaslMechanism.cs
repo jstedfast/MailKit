@@ -57,10 +57,6 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// <para>Used by the various clients when authenticating via SASL to determine
 		/// which order the SASL mechanisms supported by the server should be tried.</para>
-		/// <note type="note">Even though NTLM is more secure than PLAIN or LOGIN (and
-		/// probably others), it is tried last only because it is less reliable due to
-		/// missing functionality to make it 100% compatible with all NTLM server
-		/// implementations.</note>
 		/// </remarks>
 		static readonly string[] RankedAuthenticationMechanisms;
 		static readonly bool md5supported;
