@@ -60,5 +60,5 @@ var authToken = await publicClientApplication.AcquireTokenSilent(scopes, account
 
 ## Additional Resources
 
-For more inforrmation, check out the [Microsoft.Identity.Client](https://docs.microsoft.com/en-us/dotnet/api/microsoft.identity.client?view=azure-dotnet)
+For more information, check out the [Microsoft.Identity.Client](https://docs.microsoft.com/en-us/dotnet/api/microsoft.identity.client?view=azure-dotnet)
 documentation.
