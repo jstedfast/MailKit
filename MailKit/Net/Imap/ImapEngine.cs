@@ -740,26 +740,14 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal async Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
+		internal Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			using (var builder = new ByteArrayBuilder (64)) {
-				bool complete;
+			if (doAsync)
+				return ReadLineAsync (cancellationToken);
 
-				do {
-					if (doAsync)
-						complete = await Stream.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
-					else
-						complete = Stream.ReadLine (builder, cancellationToken);
-				} while (!complete);
-
-				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
-				builder.TrimNewLine ();
-
-				return builder.ToString ();
-			}
+			return Task.FromResult (ReadLine (cancellationToken));
 		}
 
-#if false
 		/// <summary>
 		/// Reads a single line from the <see cref="ImapStream"/>.
 		/// </summary>
@@ -779,7 +767,18 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public string ReadLine (CancellationToken cancellationToken)
 		{
-			return ReadLineAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			using (var builder = new ByteArrayBuilder (64)) {
+				bool complete;
+
+				do {
+					complete = Stream.ReadLine (builder, cancellationToken);
+				} while (!complete);
+
+				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
+				builder.TrimNewLine ();
+
+				return builder.ToString ();
+			}
 		}
 
 		/// <summary>
@@ -799,11 +798,21 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task<string> ReadLineAsync (CancellationToken cancellationToken)
+		public async Task<string> ReadLineAsync (CancellationToken cancellationToken)
 		{
-			return ReadLineAsync (true, cancellationToken);
+			using (var builder = new ByteArrayBuilder (64)) {
+				bool complete;
+
+				do {
+					complete = await Stream.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
+				} while (!complete);
+
+				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
+				builder.TrimNewLine ();
+
+				return builder.ToString ();
+			}
 		}
-#endif
 
 		internal ValueTask<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
 		{
@@ -2239,7 +2248,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="ic"/> is <c>null</c>.
 		/// </exception>
-		public async Task RunAsync (ImapCommand ic, bool doAsync)
+		public async Task<ImapCommandResponse> RunAsync (ImapCommand ic, bool doAsync)
 		{
 			if (ic == null)
 				throw new ArgumentNullException (nameof (ic));
@@ -2250,6 +2259,8 @@ namespace MailKit.Net.Imap {
 			}
 
 			ProcessResponseCodes (ic);
+
+			return ic.Response;
 		}
 
 		public IEnumerable<ImapCommand> CreateCommands (CancellationToken cancellationToken, ImapFolder folder, string format, IList<UniqueId> uids, params object[] args)
@@ -2357,13 +2368,11 @@ namespace MailKit.Net.Imap {
 		/// <returns>The command result.</returns>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task<ImapCommandResponse> QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
+		public Task<ImapCommandResponse> QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
 
-			await RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			return ic.Response;
+			return RunAsync (ic, doAsync);
 		}
 
 		/// <summary>

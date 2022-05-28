@@ -307,20 +307,14 @@ namespace MailKit.Net.Imap {
 		/// Writes the literal to the specified stream.
 		/// </remarks>
 		/// <param name="stream">The stream.</param>
-		/// <param name="doAsync">Whether the literal should be written asynchronously or not.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task WriteToAsync (ImapStream stream, bool doAsync, CancellationToken cancellationToken)
+		public void WriteTo (ImapStream stream, CancellationToken cancellationToken)
 		{
 			if (Type == ImapLiteralType.String) {
 				var bytes = (byte[]) Literal;
 
-				if (doAsync) {
-					await stream.WriteAsync (bytes, 0, bytes.Length, cancellationToken).ConfigureAwait (false);
-					await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
-				} else {
-					stream.Write (bytes, 0, bytes.Length, cancellationToken);
-					stream.Flush (cancellationToken);
-				}
+				stream.Write (bytes, 0, bytes.Length, cancellationToken);
+				stream.Flush (cancellationToken);
 				return;
 			}
 
@@ -329,30 +323,56 @@ namespace MailKit.Net.Imap {
 			//	var buf = new byte[4096];
 			//	int nread;
 
-			//	if (doAsync) {
-			//		while ((nread = await literal.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false)) > 0)
-			//			await stream.WriteAsync (buf, 0, nread, cancellationToken).ConfigureAwait (false);
+			//	while ((nread = literal.Read (buf, 0, buf.Length)) > 0)
+			//		stream.Write (buf, 0, nread, cancellationToken);
 
-			//		await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
-			//	} else {
-			//		while ((nread = literal.Read (buf, 0, buf.Length)) > 0)
-			//			stream.Write (buf, 0, nread, cancellationToken);
-
-			//		stream.Flush (cancellationToken);
-			//	}
+			//	stream.Flush (cancellationToken);
 			//	return;
 			//}
 
 			var message = (MimeMessage) Literal;
 
 			using (var s = new ProgressStream (stream, update)) {
-				if (doAsync) {
-					await message.WriteToAsync (format, s, cancellationToken).ConfigureAwait (false);
-					await s.FlushAsync (cancellationToken).ConfigureAwait (false);
-				} else {
-					message.WriteTo (format, s, cancellationToken);
-					s.Flush (cancellationToken);
-				}
+				message.WriteTo (format, s, cancellationToken);
+				s.Flush (cancellationToken);
+			}
+		}
+
+		/// <summary>
+		/// Asynchronously write the literal to the specified stream.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously writes the literal to the specified stream.
+		/// </remarks>
+		/// <param name="stream">The stream.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public async Task WriteToAsync (ImapStream stream, CancellationToken cancellationToken)
+		{
+			if (Type == ImapLiteralType.String) {
+				var bytes = (byte[]) Literal;
+
+				await stream.WriteAsync (bytes, 0, bytes.Length, cancellationToken).ConfigureAwait (false);
+				await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+				return;
+			}
+
+			//if (Type == ImapLiteralType.Stream) {
+			//	var literal = (Stream) Literal;
+			//	var buf = new byte[4096];
+			//	int nread;
+
+			//	while ((nread = await literal.ReadAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false)) > 0)
+			//		await stream.WriteAsync (buf, 0, nread, cancellationToken).ConfigureAwait (false);
+
+			//	await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+			//	return;
+			//}
+
+			var message = (MimeMessage) Literal;
+
+			using (var s = new ProgressStream (stream, update)) {
+				await message.WriteToAsync (format, s, cancellationToken).ConfigureAwait (false);
+				await s.FlushAsync (cancellationToken).ConfigureAwait (false);
 			}
 		}
 	}
@@ -788,6 +808,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Sends the next part of the command to the server.
 		/// </summary>
+		/// <returns><c>true</c> if there are more command parts to send; otherwise, <c>false</c>.</returns>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -830,7 +851,10 @@ namespace MailKit.Net.Imap {
 					break;
 
 				// otherwise, we can write out any and all literal tokens we have...
-				await parts[current].Literal.WriteToAsync (Engine.Stream, doAsync, CancellationToken).ConfigureAwait (false);
+				if (doAsync)
+					await parts[current].Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
+				else
+					parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 
 				if (current + 1 >= parts.Count)
 					break;
@@ -870,7 +894,10 @@ namespace MailKit.Net.Imap {
 
 					// if we've got a Literal pending, the '+' means we can send it now...
 					if (!supportsLiteralPlus && parts[current].Literal != null) {
-						await parts[current].Literal.WriteToAsync (Engine.Stream, doAsync, CancellationToken).ConfigureAwait (false);
+						if (doAsync)
+							await parts[current].Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
+						else
+							parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 						break;
 					}
 
