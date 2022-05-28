@@ -740,14 +740,6 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ReadLineAsync (cancellationToken);
-
-			return Task.FromResult (ReadLine (cancellationToken));
-		}
-
 		/// <summary>
 		/// Reads a single line from the <see cref="ImapStream"/>.
 		/// </summary>
@@ -814,6 +806,14 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		internal Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ReadLineAsync (cancellationToken);
+
+			return Task.FromResult (ReadLine (cancellationToken));
+		}
+
 		internal ValueTask<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (doAsync)
@@ -834,23 +834,24 @@ namespace MailKit.Net.Imap {
 			return new ValueTask<ImapToken> (token);
 		}
 
-		internal async ValueTask<ImapToken> PeekTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
+		internal ValueTask<ImapToken> PeekTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
 		{
-			ImapToken token;
-
 			if (doAsync)
-				token = await Stream.ReadTokenAsync (specials, cancellationToken).ConfigureAwait (false);
-			else
-				token = Stream.ReadToken (specials, cancellationToken);
+				return PeekTokenAsync (specials, cancellationToken);
 
-			Stream.UngetToken (token);
+			var token = PeekToken (specials, cancellationToken);
 
-			return token;
+			return new ValueTask<ImapToken> (token);
 		}
 
 		internal ValueTask<ImapToken> PeekTokenAsync (bool doAsync, CancellationToken cancellationToken)
 		{
-			return PeekTokenAsync (ImapStream.DefaultSpecials, doAsync, cancellationToken);
+			if (doAsync)
+				return PeekTokenAsync (cancellationToken);
+
+			var token = PeekToken (cancellationToken);
+
+			return new ValueTask<ImapToken> (token);
 		}
 
 		/// <summary>
@@ -897,7 +898,6 @@ namespace MailKit.Net.Imap {
 			return Stream.ReadTokenAsync (cancellationToken);
 		}
 
-#if false
 		/// <summary>
 		/// Peeks at the next token.
 		/// </summary>
@@ -918,7 +918,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken PeekToken (string specials, CancellationToken cancellationToken)
 		{
-			return PeekTokenAsync (specials, false, cancellationToken).GetAwaiter ().GetResult ();
+			var token = Stream.ReadToken (specials, cancellationToken);
+
+			Stream.UngetToken (token);
+
+			return token;
 		}
 
 		/// <summary>
@@ -939,9 +943,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public ValueTask<ImapToken> PeekTokenAsync (string specials, CancellationToken cancellationToken)
+		public async ValueTask<ImapToken> PeekTokenAsync (string specials, CancellationToken cancellationToken)
 		{
-			return PeekTokenAsync (specials, true, cancellationToken);
+			var token = await Stream.ReadTokenAsync (specials, cancellationToken).ConfigureAwait (false);
+
+			Stream.UngetToken (token);
+
+			return token;
 		}
 
 		/// <summary>
@@ -963,7 +971,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken PeekToken (CancellationToken cancellationToken)
 		{
-			return PeekTokenAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var token = Stream.ReadToken (cancellationToken);
+
+			Stream.UngetToken (token);
+
+			return token;
 		}
 
 		/// <summary>
@@ -983,46 +995,15 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public ValueTask<ImapToken> PeekTokenAsync (CancellationToken cancellationToken)
+		public async ValueTask<ImapToken> PeekTokenAsync (CancellationToken cancellationToken)
 		{
-			return PeekTokenAsync (true, cancellationToken);
-		}
-#endif
+			var token = await Stream.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-		internal async Task<string> ReadLiteralAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (Stream.Mode != ImapStreamMode.Literal)
-				throw new InvalidOperationException ();
+			Stream.UngetToken (token);
 
-			int literalLength = Stream.LiteralLength;
-			var buf = ArrayPool<byte>.Shared.Rent (literalLength);
-
-			try {
-				int n, nread = 0;
-
-				if (doAsync) {
-					do {
-						if ((n = await Stream.ReadAsync (buf, nread, literalLength - nread, cancellationToken).ConfigureAwait (false)) > 0)
-							nread += n;
-					} while (nread < literalLength);
-				} else {
-					do {
-						if ((n = Stream.Read (buf, nread, literalLength - nread, cancellationToken)) > 0)
-							nread += n;
-					} while (nread < literalLength);
-				}
-
-				try {
-					return TextEncodings.UTF8.GetString (buf, 0, nread);
-				} catch {
-					return TextEncodings.Latin1.GetString (buf, 0, nread);
-				}
-			} finally {
-				ArrayPool<byte>.Shared.Return (buf);
-			}
+			return token;
 		}
 
-#if false
 		/// <summary>
 		/// Reads the literal as a string.
 		/// </summary>
@@ -1039,7 +1020,28 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public string ReadLiteral (CancellationToken cancellationToken)
 		{
-			return ReadLiteralAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			if (Stream.Mode != ImapStreamMode.Literal)
+				throw new InvalidOperationException ();
+
+			int literalLength = Stream.LiteralLength;
+			var buf = ArrayPool<byte>.Shared.Rent (literalLength);
+
+			try {
+				int n, nread = 0;
+
+				do {
+					if ((n = Stream.Read (buf, nread, literalLength - nread, cancellationToken)) > 0)
+						nread += n;
+				} while (nread < literalLength);
+
+				try {
+					return TextEncodings.UTF8.GetString (buf, 0, nread);
+				} catch {
+					return TextEncodings.Latin1.GetString (buf, 0, nread);
+				}
+			} finally {
+				ArrayPool<byte>.Shared.Return (buf);
+			}
 		}
 
 		/// <summary>
@@ -1056,18 +1058,48 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public Task<string> ReadLiteralAsync (CancellationToken cancellationToken)
+		public async Task<string> ReadLiteralAsync (CancellationToken cancellationToken)
 		{
-			return ReadLiteralAsync (true, cancellationToken);
-		}
-#endif
+			if (Stream.Mode != ImapStreamMode.Literal)
+				throw new InvalidOperationException ();
 
-		async ValueTask SkipLineAsync (bool doAsync, CancellationToken cancellationToken)
+			int literalLength = Stream.LiteralLength;
+			var buf = ArrayPool<byte>.Shared.Rent (literalLength);
+
+			try {
+				int n, nread = 0;
+
+				do {
+					if ((n = await Stream.ReadAsync (buf, nread, literalLength - nread, cancellationToken).ConfigureAwait (false)) > 0)
+						nread += n;
+				} while (nread < literalLength);
+
+				try {
+					return TextEncodings.UTF8.GetString (buf, 0, nread);
+				} catch {
+					return TextEncodings.Latin1.GetString (buf, 0, nread);
+				}
+			} finally {
+				ArrayPool<byte>.Shared.Return (buf);
+			}
+		}
+
+		internal Task<string> ReadLiteralAsync (bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ReadLiteralAsync (cancellationToken);
+
+			var value = ReadLiteral (cancellationToken);
+
+			return Task.FromResult (value);
+		}
+
+		void SkipLine (CancellationToken cancellationToken)
 		{
 			ImapToken token;
 
 			do {
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.Literal) {
 					var buf = ArrayPool<byte>.Shared.Rent (BufferSize);
@@ -1075,16 +1107,45 @@ namespace MailKit.Net.Imap {
 
 					try {
 						do {
-							if (doAsync)
-								nread = await Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false);
-							else
-								nread = Stream.Read (buf, 0, BufferSize, cancellationToken);
+							nread = Stream.Read (buf, 0, BufferSize, cancellationToken);
 						} while (nread > 0);
 					} finally {
 						ArrayPool<byte>.Shared.Return (buf);
 					}
 				}
 			} while (token.Type != ImapTokenType.Eoln);
+		}
+
+		async Task SkipLineAsync (CancellationToken cancellationToken)
+		{
+			ImapToken token;
+
+			do {
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.Literal) {
+					var buf = ArrayPool<byte>.Shared.Rent (BufferSize);
+					int nread;
+
+					try {
+						do {
+							nread = await Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false);
+						} while (nread > 0);
+					} finally {
+						ArrayPool<byte>.Shared.Return (buf);
+					}
+				}
+			} while (token.Type != ImapTokenType.Eoln);
+		}
+
+		Task SkipLineAsync (bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return SkipLineAsync (cancellationToken);
+
+			SkipLine (cancellationToken);
+
+			return Task.CompletedTask;
 		}
 
 		static bool TryParseUInt32 (string text, int startIndex, out uint value)
