@@ -123,47 +123,99 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		static async Task ReadLiteralDataAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		static void ReadLiteralData (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var buf = ArrayPool<byte>.Shared.Rent (BufferSize);
 			int nread;
 
 			try {
 				do {
-					if (doAsync)
-						nread = await engine.Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false);
-					else
-						nread = engine.Stream.Read (buf, 0, BufferSize, cancellationToken);
+					nread = engine.Stream.Read (buf, 0, BufferSize, cancellationToken);
 				} while (nread > 0);
 			} finally {
 				ArrayPool<byte>.Shared.Return (buf);
 			}
 		}
 
-		static async Task SkipParenthesizedList (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		static async Task ReadLiteralDataAsync (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var buf = ArrayPool<byte>.Shared.Rent (BufferSize);
+			int nread;
+
+			try {
+				do {
+					nread = await engine.Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false);
+				} while (nread > 0);
+			} finally {
+				ArrayPool<byte>.Shared.Return (buf);
+			}
+		}
+
+		static Task ReadLiteralDataAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ReadLiteralDataAsync (engine, cancellationToken);
+
+			ReadLiteralData (engine, cancellationToken);
+
+			return Task.CompletedTask;
+		}
+
+		static void SkipParenthesizedList (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			do {
-				var token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				var token = engine.PeekToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.Eoln)
 					return;
 
 				// token is safe to read, so pop it off the queue
-				await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				engine.ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
 				if (token.Type == ImapTokenType.OpenParen) {
 					// skip the inner parenthesized list
-					await SkipParenthesizedList (engine, doAsync, cancellationToken).ConfigureAwait (false);
+					SkipParenthesizedList (engine, cancellationToken);
 				}
 			} while (true);
 		}
 
-		async Task<DateTimeOffset?> ReadDateTimeOffsetTokenAsync (ImapEngine engine, string atom, bool doAsync, CancellationToken cancellationToken)
+		static async Task SkipParenthesizedListAsync (ImapEngine engine, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			do {
+				var token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.Eoln)
+					return;
+
+				// token is safe to read, so pop it off the queue
+				await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				if (token.Type == ImapTokenType.OpenParen) {
+					// skip the inner parenthesized list
+					await SkipParenthesizedListAsync (engine, cancellationToken).ConfigureAwait (false);
+				}
+			} while (true);
+		}
+
+		static Task SkipParenthesizedListAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return SkipParenthesizedListAsync (engine, cancellationToken);
+
+			SkipParenthesizedList (engine, cancellationToken);
+
+			return Task.CompletedTask;
+		}
+
+		DateTimeOffset? ReadDateTimeOffsetToken (ImapEngine engine, string atom, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
 
 			switch (token.Type) {
 			case ImapTokenType.QString:
@@ -174,6 +226,31 @@ namespace MailKit.Net.Imap
 			default:
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 			}
+		}
+
+		async Task<DateTimeOffset?> ReadDateTimeOffsetTokenAsync (ImapEngine engine, string atom, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			switch (token.Type) {
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				return ImapUtils.ParseInternalDate ((string) token.Value);
+			case ImapTokenType.Nil:
+				return null;
+			default:
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+			}
+		}
+
+		Task<DateTimeOffset?> ReadDateTimeOffsetTokenAsync (ImapEngine engine, string atom, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ReadDateTimeOffsetTokenAsync (engine, atom, cancellationToken);
+
+			var value = ReadDateTimeOffsetToken (engine, atom, cancellationToken);
+
+			return Task.FromResult (value);
 		}
 
 		async Task FetchSummaryItemsAsync (ImapEngine engine, MessageSummary message, bool doAsync, CancellationToken cancellationToken)
@@ -393,7 +470,7 @@ namespace MailKit.Net.Imap
 					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 					if (token.Type == ImapTokenType.OpenParen)
-						await SkipParenthesizedList (engine, doAsync, cancellationToken).ConfigureAwait (false);
+						await SkipParenthesizedListAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
 				if (parenthesized) {
@@ -1691,7 +1768,7 @@ namespace MailKit.Net.Imap
 					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
 					if (token.Type == ImapTokenType.OpenParen)
-						await SkipParenthesizedList (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
+						await SkipParenthesizedListAsync (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
 				}
 			} while (true);
 
