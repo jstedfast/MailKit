@@ -731,13 +731,13 @@ namespace MailKit.Net.Imap {
 			return ParseMetadataAsync (engine, metadata, doAsync, ic.CancellationToken);
 		}
 
-		internal static async ValueTask<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		static string ReadStringToken (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (cancellationToken);
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
-				return await engine.ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				return engine.ReadLiteral (cancellationToken);
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
 				return (string) token.Value;
@@ -746,14 +746,39 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static async ValueTask<string> ReadNStringTokenAsync (ImapEngine engine, string format, bool rfc2047, bool doAsync, CancellationToken cancellationToken)
+		static async ValueTask<string> ReadStringTokenAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			switch (token.Type) {
+			case ImapTokenType.Literal:
+				return await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				return (string) token.Value;
+			default:
+				throw ImapEngine.UnexpectedToken (format, token);
+			}
+		}
+
+		internal static ValueTask<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ReadStringTokenAsync (engine, format, cancellationToken);
+
+			var value = ReadStringToken (engine, format, cancellationToken);
+
+			return new ValueTask<string> (value);
+		}
+
+		static string ReadNStringToken (ImapEngine engine, string format, bool rfc2047, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
 			string value;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
-				value = await engine.ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				value = engine.ReadLiteral (cancellationToken);
 				break;
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
@@ -771,10 +796,43 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
-		static async ValueTask<uint> ReadNumberAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		static async ValueTask<string> ReadNStringTokenAsync (ImapEngine engine, string format, bool rfc2047, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			string value;
 
+			switch (token.Type) {
+			case ImapTokenType.Literal:
+				value = await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				value = (string) token.Value;
+				break;
+			case ImapTokenType.Nil:
+				return null;
+			default:
+				throw ImapEngine.UnexpectedToken (format, token);
+			}
+
+			if (rfc2047)
+				return Rfc2047.DecodeText (TextEncodings.UTF8.GetBytes (value));
+
+			return value;
+		}
+
+		static ValueTask<string> ReadNStringTokenAsync (ImapEngine engine, string format, bool rfc2047, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ReadNStringTokenAsync (engine, format, rfc2047, cancellationToken);
+
+			var value = ReadNStringToken (engine, format, rfc2047, cancellationToken);
+
+			return new ValueTask<string> (value);
+		}
+
+		static uint ParseNumberToken (ImapToken token, string format)
+		{
 			// Note: this is a work-around for broken IMAP servers that return negative integer values for things
 			// like octet counts and line counts.
 			if (token.Type == ImapTokenType.Atom) {
@@ -791,6 +849,30 @@ namespace MailKit.Net.Imap {
 			}
 
 			return ImapEngine.ParseNumber (token, false, format, token);
+		}
+
+		static uint ReadNumber (ImapEngine engine, string format, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+
+			return ParseNumberToken (token, format);
+		}
+
+		static async ValueTask<uint> ReadNumberAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			return ParseNumberToken (token, format);
+		}
+
+		static ValueTask<uint> ReadNumberAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ReadNumberAsync (engine, format, cancellationToken);
+
+			var value = ReadNumber (engine, format, cancellationToken);
+
+			return new ValueTask<uint> (value);
 		}
 
 		static bool NeedsQuoting (string value)
