@@ -92,23 +92,29 @@ namespace MailKit.Net.Smtp {
 
 		static SmtpClient ()
 		{
-			string hostName = IPGlobalProperties.GetIPGlobalProperties ().HostName;
-			var idn = new IdnMapping ();
+			string hostName;
 
-			if (!string.IsNullOrEmpty (hostName)) {
-				try {
-					hostName = idn.GetAscii (hostName);
-				} catch (ArgumentException) {
-					// This can happen if the hostName contains illegal unicode characters.
-					var ascii = new StringBuilder ();
-					for (int i = 0; i < hostName.Length; i++) {
-						if (hostName[i] <= 0x7F)
-							ascii.Append (hostName[i]);
+			try {
+				hostName = IPGlobalProperties.GetIPGlobalProperties ().HostName;
+				var idn = new IdnMapping ();
+
+				if (!string.IsNullOrEmpty (hostName)) {
+					try {
+						hostName = idn.GetAscii (hostName);
+					} catch (ArgumentException) {
+						// This can happen if the hostName contains illegal unicode characters.
+						var ascii = new StringBuilder ();
+						for (int i = 0; i < hostName.Length; i++) {
+							if (hostName[i] <= 0x7F)
+								ascii.Append (hostName[i]);
+						}
+
+						hostName = ascii.Length > 0 ? ascii.ToString () : null;
 					}
-
-					hostName = ascii.Length > 0 ? ascii.ToString () : null;
+				} else {
+					hostName = null;
 				}
-			} else {
+			} catch {
 				hostName = null;
 			}
 
