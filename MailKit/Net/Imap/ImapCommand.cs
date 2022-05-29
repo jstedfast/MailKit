@@ -205,7 +205,7 @@ namespace MailKit.Net.Imap {
 
 			registration = DoneToken.Register (IdleComplete);
 
-			return Task.FromResult (true);
+			return Task.CompletedTask;
 		}
 
 		/// <summary>

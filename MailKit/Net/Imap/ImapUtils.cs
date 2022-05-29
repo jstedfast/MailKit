@@ -66,13 +66,6 @@ namespace MailKit.Net.Imap {
 				date.Offset.Hours, date.Offset.Minutes);
 		}
 
-		class UniqueHeaderSet : HashSet<string>
-		{
-			public UniqueHeaderSet () : base (StringComparer.Ordinal)
-			{
-			}
-		}
-
 		static bool TryGetInt32 (string text, ref int index, out int value)
 		{
 			int startIndex = index;

@@ -304,7 +304,7 @@ namespace MailKit.Net.Pop3 {
 				if (cmd.Status == Pop3CommandStatus.Ok)
 					okText = text;
 
-				return Task.FromResult (true);
+				return Task.CompletedTask;
 			}, encoding, format, args);
 
 			do {
@@ -589,27 +589,27 @@ namespace MailKit.Net.Pop3 {
 		{
 			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text, xdoAsync) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
-					return Task.FromResult (false);
+					return Task.CompletedTask;
 
 				// the response should be "<count> <total size>"
 				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 				if (tokens.Length < 2) {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the STAT command: {0}", text);
-					return Task.FromResult (false);
+					return Task.CompletedTask;
 				}
 
 				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out total) || total < 0) {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command: {0}", text);
-					return Task.FromResult (false);
+					return Task.CompletedTask;
 				}
 
 				if (!long.TryParse (tokens[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out octets)) {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command: {0}", text);
-					return Task.FromResult (false);
+					return Task.CompletedTask;
 				}
 
-				return Task.FromResult (true);
+				return Task.CompletedTask;
 			}, "STAT");
 			int id;
 
@@ -1955,23 +1955,23 @@ namespace MailKit.Net.Pop3 {
 			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
 			{
 				if (pc.Status != Pop3CommandStatus.Ok)
-					return Task.FromResult (true);
+					return Task.CompletedTask;
 
 				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 				if (tokens.Length < 2) {
 					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
-					return Task.FromResult (true);
+					return Task.CompletedTask;
 				}
 
 				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out int id) || id != seqid) {
 					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the UIDL command.");
-					return Task.FromResult (true);
+					return Task.CompletedTask;
 				}
 
 				uid = tokens[1];
 
-				return Task.FromResult (true);
+				return Task.CompletedTask;
 			}
 
 			public async Task<string> GetUidAsync (bool doAsync, CancellationToken cancellationToken)
@@ -2222,27 +2222,27 @@ namespace MailKit.Net.Pop3 {
 			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync)
 			{
 				if (pc.Status != Pop3CommandStatus.Ok)
-					return Task.FromResult (true);
+					return Task.CompletedTask;
 
 				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 				int id;
 
 				if (tokens.Length < 2) {
 					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", text);
-					return Task.FromResult (true);
+					return Task.CompletedTask;
 				}
 
 				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out id) || id != seqid) {
 					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected sequence-id token to the LIST command: {0}", tokens[0]);
-					return Task.FromResult (true);
+					return Task.CompletedTask;
 				}
 
 				if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out size) || size < 0) {
 					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
-					return Task.FromResult (true);
+					return Task.CompletedTask;
 				}
 
-				return Task.FromResult (true);
+				return Task.CompletedTask;
 			}
 
 			public async Task<int> GetSizeAsync (bool doAsync, CancellationToken cancellationToken)

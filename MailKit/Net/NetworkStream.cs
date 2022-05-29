@@ -256,7 +256,7 @@ namespace MailKit.Net
 
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{
-			return Task.FromResult (true);
+			return Task.CompletedTask;
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)

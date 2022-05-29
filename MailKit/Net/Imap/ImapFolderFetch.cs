@@ -654,7 +654,7 @@ namespace MailKit.Net.Imap
 				MessageSummary message;
 
 				if (!ctx.TryGetValue (section.Index, out message))
-					return Complete;
+					return Task.CompletedTask;
 
 				var body = message.TextBody;
 				TextPreviewer previewer;
@@ -667,7 +667,7 @@ namespace MailKit.Net.Imap
 				}
 
 				if (body == null)
-					return Complete;
+					return Task.CompletedTask;
 
 				var charset = body.ContentType.Charset ?? "utf-8";
 				ContentEncoding encoding;
@@ -693,12 +693,12 @@ namespace MailKit.Net.Imap
 					folder.OnMessageSummaryFetched (message);
 				}
 
-				return Complete;
+				return Task.CompletedTask;
 			}
 
 			public override Task SetUniqueIdAsync (int index, UniqueId uid, bool doAsync, CancellationToken cancellationToken)
 			{
-				return Complete;
+				return Task.CompletedTask;
 			}
 		}
 
@@ -1426,7 +1426,6 @@ namespace MailKit.Net.Imap
 
 		abstract class FetchStreamContextBase : IDisposable
 		{
-			protected static readonly Task Complete = Task.FromResult (true);
 			public readonly List<Section> Sections = new List<Section> ();
 			readonly ITransferProgress progress;
 
@@ -1475,7 +1474,7 @@ namespace MailKit.Net.Imap
 			public override Task AddAsync (Section section, bool doAsync, CancellationToken cancellationToken)
 			{
 				Sections.Add (section);
-				return Complete;
+				return Task.CompletedTask;
 			}
 
 			public bool TryGetSection (UniqueId uid, string specifier, out Section section, bool remove = false)
@@ -1529,7 +1528,7 @@ namespace MailKit.Net.Imap
 						Sections[i].UniqueId = uid;
 				}
 
-				return Complete;
+				return Task.CompletedTask;
 			}
 		}
 
@@ -4295,7 +4294,7 @@ namespace MailKit.Net.Imap
 					return ((ImapFetchStreamAsyncCallback) callback) (folder, index, uid, stream, cancellationToken);
 
 				((ImapFetchStreamCallback) callback) (folder, index, uid, stream);
-				return Complete;
+				return Task.CompletedTask;
 			}
 
 			public override async Task AddAsync (Section section, bool doAsync, CancellationToken cancellationToken)

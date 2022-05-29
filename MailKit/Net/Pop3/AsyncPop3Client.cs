@@ -826,7 +826,7 @@ namespace MailKit.Net.Pop3
 				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				return Task.FromResult ((IList<HeaderList>) new HeaderList[0]);
+				return Task.FromResult ((IList<HeaderList>) Array.Empty<HeaderList> ());
 
 			var seqids = new int[indexes.Count];
 
@@ -897,7 +897,7 @@ namespace MailKit.Net.Pop3
 				throw new ArgumentOutOfRangeException (nameof (count));
 
 			if (count == 0)
-				return Task.FromResult ((IList<HeaderList>) new HeaderList[0]);
+				return Task.FromResult ((IList<HeaderList>) Array.Empty<HeaderList> ());
 
 			var seqids = new int[count];
 
@@ -1014,7 +1014,7 @@ namespace MailKit.Net.Pop3
 				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				return Task.FromResult ((IList<MimeMessage>) new MimeMessage[0]);
+				return Task.FromResult ((IList<MimeMessage>) Array.Empty<MimeMessage> ());
 
 			var seqids = new int[indexes.Count];
 
@@ -1089,7 +1089,7 @@ namespace MailKit.Net.Pop3
 				throw new ArgumentOutOfRangeException (nameof (count));
 
 			if (count == 0)
-				return Task.FromResult ((IList<MimeMessage>) new MimeMessage[0]);
+				return Task.FromResult ((IList<MimeMessage>) Array.Empty<MimeMessage> ());
 
 			var seqids = new int[count];
 
@@ -1205,7 +1205,7 @@ namespace MailKit.Net.Pop3
 				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				return Task.FromResult ((IList<Stream>) new Stream[0]);
+				return Task.FromResult ((IList<Stream>) Array.Empty<Stream> ());
 
 			var seqids = new int[indexes.Count];
 
@@ -1278,7 +1278,7 @@ namespace MailKit.Net.Pop3
 				throw new ArgumentOutOfRangeException (nameof (count));
 
 			if (count == 0)
-				return Task.FromResult ((IList<Stream>) new Stream[0]);
+				return Task.FromResult ((IList<Stream>) Array.Empty<Stream> ());
 
 			var seqids = new int[count];
 
