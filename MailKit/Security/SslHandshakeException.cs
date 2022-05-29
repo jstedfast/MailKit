@@ -292,9 +292,7 @@ namespace MailKit.Security
 
 		public void Dispose ()
 		{
-#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
 			Certificate.Dispose ();
-#endif
 		}
 	}
 
@@ -321,11 +319,9 @@ namespace MailKit.Security
 
 		public void Dispose ()
 		{
-#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
 			Certificate.Dispose ();
 			foreach (var element in ChainElements)
 				element.Dispose ();
-#endif
 		}
 	}
 }

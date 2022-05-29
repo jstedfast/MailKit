@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace MailKit.Net.Imap {
 	class ImapAuthenticationSecretDetector : IAuthenticationSecretDetector
 	{
-		static readonly IList<AuthenticationSecret> EmptyAuthSecrets;
+		static readonly IList<AuthenticationSecret> EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
 
 		enum ImapAuthCommandState
 		{
@@ -90,15 +90,6 @@ namespace MailKit.Net.Imap {
 				ClearLoginTokenState ();
 				textIndex = 0;
 			}
-		}
-
-		static ImapAuthenticationSecretDetector ()
-		{
-#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
-			EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
-#else
-			EmptyAuthSecrets = new AuthenticationSecret[0];
-#endif
 		}
 
 		void ClearLoginTokenState ()

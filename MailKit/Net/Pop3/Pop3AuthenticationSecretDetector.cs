@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace MailKit.Net.Pop3 {
 	class Pop3AuthenticationSecretDetector : IAuthenticationSecretDetector
 	{
-		static readonly IList<AuthenticationSecret> EmptyAuthSecrets;
+		static readonly IList<AuthenticationSecret> EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
 
 		enum Pop3AuthCommandState
 		{
@@ -64,15 +64,6 @@ namespace MailKit.Net.Pop3 {
 				isAuthenticating = value;
 				commandIndex = 0;
 			}
-		}
-
-		static Pop3AuthenticationSecretDetector ()
-		{
-#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
-			EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
-#else
-			EmptyAuthSecrets = new AuthenticationSecret[0];
-#endif
 		}
 
 		bool SkipCommand (string command, byte[] buffer, ref int index, int endIndex)

@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace MailKit.Net.Smtp {
 	class SmtpAuthenticationSecretDetector : IAuthenticationSecretDetector
 	{
-		static readonly IList<AuthenticationSecret> EmptyAuthSecrets;
+		static readonly IList<AuthenticationSecret> EmptyAuthSecrets = Array.Empty<AuthenticationSecret>();
 
 		enum SmtpAuthCommandState
 		{
@@ -52,15 +52,6 @@ namespace MailKit.Net.Smtp {
 				isAuthenticating = value;
 				commandIndex = 0;
 			}
-		}
-
-		static SmtpAuthenticationSecretDetector ()
-		{
-#if NET46_OR_GREATER || NET5_0_OR_GREATER || NETSTANDARD
-			EmptyAuthSecrets = Array.Empty<AuthenticationSecret> ();
-#else
-			EmptyAuthSecrets = new AuthenticationSecret[0];
-#endif
 		}
 
 		bool SkipCommand (string command, byte[] buffer, ref int index, int endIndex)
