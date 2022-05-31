@@ -483,7 +483,14 @@ namespace MailKit.Net.Imap
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 		}
 
-		async Task FetchSummaryItemsAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		void OnFetchSummaryItemsAsyncCompleted (Task task, object data)
+		{
+			MessageSummary message = (MessageSummary) data;
+
+			OnMessageSummaryFetched (message);
+		}
+
+		Task FetchSummaryItemsAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var ctx = (FetchSummaryContext) ic.UserData;
 
@@ -492,9 +499,10 @@ namespace MailKit.Net.Imap
 				ctx.Add (index, message);
 			}
 
-			await FetchSummaryItemsAsync (engine, message, doAsync, ic.CancellationToken).ConfigureAwait (false);
-
-			OnMessageSummaryFetched (message);
+			return FetchSummaryItemsAsync (engine, message, doAsync, ic.CancellationToken)
+				.ContinueWith (OnFetchSummaryItemsAsyncCompleted, message, ic.CancellationToken,
+				TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+				TaskScheduler.Default);
 		}
 
 		internal static string FormatSummaryItems (ImapEngine engine, IFetchRequest request, out bool previewText, bool isNotify = false)

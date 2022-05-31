@@ -5423,12 +5423,11 @@ namespace MailKit.Net.Imap {
 			OnMessageExpunged (new MessageEventArgs (index));
 		}
 
-		internal async Task OnFetchAsync (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)
+		void OnFetchAsyncCompleted (Task task, object state)
 		{
-			var message = new MessageSummary (this, index);
+			MessageSummary message = (MessageSummary) state;
+			int index = message.Index;
 			UniqueId? uid = null;
-
-			await FetchSummaryItemsAsync (engine, message, doAsync, cancellationToken).ConfigureAwait (false);
 
 			if ((message.Fields & MessageSummaryItems.UniqueId) != 0)
 				uid = message.UniqueId;
@@ -5466,6 +5465,16 @@ namespace MailKit.Net.Imap {
 
 			if (message.Fields != MessageSummaryItems.None)
 				OnMessageSummaryFetched (message);
+		}
+
+		internal Task OnFetchAsync (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)
+		{
+			var message = new MessageSummary (this, index);
+
+			return FetchSummaryItemsAsync (engine, message, doAsync, cancellationToken)
+				.ContinueWith (OnFetchAsyncCompleted, message, cancellationToken,
+				TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+				TaskScheduler.Default);
 		}
 
 		internal void OnRecent (int count)
