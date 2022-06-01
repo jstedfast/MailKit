@@ -5471,10 +5471,17 @@ namespace MailKit.Net.Imap {
 		{
 			var message = new MessageSummary (this, index);
 
-			return FetchSummaryItemsAsync (engine, message, doAsync, cancellationToken)
-				.ContinueWith (OnFetchAsyncCompleted, message, cancellationToken,
-				TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-				TaskScheduler.Default);
+			if (doAsync) {
+				return FetchSummaryItemsAsync (engine, message, cancellationToken)
+					.ContinueWith (OnFetchAsyncCompleted, message, cancellationToken,
+					TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+					TaskScheduler.Default);
+			}
+
+			FetchSummaryItems (engine, message, cancellationToken);
+			OnFetchAsyncCompleted (null, message);
+
+			return Task.CompletedTask;
 		}
 
 		internal void OnRecent (int count)

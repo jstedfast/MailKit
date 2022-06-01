@@ -715,16 +715,6 @@ namespace MailKit.Net.Imap
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 		}
 
-		Task FetchSummaryItemsAsync (ImapEngine engine, MessageSummary message, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return FetchSummaryItemsAsync (engine, message, cancellationToken);
-
-			FetchSummaryItems (engine, message, cancellationToken);
-
-			return Task.CompletedTask;
-		}
-
 		void OnFetchSummaryItemsAsyncCompleted (Task task, object data)
 		{
 			MessageSummary message = (MessageSummary) data;
@@ -741,10 +731,17 @@ namespace MailKit.Net.Imap
 				ctx.Add (index, message);
 			}
 
-			return FetchSummaryItemsAsync (engine, message, doAsync, ic.CancellationToken)
-				.ContinueWith (OnFetchSummaryItemsAsyncCompleted, message, ic.CancellationToken,
-				TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-				TaskScheduler.Default);
+			if (doAsync) {
+				return FetchSummaryItemsAsync (engine, message, ic.CancellationToken)
+					.ContinueWith (OnFetchSummaryItemsAsyncCompleted, message, ic.CancellationToken,
+					TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+					TaskScheduler.Default);
+			}
+
+			FetchSummaryItems (engine, message, ic.CancellationToken);
+			OnFetchSummaryItemsAsyncCompleted (null, message);
+
+			return Task.CompletedTask;
 		}
 
 		internal static string FormatSummaryItems (ImapEngine engine, IFetchRequest request, out bool previewText, bool isNotify = false)
