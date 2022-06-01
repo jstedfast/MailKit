@@ -679,7 +679,7 @@ namespace MailKit.Net.Imap {
 			return ParseMetadataAsync (engine, metadata, doAsync, ic.CancellationToken);
 		}
 
-		static string ReadStringToken (ImapEngine engine, string format, CancellationToken cancellationToken)
+		internal static string ReadStringToken (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
@@ -694,7 +694,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static async ValueTask<string> ReadStringTokenAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
+		internal static async ValueTask<string> ReadStringTokenAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
