@@ -3026,34 +3026,40 @@ namespace MailKit.Net.Imap {
 				parser.SetStream (stream, persistent);
 		}
 
-		public async Task<HeaderList> ParseHeadersAsync (Stream stream, bool doAsync, CancellationToken cancellationToken)
+		public Task<HeaderList> ParseHeadersAsync (Stream stream, bool doAsync, CancellationToken cancellationToken)
 		{
 			InitializeParser (stream, false);
 
 			if (doAsync)
-				return await parser.ParseHeadersAsync (cancellationToken).ConfigureAwait (false);
+				return parser.ParseHeadersAsync (cancellationToken);
 
-			return parser.ParseHeaders (cancellationToken);
+			var headers = parser.ParseHeaders (cancellationToken);
+
+			return Task.FromResult (headers);
 		}
 
-		public async Task<MimeMessage> ParseMessageAsync (Stream stream, bool persistent, bool doAsync, CancellationToken cancellationToken)
+		public Task<MimeMessage> ParseMessageAsync (Stream stream, bool persistent, bool doAsync, CancellationToken cancellationToken)
 		{
 			InitializeParser (stream, persistent);
 
 			if (doAsync)
-				return await parser.ParseMessageAsync (cancellationToken).ConfigureAwait (false);
+				return parser.ParseMessageAsync (cancellationToken);
 
-			return parser.ParseMessage (cancellationToken);
+			var message = parser.ParseMessage (cancellationToken);
+
+			return Task.FromResult (message);
 		}
 
-		public async Task<MimeEntity> ParseEntityAsync (Stream stream, bool persistent, bool doAsync, CancellationToken cancellationToken)
+		public Task<MimeEntity> ParseEntityAsync (Stream stream, bool persistent, bool doAsync, CancellationToken cancellationToken)
 		{
 			InitializeParser (stream, persistent);
 
 			if (doAsync)
-				return await parser.ParseEntityAsync (cancellationToken).ConfigureAwait (false);
+				return parser.ParseEntityAsync (cancellationToken);
 
-			return parser.ParseEntity (cancellationToken);
+			var entity = parser.ParseEntity (cancellationToken);
+
+			return Task.FromResult (entity);
 		}
 
 		/// <summary>
