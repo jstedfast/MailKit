@@ -66,6 +66,9 @@ namespace MailKit.Net.Imap
 				if (max == 0)
 					return insert ? 0 : -1;
 
+				if (insert && index > Messages[max - 1].Index)
+					return max;
+
 				do {
 					int i = min + ((max - min) / 2);
 
