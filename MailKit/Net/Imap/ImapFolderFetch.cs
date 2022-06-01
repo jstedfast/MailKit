@@ -54,9 +54,9 @@ namespace MailKit.Net.Imap
 		{
 			public readonly List<IMessageSummary> Messages;
 
-			public FetchSummaryContext ()
+			public FetchSummaryContext (int capacity)
 			{
-				Messages = new List<IMessageSummary> ();
+				Messages = new List<IMessageSummary> (capacity);
 			}
 
 			int BinarySearch (int index, bool insert)
@@ -1054,7 +1054,7 @@ namespace MailKit.Net.Imap
 			}
 
 			var command = string.Format ("UID FETCH %s {0}{1}\r\n", query, changedSince);
-			var ctx = new FetchSummaryContext ();
+			var ctx = new FetchSummaryContext (4);
 
 			MessageExpunged += ctx.OnMessageExpunged;
 
@@ -1226,7 +1226,7 @@ namespace MailKit.Net.Imap
 
 			var command = string.Format ("FETCH {0} {1}{2}\r\n", set, query, changedSince);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext ();
+			var ctx = new FetchSummaryContext (indexes.Count);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
@@ -1391,6 +1391,7 @@ namespace MailKit.Net.Imap
 				return Array.Empty<IMessageSummary> ();
 
 			var query = FormatSummaryItems (Engine, request, out var previewText);
+			int capacity = (max == -1 || max > Count ? Count : max) - min;
 			var set = GetFetchRange (min, max);
 			var changedSince = string.Empty;
 
@@ -1399,7 +1400,7 @@ namespace MailKit.Net.Imap
 
 			var command = string.Format ("FETCH {0} {1}{2}\r\n", set, query, changedSince);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var ctx = new FetchSummaryContext ();
+			var ctx = new FetchSummaryContext (capacity);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
 			ic.UserData = ctx;
