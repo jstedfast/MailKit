@@ -876,15 +876,6 @@ namespace MailKit.Net.Imap
 			return string.Format ("({0})", string.Join (" ", tokens));
 		}
 
-		static IList<IMessageSummary> AsReadOnly (ICollection<IMessageSummary> collection)
-		{
-			var array = new IMessageSummary[collection.Count];
-
-			collection.CopyTo (array, 0);
-
-			return new ReadOnlyCollection<IMessageSummary> (array);
-		}
-
 		class FetchPreviewTextContext : FetchStreamContextBase
 		{
 			static readonly PlainTextPreviewer textPreviewer = new PlainTextPreviewer ();
@@ -1091,7 +1082,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Messages);
+			return ctx.Messages.AsReadOnly ();
 		}
 
 		/// <summary>
@@ -1255,7 +1246,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Messages);
+			return ctx.Messages.AsReadOnly ();
 		}
 
 		/// <summary>
@@ -1428,7 +1419,7 @@ namespace MailKit.Net.Imap
 			if (previewText)
 				await GetPreviewTextAsync (ctx, doAsync, cancellationToken).ConfigureAwait (false);
 
-			return AsReadOnly (ctx.Messages);
+			return ctx.Messages.AsReadOnly ();
 		}
 
 		/// <summary>
