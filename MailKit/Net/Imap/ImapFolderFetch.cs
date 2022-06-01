@@ -108,13 +108,12 @@ namespace MailKit.Net.Imap
 
 			public void OnMessageExpunged (object sender, MessageEventArgs args)
 			{
-				int index = BinarySearch (args.Index, true);
+				int index = BinarySearch (args.Index, false);
 
-				if (index >= Messages.Count)
+				if (index == -1)
 					return;
 
-				if (Messages[index].Index == args.Index)
-					Messages.RemoveAt (index);
+				Messages.RemoveAt (index);
 
 				for (int i = index; i < Messages.Count; i++) {
 					var message = (MessageSummary) Messages[i];
