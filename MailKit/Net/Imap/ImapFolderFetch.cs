@@ -153,16 +153,6 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		static Task ReadLiteralDataAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ReadLiteralDataAsync (engine, cancellationToken);
-
-			ReadLiteralData (engine, cancellationToken);
-
-			return Task.CompletedTask;
-		}
-
 		static void SkipParenthesizedList (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			do {
@@ -243,16 +233,6 @@ namespace MailKit.Net.Imap
 			default:
 				throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 			}
-		}
-
-		Task<DateTimeOffset?> ReadDateTimeOffsetTokenAsync (ImapEngine engine, string atom, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ReadDateTimeOffsetTokenAsync (engine, atom, cancellationToken);
-
-			var value = ReadDateTimeOffsetToken (engine, atom, cancellationToken);
-
-			return Task.FromResult (value);
 		}
 
 		void FetchSummaryItems (ImapEngine engine, MessageSummary message, CancellationToken cancellationToken)
