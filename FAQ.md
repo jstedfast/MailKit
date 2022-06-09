@@ -244,9 +244,14 @@ GMail Settings page and set your options to look like this:
 
 ### <a name="GMailAccess">Q: How can I access GMail using MailKit?</a>
 
-The first thing that you will need to do is to configure your GMail account to
-[enable less secure apps](https://www.google.com/settings/security/lesssecureapps),
-or you'll need to use [OAuth 2.0 authentication](#GMailOAuth2) (which is a bit more complex).
+As of the end of May, 2022, Google no longer allows enabling "Less secure apps".
+
+There are now only 2 options to choose from:
+1. Use [OAuth 2.0 authentication](#GMailOAuth2)
+2. Use an "App password"
+
+To use an App password, you will first need to [turn on 2-Step Verification](https://support.google.com/accounts/answer/185839).
+Once 2-Step Verification is turned on, you can [generate an App password](https://myaccount.google.com/apppasswords).
 
 Then, assuming that your GMail account is `user@gmail.com`, you would use the following
 code snippet to connect to GMail via IMAP:
