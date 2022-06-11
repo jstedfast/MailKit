@@ -864,17 +864,34 @@ namespace MailKit.Net.Imap {
 			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
-		static readonly string[] MultipartSubtypes = new string[] {
-			"alternative", "mixed", "related", "digest", "report", "parallel"
-		};
+		//static readonly string[] MediaTypes = new string[] { "text", "application", "audio", "image", "message", "multipart", "video" };
 
-		static bool IsMultipartSubtype (string subtype)
+		static bool IsMediaTypeWithDefaultSubtype (string type, out string subtype)
 		{
-			for (int i = 0; i < MultipartSubtypes.Length; i++) {
-				if (subtype.Equals (MultipartSubtypes[i], StringComparison.OrdinalIgnoreCase))
-					return true;
+			if (type.Equals ("text", StringComparison.OrdinalIgnoreCase)) {
+				subtype = "plain";
+				return true;
 			}
 
+			if (type.Equals ("application", StringComparison.OrdinalIgnoreCase)) {
+				subtype = "octet-stream";
+				return true;
+			}
+
+			if (type.Equals ("multipart", StringComparison.OrdinalIgnoreCase)) {
+				subtype = "mixed";
+				return true;
+			}
+
+			// Note: if we ever decide to uncomment this, we'll *probably* have to modify ParseBodyPartAsync() unless
+			// we want it to construct a BodyPartMessage. Most likely this will depend on an actual test-case to know
+			// what the "correct" behavior should be.
+			//if (type.Equals ("message", StringComparison.OrdinalIgnoreCase)) {
+			//	subtype = "rfc822";
+			//	return true;
+			//}
+
+			subtype = null;
 			return false;
 		}
 
@@ -897,32 +914,21 @@ namespace MailKit.Net.Imap {
 					return type;
 				}
 
-				if (token.Type != ImapTokenType.Nil) {
-					// Note: In other IMAP server implementations, such as the one found in
-					// https://github.com/jstedfast/MailKit/issues/371, if the server comes
-					// across something like "Content-Type: X-ZIP", it will only send a
-					// media-subtype token and completely fail to send a media-type token.
+				// Note: In some IMAP server implementations, such as the one found in
+				// https://github.com/jstedfast/MailKit/issues/371, if the server comes
+				// across something like "Content-Type: X-ZIP", it will only send an
+				// empty string as the media-type.
+				//
+				// e.g. <empty-string><SPACE><media-subtype>
+				//
+				// This is why we checked if the first character was a space.
+				if (!IsMediaTypeWithDefaultSubtype (type, out subtype)) {
 					subtype = type;
 					type = "application";
-				} else {
-					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					subtype = string.Empty;
 				}
 			} else {
 				subtype = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			}
-
-			if (type == null && subtype != null && IsMultipartSubtype (subtype)) {
-				// Note: Sometimes, when a multipart contains no children, IMAP servers (even Dovecot!)
-				// will reply with a BODYSTRUCTURE that looks like (NIL "alternative" ("boundary" "...
-				// Obviously, this is not a body-type-1part because "alternative" is a multipart subtype.
-				// This suggests that the NIL represents an empty list of children.
-				//
-				// See https://github.com/jstedfast/MailKit/issues/1393 for more details.
-				return subtype;
-			}
-
-			type = type ?? "application";
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1094,11 +1100,23 @@ namespace MailKit.Net.Imap {
 
 			// Note: if subtype is not null, then we are dealing with one of the work-arounds described in ParseContentTypeAsync().
 			if (subtype == null) {
-				do {
-					body.BodyParts.Add (await ParseBodyAsync (engine, format, prefix + index, doAsync, cancellationToken).ConfigureAwait (false));
-					token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-					index++;
-				} while (token.Type == ImapTokenType.OpenParen);
+				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				if (token.Type != ImapTokenType.Nil) {
+					do {
+						body.BodyParts.Add (await ParseBodyAsync (engine, format, prefix + index, doAsync, cancellationToken).ConfigureAwait (false));
+						token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+						index++;
+					} while (token.Type == ImapTokenType.OpenParen);
+				} else {
+					// Note: Sometimes, when a multipart contains no children, IMAP servers (even Dovecot!)
+					// will reply with a BODYSTRUCTURE that looks like (NIL "alternative" ("boundary" "...
+					// Obviously, this is not a body-type-1part because "alternative" is a multipart subtype.
+					// This suggests that the NIL represents an empty list of children.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/1393 for more details.
+					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				}
 
 				subtype = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			}
@@ -1183,7 +1201,7 @@ namespace MailKit.Net.Imap {
 				return null;
 			}
 
-			if (token.Type == ImapTokenType.OpenParen)
+			if (token.Type == ImapTokenType.OpenParen || token.Type == ImapTokenType.Nil)
 				return await ParseMultipartAsync (engine, format, path, null, doAsync, cancellationToken).ConfigureAwait (false);
 
 			var result = await ParseContentTypeAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);

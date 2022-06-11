@@ -2128,7 +2128,7 @@ namespace UnitTests.Net.Imap {
 
 		// Note: This tests the work-around for issue #371 (except that the example from issue #371 is also missing body-fld-enc and body-fld-octets)
 		[Test]
-		public void TestParseBadlyFormedBodyStructureWithMissingMediaType ()
+		public void TestParseBadlyFormedBodyStructureWithEmptyStringMediaType ()
 		{
 			const string text = "((\"TEXT\" \"PLAIN\" (\"CHARSET\" \"windows-1251\") NIL NIL \"base64\" 356 5)( \"X-ZIP\" (\"BOUNDARY\" \"\") NIL NIL \"base64\" 4096) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
 
@@ -2178,7 +2178,7 @@ namespace UnitTests.Net.Imap {
 
 		// Note: This tests the work-around for issue #371 (except that the example from issue #371 is also missing body-fld-enc and body-fld-octets)
 		[Test]
-		public async Task TestParseBadlyFormedBodyStructureWithMissingMediaTypeAsync ()
+		public async Task TestParseBadlyFormedBodyStructureWithEmptyStringMediaTypeAsync ()
 		{
 			const string text = "((\"TEXT\" \"PLAIN\" (\"CHARSET\" \"windows-1251\") NIL NIL \"base64\" 356 5)( \"X-ZIP\" (\"BOUNDARY\" \"\") NIL NIL \"base64\" 4096) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
 
@@ -2221,6 +2221,330 @@ namespace UnitTests.Net.Imap {
 						Assert.IsTrue (xzip.ContentType.IsMimeType ("application", "x-zip"), "x-zip Content-Type did not match.");
 						Assert.AreEqual ("", xzip.ContentType.Parameters["boundary"], "x-zip boundary parameter did not match");
 						Assert.AreEqual (4096, xzip.Octets, "x-zip octets did not match");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseBadlyFormedBodyStructureWithMissingMediaSubtypeApplication ()
+		{
+			const string text = "((\"APPLICATION\" NIL NIL NIL \"base64\" 356) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic basic;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (1, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.IsTrue (basic.ContentType.IsMimeType ("application", "octet-stream"), "application/octet-stream Content-Type did not match.");
+						Assert.AreEqual (356, basic.Octets, "application/octet-stream octets did not match");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParseBadlyFormedBodyStructureWithMissingMediaSubtypeApplicationAsync ()
+		{
+			const string text = "((\"APPLICATION\" NIL NIL NIL \"base64\" 356) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic basic;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = await engine.ReadTokenAsync (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (1, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.IsTrue (basic.ContentType.IsMimeType ("application", "octet-stream"), "application/octet-stream Content-Type did not match.");
+						Assert.AreEqual (356, basic.Octets, "application/octet-stream octets did not match");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseBadlyFormedBodyStructureWithMissingMediaSubtypeAudio ()
+		{
+			const string text = "((\"AUDIO\" NIL NIL NIL \"base64\" 356) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic basic;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (1, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.IsTrue (basic.ContentType.IsMimeType ("application", "audio"), "application/audio Content-Type did not match.");
+						Assert.AreEqual (356, basic.Octets, "application/audio octets did not match");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParseBadlyFormedBodyStructureWithMissingMediaSubtypeAudioAsync ()
+		{
+			const string text = "((\"AUDIO\" NIL NIL NIL \"base64\" 356) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic basic;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = await engine.ReadTokenAsync (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (1, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.IsTrue (basic.ContentType.IsMimeType ("application", "audio"), "application/audio Content-Type did not match.");
+						Assert.AreEqual (356, basic.Octets, "application/audio octets did not match");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseBadlyFormedBodyStructureWithMissingMediaSubtypeMessage ()
+		{
+			const string text = "((\"MESSAGE\" NIL NIL NIL \"base64\" 356) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic basic;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (1, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.IsTrue (basic.ContentType.IsMimeType ("application", "message"), "application/message Content-Type did not match.");
+						Assert.AreEqual (356, basic.Octets, "application/message octets did not match");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParseBadlyFormedBodyStructureWithMissingMediaSubtypeMessageAsync ()
+		{
+			const string text = "((\"MESSAGE\" NIL NIL NIL \"base64\" 356) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartBasic basic;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = await engine.ReadTokenAsync (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (1, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						basic = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.IsTrue (basic.ContentType.IsMimeType ("application", "message"), "application/message Content-Type did not match.");
+						Assert.AreEqual (356, basic.Octets, "application/message octets did not match");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseBadlyFormedBodyStructureWithMissingMediaSubtypeText ()
+		{
+			const string text = "((\"TEXT\" (\"CHARSET\" \"windows-1251\") NIL NIL \"base64\" 356 5) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartText plain;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (1, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						plain = (BodyPartText) multipart.BodyParts[0];
+						Assert.IsTrue (plain.ContentType.IsMimeType ("text", "plain"), "text/plain Content-Type did not match.");
+						Assert.AreEqual ("windows-1251", plain.ContentType.Charset, "text/plain charset parameter did not match");
+						Assert.AreEqual (356, plain.Octets, "text/plain octets did not match");
+						Assert.AreEqual (5, plain.Lines, "text/plain lines did not match");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParseBadlyFormedBodyStructureWithMissingMediaSubtypeTextAsync ()
+		{
+			const string text = "((\"TEXT\" (\"CHARSET\" \"windows-1251\") NIL NIL \"base64\" 356 5) \"MIXED\" (\"BOUNDARY\" \"--cd49a2f5ed4ed0cbb6f9f1c7f125541f\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPartMultipart multipart;
+						BodyPartText plain;
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = await engine.ReadTokenAsync (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "multipart/mixed Content-Type did not match.");
+						Assert.AreEqual ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f", multipart.ContentType.Parameters["boundary"], "multipart/alternative boundary param did not match");
+						Assert.AreEqual (1, multipart.BodyParts.Count, "outer multipart/alternative BodyParts count does not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						plain = (BodyPartText) multipart.BodyParts[0];
+						Assert.IsTrue (plain.ContentType.IsMimeType ("text", "plain"), "text/plain Content-Type did not match.");
+						Assert.AreEqual ("windows-1251", plain.ContentType.Charset, "text/plain charset parameter did not match");
+						Assert.AreEqual (356, plain.Octets, "text/plain octets did not match");
+						Assert.AreEqual (5, plain.Lines, "text/plain lines did not match");
 					}
 				}
 			}
