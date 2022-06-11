@@ -226,6 +226,33 @@ namespace UnitTests {
 			// FIXME: assert more stuff
 		}
 
+		[Test]
+		public void TestMultipartWithNoChildren ()
+		{
+			var original = new BodyPartMultipart {
+				ContentType = new ContentType ("multipart", "mixed") { Boundary = "----=_NextPart_000_001" }
+			};
+			original.BodyParts.Add (new BodyPartMultipart {
+				ContentType = new ContentType ("multipart", "alternative") { Boundary = "----=_AlternativePart_001_001" }
+			});
+
+			var serialized = original.ToString ();
+
+			Assert.IsTrue (BodyPart.TryParse (serialized, out var body), "Failed to parse.");
+			Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+
+			var multipart = (BodyPartMultipart) body;
+			Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "Content-Type did not match.");
+			Assert.AreEqual (original.ContentType.Boundary, multipart.ContentType.Boundary, "boundary param did not match");
+			Assert.AreEqual (1, multipart.BodyParts.Count, "BodyParts count does not match.");
+			Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
+
+			var alternative = (BodyPartMultipart) multipart.BodyParts[0];
+			Assert.IsTrue (alternative.ContentType.IsMimeType ("multipart", "alternative"), "Inner Content-Type did not match.");
+			Assert.AreEqual (original.BodyParts[0].ContentType.Boundary, alternative.ContentType.Boundary, "Inner boundary param did not match");
+			Assert.AreEqual (0, alternative.BodyParts.Count, "Inner BodyParts count does not match.");
+		}
+
 		static ContentType CreateContentType (string type, string subtype, string partSpecifier)
 		{
 			var contentType = new ContentType (type, subtype);
