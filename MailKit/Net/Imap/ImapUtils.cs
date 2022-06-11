@@ -864,9 +864,23 @@ namespace MailKit.Net.Imap {
 			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 		}
 
+		static readonly string[] MultipartSubtypes = new string[] {
+			"alternative", "mixed", "related", "digest", "report", "parallel"
+		};
+
+		static bool IsMultipartSubtype (string subtype)
+		{
+			for (int i = 0; i < MultipartSubtypes.Length; i++) {
+				if (subtype.Equals (MultipartSubtypes[i], StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
+		}
+
 		static async ValueTask<object> ParseContentTypeAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
-			var type = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false) ?? "application";
+			var type = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
 			var token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			string subtype;
 
@@ -897,6 +911,18 @@ namespace MailKit.Net.Imap {
 			} else {
 				subtype = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			}
+
+			if (type == null && subtype != null && IsMultipartSubtype (subtype)) {
+				// Note: Sometimes, when a multipart contains no children, IMAP servers (even Dovecot!)
+				// will reply with a BODYSTRUCTURE that looks like (NIL "alternative" ("boundary" "...
+				// Obviously, this is not a body-type-1part because "alternative" is a multipart subtype.
+				// This suggests that the NIL represents an empty list of children.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/1393 for more details.
+				return subtype;
+			}
+
+			type = type ?? "application";
 
 			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -1066,7 +1092,7 @@ namespace MailKit.Net.Imap {
 			ImapToken token;
 			int index = 1;
 
-			// Note: if subtype is not null, then we are working around a GMail bug...
+			// Note: if subtype is not null, then we are dealing with one of the work-arounds described in ParseContentTypeAsync().
 			if (subtype == null) {
 				do {
 					body.BodyParts.Add (await ParseBodyAsync (engine, format, prefix + index, doAsync, cancellationToken).ConfigureAwait (false));

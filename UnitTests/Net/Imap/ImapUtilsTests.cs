@@ -2883,6 +2883,124 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseBodyStructureWithNilMultipartBody ()
+		{
+			const string text = "((\"text\" \"plain\" (\"charset\" \"utf-8\") NIL NIL \"7bit\" 727 16 NIL NIL NIL NIL)(\"message\" \"delivery-status\" (\"name\" \"Delivery status\") NIL NIL \"7bit\" 416 NIL NIL NIL NIL)(\"message\" \"rfc822\" (\"name\" \"Message headers\") NIL NIL \"7bit\" 903 (\"Mon, 17 Nov 2014 13:29:21 +0100\" \"Re: Adresy\" ((\"username\" NIL \"e.username\" \"example.com\")) ((\"username\" NIL \"e.username\" \"example.com\")) ((\"username\" NIL \"e.username\" \"example.com\")) ((\"=?utf-8?Q?Justyna?=\" NIL \"salesde\" \"some-company.eu\")) ((NIL NIL \"saleseu\" \"some-company.eu\")(\"Bogdan\" NIL \"bogdan\" \"some-company.eu\")) NIL \"<004901d00260$35405970$9fc10c50$@some-company.eu>\" \"<D6173425-9D71-4D78-8C3C-1CEB03BCB4D0@example.com>\") (NIL \"alternative\" (\"boundary\" \"Apple-Mail=_352FCEEC-EB15-428F-9D8B-D3B4259DD646\") NIL NIL NIL) 17 NIL NIL NIL NIL) \"report\" (\"report-type\" \"delivery-status\" \"boundary\" \"_e0d7475d888f9882b71de053e5efb221_idea\") NIL NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						var multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "report"), "Content-Type did not match.");
+						Assert.AreEqual ("delivery-status", multipart.ContentType.Parameters["report-type"], "report-type param did not match");
+						Assert.AreEqual ("_e0d7475d888f9882b71de053e5efb221_idea", multipart.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (3, multipart.BodyParts.Count, "multipart children did not match");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "First multipart subpart types did not match.");
+						var plain = (BodyPartText) multipart.BodyParts[0];
+						Assert.AreEqual ("7bit", plain.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (727, plain.Octets, "Octets did not match.");
+						Assert.AreEqual (16, plain.Lines, "Lines did not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "Second multipart subpart types did not match.");
+						var deliveryStatus = (BodyPartBasic) multipart.BodyParts[1];
+						Assert.AreEqual ("Delivery status", deliveryStatus.ContentType.Name, "name param did not match");
+						Assert.AreEqual ("7bit", deliveryStatus.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (416, deliveryStatus.Octets, "Octets did not match.");
+
+						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "Third multipart subpart types did not match.");
+						var rfc822 = (BodyPartMessage) multipart.BodyParts[2];
+						Assert.AreEqual ("Message headers", rfc822.ContentType.Name, "name param did not match");
+						Assert.AreEqual ("7bit", rfc822.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (903, rfc822.Octets, "Octets did not match.");
+						Assert.AreEqual (17, rfc822.Lines, "Lines did not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (rfc822.Body, "rfc822 body types did not match.");
+						var alternative = (BodyPartMultipart) rfc822.Body;
+						Assert.IsTrue (alternative.ContentType.IsMimeType ("multipart", "alternative"), "Content-Type did not match.");
+						Assert.AreEqual ("Apple-Mail=_352FCEEC-EB15-428F-9D8B-D3B4259DD646", alternative.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (0, alternative.BodyParts.Count, "alternative bodyparts count did not match.");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParseBodyStructureWithNilMultipartBodyAsync ()
+		{
+			const string text = "((\"text\" \"plain\" (\"charset\" \"utf-8\") NIL NIL \"7bit\" 727 16 NIL NIL NIL NIL)(\"message\" \"delivery-status\" (\"name\" \"Delivery status\") NIL NIL \"7bit\" 416 NIL NIL NIL NIL)(\"message\" \"rfc822\" (\"name\" \"Message headers\") NIL NIL \"7bit\" 903 (\"Mon, 17 Nov 2014 13:29:21 +0100\" \"Re: Adresy\" ((\"username\" NIL \"e.username\" \"example.com\")) ((\"username\" NIL \"e.username\" \"example.com\")) ((\"username\" NIL \"e.username\" \"example.com\")) ((\"=?utf-8?Q?Justyna?=\" NIL \"salesde\" \"some-company.eu\")) ((NIL NIL \"saleseu\" \"some-company.eu\")(\"Bogdan\" NIL \"bogdan\" \"some-company.eu\")) NIL \"<004901d00260$35405970$9fc10c50$@some-company.eu>\" \"<D6173425-9D71-4D78-8C3C-1CEB03BCB4D0@example.com>\") (NIL \"alternative\" (\"boundary\" \"Apple-Mail=_352FCEEC-EB15-428F-9D8B-D3B4259DD646\") NIL NIL NIL) 17 NIL NIL NIL NIL) \"report\" (\"report-type\" \"delivery-status\" \"boundary\" \"_e0d7475d888f9882b71de053e5efb221_idea\") NIL NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = await ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, true, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						var multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "report"), "Content-Type did not match.");
+						Assert.AreEqual ("delivery-status", multipart.ContentType.Parameters["report-type"], "report-type param did not match");
+						Assert.AreEqual ("_e0d7475d888f9882b71de053e5efb221_idea", multipart.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (3, multipart.BodyParts.Count, "multipart children did not match");
+
+						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "First multipart subpart types did not match.");
+						var plain = (BodyPartText) multipart.BodyParts[0];
+						Assert.AreEqual ("7bit", plain.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (727, plain.Octets, "Octets did not match.");
+						Assert.AreEqual (16, plain.Lines, "Lines did not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "Second multipart subpart types did not match.");
+						var deliveryStatus = (BodyPartBasic) multipart.BodyParts[1];
+						Assert.AreEqual ("Delivery status", deliveryStatus.ContentType.Name, "name param did not match");
+						Assert.AreEqual ("7bit", deliveryStatus.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (416, deliveryStatus.Octets, "Octets did not match.");
+
+						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "Third multipart subpart types did not match.");
+						var rfc822 = (BodyPartMessage) multipart.BodyParts[2];
+						Assert.AreEqual ("Message headers", rfc822.ContentType.Name, "name param did not match");
+						Assert.AreEqual ("7bit", rfc822.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (903, rfc822.Octets, "Octets did not match.");
+						Assert.AreEqual (17, rfc822.Lines, "Lines did not match.");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (rfc822.Body, "rfc822 body types did not match.");
+						var alternative = (BodyPartMultipart) rfc822.Body;
+						Assert.IsTrue (alternative.ContentType.IsMimeType ("multipart", "alternative"), "Content-Type did not match.");
+						Assert.AreEqual ("Apple-Mail=_352FCEEC-EB15-428F-9D8B-D3B4259DD646", alternative.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (0, alternative.BodyParts.Count, "alternative bodyparts count did not match.");
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestParseExampleThreads ()
 		{
 			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
