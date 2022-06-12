@@ -1,5 +1,23 @@
 # Release Notes
 
+### MailKit 3.3.0 (2022-06-11)
+
+* Added work-around for IMAP BODYSTRUCTURE responses that have a NIL multipart body.
+  (issue [#1393](https://github.com/jstedfast/MailKit/issues/1393))
+* Considerably reduced memory overhead from compiler-generated async/await Tasks allocations in the IMAP
+  implementation (mostly focused on FETCH commands/responses).
+  (issue [#1335](https://github.com/jstedfast/MailKit/issues/1335))
+* Optimized FETCH response processing for the common case where FETCH responses are returned in sorted order.
+* Fixed the IMAP Literal string reader to use UTF-8 with fallback to iso-8859-1 (previously just used iso-8859-1).
+* Modified the IMAP ENVELOPE parser to combine ENVELOPE mailbox tokens if there are more than 4.
+  (issue [#1369](https://github.com/jstedfast/MailKit/issues/1369))
+* Prevent TypeLoadExceptions in the SmtpClient static .ctor by catching NotSupportedExceptions thrown by
+  IPGlobalProperties.GetIPGlobalProperties() on platforms like WASM.
+  (issue [#1381](https://github.com/jstedfast/MailKit/issues/1381))
+* Updated Google, GMX, and Yahoo! Mail SSL certificates.
+* Dropped support for net452 and net461.
+* Added support for net462.
+
 ### MailKit 3.2.0 (2022-03-26)
 
 * Do not use ApplicationProtocols with SSL. (issue [#1352](https://github.com/jstedfast/MailKit/issues/1352))

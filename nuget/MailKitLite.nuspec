@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKitLite</id>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,19 +26,15 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Do not use ApplicationProtocols with SSL. (issue #1352)
-* Updated GMail, Yahoo, and Outlook.com certificates.
-* Lazy-initialize MessageSummary.Keywords. This reduces memory usage when the client isn't requesting Flags/Keywords.
-* Hard-cache some IMAP FETCH-related tokens in order to relieve GC pressure for commands like FETCH where there can be a LOT of responses containing the same tokens over and over again.
-* Converted some IMAP async Task methods to use ValueTask to reduce GC pressure.
-* Reduced string allocations in the IMAP logic by avoiding use of ToUpperInvariant().
-* Added non-async implementations for ImapStream APIs to be used by the synchronous public APIs to avoid some async overhead.
-* Reduce MemoryStream (and thus byte[]) allocations by using a new ByteArrayBuilder.
-* Rewrote the IMAP CAPABILITY parser to avoid allocating strings.
-* Fixed some cases where IMAP NIL tokens were not compared case insensitively.
-* Always include the VERSION block in NTLM messages. (issue #1340)
-* Target .NET Framework v4.6.1 instead of v4.6 to match the changes in MimeKit.
-* Capture the Socket timeout value in Read/WriteAsync() to have it in case of exceptions. (issue #1327)
+* Added work-around for IMAP BODYSTRUCTURE responses that have a NIL multipart body. (issue #1393)
+* Considerably reduced memory overhead from compiler-generated async/await Tasks allocations in the IMAP implementation (mostly focused on FETCH commands/responses). (issue #1335)
+* Optimized FETCH response processing for the common case where FETCH responses are returned in sorted order.
+* Fixed the IMAP Literal string reader to use UTF-8 with fallback to iso-8859-1 (previously just used iso-8859-1).
+* Modified the IMAP ENVELOPE parser to combine ENVELOPE mailbox tokens if there are more than 4. (issue #1369)
+* Prevent TypeLoadExceptions in the SmtpClient static .ctor by catching NotSupportedExceptions thrown by IPGlobalProperties.GetIPGlobalProperties() on platforms like WASM. (issue #1381)
+* Updated Google, GMX, and Yahoo! Mail SSL certificates.
+* Dropped support for net452 and net461.
+* Added support for net462.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
