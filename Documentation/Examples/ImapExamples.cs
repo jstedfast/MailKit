@@ -101,10 +101,10 @@ namespace MailKit.Examples {
 					Console.WriteLine ("The current quota for the Inbox is:");
 					var quota = client.Inbox.GetQuota ();
 
-					if (quota.StorageLimit.HasValue && quota.StorageLimit.Value)
+					if (quota.StorageLimit.HasValue)
 						Console.WriteLine ("  Limited by storage space. Using {0} out of {1} bytes.", quota.CurrentStorageSize.Value, quota.StorageLimit.Value);
 
-					if (quota.MessageLimit.HasValue && quota.MessageLimit.Value)
+					if (quota.MessageLimit.HasValue)
 						Console.WriteLine ("  Limited by the number of messages. Using {0} out of {1} bytes.", quota.CurrentMessageCount.Value, quota.MessageLimit.Value);
 
 					Console.WriteLine ("The quota root is: {0}", quota.QuotaRoot);
@@ -147,7 +147,7 @@ namespace MailKit.Examples {
 		#endregion
 
 		#region DownloadBodyParts
-		public static void DownloadBodyParts ()
+		public static void DownloadBodyParts (string baseDirectory)
 		{
 			using (var client = new ImapClient ()) {
 				client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
