@@ -1267,6 +1267,7 @@ namespace MailKit.Net.Smtp {
 			case SecureSocketOptions.Auto:
 				switch (port) {
 				case 0: port = 25; goto default;
+				case 25: goto default;
 				case 465: options = SecureSocketOptions.SslOnConnect; break;
 				default: options = SecureSocketOptions.StartTlsWhenAvailable; break;
 				}
