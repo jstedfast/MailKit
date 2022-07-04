@@ -582,11 +582,17 @@ class HtmlPreviewVisitor : MimeVisitor
         return false;
     }
 
-    // Save the image to our temp directory and return a "file://" url suitable for
-    // the browser control to load.
-    // Note: if you'd rather embed the image data into the HTML, you can construct a
-    // "data:" url instead.
-    string SaveImage (MimePart image, string url)
+    /// <summary>
+    /// Get a file:// URI for the image attachment.
+    /// </summary>
+    /// <remarks>
+    /// Saves the image attachment to a temp file and returns a file:// URI for the
+    /// temp file.
+    /// </remarks>
+    /// <returns>The file:// URI.</returns>
+    /// <param name="image">The image attachment.</param>
+    /// <param name="url">The original HTML image URL.</param>
+    string GetFileUri (MimePart image, string url)
     {
         string fileName = url.Replace (':', '_').Replace ('\\', '_').Replace ('/', '_');
 
@@ -600,28 +606,70 @@ class HtmlPreviewVisitor : MimeVisitor
         return "file://" + path.Replace ('\\', '/');
     }
 
+    /// <summary>
+    /// Get a data: URI for the image attachment.
+    /// </summary>
+    /// <remarks>
+    /// Encodes the image attachment into a string suitable for setting as a src= attribute value in
+    /// an img tag.
+    /// </remarks>
+    /// <returns>The data: URI.</returns>
+    /// <param name="image">The image attachment.</param>
+    string GetDataUri (MimePart image)
+    {
+        using (var memory = new MemoryStream ()) {
+            image.Content.DecodeTo (memory);
+            var buffer = memory.GetBuffer ();
+            var length = (int) memory.Length;
+            var base64 = Convert.ToBase64String (buffer, 0, length);
+
+            return string.Format ("data:{0};base64,{1}", image.ContentType.MimeType, base64);
+        }
+    }
+
     // Replaces <img src=...> urls that refer to images embedded within the message with
     // "file://" urls that the browser control will actually be able to load.
     void HtmlTagCallback (HtmlTagContext ctx, HtmlWriter htmlWriter)
     {
-        if (ctx.TagId == HtmlTagId.Image && !ctx.IsEndTag && stack.Count > 0) {
+        if (ctx.TagId == HtmlTagId.Meta && !ctx.IsEndTag) {
+            bool isContentType = false;
+
+            ctx.WriteTag (htmlWriter, false);
+
+            // replace charsets with "utf-8" since our output will be in utf-8 (and not whatever the original charset was)
+            foreach (var attribute in ctx.Attributes) {
+                if (attribute.Id == HtmlAttributeId.Charset) {
+                    htmlWriter.WriteAttributeName (attribute.Name);
+                    htmlWriter.WriteAttributeValue ("utf-8");
+                } else if (isContentType && attribute.Id == HtmlAttributeId.Content) {
+                    htmlWriter.WriteAttributeName (attribute.Name);
+                    htmlWriter.WriteAttributeValue ("text/html; charset=utf-8");
+                } else {
+                    if (attribute.Id == HtmlAttributeId.HttpEquiv && attribute.Value != null
+                        && attribute.Value.Equals ("Content-Type", StringComparison.OrdinalIgnoreCase))
+                        isContentType = true;
+
+                    htmlWriter.WriteAttribute (attribute);
+                }
+            }
+        } else if (ctx.TagId == HtmlTagId.Image && !ctx.IsEndTag && stack.Count > 0) {
             ctx.WriteTag (htmlWriter, false);
 
             // replace the src attribute with a file:// URL
             foreach (var attribute in ctx.Attributes) {
                 if (attribute.Id == HtmlAttributeId.Src) {
-                    MimePart image;
-                    string url;
-
-                    if (!TryGetImage (attribute.Value, out image)) {
+                    if (!TryGetImage (attribute.Value, out var image)) {
                         htmlWriter.WriteAttribute (attribute);
                         continue;
                     }
 
-                    url = SaveImage (image, attribute.Value);
+                    // Note: you can either use a "file://" URI or you can use a
+                    // "data:" URI, the choice is yours.
+                    var uri = GetFileUri (image, attribute.Value);
+                    //var uri = GetDataUri (image);
 
                     htmlWriter.WriteAttributeName (attribute.Name);
-                    htmlWriter.WriteAttributeValue (url);
+                    htmlWriter.WriteAttributeValue (uri);
                 } else {
                     htmlWriter.WriteAttribute (attribute);
                 }
@@ -631,8 +679,8 @@ class HtmlPreviewVisitor : MimeVisitor
 
             // add and/or replace oncontextmenu="return false;"
             foreach (var attribute in ctx.Attributes) {
-                if (attribute.Name.ToLowerInvariant () == "oncontextmenu")
-                    continue;
+                if (attribute.Name.Equals ("oncontextmenu", StringComparison.OrdinalIgnoreCase))
+                   continue;
 
                 htmlWriter.WriteAttribute (attribute);
             }
@@ -663,7 +711,7 @@ class HtmlPreviewVisitor : MimeVisitor
             string delsp;
 
             if (entity.ContentType.Parameters.TryGetValue ("delsp", out delsp))
-                flowed.DeleteSpace = delsp.ToLowerInvariant () == "yes";
+                flowed.DeleteSpace = delsp.Equals ("yes", StringComparison.OrdinalIgnoreCase);
 
             converter = flowed;
         } else {
