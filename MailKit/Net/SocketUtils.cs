@@ -37,59 +37,36 @@ namespace MailKit.Net
 	{
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
 		{
-			IPAddress[] ipAddresses;
-
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			if (doAsync) {
-				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
-			} else {
-				ipAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
-			}
+			var socket = new Socket (SocketType.Stream, ProtocolType.Tcp);
 
-			for (int i = 0; i < ipAddresses.Length; i++) {
-				cancellationToken.ThrowIfCancellationRequested ();
+			try {
+				if (localEndPoint != null)
+					socket.Bind (localEndPoint);
 
-				var socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+				if (doAsync || cancellationToken.CanBeCanceled) {
+					var tcs = new TaskCompletionSource<bool> ();
 
-				try {
-					if (localEndPoint != null)
-						socket.Bind (localEndPoint);
+					using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
+						var ar = socket.BeginConnect (host, port, e => tcs.TrySetResult (true), null);
 
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-					if (doAsync || cancellationToken.CanBeCanceled) {
-						var tcs = new TaskCompletionSource<bool> ();
+						if (doAsync)
+							await tcs.Task.ConfigureAwait (false);
+						else
+							tcs.Task.GetAwaiter ().GetResult ();
 
-						using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-							var ar = socket.BeginConnect (ipAddresses[i], port, e => tcs.TrySetResult (true), null);
-
-							if (doAsync)
-								await tcs.Task.ConfigureAwait (false);
-							else
-								tcs.Task.GetAwaiter ().GetResult ();
-
-							socket.EndConnect (ar);
-						}
-					} else {
-						socket.Connect (ipAddresses[i], port);
+						socket.EndConnect (ar);
 					}
-#else
-					socket.Connect (ipAddresses[i], port);
-#endif
-
-					return socket;
-				} catch (OperationCanceledException) {
-					socket.Dispose ();
-					throw;
-				} catch {
-					socket.Dispose ();
-
-					if (i + 1 == ipAddresses.Length)
-						throw;
+				} else {
+					socket.Connect (host, port);
 				}
-			}
 
-			throw new IOException (string.Format ("Failed to resolve host: {0}", host));
+				return socket;
+			} catch {
+				socket.Dispose ();
+				throw;
+			}
 		}
 
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, int timeout, bool doAsync, CancellationToken cancellationToken)
