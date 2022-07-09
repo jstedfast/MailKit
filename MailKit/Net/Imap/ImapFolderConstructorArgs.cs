@@ -105,9 +105,12 @@ namespace MailKit.Net.Imap {
 
 		static string GetBaseName (string fullName, char delim)
 		{
-			var names = fullName.Split (new [] { delim }, StringSplitOptions.RemoveEmptyEntries);
+			int index;
 
-			return names.Length > 0 ? names[names.Length - 1] : fullName;
+			if ((index = fullName.LastIndexOf (delim)) != -1)
+				return fullName.Substring (index + 1);
+
+			return fullName;
 		}
 	}
 }
