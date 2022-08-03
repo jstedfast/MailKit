@@ -95,7 +95,7 @@ When your system is unable to validate the mail server's certificate because it 
 by a known and trusted Certificate Authority, the above error will occur.
 
 If you are on a Linux system or are running a web service in a Linux container, it might be possible to use the following command to install
-the standard set of Certificate AUthority root certificates using the following command:
+the standard set of Certificate Authority root certificates using the following command:
 
 ```
 apt update && apt install -y ca-certificates
