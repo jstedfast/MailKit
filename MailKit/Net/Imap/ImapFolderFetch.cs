@@ -235,7 +235,9 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		void FetchSummaryItems (ImapEngine engine, MessageSummary message, CancellationToken cancellationToken)
+		delegate void FetchSummaryItemsCompletedCallback (MessageSummary message);
+
+		void FetchSummaryItems (ImapEngine engine, MessageSummary message, FetchSummaryItemsCompletedCallback completed, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
@@ -463,9 +465,11 @@ namespace MailKit.Net.Imap
 			} while (true);
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+
+			completed (message);
 		}
 
-		async Task FetchSummaryItemsAsync (ImapEngine engine, MessageSummary message, CancellationToken cancellationToken)
+		async Task FetchSummaryItemsAsync (ImapEngine engine, MessageSummary message, FetchSummaryItemsCompletedCallback completed, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -693,13 +697,8 @@ namespace MailKit.Net.Imap
 			} while (true);
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
-		}
 
-		void OnFetchSummaryItemsAsyncCompleted (Task task, object data)
-		{
-			MessageSummary message = (MessageSummary) data;
-
-			OnMessageSummaryFetched (message);
+			completed (message);
 		}
 
 		Task FetchSummaryItemsAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
@@ -711,15 +710,10 @@ namespace MailKit.Net.Imap
 				ctx.Add (index, message);
 			}
 
-			if (doAsync) {
-				return FetchSummaryItemsAsync (engine, message, ic.CancellationToken)
-					.ContinueWith (OnFetchSummaryItemsAsyncCompleted, message, ic.CancellationToken,
-					TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-					TaskScheduler.Default);
-			}
+			if (doAsync)
+				return FetchSummaryItemsAsync (engine, message, OnMessageSummaryFetched, ic.CancellationToken);
 
-			FetchSummaryItems (engine, message, ic.CancellationToken);
-			OnFetchSummaryItemsAsyncCompleted (null, message);
+			FetchSummaryItems (engine, message, OnMessageSummaryFetched, ic.CancellationToken);
 
 			return Task.CompletedTask;
 		}

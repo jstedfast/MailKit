@@ -5423,9 +5423,8 @@ namespace MailKit.Net.Imap {
 			OnMessageExpunged (new MessageEventArgs (index));
 		}
 
-		void OnFetchAsyncCompleted (Task task, object state)
+		void OnFetchAsyncCompleted (MessageSummary message)
 		{
-			MessageSummary message = (MessageSummary) state;
 			int index = message.Index;
 			UniqueId? uid = null;
 
@@ -5471,15 +5470,10 @@ namespace MailKit.Net.Imap {
 		{
 			var message = new MessageSummary (this, index);
 
-			if (doAsync) {
-				return FetchSummaryItemsAsync (engine, message, cancellationToken)
-					.ContinueWith (OnFetchAsyncCompleted, message, cancellationToken,
-					TaskContinuationOptions.OnlyOnRanToCompletion | TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-					TaskScheduler.Default);
-			}
+			if (doAsync)
+				return FetchSummaryItemsAsync (engine, message, OnFetchAsyncCompleted, cancellationToken);
 
-			FetchSummaryItems (engine, message, cancellationToken);
-			OnFetchAsyncCompleted (null, message);
+			FetchSummaryItems (engine, message, OnFetchAsyncCompleted, cancellationToken);
 
 			return Task.CompletedTask;
 		}
