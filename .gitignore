@@ -13,3 +13,4 @@ bin
 .vs
 *.tree
 *.zip
+.idea
