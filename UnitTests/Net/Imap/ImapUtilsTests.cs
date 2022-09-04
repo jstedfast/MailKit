@@ -3325,6 +3325,22 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseBodyStructureWithNilMultipartSubtype ()
+		{
+			const string text = "((NIL NIL NIL NIL NIL \"7BIT\" 563 NIL NIL NIL NIL)(\"message\" \"delivery-status\" NIL NIL NIL \"7BIT\" 658 NIL NIL NIL NIL)(\"message\" \"rfc822\" NIL NIL NIL \"8bit\" 0 (\"Tue, 2 Aug 2022 15:00:47 +0000\" \"[POSSIBLE SPAM 11.4] Invoices now overdue - 115365#\" ((NIL NIL \"MAILBOX\" \"OUR-DOMAIN\")) NIL NIL ((NIL NIL \"accounts\" \"OTHER-DOMAIN\") (NIL NIL \"safety\" \"OTHER-DOMAIN\") (NIL NIL \"USER\" \"OUR-DOMAIN\")) NIL NIL NIL \"<1IOGPFNLIHU4.377MHPZYJQ6E3@OUR-SERVER>\") (((\"text\" \"plain\" (\"charset\" \"utf-8\") NIL NIL \"8bit\" 597 16 NIL NIL NIL NIL)((\"text\" \"html\" (\"charset\" \"utf-8\") NIL NIL \"7BIT\" 1611 26 NIL NIL NIL NIL)(\"image\" \"png\" (\"name\" \"0.dat\") \"<1KWGPFNLIHU4.4RR7HCVM8MQQ1@OUR-SERVER>\" NIL \"base64\" 14172 NIL (\"inline\" (\"filename\" \"0.dat\")) NIL \"0.dat\")(\"image\" \"png\" (\"name\" \"1.dat\") \"<1KWGPFNLIHU4.UWJ8R86RE2KA2@OUR-SERVER>\" NIL \"base64\" 486 NIL (\"inline\" (\"filename\" \"1.dat\")) NIL \"1.dat\")(\"image\" \"png\" (\"name\" \"2.dat\") \"<1KWGPFNLIHU4.EC7HN124OJC32@OUR-SERVER>\" NIL \"base64\" 506 NIL (\"inline\" (\"filename\" \"2.dat\")) NIL \"2.dat\")(\"image\" \"png\" (\"name\" \"3.dat\") \"<1KWGPFNLIHU4.WM1ALJTG745F1@OUR-SERVER>\" NIL \"base64\" 616 NIL (\"inline\" (\"filename\" \"3.dat\")) NIL \"3.dat\")(\"image\" \"png\" (\"name\" \"4.dat\") \"<1KWGPFNLIHU4.1B42S5EVSF4B2@OUR-SERVER>\" NIL \"base64\" 22470 NIL (\"inline\" (\"filename\" \"4.dat\")) NIL \"4.dat\") \"related\" (\"boundary\" \"=-5nEE2FIlRoeXkJyZAHV8UA==\" \"type\" \"text/html\") NIL NIL) \"alternative\" (\"boundary\" \"=-1sRjeMizXVbc5nGIFXbARA==\") NIL NIL)(\"application\" \"pdf\" (\"name\" \"Reminder.pdf\") \"<RJ2DSFNLIHU4.UUVSNNY5Z3ER@OUR-SERVER>\" NIL \"base64\" 359650 NIL (\"attachment\" (\"filename\" \"Reminder.pdf\" \"size\" \"262820\")) NIL NIL) \"mixed\" (\"boundary\" \"=-EJwVTfPtacyNnTqY4DPQ0A==\") NIL NIL) 0 NIL NIL NIL NIL) \"report\" (\"report-type\" \"delivery-status\" \"boundary\" \"272F16D4031920.1659452466/hermes.gatewaynet.com\") NIL NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						engine.SetStream (tokenizer);
+
+						Assert.Throws<ImapProtocolException> (() => ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ());
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestParseExampleThreads ()
 		{
 			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
