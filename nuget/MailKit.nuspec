@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>3.3.0</version>
+    <version>3.4.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,15 +26,10 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Added work-around for IMAP BODYSTRUCTURE responses that have a NIL multipart body. (issue #1393)
-* Considerably reduced memory overhead from compiler-generated async/await Tasks allocations in the IMAP implementation (mostly focused on FETCH commands/responses). (issue #1335)
-* Optimized FETCH response processing for the common case where FETCH responses are returned in sorted order.
-* Fixed the IMAP Literal string reader to use UTF-8 with fallback to iso-8859-1 (previously just used iso-8859-1).
-* Modified the IMAP ENVELOPE parser to combine ENVELOPE mailbox tokens if there are more than 4. (issue #1369)
-* Prevent TypeLoadExceptions in the SmtpClient static .ctor by catching NotSupportedExceptions thrown by IPGlobalProperties.GetIPGlobalProperties() on platforms like WASM. (issue #1381)
-* Updated Google, GMX, and Yahoo! Mail SSL certificates.
-* Dropped support for net452 and net461.
-* Added support for net462.
+* Fixed a bug that caused ImapFolder.Fetch/FetchAsync to throw TaskCanceledException instead of allowing the correct exception to bubble up. (issue #1415)
+* Simplified socket connection logic to allow Socket.Connect() to do DNS lookups for us.
+* Updated common mail server SSL certificates.
+* Dropped net5.0 support.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -68,28 +63,25 @@ Features include:
     <dependencies>
       <group targetFramework="net462">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.3.0" />
+        <dependency id="MimeKit" version="3.4.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.3.0" />
+        <dependency id="MimeKit" version="3.4.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.3.0" />
-      </group>
-      <group targetFramework="net5.0">
-        <dependency id="MimeKit" version="3.3.0" />
+        <dependency id="MimeKit" version="3.4.0" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKit" version="3.3.0" />
+        <dependency id="MimeKit" version="3.4.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.3.0" />
+        <dependency id="MimeKit" version="3.4.0" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="MimeKit" version="3.3.0" />
+        <dependency id="MimeKit" version="3.4.0" />
       </group>
     </dependencies>
   </metadata>
@@ -109,9 +101,6 @@ Features include:
     <file src="..\MailKit\bin\Release\net48\MailKit.dll" target="lib\net48\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net48\MailKit.pdb" target="lib\net48\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net48\MailKit.xml" target="lib\net48\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\net5.0\MailKit.dll" target="lib\net5.0\MailKit.dll" />
-    <file src="..\MailKit\bin\Release\net5.0\MailKit.pdb" target="lib\net5.0\MailKit.pdb" />
-    <file src="..\MailKit\bin\Release\net5.0\MailKit.xml" target="lib\net5.0\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net6.0\MailKit.dll" target="lib\net6.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net6.0\MailKit.pdb" target="lib\net6.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net6.0\MailKit.xml" target="lib\net6.0\MailKit.xml" />

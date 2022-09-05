@@ -1,5 +1,13 @@
 # Release Notes
 
+### MailKit 3.4.0 (2022-09-05)
+
+* Fixed a bug that caused ImapFolder.Fetch/FetchAsync to throw TaskCanceledException instead of allowing
+  the correct exception to bubble up. (issue [#1415](https://github.com/jstedfast/MailKit/issues/1415))
+* Simplified socket connection logic to allow Socket.Connect() to do DNS lookups for us.
+* Updated common mail server SSL certificates.
+* Dropped net5.0 support.
+
 ### MailKit 3.3.0 (2022-06-11)
 
 * Added work-around for IMAP BODYSTRUCTURE responses that have a NIL multipart body.
