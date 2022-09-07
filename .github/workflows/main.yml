@@ -163,6 +163,15 @@ jobs:
         with:
           name: Unit test results
           path: TestResult.xml
+          
+      - if: steps.configure.outputs.is_debug == 'true' && steps.configure.outputs.is_windows == 'true'
+        name: Install coveralls.net
+        id: install_coveralls_net
+        continue-on-error: false
+        shell: pwsh
+        run: |
+          dotnet new tool-manifest
+          dotnet tool install coveralls.net
 
       - if: steps.configure.outputs.is_debug == 'true' && steps.configure.outputs.is_windows == 'true'
         name: Run unit tests and upload to Coveralls
