@@ -146,8 +146,9 @@ jobs:
         continue-on-error: true
         shell: pwsh
         run: |
-          & ./scripts/test.ps1 -TestResults:TestResults.xml -GenerateCodeCoverage:$env:GENERATE_CODE_COVERAGE
+          & ./scripts/test.ps1 -Configuration:$env:BUILD_CONFIGURATION -GenerateCodeCoverage:$env:GENERATE_CODE_COVERAGE
         env:
+          BUILD_CONFIGURATION: ${{ matrix.build-configuration }}
           GENERATE_CODE_COVERAGE: ${{ steps.configure.outputs.generate_code_coverage }}
 
       - name: Upload unit test results
@@ -156,7 +157,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: Unit test results
-          path: TestResults.xml
+          path: TestResult.xml
 
       - if: steps.configure.outputs.generate_code_coverage == 'yes'
         name: Install coveralls.net
