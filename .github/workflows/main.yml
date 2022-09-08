@@ -49,7 +49,7 @@ jobs:
           if ( $env:GITHUB_EVENT_NAME -ceq 'pull_request' ) {
             $IS_NOT_PR = 'false'
           }
-          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') -and ( $env:OS -ceq 'windows-latest' ) ) {
+          if ( ($env:GITHUB_EVENT_NAME -ceq 'push') -and ($env:GITHUB_REF -ceq 'refs/heads/master') -and ($env:BUILD_CONFIGURATION -ceq 'Release') -and ($env:OS -ceq 'windows-latest') ) {
             $IS_GITHUB_RELEASE = 'true'
           }
           if ( $env:OS -ceq 'windows-latest' ) {
@@ -156,7 +156,7 @@ jobs:
         continue-on-error: true
         uses: actions/upload-artifact@v1
         with:
-          name: Unit test results
+          name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}-${{ matrix.os }}-${{ matrix.build-configuration }}-TestResults.xml
           path: TestResult.xml
 
       - if: steps.configure.outputs.generate_code_coverage == 'yes'
