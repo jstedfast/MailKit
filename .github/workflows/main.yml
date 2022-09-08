@@ -158,7 +158,7 @@ jobs:
           name: Unit test results
           path: TestResults.xml
 
-      - if: steps.configure.outputs.generate_code_coverage == 'true'
+      - if: steps.configure.outputs.generate_code_coverage == 'yes'
         name: Install coveralls.net
         id: install_coveralls_net
         continue-on-error: false
@@ -167,7 +167,7 @@ jobs:
           dotnet new tool-manifest
           dotnet tool install coveralls.net
 
-      - if: steps.configure.outputs.generate_code_coverage == 'true'
+      - if: steps.configure.outputs.generate_code_coverage == 'yes'
         name: Upload code coverage data to coveralls.io
         id: upload_to_coveralls
         shell: pwsh
