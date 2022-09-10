@@ -370,13 +370,29 @@ namespace TestClient {
 One of the advantages of IMAP over POP3 is that the IMAP protocol allows clients to retrieve information about
 the messages in a folder without having to first download all of them.
 
-Using the [Fetch](http://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_Fetch.htm) method overloads,
+Using the [Fetch](http://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_Fetch.htm) and
+[FetchAsync](http://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_FetchAsync.htm) method overloads
+(or the convenient [extension methods](http://www.mimekit.net/docs/html/Overload_MailKit_IMailFolderExtensions_Fetch.htm)),
 it's possible to obtain any subset of summary information for any range of messages in a given folder.
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full)) {
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Envelope)) {
     Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
-}
+```
+
+It's also possible to use Fetch/FetchAsync APIs that take an [IFetchRequest](http://www.mimekit.net/docs/html/T_MailKit_IFetchRequest.htm)
+argument to get even more control over what to fetch:
+
+```csharp
+// Let's Fetch non-Received headers:
+var request = new FetchRequest {
+    Headers = new HeaderSet (new HeaderId[] { HeaderId.Received }) {
+        Exclude = true
+    }
+};
+
+foreach (var summary in inbox.Fetch (0, -1, request)) {
+    Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Headers[HeaderId.Subject]);
 ```
 
 The results of a Fetch method can also be used to download individual MIME parts rather
