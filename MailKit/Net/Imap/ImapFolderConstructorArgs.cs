@@ -31,7 +31,9 @@ namespace MailKit.Net.Imap {
 	/// Constructor arguments for <see cref="ImapFolder"/>.
 	/// </summary>
 	/// <remarks>
-	/// Constructor arguments for <see cref="ImapFolder"/>.
+	/// <para>Constructor arguments for <see cref="ImapFolder"/>.</para>
+	/// <para>The <see cref="ImapFolderConstructorArgs"/> are meant only to allow subclassing of <see cref="ImapFolder"/>
+	/// by overriding the <see cref="ImapClient.CreateImapFolder(ImapFolderConstructorArgs)"/> method.</para>
 	/// </remarks>
 	public sealed class ImapFolderConstructorArgs
 	{
