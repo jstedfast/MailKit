@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\submodules\MimeKit\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj" />
     <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.csproj" />
     <ProjectReference Include="..\MailKit\MailKit.csproj" />
   </ItemGroup>
