@@ -1,5 +1,11 @@
 # Release Notes
 
+### MailKit 3.4.1 (2022-09-12)
+
+* Reverted the socket connection change to allow Socket.Connect() to do DNS lookups for us. Turns out, Socket.Connect()
+  doesn't iterate over all returned IP addresses until it finds an IP address that it can successfully connect to
+  for a given hostname which is what we need to do.
+
 ### MailKit 3.4.0 (2022-09-05)
 
 * Fixed a bug that caused ImapFolder.Fetch/FetchAsync to throw TaskCanceledException instead of allowing
