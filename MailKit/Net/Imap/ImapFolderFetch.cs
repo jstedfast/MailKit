@@ -972,7 +972,7 @@ namespace MailKit.Net.Imap
 					bodies = textBodies;
 				}
 
-				if (body == null) {
+				if (body == null || body.Octets == 0) {
 					message.Fields |= MessageSummaryItems.PreviewText;
 					message.PreviewText = string.Empty;
 					OnMessageSummaryFetched (message);
