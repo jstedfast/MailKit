@@ -3698,11 +3698,11 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				// get the list of messages marked for deletion that should not be expunged
 				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
-				var unmark = await SearchAsync (query, doAsync, false, cancellationToken).ConfigureAwait (false);
+				var unmark = await SearchAsync (SearchOptions.None, query, doAsync, false, cancellationToken).ConfigureAwait (false);
 
 				if (unmark.Count > 0) {
 					// clear the \Deleted flag on all messages except the ones that are to be expunged
-					await StoreAsync (unmark, RemoveDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
+					await StoreAsync (unmark.UniqueIds, RemoveDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
 				// expunge the folder
@@ -3710,7 +3710,7 @@ namespace MailKit.Net.Imap {
 
 				if (unmark.Count > 0) {
 					// restore the \Deleted flags
-					await StoreAsync (unmark, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
+					await StoreAsync (unmark.UniqueIds, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
 				return;

@@ -7817,7 +7817,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual IList<UniqueId> Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var results = Search (SearchOptions.None, query, cancellationToken);
+
+			return results.UniqueIds;
+		}
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query.
@@ -7859,16 +7864,11 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<IList<UniqueId>> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (query == null)
-				throw new ArgumentNullException (nameof (query));
+			var results = await SearchAsync (SearchOptions.None, query, cancellationToken).ConfigureAwait (false);
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return results.UniqueIds;
 		}
 
 		/// <summary>
@@ -8247,7 +8247,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var results = Sort (SearchOptions.None, query, orderBy, cancellationToken);
+
+			return results.UniqueIds;
+		}
 
 		/// <summary>
 		/// Asynchronously sort messages matching the specified query.
@@ -8297,7 +8302,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual async Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var results = await SortAsync (SearchOptions.None, query, orderBy, cancellationToken).ConfigureAwait (false);
+
+			return results.UniqueIds;
+		}
 
 		/// <summary>
 		/// Sort messages matching the specified query.
