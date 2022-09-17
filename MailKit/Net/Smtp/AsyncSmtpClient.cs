@@ -122,6 +122,9 @@ namespace MailKit.Net.Smtp
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient must be connected before you can send commands.");
 
+			if (!command.EndsWith ("\r\n", StringComparison.Ordinal))
+				command += "\r\n";
+
 			return Stream.SendCommandAsync (command, cancellationToken);
 		}
 
@@ -206,9 +209,9 @@ namespace MailKit.Net.Smtp
 			// send an initial challenge if the mechanism supports it
 			if (mechanism.SupportsInitialResponse) {
 				challenge = await mechanism.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
-				command = string.Format ("AUTH {0} {1}", mechanism.MechanismName, challenge);
+				command = string.Format ("AUTH {0} {1}\r\n", mechanism.MechanismName, challenge);
 			} else {
-				command = string.Format ("AUTH {0}", mechanism.MechanismName);
+				command = string.Format ("AUTH {0}\r\n", mechanism.MechanismName);
 			}
 
 			detector.IsAuthenticating = true;
@@ -222,13 +225,13 @@ namespace MailKit.Net.Smtp
 				try {
 					while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
 						challenge = await mechanism.ChallengeAsync (response.Response, cancellationToken).ConfigureAwait (false);
-						response = await Stream.SendCommandAsync (challenge, cancellationToken).ConfigureAwait (false);
+						response = await Stream.SendCommandAsync (challenge + "\r\n", cancellationToken).ConfigureAwait (false);
 					}
 
 					saslException = null;
 				} catch (SaslException ex) {
 					// reset the authentication state
-					response = await Stream.SendCommandAsync (string.Empty, cancellationToken).ConfigureAwait (false);
+					response = await Stream.SendCommandAsync ("\r\n", cancellationToken).ConfigureAwait (false);
 					saslException = ex;
 				}
 			} finally {
@@ -335,9 +338,9 @@ namespace MailKit.Net.Smtp
 				// send an initial challenge if the mechanism supports it
 				if (sasl.SupportsInitialResponse) {
 					challenge = await sasl.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
-					command = string.Format ("AUTH {0} {1}", authmech, challenge);
+					command = string.Format ("AUTH {0} {1}\r\n", authmech, challenge);
 				} else {
-					command = string.Format ("AUTH {0}", authmech);
+					command = string.Format ("AUTH {0}\r\n", authmech);
 				}
 
 				detector.IsAuthenticating = true;
@@ -355,13 +358,13 @@ namespace MailKit.Net.Smtp
 								break;
 
 							challenge = await sasl.ChallengeAsync (response.Response, cancellationToken).ConfigureAwait (false);
-							response = await Stream.SendCommandAsync (challenge, cancellationToken).ConfigureAwait (false);
+							response = await Stream.SendCommandAsync (challenge + "\r\n", cancellationToken).ConfigureAwait (false);
 						}
 
 						saslException = null;
 					} catch (SaslException ex) {
 						// reset the authentication state
-						response = await Stream.SendCommandAsync (string.Empty, cancellationToken).ConfigureAwait (false);
+						response = await Stream.SendCommandAsync ("\r\n", cancellationToken).ConfigureAwait (false);
 						saslException = ex;
 					}
 				} finally {
@@ -557,7 +560,7 @@ namespace MailKit.Net.Smtp
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
 
 				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
-					response = await Stream.SendCommandAsync ("STARTTLS", cancellationToken).ConfigureAwait (false);
+					response = await Stream.SendCommandAsync ("STARTTLS\r\n", cancellationToken).ConfigureAwait (false);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
@@ -782,7 +785,7 @@ namespace MailKit.Net.Smtp
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
 
 				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
-					response = await Stream.SendCommandAsync ("STARTTLS", cancellationToken).ConfigureAwait (false);
+					response = await Stream.SendCommandAsync ("STARTTLS\r\n", cancellationToken).ConfigureAwait (false);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
@@ -840,7 +843,7 @@ namespace MailKit.Net.Smtp
 
 			if (quit) {
 				try {
-					await Stream.SendCommandAsync ("QUIT", cancellationToken).ConfigureAwait (false);
+					await Stream.SendCommandAsync ("QUIT\r\n", cancellationToken).ConfigureAwait (false);
 				} catch (OperationCanceledException) {
 				} catch (SmtpProtocolException) {
 				} catch (SmtpCommandException) {
@@ -885,7 +888,7 @@ namespace MailKit.Net.Smtp
 			SmtpResponse response;
 
 			try {
-				response = await Stream.SendCommandAsync ("NOOP", cancellationToken).ConfigureAwait (false);
+				response = await Stream.SendCommandAsync ("NOOP\r\n", cancellationToken).ConfigureAwait (false);
 			} catch {
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 				throw;
@@ -974,7 +977,7 @@ namespace MailKit.Net.Smtp
 
 		async Task<string> DataAsync (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress progress)
 		{
-			var response = await Stream.SendCommandAsync ("DATA", cancellationToken).ConfigureAwait (false);
+			var response = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -1010,7 +1013,7 @@ namespace MailKit.Net.Smtp
 		async Task ResetAsync (CancellationToken cancellationToken)
 		{
 			try {
-				var response = await Stream.SendCommandAsync ("RSET", cancellationToken).ConfigureAwait (false);
+				var response = await Stream.SendCommandAsync ("RSET\r\n", cancellationToken).ConfigureAwait (false);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 			} catch (SmtpCommandException) {

@@ -677,6 +677,9 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient must be connected before you can send commands.");
 
+			if (!command.EndsWith ("\r\n", StringComparison.Ordinal))
+				command += "\r\n";
+
 			return Stream.SendCommand (command, cancellationToken);
 		}
 
@@ -841,7 +844,7 @@ namespace MailKit.Net.Smtp {
 				domain = DefaultLocalDomain;
 			}
 
-			command += domain;
+			command += domain + "\r\n";
 
 			return command;
 		}
@@ -946,9 +949,9 @@ namespace MailKit.Net.Smtp {
 			// send an initial challenge if the mechanism supports it
 			if (mechanism.SupportsInitialResponse) {
 				challenge = mechanism.Challenge (null, cancellationToken);
-				command = string.Format ("AUTH {0} {1}", mechanism.MechanismName, challenge);
+				command = string.Format ("AUTH {0} {1}\r\n", mechanism.MechanismName, challenge);
 			} else {
-				command = string.Format ("AUTH {0}", mechanism.MechanismName);
+				command = string.Format ("AUTH {0}\r\n", mechanism.MechanismName);
 			}
 
 			detector.IsAuthenticating = true;
@@ -962,13 +965,13 @@ namespace MailKit.Net.Smtp {
 				try {
 					while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
 						challenge = mechanism.Challenge (response.Response, cancellationToken);
-						response = Stream.SendCommand (challenge, cancellationToken);
+						response = Stream.SendCommand (challenge + "\r\n", cancellationToken);
 					}
 
 					saslException = null;
 				} catch (SaslException ex) {
 					// reset the authentication state
-					response = Stream.SendCommand (string.Empty, cancellationToken);
+					response = Stream.SendCommand ("\r\n", cancellationToken);
 					saslException = ex;
 				}
 			} finally {
@@ -1094,9 +1097,9 @@ namespace MailKit.Net.Smtp {
 				// send an initial challenge if the mechanism supports it
 				if (sasl.SupportsInitialResponse) {
 					challenge = sasl.Challenge (null, cancellationToken);
-					command = string.Format ("AUTH {0} {1}", authmech, challenge);
+					command = string.Format ("AUTH {0} {1}\r\n", authmech, challenge);
 				} else {
-					command = string.Format ("AUTH {0}", authmech);
+					command = string.Format ("AUTH {0}\r\n", authmech);
 				}
 
 				detector.IsAuthenticating = true;
@@ -1114,13 +1117,13 @@ namespace MailKit.Net.Smtp {
 								break;
 
 							challenge = sasl.Challenge (response.Response, cancellationToken);
-							response = Stream.SendCommand (challenge, cancellationToken);
+							response = Stream.SendCommand (challenge + "\r\n", cancellationToken);
 						}
 
 						saslException = null;
 					} catch (SaslException ex) {
 						// reset the authentication state
-						response = Stream.SendCommand (string.Empty, cancellationToken);
+						response = Stream.SendCommand ("\r\n", cancellationToken);
 						saslException = ex;
 					}
 				} finally {
@@ -1375,7 +1378,7 @@ namespace MailKit.Net.Smtp {
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
 
 				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
-					response = Stream.SendCommand ("STARTTLS", cancellationToken);
+					response = Stream.SendCommand ("STARTTLS\r\n", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
@@ -1617,7 +1620,7 @@ namespace MailKit.Net.Smtp {
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
 
 				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
-					response = Stream.SendCommand ("STARTTLS", cancellationToken);
+					response = Stream.SendCommand ("STARTTLS\r\n", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
@@ -1674,7 +1677,7 @@ namespace MailKit.Net.Smtp {
 
 			if (quit) {
 				try {
-					Stream.SendCommand ("QUIT", cancellationToken);
+					Stream.SendCommand ("QUIT\r\n", cancellationToken);
 				} catch (OperationCanceledException) {
 				} catch (SmtpProtocolException) {
 				} catch (SmtpCommandException) {
@@ -1718,7 +1721,7 @@ namespace MailKit.Net.Smtp {
 			SmtpResponse response;
 
 			try {
-				response = Stream.SendCommand ("NOOP", cancellationToken);
+				response = Stream.SendCommand ("NOOP\r\n", cancellationToken);
 			} catch {
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 				throw;
@@ -1965,6 +1968,8 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
+			builder.Append ("\r\n");
+
 			return builder.ToString ();
 		}
 
@@ -2112,6 +2117,8 @@ namespace MailKit.Net.Smtp {
 				AppendHexEncoded (command, orcpt.Address);
 			}
 
+			command.Append ("\r\n");
+
 			return command.ToString ();
 		}
 
@@ -2218,7 +2225,7 @@ namespace MailKit.Net.Smtp {
 
 		string Data (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress progress)
 		{
-			var response = Stream.SendCommand ("DATA", cancellationToken);
+			var response = Stream.SendCommand ("DATA\r\n", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -2254,7 +2261,7 @@ namespace MailKit.Net.Smtp {
 		void Reset (CancellationToken cancellationToken)
 		{
 			try {
-				var response = Stream.SendCommand ("RSET", cancellationToken);
+				var response = Stream.SendCommand ("RSET\r\n", cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 			} catch (SmtpCommandException) {
@@ -2586,7 +2593,7 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
-			return string.Format ("EXPN {0}", alias);
+			return string.Format ("EXPN {0}\r\n", alias);
 		}
 
 		InternetAddressList ParseExpandResponse (SmtpResponse response)
@@ -2664,7 +2671,7 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
-			return string.Format ("VRFY {0}", address);
+			return string.Format ("VRFY {0}\r\n", address);
 		}
 
 		MailboxAddress ParseVerifyResponse (SmtpResponse response)

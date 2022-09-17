@@ -582,6 +582,25 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		unsafe bool TryQueueCommand (Encoder encoder, string command, ref int index)
+		{
+			fixed (char* cmd = command) {
+				int charCount = command.Length - index;
+				char* chars = cmd + index;
+
+				fixed (byte* outbuf = output) {
+					int byteCount = output.Length - outputIndex;
+					byte* outptr = outbuf + outputIndex;
+
+					encoder.Convert (chars, charCount, outptr, byteCount, true, out int charsUsed, out int bytesUsed, out bool completed);
+					outputIndex += bytesUsed;
+					index += charsUsed;
+
+					return completed;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Queue a command to the SMTP server.
 		/// </summary>
@@ -604,9 +623,11 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public void QueueCommand (string command, CancellationToken cancellationToken)
 		{
-			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
+			var encoder = Encoding.UTF8.GetEncoder ();
+			int index = 0;
 
-			Write (bytes, 0, bytes.Length, cancellationToken);
+			while (!TryQueueCommand (encoder, command, ref index))
+				Flush (cancellationToken);
 		}
 
 		/// <summary>
@@ -629,11 +650,13 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public Task QueueCommandAsync (string command, CancellationToken cancellationToken)
+		public async Task QueueCommandAsync (string command, CancellationToken cancellationToken)
 		{
-			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
+			var encoder = Encoding.UTF8.GetEncoder ();
+			int index = 0;
 
-			return WriteAsync (bytes, 0, bytes.Length, cancellationToken);
+			while (!TryQueueCommand (encoder, command, ref index))
+				await FlushAsync (cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
