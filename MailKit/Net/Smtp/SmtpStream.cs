@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
@@ -579,6 +580,118 @@ namespace MailKit.Net.Smtp {
 
 				return new SmtpResponse ((SmtpStatusCode) code, message);
 			}
+		}
+
+		/// <summary>
+		/// Queue a command to the SMTP server.
+		/// </summary>
+		/// <remarks>
+		/// Queues a command to the SMTP server.
+		/// </remarks>
+		/// <param name="command">The command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol error occurred.
+		/// </exception>
+		public void QueueCommand (string command, CancellationToken cancellationToken)
+		{
+			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
+
+			Write (bytes, 0, bytes.Length, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously queue a command to the SMTP server.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously queues a command to the SMTP server.
+		/// </remarks>
+		/// <param name="command">The command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol error occurred.
+		/// </exception>
+		public Task QueueCommandAsync (string command, CancellationToken cancellationToken)
+		{
+			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
+
+			return WriteAsync (bytes, 0, bytes.Length, cancellationToken);
+		}
+
+		/// <summary>
+		/// Send a command to the SMTP server.
+		/// </summary>
+		/// <remarks>
+		/// Sends a command to the SMTP server and reads the response.
+		/// </remarks>
+		/// <returns>The response.</returns>
+		/// <param name="command">The command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol error occurred.
+		/// </exception>
+		public SmtpResponse SendCommand (string command, CancellationToken cancellationToken)
+		{
+			QueueCommand (command, cancellationToken);
+			Flush (cancellationToken);
+
+			return ReadResponse (cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously send a command to the SMTP server.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sends a command to the SMTP server and reads the response.
+		/// </remarks>
+		/// <returns>The response.</returns>
+		/// <param name="command">The command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol error occurred.
+		/// </exception>
+		public async Task<SmtpResponse> SendCommandAsync (string command, CancellationToken cancellationToken)
+		{
+			await QueueCommandAsync (command, cancellationToken).ConfigureAwait (false);
+			await FlushAsync (cancellationToken).ConfigureAwait (false);
+
+			return await ReadResponseAsync (cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>

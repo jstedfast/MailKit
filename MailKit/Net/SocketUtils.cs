@@ -35,17 +35,11 @@ namespace MailKit.Net
 {
 	static class SocketUtils
 	{
-		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
+		public static Socket Connect (string host, int port, IPEndPoint localEndPoint, CancellationToken cancellationToken)
 		{
-			IPAddress[] ipAddresses;
-
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			if (doAsync) {
-				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
-			} else {
-				ipAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
-			}
+			var ipAddresses = Dns.GetHostAddresses (host);
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				cancellationToken.ThrowIfCancellationRequested ();
@@ -56,26 +50,17 @@ namespace MailKit.Net
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
 
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-					if (doAsync || cancellationToken.CanBeCanceled) {
+					if (cancellationToken.CanBeCanceled) {
 						var tcs = new TaskCompletionSource<bool> ();
 
 						using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
 							var ar = socket.BeginConnect (ipAddresses[i], port, e => tcs.TrySetResult (true), null);
-
-							if (doAsync)
-								await tcs.Task.ConfigureAwait (false);
-							else
-								tcs.Task.GetAwaiter ().GetResult ();
-
+							tcs.Task.GetAwaiter ().GetResult ();
 							socket.EndConnect (ar);
 						}
 					} else {
 						socket.Connect (ipAddresses[i], port);
 					}
-#else
-					socket.Connect (ipAddresses[i], port);
-#endif
 
 					return socket;
 				} catch (OperationCanceledException) {
@@ -92,6 +77,86 @@ namespace MailKit.Net
 			throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 		}
 
+		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
+
+			for (int i = 0; i < ipAddresses.Length; i++) {
+				cancellationToken.ThrowIfCancellationRequested ();
+
+				var socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+				try {
+					if (localEndPoint != null)
+						socket.Bind (localEndPoint);
+
+					var tcs = new TaskCompletionSource<bool> ();
+
+					using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
+						var ar = socket.BeginConnect (ipAddresses[i], port, e => tcs.TrySetResult (true), null);
+						await tcs.Task.ConfigureAwait (false);
+						socket.EndConnect (ar);
+					}
+
+					return socket;
+				} catch (OperationCanceledException) {
+					socket.Dispose ();
+					throw;
+				} catch {
+					socket.Dispose ();
+
+					if (i + 1 == ipAddresses.Length)
+						throw;
+				}
+			}
+
+			throw new IOException (string.Format ("Failed to resolve host: {0}", host));
+		}
+
+		[Obsolete]
+		public static Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ConnectAsync (host, port, localEndPoint, cancellationToken);
+
+			var socket = Connect (host, port, localEndPoint, cancellationToken);
+
+			return Task.FromResult (socket);
+		}
+
+		public static Socket Connect (string host, int port, IPEndPoint localEndPoint, int timeout, CancellationToken cancellationToken)
+		{
+			using (var ts = new CancellationTokenSource (timeout)) {
+				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
+					try {
+						return Connect (host, port, localEndPoint, linked.Token);
+					} catch (OperationCanceledException) {
+						if (!cancellationToken.IsCancellationRequested)
+							throw new TimeoutException ();
+						throw;
+					}
+				}
+			}
+		}
+
+		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, int timeout, CancellationToken cancellationToken)
+		{
+			using (var ts = new CancellationTokenSource (timeout)) {
+				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
+					try {
+						return await ConnectAsync (host, port, localEndPoint, linked.Token).ConfigureAwait (false);
+					} catch (OperationCanceledException) {
+						if (!cancellationToken.IsCancellationRequested)
+							throw new TimeoutException ();
+						throw;
+					}
+				}
+			}
+		}
+
+		[Obsolete]
 		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, int timeout, bool doAsync, CancellationToken cancellationToken)
 		{
 			using (var ts = new CancellationTokenSource (timeout)) {

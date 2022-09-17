@@ -611,20 +611,39 @@ namespace MailKit {
 		}
 #endif
 
-		internal async Task<Stream> ConnectNetwork (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		internal Stream ConnectNetwork (string host, int port, CancellationToken cancellationToken)
 		{
 			if (ProxyClient != null) {
 				ProxyClient.LocalEndPoint = LocalEndPoint;
 
-				if (doAsync)
-					return await ProxyClient.ConnectAsync (host, port, Timeout, cancellationToken).ConfigureAwait (false);
-
 				return ProxyClient.Connect (host, port, Timeout, cancellationToken);
 			}
 
-			var socket = await SocketUtils.ConnectAsync (host, port, LocalEndPoint, Timeout, doAsync, cancellationToken).ConfigureAwait (false);
+			var socket = SocketUtils.Connect (host, port, LocalEndPoint, Timeout, cancellationToken);
 
 			return new NetworkStream (socket, true);
+		}
+
+		internal async Task<Stream> ConnectNetworkAsync (string host, int port, CancellationToken cancellationToken)
+		{
+			if (ProxyClient != null) {
+				ProxyClient.LocalEndPoint = LocalEndPoint;
+
+				return await ProxyClient.ConnectAsync (host, port, Timeout, cancellationToken).ConfigureAwait (false);
+			}
+
+			var socket = await SocketUtils.ConnectAsync (host, port, LocalEndPoint, Timeout, cancellationToken).ConfigureAwait (false);
+
+			return new NetworkStream (socket, true);
+		}
+
+		internal Task<Stream> ConnectNetwork (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return ConnectNetworkAsync (host, port, cancellationToken);
+
+			var stream = ConnectNetwork (host, port, cancellationToken);
+			return Task.FromResult (stream);
 		}
 
 		/// <summary>
