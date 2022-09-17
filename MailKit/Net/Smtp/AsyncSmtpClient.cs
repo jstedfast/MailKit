@@ -82,7 +82,7 @@ namespace MailKit.Net.Smtp
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient must be connected before you can send commands.");
 
-			return SendCommandAsync (command, true, cancellationToken);
+			return SendCommandAsyncInternal (command, cancellationToken);
 		}
 
 		/// <summary>

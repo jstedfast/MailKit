@@ -581,45 +581,10 @@ namespace MailKit.Net.Smtp {
 		{
 		}
 
-		async Task<int> FlushCommandQueueAsync (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, bool doAsync, CancellationToken cancellationToken)
+		int ProcessCommandQueueResponses (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, List<SmtpResponse> responses, Exception ex)
 		{
-			try {
-				// Note: Queued commands are buffered by the stream
-				if (doAsync)
-					await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
-				else
-					Stream.Flush (cancellationToken);
-			} catch {
-				queued.Clear ();
-				throw;
-			}
-
-			var responses = new List<SmtpResponse> ();
-			Exception rex = null;
 			int accepted = 0;
 			int rcpt = 0;
-
-			// Note: We need to read all responses from the server before we can process
-			// them in case any of them have any errors so that we can RSET the state.
-			try {
-				for (int i = 0; i < queued.Count; i++) {
-					SmtpResponse response;
-
-					if (doAsync)
-						response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
-					else
-						response = Stream.ReadResponse (cancellationToken);
-
-					responses.Add (response);
-				}
-			} catch (Exception ex) {
-				// Note: Most likely this exception is due to an unexpected disconnect.
-				// Usually, before an SMTP server disconnects the client, it will send an
-				// error code response that will be more useful to the user than an error
-				// stating that the server has unexpected disconnected. Save this exception
-				// in case the server didn't give us a response with an error code.
-				rex = ex;
-			}
 
 			try {
 				// process the responses
@@ -639,27 +604,110 @@ namespace MailKit.Net.Smtp {
 			}
 
 			// throw the saved exception
-			if (rex != null)
-				throw rex;
+			if (ex != null)
+				throw ex;
 
 			return accepted;
 		}
 
-		async Task<SmtpResponse> SendCommandAsync (string command, bool doAsync, CancellationToken cancellationToken)
+		async Task<int> FlushCommandQueueAsync (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+		{
+			try {
+				// Note: Queued commands are buffered by the stream
+				await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+			} catch {
+				queued.Clear ();
+				throw;
+			}
+
+			var responses = new List<SmtpResponse> ();
+			Exception rex = null;
+
+			// Note: We need to read all responses from the server before we can process
+			// them in case any of them have any errors so that we can RSET the state.
+			try {
+				for (int i = 0; i < queued.Count; i++) {
+					var response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+					responses.Add (response);
+				}
+			} catch (Exception ex) {
+				// Note: Most likely this exception is due to an unexpected disconnect.
+				// Usually, before an SMTP server disconnects the client, it will send an
+				// error code response that will be more useful to the user than an error
+				// stating that the server has unexpected disconnected. Save this exception
+				// in case the server didn't give us a response with an error code.
+				rex = ex;
+			}
+
+			return ProcessCommandQueueResponses (message, sender, recipients, responses, rex);
+		}
+
+		int FlushCommandQueue (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+		{
+			try {
+				// Note: Queued commands are buffered by the stream
+				Stream.Flush (cancellationToken);
+			} catch {
+				queued.Clear ();
+				throw;
+			}
+
+			var responses = new List<SmtpResponse> ();
+			Exception rex = null;
+
+			// Note: We need to read all responses from the server before we can process
+			// them in case any of them have any errors so that we can RSET the state.
+			try {
+				for (int i = 0; i < queued.Count; i++) {
+					var response = Stream.ReadResponse (cancellationToken);
+					responses.Add (response);
+				}
+			} catch (Exception ex) {
+				// Note: Most likely this exception is due to an unexpected disconnect.
+				// Usually, before an SMTP server disconnects the client, it will send an
+				// error code response that will be more useful to the user than an error
+				// stating that the server has unexpected disconnected. Save this exception
+				// in case the server didn't give us a response with an error code.
+				rex = ex;
+			}
+
+			return ProcessCommandQueueResponses (message, sender, recipients, responses, rex);
+		}
+
+		Task<int> FlushCommandQueueAsync (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return FlushCommandQueueAsync (message, sender, recipients, cancellationToken);
+
+			return Task.FromResult (FlushCommandQueue (message, sender, recipients, cancellationToken));
+		}
+
+		async Task<SmtpResponse> SendCommandAsyncInternal (string command, CancellationToken cancellationToken)
 		{
 			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
 
-			if (doAsync) {
-				await Stream.WriteAsync (bytes, 0, bytes.Length, cancellationToken).ConfigureAwait (false);
-				await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+			await Stream.WriteAsync (bytes, 0, bytes.Length, cancellationToken).ConfigureAwait (false);
+			await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 
-				return await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
-			}
+			return await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+		}
+
+		SmtpResponse SendCommandInternal (string command, CancellationToken cancellationToken)
+		{
+			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
 
 			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
 			Stream.Flush (cancellationToken);
 
 			return Stream.ReadResponse (cancellationToken);
+		}
+
+		Task<SmtpResponse> SendCommandAsync (string command, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return SendCommandAsyncInternal (command, cancellationToken);
+
+			return Task.FromResult (SendCommandInternal (command, cancellationToken));
 		}
 
 		/// <summary>
@@ -703,7 +751,7 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient must be connected before you can send commands.");
 
-			return SendCommandAsync (command, false, cancellationToken).GetAwaiter ().GetResult ();
+			return SendCommandInternal (command, cancellationToken);
 		}
 
 		async Task<SmtpResponse> SendEhloAsync (bool ehlo, bool doAsync, CancellationToken cancellationToken)
@@ -2337,9 +2385,22 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		async Task<string> DataAsync (FormatOptions options, MimeMessage message, long size, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		string ProcessDataResponse (MimeMessage message, SmtpResponse response)
 		{
-			var response = await SendCommandAsync ("DATA", doAsync, cancellationToken).ConfigureAwait (false);
+			switch (response.StatusCode) {
+			default:
+				throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
+			case SmtpStatusCode.AuthenticationRequired:
+				throw new ServiceNotAuthenticatedException (response.Response);
+			case SmtpStatusCode.Ok:
+				OnMessageSent (new MessageSentEventArgs (message, response.Response));
+				return response.Response;
+			}
+		}
+
+		async Task<string> DataAsync (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress progress)
+		{
+			var response = await SendCommandAsync ("DATA", true, cancellationToken).ConfigureAwait (false);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -2351,50 +2412,68 @@ namespace MailKit.Net.Smtp {
 					using (var filtered = new FilteredStream (stream)) {
 						filtered.Add (new SmtpDataFilter ());
 
-						if (doAsync) {
-							await message.WriteToAsync (options, filtered, cancellationToken).ConfigureAwait (false);
-							await filtered.FlushAsync (cancellationToken).ConfigureAwait (false);
-						} else {
-							message.WriteTo (options, filtered, cancellationToken);
-							filtered.Flush (cancellationToken);
-						}
+						await message.WriteToAsync (options, filtered, cancellationToken).ConfigureAwait (false);
+						await filtered.FlushAsync (cancellationToken).ConfigureAwait (false);
 					}
 				}
 			} else {
 				using (var filtered = new FilteredStream (Stream)) {
 					filtered.Add (new SmtpDataFilter ());
 
-					if (doAsync) {
-						await message.WriteToAsync (options, filtered, cancellationToken).ConfigureAwait (false);
-						await filtered.FlushAsync (cancellationToken).ConfigureAwait (false);
-					} else {
+					await message.WriteToAsync (options, filtered, cancellationToken).ConfigureAwait (false);
+					await filtered.FlushAsync (cancellationToken).ConfigureAwait (false);
+				}
+			}
+
+			await Stream.WriteAsync (EndData, 0, EndData.Length, cancellationToken).ConfigureAwait (false);
+			await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
+
+			response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+
+			return ProcessDataResponse (message, response);
+		}
+
+		string Data (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress progress)
+		{
+			var response = SendCommandAsync ("DATA", false, cancellationToken).GetAwaiter ().GetResult ();
+
+			if (response.StatusCode != SmtpStatusCode.StartMailInput)
+				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+			if (progress != null) {
+				var ctx = new SendContext (progress, size);
+
+				using (var stream = new ProgressStream (Stream, ctx.Update)) {
+					using (var filtered = new FilteredStream (stream)) {
+						filtered.Add (new SmtpDataFilter ());
+
 						message.WriteTo (options, filtered, cancellationToken);
 						filtered.Flush (cancellationToken);
 					}
 				}
-			}
-
-			if (doAsync) {
-				await Stream.WriteAsync (EndData, 0, EndData.Length, cancellationToken).ConfigureAwait (false);
-				await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
-
-				response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
 			} else {
-				Stream.Write (EndData, 0, EndData.Length, cancellationToken);
-				Stream.Flush (cancellationToken);
+				using (var filtered = new FilteredStream (Stream)) {
+					filtered.Add (new SmtpDataFilter ());
 
-				response = Stream.ReadResponse (cancellationToken);
+					message.WriteTo (options, filtered, cancellationToken);
+					filtered.Flush (cancellationToken);
+				}
 			}
 
-			switch (response.StatusCode) {
-			default:
-				throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
-			case SmtpStatusCode.AuthenticationRequired:
-				throw new ServiceNotAuthenticatedException (response.Response);
-			case SmtpStatusCode.Ok:
-				OnMessageSent (new MessageSentEventArgs (message, response.Response));
-				return response.Response;
-			}
+			Stream.Write (EndData, 0, EndData.Length, cancellationToken);
+			Stream.Flush (cancellationToken);
+
+			response = Stream.ReadResponse (cancellationToken);
+
+			return ProcessDataResponse (message, response);
+		}
+
+		Task<string> DataAsync (FormatOptions options, MimeMessage message, long size, bool doAsync, CancellationToken cancellationToken, ITransferProgress progress)
+		{
+			if (doAsync)
+				return DataAsync (options, message, size, cancellationToken, progress);
+
+			return Task.FromResult (Data (options, message, size, cancellationToken, progress));
 		}
 
 		async Task ResetAsync (bool doAsync, CancellationToken cancellationToken)
