@@ -204,29 +204,10 @@ namespace MailKit.Net.Smtp {
 			get { return Stream.Length; }
 		}
 
-		void AlignReadAheadBuffer (out int offset, out int count)
-		{
-			int left = inputEnd - inputIndex;
-
-			if (left > 0) {
-				if (inputIndex > 0) {
-					// move all of the remaining input to the beginning of the buffer
-					Buffer.BlockCopy (input, inputIndex, input, 0, left);
-					inputEnd = left;
-					inputIndex = 0;
-				}
-			} else {
-				inputIndex = 0;
-				inputEnd = 0;
-			}
-
-			count = input.Length - inputEnd;
-			offset = inputEnd;
-		}
-
 		int ReadAhead (CancellationToken cancellationToken)
 		{
-			AlignReadAheadBuffer (out int offset, out int count);
+			inputIndex = 0;
+			inputEnd = 0;
 
 			try {
 				var network = Stream as NetworkStream;
@@ -234,10 +215,10 @@ namespace MailKit.Net.Smtp {
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				network?.Poll (SelectMode.SelectRead, cancellationToken);
-				int nread = Stream.Read (input, offset, count);
+				int nread = Stream.Read (input, 0, input.Length);
 
 				if (nread > 0) {
-					logger.LogServer (input, offset, nread);
+					logger.LogServer (input, 0, nread);
 					inputEnd += nread;
 				} else {
 					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
@@ -252,17 +233,18 @@ namespace MailKit.Net.Smtp {
 
 		async Task<int> ReadAheadAsync (CancellationToken cancellationToken)
 		{
-			AlignReadAheadBuffer (out int offset, out int count);
+			inputIndex = 0;
+			inputEnd = 0;
 
 			try {
 				var network = Stream as NetworkStream;
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				int nread = await Stream.ReadAsync (input, offset, count, cancellationToken).ConfigureAwait (false);
+				int nread = await Stream.ReadAsync (input, 0, input.Length, cancellationToken).ConfigureAwait (false);
 
 				if (nread > 0) {
-					logger.LogServer (input, offset, nread);
+					logger.LogServer (input, 0, nread);
 					inputEnd += nread;
 				} else {
 					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
@@ -462,10 +444,9 @@ namespace MailKit.Net.Smtp {
 
 					newLine = false;
 
+					more = input[inputIndex] == (byte) '-';
 					if (input[inputIndex] != (byte) '\r' && input[inputIndex] != (byte) '\n')
-						more = input[inputIndex++] == (byte) '-';
-					else
-						more = false;
+						inputIndex++;
 
 					startIndex = inputIndex;
 				}
