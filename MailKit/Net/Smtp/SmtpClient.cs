@@ -38,6 +38,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Security.Authentication;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 using MimeKit;
@@ -818,9 +819,8 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		string CreateEhloCommand (bool ehlo)
+		string CreateEhloCommand (string helo)
 		{
-			string command = ehlo ? "EHLO " : "HELO ";
 			string domain;
 
 			if (!string.IsNullOrEmpty (LocalDomain)) {
@@ -834,9 +834,9 @@ namespace MailKit.Net.Smtp {
 					}
 
 					if (ip.AddressFamily == AddressFamily.InterNetworkV6)
-						domain = "[IPv6:" + ip + "]";
-					else
-						domain = "[" + ip + "]";
+						return string.Format ("{0} [IPv6:{1}]\r\n", helo, ip);
+
+					return string.Format ("{0} [{1}]\r\n", helo, ip);
 				} else {
 					domain = LocalDomain;
 				}
@@ -844,21 +844,19 @@ namespace MailKit.Net.Smtp {
 				domain = DefaultLocalDomain;
 			}
 
-			command += domain + "\r\n";
-
-			return command;
+			return string.Format ("{0} {1}\r\n", helo, domain);
 		}
 
-		SmtpResponse SendEhlo (bool ehlo, CancellationToken cancellationToken)
+		SmtpResponse SendEhlo (string helo, CancellationToken cancellationToken)
 		{
-			var command = CreateEhloCommand (ehlo);
+			var command = CreateEhloCommand (helo);
 
 			return Stream.SendCommand (command, cancellationToken);
 		}
 
 		void Ehlo (CancellationToken cancellationToken)
 		{
-			var response = SendEhlo (true, cancellationToken);
+			var response = SendEhlo ("EHLO", cancellationToken);
 
 			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
 			if (authenticated && response.StatusCode == SmtpStatusCode.BadCommandSequence)
@@ -866,7 +864,7 @@ namespace MailKit.Net.Smtp {
 
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				// Try sending HELO instead...
-				response = SendEhlo (false, cancellationToken);
+				response = SendEhlo ("HELO", cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
@@ -1737,6 +1735,7 @@ namespace MailKit.Net.Smtp {
 			authenticated = false;
 			connected = false;
 			secure = false;
+			queued.Clear ();
 			uri = null;
 
 			if (Stream != null) {
@@ -1793,7 +1792,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		[Flags]
-		enum SmtpExtension {
+		enum SmtpExtensions {
 			None         = 0,
 			EightBitMime = 1 << 0,
 			BinaryMime   = 1 << 1,
@@ -1809,7 +1808,7 @@ namespace MailKit.Net.Smtp {
 				this.capabilities = capabilities;
 			}
 
-			public SmtpExtension SmtpExtensions {
+			public SmtpExtensions SmtpExtensions {
 				get; private set;
 			}
 
@@ -1818,11 +1817,11 @@ namespace MailKit.Net.Smtp {
 				switch (entity.ContentTransferEncoding) {
 				case ContentEncoding.EightBit:
 					if ((capabilities & SmtpCapabilities.EightBitMime) != 0)
-						SmtpExtensions |= SmtpExtension.EightBitMime;
+						SmtpExtensions |= SmtpExtensions.EightBitMime;
 					break;
 				case ContentEncoding.Binary:
 					if ((capabilities & SmtpCapabilities.BinaryMime) != 0)
-						SmtpExtensions |= SmtpExtension.BinaryMime;
+						SmtpExtensions |= SmtpExtensions.BinaryMime;
 					break;
 				}
 			}
@@ -1928,9 +1927,9 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		string CreateMailFromCommand (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, long size)
+		string CreateMailFromCommand (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtensions extensions, long size)
 		{
-			var idnEncode = (extensions & SmtpExtension.UTF8) == 0;
+			var idnEncode = (extensions & SmtpExtensions.UTF8) == 0;
 			var builder = new StringBuilder ("MAIL FROM:<");
 
 			var addrspec = mailbox.GetAddress (idnEncode);
@@ -1945,9 +1944,9 @@ namespace MailKit.Net.Smtp {
 				builder.Append (size.ToString (CultureInfo.InvariantCulture));
 			}
 
-			if ((extensions & SmtpExtension.BinaryMime) != 0)
+			if ((extensions & SmtpExtensions.BinaryMime) != 0)
 				builder.Append (" BODY=BINARYMIME");
-			else if ((extensions & SmtpExtension.EightBitMime) != 0)
+			else if ((extensions & SmtpExtensions.EightBitMime) != 0)
 				builder.Append (" BODY=8BITMIME");
 
 			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
@@ -1986,7 +1985,7 @@ namespace MailKit.Net.Smtp {
 			OnSenderNotAccepted (message, mailbox, response);
 		}
 
-		void MailFrom (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, long size, CancellationToken cancellationToken)
+		void MailFrom (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtensions extensions, long size, CancellationToken cancellationToken)
 		{
 			var command = CreateMailFromCommand (options, message, mailbox, extensions, size);
 
@@ -2189,9 +2188,9 @@ namespace MailKit.Net.Smtp {
 
 		string Bdat (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress progress)
 		{
-			var bytes = Encoding.UTF8.GetBytes (string.Format (CultureInfo.InvariantCulture, "BDAT {0} LAST\r\n", size));
+			var command = string.Format (CultureInfo.InvariantCulture, "BDAT {0} LAST\r\n", size);
 
-			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
+			Stream.QueueCommand (command, cancellationToken);
 
 			if (progress != null) {
 				var ctx = new SendContext (progress, size);
@@ -2323,7 +2322,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		FormatOptions Prepare (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, out SmtpExtension extensions)
+		FormatOptions Prepare (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, out SmtpExtensions extensions)
 		{
 			CheckDisposed ();
 
@@ -2358,17 +2357,24 @@ namespace MailKit.Net.Smtp {
 			extensions = visitor.SmtpExtensions;
 
 			if ((Capabilities & SmtpCapabilities.UTF8) != 0 && (format.International || sender.IsInternational || recipients.Any (x => x.IsInternational)))
-				extensions |= SmtpExtension.UTF8;
+				extensions |= SmtpExtensions.UTF8;
 
 			return format;
+		}
+
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
+		bool UseBdatCommand (SmtpExtensions extensions)
+		{
+			return (extensions & SmtpExtensions.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & SmtpCapabilities.BinaryMime | SmtpCapabilities.Chunking) != 0);
 		}
 
 		string Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			var format = Prepare (options, message, sender, recipients, out var extensions);
+			var bdat = UseBdatCommand (extensions);
 			long size;
 
-			if ((Capabilities & (SmtpCapabilities.Chunking | SmtpCapabilities.Size)) != 0 || progress != null) {
+			if (bdat || (Capabilities & SmtpCapabilities.Size) != 0 || progress != null) {
 				size = GetSize (format, message, cancellationToken);
 			} else {
 				size = -1;
@@ -2397,7 +2403,7 @@ namespace MailKit.Net.Smtp {
 					throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.TransactionFailed, "No recipients were accepted.");
 				}
 
-				if ((extensions & SmtpExtension.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & SmtpCapabilities.BinaryMime) != 0))
+				if (bdat)
 					return Bdat (format, message, size, cancellationToken, progress);
 
 				return Data (format, message, size, cancellationToken, progress);

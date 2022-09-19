@@ -128,16 +128,16 @@ namespace MailKit.Net.Smtp
 			return Stream.SendCommandAsync (command, cancellationToken);
 		}
 
-		Task<SmtpResponse> SendEhloAsync (bool ehlo, CancellationToken cancellationToken)
+		Task<SmtpResponse> SendEhloAsync (string helo, CancellationToken cancellationToken)
 		{
-			var command = CreateEhloCommand (ehlo);
+			var command = CreateEhloCommand (helo);
 
 			return Stream.SendCommandAsync (command, cancellationToken);
 		}
 
 		async Task EhloAsync (CancellationToken cancellationToken)
 		{
-			var response = await SendEhloAsync (true, cancellationToken).ConfigureAwait (false);
+			var response = await SendEhloAsync ("EHLO", cancellationToken).ConfigureAwait (false);
 
 			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
 			if (authenticated && response.StatusCode == SmtpStatusCode.BadCommandSequence)
@@ -145,7 +145,7 @@ namespace MailKit.Net.Smtp
 
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				// Try sending HELO instead...
-				response = await SendEhloAsync (false, cancellationToken).ConfigureAwait (false);
+				response = await SendEhloAsync ("HELO", cancellationToken).ConfigureAwait (false);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
@@ -924,7 +924,7 @@ namespace MailKit.Net.Smtp
 			}
 		}
 
-		async Task MailFromAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, long size, CancellationToken cancellationToken)
+		async Task MailFromAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtensions extensions, long size, CancellationToken cancellationToken)
 		{
 			var command = CreateMailFromCommand (options, message, mailbox, extensions, size);
 
@@ -954,9 +954,9 @@ namespace MailKit.Net.Smtp
 
 		async Task<string> BdatAsync (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress progress)
 		{
-			var bytes = Encoding.UTF8.GetBytes (string.Format (CultureInfo.InvariantCulture, "BDAT {0} LAST\r\n", size));
+			var command = string.Format (CultureInfo.InvariantCulture, "BDAT {0} LAST\r\n", size);
 
-			await Stream.WriteAsync (bytes, 0, bytes.Length, cancellationToken).ConfigureAwait (false);
+			await Stream.QueueCommandAsync (command, cancellationToken).ConfigureAwait (false);
 
 			if (progress != null) {
 				var ctx = new SendContext (progress, size);
@@ -1026,9 +1026,10 @@ namespace MailKit.Net.Smtp
 		async Task<string> SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			var format = Prepare (options, message, sender, recipients, out var extensions);
+			var bdat = UseBdatCommand (extensions);
 			long size;
 
-			if ((Capabilities & (SmtpCapabilities.Chunking | SmtpCapabilities.Size)) != 0 || progress != null) {
+			if (bdat || (Capabilities & SmtpCapabilities.Size) != 0 || progress != null) {
 				size = await GetSizeAsync (format, message, cancellationToken).ConfigureAwait (false);
 			} else {
 				size = -1;
@@ -1057,7 +1058,7 @@ namespace MailKit.Net.Smtp
 					throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.TransactionFailed, "No recipients were accepted.");
 				}
 
-				if ((extensions & SmtpExtension.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & SmtpCapabilities.BinaryMime) != 0))
+				if (bdat)
 					return await BdatAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
 
 				return await DataAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
