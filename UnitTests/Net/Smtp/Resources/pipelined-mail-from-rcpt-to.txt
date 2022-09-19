@@ -1,2 +1,3 @@
 250 2.1.0 sender ok
 250 2.1.5 recipient ok
+354 enter mail, end with . on a line by itself

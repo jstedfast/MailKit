@@ -49,7 +49,7 @@ namespace MailKit.Net.Smtp
 			queued.Add (type);
 		}
 
-		async Task<int> FlushCommandQueueAsync (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+		async Task<QueueResults> FlushCommandQueueAsync (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
 		{
 			try {
 				// Note: Queued commands are buffered by the stream
@@ -924,11 +924,11 @@ namespace MailKit.Net.Smtp
 			}
 		}
 
-		async Task MailFromAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtensions extensions, long size, CancellationToken cancellationToken)
+		async Task MailFromAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtensions extensions, long size, bool pipeline, CancellationToken cancellationToken)
 		{
 			var command = CreateMailFromCommand (options, message, mailbox, extensions, size);
 
-			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
+			if (pipeline) {
 				await QueueCommandAsync (SmtpCommand.MailFrom, command, cancellationToken).ConfigureAwait (false);
 				return;
 			}
@@ -938,11 +938,11 @@ namespace MailKit.Net.Smtp
 			ParseMailFromResponse (message, mailbox, response);
 		}
 
-		async Task<bool> RcptToAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, CancellationToken cancellationToken)
+		async Task<bool> RcptToAsync (FormatOptions options, MimeMessage message, MailboxAddress mailbox, bool pipeline, CancellationToken cancellationToken)
 		{
 			var command = CreateRcptToCommand (options, message, mailbox);
 
-			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
+			if (pipeline) {
 				await QueueCommandAsync (SmtpCommand.RcptTo, command, cancellationToken).ConfigureAwait (false);
 				return false;
 			}
@@ -975,13 +975,8 @@ namespace MailKit.Net.Smtp
 			return ParseBdatResponse (message, response);
 		}
 
-		async Task<string> DataAsync (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress progress)
+		async Task<string> MessageDataAsync (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress progress)
 		{
-			var response = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
-
-			if (response.StatusCode != SmtpStatusCode.StartMailInput)
-				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
-
 			if (progress != null) {
 				var ctx = new SendContext (progress, size);
 
@@ -1005,15 +1000,15 @@ namespace MailKit.Net.Smtp
 			await Stream.WriteAsync (EndData, 0, EndData.Length, cancellationToken).ConfigureAwait (false);
 			await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 
-			response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+			var response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
 
-			return ParseDataResponse (message, response);
+			return ParseMessageDataResponse (message, response);
 		}
 
-		async Task ResetAsync (CancellationToken cancellationToken)
+		async Task ResetAsync (bool dataAccepted, CancellationToken cancellationToken)
 		{
 			try {
-				var response = await Stream.SendCommandAsync ("RSET\r\n", cancellationToken).ConfigureAwait (false);
+				var response = await Stream.SendCommandAsync (dataAccepted ? ".\r\n" : "RSET\r\n", cancellationToken).ConfigureAwait (false);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 			} catch (SmtpCommandException) {
@@ -1026,7 +1021,9 @@ namespace MailKit.Net.Smtp
 		async Task<string> SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			var format = Prepare (options, message, sender, recipients, out var extensions);
+			var pipeline = (capabilities & SmtpCapabilities.Pipelining) != 0;
 			var bdat = UseBdatCommand (extensions);
+			SmtpResponse dataResponse = null;
 			long size;
 
 			if (bdat || (Capabilities & SmtpCapabilities.Size) != 0 || progress != null) {
@@ -1038,22 +1035,31 @@ namespace MailKit.Net.Smtp
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
 				// queue their commands instead of sending them immediately.
-				await MailFromAsync (format, message, sender, extensions, size, cancellationToken).ConfigureAwait (false);
+				await MailFromAsync (format, message, sender, extensions, size, pipeline, cancellationToken).ConfigureAwait (false);
 
-				int accepted = 0;
+				int recipientsAccepted = 0;
 				for (int i = 0; i < recipients.Count; i++) {
-					if (await RcptToAsync (format, message, recipients[i], cancellationToken).ConfigureAwait (false))
-						accepted++;
+					if (await RcptToAsync (format, message, recipients[i], pipeline, cancellationToken).ConfigureAwait (false))
+						recipientsAccepted++;
 				}
+
+				if (!bdat && pipeline)
+					await QueueCommandAsync (SmtpCommand.Data, "DATA\r\n", cancellationToken).ConfigureAwait (false);
 
 				if (queued.Count > 0) {
 					// Note: if PIPELINING is supported, this will flush all outstanding
-					// MAIL FROM and RCPT TO commands to the server and then process all
-					// of their responses.
-					accepted = await FlushCommandQueueAsync (message, sender, recipients, cancellationToken).ConfigureAwait (false);
+					// MAIL FROM, RCPT TO, and DATA commands to the server and then process
+					// all of their responses.
+					var results = await FlushCommandQueueAsync (message, sender, recipients, cancellationToken).ConfigureAwait (false);
+
+					recipientsAccepted = results.RecipientsAccepted;
+					dataResponse = results.DataResponse;
+
+					if (results.FirstException != null)
+						throw results.FirstException;
 				}
 
-				if (accepted == 0) {
+				if (recipientsAccepted == 0) {
 					OnNoRecipientsAccepted (message);
 					throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.TransactionFailed, "No recipients were accepted.");
 				}
@@ -1061,12 +1067,21 @@ namespace MailKit.Net.Smtp
 				if (bdat)
 					return await BdatAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
 
-				return await DataAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
+				if (!pipeline)
+					dataResponse = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
+
+				ParseDataResponse (dataResponse);
+				dataResponse = null;
+
+				return await MessageDataAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
 			} catch (ServiceNotAuthenticatedException) {
 				// do not disconnect
+				var dataAccepted = dataResponse != null && dataResponse.StatusCode == SmtpStatusCode.StartMailInput;
+				await ResetAsync (dataAccepted, cancellationToken).ConfigureAwait (false);
 				throw;
 			} catch (SmtpCommandException) {
-				await ResetAsync (cancellationToken).ConfigureAwait (false);
+				var dataAccepted = dataResponse != null && dataResponse.StatusCode == SmtpStatusCode.StartMailInput;
+				await ResetAsync (dataAccepted, cancellationToken).ConfigureAwait (false);
 				throw;
 			} catch {
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);

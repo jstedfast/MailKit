@@ -38,11 +38,24 @@ namespace UnitTests.Net.Smtp {
 	{
 		public string Command { get; private set; }
 		public string Resource { get; private set; }
+		public SmtpReplayState NextState { get; private set; }
 
 		public SmtpReplayCommand (string command, string resource)
 		{
 			Command = command;
 			Resource = resource;
+
+			if (command == "DATA\r\n" || command.EndsWith ("\r\nDATA\r\n", StringComparison.Ordinal))
+				NextState = SmtpReplayState.WaitForEndOfData;
+			else
+				NextState = SmtpReplayState.WaitForCommand;
+		}
+
+		public SmtpReplayCommand (string command, string resource, SmtpReplayState nextState = SmtpReplayState.WaitForCommand)
+		{
+			Command = command;
+			Resource = resource;
+			NextState = nextState;
 		}
 	}
 
@@ -131,7 +144,7 @@ namespace UnitTests.Net.Smtp {
 			int nread = stream.Read (buffer, offset, count);
 
 			if (stream.Position == stream.Length) {
-				state = commands[index].Command == "DATA\r\n" ? SmtpReplayState.WaitForEndOfData : SmtpReplayState.WaitForCommand;
+				state = commands[index].NextState;
 				stream.Dispose ();
 				stream = null;
 				index++;
@@ -200,6 +213,14 @@ namespace UnitTests.Net.Smtp {
 						state = SmtpReplayState.SendResponse;
 						sent.SetLength (0);
 					}
+				} else if (sent.Length == 3) {
+					var command = Encoding.ASCII.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+
+					if (command == ".\r\n") {
+						stream = GetResourceStream (commands[index].Resource);
+						state = SmtpReplayState.SendResponse;
+						sent.SetLength (0);
+					}
 				}
 			}
 		}
@@ -251,4 +272,3 @@ namespace UnitTests.Net.Smtp {
 		}
 	}
 }
-	
