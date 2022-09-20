@@ -49,7 +49,7 @@ namespace MailKit.Net.Smtp {
 		const int BlockSize = 4096;
 
 		// I/O buffering
-		readonly byte[] input = new byte[BlockSize];
+		readonly byte[] input = new byte[BlockSize + 4];
 		readonly byte[] output = new byte[BlockSize];
 		int outputIndex;
 
@@ -215,11 +215,14 @@ namespace MailKit.Net.Smtp {
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				network?.Poll (SelectMode.SelectRead, cancellationToken);
-				int nread = Stream.Read (input, 0, input.Length);
+				int nread = Stream.Read (input, 0, BlockSize);
 
 				if (nread > 0) {
 					logger.LogServer (input, 0, nread);
 					inputEnd += nread;
+
+					// Optimization hack used by ReadResponse
+					input[inputEnd] = (byte) '\n';
 				} else {
 					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
 				}
@@ -241,11 +244,14 @@ namespace MailKit.Net.Smtp {
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				int nread = await Stream.ReadAsync (input, 0, input.Length, cancellationToken).ConfigureAwait (false);
+				int nread = await Stream.ReadAsync (input, 0, BlockSize, cancellationToken).ConfigureAwait (false);
 
 				if (nread > 0) {
 					logger.LogServer (input, 0, nread);
 					inputEnd += nread;
+
+					// Optimization hack used by ReadResponse
+					input[inputEnd] = (byte) '\n';
 				} else {
 					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
 				}
@@ -422,7 +428,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		}
 
-		bool ReadResponse (ByteArrayBuilder builder, ref bool complete, ref bool newLine, ref bool more, ref int code)
+		bool ReadResponse (ByteArrayBuilder builder, ref bool newLine, ref bool more, ref int code)
 		{
 			do {
 				int startIndex = inputIndex;
@@ -445,24 +451,25 @@ namespace MailKit.Net.Smtp {
 					newLine = false;
 
 					more = input[inputIndex] == (byte) '-';
-					if (input[inputIndex] != (byte) '\r' && input[inputIndex] != (byte) '\n')
+					if (more || input[inputIndex] == (byte) ' ')
 						inputIndex++;
 
 					startIndex = inputIndex;
 				}
 
-				while (inputIndex < inputEnd && input[inputIndex] != (byte) '\r' && input[inputIndex] != (byte) '\n')
+				// Note: This depends on ReadAhead[Async] setting input[inputEnd] = '\n'
+				while (input[inputIndex] != (byte) '\n')
 					inputIndex++;
 
-				builder.Append (input, startIndex, inputIndex - startIndex);
+				int endIndex = inputIndex;
+				if (inputIndex > startIndex && input[inputIndex - 1] == (byte) '\r')
+					endIndex--;
 
-				if (inputIndex < inputEnd && input[inputIndex] == (byte) '\r')
-					inputIndex++;
+				builder.Append (input, startIndex, endIndex - startIndex);
 
 				if (inputIndex < inputEnd && input[inputIndex] == (byte) '\n') {
 					if (more)
-						builder.Append (input[inputIndex]);
-					complete = true;
+						builder.Append ((byte) '\n');
 					newLine = true;
 					inputIndex++;
 				}
@@ -497,7 +504,6 @@ namespace MailKit.Net.Smtp {
 
 			using (var builder = new ByteArrayBuilder (256)) {
 				bool needInput = inputIndex == inputEnd;
-				bool complete = false;
 				bool newLine = true;
 				bool more = true;
 				int code = 0;
@@ -506,10 +512,8 @@ namespace MailKit.Net.Smtp {
 					if (needInput)
 						ReadAhead (cancellationToken);
 
-					complete = false;
-
-					needInput = ReadResponse (builder, ref complete, ref newLine, ref more, ref code);
-				} while (more || !complete);
+					needInput = ReadResponse (builder, ref newLine, ref more, ref code);
+				} while (more);
 
 				var message = builder.ToString ();
 
@@ -543,7 +547,6 @@ namespace MailKit.Net.Smtp {
 
 			using (var builder = new ByteArrayBuilder (256)) {
 				bool needInput = inputIndex == inputEnd;
-				bool complete = false;
 				bool newLine = true;
 				bool more = true;
 				int code = 0;
@@ -552,10 +555,8 @@ namespace MailKit.Net.Smtp {
 					if (needInput)
 						await ReadAheadAsync (cancellationToken).ConfigureAwait (false);
 
-					complete = false;
-
-					needInput = ReadResponse (builder, ref complete, ref newLine, ref more, ref code);
-				} while (more || !complete);
+					needInput = ReadResponse (builder, ref newLine, ref more, ref code);
+				} while (more);
 
 				var message = builder.ToString ();
 
