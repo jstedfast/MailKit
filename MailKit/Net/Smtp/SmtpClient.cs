@@ -2131,13 +2131,13 @@ namespace MailKit.Net.Smtp {
 				if (notify.HasValue) {
 					command.Append (" NOTIFY=");
 					command.Append (GetNotifyString (notify.Value));
-				}
 
-				var orcpt = GetOriginalRecipientAddress (message, mailbox);
-				command.Append (" ORCPT=");
-				command.Append (orcpt.AddrType);
-				command.Append (';');
-				AppendHexEncoded (command, orcpt.Address);
+					var orcpt = GetOriginalRecipientAddress (message, mailbox);
+					command.Append (" ORCPT=");
+					command.Append (orcpt.AddrType);
+					command.Append (';');
+					AppendHexEncoded (command, orcpt.Address);
+				}
 			}
 
 			command.Append ("\r\n");
