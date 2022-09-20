@@ -639,7 +639,7 @@ namespace MailKit.Net.Smtp {
 				throw;
 			}
 
-			var responses = new List<SmtpResponse> ();
+			var responses = new List<SmtpResponse> (queued.Count);
 			Exception rex = null;
 
 			// Note: We need to read all responses from the server before we can process
