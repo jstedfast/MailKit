@@ -179,6 +179,10 @@ namespace UnitTests.Security {
 
 			public override int? SslCipherStrength => throw new NotImplementedException ();
 
+#if NET5_0_OR_GREATER
+			public override TlsCipherSuite? SslCipherSuite => throw new NotImplementedException ();
+#endif
+
 			public override HashAlgorithmType? SslHashAlgorithm => throw new NotImplementedException ();
 
 			public override int? SslHashStrength => throw new NotImplementedException ();
