@@ -149,7 +149,7 @@ namespace UnitTests.Net.Proxy {
 				var host = ip.ToString ();
 
 				try {
-					server = await SocketUtils.ConnectAsync (host, port, null, true, cancellationToken).ConfigureAwait (false);
+					server = await SocketUtils.ConnectAsync (host, port, null, cancellationToken).ConfigureAwait (false);
 					var remote = (IPEndPoint) server.RemoteEndPoint;
 
 					response = GetResponse (Socks4Reply.RequestGranted, remote);

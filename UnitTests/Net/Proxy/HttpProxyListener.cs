@@ -103,7 +103,7 @@ namespace UnitTests.Net.Proxy
 							var httpVersion = line.Substring (index);
 
 							try {
-								server = await SocketUtils.ConnectAsync (host, port, null, true, cancellationToken).ConfigureAwait (false);
+								server = await SocketUtils.ConnectAsync (host, port, null, cancellationToken).ConfigureAwait (false);
 								var remote = (IPEndPoint) server.RemoteEndPoint;
 
 								response = Encoding.ASCII.GetBytes ($"HTTP/1.1 200 Connected to {remote}\r\n\r\n");

@@ -381,7 +381,7 @@ namespace UnitTests.Net.Proxy {
 				switch (result) {
 				case Socks5ParseResult.Success:
 					try {
-						server = await SocketUtils.ConnectAsync (host, port, null, true, cancellationToken).ConfigureAwait (false);
+						server = await SocketUtils.ConnectAsync (host, port, null, cancellationToken).ConfigureAwait (false);
 						var remote = (IPEndPoint) server.RemoteEndPoint;
 
 						response = GetCommandResponse (Socks5Reply.Success, remote);

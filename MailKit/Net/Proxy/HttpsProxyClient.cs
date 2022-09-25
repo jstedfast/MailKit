@@ -241,115 +241,6 @@ namespace MailKit.Net.Proxy {
 		}
 #endif
 
-		async Task<Stream> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
-		{
-			ValidateArguments (host, port);
-
-			cancellationToken.ThrowIfCancellationRequested ();
-
-			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
-			var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-
-			try {
-				if (doAsync) {
-#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-					await ssl.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
-#else
-					await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-#endif
-				} else {
-#if NETSTANDARD1_3 || NETSTANDARD1_6
-					ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).GetAwaiter ().GetResult ();
-#elif NET5_0_OR_GREATER
-					ssl.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
-				}
-			} catch (Exception ex) {
-				ssl.Dispose ();
-
-				throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "HTTP", host, port, 443, 80);
-			}
-
-			var command = HttpProxyClient.GetConnectCommand (host, port, ProxyCredentials);
-
-			try {
-				if (doAsync)
-					await ssl.WriteAsync (command, 0, command.Length, cancellationToken).ConfigureAwait (false);
-				else
-					ssl.Write (command, 0, command.Length);
-
-				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
-				var builder = new StringBuilder ();
-
-				try {
-					var endOfHeaders = false;
-					var newline = false;
-
-					// read until we consume the end of the headers (it's ok if we read some of the content)
-					do {
-						int nread;
-
-						if (doAsync)
-							nread = await ssl.ReadAsync (buffer, 0, BufferSize, cancellationToken).ConfigureAwait (false);
-						else
-							nread = ssl.Read (buffer, 0, BufferSize);
-
-						if (nread > 0) {
-							int n = nread;
-
-							for (int i = 0; i < nread && !endOfHeaders; i++) {
-								switch ((char) buffer[i]) {
-								case '\r':
-									break;
-								case '\n':
-									endOfHeaders = newline;
-									newline = true;
-
-									if (endOfHeaders)
-										n = i + 1;
-									break;
-								default:
-									newline = false;
-									break;
-								}
-							}
-
-							builder.Append (Encoding.UTF8.GetString (buffer, 0, n));
-						}
-					} while (!endOfHeaders);
-				} finally {
-					ArrayPool<byte>.Shared.Return (buffer);
-				}
-
-				int index = 0;
-
-				while (builder[index] != '\n')
-					index++;
-
-				if (index > 0 && builder[index - 1] == '\r')
-					index--;
-
-				// trim everything beyond the "HTTP/1.1 200 ..." part of the response
-				builder.Length = index;
-
-				var response = builder.ToString ();
-
-				if (response.Length >= 15 && response.StartsWith ("HTTP/1.", StringComparison.OrdinalIgnoreCase) &&
-					(response[7] == '1' || response[7] == '0') && response[8] == ' ' &&
-					response[9] == '2' && response[10] == '0' && response[11] == '0' &&
-					response[12] == ' ') {
-					return ssl;
-				}
-
-				throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, response));
-			} catch {
-				ssl.Dispose ();
-				throw;
-			}
-		}
-
 		/// <summary>
 		/// Connect to the target host.
 		/// </summary>
@@ -380,7 +271,54 @@ namespace MailKit.Net.Proxy {
 		/// </exception>
 		public override Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ConnectAsync (host, port, false, cancellationToken).GetAwaiter ().GetResult ();
+			ValidateArguments (host, port);
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var socket = SocketUtils.Connect (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken);
+			var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+
+			try {
+#if NET5_0_OR_GREATER
+				ssl.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
+#else
+				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
+#endif
+			} catch (Exception ex) {
+				ssl.Dispose ();
+
+				throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "HTTP", host, port, 443, 80);
+			}
+
+			var command = HttpProxyClient.GetConnectCommand (host, port, ProxyCredentials);
+
+			try {
+				ssl.Write (command, 0, command.Length);
+
+				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
+				var builder = new StringBuilder ();
+
+				try {
+					var newline = false;
+
+					// read until we consume the end of the headers (it's ok if we read some of the content)
+					do {
+						int nread = ssl.Read (buffer, 0, BufferSize);
+						int index = 0;
+
+						if (HttpProxyClient.TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
+							break;
+					} while (true);
+				} finally {
+					ArrayPool<byte>.Shared.Return (buffer);
+				}
+
+				HttpProxyClient.ValidateHttpResponse (builder, host, port);
+				return ssl;
+			} catch {
+				ssl.Dispose ();
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -411,9 +349,56 @@ namespace MailKit.Net.Proxy {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ConnectAsync (host, port, true, cancellationToken);
+			ValidateArguments (host, port);
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken).ConfigureAwait (false);
+			var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+
+			try {
+#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+				await ssl.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
+#else
+				await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
+#endif
+			} catch (Exception ex) {
+				ssl.Dispose ();
+
+				throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "HTTP", host, port, 443, 80);
+			}
+
+			var command = HttpProxyClient.GetConnectCommand (host, port, ProxyCredentials);
+
+			try {
+				await ssl.WriteAsync (command, 0, command.Length, cancellationToken).ConfigureAwait (false);
+
+				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
+				var builder = new StringBuilder ();
+
+				try {
+					var newline = false;
+
+					// read until we consume the end of the headers (it's ok if we read some of the content)
+					do {
+						int nread = ssl.Read (buffer, 0, BufferSize);
+						int index = 0;
+
+						if (HttpProxyClient.TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
+							break;
+					} while (true);
+				} finally {
+					ArrayPool<byte>.Shared.Return (buffer);
+				}
+
+				HttpProxyClient.ValidateHttpResponse (builder, host, port);
+				return ssl;
+			} catch {
+				ssl.Dispose ();
+				throw;
+			}
 		}
 	}
 }

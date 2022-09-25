@@ -113,85 +113,57 @@ namespace MailKit.Net.Proxy
 			return Encoding.UTF8.GetBytes (builder.ToString ());
 		}
 
-		async Task<Stream> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		internal static bool TryConsumeHeaders (StringBuilder builder, byte[] buffer, ref int index, int count, ref bool newLine)
 		{
-			ValidateArguments (host, port);
+			int endIndex = index + count;
+			int startIndex = index;
+			var endOfHeaders = false;
 
-			cancellationToken.ThrowIfCancellationRequested ();
-
-			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
-			var command = GetConnectCommand (host, port, ProxyCredentials);
-
-			try {
-				await SendAsync (socket, command, 0, command.Length, doAsync, cancellationToken).ConfigureAwait (false);
-
-				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
-				var builder = new StringBuilder ();
-
-				try {
-					var endOfHeaders = false;
-					var newline = false;
-
-					// read until we consume the end of the headers (it's ok if we read some of the content)
-					do {
-						int nread = await ReceiveAsync (socket, buffer, 0, BufferSize, doAsync, cancellationToken).ConfigureAwait (false);
-
-						if (nread > 0) {
-							int n = nread;
-
-							for (int i = 0; i < nread && !endOfHeaders; i++) {
-								switch ((char) buffer[i]) {
-								case '\r':
-									break;
-								case '\n':
-									endOfHeaders = newline;
-									newline = true;
-
-									if (endOfHeaders)
-										n = i + 1;
-									break;
-								default:
-									newline = false;
-									break;
-								}
-							}
-
-							builder.Append (Encoding.UTF8.GetString (buffer, 0, n));
-						}
-					} while (!endOfHeaders);
-				} finally {
-					ArrayPool<byte>.Shared.Return (buffer);
+			while (index < endIndex && !endOfHeaders) {
+				switch ((char) buffer[index]) {
+				case '\r':
+					break;
+				case '\n':
+					endOfHeaders = newLine;
+					newLine = true;
+					break;
+				default:
+					newLine = false;
+					break;
 				}
 
-				int index = 0;
-
-				while (builder[index] != '\n')
-					index++;
-
-				if (index > 0 && builder[index - 1] == '\r')
-					index--;
-
-				// trim everything beyond the "HTTP/1.1 200 ..." part of the response
-				builder.Length = index;
-
-				var response = builder.ToString ();
-
-				if (response.Length >= 15 && response.StartsWith ("HTTP/1.", StringComparison.OrdinalIgnoreCase) &&
-					(response[7] == '1' || response[7] == '0') && response[8] == ' ' &&
-					response[9] == '2' && response[10] == '0' && response[11] == '0' &&
-					response[12] == ' ') {
-					return new NetworkStream (socket, true);
-				}
-
-				throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, response));
-			} catch {
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-				if (socket.Connected)
-					socket.Disconnect (false);
-#endif
-				socket.Dispose ();
-				throw;
+				index++;
 			}
+
+			var block = Encoding.UTF8.GetString (buffer, startIndex, index - startIndex);
+			builder.Append (block);
+
+			return endOfHeaders;
+		}
+
+		internal static void ValidateHttpResponse (StringBuilder builder, string host, int port)
+		{
+			int index = 0;
+
+			while (builder[index] != '\n')
+				index++;
+
+			if (index > 0 && builder[index - 1] == '\r')
+				index--;
+
+			// trim everything beyond the "HTTP/1.1 200 ..." part of the response
+			builder.Length = index;
+
+			var response = builder.ToString ();
+
+			if (response.Length >= 15 && response.StartsWith ("HTTP/1.", StringComparison.OrdinalIgnoreCase) &&
+				(response[7] == '1' || response[7] == '0') && response[8] == ' ' &&
+				response[9] == '2' && response[10] == '0' && response[11] == '0' &&
+				response[12] == ' ') {
+				return;
+			}
+
+			throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, response));
 		}
 
 		/// <summary>
@@ -224,7 +196,43 @@ namespace MailKit.Net.Proxy
 		/// </exception>
 		public override Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ConnectAsync (host, port, false, cancellationToken).GetAwaiter ().GetResult ();
+			ValidateArguments (host, port);
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var socket = SocketUtils.Connect (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken);
+			var command = GetConnectCommand (host, port, ProxyCredentials);
+			int index;
+
+			try {
+				Send (socket, command, 0, command.Length, cancellationToken);
+
+				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
+				var builder = new StringBuilder ();
+
+				try {
+					var newline = false;
+
+					// read until we consume the end of the headers (it's ok if we read some of the content)
+					do {
+						int nread = Receive (socket, buffer, 0, BufferSize, cancellationToken);
+						index = 0;
+
+						if (TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
+							break;
+					} while (true);
+				} finally {
+					ArrayPool<byte>.Shared.Return (buffer);
+				}
+
+				ValidateHttpResponse (builder, host, port);
+				return new NetworkStream (socket, true);
+			} catch {
+				if (socket.Connected)
+					socket.Disconnect (false);
+				socket.Dispose ();
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -255,9 +263,45 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ConnectAsync (host, port, true, cancellationToken);
+			ValidateArguments (host, port);
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken).ConfigureAwait (false);
+			var command = GetConnectCommand (host, port, ProxyCredentials);
+			int index;
+
+			try {
+				await SendAsync (socket, command, 0, command.Length, cancellationToken).ConfigureAwait (false);
+
+				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
+				var builder = new StringBuilder ();
+
+				try {
+					var newline = false;
+
+					// read until we consume the end of the headers (it's ok if we read some of the content)
+					do {
+						int nread = await ReceiveAsync (socket, buffer, 0, BufferSize, cancellationToken).ConfigureAwait (false);
+						index = 0;
+
+						if (TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
+							break;
+					} while (true);
+				} finally {
+					ArrayPool<byte>.Shared.Return (buffer);
+				}
+
+				ValidateHttpResponse (builder, host, port);
+				return new NetworkStream (socket, true);
+			} catch {
+				if (socket.Connected)
+					socket.Disconnect (false);
+				socket.Dispose ();
+				throw;
+			}
 		}
 	}
 }

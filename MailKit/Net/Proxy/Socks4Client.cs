@@ -129,20 +129,8 @@ namespace MailKit.Net.Proxy
 			}
 		}
 
-		static async Task<IPAddress> ResolveAsync (string host, bool doAsync, CancellationToken cancellationToken)
+		static IPAddress Resolve (string host, IPAddress[] ipAddresses)
 		{
-			IPAddress[] ipAddresses;
-
-			if (doAsync) {
-				ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
-			} else {
-#if NETSTANDARD1_3 || NETSTANDARD1_6
-				ipAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
-#else
-				ipAddresses = Dns.GetHostAddresses (host);
-#endif
-			}
-
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				if (ipAddresses[i].AddressFamily == AddressFamily.InterNetwork)
 					return ipAddresses[i];
@@ -151,85 +139,53 @@ namespace MailKit.Net.Proxy
 			throw new ArgumentException ($"Could not resolve a suitable IPv4 address for '{host}'.", nameof (host));
 		}
 
-		async Task<Stream> ConnectAsync (string host, int port, bool doAsync, CancellationToken cancellationToken)
+		static IPAddress Resolve (string host, CancellationToken cancellationToken)
 		{
-			byte[] addr, domain = null;
-
-			ValidateArguments (host, port);
-
-			if (!IPAddress.TryParse (host, out var ip)) {
-				if (IsSocks4a) {
-					domain = Encoding.UTF8.GetBytes (host);
-					addr = InvalidIPAddress;
-				} else {
-					ip = await ResolveAsync (host, doAsync, cancellationToken).ConfigureAwait (false);
-					addr = ip.GetAddressBytes ();
-				}
-			} else {
-				if (ip.AddressFamily != AddressFamily.InterNetwork)
-					throw new ArgumentException ("The specified host address must be IPv4.", nameof (host));
-
-				addr = ip.GetAddressBytes ();
-			}
-
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, doAsync, cancellationToken).ConfigureAwait (false);
+			var ipAddresses = Dns.GetHostAddresses (host);
+
+			return Resolve (host, ipAddresses);
+		}
+
+		static async Task<IPAddress> ResolveAsync (string host, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
+
+			return Resolve (host, ipAddresses);
+		}
+
+		byte[] GetConnectCommand (byte[] domain, byte[] addr, int port)
+		{
+			// +----+-----+----------+----------+----------+-------+--------------+-------+
+			// |VER | CMD | DST.PORT | DST.ADDR |  USERID  | NULL  |  DST.DOMAIN  | NULL  |
+			// +----+-----+----------+----------+----------+-------+--------------+-------+
+			// | 1  |  1  |    2     |    4     | VARIABLE | X'00' |   VARIABLE   | X'00' |
+			// +----+-----+----------+----------+----------+-------+--------------+-------+
 			var user = ProxyCredentials != null ? Encoding.UTF8.GetBytes (ProxyCredentials.UserName) : new byte[0];
+			int bufferSize = 9 + user.Length + (domain != null ? domain.Length + 1 : 0);
+			var buffer = new byte[bufferSize];
+			int n = 0;
 
-			try {
-				// +----+-----+----------+----------+----------+-------+--------------+-------+
-				// |VER | CMD | DST.PORT | DST.ADDR |  USERID  | NULL  |  DST.DOMAIN  | NULL  |
-				// +----+-----+----------+----------+----------+-------+--------------+-------+
-				// | 1  |  1  |    2     |    4     | VARIABLE | X'00' |   VARIABLE   | X'00' |
-				// +----+-----+----------+----------+----------+-------+--------------+-------+
-				int bufferSize = 9 + user.Length + (domain != null ? domain.Length + 1 : 0);
-				var buffer = new byte[bufferSize];
-				int nread, n = 0;
+			buffer[n++] = (byte) SocksVersion;
+			buffer[n++] = (byte) Socks4Command.Connect;
+			buffer[n++] = (byte) (port >> 8);
+			buffer[n++] = (byte) port;
+			Buffer.BlockCopy (addr, 0, buffer, n, 4);
+			n += 4;
+			Buffer.BlockCopy (user, 0, buffer, n, user.Length);
+			n += user.Length;
+			buffer[n++] = 0x00;
 
-				buffer[n++] = (byte) SocksVersion;
-				buffer[n++] = (byte) Socks4Command.Connect;
-				buffer[n++] = (byte) (port >> 8);
-				buffer[n++] = (byte) port;
-				Buffer.BlockCopy (addr, 0, buffer, n, 4);
-				n += 4;
-				Buffer.BlockCopy (user, 0, buffer, n, user.Length);
-				n += user.Length;
+			if (domain != null) {
+				Buffer.BlockCopy (domain, 0, buffer, n, domain.Length);
+				n += domain.Length;
 				buffer[n++] = 0x00;
-				if (domain != null) {
-					Buffer.BlockCopy (domain, 0, buffer, n, domain.Length);
-					n += domain.Length;
-					buffer[n++] = 0x00;
-				}
-
-				await SendAsync (socket, buffer, 0, n, doAsync, cancellationToken).ConfigureAwait (false);
-
-				// +-----+-----+----------+----------+
-				// | VER | REP | BND.PORT | BND.ADDR |
-				// +-----+-----+----------+----------+
-				// |  1  |  1  |    2     |    4     |
-				// +-----+-----+----------+----------+
-				n = 0;
-
-				do {
-					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 8 - n, doAsync, cancellationToken).ConfigureAwait (false)) > 0)
-						n += nread;
-				} while (n < 8);
-
-				if (buffer[1] != (byte) Socks4Reply.RequestGranted)
-					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
-
-				// TODO: do we care about BND.ADDR and BND.PORT?
-
-				return new NetworkStream (socket, true);
-			} catch {
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
-				if (socket.Connected)
-					socket.Disconnect (false);
-#endif
-				socket.Dispose ();
-				throw;
 			}
+
+			return buffer;
 		}
 
 		/// <summary>
@@ -262,7 +218,59 @@ namespace MailKit.Net.Proxy
 		/// </exception>
 		public override Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ConnectAsync (host, port, false, cancellationToken).GetAwaiter ().GetResult ();
+			byte[] addr, domain = null;
+
+			ValidateArguments (host, port);
+
+			if (!IPAddress.TryParse (host, out var ip)) {
+				if (IsSocks4a) {
+					domain = Encoding.UTF8.GetBytes (host);
+					addr = InvalidIPAddress;
+				} else {
+					ip = Resolve (host, cancellationToken);
+					addr = ip.GetAddressBytes ();
+				}
+			} else {
+				if (ip.AddressFamily != AddressFamily.InterNetwork)
+					throw new ArgumentException ("The specified host address must be IPv4.", nameof (host));
+
+				addr = ip.GetAddressBytes ();
+			}
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var socket = SocketUtils.Connect (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken);
+
+			try {
+				var buffer = GetConnectCommand (domain, addr, port);
+
+				Send (socket, buffer, 0, buffer.Length, cancellationToken);
+
+				// +-----+-----+----------+----------+
+				// | VER | REP | BND.PORT | BND.ADDR |
+				// +-----+-----+----------+----------+
+				// |  1  |  1  |    2     |    4     |
+				// +-----+-----+----------+----------+
+				int nread, n = 0;
+
+				do {
+					if ((nread = Receive (socket, buffer, 0 + n, 8 - n, cancellationToken)) > 0)
+						n += nread;
+				} while (n < 8);
+
+				if (buffer[1] != (byte) Socks4Reply.RequestGranted)
+					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
+
+				// TODO: do we care about BND.ADDR and BND.PORT?
+
+				return new NetworkStream (socket, true);
+			} catch {
+				if (socket.Connected)
+					socket.Disconnect (false);
+
+				socket.Dispose ();
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -293,9 +301,61 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return ConnectAsync (host, port, true, cancellationToken);
+			byte[] addr, domain = null;
+
+			ValidateArguments (host, port);
+
+			if (!IPAddress.TryParse (host, out var ip)) {
+				if (IsSocks4a) {
+					domain = Encoding.UTF8.GetBytes (host);
+					addr = InvalidIPAddress;
+				} else {
+					ip = await ResolveAsync (host, cancellationToken).ConfigureAwait (false);
+					addr = ip.GetAddressBytes ();
+				}
+			} else {
+				if (ip.AddressFamily != AddressFamily.InterNetwork)
+					throw new ArgumentException ("The specified host address must be IPv4.", nameof (host));
+
+				addr = ip.GetAddressBytes ();
+			}
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken).ConfigureAwait (false);
+
+			try {
+				var buffer = GetConnectCommand (domain, addr, port);
+
+				await SendAsync (socket, buffer, 0, buffer.Length, cancellationToken).ConfigureAwait (false);
+
+				// +-----+-----+----------+----------+
+				// | VER | REP | BND.PORT | BND.ADDR |
+				// +-----+-----+----------+----------+
+				// |  1  |  1  |    2     |    4     |
+				// +-----+-----+----------+----------+
+				int nread, n = 0;
+
+				do {
+					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 8 - n, cancellationToken).ConfigureAwait (false)) > 0)
+						n += nread;
+				} while (n < 8);
+
+				if (buffer[1] != (byte) Socks4Reply.RequestGranted)
+					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
+
+				// TODO: do we care about BND.ADDR and BND.PORT?
+
+				return new NetworkStream (socket, true);
+			} catch {
+				if (socket.Connected)
+					socket.Disconnect (false);
+
+				socket.Dispose ();
+				throw;
+			}
 		}
 	}
 }

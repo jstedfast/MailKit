@@ -182,9 +182,9 @@ namespace MailKit.Net.Proxy
 			tcs.TrySetException (new SocketException ((int) args.SocketError));
 		}
 
-		internal static async Task SendAsync (Socket socket, byte[] buffer, int offset, int length, bool doAsync, CancellationToken cancellationToken)
+		internal static void Send (Socket socket, byte[] buffer, int offset, int length, CancellationToken cancellationToken)
 		{
-			if (doAsync || cancellationToken.CanBeCanceled) {
+			if (cancellationToken.CanBeCanceled) {
 				var tcs = new TaskCompletionSource<bool> ();
 
 				using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
@@ -197,11 +197,7 @@ namespace MailKit.Net.Proxy
 						if (!socket.SendAsync (args))
 							AsyncOperationCompleted (null, args);
 
-						if (doAsync)
-							await tcs.Task.ConfigureAwait (false);
-						else
-							tcs.Task.GetAwaiter ().GetResult ();
-
+						tcs.Task.GetAwaiter ().GetResult ();
 						return;
 					}
 				}
@@ -212,9 +208,28 @@ namespace MailKit.Net.Proxy
 			socket.Send (buffer, offset, length, SocketFlags.None);
 		}
 
-		internal static async Task<int> ReceiveAsync (Socket socket, byte[] buffer, int offset, int length, bool doAsync, CancellationToken cancellationToken)
+		internal static async Task SendAsync (Socket socket, byte[] buffer, int offset, int length, CancellationToken cancellationToken)
 		{
-			if (doAsync || cancellationToken.CanBeCanceled) {
+			var tcs = new TaskCompletionSource<bool> ();
+
+			using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
+				using (var args = new SocketAsyncEventArgs ()) {
+					args.Completed += AsyncOperationCompleted;
+					args.SetBuffer (buffer, offset, length);
+					args.AcceptSocket = socket;
+					args.UserToken = tcs;
+
+					if (!socket.SendAsync (args))
+						AsyncOperationCompleted (null, args);
+
+					await tcs.Task.ConfigureAwait (false);
+				}
+			}
+		}
+
+		internal static int Receive (Socket socket, byte[] buffer, int offset, int length, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.CanBeCanceled) {
 				var tcs = new TaskCompletionSource<bool> ();
 
 				using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
@@ -227,10 +242,7 @@ namespace MailKit.Net.Proxy
 						if (!socket.ReceiveAsync (args))
 							AsyncOperationCompleted (null, args);
 
-						if (doAsync)
-							await tcs.Task.ConfigureAwait (false);
-						else
-							tcs.Task.GetAwaiter ().GetResult ();
+						tcs.Task.GetAwaiter ().GetResult ();
 
 						return args.BytesTransferred;
 					}
@@ -240,6 +252,27 @@ namespace MailKit.Net.Proxy
 			SocketUtils.Poll (socket, SelectMode.SelectRead, cancellationToken);
 
 			return socket.Receive (buffer, offset, length, SocketFlags.None);
+		}
+
+		internal static async Task<int> ReceiveAsync (Socket socket, byte[] buffer, int offset, int length, CancellationToken cancellationToken)
+		{
+			var tcs = new TaskCompletionSource<bool> ();
+
+			using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
+				using (var args = new SocketAsyncEventArgs ()) {
+					args.Completed += AsyncOperationCompleted;
+					args.SetBuffer (buffer, offset, length);
+					args.AcceptSocket = socket;
+					args.UserToken = tcs;
+
+					if (!socket.ReceiveAsync (args))
+						AsyncOperationCompleted (null, args);
+
+					await tcs.Task.ConfigureAwait (false);
+
+					return args.BytesTransferred;
+				}
+			}
 		}
 
 		/// <summary>

@@ -115,17 +115,6 @@ namespace MailKit.Net
 			throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 		}
 
-		[Obsolete]
-		public static Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ConnectAsync (host, port, localEndPoint, cancellationToken);
-
-			var socket = Connect (host, port, localEndPoint, cancellationToken);
-
-			return Task.FromResult (socket);
-		}
-
 		public static Socket Connect (string host, int port, IPEndPoint localEndPoint, int timeout, CancellationToken cancellationToken)
 		{
 			using (var ts = new CancellationTokenSource (timeout)) {
@@ -147,22 +136,6 @@ namespace MailKit.Net
 				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
 					try {
 						return await ConnectAsync (host, port, localEndPoint, linked.Token).ConfigureAwait (false);
-					} catch (OperationCanceledException) {
-						if (!cancellationToken.IsCancellationRequested)
-							throw new TimeoutException ();
-						throw;
-					}
-				}
-			}
-		}
-
-		[Obsolete]
-		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, int timeout, bool doAsync, CancellationToken cancellationToken)
-		{
-			using (var ts = new CancellationTokenSource (timeout)) {
-				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
-					try {
-						return await ConnectAsync (host, port, localEndPoint, doAsync, linked.Token).ConfigureAwait (false);
 					} catch (OperationCanceledException) {
 						if (!cancellationToken.IsCancellationRequested)
 							throw new TimeoutException ();
