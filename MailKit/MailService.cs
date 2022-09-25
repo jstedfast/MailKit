@@ -448,7 +448,8 @@ namespace MailKit {
 					return (serial == "00E39068AD835A94760AA9A20FD3CA9BEC" && fingerprint == "5CC7333265A8D9800D69A815D96E60A38914931F") // Expires 10/24/2022 4:24:36 AM
 						|| (serial == "00D8FB7C156EB6688212CBE4D3A8C6D5AF" && fingerprint == "DC39EF0BCE6A11CA23806A67CFF9F12063461D66") // Expires 11/7/2022 3:24:39 AM
 						|| (serial == "4BF476263A38AD0C0AFF7B11903E437A" && fingerprint == "B375614563F69617132CE3940962732023594A71") // Expires 11/14/2022 3:24:00 AM
-						|| (serial == "121F7574EC70939D12B1B3760BA87998" && fingerprint == "EA0E79071633A21F5BF495E281C50BB32839C9C1"); // Expires 11/21/2022 3:19:42 AM
+						|| (serial == "121F7574EC70939D12B1B3760BA87998" && fingerprint == "EA0E79071633A21F5BF495E281C50BB32839C9C1") // Expires 11/21/2022 3:19:42 AM
+						|| (serial == "008FD790D29DCF011B1240BF192B42A9A0" && fingerprint == "F4FA96FF05365689DDAD8ED8A7A21BCD2B138016"); // Expires 11/28/2022 3:18:37 AM
 				default:
 					return false;
 				}
@@ -505,7 +506,13 @@ namespace MailKit {
 					return false;
 				}
 			case "imap.mail.me.com":
-				return issuer == AppleCertificateIssuer && serial == "2EC9B6B93C77A53D15405C47A9FBC3CF" && fingerprint == "A047B6AE5E0FF51CC216C1237A44529B0A4DB0D2"; // Expires 10/2/2022 3:51:56 PM
+				switch (issuer) {
+				case AppleCertificateIssuer:
+					return (serial == "2EC9B6B93C77A53D15405C47A9FBC3CF" && fingerprint == "A047B6AE5E0FF51CC216C1237A44529B0A4DB0D2") // Expires 10/2/2022 3:51:56 PM
+						|| (serial == "01EEFBE511144C6229EA73B5774B23C2" && fingerprint == "DD3BF38DA0BF95379A4F8A5B9D544B521D2F53BF"); // Expires 10/1/2023 3:45:16 PM
+				default:
+					return false;
+				}
 			case "smtp.mail.me.com":
 				return issuer == AppleCertificateIssuer && serial == "46A537AD83083BCCBDA20D1D8657F573" && fingerprint == "83AA1EF97EE9AC0EAD8B2C88C62C83F8EDBF2BDB"; // Expires 10/30/2022 4:11:38 PM
 			case "*.imap.mail.yahoo.com":
@@ -518,7 +525,8 @@ namespace MailKit {
 			case "legacy.pop.mail.yahoo.com":
 				switch (issuer) {
 				case YahooCertificateIssuer:
-					return (serial == "0258565F04B44FB9EC076BC299EDCA3B" && fingerprint == "DE6CE9148C0882577084CD3CD28CE8DB83050796"); // Expires 10/12/2022 7:59:59 PM
+					return (serial == "0258565F04B44FB9EC076BC299EDCA3B" && fingerprint == "DE6CE9148C0882577084CD3CD28CE8DB83050796") // Expires 10/12/2022 7:59:59 PM
+						|| (serial == "0844D3A0F6F69200C2E63268DADC58EE" && fingerprint == "6D26CDE4E416E6B7EA65F58206E0332D57DE5F62"); // Expires 3/8/2023 6:59:59 PM
 				default:
 					return false;
 				}
