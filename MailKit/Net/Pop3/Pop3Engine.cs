@@ -381,14 +381,15 @@ namespace MailKit.Net.Pop3 {
 			return Pop3CommandStatus.ProtocolError;
 		}
 
-		async Task SendCommandAsync (Pop3Command pc, bool doAsync, CancellationToken cancellationToken)
+		Task SendCommandAsync (Pop3Command pc, bool doAsync, CancellationToken cancellationToken)
 		{
 			var buf = pc.Encoding.GetBytes (pc.Command + "\r\n");
 
 			if (doAsync)
-				await stream.WriteAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
-			else
-				stream.Write (buf, 0, buf.Length, cancellationToken);
+				return stream.WriteAsync (buf, 0, buf.Length, cancellationToken);
+
+			stream.Write (buf, 0, buf.Length, cancellationToken);
+			return Task.CompletedTask;
 		}
 
 		async Task ReadResponseAsync (Pop3Command pc, bool doAsync)
