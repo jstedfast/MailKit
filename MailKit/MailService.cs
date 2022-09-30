@@ -533,8 +533,7 @@ namespace MailKit {
 			case "smtp.mail.yahoo.com":
 				switch (issuer) {
 				case YahooCertificateIssuer:
-					return (serial == "015B6EF73B771F866D33872DFD725369" && fingerprint == "167572F89B730C3AC63DE8BAF126A0867D41D35F") // Expires 9/7/2022 7:59:59 PM
-						|| (serial == "0309A5B44971EF157E41ADB25B550C17" && fingerprint == "04AB2B10C8D26133F770B881773F7CFB8EC065F7"); // Expires 2/1/2023 6:59:59 PM
+					return (serial == "0309A5B44971EF157E41ADB25B550C17" && fingerprint == "04AB2B10C8D26133F770B881773F7CFB8EC065F7"); // Expires 2/1/2023 6:59:59 PM
 				default:
 					return false;
 				}
