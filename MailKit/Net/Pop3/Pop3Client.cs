@@ -263,9 +263,23 @@ namespace MailKit.Net.Pop3 {
 			return new Pop3ProtocolException (string.Format (CultureInfo.InvariantCulture, format, args));
 		}
 
+		static int GetExpectedSequenceId (Pop3Command pc)
+		{
+			int index = pc.Command.IndexOf (' ') + 1;
+			int endIndex = pc.Command.IndexOf ('\r', index);
+
+#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+			var seqid = pc.Command.AsSpan (index, endIndex - index);
+#else
+			var seqid = pc.Command.Substring (index, endIndex - index);
+#endif
+
+			return int.Parse (seqid, NumberStyles.None, CultureInfo.InvariantCulture);
+		}
+
 		void SendCommand (CancellationToken token, string command)
 		{
-			var pc = engine.QueueCommand (null, Encoding.ASCII, command);
+			engine.QueueCommand (null, Encoding.ASCII, command);
 
 			engine.Run (true, token);
 		}
@@ -284,21 +298,13 @@ namespace MailKit.Net.Pop3 {
 			return SendCommand (token, Encoding.ASCII, format, args);
 		}
 
-		static Task CaptureTextResponse (Pop3Engine engine, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (pc.Status == Pop3CommandStatus.Ok)
-				pc.UserData = text;
-
-			return Task.CompletedTask;
-		}
-
 		string SendCommand (CancellationToken token, Encoding encoding, string format, params object[] args)
 		{
-			var pc = engine.QueueCommand (CaptureTextResponse, encoding, format, args);
+			var pc = engine.QueueCommand (null, encoding, format, args);
 
 			engine.Run (true, token);
 
-			return ((string) pc.UserData) ?? string.Empty;
+			return pc.StatusText ?? string.Empty;
 		}
 
 		#region IMailService implementation
@@ -616,9 +622,7 @@ namespace MailKit.Net.Pop3 {
 				// if the message count is > 0, we can probe the UIDL command
 				if (total > 0) {
 					try {
-						var ctx = new MessageUidContext (this, 1);
-
-						ctx.GetUid (cancellationToken);
+						GetMessageUid (0, cancellationToken);
 					} catch (NotSupportedException) {
 					}
 				}
@@ -1948,82 +1952,30 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		class MessageUidContext
+		static Task ProcessUidlResponse (Pop3Engine engine, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
 		{
-			readonly Pop3Client client;
-			readonly int seqid;
-			string uid;
+			if (pc.Status != Pop3CommandStatus.Ok)
+				return Task.CompletedTask;
 
-			public MessageUidContext (Pop3Client client, int seqid)
-			{
-				this.client = client;
-				this.seqid = seqid;
-			}
+			var tokens = text.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			int seqid = GetExpectedSequenceId (pc);
 
-			Pop3Engine Engine {
-				get { return client.engine; }
-			}
-
-			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
-			{
-				if (pc.Status != Pop3CommandStatus.Ok)
-					return Task.CompletedTask;
-
-				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-				if (tokens.Length < 2) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
-					return Task.CompletedTask;
-				}
-
-				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out int id) || id != seqid) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the UIDL command.");
-					return Task.CompletedTask;
-				}
-
-				uid = tokens[1];
-
+			if (tokens.Length < 2) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
 				return Task.CompletedTask;
 			}
 
-			public string GetUid (CancellationToken cancellationToken)
-			{
-				var pc = Engine.QueueCommand (OnDataReceived, "UIDL {0}\r\n", seqid);
-
-				Engine.Run (false, cancellationToken);
-
-				client.probed |= ProbedCapabilities.UIDL;
-
-				if (pc.Status != Pop3CommandStatus.Ok && !client.SupportsUids)
-					throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
-
-				pc.ThrowIfError ();
-
-				Engine.Capabilities |= Pop3Capabilities.UIDL;
-
-				return uid;
+			if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out int id) || id != seqid) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the UIDL command.");
+				return Task.CompletedTask;
 			}
 
-			public async Task<string> GetUidAsync (CancellationToken cancellationToken)
-			{
-				var pc = Engine.QueueCommand (OnDataReceived, "UIDL {0}\r\n", seqid);
+			pc.UserData = tokens[1];
 
-				await Engine.RunAsync (false, cancellationToken).ConfigureAwait (false);
-
-				client.probed |= ProbedCapabilities.UIDL;
-
-				if (pc.Status != Pop3CommandStatus.Ok && !client.SupportsUids)
-					throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
-
-				pc.ThrowIfError ();
-
-				Engine.Capabilities |= Pop3Capabilities.UIDL;
-
-				return uid;
-			}
+			return Task.CompletedTask;
 		}
 
-		void CheckCanGetUid (int index)
+		Pop3Command QueueUidlCommand (int index)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2034,6 +1986,22 @@ namespace MailKit.Net.Pop3 {
 
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
+
+			return engine.QueueCommand (ProcessUidlResponse, "UIDL {0}\r\n", index + 1);
+		}
+
+		T OnUidlComplete<T> (Pop3Command pc)
+		{
+			probed |= ProbedCapabilities.UIDL;
+
+			if (pc.Status != Pop3CommandStatus.Ok && !SupportsUids)
+				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
+
+			pc.ThrowIfError ();
+
+			engine.Capabilities |= Pop3Capabilities.UIDL;
+
+			return (T) pc.UserData;
 		}
 
 		/// <summary>
@@ -2077,127 +2045,60 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckCanGetUid (index);
+			var pc = QueueUidlCommand (index);
 
-			var ctx = new MessageUidContext (this, index + 1);
+			engine.Run (false, cancellationToken);
 
-			return ctx.GetUid (cancellationToken);
+			return OnUidlComplete<string> (pc);
 		}
 
-		class MessageUidsContext
+		static void ParseUidlAllResponse (Pop3Command pc, string response)
 		{
-			readonly Pop3Client client;
-			readonly List<string> uids;
+			var tokens = response.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			var uids = (List<string>) pc.UserData;
 
-			public MessageUidsContext (Pop3Client client)
-			{
-				uids = new List<string> ();
-				this.client = client;
+			if (tokens.Length < 2) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
+				return;
 			}
 
-			Pop3Engine Engine {
-				get { return client.engine; }
+			if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out int seqid) || seqid != uids.Count + 1) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the UIDL command.");
+				return;
 			}
 
-			void ParseUidlResponse (Pop3Command pc, string response)
-			{
-				var tokens = response.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				int seqid;
-
-				if (tokens.Length < 2) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
-					return;
-				}
-
-				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out seqid) || seqid != uids.Count + 1) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the UIDL command.");
-					return;
-				}
-
-				uids.Add (tokens[1]);
-			}
-
-			void ReadUidlResponse (Pop3Command pc, CancellationToken cancellationToken)
-			{
-				do {
-					var response = Engine.ReadLine (cancellationToken);
-
-					if (response == ".")
-						break;
-
-					if (pc.Exception != null)
-						continue;
-
-					ParseUidlResponse (pc, response);
-				} while (true);
-			}
-
-			async Task ReadUidlResponseAsync (Pop3Command pc, CancellationToken cancellationToken)
-			{
-				do {
-					var response = await Engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
-
-					if (response == ".")
-						break;
-
-					if (pc.Exception != null)
-						continue;
-
-					ParseUidlResponse (pc, response);
-				} while (true);
-			}
-
-			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
-			{
-				if (pc.Status != Pop3CommandStatus.Ok)
-					return Task.CompletedTask;
-
-				if (doAsync)
-					return ReadUidlResponseAsync (pc, cancellationToken);
-
-				ReadUidlResponse (pc, cancellationToken);
-
-				return Task.CompletedTask;
-			}
-
-			public IList<string> GetUids (CancellationToken cancellationToken)
-			{
-				var pc = Engine.QueueCommand (OnDataReceived, "UIDL\r\n");
-
-				Engine.Run (false, cancellationToken);
-
-				client.probed |= ProbedCapabilities.UIDL;
-
-				if (pc.Status != Pop3CommandStatus.Ok && !client.SupportsUids)
-					throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
-
-				pc.ThrowIfError ();
-
-				Engine.Capabilities |= Pop3Capabilities.UIDL;
-
-				return uids;
-			}
-
-			public async Task<IList<string>> GetUidsAsync (CancellationToken cancellationToken)
-			{
-				var pc = Engine.QueueCommand (OnDataReceived, "UIDL\r\n");
-
-				await Engine.RunAsync (false, cancellationToken).ConfigureAwait (false);
-
-				client.probed |= ProbedCapabilities.UIDL;
-
-				if (pc.Status != Pop3CommandStatus.Ok && !client.SupportsUids)
-					throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
-
-				pc.ThrowIfError ();
-
-				Engine.Capabilities |= Pop3Capabilities.UIDL;
-
-				return uids;
-			}
+			uids.Add (tokens[1]);
 		}
 
-		void CheckCanGetUids ()
+		static void ReadUidlAllResponse (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
+		{
+			do {
+				var response = engine.ReadLine (cancellationToken);
+
+				if (response == ".")
+					break;
+
+				if (pc.Exception != null)
+					continue;
+
+				ParseUidlAllResponse (pc, response);
+			} while (true);
+		}
+
+		static Task ProcessUidlAllResponse (Pop3Engine engine, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (pc.Status != Pop3CommandStatus.Ok)
+				return Task.CompletedTask;
+
+			if (doAsync)
+				return ReadUidlAllResponseAsync (engine, pc, cancellationToken);
+
+			ReadUidlAllResponse (engine, pc, cancellationToken);
+
+			return Task.CompletedTask;
+		}
+
+		Pop3Command QueueUidlCommand ()
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2205,6 +2106,12 @@ namespace MailKit.Net.Pop3 {
 
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
+
+			var pc = engine.QueueCommand (ProcessUidlAllResponse, "UIDL\r\n");
+			var uids = new List<string> ();
+			pc.UserData = uids;
+
+			return pc;
 		}
 
 		/// <summary>
@@ -2247,75 +2154,42 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override IList<string> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckCanGetUids ();
+			var pc = QueueUidlCommand ();
 
-			var ctx = new MessageUidsContext (this);
+			engine.Run (false, cancellationToken);
 
-			return ctx.GetUids (cancellationToken);
+			return OnUidlComplete<List<string>> (pc);
 		}
 
-		class MessageSizeContext
+		Task ProcessListResponse (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
 		{
-			readonly Pop3Client client;
-			readonly int seqid;
-			int size;
+			if (pc.Status != Pop3CommandStatus.Ok)
+				return Task.CompletedTask;
 
-			public MessageSizeContext (Pop3Client client, int seqid)
-			{
-				this.client = client;
-				this.seqid = seqid;
-			}
+			var tokens = text.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			int seqid = GetExpectedSequenceId (pc);
 
-			Pop3Engine Engine {
-				get { return client.engine; }
-			}
-
-			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
-			{
-				if (pc.Status != Pop3CommandStatus.Ok)
-					return Task.CompletedTask;
-
-				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				int id;
-
-				if (tokens.Length < 2) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", text);
-					return Task.CompletedTask;
-				}
-
-				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out id) || id != seqid) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected sequence-id token to the LIST command: {0}", tokens[0]);
-					return Task.CompletedTask;
-				}
-
-				if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out size) || size < 0) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
-					return Task.CompletedTask;
-				}
-
+			if (tokens.Length < 2) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", text);
 				return Task.CompletedTask;
 			}
 
-			public int GetSize (CancellationToken cancellationToken)
-			{
-				Engine.QueueCommand (OnDataReceived, "LIST {0}\r\n", seqid);
-
-				Engine.Run (true, cancellationToken);
-
-				return size;
+			if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out int id) || id != seqid) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected sequence-id token to the LIST command: {0}", tokens[0]);
+				return Task.CompletedTask;
 			}
 
-			public async Task<int> GetSizeAsync (CancellationToken cancellationToken)
-			{
-				Engine.QueueCommand (OnDataReceived, "LIST {0}\r\n", seqid);
-
-				await Engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
-
-				return size;
+			if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out int size) || size < 0) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
+				return Task.CompletedTask;
 			}
+
+			pc.UserData = size;
+
+			return Task.CompletedTask;
 		}
 
-		void CheckCanGetMessageSize (int index)
+		Pop3Command QueueListCommand (int index)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2323,6 +2197,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException (nameof (index));
+
+			return engine.QueueCommand (ProcessListResponse, "LIST {0}\r\n", index + 1);
 		}
 
 		/// <summary>
@@ -2360,111 +2236,75 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckCanGetMessageSize (index);
+			var pc = QueueListCommand (index);
 
-			var ctx = new MessageSizeContext (this, index + 1);
+			engine.Run (true, cancellationToken);
 
-			return ctx.GetSize (cancellationToken);
+			return (int) pc.UserData;
 		}
 
-		class MessageSizesContext
+		static void ParseListAllResponse (Pop3Command pc, string response)
 		{
-			readonly Pop3Client client;
-			readonly List<int> sizes;
+			var tokens = response.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			var sizes = (List<int>) pc.UserData;
 
-			public MessageSizesContext (Pop3Client client)
-			{
-				sizes = new List<int> ();
-				this.client = client;
+			if (tokens.Length < 2) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", response);
+				return;
 			}
 
-			Pop3Engine Engine {
-				get { return client.engine; }
+			if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out int seqid) || seqid != sizes.Count + 1) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected sequence-id token to the LIST command: {0}", tokens[0]);
+				return;
 			}
 
-			void ParseListResponse (Pop3Command pc, string response)
-			{
-				var tokens = response.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				int seqid, size;
-
-				if (tokens.Length < 2) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", response);
-					return;
-				}
-
-				if (!int.TryParse (tokens[0], NumberStyles.None, CultureInfo.InvariantCulture, out seqid) || seqid != sizes.Count + 1) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected sequence-id token to the LIST command: {0}", tokens[0]);
-					return;
-				}
-
-				if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out size) || size < 0) {
-					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
-					return;
-				}
-
-				sizes.Add (size);
+			if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out int size) || size < 0) {
+				pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
+				return;
 			}
 
-			void ReadListResponse (Pop3Command pc, CancellationToken cancellationToken)
-			{
-				do {
-					var response = Engine.ReadLine (cancellationToken);
+			sizes.Add (size);
+		}
 
-					if (response == ".")
-						break;
+		static void ReadListAllResponse (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
+		{
+			do {
+				var response = engine.ReadLine (cancellationToken);
 
-					if (pc.Exception != null)
-						continue;
+				if (response == ".")
+					break;
 
-					ParseListResponse (pc, response);
-				} while (true);
-			}
+				if (pc.Exception != null)
+					continue;
 
-			async Task ReadListResponseAsync (Pop3Command pc, CancellationToken cancellationToken)
-			{
-				do {
-					var response = await Engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
+				ParseListAllResponse (pc, response);
+			} while (true);
+		}
 
-					if (response == ".")
-						break;
-
-					if (pc.Exception != null)
-						continue;
-
-					ParseListResponse (pc, response);
-				} while (true);
-			}
-
-			Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
-			{
-				if (pc.Status != Pop3CommandStatus.Ok)
-					return Task.CompletedTask;
-
-				if (doAsync)
-					return ReadListResponseAsync (pc, cancellationToken);
-
-				ReadListResponse (pc, cancellationToken);
-
+		static Task ProcessListAllResponse (Pop3Engine engine, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (pc.Status != Pop3CommandStatus.Ok)
 				return Task.CompletedTask;
-			}
 
-			public IList<int> GetSizes (CancellationToken cancellationToken)
-			{
-				var pc = Engine.QueueCommand (OnDataReceived, "LIST\r\n");
+			if (doAsync)
+				return ReadListAllResponseAsync (engine, pc, cancellationToken);
 
-				Engine.Run (true, cancellationToken);
+			ReadListAllResponse (engine, pc, cancellationToken);
 
-				return sizes;
-			}
+			return Task.CompletedTask;
+		}
 
-			public async Task<IList<int>> GetSizesAsync (CancellationToken cancellationToken)
-			{
-				var pc = Engine.QueueCommand (OnDataReceived, "LIST\r\n");
-				
-				await Engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
+		List<int> QueueListCommand ()
+		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
 
-				return sizes;
-			}
+			var pc = engine.QueueCommand (ProcessListAllResponse, "LIST\r\n");
+			var sizes = new List<int> ();
+			pc.UserData = sizes;
+
+			return sizes;
 		}
 
 		/// <summary>
@@ -2498,13 +2338,11 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override IList<int> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
+			var sizes = QueueListCommand ();
 
-			var ctx = new MessageSizesContext (this);
+			engine.Run (true, cancellationToken);
 
-			return ctx.GetSizes (cancellationToken);
+			return sizes;
 		}
 
 		abstract class DownloadContext<T>

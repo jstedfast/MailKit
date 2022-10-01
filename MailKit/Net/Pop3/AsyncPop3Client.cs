@@ -30,7 +30,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
-using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -45,7 +44,7 @@ namespace MailKit.Net.Pop3
 	{
 		Task SendCommandAsync (CancellationToken token, string command)
 		{
-			var pc = engine.QueueCommand (null, Encoding.ASCII, command);
+			engine.QueueCommand (null, Encoding.ASCII, command);
 
 			return engine.RunAsync (true, token);
 		}
@@ -57,11 +56,11 @@ namespace MailKit.Net.Pop3
 
 		async Task<string> SendCommandAsync (CancellationToken token, Encoding encoding, string format, params object[] args)
 		{
-			var pc = engine.QueueCommand (CaptureTextResponse, encoding, format, args);
+			var pc = engine.QueueCommand (null, encoding, format, args);
 
 			await engine.RunAsync (true, token).ConfigureAwait (false);
 
-			return ((string) pc.UserData) ?? string.Empty;
+			return pc.StatusText ?? string.Empty;
 		}
 
 		async Task ProbeCapabilitiesAsync (CancellationToken cancellationToken)
@@ -70,9 +69,7 @@ namespace MailKit.Net.Pop3
 				// if the message count is > 0, we can probe the UIDL command
 				if (total > 0) {
 					try {
-						var ctx = new MessageUidContext (this, 1);
-
-						await ctx.GetUidAsync (cancellationToken).ConfigureAwait (false);
+						await GetMessageUidAsync (0, cancellationToken).ConfigureAwait (false);
 					} catch (NotSupportedException) {
 					}
 				}
@@ -786,13 +783,28 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckCanGetUid (index);
+			var pc = QueueUidlCommand (index);
 
-			var ctx = new MessageUidContext (this, index + 1);
+			await engine.RunAsync (false, cancellationToken).ConfigureAwait (false);
 
-			return ctx.GetUidAsync (cancellationToken);
+			return OnUidlComplete<string> (pc);
+		}
+
+		static async Task ReadUidlAllResponseAsync (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
+		{
+			do {
+				var response = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
+
+				if (response == ".")
+					break;
+
+				if (pc.Exception != null)
+					continue;
+
+				ParseUidlAllResponse (pc, response);
+			} while (true);
 		}
 
 		/// <summary>
@@ -833,13 +845,13 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckCanGetUids ();
+			var pc = QueueUidlCommand ();
 
-			var ctx = new MessageUidsContext (this);
+			await engine.RunAsync (false, cancellationToken).ConfigureAwait (false);
 
-			return ctx.GetUidsAsync (cancellationToken);
+			return OnUidlComplete<List<string>> (pc);
 		}
 
 		/// <summary>
@@ -875,13 +887,28 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckCanGetMessageSize (index);
+			var pc = QueueListCommand (index);
 
-			var ctx = new MessageSizeContext (this, index + 1);
+			await engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
 
-			return ctx.GetSizeAsync (cancellationToken);
+			return (int) pc.UserData;
+		}
+
+		static async Task ReadListAllResponseAsync (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
+		{
+			do {
+				var response = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
+
+				if (response == ".")
+					break;
+
+				if (pc.Exception != null)
+					continue;
+
+				ParseListAllResponse (pc, response);
+			} while (true);
 		}
 
 		/// <summary>
@@ -913,15 +940,13 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
+			var sizes = QueueListCommand ();
 
-			var ctx = new MessageSizesContext (this);
+			await engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
 
-			return ctx.GetSizesAsync (cancellationToken);
+			return sizes;
 		}
 
 		/// <summary>

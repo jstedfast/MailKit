@@ -291,6 +291,16 @@ namespace MailKit.Net.Pop3 {
 			end = input.Length - PadSize;
 		}
 
+		void OnReadAhead (int start, int nread)
+		{
+			if (nread > 0) {
+				logger.LogServer (input, start, nread);
+				inputEnd += nread;
+			} else {
+				throw new Pop3ProtocolException ("The POP3 server has unexpectedly disconnected.");
+			}
+		}
+
 		int ReadAhead (CancellationToken cancellationToken)
 		{
 			AlignReadAheadBuffer (out int start, out int end);
@@ -304,12 +314,7 @@ namespace MailKit.Net.Pop3 {
 				network?.Poll (SelectMode.SelectRead, cancellationToken);
 				nread = Stream.Read (input, start, end - start);
 
-				if (nread > 0) {
-					logger.LogServer (input, start, nread);
-					inputEnd += nread;
-				} else {
-					throw new Pop3ProtocolException ("The POP3 server has unexpectedly disconnected.");
-				}
+				OnReadAhead (start, nread);
 			} catch {
 				IsConnected = false;
 				throw;
@@ -330,12 +335,7 @@ namespace MailKit.Net.Pop3 {
 
 				nread = await Stream.ReadAsync (input, start, end - start, cancellationToken).ConfigureAwait (false);
 
-				if (nread > 0) {
-					logger.LogServer (input, start, nread);
-					inputEnd += nread;
-				} else {
-					throw new Pop3ProtocolException ("The POP3 server has unexpectedly disconnected.");
-				}
+				OnReadAhead (start, nread);
 			} catch {
 				IsConnected = false;
 				throw;
@@ -765,6 +765,13 @@ namespace MailKit.Net.Pop3 {
 				await FlushAsync (cancellationToken).ConfigureAwait (false);
 		}
 
+		void OnWriteException (Exception ex, CancellationToken cancellationToken)
+		{
+			IsConnected = false;
+			if (!(ex is OperationCanceledException))
+				cancellationToken.ThrowIfCancellationRequested ();
+		}
+
 		/// <summary>
 		/// Writes a sequence of bytes to the stream and advances the current
 		/// position within this stream by the number of bytes written.
@@ -840,9 +847,7 @@ namespace MailKit.Net.Pop3 {
 					}
 				}
 			} catch (Exception ex) {
-				IsConnected = false;
-				if (!(ex is OperationCanceledException))
-					cancellationToken.ThrowIfCancellationRequested ();
+				OnWriteException (ex, cancellationToken);
 				throw;
 			}
 
@@ -956,9 +961,7 @@ namespace MailKit.Net.Pop3 {
 					}
 				}
 			} catch (Exception ex) {
-				IsConnected = false;
-				if (!(ex is OperationCanceledException))
-					cancellationToken.ThrowIfCancellationRequested ();
+				OnWriteException (ex, cancellationToken);
 				throw;
 			}
 
@@ -1003,9 +1006,7 @@ namespace MailKit.Net.Pop3 {
 				logger.LogClient (output, 0, outputIndex);
 				outputIndex = 0;
 			} catch (Exception ex) {
-				IsConnected = false;
-				if (!(ex is OperationCanceledException))
-					cancellationToken.ThrowIfCancellationRequested ();
+				OnWriteException (ex, cancellationToken);
 				throw;
 			}
 		}
@@ -1068,9 +1069,7 @@ namespace MailKit.Net.Pop3 {
 				logger.LogClient (output, 0, outputIndex);
 				outputIndex = 0;
 			} catch (Exception ex) {
-				IsConnected = false;
-				if (!(ex is OperationCanceledException))
-					cancellationToken.ThrowIfCancellationRequested ();
+				OnWriteException (ex, cancellationToken);
 				throw;
 			}
 		}
