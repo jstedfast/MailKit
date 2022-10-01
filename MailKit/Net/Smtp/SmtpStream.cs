@@ -600,9 +600,6 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol error occurred.
-		/// </exception>
 		public void QueueCommand (string command, CancellationToken cancellationToken)
 		{
 			var encoder = Encoding.UTF8.GetEncoder ();
@@ -628,9 +625,6 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol error occurred.
 		/// </exception>
 		public async Task QueueCommandAsync (string command, CancellationToken cancellationToken)
 		{
