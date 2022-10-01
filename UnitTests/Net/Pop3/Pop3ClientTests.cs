@@ -3408,9 +3408,9 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async Task TestGMailPop3ClientAsync ()
+		public Task TestGMailPop3ClientAsync ()
 		{
-			await TestGMailPop3ClientAsync (CreateGMailCommands (), false);
+			return TestGMailPop3ClientAsync (CreateGMailCommands (), false);
 		}
 
 		List<Pop3ReplayCommand> CreateGMailCommandsNoPipelining ()
@@ -3478,9 +3478,9 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public async Task TestGMailPop3ClientNoPipeliningAsync ()
+		public Task TestGMailPop3ClientNoPipeliningAsync ()
 		{
-			await TestGMailPop3ClientAsync (CreateGMailCommandsNoPipelining (), true);
+			return TestGMailPop3ClientAsync (CreateGMailCommandsNoPipelining (), true);
 		}
 
 		[Test]

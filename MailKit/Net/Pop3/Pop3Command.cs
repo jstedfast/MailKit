@@ -39,7 +39,7 @@ namespace MailKit.Net.Pop3 {
 	/// force-disconnect the connection. If a non-fatal error occurs, set
 	/// it on the <see cref="Pop3Command.Exception"/> property.
 	/// </remarks>
-	delegate Task Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text, bool doAsync);
+	delegate Task Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken);
 
 	enum Pop3CommandStatus {
 		Queued         = -5,
@@ -52,11 +52,9 @@ namespace MailKit.Net.Pop3 {
 
 	class Pop3Command
 	{
-		public CancellationToken CancellationToken { get; private set; }
 		public Pop3CommandHandler Handler { get; private set; }
 		public Encoding Encoding { get; private set; }
 		public string Command { get; private set; }
-		public int Id { get; internal set; }
 
 		// output
 		public Pop3CommandStatus Status { get; internal set; }
@@ -65,10 +63,9 @@ namespace MailKit.Net.Pop3 {
 
 		public object UserData { get; set; }
 
-		public Pop3Command (CancellationToken cancellationToken, Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
+		public Pop3Command (Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
 		{
 			Command = string.Format (CultureInfo.InvariantCulture, format, args);
-			CancellationToken = cancellationToken;
 			Encoding = encoding;
 			Handler = handler;
 		}

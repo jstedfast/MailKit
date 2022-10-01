@@ -45,9 +45,9 @@ namespace MailKit.Net.Pop3
 	{
 		Task SendCommandAsync (CancellationToken token, string command)
 		{
-			var pc = engine.QueueCommand (token, null, Encoding.ASCII, command);
+			var pc = engine.QueueCommand (null, Encoding.ASCII, command);
 
-			return engine.RunAsync (pc);
+			return engine.RunAsync (true, token);
 		}
 
 		Task<string> SendCommandAsync (CancellationToken token, string format, params object[] args)
@@ -57,18 +57,11 @@ namespace MailKit.Net.Pop3
 
 		async Task<string> SendCommandAsync (CancellationToken token, Encoding encoding, string format, params object[] args)
 		{
-			string okText = string.Empty;
+			var pc = engine.QueueCommand (CaptureTextResponse, encoding, format, args);
 
-			var pc = engine.QueueCommand (token, (pop3, cmd, text, xdoAsync) => {
-				if (cmd.Status == Pop3CommandStatus.Ok)
-					okText = text;
+			await engine.RunAsync (true, token).ConfigureAwait (false);
 
-				return Task.CompletedTask;
-			}, encoding, format, args);
-
-			await engine.RunAsync (pc).ConfigureAwait (false);
-
-			return okText;
+			return ((string) pc.UserData) ?? string.Empty;
 		}
 
 		async Task ProbeCapabilitiesAsync (CancellationToken cancellationToken)
@@ -88,9 +81,9 @@ namespace MailKit.Net.Pop3
 
 		async Task<int> UpdateMessageCountAsync (CancellationToken cancellationToken)
 		{
-			var pc = QueueStatCommand (cancellationToken);
+			engine.QueueCommand (ProcessStatResponse, "STAT\r\n");
 
-			await engine.RunAsync (pc).ConfigureAwait (false);
+			await engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
 
 			return Count;
 		}
@@ -652,12 +645,12 @@ namespace MailKit.Net.Pop3
 			utf8 = true;
 		}
 
-		static async Task ReadLangResponseAsync (Pop3Engine engine, Pop3Command pc)
+		static async Task ReadLangResponseAsync (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
 		{
 			var langs = (List<Pop3Language>) pc.UserData;
 
 			do {
-				var response = await engine.ReadLineAsync (pc.CancellationToken).ConfigureAwait (false);
+				var response = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
 
 				if (response == ".")
 					break;
@@ -703,9 +696,9 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public async Task<IList<Pop3Language>> GetLanguagesAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			var pc = QueueLangCommand (cancellationToken, out var langs);
+			var pc = QueueLangCommand (out var langs);
 
-			await engine.RunAsync (pc).ConfigureAwait (false);
+			await engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
 
 			return new ReadOnlyCollection<Pop3Language> (langs);
 		}
@@ -1482,21 +1475,10 @@ namespace MailKit.Net.Pop3
 				return;
 			}
 
-			var commands = new Pop3Command[indexes.Count];
-			Pop3Command pc = null;
-			int id;
+			for (int i = 0; i < indexes.Count; i++)
+				engine.QueueCommand (null, "DELE {0}\r\n", indexes[i] + 1);
 
-			for (int i = 0; i < indexes.Count; i++) {
-				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}\r\n", indexes[i] + 1);
-				commands[i] = pc;
-			}
-
-			do {
-				id = await engine.IterateAsync ().ConfigureAwait (false);
-			} while (id < pc.Id);
-
-			for (int i = 0; i < commands.Length; i++)
-				commands[i].ThrowIfError ();
+			await engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -1545,30 +1527,16 @@ namespace MailKit.Net.Pop3
 				return;
 
 			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
-				for (int i = 0; i < count; i++) {
-					var seqid = (startIndex + i + 1).ToString (CultureInfo.InvariantCulture);
-					await SendCommandAsync (cancellationToken, "DELE {0}\r\n", seqid).ConfigureAwait (false);
-				}
+				for (int i = 0; i < count; i++)
+					await SendCommandAsync (cancellationToken, "DELE {0}\r\n", startIndex + i + 1).ConfigureAwait (false);
 
 				return;
 			}
 
-			var commands = new Pop3Command[count];
-			Pop3Command pc = null;
-			int id;
+			for (int i = 0; i < count; i++)
+				engine.QueueCommand (null, "DELE {0}\r\n", startIndex + i + 1);
 
-			for (int i = 0; i < count; i++) {
-				var seqid = (startIndex + i + 1).ToString (CultureInfo.InvariantCulture);
-				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}\r\n", seqid);
-				commands[i] = pc;
-			}
-
-			do {
-				id = await engine.IterateAsync ().ConfigureAwait (false);
-			} while (id < pc.Id);
-
-			for (int i = 0; i < commands.Length; i++)
-				commands[i].ThrowIfError ();
+			await engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>

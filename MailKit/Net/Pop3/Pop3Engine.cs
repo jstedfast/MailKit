@@ -397,22 +397,12 @@ namespace MailKit.Net.Pop3 {
 			return Pop3CommandStatus.ProtocolError;
 		}
 
-		void SendCommand (Pop3Command pc, CancellationToken cancellationToken)
-		{
-			stream.QueueCommand (pc.Encoding, pc.Command, cancellationToken);
-		}
-
-		Task SendCommandAsync (Pop3Command pc, CancellationToken cancellationToken)
-		{
-			return stream.QueueCommandAsync (pc.Encoding, pc.Command, cancellationToken);
-		}
-
-		void ReadResponse (Pop3Command pc)
+		void ReadResponse (Pop3Command pc, CancellationToken cancellationToken)
 		{
 			string response;
 
 			try {
-				response = ReadLine (pc.CancellationToken).TrimEnd ();
+				response = ReadLine (cancellationToken).TrimEnd ();
 			} catch {
 				pc.Status = Pop3CommandStatus.ProtocolError;
 				Disconnect ();
@@ -430,7 +420,7 @@ namespace MailKit.Net.Pop3 {
 			case Pop3CommandStatus.Ok:
 				if (pc.Handler != null) {
 					try {
-						pc.Handler (this, pc, text, false).GetAwaiter ().GetResult ();
+						pc.Handler (this, pc, text, false, cancellationToken).GetAwaiter ().GetResult ();
 					} catch {
 						pc.Status = Pop3CommandStatus.ProtocolError;
 						Disconnect ();
@@ -441,12 +431,12 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		async Task ReadResponseAsync (Pop3Command pc)
+		async Task ReadResponseAsync (Pop3Command pc, CancellationToken cancellationToken)
 		{
 			string response;
 
 			try {
-				response = (await ReadLineAsync (pc.CancellationToken).ConfigureAwait (false)).TrimEnd ();
+				response = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
 			} catch {
 				pc.Status = Pop3CommandStatus.ProtocolError;
 				Disconnect ();
@@ -464,7 +454,7 @@ namespace MailKit.Net.Pop3 {
 			case Pop3CommandStatus.Ok:
 				if (pc.Handler != null) {
 					try {
-						await pc.Handler (this, pc, text, true).ConfigureAwait (false);
+						await pc.Handler (this, pc, text, true, cancellationToken).ConfigureAwait (false);
 					} catch {
 						pc.Status = Pop3CommandStatus.ProtocolError;
 						Disconnect ();
@@ -476,124 +466,93 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Iterate the command pipeline.
+		/// Run the command pipeline.
 		/// </summary>
-		/// <returns>The ID of the command that just completed.</returns>
-		public int Iterate ()
+		/// <param name="throwOnError"><c>true</c> if exceptions should be thrown for failed commands; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		public void Run (bool throwOnError, CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
 
-			if (queue.Count == 0)
-				return 0;
-
-			int count = (Capabilities & Pop3Capabilities.Pipelining) != 0 ? queue.Count : 1;
-			var cancellationToken = queue[0].CancellationToken;
-			var active = new List<Pop3Command> ();
-
 			if (cancellationToken.IsCancellationRequested) {
-				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
+				queue.Clear ();
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
 
-			for (int i = 0; i < count; i++) {
-				var pc = queue[0];
+			try {
+				for (int i = 0; i < queue.Count; i++) {
+					var pc = queue[i];
 
-				if (i > 0 && !pc.CancellationToken.Equals (cancellationToken))
-					break;
+					pc.Status = Pop3CommandStatus.Active;
 
-				queue.RemoveAt (0);
+					stream.QueueCommand (pc.Encoding, pc.Command, cancellationToken);
+				}
 
-				pc.Status = Pop3CommandStatus.Active;
-				active.Add (pc);
+				stream.Flush (cancellationToken);
 
-				SendCommand (pc, cancellationToken);
+				for (int i = 0; i < queue.Count; i++)
+					ReadResponse (queue[i], cancellationToken);
+
+				for (int i = 0; i < queue.Count && throwOnError; i++)
+					queue[i].ThrowIfError ();
+			} finally {
+				queue.Clear ();
 			}
-
-			stream.Flush (cancellationToken);
-
-			for (int i = 0; i < active.Count; i++)
-				ReadResponse (active[i]);
-
-			return active[active.Count - 1].Id;
 		}
 
 		/// <summary>
-		/// Iterate the command pipeline.
+		/// Asynchronously run the command pipeline.
 		/// </summary>
-		/// <returns>The ID of the command that just completed.</returns>
-		public async Task<int> IterateAsync ()
+		/// <param name="throwOnError"><c>true</c> if exceptions should be thrown for failed commands; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		public async Task RunAsync (bool throwOnError, CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
 
-			if (queue.Count == 0)
-				return 0;
-
-			int count = (Capabilities & Pop3Capabilities.Pipelining) != 0 ? queue.Count : 1;
-			var cancellationToken = queue[0].CancellationToken;
-			var active = new List<Pop3Command> ();
-
 			if (cancellationToken.IsCancellationRequested) {
-				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
+				queue.Clear ();
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
 
-			for (int i = 0; i < count; i++) {
-				var pc = queue[0];
+			try {
+				for (int i = 0; i < queue.Count; i++) {
+					var pc = queue[i];
 
-				if (i > 0 && !pc.CancellationToken.Equals (cancellationToken))
-					break;
+					pc.Status = Pop3CommandStatus.Active;
 
-				queue.RemoveAt (0);
+					await stream.QueueCommandAsync (pc.Encoding, pc.Command, cancellationToken).ConfigureAwait (false);
+				}
 
-				pc.Status = Pop3CommandStatus.Active;
-				active.Add (pc);
+				await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 
-				await SendCommandAsync (pc, cancellationToken).ConfigureAwait (false);
+				for (int i = 0; i < queue.Count; i++)
+					await ReadResponseAsync (queue[i], cancellationToken).ConfigureAwait (false);
+
+				for (int i = 0; i < queue.Count && throwOnError; i++)
+					queue[i].ThrowIfError ();
+			} finally {
+				queue.Clear ();
 			}
-
-			await stream.FlushAsync (cancellationToken).ConfigureAwait (false);
-
-			for (int i = 0; i < active.Count; i++)
-				await ReadResponseAsync (active[i]).ConfigureAwait (false);
-
-			return active[active.Count - 1].Id;
 		}
 
-		public void Run (Pop3Command pc)
+		public Pop3Command QueueCommand (Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
 		{
-			int id;
-
-			do {
-				id = Iterate ();
-			} while (id < pc.Id);
-
-			pc.ThrowIfError ();
-		}
-
-		public async Task RunAsync (Pop3Command pc)
-		{
-			int id;
-
-			do {
-				id = await IterateAsync ().ConfigureAwait (false);
-			} while (id < pc.Id);
-
-			pc.ThrowIfError ();
-		}
-
-		public Pop3Command QueueCommand (CancellationToken cancellationToken, Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
-		{
-			var pc = new Pop3Command (cancellationToken, handler, encoding, format, args);
-			pc.Id = nextId++;
+			var pc = new Pop3Command (handler, encoding, format, args);
 			queue.Add (pc);
 			return pc;
 		}
 
-		public Pop3Command QueueCommand (CancellationToken cancellationToken, Pop3CommandHandler handler, string format, params object[] args)
+		public Pop3Command QueueCommand (Pop3CommandHandler handler, string format, params object[] args)
 		{
-			return QueueCommand (cancellationToken, handler, Encoding.ASCII, format, args);
+			return QueueCommand (handler, Encoding.ASCII, format, args);
 		}
 
 		static bool IsCapability (string capability, string text, int length, bool hasValue = false)
@@ -715,46 +674,43 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		static void ReadCapaResponse (Pop3Engine engine, Pop3Command pc)
+		static void ReadCapaResponse (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
 		{
-			if (pc.Status != Pop3CommandStatus.Ok)
-				return;
-
 			string response;
 
 			do {
-				if ((response = engine.ReadLine (pc.CancellationToken)) == ".")
+				if ((response = engine.ReadLine (cancellationToken)) == ".")
 					break;
 
 				ParseCapaResponse (engine, response);
 			} while (true);
 		}
 
-		static async Task ReadCapaResponseAsync (Pop3Engine engine, Pop3Command pc)
+		static async Task ReadCapaResponseAsync (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
 		{
-			if (pc.Status != Pop3CommandStatus.Ok)
-				return;
-
 			string response;
 
 			do {
-				if ((response = await engine.ReadLineAsync (pc.CancellationToken).ConfigureAwait (false)) == ".")
+				if ((response = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false)) == ".")
 					break;
 
 				ParseCapaResponse (engine, response);
 			} while (true);
 		}
 
-		static Task ProcessCapaResponse (Pop3Engine engine, Pop3Command pc, string text, bool doAsync)
+		static Task ProcessCapaResponse (Pop3Engine engine, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
 		{
+			if (pc.Status != Pop3CommandStatus.Ok)
+				return Task.CompletedTask;
+
 			if (doAsync)
-				return ReadCapaResponseAsync (engine, pc);
+				return ReadCapaResponseAsync (engine, pc, cancellationToken);
 
-			ReadCapaResponse (engine, pc);
+			ReadCapaResponse (engine, pc, cancellationToken);
 			return Task.CompletedTask;
 		}
 
-		Pop3Command QueueCapabilitiesCommand (CancellationToken cancellationToken)
+		Pop3Command QueueCapabilitiesCommand ()
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
@@ -766,29 +722,21 @@ namespace MailKit.Net.Pop3 {
 			ExpirePolicy = 0;
 			LoginDelay = 0;
 
-			return QueueCommand (cancellationToken, ProcessCapaResponse, "CAPA\r\n");
+			return QueueCommand (ProcessCapaResponse, "CAPA\r\n");
 		}
 
-		public Pop3CommandStatus QueryCapabilities (CancellationToken cancellationToken)
+		public void QueryCapabilities (CancellationToken cancellationToken)
 		{
-			var pc = QueueCapabilitiesCommand (cancellationToken);
+			QueueCapabilitiesCommand ();
 
-			while (Iterate () < pc.Id) {
-				// continue processing commands...
-			}
-
-			return pc.Status;
+			Run (false, cancellationToken);
 		}
 
-		public async Task<Pop3CommandStatus> QueryCapabilitiesAsync (CancellationToken cancellationToken)
+		public Task QueryCapabilitiesAsync (CancellationToken cancellationToken)
 		{
-			var pc = QueueCapabilitiesCommand (cancellationToken);
+			QueueCapabilitiesCommand ();
 
-			while (await IterateAsync ().ConfigureAwait (false) < pc.Id) {
-				// continue processing commands...
-			}
-
-			return pc.Status;
+			return RunAsync (false, cancellationToken);
 		}
 	}
 }
