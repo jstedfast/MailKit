@@ -420,7 +420,7 @@ namespace MailKit.Net.Pop3 {
 			case Pop3CommandStatus.Ok:
 				if (pc.Handler != null) {
 					try {
-						pc.Handler (this, pc, text, false, cancellationToken).GetAwaiter ().GetResult ();
+						pc.Handler (this, pc, text, false, cancellationToken);
 					} catch {
 						pc.Status = Pop3CommandStatus.ProtocolError;
 						Disconnect ();
