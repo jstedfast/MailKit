@@ -60,7 +60,6 @@ namespace MailKit.Net.Pop3 {
 	{
 		readonly List<Pop3Command> queue;
 		Pop3Stream stream;
-		int nextId;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Engine"/> class.
@@ -70,7 +69,6 @@ namespace MailKit.Net.Pop3 {
 			AuthenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
 			Capabilities = Pop3Capabilities.User;
 			queue = new List<Pop3Command> ();
-			nextId = 1;
 		}
 
 		/// <summary>
@@ -465,6 +463,17 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
+		void CheckCanRun (CancellationToken cancellationToken)
+		{
+			if (stream == null)
+				throw new InvalidOperationException ();
+
+			if (cancellationToken.IsCancellationRequested) {
+				queue.Clear ();
+				cancellationToken.ThrowIfCancellationRequested ();
+			}
+		}
+
 		/// <summary>
 		/// Run the command pipeline.
 		/// </summary>
@@ -475,13 +484,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public void Run (bool throwOnError, CancellationToken cancellationToken)
 		{
-			if (stream == null)
-				throw new InvalidOperationException ();
-
-			if (cancellationToken.IsCancellationRequested) {
-				queue.Clear ();
-				cancellationToken.ThrowIfCancellationRequested ();
-			}
+			CheckCanRun (cancellationToken);
 
 			try {
 				for (int i = 0; i < queue.Count; i++) {
@@ -514,13 +517,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public async Task RunAsync (bool throwOnError, CancellationToken cancellationToken)
 		{
-			if (stream == null)
-				throw new InvalidOperationException ();
-
-			if (cancellationToken.IsCancellationRequested) {
-				queue.Clear ();
-				cancellationToken.ThrowIfCancellationRequested ();
-			}
+			CheckCanRun (cancellationToken);
 
 			try {
 				for (int i = 0; i < queue.Count; i++) {

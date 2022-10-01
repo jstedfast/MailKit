@@ -494,6 +494,8 @@
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\stat-error1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\stat-error2.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\stat-error3.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\common\err-greeting.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\common\ok-greeting.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\exchange\auth.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\exchange\capa.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\exchange\greeting.txt" />

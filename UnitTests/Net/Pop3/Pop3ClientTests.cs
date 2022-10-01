@@ -1070,6 +1070,108 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
+		public void TestGreetingOk ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "common.ok-greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.AreEqual (ComcastCapa1, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
+				Assert.AreEqual (120000, client.Timeout, "Timeout");
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async Task TestGreetingOkAsync ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "common.ok-greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.AreEqual (ComcastCapa1, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
+				Assert.AreEqual (120000, client.Timeout, "Timeout");
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public void TestGreetingErr ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "common.err-greeting.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					Assert.Fail ("Expected Connect to fail.");
+				} catch (Pop3ProtocolException) {
+					Assert.Pass ();
+				} catch (Exception ex) {
+					Assert.Fail ("Expected Pop3ProtocolException from Connect: {0}", ex);
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestGreetingErrAsync ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "common.err-greeting.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					Assert.Fail ("Expected Connect to fail.");
+				} catch (Pop3ProtocolException) {
+					Assert.Pass ();
+				} catch (Exception ex) {
+					Assert.Fail ("Expected Pop3ProtocolException from Connect: {0}", ex);
+				}
+			}
+		}
+
+		[Test]
 		public void TestBasicPop3Client ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
