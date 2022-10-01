@@ -63,12 +63,34 @@ namespace MailKit.Net.Pop3 {
 		public ProtocolException Exception { get; set; }
 		public string StatusText { get; set; }
 
+		public object UserData { get; set; }
+
 		public Pop3Command (CancellationToken cancellationToken, Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
 		{
 			Command = string.Format (CultureInfo.InvariantCulture, format, args);
 			CancellationToken = cancellationToken;
 			Encoding = encoding;
 			Handler = handler;
+		}
+
+		static Exception CreatePop3Exception (Pop3Command pc)
+		{
+			var command = pc.Command.Split (' ')[0].TrimEnd ();
+			var message = string.Format ("POP3 server did not respond with a +OK response to the {0} command.", command);
+
+			if (pc.Status == Pop3CommandStatus.Error)
+				return new Pop3CommandException (message, pc.StatusText);
+
+			return new Pop3ProtocolException (message);
+		}
+
+		public void ThrowIfError ()
+		{
+			if (Status != Pop3CommandStatus.Ok)
+				throw CreatePop3Exception (this);
+
+			if (Exception != null)
+				throw Exception;
 		}
 	}
 }

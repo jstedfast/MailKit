@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -628,6 +629,79 @@ namespace MailKit.Net.Pop3 {
 		internal Task<bool> ReadLineAsync (ByteArrayBuilder builder, CancellationToken cancellationToken)
 		{
 			return ReadLineAsync (builder, true, cancellationToken);
+		}
+
+		unsafe bool TryQueueCommand (Encoder encoder, string command, ref int index)
+		{
+			fixed (char* cmd = command) {
+				int charCount = command.Length - index;
+				char* chars = cmd + index;
+
+				fixed (byte* outbuf = output) {
+					int byteCount = output.Length - outputIndex;
+					byte* outptr = outbuf + outputIndex;
+
+					encoder.Convert (chars, charCount, outptr, byteCount, true, out int charsUsed, out int bytesUsed, out bool completed);
+					outputIndex += bytesUsed;
+					index += charsUsed;
+
+					return completed;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Queue a command to the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// Queues a command to the POP3 server.
+		/// </remarks>
+		/// <param name="encoding">The character encoding.</param>
+		/// <param name="command">The command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public void QueueCommand (Encoding encoding, string command, CancellationToken cancellationToken)
+		{
+			var encoder = encoding.GetEncoder ();
+			int index = 0;
+
+			while (!TryQueueCommand (encoder, command, ref index))
+				Flush (cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously queue a command to the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously queues a command to the POP3 server.
+		/// </remarks>
+		/// <param name="encoding">The character encoding.</param>
+		/// <param name="command">The command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public async Task QueueCommandAsync (Encoding encoding, string command, CancellationToken cancellationToken)
+		{
+			var encoder = encoding.GetEncoder ();
+			int index = 0;
+
+			while (!TryQueueCommand (encoder, command, ref index))
+				await FlushAsync (cancellationToken).ConfigureAwait (false);
 		}
 
 		async Task WriteAsync (byte[] buffer, int offset, int count, bool doAsync, CancellationToken cancellationToken)
