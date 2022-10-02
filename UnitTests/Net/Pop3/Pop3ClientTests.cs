@@ -4240,5 +4240,137 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
 			}
 		}
+
+		[Test]
+		public void TestParseExceptions ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "gmail.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "gmail.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1-parse-error.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\n", "gmail.retr1-parse-error.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (GMailCapa1, client.Capabilities);
+				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (GMailCapa2, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+
+				try {
+					client.GetMessage (0);
+					Assert.Fail ("Expected GetMessage() to throw Pop3ProtocolException");
+				} catch (Pop3ProtocolException pex) {
+					Assert.IsInstanceOf<FormatException> (pex.InnerException);
+				} catch (Exception ex) {
+					Assert.Fail ("Unexpected exception thrown by GetMessage: {0}", ex);
+				}
+
+				try {
+					client.GetMessageHeaders (0);
+					Assert.Fail ("Expected GetMessageHeaders() to throw Pop3ProtocolException");
+				} catch (Pop3ProtocolException pex) {
+					Assert.IsInstanceOf<FormatException> (pex.InnerException);
+				} catch (Exception ex) {
+					Assert.Fail ("Unexpected exception thrown by GetMessageHeaders: {0}", ex);
+				}
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async Task TestParseExceptionsAsync ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "gmail.plus.txt"));
+			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.auth.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "gmail.stat.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1-parse-error.txt"));
+			commands.Add (new Pop3ReplayCommand ("TOP 1 0\r\n", "gmail.retr1-parse-error.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (GMailCapa1, client.Capabilities);
+				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (GMailCapa2, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+
+				try {
+					await client.GetMessageAsync (0);
+					Assert.Fail ("Expected GetMessageAsync() to throw Pop3ProtocolException");
+				} catch (Pop3ProtocolException pex) {
+					Assert.IsInstanceOf<FormatException> (pex.InnerException);
+				} catch (Exception ex) {
+					Assert.Fail ("Unexpected exception thrown by GetMessageAsync: {0}", ex);
+				}
+
+				try {
+					await client.GetMessageHeadersAsync (0);
+					Assert.Fail ("Expected GetMessageHeadersAsync() to throw Pop3ProtocolException");
+				} catch (Pop3ProtocolException pex) {
+					Assert.IsInstanceOf<FormatException> (pex.InnerException);
+				} catch (Exception ex) {
+					Assert.Fail ("Unexpected exception thrown by GetMessageHeadersAsync: {0}", ex);
+				}
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
 	}
 }
