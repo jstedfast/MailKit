@@ -183,6 +183,12 @@ namespace MailKit.Net.Pop3 {
 			get; private set;
 		}
 
+		void CheckConnected ()
+		{
+			if (stream == null)
+				throw new InvalidOperationException ();
+		}
+
 		void Initialize (Pop3Stream pop3)
 		{
 			if (stream != null)
@@ -313,8 +319,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public string ReadLine (CancellationToken cancellationToken)
 		{
-			if (stream == null)
-				throw new InvalidOperationException ();
+			CheckConnected ();
 
 			using (var builder = new ByteArrayBuilder (64)) {
 				bool complete;
@@ -346,8 +351,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public async Task<string> ReadLineAsync (CancellationToken cancellationToken)
 		{
-			if (stream == null)
-				throw new InvalidOperationException ();
+			CheckConnected ();
 
 			using (var builder = new ByteArrayBuilder (64)) {
 				bool complete;
@@ -465,8 +469,7 @@ namespace MailKit.Net.Pop3 {
 
 		void CheckCanRun (CancellationToken cancellationToken)
 		{
-			if (stream == null)
-				throw new InvalidOperationException ();
+			CheckConnected ();
 
 			if (cancellationToken.IsCancellationRequested) {
 				queue.Clear ();
@@ -709,8 +712,7 @@ namespace MailKit.Net.Pop3 {
 
 		Pop3Command QueueCapabilitiesCommand ()
 		{
-			if (stream == null)
-				throw new InvalidOperationException ();
+			CheckConnected ();
 
 			// Clear all CAPA response capabilities (except the APOP, USER, and STLS capabilities).
 			Capabilities &= Pop3Capabilities.Apop | Pop3Capabilities.User | Pop3Capabilities.StartTLS;
