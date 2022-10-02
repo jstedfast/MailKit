@@ -598,15 +598,6 @@ namespace MailKit.Net.Pop3 {
 			return Count;
 		}
 
-		Task UpdateMessageCountAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return UpdateMessageCountAsync (cancellationToken);
-
-			UpdateMessageCount (cancellationToken);
-			return Task.CompletedTask;
-		}
-
 		void ProbeCapabilities (CancellationToken cancellationToken)
 		{
 			if ((engine.Capabilities & Pop3Capabilities.UIDL) == 0 && (probed & ProbedCapabilities.UIDL) == 0) {
@@ -618,24 +609,6 @@ namespace MailKit.Net.Pop3 {
 					}
 				}
 			}
-		}
-
-		Task ProbeCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ProbeCapabilitiesAsync (cancellationToken);
-
-			ProbeCapabilities (cancellationToken);
-			return Task.CompletedTask;
-		}
-
-		Task QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return engine.QueryCapabilitiesAsync (cancellationToken);
-
-			engine.QueryCapabilities (cancellationToken);
-			return Task.CompletedTask;
 		}
 
 		class SaslAuthContext
@@ -740,15 +713,6 @@ namespace MailKit.Net.Pop3 {
 				}
 
 				return pc;
-			}
-
-			public Task<Pop3Command> AuthenticateAsync (bool doAsync, CancellationToken cancellationToken)
-			{
-				if (doAsync)
-					return AuthenticateAsync (cancellationToken);
-
-				var pc = Authenticate (cancellationToken);
-				return Task.FromResult (pc);
 			}
 		}
 
