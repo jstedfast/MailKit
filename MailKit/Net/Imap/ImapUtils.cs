@@ -1088,35 +1088,32 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static async ValueTask<BodyPart> ParseMultipartAsync (ImapEngine engine, string format, string path, string subtype, bool doAsync, CancellationToken cancellationToken)
+		static async ValueTask<BodyPart> ParseMultipartAsync (ImapEngine engine, string format, string path, bool doAsync, CancellationToken cancellationToken)
 		{
 			var prefix = path.Length > 0 ? path + "." : string.Empty;
 			var body = new BodyPartMultipart ();
 			ImapToken token;
 			int index = 1;
 
-			// Note: if subtype is not null, then we are dealing with one of the work-arounds described in ParseContentTypeAsync().
-			if (subtype == null) {
-				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-				if (token.Type != ImapTokenType.Nil) {
-					do {
-						body.BodyParts.Add (await ParseBodyAsync (engine, format, prefix + index, doAsync, cancellationToken).ConfigureAwait (false));
-						token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-						index++;
-					} while (token.Type == ImapTokenType.OpenParen);
-				} else {
-					// Note: Sometimes, when a multipart contains no children, IMAP servers (even Dovecot!)
-					// will reply with a BODYSTRUCTURE that looks like (NIL "alternative" ("boundary" "...
-					// Obviously, this is not a body-type-1part because "alternative" is a multipart subtype.
-					// This suggests that the NIL represents an empty list of children.
-					//
-					// See https://github.com/jstedfast/MailKit/issues/1393 for more details.
-					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				}
-
-				subtype = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+			if (token.Type != ImapTokenType.Nil) {
+				do {
+					body.BodyParts.Add (await ParseBodyAsync (engine, format, prefix + index, doAsync, cancellationToken).ConfigureAwait (false));
+					token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					index++;
+				} while (token.Type == ImapTokenType.OpenParen);
+			} else {
+				// Note: Sometimes, when a multipart contains no children, IMAP servers (even Dovecot!)
+				// will reply with a BODYSTRUCTURE that looks like (NIL "alternative" ("boundary" "...
+				// Obviously, this is not a body-type-1part because "alternative" is a multipart subtype.
+				// This suggests that the NIL represents an empty list of children.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/1393 for more details.
+				await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			}
+
+			var subtype = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 
 			body.ContentType = new ContentType ("multipart", subtype);
 			body.PartSpecifier = path;
@@ -1179,8 +1176,7 @@ namespace MailKit.Net.Imap {
 			return body;
 		}
 
-		// Note: We're using a Tuple<bool, string> here, but once we can drop Net4.6.2, we can use a (bool IsMultipart, string Subtype) tuple instead.
-		static async Task<Tuple<bool, string>> ShouldParseMultipartAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		static async Task<bool> ShouldParseMultipartAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 			ImapToken nextToken;
@@ -1202,22 +1198,29 @@ namespace MailKit.Net.Imap {
 					// the Content-Type parameter list. If it is NIL, then it would signify that the Content-Type has no
 					// parameters.
 
-					// Peek at the next token to see what we've got.
+					// Peek at the next token to see what we've got. If we get a '(' or NIL, then treat this as a multipart.
 					nextToken = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
-					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.Nil)
-						return new Tuple<bool, string> (true, (string) token.Value);
+					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.Nil) {
+						// Unget the multipart subtype.
+						engine.Stream.UngetToken (token);
+
+						// Now unget a fake NIL token that represents an empty set of children.
+						engine.Stream.UngetToken (ImapToken.Nil);
+
+						return true;
+					}
 
 					// Fall through and treat things nomrally.
 				}
 
 				// We've got a string which normally means it's the first token of a mime-type.
 				engine.Stream.UngetToken (token);
-				return new Tuple<bool, string> (false, null);
+				return false;
 			case ImapTokenType.OpenParen:
 				// We've got children, so this is definitely a multipart.
 				engine.Stream.UngetToken (token);
-				return new Tuple<bool, string> (true, null);
+				return true;
 			case ImapTokenType.Nil:
 				// We've got a NIL token. Technically, this is illegal syntax, but we need to be able to handle it.
 				//
@@ -1244,14 +1247,14 @@ namespace MailKit.Net.Imap {
 
 				if (nextToken.Type == ImapTokenType.Nil) {
 					// Looks like we've probably encountered the `(NIL NIL NIL NIL NIL "7BIT" 0 NIL NIL NIL NIL)` variant.
-					return new Tuple<bool, string> (false, null);
+					return false;
 				}
 
 				// Assume (NIL "alternative" ("boundary" "...
-				return new Tuple<bool, string> (true, null);
+				return true;
 			default:
 				engine.Stream.UngetToken (token);
-				return new Tuple<bool, string> (false, null);
+				return false;
 			}
 		}
 
@@ -1274,10 +1277,8 @@ namespace MailKit.Net.Imap {
 				return null;
 			}
 
-			var result = await ShouldParseMultipartAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
-
-			if (result.Item1)
-				return await ParseMultipartAsync (engine, format, path, result.Item2, doAsync, cancellationToken).ConfigureAwait (false);
+			if (await ShouldParseMultipartAsync (engine, doAsync, cancellationToken).ConfigureAwait (false))
+				return await ParseMultipartAsync (engine, format, path, doAsync, cancellationToken).ConfigureAwait (false);
 
 			var type = await ParseContentTypeAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			var id = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);

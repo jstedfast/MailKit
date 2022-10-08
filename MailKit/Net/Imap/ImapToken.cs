@@ -55,6 +55,7 @@ namespace MailKit.Net.Imap {
 		public static readonly ImapToken CloseParen = new ImapToken (ImapTokenType.CloseParen, ')');
 		public static readonly ImapToken OpenBracket = new ImapToken (ImapTokenType.OpenBracket, '[');
 		public static readonly ImapToken CloseBracket = new ImapToken (ImapTokenType.CloseBracket, ']');
+		public static readonly ImapToken Nil = new ImapToken (ImapTokenType.Nil, "NIL");
 		public static readonly ImapToken Eoln = new ImapToken (ImapTokenType.Eoln, '\n');
 
 		static readonly ImapToken[] CommonMessageFlagTokens = new ImapToken[] {
@@ -68,7 +69,7 @@ namespace MailKit.Net.Imap {
 		};
 
 		static readonly List<ImapToken> NilTokens = new List<ImapToken> (6) {
-			new ImapToken (ImapTokenType.Nil, "NIL")
+			Nil
 		};
 
 		static readonly ImapToken Fetch = new ImapToken (ImapTokenType.Atom, "FETCH");
