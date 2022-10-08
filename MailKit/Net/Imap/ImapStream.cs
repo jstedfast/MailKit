@@ -30,6 +30,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using MimeKit.IO;
 
@@ -75,6 +76,7 @@ namespace MailKit.Net.Imap {
 		readonly byte[] output = new byte[BlockSize];
 		int outputIndex;
 
+		readonly Stack<ImapToken> tokens;
 		readonly IProtocolLogger logger;
 		int literalDataLeft;
 		ImapToken nextToken;
@@ -90,6 +92,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="protocolLogger">The protocol logger.</param>
 		public ImapStream (Stream source, IProtocolLogger protocolLogger)
 		{
+			tokens = new Stack<ImapToken> ();
 			logger = protocolLogger;
 			IsConnected = true;
 			Stream = source;
@@ -816,11 +819,8 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
-			if (nextToken != null) {
-				var token = nextToken;
-				nextToken = null;
-				return token;
-			}
+			if (tokens.Count > 0)
+				return tokens.Pop ();
 
 			// skip over white space between tokens...
 			while (!TrySkipWhiteSpace ())
@@ -865,11 +865,8 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
-			if (nextToken != null) {
-				var token = nextToken;
-				nextToken = null;
-				return token;
-			}
+			if (tokens.Count > 0)
+				return tokens.Pop ();
 
 			// skip over white space between tokens...
 			while (!TrySkipWhiteSpace ())
@@ -942,7 +939,7 @@ namespace MailKit.Net.Imap {
 			if (token == null)
 				throw new ArgumentNullException (nameof (token));
 
-			nextToken = token;
+			tokens.Push (token);
 		}
 
 		unsafe bool TryReadLine (ByteArrayBuilder builder)

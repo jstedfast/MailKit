@@ -3325,16 +3325,163 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestParseBodyStructureWithNilMultipartSubtype ()
+		public void TestParseBadlyFormedBodyStructureWithCompletelyNilBodyParts1 ()
+		{
+			const string text = "((((\"text\" \"plain\" (\"charset\" \"us-ascii\") NIL NIL \"quoted-printable\" 44619 793 NIL NIL NIL NIL)(\"text\" \"html\" (\"charset\" \"us-ascii\") NIL NIL \"quoted-printable\" 143984 2321 NIL NIL NIL NIL) \"alternative\" (\"boundary\" \"000_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP\") NIL NIL)(\"image\" \"jpeg\" (\"name\" \"~WRD0000.jpg\") \"<~WRD0000.jpg>\" \"~WRD0000.jpg\" \"base64\" 1130 NIL (\"inline\" (\"filename\" \"~WRD0000.jpg\" \"size\" \"823\" \"creation-date\" \"Thu, 14 Jul 2022 17:26:49 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:16 GMT\")) NIL NIL)(\"image\" \"png\" (\"name\" \"image001.png\") \"image001.png@01D89786.45095140\" \"image001.png\" \"base64\" 8174 NIL (\"inline\" (\"filename\" \"image001.png\" \"size\" \"5973\" \"creation-date\" \"Thu, 14 Jul 2022 17:33:18 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:18 GMT\")) NIL NIL)(\"image\" \"png\" (\"name\" \"image002.png\") \"image002.png@01D89786.45095140\" \"image002.png\" \"base64\" 3524 NIL (\"inline\" (\"filename\" \"image002.png\" \"size\" \"2572\" \"creation-date\" \"Thu, 14 Jul 2022 17:33:18 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:18 GMT\")) NIL NIL) \"related\" (\"boundary\" \"007_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP\" \"type\" \"multipart/alternative\") NIL NIL)(\"message\" \"rfc822\" NIL NIL NIL \"7BIT\" 0 (\"Thu, 14 Jul 2022 15:12:33 +0000\" \"Scrubbed\" ((\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\")) NIL NIL ((\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\")) ((\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\") (\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\")) NIL \"Scrubbed@Scrubbed.com\" \"Scrubbed@Scrubbed.com\") ((((\"text\" \"plain\" (\"charset\" \"utf-8\") NIL NIL \"base64\" 53608 688 NIL NIL NIL NIL)(\"text\" \"html\" (\"charset\" \"utf-8\") \"Scrubbed@NAMP221.PROD.OUTLOOK.COM\" NIL \"base64\" 176002 2257 NIL NIL NIL NIL) \"alternative\" (\"boundary\" \"000_18f52bea798548b88470c3df62d666bcScrubbed\") NIL NIL)(\"image\" \"png\" (\"name\" \"image001.png\") \"image001.png@01D89770.62F36800\" \"image001.png\" \"base64\" 8174 NIL (\"inline\" (\"filename\" \"image001.png\" \"size\" \"5973\" \"creation-date\" \"Thu, 14 Jul 2022 15:12:32 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:17 GMT\")) NIL NIL)(\"image\" \"jpeg\" (\"name\" \"image002.jpg\") \"image002.jpg@01D89770.62F36800\" \"image002.jpg\" \"base64\" 1130 NIL (\"inline\" (\"filename\" \"image002.jpg\" \"size\" \"823\" \"creation-date\" \"Thu, 14 Jul 2022 15:12:32 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:17 GMT\")) NIL NIL)(\"image\" \"png\" (\"name\" \"image003.png\") \"image003.png@01D89770.62F36800\" \"image003.png\" \"base64\" 3524 NIL (\"inline\" (\"filename\" \"image003.png\" \"size\" \"2572\" \"creation-date\" \"Thu, 14 Jul 2022 15:12:32 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:17 GMT\")) NIL NIL) \"related\" (\"boundary\" \"009_18f52bea798548b88470c3df62d666bcScrubbed\" \"type\" \"multipart/alternative\") NIL NIL)(\"application\" \"pdf\" (\"name\" \"Scrubbed.pdf\") \"Scrubbed@NAMP221.PROD.OUTLOOK.COM\" \"Scrubbed.pdf\" \"base64\" 324012 NIL (\"attachment\" (\"filename\" \"Scrubbed.pdf\" \"size\" \"236776\" \"creation-date\" \"Thu, 14 Jul 2022 14:53:00 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:17 GMT\")) NIL NIL)(\"message\" \"rfc822\" NIL \"Scrubbed@NAMP221.PROD.OUTLOOK.COM\" NIL \"7BIT\" 0 (\"Tue, 11 Jan 2022 16:34:33 +0000\" \"RE: Scrubbed\" ((\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\")) NIL NIL ((\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\")) ((\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\") (\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\") (\"Scrubbed\" NIL \"Scrubbed\" \"Scrubbed\")) NIL \"Scrubbed@Scrubbed.com\" \"Scrubbed@Scrubbed.CANPRD01.PROD.OUTLOOK.COM\") (((NIL NIL NIL NIL NIL \"7BIT\" 0 NIL NIL NIL NIL)(NIL NIL NIL NIL NIL \"7BIT\" 0 NIL NIL NIL NIL)(NIL NIL NIL NIL NIL \"7BIT\" 0 NIL NIL NIL NIL)(NIL NIL NIL NIL NIL \"7BIT\" 0 NIL NIL NIL NIL) \"related\" (\"boundary\" \"007_YT2PR01MB47524CF92A3AD1F75AFF2D25D9519YT2PR01MB4752CANP\" \"type\" \"multipart/alternative\") NIL NIL)(\"application\" \"pdf\" (\"name\" \"Scrubbed.pdf\") NIL \"Scrubbed.pdf\" \"base64\" 215638 NIL (\"attachment\" (\"filename\" \"Scrubbed.pdf\" \"size\" \"157579\" \"creation-date\" \"Wed, 02 Feb 2022 21:33:39 GMT\" \"modification-date\" \"Wed, 02 Feb 2022 21:33:39 GMT\")) NIL NIL) \"mixed\" (\"boundary\" \"008_YT2PR01MB47524CF92A3AD1F75AFF2D25D9519YT2PR01MB4752CANP\") NIL \"en-US\") 0 NIL (\"attachment\" (\"creation-date\" \"Thu, 14 Jul 2022 15:12:31 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:18 GMT\")) NIL NIL)(\"application\" \"pdf\" (\"name\" \"Scrubbed.pdf?=\") \"Scrubbed@NAMP221.PROD.OUTLOOK.COM\" \"Scrubbed.pdf?=\" \"base64\" 208376 NIL (\"attachment\" (\"filename\" \"Scrubbed.pdf?=\" \"size\" \"152274\" \"creation-date\" \"Thu, 14 Jul 2022 15:05:00 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:18 GMT\")) NIL NIL) \"mixed\" (\"boundary\" \"010_18f52bea798548b88470c3df62d666bcScrubbed\") NIL \"en-US\") 0 NIL (\"attachment\" (\"creation-date\" \"Thu, 14 Jul 2022 17:33:16 GMT\" \"modification-date\" \"Thu, 14 Jul 2022 17:33:18 GMT\")) NIL NIL) \"mixed\" (\"boundary\" \"008_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP\") NIL \"en-US\")\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						var multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "Content-Type did not match.");
+						Assert.AreEqual ("008_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP", multipart.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (2, multipart.BodyParts.Count, "multipart children did not match");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "First multipart/mixed subpart types did not match.");
+						var related = (BodyPartMultipart) multipart.BodyParts[0];
+						Assert.IsTrue (related.ContentType.IsMimeType ("multipart", "related"), "Content-Type did not match.");
+						Assert.AreEqual ("multipart/alternative", related.ContentType.Parameters["type"], "type param did not match");
+						Assert.AreEqual ("007_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP", related.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (4, related.BodyParts.Count, "multipart children did not match");
+
+						Assert.IsInstanceOf<BodyPartMultipart> (related.BodyParts[0], "First multipart/related subpart types did not match.");
+						var alternative = (BodyPartMultipart) related.BodyParts[0];
+						Assert.IsTrue (alternative.ContentType.IsMimeType ("multipart", "alternative"), "Content-Type did not match.");
+						Assert.AreEqual ("000_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP", alternative.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (2, alternative.BodyParts.Count, "multipart children did not match");
+
+						Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[0], "First multipart/alternative subpart types did not match.");
+						var plain = (BodyPartText) alternative.BodyParts[0];
+						Assert.IsTrue (plain.ContentType.IsMimeType ("text", "plain"), "Content-Type did not match.");
+						Assert.AreEqual ("us-ascii", plain.ContentType.Charset, "Charset parameter did not match");
+						Assert.AreEqual ("quoted-printable", plain.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (44619, plain.Octets, "Octets did not match.");
+						Assert.AreEqual (793, plain.Lines, "Lines did not match.");
+
+						Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[1], "Second multipart/alternative subpart types did not match.");
+						var html = (BodyPartText) alternative.BodyParts[1];
+						Assert.IsTrue (html.ContentType.IsMimeType ("text", "html"), "Content-Type did not match.");
+						Assert.AreEqual ("quoted-printable", html.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (143984, html.Octets, "Octets did not match.");
+						Assert.AreEqual (2321, html.Lines, "Lines did not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (related.BodyParts[1], "Second multipart/related subpart types did not match.");
+						var jpeg = (BodyPartBasic) related.BodyParts[1];
+						Assert.IsTrue (jpeg.ContentType.IsMimeType ("image", "jpeg"), "Content-Type did not match.");
+						Assert.AreEqual ("~WRD0000.jpg", jpeg.ContentType.Name, "Name parameter did not match");
+						Assert.AreEqual ("inline", jpeg.ContentDisposition.Disposition, "Disposition did not match");
+						Assert.AreEqual ("~WRD0000.jpg", jpeg.ContentDisposition.FileName, "Filename parameter did not match");
+						Assert.AreEqual ("base64", jpeg.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (1130, jpeg.Octets, "Octets did not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (related.BodyParts[2], "Third multipart/related subpart types did not match.");
+						var png = (BodyPartBasic) related.BodyParts[2];
+						Assert.IsTrue (png.ContentType.IsMimeType ("image", "png"), "Content-Type did not match.");
+						Assert.AreEqual ("image001.png", png.ContentType.Name, "Name parameter did not match");
+						Assert.AreEqual ("inline", png.ContentDisposition.Disposition, "Disposition did not match");
+						Assert.AreEqual ("image001.png", png.ContentDisposition.FileName, "Filename parameter did not match");
+						Assert.AreEqual ("base64", png.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (8174, png.Octets, "Octets did not match.");
+
+						Assert.IsInstanceOf<BodyPartBasic> (related.BodyParts[3], "Fourth multipart/related subpart types did not match.");
+						png = (BodyPartBasic) related.BodyParts[3];
+						Assert.IsTrue (png.ContentType.IsMimeType ("image", "png"), "Content-Type did not match.");
+						Assert.AreEqual ("image002.png", png.ContentType.Name, "Name parameter did not match");
+						Assert.AreEqual ("inline", png.ContentDisposition.Disposition, "Disposition did not match");
+						Assert.AreEqual ("image002.png", png.ContentDisposition.FileName, "Filename parameter did not match");
+						Assert.AreEqual ("base64", png.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (3524, png.Octets, "Octets did not match.");
+
+						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[1], "Second multipart/mixed subpart types did not match.");
+						var rfc822 = (BodyPartMessage) multipart.BodyParts[1];
+						Assert.AreEqual (null, rfc822.ContentType.Name, "name param did not match");
+						Assert.AreEqual ("7BIT", rfc822.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
+						Assert.AreEqual (0, rfc822.Octets, "Octets did not match.");
+						Assert.AreEqual (0, rfc822.Lines, "Lines did not match.");
+
+						// Okay, lets skip ahead to the juicy bits...
+						multipart = (BodyPartMultipart) rfc822.Body;
+						Assert.AreEqual ("010_18f52bea798548b88470c3df62d666bcScrubbed", multipart.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (4, multipart.BodyParts.Count, "multipart children did not match");
+
+						rfc822 = (BodyPartMessage) multipart.BodyParts[2];
+						multipart = (BodyPartMultipart) rfc822.Body;
+						alternative = (BodyPartMultipart) multipart.BodyParts[0];
+
+						for (int i = 0; i < alternative.BodyParts.Count; i++) {
+							var nils = (BodyPartBasic) alternative.BodyParts[i];
+
+							Assert.IsTrue (nils.ContentType.IsMimeType ("application", "octet-stream"), "Content-Type did not match.");
+							Assert.IsNull (nils.ContentDescription, "Content-Description should be null");
+							Assert.IsNull (nils.ContentDisposition, "Content-Disposition should be null");
+							Assert.IsNull (nils.ContentId, "Content-Id should be null");
+							Assert.IsNull (nils.ContentLanguage, "Content-Language should be null");
+							Assert.IsNull (nils.ContentLocation, "Content-Location should be null");
+							Assert.IsNull (nils.ContentMd5, "Content-Md5 should be null");
+							Assert.AreEqual ("7BIT", nils.ContentTransferEncoding, "Content-Transfer-Encodings did not match");
+							Assert.AreEqual (0, nils.Octets, "Octets did not match");
+						}
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseBadlyFormedBodyStructureWithCompletelyNilBodyParts2 ()
 		{
 			const string text = "((NIL NIL NIL NIL NIL \"7BIT\" 563 NIL NIL NIL NIL)(\"message\" \"delivery-status\" NIL NIL NIL \"7BIT\" 658 NIL NIL NIL NIL)(\"message\" \"rfc822\" NIL NIL NIL \"8bit\" 0 (\"Tue, 2 Aug 2022 15:00:47 +0000\" \"[POSSIBLE SPAM 11.4] Invoices now overdue - 115365#\" ((NIL NIL \"MAILBOX\" \"OUR-DOMAIN\")) NIL NIL ((NIL NIL \"accounts\" \"OTHER-DOMAIN\") (NIL NIL \"safety\" \"OTHER-DOMAIN\") (NIL NIL \"USER\" \"OUR-DOMAIN\")) NIL NIL NIL \"<1IOGPFNLIHU4.377MHPZYJQ6E3@OUR-SERVER>\") (((\"text\" \"plain\" (\"charset\" \"utf-8\") NIL NIL \"8bit\" 597 16 NIL NIL NIL NIL)((\"text\" \"html\" (\"charset\" \"utf-8\") NIL NIL \"7BIT\" 1611 26 NIL NIL NIL NIL)(\"image\" \"png\" (\"name\" \"0.dat\") \"<1KWGPFNLIHU4.4RR7HCVM8MQQ1@OUR-SERVER>\" NIL \"base64\" 14172 NIL (\"inline\" (\"filename\" \"0.dat\")) NIL \"0.dat\")(\"image\" \"png\" (\"name\" \"1.dat\") \"<1KWGPFNLIHU4.UWJ8R86RE2KA2@OUR-SERVER>\" NIL \"base64\" 486 NIL (\"inline\" (\"filename\" \"1.dat\")) NIL \"1.dat\")(\"image\" \"png\" (\"name\" \"2.dat\") \"<1KWGPFNLIHU4.EC7HN124OJC32@OUR-SERVER>\" NIL \"base64\" 506 NIL (\"inline\" (\"filename\" \"2.dat\")) NIL \"2.dat\")(\"image\" \"png\" (\"name\" \"3.dat\") \"<1KWGPFNLIHU4.WM1ALJTG745F1@OUR-SERVER>\" NIL \"base64\" 616 NIL (\"inline\" (\"filename\" \"3.dat\")) NIL \"3.dat\")(\"image\" \"png\" (\"name\" \"4.dat\") \"<1KWGPFNLIHU4.1B42S5EVSF4B2@OUR-SERVER>\" NIL \"base64\" 22470 NIL (\"inline\" (\"filename\" \"4.dat\")) NIL \"4.dat\") \"related\" (\"boundary\" \"=-5nEE2FIlRoeXkJyZAHV8UA==\" \"type\" \"text/html\") NIL NIL) \"alternative\" (\"boundary\" \"=-1sRjeMizXVbc5nGIFXbARA==\") NIL NIL)(\"application\" \"pdf\" (\"name\" \"Reminder.pdf\") \"<RJ2DSFNLIHU4.UUVSNNY5Z3ER@OUR-SERVER>\" NIL \"base64\" 359650 NIL (\"attachment\" (\"filename\" \"Reminder.pdf\" \"size\" \"262820\")) NIL NIL) \"mixed\" (\"boundary\" \"=-EJwVTfPtacyNnTqY4DPQ0A==\") NIL NIL) 0 NIL NIL NIL NIL) \"report\" (\"report-type\" \"delivery-status\" \"boundary\" \"272F16D4031920.1659452466/hermes.gatewaynet.com\") NIL NIL)\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
 						engine.SetStream (tokenizer);
 
-						Assert.Throws<ImapProtocolException> (() => ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ());
+						try {
+							body = ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						var multipart = (BodyPartMultipart) body;
+
+						Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "report"), "Content-Type did not match.");
+						Assert.AreEqual ("272F16D4031920.1659452466/hermes.gatewaynet.com", multipart.ContentType.Boundary, "boundary param did not match");
+						Assert.AreEqual (3, multipart.BodyParts.Count, "multipart children did not match");
+
+						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "First multipart/report subpart types did not match.");
+						var nils = (BodyPartBasic) multipart.BodyParts[0];
+						Assert.IsTrue (nils.ContentType.IsMimeType ("application", "octet-stream"), "Content-Type did not match.");
+						Assert.IsNull (nils.ContentDescription, "Content-Description should be null");
+						Assert.IsNull (nils.ContentDisposition, "Content-Disposition should be null");
+						Assert.IsNull (nils.ContentId, "Content-Id should be null");
+						Assert.IsNull (nils.ContentLanguage, "Content-Language should be null");
+						Assert.IsNull (nils.ContentLocation, "Content-Location should be null");
+						Assert.IsNull (nils.ContentMd5, "Content-Md5 should be null");
+						Assert.AreEqual ("7BIT", nils.ContentTransferEncoding, "Content-Transfer-Encodings did not match");
+						Assert.AreEqual (563, nils.Octets, "Octets did not match");
 					}
 				}
 			}

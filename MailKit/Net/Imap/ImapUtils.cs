@@ -895,7 +895,7 @@ namespace MailKit.Net.Imap {
 			return false;
 		}
 
-		static async ValueTask<object> ParseContentTypeAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
+		static async ValueTask<ContentType> ParseContentTypeAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
 		{
 			var type = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
 			var token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -903,28 +903,25 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type == ImapTokenType.OpenParen || token.Type == ImapTokenType.Nil) {
 				// Note: work around broken IMAP server implementations...
-				if (engine.QuirksMode == ImapQuirksMode.GMail) {
-					// Note: GMail's IMAP server implementation breaks when it encounters
-					// nested multiparts with the same boundary and returns a BODYSTRUCTURE
-					// like the example in https://github.com/jstedfast/MailKit/issues/205 or
-					// like the example in https://github.com/jstedfast/MailKit/issues/777
-					//
-					// Note: this token is either '(' to start the Content-Type parameter values
-					// or it is a NIL to specify that there are no parameter values.
-					return type;
-				}
 
-				// Note: In some IMAP server implementations, such as the one found in
-				// https://github.com/jstedfast/MailKit/issues/371, if the server comes
-				// across something like "Content-Type: X-ZIP", it will only send an
-				// empty string as the media-type.
-				//
-				// e.g. <empty-string><SPACE><media-subtype>
-				//
-				// This is why we checked if the first character was a space.
-				if (!IsMediaTypeWithDefaultSubtype (type, out subtype)) {
-					subtype = type;
+				if (type == null && token.Type == ImapTokenType.Nil) {
+					// We probably got something like (NIL NIL NIL NIL NIL "7BIT" 0 NIL NIL NIL NIL)
+					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					type = "application";
+					subtype = "octet-stream";
+				} else {
+					// Note: In some IMAP server implementations, such as the one found in
+					// https://github.com/jstedfast/MailKit/issues/371, if the server comes
+					// across something like "Content-Type: X-ZIP", it will only send an
+					// empty string as the media-type.
+					//
+					// e.g. ( "X-ZIP" NIL ...) or ( "PLAIN" ("CHARSET" "US-ASCII") ...)
+					//
+					// Take special note of the leading <SPACE> character after the '('.
+					if (!IsMediaTypeWithDefaultSubtype (type, out subtype)) {
+						subtype = type;
+						type = "application";
+					}
 				}
 			} else {
 				subtype = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
@@ -1182,6 +1179,82 @@ namespace MailKit.Net.Imap {
 			return body;
 		}
 
+		// Note: We're using a Tuple<bool, string> here, but once we can drop Net4.6.2, we can use a (bool IsMultipart, string Subtype) tuple instead.
+		static async Task<Tuple<bool, string>> ShouldParseMultipartAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			ImapToken nextToken;
+
+			switch (token.Type) {
+			case ImapTokenType.Atom: // Note: Technically, we should never get an Atom here, but if we do, we'll treat it as a QString.
+			case ImapTokenType.QString:
+			case ImapTokenType.Literal:
+				if (engine.QuirksMode == ImapQuirksMode.GMail && token.Type != ImapTokenType.Literal) {
+					// Note: GMail's IMAP server implementation breaks when it encounters nested multiparts with the same
+					// boundary and returns a BODYSTRUCTURE like the example in https://github.com/jstedfast/MailKit/issues/205
+					// or like the example in https://github.com/jstedfast/MailKit/issues/777:
+					//
+					// ("ALTERNATIVE" ("BOUNDARY" "==alternative_xad5934455aeex") NIL NIL)
+					// or
+					// ("RELATED" NIL ("ATTACHMENT" NIL) NIL)
+					//
+					// Check if the next token is either a '(' or NIL. If it is '(', then that would indicate the start of
+					// the Content-Type parameter list. If it is NIL, then it would signify that the Content-Type has no
+					// parameters.
+
+					// Peek at the next token to see what we've got.
+					nextToken = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.Nil)
+						return new Tuple<bool, string> (true, (string) token.Value);
+
+					// Fall through and treat things nomrally.
+				}
+
+				// We've got a string which normally means it's the first token of a mime-type.
+				engine.Stream.UngetToken (token);
+				return new Tuple<bool, string> (false, null);
+			case ImapTokenType.OpenParen:
+				// We've got children, so this is definitely a multipart.
+				engine.Stream.UngetToken (token);
+				return new Tuple<bool, string> (true, null);
+			case ImapTokenType.Nil:
+				// We've got a NIL token. Technically, this is illegal syntax, but we need to be able to handle it.
+				//
+				// There are currently 2 known examples of this:
+				//
+				// 1. Sometimes, when a multipart contains no children, IMAP servers (even Dovecot!)
+				// will reply with a BODYSTRUCTURE that looks like (NIL "alternative" ("boundary" "...
+				// Obviously, this is not a body-type-1part because "alternative" is a multipart subtype.
+				// This suggests that the NIL represents an empty list of children.
+				//
+				// For an example of this particular case, see https://github.com/jstedfast/MailKit/issues/1393.
+				//
+				// 2. There have been several reports of Office365 sending body-type-1parts of the following form:
+				// (NIL NIL NIL NIL NIL "7BIT" 0 NIL NIL NIL NIL)
+				//
+				// Presumably this is a text/plain part with no headers?
+				//
+				// For examples of this, see:
+				// https://github.com/jstedfast/MailKit/issues/1415#issuecomment-1206533214 and
+				// https://github.com/jstedfast/MailKit/issues/1446
+				nextToken = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+
+				engine.Stream.UngetToken (token);
+
+				if (nextToken.Type == ImapTokenType.Nil) {
+					// Looks like we've probably encountered the `(NIL NIL NIL NIL NIL "7BIT" 0 NIL NIL NIL NIL)` variant.
+					return new Tuple<bool, string> (false, null);
+				}
+
+				// Assume (NIL "alternative" ("boundary" "...
+				return new Tuple<bool, string> (true, null);
+			default:
+				engine.Stream.UngetToken (token);
+				return new Tuple<bool, string> (false, null);
+			}
+		}
+
 		public static async ValueTask<BodyPart> ParseBodyAsync (ImapEngine engine, string format, string path, bool doAsync, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
@@ -1201,28 +1274,22 @@ namespace MailKit.Net.Imap {
 				return null;
 			}
 
-			if (token.Type == ImapTokenType.OpenParen || token.Type == ImapTokenType.Nil)
-				return await ParseMultipartAsync (engine, format, path, null, doAsync, cancellationToken).ConfigureAwait (false);
+			var result = await ShouldParseMultipartAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
 
-			var result = await ParseContentTypeAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+			if (result.Item1)
+				return await ParseMultipartAsync (engine, format, path, result.Item2, doAsync, cancellationToken).ConfigureAwait (false);
 
-			if (result is string subtype) {
-				// GMail breakage... yay! What we have is a nested multipart with
-				// the same boundary as its parent.
-				return await ParseMultipartAsync (engine, format, path, subtype, doAsync, cancellationToken).ConfigureAwait (false);
-			}
-
+			var type = await ParseContentTypeAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 			var id = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
 			var desc = await ReadNStringTokenAsync (engine, format, true, doAsync, cancellationToken).ConfigureAwait (false);
 			// Note: technically, body-fld-enc, is not allowed to be NIL, but we need to deal with broken servers...
 			var enc = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
 			var octets = await ReadNumberAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
-			var type = (ContentType) result;
 			var isMultipart = false;
 			BodyPartBasic body;
 
 			if (type.IsMimeType ("message", "rfc822")) {
-				var mesg = new BodyPartMessage ();
+				var rfc822 = new BodyPartMessage ();
 
 				// Note: GMail (and potentially other IMAP servers) will send body-part-basic
 				// expressions instead of body-part-msg expressions when they encounter
@@ -1240,12 +1307,12 @@ namespace MailKit.Net.Imap {
 				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenParen) {
-					mesg.Envelope = await ParseEnvelopeAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
-					mesg.Body = await ParseBodyAsync (engine, format, path, doAsync, cancellationToken).ConfigureAwait (false);
-					mesg.Lines = await ReadNumberAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+					rfc822.Envelope = await ParseEnvelopeAsync (engine, doAsync, cancellationToken).ConfigureAwait (false);
+					rfc822.Body = await ParseBodyAsync (engine, format, path, doAsync, cancellationToken).ConfigureAwait (false);
+					rfc822.Lines = await ReadNumberAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
 				}
 
-				body = mesg;
+				body = rfc822;
 			} else if (type.IsMimeType ("text", "*")) {
 				var text = new BodyPartText ();
 				text.Lines = await ReadNumberAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
