@@ -1409,6 +1409,7 @@ namespace MailKit.Net.Imap {
 				var mailbox = Mailbox;
 				var domain = Domain;
 				string name = null;
+				string address;
 
 				if (Name != null)
 					name = Rfc2047.DecodePhrase (TextEncodings.UTF8.GetBytes (Name));
@@ -1421,10 +1422,13 @@ namespace MailKit.Net.Imap {
 				else if (domain != null)
 					domain = domain.TrimEnd ('>');
 
-				if (mailbox != null)
+				if (mailbox != null) {
 					mailbox = mailbox.TrimStart ('<');
 
-				string address = domain != null ? mailbox + "@" + domain : mailbox;
+					address = domain != null ? mailbox + "@" + domain : mailbox;
+				} else {
+					address = string.Empty;
+				}
 
 				if (Route != null && DomainList.TryParse (Route, out var route))
 					return new MailboxAddress (name, route, address);

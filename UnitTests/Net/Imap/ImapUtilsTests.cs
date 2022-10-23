@@ -994,6 +994,34 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// This tests issue #1451
+		[Test]
+		public void TestParseEnvelopeWithNilMailbox ()
+		{
+			const string text = "(NIL \"Retrieval using the IMAP4 protocol failed for the following message: 3\" ((\"Microsoft Exchange Server\" NIL NIL \".MISSING-HOST-NAME.\")) NIL NIL ((\"username@testdomain.com\" NIL \"username\" \"testdomain.com\")) NIL NIL NIL NIL)";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						Envelope envelope;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual ("Retrieval using the IMAP4 protocol failed for the following message: 3", envelope.Subject);
+						Assert.AreEqual ("\"Microsoft Exchange Server\" <>", envelope.From.ToString ());
+						Assert.AreEqual ("\"username@testdomain.com\" <username@testdomain.com>", envelope.To.ToString ());
+					}
+				}
+			}
+		}
+
 		[Test]
 		public void TestParseEnvelopeWithRoutedMailboxes ()
 		{
