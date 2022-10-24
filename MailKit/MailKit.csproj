@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
     <AssemblyTitle>MailKit</AssemblyTitle>
-    <VersionPrefix>3.4.1</VersionPrefix>
+    <VersionPrefix>3.4.2</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
     <LangVersion>8</LangVersion>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net47;net48;net6.0</TargetFrameworks>

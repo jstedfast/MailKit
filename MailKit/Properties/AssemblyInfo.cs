@@ -1,4 +1,4 @@
-﻿//
+//
 // AssemblyInfo.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
@@ -79,6 +79,6 @@ using System.Runtime.InteropServices;
 //
 // If there have only been bug fixes, bump the Micro Version and/or the Build Number
 //    in the AssemblyFileVersion attribute.
-[assembly: AssemblyInformationalVersion ("3.4.1.0")]
-[assembly: AssemblyFileVersion ("3.4.1.0")]
+[assembly: AssemblyInformationalVersion ("3.4.2.0")]
+[assembly: AssemblyFileVersion ("3.4.2.0")]
 [assembly: AssemblyVersion ("3.4.0.0")]

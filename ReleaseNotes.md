@@ -1,5 +1,25 @@
 # Release Notes
 
+### MailKit 3.4.2 (2022-10-24)
+
+* Fixed fetching of MessageSummaryItems.PreviewText if the octet count of the message body is 0.
+  (issue [#1430](https://github.com/jstedfast/MailKit/issues/1430))
+* Modified ImapFolder.Search(SearchOptions.None, query) work the same as ImapFolder.Search(query).
+  (issue [#1437](https://github.com/jstedfast/MailKit/issues/1437))
+* Improved performance of SmtpClient by reducing memory allocations and pipelining the DATA command when the PIPELINING
+  extension is available.
+* Refactored sync and async SmtpClient APIs such that the synchronous APIs no longer call methods marked with async in order
+  to reduce AsyncMethodBuilder state machines/allocations.
+* Modified SmtpClient to only send the ORCPT argument to RCPT TO if NOTIFY is specified.
+* Improved performance of Pop3Client by reducing memory allocations.
+* Refactored sync and async Pop3Client APIs such that the synchronous APIs no longer call methods marked with async in order
+  to reduce AsyncMethodBuilder state machines/allocations.
+* Improved IMAP's BODY/BODYSTRUCTURE parser to be able to scan ahead multiple tokens in order to better handle syntactically
+  incorrect responses in a more graceful way.
+  (issue [#1446](https://github.com/jstedfast/MailKit/issues/1446))
+* Improved IMAP's ENVELOPE parser to handle ("Microsoft Exchange Server" NIL NIL ".MISSING-HOST-NAME.") in a more graceful way.
+  (issue [#1451](https://github.com/jstedfast/MailKit/issues/1451))
+
 ### MailKit 3.4.1 (2022-09-12)
 
 * Reverted the socket connection change to allow Socket.Connect() to do DNS lookups for us. Turns out, Socket.Connect()
