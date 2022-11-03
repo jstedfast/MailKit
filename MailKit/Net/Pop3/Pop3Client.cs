@@ -2457,9 +2457,9 @@ namespace MailKit.Net.Pop3 {
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
+				var stream = new MemoryBlockStream ();
 
 				try {
-					var stream = new MemoryBlockStream ();
 					int nread;
 
 					while ((nread = data.Read (buffer, 0, BufferSize, cancellationToken)) > 0) {
@@ -2470,6 +2470,9 @@ namespace MailKit.Net.Pop3 {
 					stream.Position = 0;
 
 					return stream;
+				} catch {
+					stream.Dispose ();
+					throw;
 				} finally {
 					ArrayPool<byte>.Shared.Return (buffer);
 				}
@@ -2480,9 +2483,9 @@ namespace MailKit.Net.Pop3 {
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
+				var stream = new MemoryBlockStream ();
 
 				try {
-					var stream = new MemoryBlockStream ();
 					int nread;
 
 					while ((nread = await data.ReadAsync (buffer, 0, BufferSize, cancellationToken).ConfigureAwait (false)) > 0) {
@@ -2493,6 +2496,9 @@ namespace MailKit.Net.Pop3 {
 					stream.Position = 0;
 
 					return stream;
+				} catch {
+					stream.Dispose ();
+					throw;
 				} finally {
 					ArrayPool<byte>.Shared.Return (buffer);
 				}
