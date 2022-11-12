@@ -76,8 +76,7 @@ namespace MailKit.Net.Smtp {
 
 		enum SmtpCommand {
 			MailFrom,
-			RcptTo,
-			Data
+			RcptTo
 		}
 
 		readonly HashSet<string> authenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
@@ -580,20 +579,17 @@ namespace MailKit.Net.Smtp {
 		struct QueueResults
 		{
 			public readonly int RecipientsAccepted;
-			public readonly SmtpResponse DataResponse;
 			public Exception FirstException;
 
-			public QueueResults (int recipientsAccepted, SmtpResponse dataResponse, Exception firstException)
+			public QueueResults (int recipientsAccepted, Exception firstException)
 			{
 				RecipientsAccepted = recipientsAccepted;
-				DataResponse = dataResponse;
 				FirstException = firstException;
 			}
 		}
 
 		QueueResults ParseCommandQueueResponses (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, List<SmtpResponse> responses, Exception readResponseException)
 		{
-			SmtpResponse dataResponse = null;
 			Exception firstException = null;
 			int recipientsAccepted = 0;
 			int rcpt = 0;
@@ -617,16 +613,13 @@ namespace MailKit.Net.Smtp {
 							firstException ??= ex;
 						}
 						break;
-					case SmtpCommand.Data:
-						dataResponse = responses[i];
-						break;
 					}
 				}
 			} finally {
 				queued.Clear ();
 			}
 
-			return new QueueResults (recipientsAccepted, dataResponse, firstException ?? readResponseException);
+			return new QueueResults (recipientsAccepted, firstException ?? readResponseException);
 		}
 
 		QueueResults FlushCommandQueue (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
@@ -2282,10 +2275,10 @@ namespace MailKit.Net.Smtp {
 			return ParseMessageDataResponse (message, response);
 		}
 
-		void Reset (bool dataAccepted, CancellationToken cancellationToken)
+		void Reset (CancellationToken cancellationToken)
 		{
 			try {
-				var response = Stream.SendCommand (dataAccepted ? ".\r\n" : "RSET\r\n", cancellationToken);
+				var response = Stream.SendCommand ("RSET\r\n", cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 			} catch (SmtpCommandException) {
@@ -2418,17 +2411,13 @@ namespace MailKit.Net.Smtp {
 						recipientsAccepted++;
 				}
 
-				if (!bdat && pipeline)
-					QueueCommand (SmtpCommand.Data, "DATA\r\n", cancellationToken);
-
 				if (queued.Count > 0) {
 					// Note: if PIPELINING is supported, this will flush all outstanding
-					// MAIL FROM, RCPT TO, and DATA commands to the server and then process
+					// MAIL FROM and RCPT TO commands to the server and then process
 					// all of their responses.
 					var results = FlushCommandQueue (message, sender, recipients, cancellationToken);
 
 					recipientsAccepted = results.RecipientsAccepted;
-					dataResponse = results.DataResponse;
 
 					if (results.FirstException != null)
 						throw results.FirstException;
@@ -2442,8 +2431,7 @@ namespace MailKit.Net.Smtp {
 				if (bdat)
 					return Bdat (format, message, size, cancellationToken, progress);
 
-				if (!pipeline)
-					dataResponse = Stream.SendCommand ("DATA\r\n", cancellationToken);
+				dataResponse = Stream.SendCommand ("DATA\r\n", cancellationToken);
 
 				ParseDataResponse (dataResponse);
 				dataResponse = null;
@@ -2451,12 +2439,10 @@ namespace MailKit.Net.Smtp {
 				return MessageData (format, message, size, cancellationToken, progress);
 			} catch (ServiceNotAuthenticatedException) {
 				// do not disconnect
-				var dataAccepted = dataResponse != null && dataResponse.StatusCode == SmtpStatusCode.StartMailInput;
-				Reset (dataAccepted, cancellationToken);
+				Reset (cancellationToken);
 				throw;
 			} catch (SmtpCommandException) {
-				var dataAccepted = dataResponse != null && dataResponse.StatusCode == SmtpStatusCode.StartMailInput;
-				Reset (dataAccepted, cancellationToken);
+				Reset (cancellationToken);
 				throw;
 			} catch {
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
@@ -2626,7 +2612,7 @@ namespace MailKit.Net.Smtp {
 			return Send (options, message, sender, rcpts, cancellationToken, progress);
 		}
 
-		#endregion
+#endregion
 
 		string CreateExpandCommand (string alias)
 		{

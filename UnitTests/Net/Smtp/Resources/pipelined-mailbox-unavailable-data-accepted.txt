@@ -1,3 +1,0 @@
-250 2.1.0 sender ok
-550 5.1.0 mailbox unavailable
-354 enter mail, end with . on a line by itself

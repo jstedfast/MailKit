@@ -1005,10 +1005,10 @@ namespace MailKit.Net.Smtp
 			return ParseMessageDataResponse (message, response);
 		}
 
-		async Task ResetAsync (bool dataAccepted, CancellationToken cancellationToken)
+		async Task ResetAsync (CancellationToken cancellationToken)
 		{
 			try {
-				var response = await Stream.SendCommandAsync (dataAccepted ? ".\r\n" : "RSET\r\n", cancellationToken).ConfigureAwait (false);
+				var response = await Stream.SendCommandAsync ("RSET\r\n", cancellationToken).ConfigureAwait (false);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 			} catch (SmtpCommandException) {
@@ -1043,17 +1043,13 @@ namespace MailKit.Net.Smtp
 						recipientsAccepted++;
 				}
 
-				if (!bdat && pipeline)
-					await QueueCommandAsync (SmtpCommand.Data, "DATA\r\n", cancellationToken).ConfigureAwait (false);
-
 				if (queued.Count > 0) {
 					// Note: if PIPELINING is supported, this will flush all outstanding
-					// MAIL FROM, RCPT TO, and DATA commands to the server and then process
+					// MAIL FROM and RCPT TO commands to the server and then process
 					// all of their responses.
 					var results = await FlushCommandQueueAsync (message, sender, recipients, cancellationToken).ConfigureAwait (false);
 
 					recipientsAccepted = results.RecipientsAccepted;
-					dataResponse = results.DataResponse;
 
 					if (results.FirstException != null)
 						throw results.FirstException;
@@ -1067,8 +1063,7 @@ namespace MailKit.Net.Smtp
 				if (bdat)
 					return await BdatAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
 
-				if (!pipeline)
-					dataResponse = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
+				dataResponse = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
 
 				ParseDataResponse (dataResponse);
 				dataResponse = null;
@@ -1076,12 +1071,10 @@ namespace MailKit.Net.Smtp
 				return await MessageDataAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
 			} catch (ServiceNotAuthenticatedException) {
 				// do not disconnect
-				var dataAccepted = dataResponse != null && dataResponse.StatusCode == SmtpStatusCode.StartMailInput;
-				await ResetAsync (dataAccepted, cancellationToken).ConfigureAwait (false);
+				await ResetAsync (cancellationToken).ConfigureAwait (false);
 				throw;
 			} catch (SmtpCommandException) {
-				var dataAccepted = dataResponse != null && dataResponse.StatusCode == SmtpStatusCode.StartMailInput;
-				await ResetAsync (dataAccepted, cancellationToken).ConfigureAwait (false);
+				await ResetAsync (cancellationToken).ConfigureAwait (false);
 				throw;
 			} catch {
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
