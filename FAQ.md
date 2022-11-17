@@ -1747,7 +1747,7 @@ If the "Sent Mail" folder exists on an IMAP server, you would need to do somethi
 
 ```csharp
 using (var client = new ImapClient ()) {
-    client.Connect ("imap.server.com", 993, SecujreSocketOptions.SslOnConnect);
+    client.Connect ("imap.server.com", 993, SecureSocketOptions.SslOnConnect);
     client.Authenticate ("username", "password");
     
     IMailFolder sentMail;
