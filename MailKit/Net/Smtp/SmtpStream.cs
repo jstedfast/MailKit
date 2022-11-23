@@ -47,9 +47,10 @@ namespace MailKit.Net.Smtp {
 	class SmtpStream : Stream, ICancellableStream
 	{
 		const int BlockSize = 4096;
+		const int PadSize = 4;
 
 		// I/O buffering
-		readonly byte[] input = new byte[BlockSize + 4];
+		readonly byte[] input = new byte[BlockSize + PadSize];
 		readonly byte[] output = new byte[BlockSize];
 		int outputIndex;
 
@@ -204,10 +205,29 @@ namespace MailKit.Net.Smtp {
 			get { return Stream.Length; }
 		}
 
+		void AlignReadAheadBuffer (out int offset, out int count)
+		{
+			int left = inputEnd - inputIndex;
+
+			if (left > 0) {
+				if (inputIndex > 0) {
+					// move all of the remaining input to the beginning of the buffer
+					Buffer.BlockCopy (input, inputIndex, input, 0, left);
+					inputEnd = left;
+					inputIndex = 0;
+				}
+			} else {
+				inputIndex = 0;
+				inputEnd = 0;
+			}
+
+			count = BlockSize - inputEnd;
+			offset = inputEnd;
+		}
+
 		int ReadAhead (CancellationToken cancellationToken)
 		{
-			inputIndex = 0;
-			inputEnd = 0;
+			AlignReadAheadBuffer (out int offset, out int count);
 
 			try {
 				var network = Stream as NetworkStream;
@@ -215,10 +235,10 @@ namespace MailKit.Net.Smtp {
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				network?.Poll (SelectMode.SelectRead, cancellationToken);
-				int nread = Stream.Read (input, 0, BlockSize);
+				int nread = Stream.Read (input, offset, count);
 
 				if (nread > 0) {
-					logger.LogServer (input, 0, nread);
+					logger.LogServer (input, offset, nread);
 					inputEnd += nread;
 
 					// Optimization hack used by ReadResponse
@@ -236,18 +256,17 @@ namespace MailKit.Net.Smtp {
 
 		async Task<int> ReadAheadAsync (CancellationToken cancellationToken)
 		{
-			inputIndex = 0;
-			inputEnd = 0;
+			AlignReadAheadBuffer (out int offset, out int count);
 
 			try {
 				var network = Stream as NetworkStream;
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				int nread = await Stream.ReadAsync (input, 0, BlockSize, cancellationToken).ConfigureAwait (false);
+				int nread = await Stream.ReadAsync (input, offset, count, cancellationToken).ConfigureAwait (false);
 
 				if (nread > 0) {
-					logger.LogServer (input, 0, nread);
+					logger.LogServer (input, offset, nread);
 					inputEnd += nread;
 
 					// Optimization hack used by ReadResponse
@@ -433,28 +452,34 @@ namespace MailKit.Net.Smtp {
 			do {
 				int startIndex = inputIndex;
 
-				if (newLine && inputIndex < inputEnd) {
-					if (!ByteArrayBuilder.TryParse (input, ref inputIndex, inputEnd, out int value))
-						throw new SmtpProtocolException ("Unable to parse status code returned by the server.");
+				if (newLine) {
+					if (inputIndex + 3 < inputEnd) {
+						if (!ByteArrayBuilder.TryParse (input, ref inputIndex, inputEnd, out int value))
+							throw new SmtpProtocolException ("Unable to parse status code returned by the server.");
 
-					if (inputIndex == inputEnd) {
-						inputIndex = startIndex;
+						if (inputIndex == inputEnd) {
+							// Need input.
+							inputIndex = startIndex;
+							return true;
+						}
+
+						if (code == 0) {
+							code = value;
+						} else if (value != code) {
+							throw new SmtpProtocolException ("The status codes returned by the server did not match.");
+						}
+
+						newLine = false;
+
+						more = input[inputIndex] == (byte) '-';
+						if (more || input[inputIndex] == (byte) ' ')
+							inputIndex++;
+
+						startIndex = inputIndex;
+					} else {
+						// Need input.
 						return true;
 					}
-
-					if (code == 0) {
-						code = value;
-					} else if (value != code) {
-						throw new SmtpProtocolException ("The status codes returned by the server did not match.");
-					}
-
-					newLine = false;
-
-					more = input[inputIndex] == (byte) '-';
-					if (more || input[inputIndex] == (byte) ' ')
-						inputIndex++;
-
-					startIndex = inputIndex;
 				}
 
 				// Note: This depends on ReadAhead[Async] setting input[inputEnd] = '\n'
@@ -513,7 +538,7 @@ namespace MailKit.Net.Smtp {
 						ReadAhead (cancellationToken);
 
 					needInput = ReadResponse (builder, ref newLine, ref more, ref code);
-				} while (more);
+				} while (more || !newLine);
 
 				var message = builder.ToString ();
 
@@ -556,7 +581,7 @@ namespace MailKit.Net.Smtp {
 						await ReadAheadAsync (cancellationToken).ConfigureAwait (false);
 
 					needInput = ReadResponse (builder, ref newLine, ref more, ref code);
-				} while (more);
+				} while (more || !newLine);
 
 				var message = builder.ToString ();
 

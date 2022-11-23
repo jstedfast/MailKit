@@ -1716,26 +1716,39 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		[Test]
-		public void TestServerResponseLineByLine ()
+		[TestCase (SmtpResponseMode.Char)]
+		[TestCase (SmtpResponseMode.Line)]
+		public void TestSmtpResponseModes (SmtpResponseMode mode)
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt") { RespondLineByLine = true });
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false, mode));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
-				Assert.AreEqual (SmtpCapabilities.None, client.Capabilities, "Capabilities");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
 					client.Disconnect (true);

@@ -34,12 +34,19 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace UnitTests.Net.Smtp {
+	public enum SmtpResponseMode
+	{
+		Blit,
+		Char,
+		Line
+	}
+
 	class SmtpReplayCommand
 	{
 		public string Command { get; private set; }
 		public string Resource { get; private set; }
 		public SmtpReplayState NextState { get; private set; }
-		public bool RespondLineByLine { get; set; }
+		public SmtpResponseMode ResponseMode { get; set; }
 
 		public SmtpReplayCommand (string command, string resource)
 		{
@@ -72,18 +79,20 @@ namespace UnitTests.Net.Smtp {
 		readonly IList<SmtpReplayCommand> commands;
 		int timeout = 100000;
 		SmtpReplayState state;
+		SmtpResponseMode mode;
 		Stream stream;
 		bool disposed;
 		bool asyncIO;
 		bool isAsync;
 		int index;
 
-		public SmtpReplayStream (IList<SmtpReplayCommand> commands, bool asyncIO)
+		public SmtpReplayStream (IList<SmtpReplayCommand> commands, bool asyncIO, SmtpResponseMode mode = SmtpResponseMode.Blit)
 		{
 			stream = GetResourceStream (commands[0].Resource);
 			state = SmtpReplayState.SendResponse;
 			this.commands = commands;
 			this.asyncIO = asyncIO;
+			this.mode = mode;
 		}
 
 		void CheckDisposed ()
@@ -142,11 +151,16 @@ namespace UnitTests.Net.Smtp {
 			Assert.AreEqual (SmtpReplayState.SendResponse, state, "Trying to read when no command given.");
 			Assert.IsNotNull (stream, "Trying to read when no data available.");
 
-			int nread;
+			int nread = 0;
 
-			if (commands[index].RespondLineByLine) {
-				nread = 0;
-
+			switch (mode) {
+			case SmtpResponseMode.Blit:
+				nread = stream.Read (buffer, offset, count);
+				break;
+			case SmtpResponseMode.Char:
+				nread = stream.Read (buffer, offset, 1);
+				break;
+			case SmtpResponseMode.Line:
 				while (nread < count && stream.Read (buffer, offset, 1) > 0) {
 					nread++;
 
@@ -155,8 +169,7 @@ namespace UnitTests.Net.Smtp {
 
 					offset++;
 				}
-			} else {
-				nread = stream.Read (buffer, offset, count);
+				break;
 			}
 
 			if (stream.Position == stream.Length) {
