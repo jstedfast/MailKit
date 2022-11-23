@@ -39,6 +39,7 @@ namespace UnitTests.Net.Smtp {
 		public string Command { get; private set; }
 		public string Resource { get; private set; }
 		public SmtpReplayState NextState { get; private set; }
+		public bool RespondLineByLine { get; set; }
 
 		public SmtpReplayCommand (string command, string resource)
 		{
@@ -141,7 +142,22 @@ namespace UnitTests.Net.Smtp {
 			Assert.AreEqual (SmtpReplayState.SendResponse, state, "Trying to read when no command given.");
 			Assert.IsNotNull (stream, "Trying to read when no data available.");
 
-			int nread = stream.Read (buffer, offset, count);
+			int nread;
+
+			if (commands[index].RespondLineByLine) {
+				nread = 0;
+
+				while (nread < count && stream.Read (buffer, offset, 1) > 0) {
+					nread++;
+
+					if (buffer[offset] == (byte) '\n')
+						break;
+
+					offset++;
+				}
+			} else {
+				nread = stream.Read (buffer, offset, count);
+			}
 
 			if (stream.Position == stream.Length) {
 				state = commands[index].NextState;
