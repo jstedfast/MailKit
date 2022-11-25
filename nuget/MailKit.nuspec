@@ -68,25 +68,25 @@ Features include:
     <dependencies>
       <group targetFramework="net462">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.4.2" />
+        <dependency id="MimeKit" version="3.4.3" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.4.2" />
+        <dependency id="MimeKit" version="3.4.3" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.4.2" />
+        <dependency id="MimeKit" version="3.4.3" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKit" version="3.4.2" />
+        <dependency id="MimeKit" version="3.4.3" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.4.2" />
+        <dependency id="MimeKit" version="3.4.3" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="MimeKit" version="3.4.2" />
+        <dependency id="MimeKit" version="3.4.3" />
       </group>
     </dependencies>
   </metadata>
