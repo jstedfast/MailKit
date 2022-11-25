@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKitLite</id>
-    <version>3.4.2</version>
+    <version>3.4.3</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,15 +26,10 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Fixed fetching of MessageSummaryItems.PreviewText if the octet count of the message body is 0. (issue #1430)
-* Modified ImapFolder.Search(SearchOptions.None, query) work the same as ImapFolder.Search(query). (issue #1437)
-* Improved performance of SmtpClient by reducing memory allocations and pipelining the DATA command when the PIPELINING extension is available.
-* Refactored sync and async SmtpClient APIs such that the synchronous APIs no longer call methods marked with async in order to reduce AsyncMethodBuilder state machines/allocations.
-* Modified SmtpClient to only send the ORCPT argument to RCPT TO if NOTIFY is specified.
-* Improved performance of Pop3Client by reducing memory allocations.
-* Refactored sync and async Pop3Client APIs such that the synchronous APIs no longer call methods marked with async in order to reduce AsyncMethodBuilder state machines/allocations.
-* Improved IMAP's BODY/BODYSTRUCTURE parser to be able to scan ahead multiple tokens in order to better handle syntactically incorrect responses in a more graceful way. (issue #1446)
-* Improved IMAP's ENVELOPE parser to handle ("Microsoft Exchange Server" NIL NIL ".MISSING-HOST-NAME.") in a more graceful way. (issue #1451)
+* Fixed potential memory leaks in Pop3Client.
+* Reverted SMTP pipelining of the DATA command. (issue #1459)
+* Fixed ImapFolder.Rename() to disallow renaming a folder to be a child of itself.
+* Fixed SmtpStream.ReadResponse/Async() to handle buffers that do not contain a complete line. (issue #1467)
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>

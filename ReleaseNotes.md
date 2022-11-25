@@ -1,5 +1,13 @@
 # Release Notes
 
+### MailKit 3.4.3 (2022-11-25)
+
+* Fixed potential memory leaks in Pop3Client.
+* Reverted SMTP pipelining of the DATA command. (issue [#1459](https://github.com/jstedfast/MailKit/issues/1459))
+* Fixed ImapFolder.Rename() to disallow renaming a folder to be a child of itself.
+* Fixed SmtpStream.ReadResponse/Async() to handle buffers that do not contain a complete line.
+  (issue [#1467](https://github.com/jstedfast/MailKit/issues/1467))
+
 ### MailKit 3.4.2 (2022-10-24)
 
 * Fixed fetching of MessageSummaryItems.PreviewText if the octet count of the message body is 0.
