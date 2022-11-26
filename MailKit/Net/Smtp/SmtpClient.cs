@@ -2383,7 +2383,7 @@ namespace MailKit.Net.Smtp {
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		bool UseBdatCommand (SmtpExtensions extensions)
 		{
-			return (extensions & SmtpExtensions.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & SmtpCapabilities.BinaryMime | SmtpCapabilities.Chunking) != 0);
+			return (extensions & SmtpExtensions.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & (SmtpCapabilities.BinaryMime | SmtpCapabilities.Chunking)) != 0);
 		}
 
 		string Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
