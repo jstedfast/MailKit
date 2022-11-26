@@ -903,10 +903,14 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type == ImapTokenType.OpenParen || token.Type == ImapTokenType.Nil) {
 				// Note: work around broken IMAP server implementations...
+				if (type == null) {
+					if (token.Type == ImapTokenType.Nil) {
+						// The type and subtype tokens are both NIL. We probably got something like:
+						// (NIL NIL NIL NIL NIL "7BIT" 0 NIL NIL NIL NIL)
+						// Consume the NIL subtype token.
+						await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					}
 
-				if (type == null && token.Type == ImapTokenType.Nil) {
-					// We probably got something like (NIL NIL NIL NIL NIL "7BIT" 0 NIL NIL NIL NIL)
-					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 					type = "application";
 					subtype = "octet-stream";
 				} else {
