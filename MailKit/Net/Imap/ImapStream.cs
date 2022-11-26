@@ -79,7 +79,6 @@ namespace MailKit.Net.Imap {
 		readonly Stack<ImapToken> tokens;
 		readonly IProtocolLogger logger;
 		int literalDataLeft;
-		ImapToken nextToken;
 		bool disposed;
 
 		/// <summary>
