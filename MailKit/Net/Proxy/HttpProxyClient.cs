@@ -200,9 +200,8 @@ namespace MailKit.Net.Proxy
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			var socket = SocketUtils.Connect (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken);
 			var command = GetConnectCommand (host, port, ProxyCredentials);
-			int index;
+			var socket = SocketUtils.Connect (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken);
 
 			try {
 				Send (socket, command, 0, command.Length, cancellationToken);
@@ -216,7 +215,7 @@ namespace MailKit.Net.Proxy
 					// read until we consume the end of the headers (it's ok if we read some of the content)
 					do {
 						int nread = Receive (socket, buffer, 0, BufferSize, cancellationToken);
-						index = 0;
+						int index = 0;
 
 						if (TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
 							break;
