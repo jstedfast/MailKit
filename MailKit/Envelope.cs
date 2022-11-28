@@ -426,7 +426,8 @@ namespace MailKit {
 			index++;
 
 			if (domain != null) {
-				var address = user + "@" + domain;
+				// Note: The serializer injects "localhost" as the domain when provided a UNIX mailbox or the special <> mailbox.
+				var address = domain == "localhost" ? user : user + "@" + domain;
 
 				if (route != null && DomainList.TryParse (route, out var domains))
 					addr = new MailboxAddress (name, domains, address);
