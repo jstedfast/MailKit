@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
+using System.Diagnostics;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
-using MailKit.Net.Imap;
 using MailKit;
+using MailKit.Net.Imap;
 
 namespace ImapClientDemo
 {
@@ -49,6 +51,8 @@ namespace ImapClientDemo
 
 		void UpdateFolderNode (IMailFolder folder)
 		{
+			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
 			var node = map[folder];
 
 			if (folder.Unread > 0) {
@@ -65,6 +69,8 @@ namespace ImapClientDemo
 
 		TreeNode CreateFolderNode (IMailFolder folder)
 		{
+			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
 			var node = new TreeNode (folder.Name) { Tag = folder, ToolTipText = folder.FullName };
 
 			node.NodeFont = new Font (Font, FontStyle.Regular);
@@ -97,9 +103,8 @@ namespace ImapClientDemo
 		async Task LoadSubfoldersAsync (IMailFolder folder, IList<IMailFolder> subfolders)
 		{
 			TreeNodeCollection nodes;
-			TreeNode node;
 
-			if (map.TryGetValue (folder, out node)) {
+			if (map.TryGetValue (folder, out var node)) {
 				// removes the dummy "Loading..." folder
 				nodes = node.Nodes;
 				nodes.Clear ();
@@ -203,10 +208,7 @@ namespace ImapClientDemo
 
 		protected override void OnAfterSelect (TreeViewEventArgs e)
 		{
-			var handler = FolderSelected;
-
-			if (handler != null)
-				handler (this, new FolderSelectedEventArgs ((IMailFolder) e.Node.Tag));
+			FolderSelected?.Invoke (this, new FolderSelectedEventArgs ((IMailFolder) e.Node.Tag));
 
 			base.OnAfterSelect (e);
 		}

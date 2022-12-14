@@ -10,6 +10,7 @@
     <RootNamespace>ImapClientDemo</RootNamespace>
     <AssemblyName>ImapClientDemo</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>8</LangVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -50,6 +51,7 @@
     <PackageReference Include="MailKit" Version="3.4.3" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomTaskScheduler.cs" />
     <Compile Include="FolderSelectedEventArgs.cs" />
     <Compile Include="FolderTreeView.cs">
       <SubType>Component</SubType>

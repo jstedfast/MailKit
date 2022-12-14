@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net;
-using System.Linq;
 using System.Threading;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,12 +12,13 @@ namespace ImapClientDemo
 {
 	static class Program
 	{
-		public static readonly ImapClient Client = new ImapClient (new ProtocolLogger ("imap.txt"));
+		public static SynchronizationContext GuiContext { get; private set; }
+		public static ImapClient Client { get; private set; }
 		public static ICredentials Credentials;
 		public static MainWindow MainWindow;
 
-		static TaskScheduler GuiTaskScheduler;
-		static Task CurrentTask = Task.FromResult (true);
+		static CustomTaskScheduler GuiTaskScheduler;
+		static Task CurrentTask;
 
 		/// <summary>
 		/// The main entry point for the application.
@@ -30,10 +29,16 @@ namespace ImapClientDemo
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
 
+			Client = new ImapClient (new ProtocolLogger ("imap.txt"));
 			Client.Disconnected += OnClientDisconnected;
 
 			MainWindow = new MainWindow ();
-			
+
+			// Note: SynchronizationContext.Current will be null *until* a Windows.Forms control is instantiated.
+			GuiContext = SynchronizationContext.Current;
+			GuiTaskScheduler = new CustomTaskScheduler (GuiContext);
+			CurrentTask = Task.CompletedTask;
+
 			Application.Run (new LoginWindow ());
 		}
 
@@ -62,26 +67,27 @@ namespace ImapClientDemo
 
 		public static void Queue (Func<Task, Task> action)
 		{
-			if (GuiTaskScheduler == null)
-				GuiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
-
 			CurrentTask = CurrentTask.ContinueWith (action, GuiTaskScheduler);
 		}
 
 		public static void Queue (Func<Task, object, Task> action, object state)
 		{
-			if (GuiTaskScheduler == null)
-				GuiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext ();
-
 			CurrentTask = CurrentTask.ContinueWith (action, state, GuiTaskScheduler);
 		}
 
-		static async void OnClientDisconnected (object sender, DisconnectedEventArgs e)
+		static void OnClientDisconnected (object sender, DisconnectedEventArgs e)
 		{
 			if (e.IsRequested)
 				return;
 
-			await ReconnectAsync (e.Host, e.Port, e.Options);
+			Queue (ReconnectAsync, e);
+		}
+
+		static Task ReconnectAsync (Task task, object state)
+		{
+			var e = (DisconnectedEventArgs) state;
+
+			return ReconnectAsync (e.Host, e.Port, e.Options);
 		}
 
 		public static async Task ReconnectAsync (string host, int port, SecureSocketOptions options)
@@ -96,7 +102,7 @@ namespace ImapClientDemo
 			if (Client.Capabilities.HasFlag (ImapCapabilities.UTF8Accept))
 				await Client.EnableUTF8Async ();
 
-			CurrentTask = Task.FromResult (true);
+			CurrentTask = Task.CompletedTask;
 		}
 	}
 }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
+using System.Diagnostics;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 using MailKit;
@@ -23,6 +25,8 @@ namespace ImapClientDemo
 
 		void UpdateMessageNode (TreeNode node)
 		{
+			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
 			var info = (MessageInfo) node.Tag;
 			FontStyle style;
 
@@ -38,6 +42,8 @@ namespace ImapClientDemo
 
 		void AddMessageSummaries (IEnumerable<IMessageSummary> summaries)
 		{
+			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
 			foreach (var message in summaries) {
 				var info = new MessageInfo (message);
 				var node = new TreeNode (message.Envelope.Subject) { Tag = info };
@@ -49,6 +55,8 @@ namespace ImapClientDemo
 
 		async Task LoadMessagesAsync (Task task)
 		{
+			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
 			await task;
 
 			messages.Clear ();
@@ -69,6 +77,8 @@ namespace ImapClientDemo
 
 		public void OpenFolder (IMailFolder folder)
 		{
+			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
 			if (this.folder == folder)
 				return;
 
@@ -86,8 +96,12 @@ namespace ImapClientDemo
 			Program.Queue (LoadMessagesAsync);
 		}
 
-		void MessageFlagsChanged (object sender, MessageFlagsChangedEventArgs e)
+		void MessageFlagsChangedInGuiThread (object state)
 		{
+			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
+			var e = (MessageFlagsChangedEventArgs) state;
+
 			if (e.Index < messages.Count) {
 				var info = messages[e.Index];
 				var node = map[info];
@@ -98,8 +112,18 @@ namespace ImapClientDemo
 			}
 		}
 
-		void MessageExpunged (object sender, MessageEventArgs e)
+		void MessageFlagsChanged (object sender, MessageFlagsChangedEventArgs e)
 		{
+			// This event is raised by the ImapFolder and might be running in another thread. Defer this back to the GUI thread.
+			Program.GuiContext.Send (MessageFlagsChangedInGuiThread, e);
+		}
+
+		void MessageExpungedInGuiThread (object state)
+		{
+			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
+			var e = (MessageEventArgs) state;
+
 			if (e.Index < messages.Count) {
 				var info = messages[e.Index];
 				var node = map[info];
@@ -108,6 +132,12 @@ namespace ImapClientDemo
 				map.Remove (info);
 				node.Remove ();
 			}
+		}
+
+		void MessageExpunged (object sender, MessageEventArgs e)
+		{
+			// This event is raised by the ImapFolder and might be running in another thread. Defer this back to the GUI thread.
+			Program.GuiContext.Send (MessageExpungedInGuiThread, e);
 		}
 
 		async Task UpdateMessageListAsync (Task task)
