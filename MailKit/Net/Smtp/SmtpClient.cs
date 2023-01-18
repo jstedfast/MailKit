@@ -100,6 +100,8 @@ namespace MailKit.Net.Smtp {
 				var idn = new IdnMapping ();
 
 				if (!string.IsNullOrEmpty (hostName)) {
+					hostName = hostName.Replace ('_', '-');
+
 					try {
 						hostName = idn.GetAscii (hostName);
 					} catch (ArgumentException) {
