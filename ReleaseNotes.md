@@ -1,5 +1,18 @@
 # Release Notes
 
+### MailKit 3.5.0 (2023-01-27)
+
+* Fixed bitmasking logic in SmtpClient.cs for deciding whether to use the BDAT command.
+* Fixed HttpProxyClient to call GetConnectCommand() *before* connecting a socket to prevent memory leaks when
+  connecting fails.
+* Improved the IMAP BODYSTRUCTURE parser to better handle broken responses.
+* Fixed bug in Envelope.Parse/TryParse when given `(NIL NIL "" "localhost")`
+  (issue [#1471](https://github.com/jstedfast/MailKit/issues/1471))
+* Fixed SMTP client logic to calculate the needed bytes before converting commands into into the output buffer.
+  (issue [#1498](https://github.com/jstedfast/MailKit/issues/1498))
+* Fixed SmtpClient to replace _'s with -'s in the default LocalDomain string (used in HELO/EHLO commands).
+  (issue [#1501](https://github.com/jstedfast/MailKit/issues/1501))
+
 ### MailKit 3.4.3 (2022-11-25)
 
 * Fixed potential memory leaks in Pop3Client.

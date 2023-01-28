@@ -3484,7 +3484,7 @@ namespace UnitTests.Net.Pop3 {
 							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
-							using (var md5 = new MD5CryptoServiceProvider ()) {
+							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
@@ -3505,7 +3505,7 @@ namespace UnitTests.Net.Pop3 {
 							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
-							using (var md5 = new MD5CryptoServiceProvider ()) {
+							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
@@ -3528,7 +3528,7 @@ namespace UnitTests.Net.Pop3 {
 							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
-							using (var md5 = new MD5CryptoServiceProvider ()) {
+							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
@@ -3730,7 +3730,7 @@ namespace UnitTests.Net.Pop3 {
 						attachment.Content.DecodeTo (jpeg);
 						jpeg.Position = 0;
 
-						using (var md5 = new MD5CryptoServiceProvider ()) {
+						using (var md5 = MD5.Create ()) {
 							var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
 							Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
@@ -3750,7 +3750,7 @@ namespace UnitTests.Net.Pop3 {
 							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
-							using (var md5 = new MD5CryptoServiceProvider ()) {
+							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
@@ -3773,7 +3773,7 @@ namespace UnitTests.Net.Pop3 {
 							attachment.Content.DecodeTo (jpeg);
 							jpeg.Position = 0;
 
-							using (var md5 = new MD5CryptoServiceProvider ()) {
+							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
 								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
