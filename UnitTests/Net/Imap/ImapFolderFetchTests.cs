@@ -793,7 +793,7 @@ namespace UnitTests.Net.Imap {
 						attachment.Content.DecodeTo (jpeg);
 						jpeg.Position = 0;
 
-						using (var md5 = new MD5CryptoServiceProvider ()) {
+						using (var md5 = MD5.Create ()) {
 							var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
 							Assert.AreEqual ("167a46aa81e881da2ea8a840727384d3", md5sum, "MD5 checksums do not match.");
@@ -870,7 +870,7 @@ namespace UnitTests.Net.Imap {
 						attachment.Content.DecodeTo (jpeg);
 						jpeg.Position = 0;
 
-						using (var md5 = new MD5CryptoServiceProvider ()) {
+						using (var md5 = MD5.Create ()) {
 							var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
 							Assert.AreEqual ("167a46aa81e881da2ea8a840727384d3", md5sum, "MD5 checksums do not match.");
