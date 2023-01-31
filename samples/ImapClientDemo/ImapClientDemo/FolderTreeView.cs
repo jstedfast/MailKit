@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -19,6 +19,8 @@ namespace ImapClientDemo
 
 		public FolderTreeView ()
 		{
+			FullRowSelect = true;
+
 			ImageList = new ImageList ();
 			ImageList.Images.Add ("folder", GetImageResource ("folder.png"));
 			ImageList.Images.Add ("inbox", GetImageResource ("inbox.png"));
@@ -37,9 +39,9 @@ namespace ImapClientDemo
 			return Image.FromStream (typeof (FolderTreeView).Assembly.GetManifestResourceStream ("ImapClientDemo.Resources." + name));
 		}
 
-		static bool CheckFolderForChildren (IMailFolder folder)
+		static bool CheckFolderForChildren (ClientConnection<ImapClient> connection, IMailFolder folder)
 		{
-			if (Program.Client.Capabilities.HasFlag (ImapCapabilities.Children)) {
+			if (connection.Client.Capabilities.HasFlag (ImapCapabilities.Children)) {
 				if (folder.Attributes.HasFlag (FolderAttributes.HasChildren))
 					return true;
 			} else if (!folder.Attributes.HasFlag (FolderAttributes.NoInferiors)) {
@@ -67,7 +69,7 @@ namespace ImapClientDemo
 				node.SelectedImageKey = node.ImageKey = folder.Count > 0 ? "trash-full" : "trash-empty";
 		}
 
-		TreeNode CreateFolderNode (IMailFolder folder)
+		TreeNode CreateFolderNode (ClientConnection<ImapClient> connection, IMailFolder folder)
 		{
 			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
 
@@ -75,7 +77,7 @@ namespace ImapClientDemo
 
 			node.NodeFont = new Font (Font, FontStyle.Regular);
 
-			if (folder == Program.Client.Inbox)
+			if (folder == connection.Client.Inbox)
 				node.SelectedImageKey = node.ImageKey = "inbox";
 			else if (folder.Attributes.HasFlag (FolderAttributes.Archive))
 				node.SelectedImageKey = node.ImageKey = "archive";
@@ -94,13 +96,13 @@ namespace ImapClientDemo
 			else
 				node.SelectedImageKey = node.ImageKey = "folder";
 
-			if (CheckFolderForChildren (folder))
+			if (CheckFolderForChildren (connection, folder))
 				node.Nodes.Add ("Loading...");
 
 			return node;
 		}
 
-		async Task LoadSubfoldersAsync (IMailFolder folder, IList<IMailFolder> subfolders)
+		void LoadSubfolders (ClientConnection<ImapClient> connection, IMailFolder folder, IList<IMailFolder> subfolders)
 		{
 			TreeNodeCollection nodes;
 
@@ -113,78 +115,157 @@ namespace ImapClientDemo
 			}
 
 			foreach (var subfolder in subfolders) {
-				node = CreateFolderNode (subfolder);
+				node = CreateFolderNode (connection, subfolder);
 				map[subfolder] = node;
 				nodes.Add (node);
 
-				subfolder.MessageFlagsChanged += UpdateUnreadCount;
-				subfolder.CountChanged += UpdateUnreadCount;
+				subfolder.MessageFlagsChanged += OnMessageFlagsChanged;
+				subfolder.CountChanged += OnFolderCountChanged;
 
 				if (!subfolder.Attributes.HasFlag (FolderAttributes.NonExistent) && !subfolder.Attributes.HasFlag (FolderAttributes.NoSelect)) {
-					await subfolder.StatusAsync (StatusItems.Unread);
-					UpdateFolderNode (subfolder);
+					if (connection.Client.Capabilities.HasFlag (ImapCapabilities.ListStatus)) {
+						// Note: If the IMAP server supports LIST-STATUS, then we obtained the STATUS information for each subfolder already.
+						UpdateFolderNode (subfolder);
+					} else {
+						// ... If not, then we will queue a STATUS command ourselves.
+						//
+						// Note: Technically, ImapFolder.GetSubfolders(StatusItems, bool, CancellationToken) would send a STATUS command for us
+						// for each subfolder if the IMAP server doesn't support LIST-STATUS, but I'm doing things this way so that we can display
+						// a list of folders sooner and then asynchronously update each folder with an unread count as that information becomes
+						// available.
+						QueueUpdateUnreadCount (subfolder);
+					}
 				}
 			}
 		}
 
-		class FolderComparer : IComparer<IMailFolder>
+		class LoadSubfoldersCommand : ClientCommand<ImapClient>
 		{
-			public int Compare (IMailFolder x, IMailFolder y)
+			List<IMailFolder> subfolders;
+
+			protected LoadSubfoldersCommand (ClientConnection<ImapClient> connection, FolderTreeView treeView) : base (connection)
 			{
-				return string.Compare (x.Name, y.Name, StringComparison.CurrentCulture);
+				TreeView = treeView;
+			}
+
+			public LoadSubfoldersCommand (ClientConnection<ImapClient> connection, ImapFolder folder, FolderTreeView treeView) : this (connection, treeView)
+			{
+				Folder = folder;
+			}
+
+			protected FolderTreeView TreeView {
+				get; private set;
+			}
+
+			protected IMailFolder Folder {
+				get; set;
+			}
+
+			public override void Run (CancellationToken cancellationToken)
+			{
+				// Note: If the IMAP server supports LIST-STATUS, then we'll get the status of the subfolders as we get the list,
+				// otherwise, we'll queue a StatusCommand for each subfolder in LoadSubfolders().
+				if (Connection.Client.Capabilities.HasFlag (ImapCapabilities.ListStatus))
+					subfolders = Folder.GetSubfolders (StatusItems.Unread, false, cancellationToken).ToList ();
+				else
+					subfolders = Folder.GetSubfolders (false, cancellationToken).ToList ();
+
+				subfolders.Sort (FolderNameComparer.Default);
+
+				// Proxy the PostProcess() method call to the GUI thread.
+				Program.RunOnMainThread (TreeView, PostProcess);
+			}
+
+			protected virtual void PostProcess ()
+			{
+				TreeView.LoadSubfolders (Connection, Folder, subfolders);
 			}
 		}
 
-		async Task LoadSubfoldersAsync (IMailFolder folder)
+		class LoadRootFoldersCommand : LoadSubfoldersCommand
 		{
-			var subfolders = await folder.GetSubfoldersAsync ();
-			var sorted = new List<IMailFolder> (subfolders);
-			
-			sorted.Sort (new FolderComparer ());
+			public LoadRootFoldersCommand (ClientConnection<ImapClient> connection, FolderTreeView treeView) : base (connection, treeView)
+			{
+			}
 
-			await LoadSubfoldersAsync (folder, sorted);
+			public override void Run (CancellationToken cancellationToken)
+			{
+				Folder = Connection.Client.GetFolder (Connection.Client.PersonalNamespaces[0]);
+
+				base.Run (cancellationToken);
+			}
+
+			protected override void PostProcess ()
+			{
+				TreeView.PathSeparator = Folder.DirectorySeparator.ToString ();
+				base.PostProcess ();
+			}
 		}
 
-		public Task LoadFoldersAsync ()
+		class StatusCommand : ClientCommand<ImapClient>
 		{
-			var personal = Program.Client.GetFolder (Program.Client.PersonalNamespaces[0]);
+			readonly FolderTreeView treeView;
+			readonly IMailFolder folder;
 
-			PathSeparator = personal.DirectorySeparator.ToString ();
+			public StatusCommand (ClientConnection<ImapClient> connection, IMailFolder folder, FolderTreeView treeView) : base (connection)
+			{
+				this.folder = folder;
+				this.treeView = treeView;
+			}
 
-			return LoadSubfoldersAsync (personal);
+			public override void Run (CancellationToken cancellationToken)
+			{
+				if (!folder.IsOpen)
+				folder.Status (StatusItems.Unread, cancellationToken);
+
+				// Proxy the PostProcess() method call to the GUI thread.
+				Program.RunOnMainThread (treeView, PostProcess);
+			}
+
+			void PostProcess ()
+			{
+				treeView.UpdateFolderNode (folder);
+			}
 		}
 
-		async Task UpdateUnreadCountAsync (Task task, object state)
+		public void LoadFolders ()
 		{
-			var folder = (IMailFolder) state;
-
-			await task;
-
-			await folder.StatusAsync (StatusItems.Unread);
-			UpdateFolderNode (folder);
+			var command = new LoadRootFoldersCommand (Program.ImapClientConnection, this);
+			Program.ImapCommandPipeline.Enqueue (command);
 		}
 
-		void UpdateUnreadCount (object sender, EventArgs e)
+		void QueueUpdateUnreadCount (IMailFolder folder)
 		{
-			Program.Queue (UpdateUnreadCountAsync, sender);
+			if (!folder.IsOpen) {
+				var command = new StatusCommand (Program.ImapClientConnection, folder, this);
+				Program.ImapCommandPipeline.Enqueue (command);
+			} else {
+				Program.RunOnMainThread (this, () => UpdateFolderNode (folder));
+			}
 		}
 
-		async Task ExpandFolderAsync (Task task, object state)
+		void OnFolderCountChanged (object sender, EventArgs e)
 		{
-			var folder = (IMailFolder) state;
+			var folder = (IMailFolder) sender;
 
-			await task;
+			QueueUpdateUnreadCount (folder);
+		}
 
-			await LoadSubfoldersAsync (folder);
+		void OnMessageFlagsChanged (object sender, MessageFlagsChangedEventArgs e)
+		{
+			var folder = (IMailFolder) sender;
+
+			QueueUpdateUnreadCount (folder);
 		}
 
 		protected override void OnBeforeExpand (TreeViewCancelEventArgs e)
 		{
 			if (e.Node.Nodes.Count == 1 && e.Node.Nodes[0].Tag == null) {
 				// this folder has never been expanded before...
-				var folder = e.Node.Tag;
+				var folder = (ImapFolder) e.Node.Tag;
 
-				Program.Queue (ExpandFolderAsync, folder);
+				var command = new LoadSubfoldersCommand (Program.ImapClientConnection, folder, this);
+				Program.ImapCommandPipeline.Enqueue (command);
 			}
 
 			base.OnBeforeExpand (e);

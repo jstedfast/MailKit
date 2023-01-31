@@ -3,24 +3,27 @@ using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
 using MailKit;
+using MailKit.Net.Imap;
 
 namespace ImapClientDemo
 {
 	[ToolboxItem (true)]
 	class MessageList : TreeView
 	{
-		readonly FetchRequest request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.Flags | MessageSummaryItems.BodyStructure);
+		static readonly FetchRequest request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.Flags | MessageSummaryItems.BodyStructure);
+		const int BatchSize = 512;
+
 		readonly Dictionary<MessageInfo, TreeNode> map = new Dictionary<MessageInfo, TreeNode> ();
 		readonly List<MessageInfo> messages = new List<MessageInfo> ();
 		IMailFolder folder;
 
 		public MessageList ()
 		{
+			FullRowSelect = true;
 		}
 
 		void UpdateMessageNode (TreeNode node)
@@ -40,60 +43,85 @@ namespace ImapClientDemo
 			node.NodeFont = new Font (Font, style);
 		}
 
-		void AddMessageSummaries (IEnumerable<IMessageSummary> summaries)
+		void AddMessageSummaries (IMailFolder folder, IEnumerable<IMessageSummary> summaries)
 		{
 			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
+
+			if (folder != this.folder)
+				return;
 
 			foreach (var message in summaries) {
 				var info = new MessageInfo (message);
 				var node = new TreeNode (message.Envelope.Subject) { Tag = info };
 				UpdateMessageNode (node);
+				messages.Add (info);
 				Nodes.Add (node);
 				map[info] = node;
 			}
+
+			if (messages.Count < folder.Count)
+				FetchNewMessages (folder);
 		}
 
-		async Task LoadMessagesAsync (Task task)
+		void OnFolderOpened (IMailFolder folder, IList<IMessageSummary> summaries)
 		{
-			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
-
-			await task;
-
-			messages.Clear ();
-			Nodes.Clear ();
-			map.Clear ();
-
-			if (!folder.IsOpen)
-				await folder.OpenAsync (FolderAccess.ReadOnly);
-
-			if (folder.Count > 0) {
-				var summaries = await folder.FetchAsync (0, -1, request);
-
-				AddMessageSummaries (summaries);
+			if (this.folder != null) {
+				this.folder.MessageFlagsChanged -= OnMessageFlagsChanged;
+				this.folder.MessageExpunged -= OnMessageExpunged;
+				this.folder.CountChanged -= OnCountChanged;
 			}
 
-			folder.CountChanged += CountChanged;
+			folder.MessageFlagsChanged += OnMessageFlagsChanged;
+			folder.MessageExpunged += OnMessageExpunged;
+
+			this.folder = folder;
+
+			lock (messages) {
+				messages.Clear ();
+				Nodes.Clear ();
+				map.Clear ();
+
+				if (summaries != null)
+					AddMessageSummaries (folder, summaries);
+			}
+
+			folder.CountChanged += OnCountChanged;
+		}
+
+		class OpenFolderCommand : ClientCommand<ImapClient>
+		{
+			readonly MessageList messageList;
+			readonly IMailFolder folder;
+			IList<IMessageSummary> summaries;
+
+			public OpenFolderCommand (ClientConnection<ImapClient> connection, IMailFolder folder, MessageList messageList) : base (connection)
+			{
+				this.messageList = messageList;
+				this.folder = folder;
+			}
+
+			public override void Run (CancellationToken cancellationToken)
+			{
+				if (!folder.IsOpen)
+					folder.Open (FolderAccess.ReadWrite, cancellationToken);
+
+				if (folder.Count > 0)
+					summaries = folder.Fetch (0, BatchSize, request, cancellationToken);
+
+				// Proxy the PostProcess() method call to the GUI thread.
+				Program.RunOnMainThread (messageList, PostProcess);
+			}
+
+			void PostProcess ()
+			{
+				messageList.OnFolderOpened (folder, summaries);
+			}
 		}
 
 		public void OpenFolder (IMailFolder folder)
 		{
-			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
-
-			if (this.folder == folder)
-				return;
-
-			if (this.folder != null) {
-				this.folder.MessageFlagsChanged -= MessageFlagsChanged;
-				this.folder.MessageExpunged -= MessageExpunged;
-				this.folder.CountChanged -= CountChanged;
-			}
-
-			folder.MessageFlagsChanged += MessageFlagsChanged;
-			folder.MessageExpunged += MessageExpunged;
-
-			this.folder = folder;
-			
-			Program.Queue (LoadMessagesAsync);
+			var command = new OpenFolderCommand (Program.ImapClientConnection, folder, this);
+			Program.ImapCommandPipeline.Enqueue (command);
 		}
 
 		void MessageFlagsChangedInGuiThread (object state)
@@ -102,19 +130,21 @@ namespace ImapClientDemo
 
 			var e = (MessageFlagsChangedEventArgs) state;
 
-			if (e.Index < messages.Count) {
-				var info = messages[e.Index];
-				var node = map[info];
+			lock (messages) {
+				if (e.Index < messages.Count) {
+					var info = messages[e.Index];
+					var node = map[info];
 
-				info.Flags = e.Flags;
+					info.Flags = e.Flags;
 
-				UpdateMessageNode (node);
+					UpdateMessageNode (node);
+				}
 			}
 		}
 
-		void MessageFlagsChanged (object sender, MessageFlagsChangedEventArgs e)
+		void OnMessageFlagsChanged (object sender, MessageFlagsChangedEventArgs e)
 		{
-			// This event is raised by the ImapFolder and might be running in another thread. Defer this back to the GUI thread.
+			// This event is raised by the ImapFolder and will be running in the IMAP Command Pipeline thread. Defer this back to the GUI thread.
 			Program.GuiContext.Send (MessageFlagsChangedInGuiThread, e);
 		}
 
@@ -124,38 +154,74 @@ namespace ImapClientDemo
 
 			var e = (MessageEventArgs) state;
 
-			if (e.Index < messages.Count) {
-				var info = messages[e.Index];
-				var node = map[info];
+			lock (messages) {
+				if (e.Index < messages.Count) {
+					var info = messages[e.Index];
+					var node = map[info];
 
-				messages.RemoveAt (e.Index);
-				map.Remove (info);
-				node.Remove ();
+					messages.RemoveAt (e.Index);
+					map.Remove (info);
+					node.Remove ();
+				}
 			}
 		}
 
-		void MessageExpunged (object sender, MessageEventArgs e)
+		void OnMessageExpunged (object sender, MessageEventArgs e)
 		{
-			// This event is raised by the ImapFolder and might be running in another thread. Defer this back to the GUI thread.
+			// This event is raised by the ImapFolder and will be running in the IMAP Command Pipeline thread. Defer this back to the GUI thread.
 			Program.GuiContext.Send (MessageExpungedInGuiThread, e);
 		}
 
-		async Task UpdateMessageListAsync (Task task)
+		class FetchNewMessagesCommand : ClientCommand<ImapClient>
 		{
-			await task;
+			readonly MessageList messageList;
+			readonly IMailFolder folder;
+			IList<IMessageSummary> summaries;
 
-			if (folder.Count > messages.Count) {
-				var summaries = await folder.FetchAsync (messages.Count, -1, request);
+			public FetchNewMessagesCommand (ClientConnection<ImapClient> connection, IMailFolder folder, MessageList messageList) : base (connection)
+			{
+				this.messageList = messageList;
+				this.folder = folder;
+			}
 
-				AddMessageSummaries (summaries);
+			public override void Run (CancellationToken cancellationToken)
+			{
+				if (!folder.IsOpen)
+					folder.Open (FolderAccess.ReadWrite, cancellationToken);
+
+				if (folder.Count > 0) {
+					int currentCount;
+
+					lock (messageList.messages) {
+						currentCount = messageList.messages.Count;
+					}
+
+					summaries = folder.Fetch (currentCount, currentCount + BatchSize, request, cancellationToken);
+
+					// Proxy the PostProcess() method call to the GUI thread.
+					Program.RunOnMainThread (messageList, PostProcess);
+				}
+			}
+
+			void PostProcess ()
+			{
+				lock (messageList.messages) {
+					messageList.AddMessageSummaries (folder, summaries);
+				}
 			}
 		}
 
-		void CountChanged (object sender, EventArgs e)
+		void FetchNewMessages (IMailFolder folder)
 		{
-			// Note: we can't call back into the ImapFolder in this event handler since another command is still processing,
-			// so queue it to run after our current command...
-			Program.Queue (UpdateMessageListAsync);
+			var command = new FetchNewMessagesCommand (Program.ImapClientConnection, folder, this);
+			Program.ImapCommandPipeline.Enqueue (command);
+		}
+
+		void OnCountChanged (object sender, EventArgs e)
+		{
+			var folder = (IMailFolder) sender;
+
+			FetchNewMessages (folder);
 		}
 
 		public event EventHandler<MessageSelectedEventArgs> MessageSelected;

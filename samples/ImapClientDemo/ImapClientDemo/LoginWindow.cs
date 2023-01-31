@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading;
 using System.Windows.Forms;
 
 using MailKit.Security;
@@ -19,8 +18,17 @@ namespace ImapClientDemo
 			serverCombo.TextChanged += ServerChanged;
 			portCombo.TextChanged += PortChanged;
 			signInButton.Click += SignInClicked;
+		}
 
-			serverCombo.Text = "imap.gmail.com";
+		protected override void OnShown (EventArgs e)
+		{
+			serverCombo.Text = Program.ImapClientConnection.Host;
+			portCombo.Text = Program.ImapClientConnection.Port.ToString ();
+			sslCheckbox.Checked = Program.ImapClientConnection.SslOptions == SecureSocketOptions.SslOnConnect;
+			loginTextBox.Text = Program.ImapClientConnection.Credentials.UserName;
+			passwordTextBox.Text = Program.ImapClientConnection.Credentials.Password;
+
+			base.OnShown (e);
 		}
 
 		void CheckCanLogin ()
@@ -72,38 +80,28 @@ namespace ImapClientDemo
 			CheckCanLogin ();
 		}
 
-		async void SignInClicked (object sender, EventArgs e)
+		void SignInClicked (object sender, EventArgs e)
 		{
-			var options = SecureSocketOptions.StartTlsWhenAvailable;
+			var sslOptions = SecureSocketOptions.StartTlsWhenAvailable;
 			var host = serverCombo.Text.Trim ();
 			var passwd = passwordTextBox.Text;
 			var user = loginTextBox.Text;
-			int port;
+			int port = 0;
 
 			if (!string.IsNullOrEmpty (portCombo.Text))
 				port = int.Parse (portCombo.Text);
-			else
-				port = 0; // default
 
-			Program.Credentials = new NetworkCredential (user, passwd);
+			var credentials = new NetworkCredential (user, passwd);
 
 			if (sslCheckbox.Checked)
-				options = SecureSocketOptions.SslOnConnect;
+				sslOptions = SecureSocketOptions.SslOnConnect;
 
-			try {
-				await Program.ReconnectAsync (host, port, options);
-			} catch {
-				MessageBox.Show ("Failed to Authenticate to server. If you are using GMail, then you probably " +
-					"need to go into your GMail settings to enable \"less secure apps\" in order " +
-					"to get this demo to work.\n\n" +
-					"For a real Mail application, you'll want to add support for obtaining the " +
-					"user's OAuth2 credentials to prevent the need for user's to enable this, but " +
-					"that is beyond the scope of this demo.",
-					"Authentication Error");
-				return;
-			}
+			Program.ImapClientConnection.Host = host;
+			Program.ImapClientConnection.Port = port;
+			Program.ImapClientConnection.SslOptions = sslOptions;
+			Program.ImapClientConnection.Credentials = credentials;
 
-			Program.Queue (Program.MainWindow.LoadContentAsync);
+			Program.MainWindow.LoadContent ();
 
 			Program.MainWindow.Visible = true;
 			Visible = false;
