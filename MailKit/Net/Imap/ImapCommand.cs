@@ -938,7 +938,9 @@ namespace MailKit.Net.Imap {
 						break;
 					}
 
-					Folder?.FlushQueuedEvents ();
+					var folder = Folder ?? Engine.Selected;
+
+					folder?.FlushQueuedEvents ();
 				} else if (token.Type == ImapTokenType.OpenBracket) {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
