@@ -928,19 +928,16 @@ namespace MailKit.Net.Imap {
 					if (token.Type == ImapTokenType.OpenBracket) {
 						var code = await Engine.ParseResponseCodeAsync (true, doAsync, CancellationToken).ConfigureAwait (false);
 						RespCodes.Add (code);
-						break;
-					}
-
-					if (token.Type != ImapTokenType.Eoln) {
+					} else if (token.Type != ImapTokenType.Eoln) {
 						// consume the rest of the line...
 						var line = (await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false)).TrimEnd ();
 						ResponseText = token.Value.ToString () + line;
-						break;
 					}
 
 					var folder = Folder ?? Engine.Selected;
 
 					folder?.FlushQueuedEvents ();
+					break;
 				} else if (token.Type == ImapTokenType.OpenBracket) {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
