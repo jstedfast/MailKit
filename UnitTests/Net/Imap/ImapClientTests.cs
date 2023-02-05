@@ -1460,14 +1460,20 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreatePreAuthCapabilityGreetingCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "common.preauth-capability-greeting.txt"),
+				new ImapReplayCommand ("A00000000 LIST \"\" \"\"\r\n", "common.list-namespace.txt"),
+				new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt")
+			};
+		}
+
 		[Test]
 		public void TestPreAuthCapabilityGreeting ()
 		{
 			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.preauth-capability-greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LIST \"\" \"\"\r\n", "common.list-namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
+			var commands = CreatePreAuthCapabilityGreetingCommands ();
 
 			using (var client = new ImapClient ()) {
 				int authenticated = 0;
@@ -1502,10 +1508,7 @@ namespace UnitTests.Net.Imap {
 		public async Task TestPreAuthCapabilityGreetingAsync ()
 		{
 			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.preauth-capability-greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LIST \"\" \"\"\r\n", "common.list-namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
+			var commands = CreatePreAuthCapabilityGreetingCommands ();
 
 			using (var client = new ImapClient ()) {
 				int authenticated = 0;
@@ -1536,16 +1539,22 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateGMailWebAlertCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 LOGIN username password\r\n", "gmail.authenticate+webalert.txt")
+			};
+		}
+
 		[Test]
 		public void TestGMailWebAlert ()
 		{
 			const string webUri = "https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbsNd6RU3LIlgDfhmL9Y7ywYhtagFig_xfuSJCUHD9Eg3XqN8DKlDk3G8jmj2w5viIm5PDC3BS4SVy7iFMB6g1244cnQt1E60EdOTSEpnqDzL6FH2L-ReOAyZ3qkSXZQZs2pIfL2";
 			const string alert = "Please log in via your web browser: https://support.google.com/mail/accounts/answer/78754 (Failure)";
 
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", "gmail.authenticate+webalert.txt"));
+			var commands = CreateGMailWebAlertCommands ();
 
 			using (var client = new ImapClient ()) {
 				int webalerts = 0;
@@ -1592,10 +1601,7 @@ namespace UnitTests.Net.Imap {
 			const string webUri = "https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbsNd6RU3LIlgDfhmL9Y7ywYhtagFig_xfuSJCUHD9Eg3XqN8DKlDk3G8jmj2w5viIm5PDC3BS4SVy7iFMB6g1244cnQt1E60EdOTSEpnqDzL6FH2L-ReOAyZ3qkSXZQZs2pIfL2";
 			const string alert = "Please log in via your web browser: https://support.google.com/mail/accounts/answer/78754 (Failure)";
 
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", "gmail.authenticate+webalert.txt"));
+			var commands = CreateGMailWebAlertCommands ();
 
 			using (var client = new ImapClient ()) {
 				int webalerts = 0;
@@ -1636,14 +1642,21 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateUnicodeRespTextCommands (out string respText)
+		{
+			respText = "╟ы╩╣╙├╩┌╚и┬ы╡╟┬╝бг╧ъ╟щ╟ы┐┤";
+
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000001 NO " + respText + "\r\n"))
+			};
+		}
+
 		[Test]
 		public void TestUnicodeRespText ()
 		{
-			const string respText = "╟ы╩╣╙├╩┌╚и┬ы╡╟┬╝бг╧ъ╟щ╟ы┐┤";
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000001 NO " + respText + "\r\n")));
+			var commands = CreateUnicodeRespTextCommands (out var respText);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1670,11 +1683,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestUnicodeRespTextAsync ()
 		{
-			const string respText = "╟ы╩╣╙├╩┌╚и┬ы╡╟┬╝бг╧ъ╟щ╟ы┐┤";
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000001 NO " + respText + "\r\n")));
+			var commands = CreateUnicodeRespTextCommands (out var respText);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1698,16 +1707,23 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateInvalidUntaggedBadResponseCommands (out string alertText)
+		{
+			alertText = "Please enable IMAP access in your account settings first.";
+
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "common.capability-greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000000 OK [ALERT] " + alertText + "\r\n")),
+				new ImapReplayCommand ("A00000001 CAPABILITY\r\n", Encoding.UTF8.GetBytes ("A00000001 NO [ALERT] " + alertText + "\r\n")),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", Encoding.UTF8.GetBytes ("A00000002 NO [ALERT] " + alertText + "\r\n")),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", Encoding.UTF8.GetBytes ("* BAD [ALERT] " + alertText + "\r\nA00000003 NO [ALERT] " + alertText + "\r\n"))
+			};
+		}
+
 		[Test]
 		public void TestInvalidUntaggedBadResponse ()
 		{
-			const string alertText = "Please enable IMAP access in your account settings first.";
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.capability-greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000000 OK [ALERT] " + alertText + "\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", Encoding.UTF8.GetBytes ("A00000001 NO [ALERT] " + alertText + "\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", Encoding.UTF8.GetBytes ("A00000002 NO [ALERT] " + alertText + "\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", Encoding.UTF8.GetBytes ("* BAD [ALERT] " + alertText + "\r\nA00000003 NO [ALERT] " + alertText + "\r\n")));
+			var commands = CreateInvalidUntaggedBadResponseCommands (out var alertText);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1741,13 +1757,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestInvalidUntaggedBadResponseAsync ()
 		{
-			const string alertText = "Please enable IMAP access in your account settings first.";
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.capability-greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.UTF8.GetBytes ("A00000000 OK [ALERT] " + alertText + "\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", Encoding.UTF8.GetBytes ("A00000001 NO [ALERT] " + alertText + "\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", Encoding.UTF8.GetBytes ("A00000002 NO [ALERT] " + alertText + "\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", Encoding.UTF8.GetBytes ("* BAD [ALERT] " + alertText + "\r\nA00000003 NO [ALERT] " + alertText + "\r\n")));
+			var commands = CreateInvalidUntaggedBadResponseCommands (out var alertText);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1778,16 +1788,22 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateLoginCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 LOGIN \"Indiana \\\"Han Solo\\\" Jones\" \"p@ss\\\\word\"\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt")
+			};
+		}
+
 		[Test]
 		public void TestLogin ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN \"Indiana \\\"Han Solo\\\" Jones\" \"p@ss\\\\word\"\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateLoginCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1835,13 +1851,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestLoginAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN \"Indiana \\\"Han Solo\\\" Jones\" \"p@ss\\\\word\"\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateLoginCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1886,16 +1896,22 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateLoginSpecialCharacterCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 LOGIN username \"pass%word\"\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt")
+			};
+		}
+
 		[Test]
 		public void TestLoginSpecialCharacter ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username \"pass%word\"\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateLoginSpecialCharacterCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1943,13 +1959,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestLoginSpecialCharacterAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username \"pass%word\"\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateLoginSpecialCharacterCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1994,13 +2004,19 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateLoginDisabledCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+logindisabled.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", ImapReplayCommandResponse.NO)
+			};
+		}
+
 		[Test]
 		public void TestLoginDisabled ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+logindisabled.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", ImapReplayCommandResponse.NO));
+			var commands = CreateLoginDisabledCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2047,10 +2063,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestLoginDisabledAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+logindisabled.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", ImapReplayCommandResponse.NO));
+			var commands = CreateLoginDisabledCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2091,15 +2104,21 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateExchangeUserIsAuthenticatedButNotConnectedCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "exchange.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "exchange.capability-preauth.txt"),
+				new ImapReplayCommand ("A00000001 LOGIN \"user@domain.com\\\\mailbox\" password\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "exchange.capability-postauth.txt"),
+				new ImapReplayCommand ("A00000003 NAMESPACE\r\n", Encoding.ASCII.GetBytes ("A00000003 BAD User is authenticated but not connected.\r\n"))
+			};
+		}
+
 		[Test]
 		public void TestExchangeUserIsAuthenticatedButNotConnected ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "exchange.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "exchange.capability-preauth.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN \"user@domain.com\\\\mailbox\" password\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "exchange.capability-postauth.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 NAMESPACE\r\n", Encoding.ASCII.GetBytes ("A00000003 BAD User is authenticated but not connected.\r\n")));
+			var commands = CreateExchangeUserIsAuthenticatedButNotConnectedCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2134,12 +2153,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestExchangeUserIsAuthenticatedButNotConnectedAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "exchange.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "exchange.capability-preauth.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN \"user@domain.com\\\\mailbox\" password\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "exchange.capability-postauth.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 NAMESPACE\r\n", Encoding.ASCII.GetBytes ("A00000003 BAD User is authenticated but not connected.\r\n")));
+			var commands = CreateExchangeUserIsAuthenticatedButNotConnectedCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2171,22 +2185,28 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateAdvancedFeaturesCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"),
+				new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35+}\r\n1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"),
+				new ImapReplayCommand ("A00000007 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"),
+				new ImapReplayCommand ("A00000008 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt")
+			};
+		}
+
 		[Test]
 		public void TestAdvancedFeatures ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35+}\r\n1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
+			var commands = CreateAdvancedFeaturesCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2272,19 +2292,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestAdvancedFeaturesAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35+}\r\n1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt"));
+			var commands = CreateAdvancedFeaturesCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2367,22 +2375,28 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateSendingStringsAsLiteralsCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"),
+				new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35}\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("A00000006", "1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"),
+				new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt")
+			};
+		}
+
 		[Test]
 		public void TestSendingStringsAsLiterals ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35}\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000006", "1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+			var commands = CreateSendingStringsAsLiteralsCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2420,19 +2434,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestSendingStringsAsLiteralsAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35}\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000006", "1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+			var commands = CreateSendingStringsAsLiteralsCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2467,18 +2469,24 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateSaslAuthenticationCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt")
+			};
+		}
+
 		[Test]
 		public void TestSaslAuthentication ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateSaslAuthenticationCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2527,15 +2535,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestSaslAuthenticationAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateSaslAuthenticationCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2629,16 +2629,22 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateRedactLoginCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 LOGIN username \"pass%word\"\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt")
+			};
+		}
+
 		[Test]
 		public void TestRedactLogin ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username \"pass%word\"\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateRedactLoginCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new ImapClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -2690,13 +2696,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestRedactLoginAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LOGIN username \"pass%word\"\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateRedactLoginCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new ImapClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -2745,16 +2745,22 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateRedactAuthenticationCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt")
+			};
+		}
+
 		[Test]
 		public void TestRedactAuthentication ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateRedactAuthenticationCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new ImapClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -2795,13 +2801,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestRedactAuthenticationAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateRedactAuthenticationCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new ImapClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -2839,18 +2839,24 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateRedactSaslAuthenticationCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt")
+			};
+		}
+
 		[Test]
 		public void TestRedactSaslAuthentication ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateRedactSaslAuthenticationCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new ImapClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -2903,15 +2909,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestRedactSaslAuthenticationAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability+login.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE LOGIN\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("dXNlcm5hbWU=\r\n", ImapReplayCommandResponse.Plus));
-			commands.Add (new ImapReplayCommand ("A00000001", "cGFzc3dvcmQ=\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			var commands = CreateRedactSaslAuthenticationCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new ImapClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -2981,35 +2979,34 @@ namespace UnitTests.Net.Imap {
 
 		static List<ImapReplayCommand> CreateGetFoldersCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST (SUBSCRIBED) \"\" \"*\" RETURN (CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID))\r\n", "gmail.list-all.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-all-no-status.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 STATUS INBOX (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 STATUS \"[Gmail]/All Mail\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-all-mail.txt"));
-			commands.Add (new ImapReplayCommand ("A00000009 STATUS \"[Gmail]/Drafts\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-drafts.txt"));
-			commands.Add (new ImapReplayCommand ("A00000010 STATUS \"[Gmail]/Important\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-important.txt"));
-			commands.Add (new ImapReplayCommand ("A00000011 STATUS \"[Gmail]/Sent Mail\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-sent-mail.txt"));
-			commands.Add (new ImapReplayCommand ("A00000012 STATUS \"[Gmail]/Spam\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-spam.txt"));
-			commands.Add (new ImapReplayCommand ("A00000013 STATUS \"[Gmail]/Starred\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-starred.txt"));
-			commands.Add (new ImapReplayCommand ("A00000014 STATUS \"[Gmail]/Trash\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-trash.txt"));
-			commands.Add (new ImapReplayCommand ("A00000015 LSUB \"\" \"*\"\r\n", "gmail.lsub-all.txt"));
-			commands.Add (new ImapReplayCommand ("A00000016 STATUS INBOX (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000017 STATUS \"[Gmail]/All Mail\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-all-mail.txt"));
-			commands.Add (new ImapReplayCommand ("A00000018 STATUS \"[Gmail]/Drafts\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-drafts.txt"));
-			commands.Add (new ImapReplayCommand ("A00000019 STATUS \"[Gmail]/Important\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-important.txt"));
-			commands.Add (new ImapReplayCommand ("A00000020 STATUS \"[Gmail]/Sent Mail\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-sent-mail.txt"));
-			commands.Add (new ImapReplayCommand ("A00000021 STATUS \"[Gmail]/Spam\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-spam.txt"));
-			commands.Add (new ImapReplayCommand ("A00000022 STATUS \"[Gmail]/Starred\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-starred.txt"));
-			commands.Add (new ImapReplayCommand ("A00000023 STATUS \"[Gmail]/Trash\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-trash.txt"));
-			commands.Add (new ImapReplayCommand ("A00000024 LOGOUT\r\n", "gmail.logout.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST (SUBSCRIBED) \"\" \"*\" RETURN (CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID))\r\n", "gmail.list-all.txt"),
+				new ImapReplayCommand ("A00000006 LIST \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-all-no-status.txt"),
+				new ImapReplayCommand ("A00000007 STATUS INBOX (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-inbox.txt"),
+				new ImapReplayCommand ("A00000008 STATUS \"[Gmail]/All Mail\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-all-mail.txt"),
+				new ImapReplayCommand ("A00000009 STATUS \"[Gmail]/Drafts\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-drafts.txt"),
+				new ImapReplayCommand ("A00000010 STATUS \"[Gmail]/Important\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-important.txt"),
+				new ImapReplayCommand ("A00000011 STATUS \"[Gmail]/Sent Mail\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-sent-mail.txt"),
+				new ImapReplayCommand ("A00000012 STATUS \"[Gmail]/Spam\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-spam.txt"),
+				new ImapReplayCommand ("A00000013 STATUS \"[Gmail]/Starred\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-starred.txt"),
+				new ImapReplayCommand ("A00000014 STATUS \"[Gmail]/Trash\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-trash.txt"),
+				new ImapReplayCommand ("A00000015 LSUB \"\" \"*\"\r\n", "gmail.lsub-all.txt"),
+				new ImapReplayCommand ("A00000016 STATUS INBOX (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-inbox.txt"),
+				new ImapReplayCommand ("A00000017 STATUS \"[Gmail]/All Mail\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-all-mail.txt"),
+				new ImapReplayCommand ("A00000018 STATUS \"[Gmail]/Drafts\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-drafts.txt"),
+				new ImapReplayCommand ("A00000019 STATUS \"[Gmail]/Important\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-important.txt"),
+				new ImapReplayCommand ("A00000020 STATUS \"[Gmail]/Sent Mail\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-sent-mail.txt"),
+				new ImapReplayCommand ("A00000021 STATUS \"[Gmail]/Spam\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-spam.txt"),
+				new ImapReplayCommand ("A00000022 STATUS \"[Gmail]/Starred\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-starred.txt"),
+				new ImapReplayCommand ("A00000023 STATUS \"[Gmail]/Trash\" (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ SIZE MAILBOXID)\r\n", "gmail.status-trash.txt"),
+				new ImapReplayCommand ("A00000024 LOGOUT\r\n", "gmail.logout.txt")
+			};
 		}
 
 		[Test]
@@ -3228,18 +3225,24 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateGetQuotaNonexistantQuotaRootCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 GETQUOTAROOT INBOX\r\n", "common.getquota-no-root.txt"),
+				new ImapReplayCommand ("A00000006 LIST \"\" storage=0 RETURN (SUBSCRIBED CHILDREN)\r\n", ImapReplayCommandResponse.OK)
+			};
+		}
+
 		[Test]
 		public void TestGetQuotaNonexistantQuotaRoot ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 GETQUOTAROOT INBOX\r\n", "common.getquota-no-root.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" storage=0 RETURN (SUBSCRIBED CHILDREN)\r\n", ImapReplayCommandResponse.OK));
+			var commands = CreateGetQuotaNonexistantQuotaRootCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -3290,15 +3293,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestGetQuotaNonexistantQuotaRootAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 GETQUOTAROOT INBOX\r\n", "common.getquota-no-root.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" storage=0 RETURN (SUBSCRIBED CHILDREN)\r\n", ImapReplayCommandResponse.OK));
+			var commands = CreateGetQuotaNonexistantQuotaRootCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -3367,18 +3362,19 @@ namespace UnitTests.Net.Imap {
 
 		List<ImapReplayCommand> CreateDovecotCommands (out List<DateTimeOffset> internalDates, out List<MimeMessage> messages, out List<MessageFlags> flags)
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 ENABLE QRESYNC CONDSTORE\r\n", "dovecot.enable-qresync.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ))\r\n", "dovecot.list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 CREATE UnitTests.\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" UnitTests\r\n", "dovecot.list-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 CREATE UnitTests.Messages\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000009 LIST \"\" UnitTests.Messages\r\n", "dovecot.list-unittests-messages.txt"));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 ENABLE QRESYNC CONDSTORE\r\n", "dovecot.enable-qresync.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN HIGHESTMODSEQ))\r\n", "dovecot.list-personal.txt"),
+				new ImapReplayCommand ("A00000006 CREATE UnitTests.\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000007 LIST \"\" UnitTests\r\n", "dovecot.list-unittests.txt"),
+				new ImapReplayCommand ("A00000008 CREATE UnitTests.Messages\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000009 LIST \"\" UnitTests.Messages\r\n", "dovecot.list-unittests-messages.txt")
+			};
 
 			var command = new StringBuilder ("A00000010 APPEND UnitTests.Messages");
 			var now = DateTimeOffset.Now;
@@ -3491,11 +3487,7 @@ namespace UnitTests.Net.Imap {
 		{
 			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
 			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
-
-			var commands = CreateDovecotCommands (out internalDates, out messages, out flags);
+			var commands = CreateDovecotCommands (out var internalDates, out var messages, out var flags);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -4143,11 +4135,7 @@ namespace UnitTests.Net.Imap {
 		{
 			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
 			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<DateTimeOffset> internalDates;
-			List<MimeMessage> messages;
-			List<MessageFlags> flags;
-
-			var commands = CreateDovecotCommands (out internalDates, out messages, out flags);
+			var commands = CreateDovecotCommands (out var internalDates, out var messages, out var flags);
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -4775,17 +4763,18 @@ namespace UnitTests.Net.Imap {
 
 		static List<ImapReplayCommand> CreateGMailCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 CREATE UnitTests\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" UnitTests\r\n", "gmail.list-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SELECT UnitTests (CONDSTORE)\r\n", "gmail.select-unittests.txt"));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"),
+				new ImapReplayCommand ("A00000006 CREATE UnitTests\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000007 LIST \"\" UnitTests\r\n", "gmail.list-unittests.txt"),
+				new ImapReplayCommand ("A00000008 SELECT UnitTests (CONDSTORE)\r\n", "gmail.select-unittests.txt")
+			};
 
 			for (int i = 0; i < 50; i++) {
 				MimeMessage message;
@@ -5200,19 +5189,18 @@ namespace UnitTests.Net.Imap {
 
 		static List<ImapReplayCommand> CreateGetFolderCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" Level1/Level2/Level3 RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-level3.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 LIST \"\" Level1/Level2 RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-level2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" Level1 RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-level1.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" Level1/Level2/Level3 RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-level3.txt"),
+				new ImapReplayCommand ("A00000006 LIST \"\" Level1/Level2 RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-level2.txt"),
+				new ImapReplayCommand ("A00000007 LIST \"\" Level1 RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-level1.txt"),
+				new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt")
+			};
 		}
 
 		[Test]
@@ -5311,19 +5299,18 @@ namespace UnitTests.Net.Imap {
 
 		static List<ImapReplayCommand> CreateIdleCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 IDLE\r\n", "gmail.idle.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006", "DONE\r\n", "gmail.idle-done.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 IDLE\r\n", "gmail.idle.txt"),
+				new ImapReplayCommand ("A00000006", "DONE\r\n", "gmail.idle-done.txt"),
+				new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt")
+			};
 		}
 
 		[Test]
@@ -5440,24 +5427,22 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// TODO: test MessageNew w/ headers
 		static List<ImapReplayCommand> CreateNotifyCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting-preauth.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.notify-list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 EXAMINE Folder (CONDSTORE)\r\n", "dovecot.examine-folder.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 NOTIFY SET STATUS (PERSONAL (MailboxName SubscriptionChange)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ) MessageExpunge FlagChange)) (SUBTREE (INBOX Folder) (MessageNew MessageExpunge MailboxMetadataChange ServerMetadataChange))\r\n", "dovecot.notify.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 IDLE\r\n", "dovecot.notify-idle.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006", "DONE\r\n", "dovecot.notify-idle-done.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt"));
-
-			// TODO: test MessageNew w/ headers
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting-preauth.txt"),
+				new ImapReplayCommand ("A00000000 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000001 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000002 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.notify-list-personal.txt"),
+				new ImapReplayCommand ("A00000004 EXAMINE Folder (CONDSTORE)\r\n", "dovecot.examine-folder.txt"),
+				new ImapReplayCommand ("A00000005 NOTIFY SET STATUS (PERSONAL (MailboxName SubscriptionChange)) (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ) MessageExpunge FlagChange)) (SUBTREE (INBOX Folder) (MessageNew MessageExpunge MailboxMetadataChange ServerMetadataChange))\r\n", "dovecot.notify.txt"),
+				new ImapReplayCommand ("A00000006 IDLE\r\n", "dovecot.notify-idle.txt"),
+				new ImapReplayCommand ("A00000006", "DONE\r\n", "dovecot.notify-idle-done.txt"),
+				new ImapReplayCommand ("A00000007 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt")
+			};
 		}
 
 		[Test]
@@ -5862,22 +5847,21 @@ namespace UnitTests.Net.Imap {
 
 		static List<ImapReplayCommand> CreateCompressCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000006 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.NO, true));
-			commands.Add (new ImapReplayCommand ("A00000007 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt", true));
-			commands.Add (new ImapReplayCommand ("A00000008 UID SEARCH RETURN (ALL) ALL\r\n", "gmail.search.txt", true));
-			commands.Add (new ImapReplayCommand ("A00000009 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK, true));
-			commands.Add (new ImapReplayCommand ("A00000010 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt", true));
-			commands.Add (new ImapReplayCommand ("A00000011 LOGOUT\r\n", "gmail.logout.txt", true));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000006 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.NO, true),
+				new ImapReplayCommand ("A00000007 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt", true),
+				new ImapReplayCommand ("A00000008 UID SEARCH RETURN (ALL) ALL\r\n", "gmail.search.txt", true),
+				new ImapReplayCommand ("A00000009 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK, true),
+				new ImapReplayCommand ("A00000010 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt", true),
+				new ImapReplayCommand ("A00000011 LOGOUT\r\n", "gmail.logout.txt", true)
+			};
 		}
 
 		[Test]
@@ -5972,23 +5956,29 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateAccessControlListsCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "acl.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "acl.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 GETACL INBOX\r\n", "acl.getacl.txt"),
+				new ImapReplayCommand ("A00000006 LISTRIGHTS INBOX smith\r\n", "acl.listrights.txt"),
+				new ImapReplayCommand ("A00000007 MYRIGHTS INBOX\r\n", "acl.myrights.txt"),
+				new ImapReplayCommand ("A00000008 SETACL INBOX smith +lrswida\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000009 SETACL INBOX smith -lrswida\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000010 SETACL INBOX smith lrswida\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000011 DELETEACL INBOX smith\r\n", ImapReplayCommandResponse.OK)
+			};
+		}
+
 		[Test]
 		public void TestAccessControlLists ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "acl.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "acl.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 GETACL INBOX\r\n", "acl.getacl.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 LISTRIGHTS INBOX smith\r\n", "acl.listrights.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 MYRIGHTS INBOX\r\n", "acl.myrights.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SETACL INBOX smith +lrswida\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000009 SETACL INBOX smith -lrswida\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000010 SETACL INBOX smith lrswida\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000011 DELETEACL INBOX smith\r\n", ImapReplayCommandResponse.OK));
+			var commands = CreateAccessControlListsCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -6087,20 +6077,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestAccessControlListsAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "acl.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "acl.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 GETACL INBOX\r\n", "acl.getacl.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 LISTRIGHTS INBOX smith\r\n", "acl.listrights.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 MYRIGHTS INBOX\r\n", "acl.myrights.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SETACL INBOX smith +lrswida\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000009 SETACL INBOX smith -lrswida\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000010 SETACL INBOX smith lrswida\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000011 DELETEACL INBOX smith\r\n", ImapReplayCommandResponse.OK));
+			var commands = CreateAccessControlListsCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -6196,30 +6173,36 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateMetadataCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "metadata.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "metadata.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 GETMETADATA \"\" /private/comment\r\n", "metadata.getmetadata.txt"),
+				new ImapReplayCommand ("A00000006 GETMETADATA \"\" (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.getmetadata-options.txt"),
+				new ImapReplayCommand ("A00000007 GETMETADATA \"\" /private/comment /shared/comment\r\n", "metadata.getmetadata-multi.txt"),
+				new ImapReplayCommand ("A00000008 SETMETADATA \"\" (/private/comment \"this is a comment\")\r\n", "metadata.setmetadata-noprivate.txt"),
+				new ImapReplayCommand ("A00000009 SETMETADATA \"\" (/private/comment \"this comment is too long!\")\r\n", "metadata.setmetadata-maxsize.txt"),
+				new ImapReplayCommand ("A00000010 SETMETADATA \"\" (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.setmetadata-toomany.txt"),
+				new ImapReplayCommand ("A00000011 SETMETADATA \"\" (/private/comment NIL)\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000012 GETMETADATA INBOX /private/comment\r\n", "metadata.inbox-getmetadata.txt"),
+				new ImapReplayCommand ("A00000013 GETMETADATA INBOX (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.inbox-getmetadata-options.txt"),
+				new ImapReplayCommand ("A00000014 GETMETADATA INBOX /private/comment /shared/comment\r\n", "metadata.inbox-getmetadata-multi.txt"),
+				new ImapReplayCommand ("A00000015 SETMETADATA INBOX (/private/comment \"this is a comment\")\r\n", "metadata.inbox-setmetadata-noprivate.txt"),
+				new ImapReplayCommand ("A00000016 SETMETADATA INBOX (/private/comment \"this comment is too long!\")\r\n", "metadata.inbox-setmetadata-maxsize.txt"),
+				new ImapReplayCommand ("A00000017 SETMETADATA INBOX (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.inbox-setmetadata-toomany.txt"),
+				new ImapReplayCommand ("A00000018 SETMETADATA INBOX (/private/comment NIL)\r\n", ImapReplayCommandResponse.OK)
+			};
+		}
+
 		[Test]
 		public void TestMetadata ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "metadata.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "metadata.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 GETMETADATA \"\" /private/comment\r\n", "metadata.getmetadata.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 GETMETADATA \"\" (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.getmetadata-options.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 GETMETADATA \"\" /private/comment /shared/comment\r\n", "metadata.getmetadata-multi.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SETMETADATA \"\" (/private/comment \"this is a comment\")\r\n", "metadata.setmetadata-noprivate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000009 SETMETADATA \"\" (/private/comment \"this comment is too long!\")\r\n", "metadata.setmetadata-maxsize.txt"));
-			commands.Add (new ImapReplayCommand ("A00000010 SETMETADATA \"\" (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.setmetadata-toomany.txt"));
-			commands.Add (new ImapReplayCommand ("A00000011 SETMETADATA \"\" (/private/comment NIL)\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000012 GETMETADATA INBOX /private/comment\r\n", "metadata.inbox-getmetadata.txt"));
-			commands.Add (new ImapReplayCommand ("A00000013 GETMETADATA INBOX (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.inbox-getmetadata-options.txt"));
-			commands.Add (new ImapReplayCommand ("A00000014 GETMETADATA INBOX /private/comment /shared/comment\r\n", "metadata.inbox-getmetadata-multi.txt"));
-			commands.Add (new ImapReplayCommand ("A00000015 SETMETADATA INBOX (/private/comment \"this is a comment\")\r\n", "metadata.inbox-setmetadata-noprivate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000016 SETMETADATA INBOX (/private/comment \"this comment is too long!\")\r\n", "metadata.inbox-setmetadata-maxsize.txt"));
-			commands.Add (new ImapReplayCommand ("A00000017 SETMETADATA INBOX (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.inbox-setmetadata-toomany.txt"));
-			commands.Add (new ImapReplayCommand ("A00000018 SETMETADATA INBOX (/private/comment NIL)\r\n", ImapReplayCommandResponse.OK));
+			var commands = CreateMetadataCommands ();
 
 			using (var client = new ImapClient ()) {
 				MetadataCollection metadata;
@@ -6339,27 +6322,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestMetadataAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "metadata.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "metadata.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 GETMETADATA \"\" /private/comment\r\n", "metadata.getmetadata.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 GETMETADATA \"\" (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.getmetadata-options.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 GETMETADATA \"\" /private/comment /shared/comment\r\n", "metadata.getmetadata-multi.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SETMETADATA \"\" (/private/comment \"this is a comment\")\r\n", "metadata.setmetadata-noprivate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000009 SETMETADATA \"\" (/private/comment \"this comment is too long!\")\r\n", "metadata.setmetadata-maxsize.txt"));
-			commands.Add (new ImapReplayCommand ("A00000010 SETMETADATA \"\" (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.setmetadata-toomany.txt"));
-			commands.Add (new ImapReplayCommand ("A00000011 SETMETADATA \"\" (/private/comment NIL)\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000012 GETMETADATA INBOX /private/comment\r\n", "metadata.inbox-getmetadata.txt"));
-			commands.Add (new ImapReplayCommand ("A00000013 GETMETADATA INBOX (MAXSIZE 1024 DEPTH infinity) (/private)\r\n", "metadata.inbox-getmetadata-options.txt"));
-			commands.Add (new ImapReplayCommand ("A00000014 GETMETADATA INBOX /private/comment /shared/comment\r\n", "metadata.inbox-getmetadata-multi.txt"));
-			commands.Add (new ImapReplayCommand ("A00000015 SETMETADATA INBOX (/private/comment \"this is a comment\")\r\n", "metadata.inbox-setmetadata-noprivate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000016 SETMETADATA INBOX (/private/comment \"this comment is too long!\")\r\n", "metadata.inbox-setmetadata-maxsize.txt"));
-			commands.Add (new ImapReplayCommand ("A00000017 SETMETADATA INBOX (/private/comment \"this is a private comment\" /shared/comment \"this is a shared comment\")\r\n", "metadata.inbox-setmetadata-toomany.txt"));
-			commands.Add (new ImapReplayCommand ("A00000018 SETMETADATA INBOX (/private/comment NIL)\r\n", ImapReplayCommandResponse.OK));
+			var commands = CreateMetadataCommands ();
 
 			using (var client = new ImapClient ()) {
 				MetadataCollection metadata;
@@ -6478,16 +6441,15 @@ namespace UnitTests.Net.Imap {
 
 		static List<ImapReplayCommand> CreateNamespaceExtensionCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "common.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LOGOUT\r\n", "gmail.logout.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "common.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LOGOUT\r\n", "gmail.logout.txt")
+			};
 		}
 
 		[Test]
@@ -6565,13 +6527,14 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestLowercaseImapResponses ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "lowercase.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", "lowercase.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"\"\r\n", "lowercase.list.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "lowercase.list.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "lowercase.list.txt"));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "lowercase.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000001 CAPABILITY\r\n", "lowercase.capability.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"\"\r\n", "lowercase.list.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "lowercase.list.txt"),
+				new ImapReplayCommand ("A00000004 LIST (SPECIAL-USE) \"\" \"*\"\r\n", "lowercase.list.txt")
+			};
 
 			using (var client = new ImapClient ()) {
 				try {
