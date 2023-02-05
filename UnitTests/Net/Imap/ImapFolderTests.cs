@@ -2228,8 +2228,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[Test]
-		public void TestCountChanged ()
+		static List<ImapReplayCommand> CreateExplicitCountChangedCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -2240,9 +2239,17 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			// INBOX has 1 message present in this test
 			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
-			// next command simulates one expunge + one new message
-			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", "gmail.count.noop.txt"));
+			// The next response simulates an EXPUNGE notification followed by an explicit EXISTS notification.
+			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", $"gmail.count-explicit.noop.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestExplicitCountChanged ()
+		{
+			var commands = CreateExplicitCountChangedCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2259,37 +2266,43 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				var count = -1;
-
 				client.Inbox.Open (FolderAccess.ReadOnly);
 
+				int messageExpungedEmitted = 0;
+				int messageExpungedIndex = -1;
+				int messageExpungedCount = -1;
+				int countChangedEmitted = 0;
+				int countChangedValue = -1;
+
 				client.Inbox.CountChanged += delegate {
-					count = client.Inbox.Count;
+					countChangedValue = client.Inbox.Count;
+					countChangedEmitted++;
+				};
+
+				client.Inbox.MessageExpunged += delegate (object sender, MessageEventArgs e) {
+					messageExpungedCount = client.Inbox.Count;
+					messageExpungedIndex = e.Index;
+					messageExpungedEmitted++;
 				};
 
 				client.NoOp ();
 
-				Assert.AreEqual (1, count, "Count is not correct");
+				Assert.AreEqual (1, client.Inbox.Count, "Count");
+				Assert.AreEqual (1, countChangedEmitted, "CountChanged was not emitted the expected number of times");
+				Assert.AreEqual (1, countChangedValue, "Count was not correct inside of the CountChanged event handler");
+
+				Assert.AreEqual (0, messageExpungedIndex, "The index of the expected message did not match");
+				Assert.AreEqual (1, messageExpungedEmitted, "MessageExpunged was not emitted the expected number of times");
+				Assert.AreEqual (0, messageExpungedCount, "Count was not correct inside of the MessageExpunged event handler");
 
 				client.Disconnect (true);
 			}
 		}
 
 		[Test]
-		public async Task TestCountChangedAsync ()
+		public async Task TestExplicitCountChangedAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			// INBOX has 1 message present in this test
-			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
-			// next command simulates one expunge + one new message
-			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", "gmail.count.noop.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+			var commands = CreateExplicitCountChangedCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -2306,17 +2319,158 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				var count = -1;
-
 				await client.Inbox.OpenAsync (FolderAccess.ReadOnly);
 
+				int messageExpungedEmitted = 0;
+				int messageExpungedIndex = -1;
+				int messageExpungedCount = -1;
+				int countChangedEmitted = 0;
+				int countChangedValue = -1;
+
 				client.Inbox.CountChanged += delegate {
-					count = client.Inbox.Count;
+					countChangedValue = client.Inbox.Count;
+					countChangedEmitted++;
+				};
+
+				client.Inbox.MessageExpunged += delegate (object sender, MessageEventArgs e) {
+					messageExpungedCount = client.Inbox.Count;
+					messageExpungedIndex = e.Index;
+					messageExpungedEmitted++;
 				};
 
 				await client.NoOpAsync ();
 
-				Assert.AreEqual (1, count, "Count is not correct");
+				Assert.AreEqual (1, client.Inbox.Count, "Count");
+				Assert.AreEqual (1, countChangedEmitted, "CountChanged was not emitted the expected number of times");
+				Assert.AreEqual (1, countChangedValue, "Count was not correct inside of the CountChanged event handler");
+
+				Assert.AreEqual (0, messageExpungedIndex, "The index of the expected message did not match");
+				Assert.AreEqual (1, messageExpungedEmitted, "MessageExpunged was not emitted the expected number of times");
+				Assert.AreEqual (0, messageExpungedCount, "Count was not correct inside of the MessageExpunged event handler");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateImplicitCountChangedCommands ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			// INBOX has 1 message present in this test
+			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
+			// The next response simulates an EXPUNGE notification without an explicit EXISTS notification.
+			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", $"gmail.count-implicit.noop.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestImplicitCountChanged ()
+		{
+			var commands = CreateImplicitCountChangedCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				client.Inbox.Open (FolderAccess.ReadOnly);
+
+				int messageExpungedEmitted = 0;
+				int messageExpungedIndex = -1;
+				int messageExpungedCount = -1;
+				int countChangedEmitted = 0;
+				int countChangedValue = -1;
+
+				client.Inbox.CountChanged += delegate {
+					countChangedValue = client.Inbox.Count;
+					countChangedEmitted++;
+				};
+
+				client.Inbox.MessageExpunged += delegate (object sender, MessageEventArgs e) {
+					messageExpungedCount = client.Inbox.Count;
+					messageExpungedIndex = e.Index;
+					messageExpungedEmitted++;
+				};
+
+				client.NoOp ();
+
+				Assert.AreEqual (0, client.Inbox.Count, "Count");
+				Assert.AreEqual (1, countChangedEmitted, "CountChanged was not emitted the expected number of times");
+				Assert.AreEqual (0, countChangedValue, "Count was not correct inside of the CountChanged event handler");
+
+				Assert.AreEqual (0, messageExpungedIndex, "The index of the expected message did not match");
+				Assert.AreEqual (1, messageExpungedEmitted, "MessageExpunged was not emitted the expected number of times");
+				Assert.AreEqual (0, messageExpungedCount, "Count was not correct inside of the MessageExpunged event handler");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestImplicitCountChangedAsync ()
+		{
+			var commands = CreateImplicitCountChangedCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				await client.Inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				int messageExpungedEmitted = 0;
+				int messageExpungedIndex = -1;
+				int messageExpungedCount = -1;
+				int countChangedEmitted = 0;
+				int countChangedValue = -1;
+
+				client.Inbox.CountChanged += delegate {
+					countChangedValue = client.Inbox.Count;
+					countChangedEmitted++;
+				};
+
+				client.Inbox.MessageExpunged += delegate (object sender, MessageEventArgs e) {
+					messageExpungedCount = client.Inbox.Count;
+					messageExpungedIndex = e.Index;
+					messageExpungedEmitted++;
+				};
+
+				await client.NoOpAsync ();
+
+				Assert.AreEqual (0, client.Inbox.Count, "Count");
+				Assert.AreEqual (1, countChangedEmitted, "CountChanged was not emitted the expected number of times");
+				Assert.AreEqual (0, countChangedValue, "Count was not correct inside of the CountChanged event handler");
+
+				Assert.AreEqual (0, messageExpungedIndex, "The index of the expected message did not match");
+				Assert.AreEqual (1, messageExpungedEmitted, "MessageExpunged was not emitted the expected number of times");
+				Assert.AreEqual (0, messageExpungedCount, "Count was not correct inside of the MessageExpunged event handler");
 
 				await client.DisconnectAsync (true);
 			}
