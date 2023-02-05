@@ -472,8 +472,7 @@ namespace UnitTests.Net.Imap {
 			"Planet Fitness https://view.email.planetfitness.com/?qs=9a098a031cabde68c0a4260051cd6fe473a2e997a53678ff26b4b199a711a9d2ad0536530d6f837c246b09f644d42016ecfb298f930b7af058e9e454b34f3d818ceb3052ae317b1ac4594aab28a2d788 View web ver…"
 		};
 
-		[Test]
-		public void TestFetchPreviewText ()
+		static List<ImapReplayCommand> CreateFetchPreviewTextCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -496,6 +495,14 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000016 UID FETCH 1,4 (BODY.PEEK[TEXT]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-only.txt"));
 			commands.Add (new ImapReplayCommand ("A00000017 UID FETCH 3,6 (BODY.PEEK[1]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-alternative.txt"));
 			commands.Add (new ImapReplayCommand ("A00000018 UID FETCH 2,5 (BODY.PEEK[TEXT]<0.16384>)\r\n", "gmail.fetch-previewtext-peek-html-only.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestFetchPreviewText ()
+		{
+			var commands = CreateFetchPreviewTextCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -545,27 +552,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestFetchPreviewTextAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 UID FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext-bodystructure.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 UID FETCH 1,4 (BODY.PEEK[TEXT]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-only.txt"));
-			commands.Add (new ImapReplayCommand ("A00000009 UID FETCH 3,6 (BODY.PEEK[1]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-alternative.txt"));
-			commands.Add (new ImapReplayCommand ("A00000010 UID FETCH 2,5 (BODY.PEEK[TEXT]<0.16384>)\r\n", "gmail.fetch-previewtext-peek-html-only.txt"));
-			commands.Add (new ImapReplayCommand ("A00000011 FETCH 1:6 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext-bodystructure.txt"));
-			commands.Add (new ImapReplayCommand ("A00000012 UID FETCH 1,4 (BODY.PEEK[TEXT]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-only.txt"));
-			commands.Add (new ImapReplayCommand ("A00000013 UID FETCH 3,6 (BODY.PEEK[1]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-alternative.txt"));
-			commands.Add (new ImapReplayCommand ("A00000014 UID FETCH 2,5 (BODY.PEEK[TEXT]<0.16384>)\r\n", "gmail.fetch-previewtext-peek-html-only.txt"));
-			commands.Add (new ImapReplayCommand ("A00000015 FETCH 1:* (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext-bodystructure.txt"));
-			commands.Add (new ImapReplayCommand ("A00000016 UID FETCH 1,4 (BODY.PEEK[TEXT]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-only.txt"));
-			commands.Add (new ImapReplayCommand ("A00000017 UID FETCH 3,6 (BODY.PEEK[1]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-alternative.txt"));
-			commands.Add (new ImapReplayCommand ("A00000018 UID FETCH 2,5 (BODY.PEEK[TEXT]<0.16384>)\r\n", "gmail.fetch-previewtext-peek-html-only.txt"));
+			var commands = CreateFetchPreviewTextCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -612,8 +599,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[Test]
-		public void TestExpungeDuringFetch ()
+		static List<ImapReplayCommand> CreateExpungeDuringFetchCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -625,6 +611,14 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 UID FETCH 1:6 (UID INTERNALDATE ENVELOPE)\r\n", "gmail.expunge-during-fetch.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestExpungeDuringFetch ()
+		{
+			var commands = CreateExpungeDuringFetchCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -673,16 +667,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestExpungeDuringFetchAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 UID FETCH 1:6 (UID INTERNALDATE ENVELOPE)\r\n", "gmail.expunge-during-fetch.txt"));
+			var commands = CreateExpungeDuringFetchCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -728,8 +713,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[Test]
-		public void TestExtractingPrecisePangolinAttachment ()
+		static List<ImapReplayCommand> CreateExtractingPrecisePangolinAttachmentCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -741,6 +725,14 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 FETCH 270 (BODY.PEEK[])\r\n", "gmail.precise-pangolin-message.txt"));
+
+			return commands;
+		}
+
+		[Test]
+		public void TestExtractingPrecisePangolinAttachment ()
+		{
+			var commands = CreateExtractingPrecisePangolinAttachmentCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -808,16 +800,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestExtractingPrecisePangolinAttachmentAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 FETCH 270 (BODY.PEEK[])\r\n", "gmail.precise-pangolin-message.txt"));
+			var commands = CreateExtractingPrecisePangolinAttachmentCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -882,7 +865,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateFetchObjectIdAttributesCommands ()
+		static List<ImapReplayCommand> CreateFetchObjectIdAttributesCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -982,7 +965,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateFetchAnnotationsCommands ()
+		static List<ImapReplayCommand> CreateFetchAnnotationsCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -1134,7 +1117,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateDominoParenthesisWorkaroundCommands ()
+		static List<ImapReplayCommand> CreateDominoParenthesisWorkaroundCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK Domino IMAP4 Server Release 10.0.1FP3 ready Wed, 30 Oct 2019 09:28:06 +0100\r\n")));

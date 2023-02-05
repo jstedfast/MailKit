@@ -103,9 +103,9 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		Stream GetResourceStream (string name)
+		static Stream GetResourceStream (string name)
 		{
-			return GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + name);
+			return typeof (ImapClientTests).Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + name);
 		}
 
 		static void GetStreamsCallback (ImapFolder folder, int index, UniqueId uid, Stream stream)
@@ -2963,7 +2963,7 @@ namespace UnitTests.Net.Imap {
 			Assert.AreEqual (id, folder.Id, "MailboxId");
 		}
 
-		List<ImapReplayCommand> CreateGetFoldersCommands ()
+		static List<ImapReplayCommand> CreateGetFoldersCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -4757,7 +4757,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateGMailCommands ()
+		static List<ImapReplayCommand> CreateGMailCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -5182,7 +5182,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateGetFolderCommands ()
+		static List<ImapReplayCommand> CreateGetFolderCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -5293,7 +5293,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateIdleCommands ()
+		static List<ImapReplayCommand> CreateIdleCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -5424,7 +5424,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateNotifyCommands ()
+		static List<ImapReplayCommand> CreateNotifyCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting-preauth.txt"));
@@ -5844,7 +5844,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateCompressCommands ()
+		static List<ImapReplayCommand> CreateCompressCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -6460,7 +6460,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateNamespaceExtensionCommands ()
+		static List<ImapReplayCommand> CreateNamespaceExtensionCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));

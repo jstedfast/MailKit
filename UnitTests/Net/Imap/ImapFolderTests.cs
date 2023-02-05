@@ -64,9 +64,9 @@ namespace UnitTests.Net.Imap {
 			return message;
 		}
 
-		Stream GetResourceStream (string name)
+		static Stream GetResourceStream (string name)
 		{
-			return GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + name);
+			return typeof (ImapFolderTests).Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + name);
 		}
 
 		[Test]
@@ -495,7 +495,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateAppendCommands (bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
+		static List<ImapReplayCommand> CreateAppendCommands (bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -668,7 +668,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateMultiAppendCommands (bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
+		static List<ImapReplayCommand> CreateMultiAppendCommands (bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -944,7 +944,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateReplaceCommands (bool clientSide, bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
+		static List<ImapReplayCommand> CreateReplaceCommands (bool clientSide, bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -1158,7 +1158,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateReplaceByUidCommands (bool clientSide, bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
+		static List<ImapReplayCommand> CreateReplaceByUidCommands (bool clientSide, bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
@@ -1375,7 +1375,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateCreateRenameDeleteCommands ()
+		static List<ImapReplayCommand> CreateCreateRenameDeleteCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1554,7 +1554,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateCreateMailboxIdCommands ()
+		static List<ImapReplayCommand> CreateCreateMailboxIdCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1632,7 +1632,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateCreateSpecialUseCommands ()
+		static List<ImapReplayCommand> CreateCreateSpecialUseCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1716,7 +1716,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateCreateSpecialUseMultipleCommands ()
+		static List<ImapReplayCommand> CreateCreateSpecialUseMultipleCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1855,7 +1855,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateCopyToCommands ()
+		static List<ImapReplayCommand> CreateCopyToCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -1965,7 +1965,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateMoveToCommands (bool disableMove)
+		static List<ImapReplayCommand> CreateMoveToCommands (bool disableMove)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -2110,7 +2110,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		List<ImapReplayCommand> CreateUidExpungeCommands (bool disableUidPlus)
+		static List<ImapReplayCommand> CreateUidExpungeCommands (bool disableUidPlus)
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -2492,7 +2492,7 @@ namespace UnitTests.Net.Imap {
 			Assert.AreEqual (validity, folder.UidValidity, "UidValidity");
 		}
 
-		List<ImapReplayCommand> CreateGetSubfoldersWithStatusItemsCommands ()
+		static List<ImapReplayCommand> CreateGetSubfoldersWithStatusItemsCommands ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
