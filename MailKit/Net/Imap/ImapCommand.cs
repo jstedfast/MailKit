@@ -544,7 +544,7 @@ namespace MailKit.Net.Imap {
 							AppendString (options, false, builder, (string) args[argc++]);
 							break;
 						default:
-							throw new FormatException ();
+							throw new FormatException ($"The %{format[i]} format specifier is not supported.");
 						}
 					} else if (format[i] < 128) {
 						builder.Append ((byte) format[i]);
@@ -592,17 +592,23 @@ namespace MailKit.Net.Imap {
 			for (int i = 0; i < format.Length; i++) {
 				if (format[i] == '%') {
 					switch (format[++i]) {
-					case '%': // a literal %
-						length++;
-						break;
-					case 'd': // an integer
-						str = ((int) args[argc++]).ToString (CultureInfo.InvariantCulture);
-						length += str.Length;
-						break;
-					case 'u': // an unsigned integer
-						str = ((uint) args[argc++]).ToString (CultureInfo.InvariantCulture);
-						length += str.Length;
-						break;
+					//case '%': // a literal %
+						// Note: This is commented out because %% is only ever used in some LIST commands which never need
+						// to split the split the command to keep it under the max line length.
+						//length++;
+						//break;
+					//case 'd': // an integer
+						// Note: This is commented out because %d is only ever used for some REPLACE and GetMessage/GetHeaders/GetBodyPart
+						// commands which never need to split the command to keep it under the max line length.
+						//str = ((int) args[argc++]).ToString (CultureInfo.InvariantCulture);
+						//length += str.Length;
+						//break;
+					//case 'u': // an unsigned integer
+						// Note: This is commented out because %u is only ever used for some GetMessage/GetHeaders/GetBodyPart
+						// commands which never need to split the command to keep it under the max line length.
+						//str = ((uint) args[argc++]).ToString (CultureInfo.InvariantCulture);
+						//length += str.Length;
+						//break;
 					case 's':
 						str = (string) args[argc++];
 						length += str.Length;
@@ -611,7 +617,7 @@ namespace MailKit.Net.Imap {
 						var utf7 = ((ImapFolder) args[argc++]).EncodedName;
 						length += EstimateStringLength (engine, true, utf7, out eoln);
 						break;
-					case 'L': // a MimeMessage or a byte[]
+					//case 'L': // a MimeMessage or a byte[]
 						// Note: This is commented out because %L is only ever used for APPEND and REPLACE commands which
 						// never need to split the command to keep it under the max line length.
 						//var arg = args[argc++];
@@ -639,15 +645,17 @@ namespace MailKit.Net.Imap {
 						//	length++;
 
 						//eoln = true;
-						break;
+						//break;
 					case 'S': // a string which may need to be quoted or made into a literal
 						length += EstimateStringLength (engine, true, (string) args[argc++], out eoln);
 						break;
-					case 'Q': // similar to %S but string must be quoted at a minimum
-						length += EstimateStringLength (engine, false, (string) args[argc++], out eoln);
-						break;
+					//case 'Q': // similar to %S but string must be quoted at a minimum
+						// Note: This is commented out because %Q is only ever used for the ID command which
+						// never needs to split the command to keep it under the max line length.
+						//length += EstimateStringLength (engine, false, (string) args[argc++], out eoln);
+						//break;
 					default:
-						throw new FormatException ();
+						throw new FormatException ($"The %{format[i]} format specifier is not supported.");
 					}
 
 					if (eoln)
