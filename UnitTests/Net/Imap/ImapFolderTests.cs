@@ -1968,6 +1968,102 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateExchangeCopyUidRespCodeWithoutOkCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "exchange.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "exchange.capability-preauth.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "exchange.capability-postauth.txt"),
+				new ImapReplayCommand ("A00000003 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000004 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 LIST \"\" Level1\r\n", "gmail.list-level1.txt"),
+				new ImapReplayCommand ("A00000007 UID MOVE 31 Level1\r\n", "exchange.issue115.txt"),
+				new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt")
+			};
+		}
+
+		[Test]
+		public void TestExchangeCopyUidRespCodeWithoutOk ()
+		{
+			var commands = CreateExchangeCopyUidRespCodeWithoutOkCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), "Expected UIDPLUS extension");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadWrite);
+
+				// Test handling of broken Exchange IMAP response: "[COPYUID 55 31 6]" (it should be "* OK [COPYUID 55 31 6]")
+				var level1 = personal.GetSubfolder ("Level1");
+				var uids = new[] { new UniqueId (31) };
+				var copied = inbox.MoveTo (uids, level1);
+
+				Assert.AreEqual (copied.Source.Count, copied.Destination.Count, "Source and Destination UID counts do not match");
+				Assert.AreEqual (copied.Source[0], uids[0], "Source[0]");
+				Assert.AreEqual (copied.Destination[0], new UniqueId (6), "Destination[0]");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestExchangeCopyUidRespCodeWithoutOkAsync ()
+		{
+			var commands = CreateExchangeCopyUidRespCodeWithoutOkCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), "Expected UIDPLUS extension");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				// Test handling of broken Exchange IMAP response: "[COPYUID 55 31 6]" (it should be "* OK [COPYUID 55 31 6]")
+				var level1 = await personal.GetSubfolderAsync ("Level1");
+				var uids = new[] { new UniqueId (31) };
+				var copied = await inbox.MoveToAsync (uids, level1);
+
+				Assert.AreEqual (copied.Source.Count, copied.Destination.Count, "Source and Destination UID counts do not match");
+				Assert.AreEqual (copied.Source[0], uids[0], "Source[0]");
+				Assert.AreEqual (copied.Destination[0], new UniqueId (6), "Destination[0]");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateMoveToCommands (bool disableMove)
 		{
 			var commands = new List<ImapReplayCommand> {
