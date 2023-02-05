@@ -131,12 +131,13 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestArgumentExceptions ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt")
+			};
 
 			using (var client = new ImapClient ()) {
 				var credentials = new NetworkCredential ("username", "password");
@@ -422,7 +423,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		void AssertGMailIsConnected (IMailService client)
+		static void AssertGMailIsConnected (IMailService client)
 		{
 			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 			Assert.IsTrue (client.IsSecure, "Expected a secure connection");
@@ -438,7 +439,7 @@ namespace UnitTests.Net.Imap {
 			Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 		}
 
-		void AssertClientIsDisconnected (IMailService client)
+		static void AssertClientIsDisconnected (IMailService client)
 		{
 			Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 			Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -921,8 +922,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestGreetingCapabilities ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.capability-greeting.txt"));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "common.capability-greeting.txt")
+			};
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -942,8 +944,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestGreetingCapabilitiesAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.capability-greeting.txt"));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "common.capability-greeting.txt")
+			};
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -963,8 +966,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestByeGreeting ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE\r\n")));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE\r\n"))
+			};
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -983,8 +987,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestByeGreetingAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE\r\n")));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE\r\n"))
+			};
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1003,8 +1008,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestByeGreetingWithAlert ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE [ALERT] Too many connections.\r\n")));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE [ALERT] Too many connections.\r\n"))
+			};
 
 			using (var client = new ImapClient ()) {
 				int alerts = 0;
@@ -1032,8 +1038,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestByeGreetingWithAlertAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE [ALERT] Too many connections.\r\n")));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE [ALERT] Too many connections.\r\n"))
+			};
 
 			using (var client = new ImapClient ()) {
 				int alerts = 0;
@@ -1061,8 +1068,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestByeGreetingWithRespText ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE Too many connections.\r\n")));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE Too many connections.\r\n"))
+			};
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1081,8 +1089,9 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestByeGreetingWithRespTextAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE Too many connections.\r\n")));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* BYE Too many connections.\r\n"))
+			};
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1098,17 +1107,23 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateUnexpectedByeCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE System going down for a reboot.\r\n"))
+			};
+		}
+
 		[Test]
 		public void TestUnexpectedBye ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE System going down for a reboot.\r\n")));
+			var commands = CreateUnexpectedByeCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1139,14 +1154,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestUnexpectedByeAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE System going down for a reboot.\r\n")));
+			var commands = CreateUnexpectedByeCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1174,12 +1182,18 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateUnexpectedByeAfterCapabilityCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK Yandex IMAP4rev1 at sas8-bccc92f57f23.qloud-c.yandex.net:993 ready to talk with, 2019-Oct-18 07:41:00, 0fHtH613ZiE1\r\n")),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", Encoding.ASCII.GetBytes ("* BYE Autologout; idle for too long (1)\r\n* BYE Autologout; idle for too long (2)\r\n* BYE Autologout; idle for too long (3)\r\n"))
+			};
+		}
+
 		[Test]
 		public void TestUnexpectedByeAfterCapability ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK Yandex IMAP4rev1 at sas8-bccc92f57f23.qloud-c.yandex.net:993 ready to talk with, 2019-Oct-18 07:41:00, 0fHtH613ZiE1\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", Encoding.ASCII.GetBytes ("* BYE Autologout; idle for too long (1)\r\n* BYE Autologout; idle for too long (2)\r\n* BYE Autologout; idle for too long (3)\r\n")));
+			var commands = CreateUnexpectedByeAfterCapabilityCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1198,9 +1212,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestUnexpectedByeAfterCapabilityAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK Yandex IMAP4rev1 at sas8-bccc92f57f23.qloud-c.yandex.net:993 ready to talk with, 2019-Oct-18 07:41:00, 0fHtH613ZiE1\r\n")));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", Encoding.ASCII.GetBytes ("* BYE Autologout; idle for too long (1)\r\n* BYE Autologout; idle for too long (2)\r\n* BYE Autologout; idle for too long (3)\r\n")));
+			var commands = CreateUnexpectedByeAfterCapabilityCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1216,17 +1228,23 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateUnexpectedByeWithAlertCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE [ALERT] System going down for a reboot.\r\n"))
+			};
+		}
+
 		[Test]
 		public void TestUnexpectedByeWithAlert ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE [ALERT] System going down for a reboot.\r\n")));
+			var commands = CreateUnexpectedByeWithAlertCommands ();
 
 			using (var client = new ImapClient ()) {
 				int alerts = 0;
@@ -1266,14 +1284,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestUnexpectedByeWithAlertAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", Encoding.ASCII.GetBytes ("* BYE [ALERT] System going down for a reboot.\r\n")));
+			var commands = CreateUnexpectedByeWithAlertCommands ();
 
 			using (var client = new ImapClient ()) {
 				int alerts = 0;
@@ -1310,13 +1321,19 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateUnexpectedByeInSaslAuthenticateCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", Encoding.ASCII.GetBytes ("* BYE disconnecting\r\nA00000001 NO you are not allowed to act as a proxy server\r\n"))
+			};
+		}
+
 		[Test]
 		public void TestUnexpectedByeInSaslAuthenticate ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", Encoding.ASCII.GetBytes ("* BYE disconnecting\r\nA00000001 NO you are not allowed to act as a proxy server\r\n")));
+			var commands = CreateUnexpectedByeInSaslAuthenticateCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1341,10 +1358,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestUnexpectedByeInSaslAuthenticateAsync ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", Encoding.ASCII.GetBytes ("* BYE disconnecting\r\nA00000001 NO you are not allowed to act as a proxy server\r\n")));
+			var commands = CreateUnexpectedByeInSaslAuthenticateCommands ();
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -1366,15 +1380,21 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreatePreAuthGreetingCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "common.preauth-greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "common.capability.txt"),
+				new ImapReplayCommand ("A00000001 LIST \"\" \"\"\r\n", "common.list-namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt")
+			};
+		}
+
 		[Test]
 		public void TestPreAuthGreeting ()
 		{
 			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.preauth-greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "common.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"\"\r\n", "common.list-namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
+			var commands = CreatePreAuthGreetingCommands ();
 
 			using (var client = new ImapClient ()) {
 				int authenticated = 0;
@@ -1409,11 +1429,7 @@ namespace UnitTests.Net.Imap {
 		public async Task TestPreAuthGreetingAsync ()
 		{
 			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.preauth-greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "common.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 LIST \"\" \"\"\r\n", "common.list-namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"));
+			var commands = CreatePreAuthGreetingCommands ();
 
 			using (var client = new ImapClient ()) {
 				int authenticated = 0;

@@ -43,13 +43,14 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestArgumentExceptions ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt")
+			};
 
 			using (var client = new ImapClient ()) {
 				var credentials = new NetworkCredential ("username", "password");
@@ -153,16 +154,15 @@ namespace UnitTests.Net.Imap {
 
 		static List<ImapReplayCommand> CreateRawUnicodeSearchCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH SUBJECT {13+}\r\nComunicação\r\n", "dovecot.search-raw.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH SUBJECT {13+}\r\nComunicação\r\n", "dovecot.search-raw.txt")
+			};
 		}
 
 		[Test]
@@ -251,16 +251,15 @@ namespace UnitTests.Net.Imap {
 
 		static List<ImapReplayCommand> CreateSearchStringWithSpacesCommands ()
 		{
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "yahoo.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000001 CAPABILITY\r\n", "yahoo.capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "yahoo.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "yahoo.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 EXAMINE Inbox\r\n", "yahoo.examine-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH SUBJECT \"Yahoo Mail\"\r\n", "yahoo.search.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "yahoo.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000001 CAPABILITY\r\n", "yahoo.capabilities.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "yahoo.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "yahoo.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 EXAMINE Inbox\r\n", "yahoo.examine-inbox.txt"),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH SUBJECT \"Yahoo Mail\"\r\n", "yahoo.search.txt")
+			};
 		}
 
 		[Test]
@@ -341,17 +340,16 @@ namespace UnitTests.Net.Imap {
 		{
 			var badCharsetResponse = Encoding.ASCII.GetBytes ("A00000005 NO [BADCHARSET (US-ASCII)] The specified charset is not supported.\r\n");
 
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH RETURN (ALL) CHARSET UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) SUBJECT {6+}\r\n?@825B\r\n", "dovecot.search-raw.txt"));
-
-			return commands;
+			return  new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH RETURN (ALL) CHARSET UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse),
+				new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) SUBJECT {6+}\r\n?@825B\r\n", "dovecot.search-raw.txt")
+			};
 		}
 
 		[Test]
@@ -432,17 +430,16 @@ namespace UnitTests.Net.Imap {
 		{
 			var badCharsetResponse = Encoding.ASCII.GetBytes ("A00000005 NO [BADCHARSET (US-ASCII)] The specified charset is not supported.\r\n");
 
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH RETURN (ALL RELEVANCY COUNT MIN MAX) CHARSET UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL RELEVANCY COUNT MIN MAX) SUBJECT {6+}\r\n?@825B\r\n", "dovecot.search-uids-options.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SEARCH RETURN (ALL RELEVANCY COUNT MIN MAX) CHARSET UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse),
+				new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL RELEVANCY COUNT MIN MAX) SUBJECT {6+}\r\n?@825B\r\n", "dovecot.search-uids-options.txt")
+			};
 		}
 
 		[Test]
@@ -535,17 +532,16 @@ namespace UnitTests.Net.Imap {
 		{
 			var badCharsetResponse = Encoding.ASCII.GetBytes ("A00000005 NO [BADCHARSET (US-ASCII)] The specified charset is not supported.\r\n");
 
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SORT RETURN (ALL) (SUBJECT) UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SORT RETURN (ALL) (SUBJECT) US-ASCII SUBJECT {6+}\r\n?@825B\r\n", "dovecot.sort-raw.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SORT RETURN (ALL) (SUBJECT) UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse),
+				new ImapReplayCommand ("A00000006 UID SORT RETURN (ALL) (SUBJECT) US-ASCII SUBJECT {6+}\r\n?@825B\r\n", "dovecot.sort-raw.txt")
+			};
 		}
 
 		[Test]
@@ -626,17 +622,16 @@ namespace UnitTests.Net.Imap {
 		{
 			var badCharsetResponse = Encoding.ASCII.GetBytes ("A00000005 NO [BADCHARSET (US-ASCII)] The specified charset is not supported.\r\n");
 
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SORT RETURN (ALL RELEVANCY COUNT MIN MAX) (ARRIVAL) UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
-			commands.Add (new ImapReplayCommand ("A00000006 UID SORT RETURN (ALL RELEVANCY COUNT MIN MAX) (ARRIVAL) US-ASCII SUBJECT {6+}\r\n?@825B\r\n", "dovecot.sort-uids-options.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 UID SORT RETURN (ALL RELEVANCY COUNT MIN MAX) (ARRIVAL) UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse),
+				new ImapReplayCommand ("A00000006 UID SORT RETURN (ALL RELEVANCY COUNT MIN MAX) (ARRIVAL) US-ASCII SUBJECT {6+}\r\n?@825B\r\n", "dovecot.sort-uids-options.txt")
+			};
 		}
 
 		[Test]
@@ -729,19 +724,18 @@ namespace UnitTests.Net.Imap {
 		{
 			var badCharsetResponse = Encoding.ASCII.GetBytes ("A00000005 NO [BADCHARSET (US-ASCII)] The specified charset is not supported.\r\n");
 
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			//commands.Add (new ImapReplayCommand ("A00000005 UID THREAD REFERENCES US-ASCII \r\n", "dovecot.thread-references.txt"));
-			//commands.Add (new ImapReplayCommand ("A00000017 UID THREAD ORDEREDSUBJECT US-ASCII UID 1:* ALL\r\n", "dovecot.thread-orderedsubject.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID THREAD REFERENCES UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
-			commands.Add (new ImapReplayCommand ("A00000006 UID THREAD REFERENCES US-ASCII SUBJECT {6+}\r\n?@825B\r\n", "dovecot.thread-references.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				//new ImapReplayCommand ("A00000005 UID THREAD REFERENCES US-ASCII \r\n", "dovecot.thread-references.txt"),
+				//(new ImapReplayCommand ("A00000017 UID THREAD ORDEREDSUBJECT US-ASCII UID 1:* ALL\r\n", "dovecot.thread-orderedsubject.txt"),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 UID THREAD REFERENCES UTF-8 SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse),
+				new ImapReplayCommand ("A00000006 UID THREAD REFERENCES US-ASCII SUBJECT {6+}\r\n?@825B\r\n", "dovecot.thread-references.txt")
+			};
 		}
 
 		[Test]
@@ -824,17 +818,16 @@ namespace UnitTests.Net.Imap {
 		{
 			var badCharsetResponse = Encoding.ASCII.GetBytes ("A00000005 NO [BADCHARSET (US-ASCII)] The specified charset is not supported.\r\n");
 
-			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "dovecot.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"));
-			commands.Add (new ImapReplayCommand (Encoding.UTF8, "A00000005 UID THREAD REFERENCES UTF-8 UID 1:* SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse));
-			commands.Add (new ImapReplayCommand ("A00000006 UID THREAD REFERENCES US-ASCII UID 1:* SUBJECT {6+}\r\n?@825B\r\n", "dovecot.thread-references.txt"));
-
-			return commands;
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 UID THREAD REFERENCES UTF-8 UID 1:* SUBJECT {12+}\r\nпривет\r\n", badCharsetResponse),
+				new ImapReplayCommand ("A00000006 UID THREAD REFERENCES US-ASCII UID 1:* SUBJECT {6+}\r\n?@825B\r\n", "dovecot.thread-references.txt")
+			};
 		}
 
 		[Test]
