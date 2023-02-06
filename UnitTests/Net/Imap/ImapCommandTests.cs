@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,7 +44,9 @@ namespace UnitTests.Net.Imap {
 
 		public ImapCommandTests ()
 		{
-			Engine = new ImapEngine (CreateImapFolderDelegate);
+			Engine = new ImapEngine (CreateImapFolderDelegate) {
+				Capabilities = ImapCapabilities.IMAP4rev1
+			};
 
 			var args = new ImapFolderConstructorArgs (Engine, "INBOX", FolderAttributes.None, '.');
 			Inbox = new ImapFolder (args);
@@ -84,6 +87,53 @@ namespace UnitTests.Net.Imap {
 
 			ic.Status = ImapCommandStatus.Error;
 			Assert.Throws<InvalidOperationException> (() => ic.RegisterUntaggedHandler ("EVENT", UntaggedResponseHandler));
+		}
+
+		[Test]
+		public void TestFormatExceptions ()
+		{
+			try {
+				var ic = new ImapCommand (Engine, CancellationToken.None, null, "Lets try %X as a format argument.");
+				Assert.Fail ("Expected FormatException");
+			} catch (FormatException ex) {
+				Assert.AreEqual ("The %X format specifier is not supported.", ex.Message);
+			} catch (Exception ex) {
+				Assert.Fail ($"Expected FormatException, but got {ex.GetType ().Name}");
+			}
+
+			try {
+				var ic = ImapCommand.EstimateCommandLength (Engine, "Lets try %Y as a format argument.");
+				Assert.Fail ("Expected FormatException");
+			} catch (FormatException ex) {
+				Assert.AreEqual ("The %Y format specifier is not supported.", ex.Message);
+			} catch (Exception ex) {
+				Assert.Fail ($"Expected FormatException, but got {ex.GetType ().Name}");
+			}
+		}
+
+		[Test]
+		public void TestEstimateCommandLengthWithLiteralString ()
+		{
+			const string koreanProverb = "꿩 먹고 알 먹는다";
+			var literalLength = Encoding.UTF8.GetByteCount (koreanProverb);
+			var expected = $"SEARCH TEXT {{{literalLength}}}\r\n{koreanProverb}".Length;
+
+			var length = ImapCommand.EstimateCommandLength (Engine, "SEARCH TEXT %S", koreanProverb);
+			Assert.AreEqual (expected, length);
+
+			try {
+				Engine.Capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.LiteralPlus;
+				expected = $"SEARCH TEXT {{{literalLength}+}}\r\n{koreanProverb}".Length;
+				length = ImapCommand.EstimateCommandLength (Engine, "SEARCH TEXT %S", koreanProverb);
+				Assert.AreEqual (expected, length, "LITERAL+");
+
+				Engine.Capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.LiteralMinus;
+				expected = $"SEARCH TEXT {{{literalLength}+}}\r\n{koreanProverb}".Length;
+				length = ImapCommand.EstimateCommandLength (Engine, "SEARCH TEXT %S", koreanProverb);
+				Assert.AreEqual (expected, length, "LITERAL-");
+			} finally {
+				Engine.Capabilities = ImapCapabilities.IMAP4rev1;
+			}
 		}
 	}
 }
