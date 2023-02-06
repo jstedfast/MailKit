@@ -78,7 +78,7 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		MimeMessage CreateSimpleMessage ()
+		static MimeMessage CreateSimpleMessage ()
 		{
 			var message = new MimeMessage ();
 			message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
@@ -92,7 +92,7 @@ namespace UnitTests.Net.Smtp {
 			return message;
 		}
 
-		MimeMessage CreateBinaryMessage ()
+		static MimeMessage CreateBinaryMessage ()
 		{
 			var message = new MimeMessage ();
 			message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
@@ -107,7 +107,7 @@ namespace UnitTests.Net.Smtp {
 			return message;
 		}
 
-		MimeMessage CreateEightBitMessage ()
+		static MimeMessage CreateEightBitMessage ()
 		{
 			var message = new MimeMessage ();
 			message.From.Add (new MailboxAddress ("Sender Name", "sender@example.com"));
@@ -404,10 +404,11 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestLocalDomainIPv4 ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "127.0.0.1";
@@ -425,10 +426,11 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestLocalDomainIPv6 ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [IPv6:::1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO [IPv6:::1]\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "::1";
@@ -446,10 +448,11 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestLocalDomainIPv4MappedToIPv6 ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [129.144.52.38]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO [129.144.52.38]\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "::FFFF:129.144.52.38";
@@ -464,13 +467,19 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateSendWithoutSenderOrRecipientsCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestSendWithoutSenderOrRecipients ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateSendWithoutSenderOrRecipientsCommands ();
 
 			using (var client = new SmtpClient ()) {
 					try {
@@ -496,10 +505,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestSendWithoutSenderOrRecipientsAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateSendWithoutSenderOrRecipientsCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -522,24 +528,30 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateInvalidStateExceptionsCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "auth-required.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "auth-required.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestInvalidStateExceptions ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateInvalidStateExceptionsCommands ();
 
 			using (var client = new SmtpClient ()) {
 				var message = CreateSimpleMessage ();
@@ -597,21 +609,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestInvalidStateExceptionsAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateInvalidStateExceptionsCommands ();
 
 			using (var client = new SmtpClient ()) {
 				var message = CreateSimpleMessage ();
@@ -706,7 +704,7 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		void AssertGMailIsConnected (IMailService client)
+		static void AssertGMailIsConnected (IMailService client)
 		{
 			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
 			Assert.IsTrue (client.IsSecure, "Expected a secure connection");
@@ -722,7 +720,7 @@ namespace UnitTests.Net.Smtp {
 			Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
 		}
 
-		void AssertClientIsDisconnected (IMailService client)
+		static void AssertClientIsDisconnected (IMailService client)
 		{
 			Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
 			Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
@@ -1283,18 +1281,24 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateAuthenticationFailedCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "auth-failed.txt"),
+				new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"),
+				new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"),
+				new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "auth-failed.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "auth-failed.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestAuthenticationFailed ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "auth-failed.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "auth-failed.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "auth-failed.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateAuthenticationFailedCommands ();
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
@@ -1343,15 +1347,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestAuthenticationFailedAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "auth-failed.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "auth-failed.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "auth-failed.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateAuthenticationFailedCommands ();
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
@@ -1434,16 +1430,22 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateRedactAuthenticationCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"),
+				new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"),
+				new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestRedactAuthentication ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateRedactAuthenticationCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -1486,13 +1488,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestRedactAuthenticationAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateRedactAuthenticationCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -1532,14 +1528,20 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateRedactSaslInitialResponseCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestRedactSaslInitialResponse ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateRedactSaslInitialResponseCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -1580,11 +1582,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestRedactSaslInitialResponseAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateRedactSaslInitialResponseCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -1622,16 +1620,22 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateRedactSaslAuthenticationCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"),
+				new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"),
+				new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestRedactSaslAuthentication ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateRedactSaslAuthenticationCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -1672,13 +1676,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestRedactSaslAuthenticationAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateRedactSaslAuthenticationCommands ();
 
 			using (var stream = new MemoryStream ()) {
 				using (var client = new SmtpClient (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
@@ -1720,10 +1718,11 @@ namespace UnitTests.Net.Smtp {
 		[TestCase (SmtpResponseMode.Line)]
 		public void TestSmtpResponseModes (SmtpResponseMode mode)
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
@@ -1760,14 +1759,20 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateHeloFallbackCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO [IPv6:::1]\r\n", "ehlo-failed.txt"),
+				new SmtpReplayCommand ("HELO [IPv6:::1]\r\n", "helo.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestHeloFallback ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [IPv6:::1]\r\n", "ehlo-failed.txt"));
-			commands.Add (new SmtpReplayCommand ("HELO [IPv6:::1]\r\n", "helo.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateHeloFallbackCommands ();
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "::1";
@@ -1795,11 +1800,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestHeloFallbackAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [IPv6:::1]\r\n", "ehlo-failed.txt"));
-			commands.Add (new SmtpReplayCommand ("HELO [IPv6:::1]\r\n", "helo.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateHeloFallbackCommands ();
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "::1";
@@ -1824,35 +1825,41 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateBasicFunctionalityCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"),
+				new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"),
+				new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"),
+				new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"),
+				new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"),
+				new SmtpReplayCommand ("NOOP\r\n", "comcast-noop.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestBasicFunctionality ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
-			commands.Add (new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"));
-			commands.Add (new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"));
-			commands.Add (new SmtpReplayCommand ("NOOP\r\n", "comcast-noop.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateBasicFunctionalityCommands ();
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
@@ -1989,32 +1996,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestBasicFunctionalityAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
-			commands.Add (new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"));
-			commands.Add (new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"));
-			commands.Add (new SmtpReplayCommand ("NOOP\r\n", "comcast-noop.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateBasicFunctionalityCommands ();
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
@@ -2148,16 +2130,22 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateSaslAuthenticationCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"),
+				new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"),
+				new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestSaslAuthentication ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateSaslAuthenticationCommands ();
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
@@ -2211,13 +2199,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestSaslAuthenticationAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH LOGIN\r\n", "comcast-auth-login-username.txt"));
-			commands.Add (new SmtpReplayCommand ("dXNlcm5hbWU=\r\n", "comcast-auth-login-password.txt"));
-			commands.Add (new SmtpReplayCommand ("cGFzc3dvcmQ=\r\n", "comcast-auth-login.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateSaslAuthenticationCommands ();
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
@@ -2268,18 +2250,24 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateEightBitMimeCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestEightBitMime ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateEightBitMimeCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -2326,15 +2314,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestEightBitMimeAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateEightBitMimeCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -2378,25 +2358,31 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateInternationalMailboxesCommands (out MailboxAddress mailbox, out string addrspec)
+		{
+			mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
+			addrspec = MailboxAddress.EncodeAddrspec (mailbox.Address);
+
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+smtputf8.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ($"MAIL FROM:<{mailbox.Address}> SMTPUTF8 BODY=8BITMIME\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ($"RCPT TO:<{mailbox.Address}>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ($"MAIL FROM:<{addrspec}> BODY=8BITMIME\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ($"RCPT TO:<{addrspec}>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestInternationalMailboxes ()
 		{
-			var mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
-			var addrspec = MailboxAddress.EncodeAddrspec (mailbox.Address);
-
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+smtputf8.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ($"MAIL FROM:<{mailbox.Address}> SMTPUTF8 BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ($"RCPT TO:<{mailbox.Address}>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ($"MAIL FROM:<{addrspec}> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ($"RCPT TO:<{addrspec}>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateInternationalMailboxesCommands (out var mailbox, out var addrspec);
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -2454,22 +2440,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestInternationalMailboxesAsync ()
 		{
-			var mailbox = new MailboxAddress (string.Empty, "úßerñame@example.com");
-			var addrspec = MailboxAddress.EncodeAddrspec (mailbox.Address);
-
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+smtputf8.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ($"MAIL FROM:<{mailbox.Address}> SMTPUTF8 BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ($"RCPT TO:<{mailbox.Address}>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ($"MAIL FROM:<{addrspec}> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ($"RCPT TO:<{addrspec}>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateInternationalMailboxesCommands (out var mailbox, out var addrspec);
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -2560,14 +2531,15 @@ namespace UnitTests.Net.Smtp {
 					bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
 				}
 
-				var commands = new List<SmtpReplayCommand> ();
-				commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-				commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+binarymime.txt"));
-				commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-				commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"));
-				commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-				commands.Add (new SmtpReplayCommand (bdat, "comcast-data-done.txt"));
-				commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+				var commands = new List<SmtpReplayCommand> {
+					new SmtpReplayCommand ("", "comcast-greeting.txt"),
+					new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+binarymime.txt"),
+					new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+					new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"),
+					new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+					new SmtpReplayCommand (bdat, "comcast-data-done.txt"),
+					new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+				};
 
 				using (var client = new SmtpClient ()) {
 					try {
@@ -2645,14 +2617,15 @@ namespace UnitTests.Net.Smtp {
 					bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
 				}
 
-				var commands = new List<SmtpReplayCommand> ();
-				commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-				commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+binarymime.txt"));
-				commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-				commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"));
-				commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-				commands.Add (new SmtpReplayCommand (bdat, "comcast-data-done.txt"));
-				commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+				var commands = new List<SmtpReplayCommand> {
+					new SmtpReplayCommand ("", "comcast-greeting.txt"),
+					new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+binarymime.txt"),
+					new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+					new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"),
+					new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+					new SmtpReplayCommand (bdat, "comcast-data-done.txt"),
+					new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+				};
 
 				using (var client = new SmtpClient ()) {
 					try {
@@ -2707,18 +2680,24 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreatetPipeliningCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+pipelining.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\nRCPT TO:<recipient@example.com>\r\n", "pipelined-mail-from-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[TestCase (false, TestName = "TestPipeliningNoProgress")]
 		[TestCase (true, TestName = "TestPipeliningWithProgress")]
 		public void TestPipelining (bool showProgress)
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+pipelining.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\nRCPT TO:<recipient@example.com>\r\n", "pipelined-mail-from-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreatetPipeliningCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -2776,14 +2755,7 @@ namespace UnitTests.Net.Smtp {
 		[TestCase (true, TestName = "TestPipeliningAsyncWithProgress")]
 		public async Task TestPipeliningAsync (bool showProgress)
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+pipelining.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\nRCPT TO:<recipient@example.com>\r\n", "pipelined-mail-from-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreatetPipeliningCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -2837,16 +2809,22 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateMailFromMailboxUnavailableCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "mailbox-unavailable.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestMailFromMailboxUnavailable ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateMailFromMailboxUnavailableCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -2898,13 +2876,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestMailFromMailboxUnavailableAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateMailFromMailboxUnavailableCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -2953,17 +2925,23 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateRcptToMailboxUnavailableCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestRcptToMailboxUnavailable ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateRcptToMailboxUnavailableCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -3015,14 +2993,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestRcptToMailboxUnavailableAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateRcptToMailboxUnavailableCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -3088,17 +3059,23 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateNoRecipientsAcceptedCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestNoRecipientsAccepted ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateNoRecipientsAcceptedCommands ();
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
 				try {
@@ -3154,14 +3131,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestNoRecipientsAcceptedAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateNoRecipientsAcceptedCommands ();
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
 				try {
@@ -3214,16 +3184,22 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand>  CreateNoRecipientsAcceptedPipelinedCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+pipelining.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\nRCPT TO:<recipient@example.com>\r\n", "pipelined-mailbox-unavailable.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestNoRecipientsAcceptedPipelined ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+pipelining.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\nRCPT TO:<recipient@example.com>\r\n", "pipelined-mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateNoRecipientsAcceptedPipelinedCommands ();
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
 				try {
@@ -3279,13 +3255,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestNoRecipientsAcceptedPipelinedAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+pipelining.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\nRCPT TO:<recipient@example.com>\r\n", "pipelined-mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateNoRecipientsAcceptedPipelinedCommands ();
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
 				try {
@@ -3338,15 +3308,21 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateUnauthorizedAccessExceptionCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"),
+				new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestUnauthorizedAccessException ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateUnauthorizedAccessExceptionCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -3392,12 +3368,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestUnauthorizedAccessExceptionAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateUnauthorizedAccessExceptionCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -3469,23 +3440,29 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateDeliveryStatusNotificationCommands (MimeMessage message)
+		{
+			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
+
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestDeliveryStatusNotification ()
 		{
 			using (var message = CreateEightBitMessage ()) {
 				message.MessageId = MimeUtils.GenerateMessageId ();
 
-				var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
-
-				var commands = new List<SmtpReplayCommand> ();
-				commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-				commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
-				commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-				commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
-				commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"));
-				commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-				commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-				commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+				var commands = CreateDeliveryStatusNotificationCommands (message);
 
 				using (var client = new DsnSmtpClient ()) {
 					try {
@@ -3543,17 +3520,7 @@ namespace UnitTests.Net.Smtp {
 			using (var message = CreateEightBitMessage ()) {
 				message.MessageId = MimeUtils.GenerateMessageId ();
 
-				var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
-
-				var commands = new List<SmtpReplayCommand> ();
-				commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-				commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
-				commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-				commands.Add (new SmtpReplayCommand (mailFrom, "comcast-mail-from.txt"));
-				commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com> NOTIFY=SUCCESS,FAILURE,DELAY ORCPT=rfc822;recipient@example.com\r\n", "comcast-rcpt-to.txt"));
-				commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-				commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-				commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+				var commands = CreateDeliveryStatusNotificationCommands (message);
 
 				using (var client = new DsnSmtpClient ()) {
 					try {
@@ -3605,18 +3572,24 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateDeliveryStatusNotificationWithHexEncodeCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=FULL\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=NEVER ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
 		[Test]
 		public void TestDeliveryStatusNotificationWithHexEncode ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=FULL\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=NEVER ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateDeliveryStatusNotificationWithHexEncodeCommands ();
 
 			using (var client = new DsnSmtpClient ()) {
 				try {
@@ -3677,15 +3650,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestDeliveryStatusNotificationWithHexEncodeAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+dsn.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID=123456789+2B+3Dabc@+E5+90+8D+E3+81+8C+E3+83+89+E3+83+A1+E3+82+A4+E3+83+B3.com RET=FULL\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@xn--v8jxj3d1dzdz08w.com> NOTIFY=NEVER ORCPT=rfc822;recipient@xn--v8jxj3d1dzdz08w.com\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = CreateDeliveryStatusNotificationWithHexEncodeCommands ();
 
 			using (var client = new DsnSmtpClient ()) {
 				try {
@@ -3756,14 +3721,20 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateCustomCommandCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"),
+				new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt")
+			};
+		}
+
 		[Test]
 		public void TestCustomCommand ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"));
-			commands.Add (new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"));
+			var commands = CreateCustomCommandCommands ();
 
 			using (var client = new CustomSmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
@@ -3826,11 +3797,7 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestCustomCommandAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"));
-			commands.Add (new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"));
+			var commands = CreateCustomCommandCommands ();
 
 			using (var client = new CustomSmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
