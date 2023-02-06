@@ -547,12 +547,16 @@
     <EmbeddedResource Include="Net\Smtp\Resources\auth-failed.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-required.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-successful.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-digest-md5-response.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-digest-md5-reset.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-login-password.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-digest-md5.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-login-username.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-login.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-plain.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-data.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-data-done.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+digest-md5.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+binarymime.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+dsn.txt" />

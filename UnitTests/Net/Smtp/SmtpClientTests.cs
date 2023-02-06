@@ -2250,6 +2250,142 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateSaslExceptionProperlyResetsCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo+digest-md5.txt"),
+				new SmtpReplayCommand ("AUTH DIGEST-MD5\r\n", "comcast-auth-digest-md5.txt"),
+				new SmtpReplayCommand ("dXNlcm5hbWU9ImNocmlzIixyZWFsbT0iZWx3b29kLmlubm9zb2Z0LmNvbSIsbm9uY2U9Ik9BNk1HOXRFUUdtMmhoIixjbm9uY2U9Ik9BNk1IWGg2VnFUclJrIixuYz0wMDAwMDAwMSxxb3A9ImF1dGgiLGRpZ2VzdC11cmk9InNtdHAvZWx3b29kLmlubm9zb2Z0LmNvbSIscmVzcG9uc2U9NTJmZjQ0OTA3ZjcyMzE0NDgxYjVjMDk4YzcwOGViZjMsY2hhcnNldD11dGYtOCxhbGdvcml0aG09bWQ1LXNlc3M=\r\n", "comcast-auth-digest-md5-response.txt"),
+				new SmtpReplayCommand ("\r\n", "comcast-auth-digest-md5-reset.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
+		[Test]
+		public void TestSaslExceptionProperlyResets ()
+		{
+			var commands = CreateSaslExceptionProperlyResetsCommands ();
+
+			using (var client = new SmtpClient ()) {
+				client.LocalDomain = "unit-tests.mimekit.org";
+
+				try {
+					client.ReplayConnect ("elwood.innosoft.com", new SmtpReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), "Failed to detect the DIGEST-MD5 auth mechanism");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
+
+				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				client.Timeout *= 2;
+
+				try {
+					var credentials = new NetworkCredential ("chris", "secret");
+					var sasl = new SaslMechanismDigestMd5 (credentials) {
+						cnonce = "OA6MHXh6VqTrRk"
+					};
+
+					client.Authenticate (sasl);
+					Assert.Fail ("Expected AUthenticationException");
+				} catch (AuthenticationException ax) {
+					// yay!
+				} catch (Exception ex) {
+					Assert.Fail ("Unexpected exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsAuthenticated, "IsAuthenticated");
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async Task TestSaslExceptionProperlyResetsAsync ()
+		{
+			var commands = CreateSaslExceptionProperlyResetsCommands ();
+
+			using (var client = new SmtpClient ()) {
+				client.LocalDomain = "unit-tests.mimekit.org";
+
+				try {
+					await client.ReplayConnectAsync ("elwood.innosoft.com", new SmtpReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), "Failed to detect the DIGEST-MD5 auth mechanism");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
+				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+
+				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
+
+				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				client.Timeout *= 2;
+
+				try {
+					var credentials = new NetworkCredential ("chris", "secret");
+					var sasl = new SaslMechanismDigestMd5 (credentials) {
+						cnonce = "OA6MHXh6VqTrRk"
+					};
+
+					await client.AuthenticateAsync (sasl);
+					Assert.Fail ("Expected AUthenticationException");
+				} catch (AuthenticationException ax) {
+					// yay!
+				} catch (Exception ex) {
+					Assert.Fail ("Unexpected exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsAuthenticated, "IsAuthenticated");
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
 		static List<SmtpReplayCommand> CreateEightBitMimeCommands ()
 		{
 			return new List<SmtpReplayCommand> {
