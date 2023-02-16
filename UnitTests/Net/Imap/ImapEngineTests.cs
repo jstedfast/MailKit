@@ -313,6 +313,18 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestExchange2003ImapDetection ()
+		{
+			TestGreetingDetection ("exchange", "greeting-2003.txt", ImapQuirksMode.Exchange2003);
+		}
+
+		[Test]
+		public void TestExchange2007ImapDetection ()
+		{
+			TestGreetingDetection ("exchange", "greeting-2007.txt", ImapQuirksMode.Exchange2007);
+		}
+
+		[Test]
 		public void TestUWImapDetection ()
 		{
 			TestGreetingDetection ("uw", "greeting.txt", ImapQuirksMode.UW);

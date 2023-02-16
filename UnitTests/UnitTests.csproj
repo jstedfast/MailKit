@@ -308,6 +308,8 @@
     <EmbeddedResource Include="Net\Imap\Resources\exchange\capability-postauth.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\exchange\capability-preauth.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\exchange\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\exchange\greeting-2003.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\exchange\greeting-2007.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\exchange\issue115.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\add-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\add-labels.txt" />
