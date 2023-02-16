@@ -336,6 +336,11 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		SaveDate         = 1L << 57,
 
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc8970">PREVIEW</a> extension.
+		/// </summary>
+		Preview          = 1L << 58,
+
 		#region GMail Extensions
 
 		/// <summary>

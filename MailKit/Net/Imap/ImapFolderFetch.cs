@@ -271,7 +271,7 @@ namespace MailKit.Net.Imap
 					message.InternalDate = ReadDateTimeOffsetToken (engine, atom, cancellationToken);
 					message.Fields |= MessageSummaryItems.InternalDate;
 				} else if (atom.Equals ("SAVEDATE", StringComparison.OrdinalIgnoreCase)) {
-					message.SaveDate = ReadDateTimeOffsetToken (engine, atom, cancellationToken) ;
+					message.SaveDate = ReadDateTimeOffsetToken (engine, atom, cancellationToken);
 					message.Fields |= MessageSummaryItems.SaveDate;
 				} else if (atom.Equals ("RFC822.SIZE", StringComparison.OrdinalIgnoreCase)) {
 					token = engine.ReadToken (cancellationToken);
@@ -449,6 +449,10 @@ namespace MailKit.Net.Imap
 				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
 					message.Annotations = ImapUtils.ParseAnnotationsAsync (engine, false, cancellationToken).GetAwaiter ().GetResult ();
 					message.Fields |= MessageSummaryItems.Annotations;
+				} else if (atom.Equals ("PREVIEW", StringComparison.OrdinalIgnoreCase)) {
+					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "PREVIEW", "{0}");
+					message.PreviewText = ImapUtils.ReadNStringToken (engine, format, false, cancellationToken);
+					message.Fields |= MessageSummaryItems.PreviewText;
 				} else {
 					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
 					token = engine.ReadToken (cancellationToken);
@@ -681,6 +685,10 @@ namespace MailKit.Net.Imap
 				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
 					message.Annotations = await ImapUtils.ParseAnnotationsAsync (engine, true, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Annotations;
+				} else if (atom.Equals ("PREVIEW", StringComparison.OrdinalIgnoreCase)) {
+					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "PREVIEW", "{0}");
+					message.PreviewText = await ImapUtils.ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
+					message.Fields |= MessageSummaryItems.PreviewText;
 				} else {
 					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
 					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -722,10 +730,11 @@ namespace MailKit.Net.Imap
 		{
 			var items = request.Items;
 
-			if ((items & MessageSummaryItems.PreviewText) != 0) {
+			if ((engine.Capabilities & ImapCapabilities.Preview) == 0 && (items & MessageSummaryItems.PreviewText) != 0) {
 				// if the user wants the preview text, we will also need the UIDs and BODYSTRUCTUREs
 				// so that we can request a preview of the body text in subsequent FETCH requests.
 				items |= MessageSummaryItems.BodyStructure | MessageSummaryItems.UniqueId;
+				items &= ~MessageSummaryItems.PreviewText;
 				previewText = true;
 			} else {
 				previewText = false;
@@ -737,16 +746,13 @@ namespace MailKit.Net.Imap
 			}
 
 			if (engine.QuirksMode != ImapQuirksMode.GMail && !isNotify) {
-				// first, eliminate the aliases...
-				var alias = items & ~MessageSummaryItems.PreviewText;
-
-				if (alias == MessageSummaryItems.All)
+				if (items == MessageSummaryItems.All)
 					return "ALL";
 
-				if (alias == MessageSummaryItems.Full)
+				if (items == MessageSummaryItems.Full)
 					return "FULL";
 
-				if (alias == MessageSummaryItems.Fast)
+				if (items == MessageSummaryItems.Fast)
 					return "FAST";
 			}
 
@@ -788,6 +794,19 @@ namespace MailKit.Net.Imap
 			if ((engine.Capabilities & ImapCapabilities.SaveDate) != 0) {
 				if ((items & MessageSummaryItems.SaveDate) != 0)
 					tokens.Add ("SAVEDATE");
+			}
+
+			if ((engine.Capabilities & ImapCapabilities.Preview) != 0) {
+				if ((items & MessageSummaryItems.PreviewText) != 0) {
+#if ENABLE_LAZY_PREVIEW_API
+					if (request.PreviewOptions == PreviewOptions.Lazy)
+						tokens.Add ("PREVIEW (LAZY)");
+					else
+						tokens.Add ("PREVIEW");
+#else
+					tokens.Add ("PREVIEW");
+#endif
+				}
 			}
 
 			if ((engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {

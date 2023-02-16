@@ -116,3 +116,4 @@ MailKit implements the following IETF specifications:
 * [8508](https://tools.ietf.org/html/rfc8508): IMAP REPLACE Extension (Updates rfc3501)
 * [8514](https://tools.ietf.org/html/rfc8514): Internet Message Access Protocol (IMAP) - SAVEDATE Extension
 * [8689](https://tools.ietf.org/html/rfc8689): SMTP Require TLS Option
+* [8970](https://tools.ietf.org/html/rfc8970): IMAP4 Extension: Message Preview Generation

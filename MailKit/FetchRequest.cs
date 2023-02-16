@@ -135,5 +135,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The set of headers to be fetched.</value>
 		public HeaderSet Headers { get; set; }
+
+#if ENABLE_LAZY_PREVIEW_API
+		/// <summary>
+		/// Get or set options to use when fetching <see cref="MessageSummaryItems.PreviewText"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets options to use when fetching <see cref="MessageSummaryItems.PreviewText"/>.</para>
+		/// <note type="note">These options are only used if <see cref="Items"/> includes the
+		/// <see cref="MessageSummaryItems.PreviewText"/> value.</note>
+		/// </remarks>
+		public PreviewOptions PreviewOptions { get; set; }
+#endif
 	}
 }

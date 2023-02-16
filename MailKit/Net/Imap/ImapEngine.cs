@@ -1312,6 +1312,8 @@ namespace MailKit.Net.Imap {
 				Capabilities |= ImapCapabilities.Replace;
 			} else if (atom.Equals ("SAVEDATE", StringComparison.OrdinalIgnoreCase)) {
 				Capabilities |= ImapCapabilities.SaveDate;
+			} else if (atom.Equals ("PREVIEW", StringComparison.OrdinalIgnoreCase)) {
+				Capabilities |= ImapCapabilities.Preview;
 			} else if (atom.Equals ("XLIST", StringComparison.OrdinalIgnoreCase)) {
 				Capabilities |= ImapCapabilities.XList;
 			} else if (atom.Equals ("X-GM-EXT-1", StringComparison.OrdinalIgnoreCase)) {
