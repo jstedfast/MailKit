@@ -173,7 +173,7 @@ namespace MailKit {
 
 		/// <summary>
 		/// <para>Fetch the <see cref="IMessageSummary.PreviewText"/>.</para>
-		/// <note type="note">This property is quite expensive to calculate because it is not an
+		/// <note type="note">This property can be quite expensive to calculate because it is typically not an
 		/// item that is cached on the IMAP server. Instead, MailKit must download a hunk of the
 		/// message body so that it can decode and parse it in order to generate a meaningful
 		/// text snippet. This usually involves downloading the first 512 bytes for <c>text/plain</c>
