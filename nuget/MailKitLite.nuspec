@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKitLite</id>
-    <version>3.5.0</version>
+    <version>3.6.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,12 +26,9 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Fixed bitmasking logic in SmtpClient.cs for deciding whether to use the BDAT command.
-* Fixed HttpProxyClient to call GetConnectCommand() *before* connecting a socket to prevent memory leaks when connecting fails.
-* Improved the IMAP BODYSTRUCTURE parser to better handle broken responses.
-* Fixed bug in Envelope.Parse/TryParse when given `(NIL NIL "" "localhost")` (issue #1471)
-* Fixed SMTP client logic to calculate the needed bytes before converting commands into into the output buffer. (issue #1498)
-* Fixed SmtpClient to replace _'s with -'s in the default LocalDomain string (used in HELO/EHLO commands). (issue #1501)
+* Decrement ImapFolder.Count when ImapClient receives an untagged EXPUNGE notification and emit a CountChanged event. (issue #1509)
+* Avoid using the NAMESPACE command for Exchange 2003. (issue #1512)
+* Added support for rfc8970 (IMAP4 Extension: Message Preview Generation).
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -61,25 +58,25 @@ Features include:
     <dependencies>
       <group targetFramework="net462">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="3.5.0" />
+        <dependency id="MimeKitLite" version="3.6.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="3.5.0" />
+        <dependency id="MimeKitLite" version="3.6.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="3.5.0" />
+        <dependency id="MimeKitLite" version="3.6.0" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKitLite" version="3.5.0" />
+        <dependency id="MimeKitLite" version="3.6.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="3.5.0" />
+        <dependency id="MimeKitLite" version="3.6.0" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="MimeKitLite" version="3.5.0" />
+        <dependency id="MimeKitLite" version="3.6.0" />
       </group>
     </dependencies>
   </metadata>
