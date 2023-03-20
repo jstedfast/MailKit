@@ -2122,7 +2122,7 @@ namespace MailKit.Net.Imap {
 				command.Append (" STATUS");
 
 			foreach (var group in eventGroups) {
-				command.Append (" ");
+				command.Append (' ');
 
 				group.Format (engine, command, args, ref notifySelectedNewExpunge);
 			}

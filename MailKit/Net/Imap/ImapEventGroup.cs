@@ -102,9 +102,9 @@ namespace MailKit.Net.Imap {
 		{
 			bool isSelectedFilter = MailboxFilter == ImapMailboxFilter.Selected || MailboxFilter == ImapMailboxFilter.SelectedDelayed;
 
-			command.Append ("(");
+			command.Append ('(');
 			MailboxFilter.Format (engine, command, args);
-			command.Append (" ");
+			command.Append (' ');
 
 			if (Events.Count > 0) {
 				var haveAnnotationChange = false;
@@ -112,7 +112,7 @@ namespace MailKit.Net.Imap {
 				var haveMessageNew = false;
 				var haveFlagChange = false;
 
-				command.Append ("(");
+				command.Append ('(');
 
 				for (int i = 0; i < Events.Count; i++) {
 					var @event = Events[i];
@@ -130,11 +130,11 @@ namespace MailKit.Net.Imap {
 						haveAnnotationChange = true;
 
 					if (i > 0)
-						command.Append (" ");
+						command.Append (' ');
 
 					@event.Format (engine, command, args, isSelectedFilter);
 				}
-				command.Append (")");
+				command.Append (')');
 
 				// https://tools.ietf.org/html/rfc5465#section-5
 				if ((haveMessageNew && !haveMessageExpunge) || (!haveMessageNew && haveMessageExpunge))
@@ -148,7 +148,7 @@ namespace MailKit.Net.Imap {
 				command.Append ("NONE");
 			}
 
-			command.Append (")");
+			command.Append (')');
 		}
 	}
 
@@ -320,16 +320,16 @@ namespace MailKit.Net.Imap {
 					command.Append ("%F");
 					args.Add (folders[0]);
 				} else {
-					command.Append ("(");
+					command.Append ('(');
 
 					for (int i = 0; i < folders.Length; i++) {
 						if (i > 0)
-							command.Append (" ");
+							command.Append (' ');
 						command.Append ("%F");
 						args.Add (folders[i]);
 					}
 
-					command.Append (")");
+					command.Append (')');
 				}
 			}
 		}
@@ -710,7 +710,7 @@ namespace MailKit.Net.Imap {
 				if (!isSelectedFilter)
 					throw new InvalidOperationException ("The MessageNew event cannot have any parameters for mailbox filters other than SELECTED and SELECTED-DELAYED.");
 
-				command.Append (" ");
+				command.Append (' ');
 				command.Append (ImapFolder.FormatSummaryItems (engine, request, out _, isNotify: true));
 			}
 		}
