@@ -435,7 +435,8 @@ namespace MailKit {
 				switch (issuer) {
 				case GMailCertificateIssuer:
 					return (serial == "34B84EF11142CF4512D41976BF659B41" && fingerprint == "ABF1B02CBF92482FE1640E8EAD4C9CE0C8BD8573") // Expires 4/3/2023 4:18:36 AM
-						|| (serial == "458817FC181DDE2E1288AD51CE2798BF" && fingerprint == "EF88E9EDB9B15EBD8498D037EAD8CF15F11A7492"); // Expires 5/3/2023 12:35:52 AM
+						|| (serial == "458817FC181DDE2E1288AD51CE2798BF" && fingerprint == "EF88E9EDB9B15EBD8498D037EAD8CF15F11A7492") // Expires 5/3/2023 12:35:52 AM
+						|| (serial == "00F525194DBA81A0BC12DBDFD903F44F0D" && fingerprint == "75F1EB098EEC6BB570485A402459B846B3052C11"); // Expires 5/25/2023 12:22:22 AM
 				default:
 					return false;
 				}
@@ -443,7 +444,8 @@ namespace MailKit {
 				switch (issuer) {
 				case GMailCertificateIssuer:
 					return (serial == "064F13D6F20B4C140AA426791CCA36CB" && fingerprint == "4C3B78DD1078069E257E717513BF3E246DDA45E0") // Expires 4/3/2023 4:18:36 AM
-						|| (serial == "00946E3F84703BE4690A12491232CD7DF9" && fingerprint == "5C1376C19F1A6FB6DAAE4393D2919134573CADDE"); // Expires 5/3/2023 12:35:52 AM
+						|| (serial == "00946E3F84703BE4690A12491232CD7DF9" && fingerprint == "5C1376C19F1A6FB6DAAE4393D2919134573CADDE") // Expires 5/3/2023 12:35:52 AM
+						|| (serial == "0BFA6B98977EA55912F4440ADE1B9320" && fingerprint == "20B6444B3A195C499B2BD27FB1C1BE01814D1A01"); // Expires 5/25/2023 12:22:22 AM
 				default:
 					return false;
 				}
@@ -451,7 +453,8 @@ namespace MailKit {
 				switch (issuer) {
 				case GMailCertificateIssuer:
 					return (serial == "00A7342694B906B4FE0A3683770F0FE5A7" && fingerprint == "23D7F12451BE47686D2A2C2837A88E1A5341F970") // Expires 4/3/2023 4:18:38 AM
-						|| (serial == "00F84964E523B1ADD80A85F5DBDFB8118A" && fingerprint == "7923264A11C9BB7C8F477A2E71FEC8449E56B192"); // Expires 5/3/2023 12:35:53 AM
+						|| (serial == "00F84964E523B1ADD80A85F5DBDFB8118A" && fingerprint == "7923264A11C9BB7C8F477A2E71FEC8449E56B192") // Expires 5/3/2023 12:35:53 AM
+						|| (serial == "00BB686207476F3BA30AAA3FE14DF58FAC" && fingerprint == "B3FBFA39091768512BC42B9C0C71809E3309553B"); // Expires 5/25/2023 12:22:23 AM
 				default:
 					return false;
 				}
