@@ -2228,7 +2228,7 @@ namespace MailKit.Net.Smtp {
 			return ParseBdatResponse (message, response);
 		}
 
-		void ParseDataResponse (SmtpResponse response)
+		static void ParseDataResponse (SmtpResponse response)
 		{
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -2452,7 +2452,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void ValidateArguments (FormatOptions options, MimeMessage message, out MailboxAddress sender, out IList<MailboxAddress> recipients)
+		static void ValidateArguments (FormatOptions options, MimeMessage message, out MailboxAddress sender, out IList<MailboxAddress> recipients)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -2531,7 +2531,7 @@ namespace MailKit.Net.Smtp {
 			return Send (options, message, sender, recipients, cancellationToken, progress);
 		}
 
-		List<MailboxAddress> ValidateArguments (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients)
+		static List<MailboxAddress> ValidateArguments (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -2635,7 +2635,7 @@ namespace MailKit.Net.Smtp {
 			return string.Format ("EXPN {0}\r\n", alias);
 		}
 
-		InternetAddressList ParseExpandResponse (SmtpResponse response)
+		static InternetAddressList ParseExpandResponse (SmtpResponse response)
 		{
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -2713,7 +2713,7 @@ namespace MailKit.Net.Smtp {
 			return string.Format ("VRFY {0}\r\n", address);
 		}
 
-		MailboxAddress ParseVerifyResponse (SmtpResponse response)
+		static MailboxAddress ParseVerifyResponse (SmtpResponse response)
 		{
 			if (response.StatusCode == SmtpStatusCode.Ok)
 				return MailboxAddress.Parse (response.Response);

@@ -3009,7 +3009,7 @@ namespace MailKit.Net.Imap {
 		/// <returns><c>true</c> if the mailbox name is valid; otherwise, <c>false</c>.</returns>
 		/// <param name="mailboxName">The mailbox name.</param>
 		/// <param name="delim">The path delimeter.</param>
-		public bool IsValidMailboxName (string mailboxName, char delim)
+		public static bool IsValidMailboxName (string mailboxName, char delim)
 		{
 			// From rfc6855:
 			//

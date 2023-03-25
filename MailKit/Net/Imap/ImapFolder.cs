@@ -758,7 +758,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
 
-			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
+			if (!ImapEngine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			CheckState (false, false);
@@ -887,7 +887,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
 
-			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
+			if (!ImapEngine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			if (specialUses == null)
@@ -1070,7 +1070,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
 
-			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
+			if (!ImapEngine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			if (IsNamespace || (Attributes & FolderAttributes.Inbox) != 0)
@@ -1693,7 +1693,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
 
-			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
+			if (!ImapEngine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name of the subfolder is invalid.", nameof (name));
 
 			CheckState (false, false);
