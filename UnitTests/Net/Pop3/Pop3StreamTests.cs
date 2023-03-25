@@ -134,18 +134,12 @@ namespace UnitTests.Net.Pop3 {
 		public void TestWrite ()
 		{
 			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var buf1k = RandomNumberGenerator.GetBytes (1024);
+				var buf4k = RandomNumberGenerator.GetBytes (4096);
+				var buf9k = RandomNumberGenerator.GetBytes (9216);
 				var memory = (MemoryStream) stream.Stream;
 				var buffer = new byte[8192];
-				var buf1k = new byte[1024];
-				var buf4k = new byte[4096];
-				var buf9k = new byte[9216];
 				byte[] mem;
-
-				using (var rng = new RNGCryptoServiceProvider ()) {
-					rng.GetBytes (buf1k);
-					rng.GetBytes (buf4k);
-					rng.GetBytes (buf9k);
-				}
 
 				Assert.Throws<ArgumentNullException> (() => stream.Write (null, 0, buffer.Length));
 				Assert.Throws<ArgumentOutOfRangeException> (() => stream.Write (buffer, -1, buffer.Length));
@@ -200,18 +194,12 @@ namespace UnitTests.Net.Pop3 {
 		public async Task TestWriteAsync ()
 		{
 			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var buf1k = RandomNumberGenerator.GetBytes (1024);
+				var buf4k = RandomNumberGenerator.GetBytes (4096);
+				var buf9k = RandomNumberGenerator.GetBytes (9216);
 				var memory = (MemoryStream) stream.Stream;
 				var buffer = new byte[8192];
-				var buf1k = new byte[1024];
-				var buf4k = new byte[4096];
-				var buf9k = new byte[9216];
 				byte[] mem;
-
-				using (var rng = new RNGCryptoServiceProvider ()) {
-					rng.GetBytes (buf1k);
-					rng.GetBytes (buf4k);
-					rng.GetBytes (buf9k);
-				}
 
 				// Test #1: write less than 4K to make sure that Pop3Stream buffers it
 				await stream.WriteAsync (buf1k, 0, buf1k.Length);

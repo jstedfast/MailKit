@@ -125,25 +125,21 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestReadResponseOver4K ()
 		{
-			string expected;
-			string input;
+			var builder = new StringBuilder ();
+			var rngData = new byte[72];
 
-			using (var rng = new RNGCryptoServiceProvider ()) {
-				var builder = new StringBuilder ();
-				var buffer = new byte[72];
+			while (builder.Length < 5120) {
+				RandomNumberGenerator.Fill (rngData);
 
-				while (builder.Length < 5120) {
-					rng.GetBytes (buffer);
-
-					var base64 = Convert.ToBase64String (buffer);
-					builder.AppendFormat ("250-{0}\r\n", base64);
-				}
-
-				builder.Append ("250 Okay, now we're done.\r\n");
-				input = builder.ToString ();
-
-				expected = input.Replace ("250-", "").Replace ("250 ", "").Replace ("\r\n", "\n").TrimEnd ();
+				var base64 = Convert.ToBase64String (rngData);
+				builder.AppendFormat ("250-{0}\r\n", base64);
 			}
+
+			builder.Append ("250 Okay, now we're done.\r\n");
+
+			var input = builder.ToString ();
+
+			var expected = input.Replace ("250-", "").Replace ("250 ", "").Replace ("\r\n", "\n").TrimEnd ();
 
 			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = Encoding.ASCII.GetBytes (input);
@@ -182,18 +178,12 @@ namespace UnitTests.Net.Smtp {
 		public void TestWrite ()
 		{
 			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var buf1k = RandomNumberGenerator.GetBytes (1024);
+				var buf4k = RandomNumberGenerator.GetBytes (4096);
+				var buf9k = RandomNumberGenerator.GetBytes (9216);
 				var memory = (MemoryStream) stream.Stream;
 				var buffer = new byte[8192];
-				var buf1k = new byte[1024];
-				var buf4k = new byte[4096];
-				var buf9k = new byte[9216];
 				byte[] mem;
-
-				using (var rng = new RNGCryptoServiceProvider ()) {
-					rng.GetBytes (buf1k);
-					rng.GetBytes (buf4k);
-					rng.GetBytes (buf9k);
-				}
 
 				Assert.Throws<ArgumentNullException> (() => stream.Write (null, 0, buffer.Length));
 				Assert.Throws<ArgumentOutOfRangeException> (() => stream.Write (buffer, -1, buffer.Length));
@@ -248,18 +238,12 @@ namespace UnitTests.Net.Smtp {
 		public async Task TestWriteAsync ()
 		{
 			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var buf1k = RandomNumberGenerator.GetBytes (1024);
+				var buf4k = RandomNumberGenerator.GetBytes (4096);
+				var buf9k = RandomNumberGenerator.GetBytes (9216);
 				var memory = (MemoryStream) stream.Stream;
 				var buffer = new byte[8192];
-				var buf1k = new byte[1024];
-				var buf4k = new byte[4096];
-				var buf9k = new byte[9216];
 				byte [] mem;
-
-				using (var rng = new RNGCryptoServiceProvider ()) {
-					rng.GetBytes (buf1k);
-					rng.GetBytes (buf4k);
-					rng.GetBytes (buf9k);
-				}
 
 				// Test #1: write less than 4K to make sure that SmtpStream buffers it
 				await stream.WriteAsync (buf1k, 0, buf1k.Length);
