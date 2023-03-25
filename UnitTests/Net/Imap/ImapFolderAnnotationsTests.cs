@@ -245,8 +245,8 @@ namespace UnitTests.Net.Imap {
 				annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "value");
 
 				ulong modseq = 409601020304;
-				var uids = new UniqueId[0];
-				var indexes = new int[0];
+				var uids = Array.Empty<UniqueId> ();
+				var indexes = Array.Empty<int> ();
 				IList<UniqueId> unmodifiedUids;
 				IList<int> unmodifiedIndexes;
 

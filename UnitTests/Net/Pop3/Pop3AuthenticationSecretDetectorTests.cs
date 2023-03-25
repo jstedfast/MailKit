@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Text;
 using System.Collections.Generic;
 
@@ -40,7 +41,7 @@ namespace UnitTests.Net.Pop3 {
 		public void TestEmptyCommand ()
 		{
 			var detector = new Pop3AuthenticationSecretDetector ();
-			var buffer = new byte[0];
+			var buffer = Array.Empty<byte> ();
 
 			detector.IsAuthenticating = true;
 

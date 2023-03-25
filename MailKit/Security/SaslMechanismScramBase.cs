@@ -408,7 +408,7 @@ namespace MailKit.Security {
 
 				negotiatedChannelBinding = channelBindingKind != ChannelBindingKind.Unknown;
 				IsAuthenticated = true;
-				response = new byte[0];
+				response = Array.Empty<byte> ();
 				break;
 			default:
 				throw new IndexOutOfRangeException ("state");

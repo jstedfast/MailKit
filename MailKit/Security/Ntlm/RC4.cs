@@ -98,7 +98,7 @@ namespace MailKit.Security.Ntlm {
 		public override void GenerateIV ()
 		{
 			// not used for a stream cipher
-			IV = new byte[0];
+			IV = Array.Empty<byte> ();
 		}
 
 		public override void GenerateKey ()

@@ -268,7 +268,7 @@ namespace UnitTests.Security {
 			};
 
 			Assert.Throws<ArgumentNullException> (() => challenge.ServerChallenge = null);
-			Assert.Throws<ArgumentException> (() => challenge.ServerChallenge = new byte[0]);
+			Assert.Throws<ArgumentException> (() => challenge.ServerChallenge = Array.Empty<byte> ());
 
 			var encoded = challenge.Encode ();
 			string actual, expected;
@@ -339,7 +339,7 @@ namespace UnitTests.Security {
 			};
 
 			Assert.Throws<ArgumentNullException> (() => challenge.ServerChallenge = null);
-			Assert.Throws<ArgumentException> (() => challenge.ServerChallenge = new byte[0]);
+			Assert.Throws<ArgumentException> (() => challenge.ServerChallenge = Array.Empty<byte> ());
 
 			var encoded = challenge.Encode ();
 			string actual, expected;

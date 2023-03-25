@@ -164,7 +164,7 @@ namespace MailKit.Net.Proxy
 			// +----+-----+----------+----------+----------+-------+--------------+-------+
 			// | 1  |  1  |    2     |    4     | VARIABLE | X'00' |   VARIABLE   | X'00' |
 			// +----+-----+----------+----------+----------+-------+--------------+-------+
-			var user = ProxyCredentials != null ? Encoding.UTF8.GetBytes (ProxyCredentials.UserName) : new byte[0];
+			var user = ProxyCredentials != null ? Encoding.UTF8.GetBytes (ProxyCredentials.UserName) : Array.Empty<byte> ();
 			int bufferSize = 9 + user.Length + (domain != null ? domain.Length + 1 : 0);
 			var buffer = new byte[bufferSize];
 			int n = 0;

@@ -52,7 +52,7 @@ namespace MailKit.Net.Imap
 				throw new NotSupportedException ("The ImapFolder does not support annotations.");
 
 			if (uids.Count == 0 || annotations.Count == 0)
-				return new UniqueId[0];
+				return Array.Empty<UniqueId> ();
 
 			var builder = new StringBuilder ("UID STORE %s ");
 			var values = new List<object> ();
@@ -82,7 +82,7 @@ namespace MailKit.Net.Imap
 			}
 
 			if (unmodified == null)
-				return new UniqueId[0];
+				return Array.Empty<UniqueId> ();
 
 			return unmodified;
 		}
@@ -321,7 +321,7 @@ namespace MailKit.Net.Imap
 				throw new NotSupportedException ("The ImapFolder does not support annotations.");
 
 			if (indexes.Count == 0 || annotations.Count == 0)
-				return new int[0];
+				return Array.Empty<int> ();
 
 			var command = new StringBuilder ("STORE ");
 			var args = new List<object> ();

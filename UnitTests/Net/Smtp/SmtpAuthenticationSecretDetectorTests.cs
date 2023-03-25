@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Text;
 using System.Collections.Generic;
 
@@ -40,7 +41,7 @@ namespace UnitTests.Net.Smtp {
 		public void TestEmptyCommand ()
 		{
 			var detector = new SmtpAuthenticationSecretDetector ();
-			var buffer = new byte[0];
+			var buffer = Array.Empty<byte> ();
 
 			detector.IsAuthenticating = true;
 

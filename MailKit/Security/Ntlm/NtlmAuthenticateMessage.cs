@@ -252,7 +252,7 @@ namespace MailKit.Security.Ntlm {
 		byte[] EncodeString (string text)
 		{
 			if (text == null)
-				return new byte[0];
+				return Array.Empty<byte> ();
 
 			var encoding = (Flags & NtlmFlags.NegotiateUnicode) != 0 ? Encoding.Unicode : Encoding.UTF8;
 

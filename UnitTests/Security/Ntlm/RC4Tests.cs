@@ -47,7 +47,7 @@ namespace UnitTests.Security.Ntlm {
 
 				Assert.Throws<InvalidOperationException> (() => { var x = rc4.Key; });
 				Assert.Throws<ArgumentNullException> (() => { rc4.Key = null; });
-				Assert.Throws<ArgumentException> (() => { rc4.Key = new byte[0]; });
+				Assert.Throws<ArgumentException> (() => { rc4.Key = Array.Empty<byte> (); });
 
 				rc4.GenerateIV ();
 				rc4.GenerateKey ();

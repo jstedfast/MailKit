@@ -41,7 +41,7 @@ namespace UnitTests.Net.Imap {
 		public void TestEmptyCommand ()
 		{
 			var detector = new ImapAuthenticationSecretDetector ();
-			var buffer = new byte[0];
+			var buffer = Array.Empty<byte> ();
 
 			detector.IsAuthenticating = true;
 

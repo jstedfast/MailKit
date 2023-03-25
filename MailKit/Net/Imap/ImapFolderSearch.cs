@@ -1428,7 +1428,7 @@ namespace MailKit.Net.Imap
 			var threads = (IList<MessageThread>) ic.UserData;
 
 			if (threads == null)
-				return new MessageThread[0];
+				return Array.Empty<MessageThread> ();
 
 			return threads;
 		}
@@ -1552,7 +1552,7 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			if (uids.Count == 0)
-				return new MessageThread[0];
+				return Array.Empty<MessageThread> ();
 
 			var method = algorithm.ToString ().ToUpperInvariant ();
 			var set = UniqueIdSet.ToString (uids);
@@ -1584,7 +1584,7 @@ namespace MailKit.Net.Imap
 			var threads = (IList<MessageThread>) ic.UserData;
 
 			if (threads == null)
-				return new MessageThread[0];
+				return Array.Empty<MessageThread> ();
 
 			return threads;
 		}

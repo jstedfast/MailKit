@@ -99,7 +99,7 @@ namespace UnitTests.Net.Imap {
 			case SpecialFolder.Junk:      return FolderAttributes.Junk;
 			case SpecialFolder.Sent:      return FolderAttributes.Sent;
 			case SpecialFolder.Trash:     return FolderAttributes.Trash;
-			default: throw new ArgumentOutOfRangeException ();
+			default: throw new ArgumentOutOfRangeException (nameof (special));
 			}
 		}
 
@@ -216,8 +216,8 @@ namespace UnitTests.Net.Imap {
 				// Notify
 				Assert.Throws<ArgumentNullException> (() => client.Notify (true, null));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.NotifyAsync (true, null));
-				Assert.Throws<ArgumentException> (() => client.Notify (true, new ImapEventGroup[0]));
-				Assert.ThrowsAsync<ArgumentException> (async () => await client.NotifyAsync (true, new ImapEventGroup[0]));
+				Assert.Throws<ArgumentException> (() => client.Notify (true, Array.Empty<ImapEventGroup> ()));
+				Assert.ThrowsAsync<ArgumentException> (async () => await client.NotifyAsync (true, Array.Empty<ImapEventGroup> ()));
 				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (null, new List<ImapEvent> ()));
 				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (ImapMailboxFilter.Selected, null));
 				Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Subtree (null));
