@@ -37,7 +37,7 @@ namespace MailKit {
 	/// see https://tools.ietf.org/html/rfc4314#section-2.1
 	/// </para>
 	/// </remarks>
-	public struct AccessRight : IEquatable<AccessRight>
+	public readonly struct AccessRight : IEquatable<AccessRight>
 	{
 		/// <summary>
 		/// The access right for folder lookups.

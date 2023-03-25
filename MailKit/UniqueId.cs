@@ -34,7 +34,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Represents a unique identifier for messages in a <see cref="IMailFolder"/>.
 	/// </remarks>
-	public struct UniqueId : IComparable<UniqueId>, IEquatable<UniqueId>
+	public readonly struct UniqueId : IComparable<UniqueId>, IEquatable<UniqueId>
 	{
 		/// <summary>
 		/// The invalid <see cref="UniqueId"/> value.
