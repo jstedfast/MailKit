@@ -56,7 +56,7 @@ namespace UnitTests.Net.Imap {
 			case SpecialFolder.Junk:      return FolderAttributes.Junk;
 			case SpecialFolder.Sent:      return FolderAttributes.Sent;
 			case SpecialFolder.Trash:     return FolderAttributes.Trash;
-			default: throw new ArgumentOutOfRangeException ();
+			default: throw new ArgumentOutOfRangeException (nameof (special));
 			}
 		}
 
