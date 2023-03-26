@@ -106,7 +106,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
+		Stream Connect (string host, int port, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously connect to the target host.
@@ -136,7 +136,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
+		Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Connect to the target host.
@@ -170,7 +170,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		Stream Connect (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken));
+		Stream Connect (string host, int port, int timeout, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously connect to the target host.
@@ -204,6 +204,6 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		Task<Stream> ConnectAsync (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken));
+		Task<Stream> ConnectAsync (string host, int port, int timeout, CancellationToken cancellationToken = default);
 	}
 }

@@ -126,7 +126,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		void EnableUTF8 (CancellationToken cancellationToken = default (CancellationToken));
+		void EnableUTF8 (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously enable UTF8 mode.
@@ -161,7 +161,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		Task EnableUTF8Async (CancellationToken cancellationToken = default (CancellationToken));
+		Task EnableUTF8Async (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the list of languages supported by the POP3 server.
@@ -194,7 +194,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		IList<Pop3Language> GetLanguages (CancellationToken cancellationToken = default (CancellationToken));
+		IList<Pop3Language> GetLanguages (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the list of languages supported by the POP3 server.
@@ -227,7 +227,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		Task<IList<Pop3Language>> GetLanguagesAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<Pop3Language>> GetLanguagesAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Set the language used by the POP3 server for error messages.
@@ -265,7 +265,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		void SetLanguage (string lang, CancellationToken cancellationToken = default (CancellationToken));
+		void SetLanguage (string lang, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously set the language used by the POP3 server for error messages.
@@ -304,6 +304,6 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		Task SetLanguageAsync (string lang, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetLanguageAsync (string lang, CancellationToken cancellationToken = default);
 	}
 }

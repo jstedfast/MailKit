@@ -134,7 +134,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		void Compress (CancellationToken cancellationToken = default (CancellationToken));
+		void Compress (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously enable compression over the IMAP connection.
@@ -171,7 +171,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		Task CompressAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task CompressAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Enable the UTF8=ACCEPT extension.
@@ -207,7 +207,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		void EnableUTF8 (CancellationToken cancellationToken = default (CancellationToken));
+		void EnableUTF8 (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously enable the UTF8=ACCEPT extension.
@@ -244,7 +244,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		Task EnableUTF8Async (CancellationToken cancellationToken = default (CancellationToken));
+		Task EnableUTF8Async (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Identify the client implementation to the server and obtain the server implementation details.
@@ -294,7 +294,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		ImapImplementation Identify (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken));
+		ImapImplementation Identify (ImapImplementation clientImplementation, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously identify the client implementation to the server and obtain the server implementation details.
@@ -341,7 +341,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken));
+		Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Toggle the <see cref="ImapClient"/> into the IDLE state.
@@ -397,7 +397,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Idle (CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken));
+		void Idle (CancellationToken doneToken, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously toggle the <see cref="ImapClient"/> into the IDLE state.
@@ -451,7 +451,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task IdleAsync (CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken));
+		Task IdleAsync (CancellationToken doneToken, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Request the specified notification events from the IMAP server.
@@ -501,7 +501,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Notify (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default (CancellationToken));
+		void Notify (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously request the specified notification events from the IMAP server.
@@ -552,7 +552,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task NotifyAsync (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default (CancellationToken));
+		Task NotifyAsync (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Disable any previously requested notification events from the IMAP server.
@@ -587,7 +587,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void DisableNotify (CancellationToken cancellationToken = default (CancellationToken));
+		void DisableNotify (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously disable any previously requested notification events from the IMAP server.
@@ -623,6 +623,6 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task DisableNotifyAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task DisableNotifyAsync (CancellationToken cancellationToken = default);
 	}
 }

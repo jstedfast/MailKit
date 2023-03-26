@@ -303,7 +303,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public abstract Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream Connect (string host, int port, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously connect to the target host.
@@ -333,7 +333,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public abstract Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Connect to the target host.
@@ -369,7 +369,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public virtual Stream Connect (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Stream Connect (string host, int port, int timeout, CancellationToken cancellationToken = default)
 		{
 			ValidateArguments (host, port, timeout);
 
@@ -420,7 +420,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async virtual Task<Stream> ConnectAsync (string host, int port, int timeout, CancellationToken cancellationToken = default (CancellationToken))
+		public async virtual Task<Stream> ConnectAsync (string host, int port, int timeout, CancellationToken cancellationToken = default)
 		{
 			ValidateArguments (host, port, timeout);
 

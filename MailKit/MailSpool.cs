@@ -135,7 +135,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract int GetMessageCount (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the message count.
@@ -166,7 +166,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the UID of the message at the specified index.
@@ -205,7 +205,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract string GetMessageUid (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the UID of the message at the specified index.
@@ -244,7 +244,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the full list of available message UIDs.
@@ -282,7 +282,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<string> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<string> GetMessageUids (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the full list of available message UIDs.
@@ -317,7 +317,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the size of the specified message, in bytes.
@@ -352,7 +352,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract int GetMessageSize (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -387,7 +387,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the sizes for all available messages, in bytes.
@@ -418,7 +418,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<int> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<int> GetMessageSizes (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the sizes for all available messages, in bytes.
@@ -449,7 +449,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers for the specified message.
@@ -484,7 +484,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the headers for the specified message.
@@ -519,7 +519,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers for the specified messages.
@@ -559,7 +559,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<HeaderList> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<HeaderList> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the headers for the specified messages.
@@ -599,7 +599,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers of the messages within the specified range.
@@ -636,7 +636,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers of the messages within the specified range.
@@ -673,7 +673,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the message at the specified index.
@@ -712,7 +712,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message at the specified index.
@@ -748,7 +748,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the messages at the specified indexes.
@@ -789,7 +789,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages at the specified indexes.
@@ -830,7 +830,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the messages within the specified range.
@@ -871,7 +871,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages within the specified range.
@@ -909,7 +909,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the message or header stream at the specified index.
@@ -946,7 +946,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header stream at the specified index.
@@ -983,7 +983,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the message or header streams at the specified indexes.
@@ -1028,7 +1028,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams at the specified indexes.
@@ -1070,7 +1070,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the message or header streams within the specified range.
@@ -1112,7 +1112,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams within the specified range.
@@ -1151,7 +1151,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Mark the specified message for deletion.
@@ -1190,7 +1190,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void DeleteMessage (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously mark the specified message for deletion.
@@ -1227,7 +1227,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Mark the specified messages for deletion.
@@ -1268,7 +1268,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously mark the specified messages for deletion.
@@ -1310,7 +1310,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Mark the specified range of messages for deletion.
@@ -1351,7 +1351,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously mark the specified range of messages for deletion.
@@ -1390,7 +1390,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Mark all messages for deletion.
@@ -1422,7 +1422,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void DeleteAllMessages (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void DeleteAllMessages (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously mark all messages for deletion.
@@ -1455,7 +1455,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Reset the state of all messages marked for deletion.
@@ -1487,7 +1487,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void Reset (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Reset (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously reset the state of all messages marked for deletion.
@@ -1520,7 +1520,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task ResetAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task ResetAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get an enumerator for the messages in the folder.

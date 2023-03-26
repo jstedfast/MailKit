@@ -696,7 +696,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual SearchResults Search (string query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual SearchResults Search (string query, CancellationToken cancellationToken = default)
 		{
 			return SearchAsync (query, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -743,7 +743,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task<SearchResults> SearchAsync (string query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<SearchResults> SearchAsync (string query, CancellationToken cancellationToken = default)
 		{
 			return SearchAsync (query, true, cancellationToken);
 		}
@@ -860,7 +860,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			return SearchAsync (options, query, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -908,7 +908,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			return SearchAsync (options, query, true, true, cancellationToken);
 		}
@@ -992,7 +992,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual SearchResults Sort (string query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual SearchResults Sort (string query, CancellationToken cancellationToken = default)
 		{
 			return SortAsync (query, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1042,7 +1042,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task<SearchResults> SortAsync (string query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<SearchResults> SortAsync (string query, CancellationToken cancellationToken = default)
 		{
 			return SortAsync (query, true, cancellationToken);
 		}
@@ -1147,7 +1147,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			return SortAsync (query, orderBy, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1200,7 +1200,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			return SortAsync (query, orderBy, true, true, cancellationToken);
 		}
@@ -1323,7 +1323,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public override SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			return SortAsync (options, query, orderBy, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1376,7 +1376,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			return SortAsync (options, query, orderBy, true, true, cancellationToken);
 		}
@@ -1479,7 +1479,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<MessageThread> Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<MessageThread> Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			return ThreadAsync (algorithm, query, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1530,7 +1530,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			return ThreadAsync (algorithm, query, true, true, cancellationToken);
 		}
@@ -1643,7 +1643,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<MessageThread> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<MessageThread> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			return ThreadAsync (uids, algorithm, query, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1702,7 +1702,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			return ThreadAsync (uids, algorithm, query, true, true, cancellationToken);
 		}

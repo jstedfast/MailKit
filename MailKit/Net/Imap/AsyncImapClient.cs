@@ -74,7 +74,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task CompressAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public Task CompressAsync (CancellationToken cancellationToken = default)
 		{
 			return CompressAsync (true, cancellationToken);
 		}
@@ -123,7 +123,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task EnableQuickResyncAsync (CancellationToken cancellationToken = default)
 		{
 			return EnableQuickResyncAsync (true, cancellationToken);
 		}
@@ -163,7 +163,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task EnableUTF8Async (CancellationToken cancellationToken = default (CancellationToken))
+		public Task EnableUTF8Async (CancellationToken cancellationToken = default)
 		{
 			return EnableUTF8Async (true, cancellationToken);
 		}
@@ -213,7 +213,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken))
+		public Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, CancellationToken cancellationToken = default)
 		{
 			return IdentifyAsync (clientImplementation, true, cancellationToken);
 		}
@@ -260,7 +260,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default)
 		{
 			return AuthenticateAsync (mechanism, true, cancellationToken);
 		}
@@ -317,7 +317,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default)
 		{
 			return AuthenticateAsync (encoding, credentials, true, cancellationToken);
 		}
@@ -387,7 +387,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			return ConnectAsync (host, port, options, true, cancellationToken);
 		}
@@ -457,7 +457,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			return ConnectAsync (socket, host, port, options, true, cancellationToken);
 		}
@@ -525,7 +525,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			return ConnectAsync (stream, host, port, options, true, cancellationToken);
 		}
@@ -545,7 +545,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		public override Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default)
 		{
 			return DisconnectAsync (quit, true, cancellationToken);
 		}
@@ -594,7 +594,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task NoOpAsync (CancellationToken cancellationToken = default)
 		{
 			return NoOpAsync (true, cancellationToken);
 		}
@@ -651,7 +651,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public Task IdleAsync (CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken))
+		public Task IdleAsync (CancellationToken doneToken, CancellationToken cancellationToken = default)
 		{
 			return IdleAsync (doneToken, true, cancellationToken);
 		}
@@ -705,7 +705,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public Task NotifyAsync (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default (CancellationToken))
+		public Task NotifyAsync (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default)
 		{
 			return NotifyAsync (status, eventGroups, true, cancellationToken);
 		}
@@ -744,7 +744,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public Task DisableNotifyAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public Task DisableNotifyAsync (CancellationToken cancellationToken = default)
 		{
 			return DisableNotifyAsync (true, cancellationToken);
 		}
@@ -787,7 +787,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
 			return GetFoldersAsync (@namespace, items, subscribedOnly, true, cancellationToken);
 		}
@@ -828,7 +828,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override async Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default)
 		{
 			if (path == null)
 				throw new ArgumentNullException (nameof (path));
@@ -873,7 +873,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (tag, true, cancellationToken);
 		}
@@ -917,7 +917,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (options, tags, true, cancellationToken);
 		}
@@ -958,7 +958,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
 			return SetMetadataAsync (metadata, true, cancellationToken);
 		}

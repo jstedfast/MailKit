@@ -452,7 +452,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
+		public override FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
 			return OpenAsync (access, uidValidity, highestModSeq, uids, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -507,7 +507,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
 			return OpenAsync (access, uidValidity, highestModSeq, uids, true, cancellationToken);
 		}
@@ -571,7 +571,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
+		public override FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default)
 		{
 			return OpenAsync (access, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -612,7 +612,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default)
 		{
 			return OpenAsync (access, true, cancellationToken);
 		}
@@ -681,7 +681,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Close (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Close (bool expunge = false, CancellationToken cancellationToken = default)
 		{
 			CloseAsync (expunge, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -719,7 +719,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default)
 		{
 			return CloseAsync (expunge, true, cancellationToken);
 		}
@@ -832,7 +832,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
+		public override IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
 		{
 			return CreateAsync (name, isMessageFolder, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -877,7 +877,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
 		{
 			return CreateAsync (name, isMessageFolder, true, cancellationToken);
 		}
@@ -1001,7 +1001,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken))
+		public override IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
 		{
 			return CreateAsync (name, specialUses, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1051,7 +1051,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
 		{
 			return CreateAsync (name, specialUses, true, cancellationToken);
 		}
@@ -1162,7 +1162,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default)
 		{
 			RenameAsync (parent, name, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1214,7 +1214,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default)
 		{
 			return RenameAsync (parent, name, true, cancellationToken);
 		}
@@ -1279,7 +1279,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Delete (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Delete (CancellationToken cancellationToken = default)
 		{
 			DeleteAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1317,7 +1317,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task DeleteAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task DeleteAsync (CancellationToken cancellationToken = default)
 		{
 			return DeleteAsync (true, cancellationToken);
 		}
@@ -1370,7 +1370,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Subscribe (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Subscribe (CancellationToken cancellationToken = default)
 		{
 			SubscribeAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1404,7 +1404,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task SubscribeAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task SubscribeAsync (CancellationToken cancellationToken = default)
 		{
 			return SubscribeAsync (true, cancellationToken);
 		}
@@ -1457,7 +1457,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Unsubscribe (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Unsubscribe (CancellationToken cancellationToken = default)
 		{
 			UnsubscribeAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1491,7 +1491,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task UnsubscribeAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task UnsubscribeAsync (CancellationToken cancellationToken = default)
 		{
 			return UnsubscribeAsync (true, cancellationToken);
 		}
@@ -1647,7 +1647,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMailFolder> GetSubfolders (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMailFolder> GetSubfolders (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
 			return GetSubfoldersAsync (items, subscribedOnly, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1683,7 +1683,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
 			return GetSubfoldersAsync (items, subscribedOnly, true, cancellationToken);
 		}
@@ -1776,7 +1776,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default)
 		{
 			return GetSubfolderAsync (name, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1820,7 +1820,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default)
 		{
 			return GetSubfolderAsync (name, true, cancellationToken);
 		}
@@ -1873,7 +1873,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Check (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Check (CancellationToken cancellationToken = default)
 		{
 			CheckAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1913,7 +1913,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task CheckAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task CheckAsync (CancellationToken cancellationToken = default)
 		{
 			return CheckAsync (true, cancellationToken);
 		}
@@ -1983,7 +1983,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Status (StatusItems items, CancellationToken cancellationToken = default)
 		{
 			StatusAsync (items, false, true, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2033,7 +2033,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default)
 		{
 			return StatusAsync (items, true, true, cancellationToken);
 		}
@@ -2126,7 +2126,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override AccessControlList GetAccessControlList (CancellationToken cancellationToken = default (CancellationToken))
+		public override AccessControlList GetAccessControlList (CancellationToken cancellationToken = default)
 		{
 			return GetAccessControlListAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2163,7 +2163,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default)
 		{
 			return GetAccessControlListAsync (true, cancellationToken);
 		}
@@ -2251,7 +2251,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default)
 		{
 			return GetAccessRightsAsync (name, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2292,7 +2292,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default)
 		{
 			return GetAccessRightsAsync (name, true, cancellationToken);
 		}
@@ -2364,7 +2364,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override AccessRights GetMyAccessRights (CancellationToken cancellationToken = default (CancellationToken))
+		public override AccessRights GetMyAccessRights (CancellationToken cancellationToken = default)
 		{
 			return GetMyAccessRightsAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2401,7 +2401,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default)
 		{
 			return GetMyAccessRightsAsync (true, cancellationToken);
 		}
@@ -2464,7 +2464,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		public override void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2520,7 +2520,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2575,7 +2575,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		public override void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2631,7 +2631,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2683,7 +2683,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		public override void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2733,7 +2733,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2799,7 +2799,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override void RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override void RemoveAccess (string name, CancellationToken cancellationToken = default)
 		{
 			RemoveAccessAsync (name, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2840,7 +2840,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default)
 		{
 			return RemoveAccessAsync (name, true, cancellationToken);
 		}
@@ -2914,7 +2914,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken))
+		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (tag, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2952,7 +2952,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (tag, true, cancellationToken);
 		}
@@ -3069,7 +3069,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (options, tags, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -3113,7 +3113,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (options, tags, true, cancellationToken);
 		}
@@ -3198,7 +3198,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
+		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
 			SetMetadataAsync (metadata, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -3239,7 +3239,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
 			return SetMetadataAsync (metadata, true, cancellationToken);
 		}
@@ -3411,7 +3411,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override FolderQuota GetQuota (CancellationToken cancellationToken = default (CancellationToken))
+		public override FolderQuota GetQuota (CancellationToken cancellationToken = default)
 		{
 			return GetQuotaAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -3450,7 +3450,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default)
 		{
 			return GetQuotaAsync (true, cancellationToken);
 		}
@@ -3540,7 +3540,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken))
+		public override FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
 		{
 			return SetQuotaAsync (messageLimit, storageLimit, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -3581,7 +3581,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
 		{
 			return SetQuotaAsync (messageLimit, storageLimit, true, cancellationToken);
 		}
@@ -3639,7 +3639,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Expunge (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Expunge (CancellationToken cancellationToken = default)
 		{
 			ExpungeAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -3684,7 +3684,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task ExpungeAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task ExpungeAsync (CancellationToken cancellationToken = default)
 		{
 			return ExpungeAsync (true, cancellationToken);
 		}
@@ -3785,7 +3785,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
 			ExpungeAsync (uids, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -3846,7 +3846,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
 			return ExpungeAsync (uids, true, cancellationToken);
 		}
@@ -3986,7 +3986,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
 		{
 			return AppendAsync (options, request, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -4038,7 +4038,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
 		{
 			return AppendAsync (options, request, true, cancellationToken);
 		}
@@ -4214,7 +4214,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> Append (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> Append (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default)
 		{
 			return AppendAsync (options, requests, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -4269,7 +4269,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default)
 		{
 			return AppendAsync (options, requests, true, cancellationToken);
 		}
@@ -4652,7 +4652,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Replace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Replace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
 			return ReplaceAsync (options, index, request, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -4712,7 +4712,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
 			return ReplaceAsync (options, index, request, true, cancellationToken);
 		}
@@ -4847,7 +4847,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			return CopyToAsync (uids, destination, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -4902,7 +4902,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			return CopyToAsync (uids, destination, true, cancellationToken);
 		}
@@ -5024,7 +5024,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			return MoveToAsync (uids, destination, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -5087,7 +5087,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			return MoveToAsync (uids, destination, true, cancellationToken);
 		}
@@ -5172,7 +5172,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			CopyToAsync (indexes, destination, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -5227,7 +5227,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			return CopyToAsync (indexes, destination, true, cancellationToken);
 		}
@@ -5319,7 +5319,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			MoveToAsync (indexes, destination, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -5375,7 +5375,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			return MoveToAsync (indexes, destination, true, cancellationToken);
 		}

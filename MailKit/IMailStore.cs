@@ -140,7 +140,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken));
+		void EnableQuickResync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously enable the quick resynchronization feature.
@@ -184,7 +184,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task EnableQuickResyncAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the specified special folder.
@@ -254,7 +254,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IList<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
+		IList<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get all of the folders within the specified namespace.
@@ -293,7 +293,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get all of the folders within the specified namespace.
@@ -333,7 +333,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get all of the folders within the specified namespace.
@@ -373,7 +373,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the folder for the specified path.
@@ -402,7 +402,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
+		IMailFolder GetFolder (string path, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the folder for the specified path.
@@ -431,7 +431,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets the specified metadata.
@@ -442,7 +442,7 @@ namespace MailKit {
 		/// <returns>The requested metadata value.</returns>
 		/// <param name="tag">The metadata tag.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken));
+		string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -453,7 +453,7 @@ namespace MailKit {
 		/// <returns>The requested metadata value.</returns>
 		/// <param name="tag">The metadata tag.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken));
+		Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets the specified metadata.
@@ -464,7 +464,7 @@ namespace MailKit {
 		/// <returns>The requested metadata.</returns>
 		/// <param name="tags">The metadata tags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MetadataCollection GetMetadata (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken));
+		MetadataCollection GetMetadata (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -475,7 +475,7 @@ namespace MailKit {
 		/// <returns>The requested metadata.</returns>
 		/// <param name="tags">The metadata tags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<MetadataCollection> GetMetadataAsync (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken));
+		Task<MetadataCollection> GetMetadataAsync (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets the specified metadata.
@@ -487,7 +487,7 @@ namespace MailKit {
 		/// <param name="options">The metadata options.</param>
 		/// <param name="tags">The metadata tags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken));
+		MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -499,7 +499,7 @@ namespace MailKit {
 		/// <param name="options">The metadata options.</param>
 		/// <param name="tags">The metadata tags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken));
+		Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Sets the specified metadata.
@@ -509,7 +509,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="metadata">The metadata.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken));
+		void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously sets the specified metadata.
@@ -520,7 +520,7 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="metadata">The metadata.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Occurs when a remote message store receives an alert message from the server.

@@ -92,7 +92,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uid, GetStoreFlagsRequest (StoreAction.Add, silent, flags), cancellationToken);
 		}
@@ -141,7 +141,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uid, GetStoreFlagsRequest (StoreAction.Add, silent, flags), cancellationToken);
 		}
@@ -190,7 +190,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uid, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords), cancellationToken);
 		}
@@ -240,7 +240,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uid, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords), cancellationToken);
 		}
@@ -291,7 +291,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreFlagsRequest (StoreAction.Add, silent, flags), cancellationToken);
 		}
@@ -343,7 +343,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Add, silent, flags), cancellationToken);
 		}
@@ -395,7 +395,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords), cancellationToken);
 		}
@@ -448,7 +448,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords), cancellationToken);
 		}
@@ -496,7 +496,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uid, GetStoreFlagsRequest (StoreAction.Remove, silent, flags), cancellationToken);
 		}
@@ -545,7 +545,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uid, GetStoreFlagsRequest (StoreAction.Remove, silent, flags), cancellationToken);
 		}
@@ -594,7 +594,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uid, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords), cancellationToken);
 		}
@@ -644,7 +644,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uid, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords), cancellationToken);
 		}
@@ -695,7 +695,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreFlagsRequest (StoreAction.Remove, silent, flags), cancellationToken);
 		}
@@ -747,7 +747,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Remove, silent, flags), cancellationToken);
 		}
@@ -799,7 +799,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords), cancellationToken);
 		}
@@ -852,7 +852,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords), cancellationToken);
 		}
@@ -898,7 +898,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uid, GetStoreFlagsRequest (StoreAction.Set, silent, flags), cancellationToken);
 		}
@@ -945,7 +945,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uid, GetStoreFlagsRequest (StoreAction.Set, silent, flags), cancellationToken);
 		}
@@ -989,7 +989,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetFlags (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uid, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords), cancellationToken);
 		}
@@ -1034,7 +1034,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetFlagsAsync (this IMailFolder folder, UniqueId uid, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uid, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords), cancellationToken);
 		}
@@ -1080,7 +1080,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreFlagsRequest (StoreAction.Set, silent, flags), cancellationToken);
 		}
@@ -1127,7 +1127,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Set, silent, flags), cancellationToken);
 		}
@@ -1174,7 +1174,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetFlags (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords), cancellationToken);
 		}
@@ -1222,7 +1222,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords), cancellationToken);
 		}
@@ -1275,7 +1275,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> AddFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> AddFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreFlagsRequest (StoreAction.Add, silent, flags, null, modseq), cancellationToken);
 		}
@@ -1328,7 +1328,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> AddFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> AddFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Add, silent, flags, null, modseq), cancellationToken);
 		}
@@ -1382,7 +1382,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> AddFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> AddFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -1436,7 +1436,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> AddFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> AddFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -1489,7 +1489,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> RemoveFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> RemoveFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, null, modseq), cancellationToken);
 		}
@@ -1542,7 +1542,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> RemoveFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> RemoveFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, null, modseq), cancellationToken);
 		}
@@ -1596,7 +1596,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> RemoveFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> RemoveFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -1650,7 +1650,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> RemoveFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> RemoveFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -1701,7 +1701,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> SetFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> SetFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreFlagsRequest (StoreAction.Set, silent, flags, null, modseq), cancellationToken);
 		}
@@ -1752,7 +1752,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> SetFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> SetFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Set, silent, flags, null, modseq), cancellationToken);
 		}
@@ -1804,7 +1804,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> SetFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> SetFlags (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -1856,7 +1856,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> SetFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> SetFlagsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -1901,7 +1901,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddFlags (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddFlags (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (index, GetStoreFlagsRequest (StoreAction.Add, silent, flags), cancellationToken);
 		}
@@ -1947,7 +1947,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (index, GetStoreFlagsRequest (StoreAction.Add, silent, flags), cancellationToken);
 		}
@@ -1993,7 +1993,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddFlags (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddFlags (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (index, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords), cancellationToken);
 		}
@@ -2040,7 +2040,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (index, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords), cancellationToken);
 		}
@@ -2088,7 +2088,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Add, silent, flags), cancellationToken);
 		}
@@ -2137,7 +2137,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Add, silent, flags), cancellationToken);
 		}
@@ -2186,7 +2186,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords), cancellationToken);
 		}
@@ -2236,7 +2236,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords), cancellationToken);
 		}
@@ -2281,7 +2281,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveFlags (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveFlags (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (index, GetStoreFlagsRequest (StoreAction.Remove, silent, flags), cancellationToken);
 		}
@@ -2327,7 +2327,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (index, GetStoreFlagsRequest (StoreAction.Remove, silent, flags), cancellationToken);
 		}
@@ -2373,7 +2373,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveFlags (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveFlags (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (index, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords), cancellationToken);
 		}
@@ -2420,7 +2420,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (index, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords), cancellationToken);
 		}
@@ -2468,7 +2468,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Remove, silent, flags), cancellationToken);
 		}
@@ -2517,7 +2517,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Remove, silent, flags), cancellationToken);
 		}
@@ -2566,7 +2566,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords), cancellationToken);
 		}
@@ -2616,7 +2616,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords), cancellationToken);
 		}
@@ -2659,7 +2659,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetFlags (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetFlags (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (index, GetStoreFlagsRequest (StoreAction.Set, silent, flags), cancellationToken);
 		}
@@ -2703,7 +2703,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (index, GetStoreFlagsRequest (StoreAction.Set, silent, flags), cancellationToken);
 		}
@@ -2747,7 +2747,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetFlags (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetFlags (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (index, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords), cancellationToken);
 		}
@@ -2792,7 +2792,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetFlagsAsync (this IMailFolder folder, int index, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (index, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords), cancellationToken);
 		}
@@ -2838,7 +2838,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Set, silent, flags), cancellationToken);
 		}
@@ -2885,7 +2885,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Set, silent, flags), cancellationToken);
 		}
@@ -2932,7 +2932,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetFlags (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords), cancellationToken);
 		}
@@ -2980,7 +2980,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetFlagsAsync (this IMailFolder folder, IList<int> indexes, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords), cancellationToken);
 		}
@@ -3033,7 +3033,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> AddFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> AddFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Add, silent, flags, null, modseq), cancellationToken);
 		}
@@ -3086,7 +3086,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> AddFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> AddFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Add, silent, flags, null, modseq), cancellationToken);
 		}
@@ -3140,7 +3140,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> AddFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> AddFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -3194,7 +3194,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> AddFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> AddFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Add, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -3247,7 +3247,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> RemoveFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> RemoveFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, null, modseq), cancellationToken);
 		}
@@ -3300,7 +3300,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> RemoveFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> RemoveFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, null, modseq), cancellationToken);
 		}
@@ -3354,7 +3354,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> RemoveFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> RemoveFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -3408,7 +3408,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> RemoveFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> RemoveFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Remove, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -3459,7 +3459,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> SetFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> SetFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Set, silent, flags, null, modseq), cancellationToken);
 		}
@@ -3510,7 +3510,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> SetFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> SetFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Set, silent, flags, null, modseq), cancellationToken);
 		}
@@ -3562,7 +3562,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> SetFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> SetFlags (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -3614,7 +3614,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> SetFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> SetFlagsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> keywords, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreFlagsRequest (StoreAction.Set, silent, flags, keywords, modseq), cancellationToken);
 		}
@@ -3680,7 +3680,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddLabels (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddLabels (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (new[] { uid }, GetStoreLabelsRequest (StoreAction.Add, silent, labels), cancellationToken);
 		}
@@ -3729,7 +3729,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddLabelsAsync (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddLabelsAsync (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (new[] { uid }, GetStoreLabelsRequest (StoreAction.Add, silent, labels), cancellationToken);
 		}
@@ -3779,7 +3779,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddLabels (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddLabels (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreLabelsRequest (StoreAction.Add, silent, labels), cancellationToken);
 		}
@@ -3830,7 +3830,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreLabelsRequest (StoreAction.Add, silent, labels), cancellationToken);
 		}
@@ -3878,7 +3878,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveLabels (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveLabels (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (new[] { uid }, GetStoreLabelsRequest (StoreAction.Remove, silent, labels), cancellationToken);
 		}
@@ -3927,7 +3927,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveLabelsAsync (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveLabelsAsync (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (new[] { uid }, GetStoreLabelsRequest (StoreAction.Remove, silent, labels), cancellationToken);
 		}
@@ -3977,7 +3977,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveLabels (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveLabels (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreLabelsRequest (StoreAction.Remove, silent, labels), cancellationToken);
 		}
@@ -4028,7 +4028,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreLabelsRequest (StoreAction.Remove, silent, labels), cancellationToken);
 		}
@@ -4074,7 +4074,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetLabels (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetLabels (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (new[] { uid }, GetStoreLabelsRequest (StoreAction.Set, silent, labels), cancellationToken);
 		}
@@ -4121,7 +4121,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetLabelsAsync (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetLabelsAsync (this IMailFolder folder, UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (new[] { uid }, GetStoreLabelsRequest (StoreAction.Set, silent, labels), cancellationToken);
 		}
@@ -4169,7 +4169,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetLabels (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetLabels (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (uids, GetStoreLabelsRequest (StoreAction.Set, silent, labels), cancellationToken);
 		}
@@ -4218,7 +4218,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreLabelsRequest (StoreAction.Set, silent, labels), cancellationToken);
 		}
@@ -4273,7 +4273,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> AddLabels (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> AddLabels (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreLabelsRequest (StoreAction.Add, silent, labels, modseq), cancellationToken);
 		}
@@ -4328,7 +4328,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> AddLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> AddLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreLabelsRequest (StoreAction.Add, silent, labels, modseq), cancellationToken);
 		}
@@ -4383,7 +4383,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> RemoveLabels (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> RemoveLabels (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreLabelsRequest (StoreAction.Remove, silent, labels, modseq), cancellationToken);
 		}
@@ -4438,7 +4438,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> RemoveLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> RemoveLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreLabelsRequest (StoreAction.Remove, silent, labels, modseq), cancellationToken);
 		}
@@ -4491,7 +4491,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> SetLabels (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<UniqueId> SetLabels (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (uids, GetStoreLabelsRequest (StoreAction.Set, silent, labels, modseq), cancellationToken);
 		}
@@ -4544,7 +4544,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> SetLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<UniqueId>> SetLabelsAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (uids, GetStoreLabelsRequest (StoreAction.Set, silent, labels, modseq), cancellationToken);
 		}
@@ -4592,7 +4592,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddLabels (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddLabels (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (new[] { index }, GetStoreLabelsRequest (StoreAction.Add, silent, labels), cancellationToken);
 		}
@@ -4641,7 +4641,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddLabelsAsync (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddLabelsAsync (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (new[] { index }, GetStoreLabelsRequest (StoreAction.Add, silent, labels), cancellationToken);
 		}
@@ -4691,7 +4691,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void AddLabels (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void AddLabels (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreLabelsRequest (StoreAction.Add, silent, labels), cancellationToken);
 		}
@@ -4742,7 +4742,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task AddLabelsAsync (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task AddLabelsAsync (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreLabelsRequest (StoreAction.Add, silent, labels), cancellationToken);
 		}
@@ -4790,7 +4790,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveLabels (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveLabels (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (new[] { index }, GetStoreLabelsRequest (StoreAction.Remove, silent, labels), cancellationToken);
 		}
@@ -4839,7 +4839,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveLabelsAsync (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveLabelsAsync (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (new[] { index }, GetStoreLabelsRequest (StoreAction.Remove, silent, labels), cancellationToken);
 		}
@@ -4889,7 +4889,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void RemoveLabels (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void RemoveLabels (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreLabelsRequest (StoreAction.Remove, silent, labels), cancellationToken);
 		}
@@ -4940,7 +4940,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task RemoveLabelsAsync (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task RemoveLabelsAsync (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreLabelsRequest (StoreAction.Remove, silent, labels), cancellationToken);
 		}
@@ -4986,7 +4986,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetLabels (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetLabels (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (new[] { index }, GetStoreLabelsRequest (StoreAction.Set, silent, labels), cancellationToken);
 		}
@@ -5033,7 +5033,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetLabelsAsync (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetLabelsAsync (this IMailFolder folder, int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (new[] { index }, GetStoreLabelsRequest (StoreAction.Set, silent, labels), cancellationToken);
 		}
@@ -5081,7 +5081,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static void SetLabels (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static void SetLabels (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			folder.Store (indexes, GetStoreLabelsRequest (StoreAction.Set, silent, labels), cancellationToken);
 		}
@@ -5130,7 +5130,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task SetLabelsAsync (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task SetLabelsAsync (this IMailFolder folder, IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreLabelsRequest (StoreAction.Set, silent, labels), cancellationToken);
 		}
@@ -5185,7 +5185,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> AddLabels (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> AddLabels (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreLabelsRequest (StoreAction.Add, silent, labels, modseq), cancellationToken);
 		}
@@ -5240,7 +5240,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> AddLabelsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> AddLabelsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreLabelsRequest (StoreAction.Add, silent, labels, modseq), cancellationToken);
 		}
@@ -5295,7 +5295,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> RemoveLabels (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> RemoveLabels (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreLabelsRequest (StoreAction.Remove, silent, labels, modseq), cancellationToken);
 		}
@@ -5350,7 +5350,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> RemoveLabelsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> RemoveLabelsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreLabelsRequest (StoreAction.Remove, silent, labels, modseq), cancellationToken);
 		}
@@ -5403,7 +5403,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<int> SetLabels (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<int> SetLabels (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.Store (indexes, GetStoreLabelsRequest (StoreAction.Set, silent, labels, modseq), cancellationToken);
 		}
@@ -5456,7 +5456,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<int>> SetLabelsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<int>> SetLabelsAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default)
 		{
 			return folder.StoreAsync (indexes, GetStoreLabelsRequest (StoreAction.Set, silent, labels, modseq), cancellationToken);
 		}

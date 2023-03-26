@@ -125,7 +125,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		InternetAddressList Expand (string alias, CancellationToken cancellationToken = default (CancellationToken));
+		InternetAddressList Expand (string alias, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously expand a mailing address alias.
@@ -163,7 +163,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		Task<InternetAddressList> ExpandAsync (string alias, CancellationToken cancellationToken = default (CancellationToken));
+		Task<InternetAddressList> ExpandAsync (string alias, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Verify the existence of a mailbox address.
@@ -202,7 +202,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		MailboxAddress Verify (string address, CancellationToken cancellationToken = default (CancellationToken));
+		MailboxAddress Verify (string address, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously verify the existence of a mailbox address.
@@ -241,6 +241,6 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		Task<MailboxAddress> VerifyAsync (string address, CancellationToken cancellationToken = default (CancellationToken));
+		Task<MailboxAddress> VerifyAsync (string address, CancellationToken cancellationToken = default);
 	}
 }

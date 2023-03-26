@@ -90,7 +90,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items);
 
@@ -145,7 +145,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items);
 
@@ -204,7 +204,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -264,7 +264,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -323,7 +323,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -383,7 +383,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -444,7 +444,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items) { ChangedSince = modseq };
 
@@ -505,7 +505,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items) { ChangedSince = modseq };
 
@@ -571,7 +571,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -637,7 +637,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -703,7 +703,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -769,7 +769,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -823,7 +823,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items);
 
@@ -878,7 +878,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items);
 
@@ -937,7 +937,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -997,7 +997,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -1056,7 +1056,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -1116,7 +1116,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -1173,7 +1173,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items) { ChangedSince = modseq };
 
@@ -1230,7 +1230,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items) { ChangedSince = modseq };
 
@@ -1292,7 +1292,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -1354,7 +1354,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -1416,7 +1416,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -1478,7 +1478,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, IList<int> indexes, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -1533,7 +1533,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items);
 
@@ -1588,7 +1588,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items);
 
@@ -1650,7 +1650,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -1712,7 +1712,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -1774,7 +1774,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -1836,7 +1836,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers);
 
@@ -1894,7 +1894,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items) { ChangedSince = modseq };
 
@@ -1952,7 +1952,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items) { ChangedSince = modseq };
 
@@ -2017,7 +2017,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -2082,7 +2082,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<HeaderId> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -2144,7 +2144,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static IList<IMessageSummary> Fetch (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 
@@ -2206,7 +2206,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default (CancellationToken))
+		public static Task<IList<IMessageSummary>> FetchAsync (this IMailFolder folder, int min, int max, ulong modseq, MessageSummaryItems items, IEnumerable<string> headers, CancellationToken cancellationToken = default)
 		{
 			var request = new FetchRequest (items, headers) { ChangedSince = modseq };
 

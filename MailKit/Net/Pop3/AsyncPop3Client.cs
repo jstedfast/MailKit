@@ -137,7 +137,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// An POP3 protocol error occurred.
 		/// </exception>
-		public override async Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default)
 		{
 			CheckCanAuthenticate (mechanism, cancellationToken);
 
@@ -212,7 +212,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// An POP3 protocol error occurred.
 		/// </exception>
-		public override async Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default)
 		{
 			CheckCanAuthenticate (encoding, credentials, cancellationToken);
 
@@ -347,7 +347,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			ValidateArguments (host, port);
 
@@ -496,7 +496,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			ValidateArguments (socket, host, port);
 
@@ -566,7 +566,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			ValidateArguments (stream, host, port);
 
@@ -668,7 +668,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		public override async Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default)
 		{
 			CheckDisposed ();
 
@@ -718,7 +718,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -754,7 +754,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task NoOpAsync (CancellationToken cancellationToken = default)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -796,7 +796,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public async Task EnableUTF8Async (CancellationToken cancellationToken = default (CancellationToken))
+		public async Task EnableUTF8Async (CancellationToken cancellationToken = default)
 		{
 			if (!CheckCanEnableUTF8 ())
 				return;
@@ -854,7 +854,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public async Task<IList<Pop3Language>> GetLanguagesAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public async Task<IList<Pop3Language>> GetLanguagesAsync (CancellationToken cancellationToken = default)
 		{
 			var pc = QueueLangCommand (out var langs);
 
@@ -900,7 +900,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public Task SetLanguageAsync (string lang, CancellationToken cancellationToken = default (CancellationToken))
+		public Task SetLanguageAsync (string lang, CancellationToken cancellationToken = default)
 		{
 			CheckCanSetLanguage (lang);
 
@@ -946,7 +946,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default)
 		{
 			var pc = QueueUidlCommand (index);
 
@@ -1008,7 +1008,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default)
 		{
 			var pc = QueueUidlCommand ();
 
@@ -1050,7 +1050,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default)
 		{
 			var pc = QueueListCommand (index);
 
@@ -1103,7 +1103,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default)
 		{
 			var sizes = QueueListCommand ();
 
@@ -1145,7 +1145,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default)
 		{
 			CheckCanDownload (index);
 
@@ -1197,7 +1197,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default)
 		{
 			if (!CheckCanDownload (indexes))
 				return Task.FromResult ((IList<HeaderList>) Array.Empty<HeaderList> ());
@@ -1249,7 +1249,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default)
 		{
 			if (!CheckCanDownload (startIndex, count))
 				return Task.FromResult ((IList<HeaderList>) Array.Empty<HeaderList> ());
@@ -1296,7 +1296,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			CheckCanDownload (index);
 
@@ -1349,7 +1349,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			if (!CheckCanDownload (indexes))
 				return Task.FromResult ((IList<MimeMessage>) Array.Empty<MimeMessage> ());
@@ -1405,7 +1405,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			if (!CheckCanDownload (startIndex, count))
 				return Task.FromResult ((IList<MimeMessage>) Array.Empty<MimeMessage> ());
@@ -1450,7 +1450,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			CheckCanDownload (index);
 
@@ -1504,7 +1504,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			if (!CheckCanDownload (indexes))
 				return Task.FromResult ((IList<Stream>) Array.Empty<Stream> ());
@@ -1558,7 +1558,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			if (!CheckCanDownload (startIndex, count))
 				return Task.FromResult ((IList<Stream>) Array.Empty<Stream> ());
@@ -1606,7 +1606,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default)
 		{
 			CheckCanDelete (index, out string seqid);
 
@@ -1651,7 +1651,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default)
 		{
 			if (!CheckCanDelete (indexes))
 				return;
@@ -1709,7 +1709,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default)
 		{
 			if (!CheckCanDelete (startIndex, count))
 				return;
@@ -1758,7 +1758,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default)
 		{
 			if (total > 0)
 				return DeleteMessagesAsync (0, total, cancellationToken);
@@ -1797,7 +1797,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task ResetAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task ResetAsync (CancellationToken cancellationToken = default)
 		{
 			CheckDisposed ();
 			CheckConnected ();

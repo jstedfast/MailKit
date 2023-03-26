@@ -489,7 +489,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously opens the folder using the requested folder access.
@@ -541,7 +541,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Open the folder using the requested folder access.
@@ -579,7 +579,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously open the folder using the requested folder access.
@@ -617,7 +617,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Close the folder, optionally expunging the messages marked for deletion.
@@ -651,7 +651,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Close (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Close (bool expunge = false, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously close the folder, optionally expunging the messages marked for deletion.
@@ -686,7 +686,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -728,7 +728,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously create a new subfolder with the given name.
@@ -770,7 +770,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -817,7 +817,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously create a new subfolder with the given name.
@@ -864,7 +864,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -909,7 +909,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IMailFolder Create (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IMailFolder Create (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default)
 		{
 			return Create (name, new [] { specialUse }, cancellationToken);
 		}
@@ -957,7 +957,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IMailFolder> CreateAsync (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IMailFolder> CreateAsync (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default)
 		{
 			return CreateAsync (name, new [] { specialUse }, cancellationToken);
 		}
@@ -1008,7 +1008,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously rename the folder.
@@ -1057,7 +1057,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Delete the folder.
@@ -1093,7 +1093,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Delete (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Delete (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously delete the folder.
@@ -1130,7 +1130,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task DeleteAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Subscribe to the folder.
@@ -1160,7 +1160,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Subscribe (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Subscribe (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously subscribe to the folder.
@@ -1191,7 +1191,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task SubscribeAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task SubscribeAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Unsubscribe from the folder.
@@ -1221,7 +1221,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Unsubscribe (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Unsubscribe (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously unsubscribe from the folder.
@@ -1252,7 +1252,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task UnsubscribeAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task UnsubscribeAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the subfolders.
@@ -1288,7 +1288,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<IMailFolder> GetSubfolders (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<IMailFolder> GetSubfolders (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the subfolders.
@@ -1324,7 +1324,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the subfolders.
@@ -1356,7 +1356,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<IMailFolder> GetSubfolders (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IList<IMailFolder> GetSubfolders (bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
 			return GetSubfolders (StatusItems.None, subscribedOnly, cancellationToken);
 		}
@@ -1391,7 +1391,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<IMailFolder>> GetSubfoldersAsync (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<IMailFolder>> GetSubfoldersAsync (bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
 			return GetSubfoldersAsync (StatusItems.None, subscribedOnly, cancellationToken);
 		}
@@ -1435,7 +1435,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the specified subfolder.
@@ -1476,7 +1476,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Force the server to flush its state for the folder.
@@ -1509,7 +1509,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Check (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Check (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously force the server to flush its state for the folder.
@@ -1543,7 +1543,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task CheckAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task CheckAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Update the values of the specified items.
@@ -1587,7 +1587,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Status (StatusItems items, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously update the values of the specified items.
@@ -1629,7 +1629,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the complete access control list for the folder.
@@ -1663,7 +1663,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract AccessControlList GetAccessControlList (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract AccessControlList GetAccessControlList (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the complete access control list for the folder.
@@ -1697,7 +1697,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the access rights for a particular identifier.
@@ -1735,7 +1735,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the access rights for a particular identifier.
@@ -1773,7 +1773,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the access rights for the current authenticated user.
@@ -1807,7 +1807,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract AccessRights GetMyAccessRights (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract AccessRights GetMyAccessRights (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the access rights for the current authenticated user.
@@ -1841,7 +1841,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Add access rights for the specified identity.
@@ -1881,7 +1881,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously add access rights for the specified identity.
@@ -1922,7 +1922,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Remove access rights for the specified identity.
@@ -1962,7 +1962,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously remove access rights for the specified identity.
@@ -2003,7 +2003,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Set the access rights for the specified identity.
@@ -2043,7 +2043,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously set the access rights for the specified identity.
@@ -2084,7 +2084,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Remove all access rights for the given identity.
@@ -2121,7 +2121,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void RemoveAccess (string name, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously remove all access rights for the given identity.
@@ -2159,7 +2159,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the quota information for the folder.
@@ -2195,7 +2195,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderQuota GetQuota (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract FolderQuota GetQuota (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the quota information for the folder.
@@ -2231,7 +2231,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Set the quota limits for the folder.
@@ -2269,7 +2269,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously set the quota limits for the folder.
@@ -2307,7 +2307,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the specified metadata.
@@ -2342,7 +2342,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -2377,7 +2377,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the specified metadata.
@@ -2415,7 +2415,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public MetadataCollection GetMetadata (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		public MetadataCollection GetMetadata (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
 			return GetMetadata (new MetadataOptions (), tags, cancellationToken);
 		}
@@ -2456,7 +2456,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MetadataCollection> GetMetadataAsync (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<MetadataCollection> GetMetadataAsync (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (new MetadataOptions (), tags, cancellationToken);
 		}
@@ -2500,7 +2500,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -2541,7 +2541,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Sets the specified metadata.
@@ -2578,7 +2578,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously sets the specified metadata.
@@ -2616,7 +2616,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Expunge the folder, permanently removing all messages marked for deletion.
@@ -2655,7 +2655,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Expunge (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Expunge (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously expunge the folder, permanently removing all messages marked for deletion.
@@ -2695,7 +2695,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task ExpungeAsync (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task ExpungeAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Expunge the specified uids, permanently removing them from the folder.
@@ -2741,7 +2741,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously expunge the specified uids, permanently removing them from the folder.
@@ -2788,7 +2788,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Append a message to the folder.
@@ -2834,7 +2834,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? Append (IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual UniqueId? Append (IAppendRequest request, CancellationToken cancellationToken = default)
 		{
 			return Append (FormatOptions.Default, request, cancellationToken);
 		}
@@ -2883,7 +2883,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueId?> AppendAsync (IAppendRequest request, CancellationToken cancellationToken = default)
 		{
 			return AppendAsync (FormatOptions.Default, request, cancellationToken);
 		}
@@ -2935,7 +2935,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously append a message to the folder.
@@ -2984,7 +2984,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Append multiple messages to the folder.
@@ -3033,7 +3033,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Append (IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IList<UniqueId> Append (IList<IAppendRequest> requests, CancellationToken cancellationToken = default)
 		{
 			return Append (FormatOptions.Default, requests, cancellationToken);
 		}
@@ -3085,7 +3085,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> AppendAsync (IList<IAppendRequest> requests, CancellationToken cancellationToken = default)
 		{
 			return AppendAsync (FormatOptions.Default, requests, cancellationToken);
 		}
@@ -3140,7 +3140,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Append (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Append (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously append multiple messages to the folder.
@@ -3192,7 +3192,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Replace a message in the folder.
@@ -3242,7 +3242,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual UniqueId? Replace (UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual UniqueId? Replace (UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
 			return Replace (FormatOptions.Default, uid, request, cancellationToken);
 		}
@@ -3295,7 +3295,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task<UniqueId?> ReplaceAsync (UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueId?> ReplaceAsync (UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
 			return ReplaceAsync (FormatOptions.Default, uid, request, cancellationToken);
 		}
@@ -3354,7 +3354,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public abstract UniqueId? Replace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueId? Replace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously replace a message in the folder.
@@ -3410,7 +3410,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Replace a message in the folder.
@@ -3461,7 +3461,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual UniqueId? Replace (int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual UniqueId? Replace (int index, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
 			return Replace (FormatOptions.Default, index, request, cancellationToken);
 		}
@@ -3515,7 +3515,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual Task<UniqueId?> ReplaceAsync (int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueId?> ReplaceAsync (int index, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
 			return ReplaceAsync (FormatOptions.Default, index, request, cancellationToken);
 		}
@@ -3575,7 +3575,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public abstract UniqueId? Replace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueId? Replace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously replace a message in the folder.
@@ -3632,7 +3632,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Copy the specified message to the destination folder.
@@ -3679,7 +3679,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? CopyTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual UniqueId? CopyTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			var uids = CopyTo (new [] { uid }, destination, cancellationToken);
 
@@ -3734,7 +3734,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual async Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			var uids = await CopyToAsync (new [] { uid }, destination, cancellationToken).ConfigureAwait (false);
 
@@ -3791,7 +3791,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -3840,7 +3840,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Move the specified message to the destination folder.
@@ -3887,7 +3887,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? MoveTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual UniqueId? MoveTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			var uids = MoveTo (new [] { uid }, destination, cancellationToken);
 
@@ -3942,7 +3942,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual async Task<UniqueId?> MoveToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<UniqueId?> MoveToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			var uids = await MoveToAsync (new [] { uid }, destination, cancellationToken).ConfigureAwait (false);
 
@@ -3999,7 +3999,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -4048,7 +4048,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Copy the specified message to the destination folder.
@@ -4092,7 +4092,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual void CopyTo (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void CopyTo (int index, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4143,7 +4143,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task CopyToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task CopyToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4194,7 +4194,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -4240,7 +4240,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Move the specified message to the destination folder.
@@ -4284,7 +4284,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual void MoveTo (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void MoveTo (int index, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4335,7 +4335,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task MoveToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task MoveToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4386,7 +4386,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -4432,7 +4432,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs.
@@ -4485,7 +4485,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, IFetchRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, IFetchRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
@@ -4536,7 +4536,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, IFetchRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, IFetchRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes.
@@ -4586,7 +4586,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, IFetchRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, IFetchRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -4637,7 +4637,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, IFetchRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, IFetchRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes, inclusive.
@@ -4689,7 +4689,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (int min, int max, IFetchRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<IMessageSummary> Fetch (int min, int max, IFetchRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -4741,7 +4741,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<IMessageSummary>> FetchAsync (int min, int max, IFetchRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<IMessageSummary>> FetchAsync (int min, int max, IFetchRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the specified message headers.
@@ -4783,7 +4783,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message headers.
@@ -4825,7 +4825,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part headers.
@@ -4871,7 +4871,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part headers.
@@ -4917,7 +4917,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified message headers.
@@ -4959,7 +4959,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract HeaderList GetHeaders (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract HeaderList GetHeaders (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message headers.
@@ -5001,7 +5001,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part headers.
@@ -5047,7 +5047,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part headers.
@@ -5093,7 +5093,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -5135,7 +5135,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -5177,7 +5177,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -5219,7 +5219,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -5261,7 +5261,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -5310,7 +5310,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -5356,7 +5356,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -5402,7 +5402,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -5448,7 +5448,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -5500,7 +5500,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -5552,7 +5552,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -5603,7 +5603,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -5654,7 +5654,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified body part.
@@ -5710,7 +5710,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -5781,7 +5781,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			if (part == null)
 				throw new ArgumentNullException (nameof (part));
@@ -5848,7 +5848,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -5918,7 +5918,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -5981,7 +5981,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -6029,7 +6029,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6087,7 +6087,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -6145,7 +6145,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6193,7 +6193,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Stream GetStream (int index, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -6241,7 +6241,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6298,7 +6298,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -6355,7 +6355,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Store message flags and keywords for a message.
@@ -6401,7 +6401,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual bool Store (UniqueId uid, IStoreFlagsRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual bool Store (UniqueId uid, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
 			var uids = Store (new[] { uid }, request, cancellationToken);
 
@@ -6452,7 +6452,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual async Task<bool> StoreAsync (UniqueId uid, IStoreFlagsRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<bool> StoreAsync (UniqueId uid, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
 			var uids = await StoreAsync (new[] { uid }, request, cancellationToken).ConfigureAwait (false);
 			
@@ -6505,7 +6505,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Store (IList<UniqueId> uids, IStoreFlagsRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Store (IList<UniqueId> uids, IStoreFlagsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously store message flags and keywords for a set of messages.
@@ -6553,7 +6553,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreFlagsRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreFlagsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Store message flags and keywords for a message.
@@ -6599,7 +6599,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual bool Store (int index, IStoreFlagsRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual bool Store (int index, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
 			var indexes = Store (new[] { index }, request, cancellationToken);
 
@@ -6650,7 +6650,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual async Task<bool> StoreAsync (int index, IStoreFlagsRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<bool> StoreAsync (int index, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
 			var indexes = await StoreAsync (new[] { index }, request, cancellationToken).ConfigureAwait (false);
 
@@ -6703,7 +6703,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<int> Store (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<int> Store (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously store message flags and keywords for a set of messages.
@@ -6751,7 +6751,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<int>> StoreAsync (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<int>> StoreAsync (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Store GMail-style labels for a message.
@@ -6799,7 +6799,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual bool Store (UniqueId uid, IStoreLabelsRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual bool Store (UniqueId uid, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
 			var uids = Store (new[] { uid }, request, cancellationToken);
 
@@ -6852,7 +6852,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual async Task<bool> StoreAsync (UniqueId uid, IStoreLabelsRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<bool> StoreAsync (UniqueId uid, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
 			var uids = await StoreAsync (new[] { uid }, request, cancellationToken).ConfigureAwait (false);
 
@@ -6907,7 +6907,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Store (IList<UniqueId> uids, IStoreLabelsRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Store (IList<UniqueId> uids, IStoreLabelsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously store GMail-style labels for a set of messages.
@@ -6957,7 +6957,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreLabelsRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreLabelsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Store GMail-style labels for a message.
@@ -7005,7 +7005,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual bool Store (int index, IStoreLabelsRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual bool Store (int index, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
 			var indexes = Store (new[] { index }, request, cancellationToken);
 
@@ -7058,7 +7058,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual async Task<bool> StoreAsync (int index, IStoreLabelsRequest request, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<bool> StoreAsync (int index, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
 			var indexes = await StoreAsync (new[] { index }, request, cancellationToken).ConfigureAwait (false);
 
@@ -7113,7 +7113,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<int> Store (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<int> Store (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously store GMail-style labels for a set of messages.
@@ -7163,7 +7163,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<int>> StoreAsync (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<int>> StoreAsync (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Store the annotations for the specified message.
@@ -7210,7 +7210,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual void Store (UniqueId uid, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void Store (UniqueId uid, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
 			Store (new [] { uid }, annotations, cancellationToken);
 		}
@@ -7261,7 +7261,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task StoreAsync (UniqueId uid, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task StoreAsync (UniqueId uid, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
 			return StoreAsync (new [] { uid }, annotations, cancellationToken);
 		}
@@ -7313,7 +7313,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Store (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Store (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously store the annotations for the specified messages.
@@ -7363,7 +7363,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task StoreAsync (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task StoreAsync (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
@@ -7416,7 +7416,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Store (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Store (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
@@ -7469,7 +7469,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Store the annotations for the specified message.
@@ -7516,7 +7516,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual void Store (int index, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void Store (int index, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
 			Store (new[] { index }, annotations, cancellationToken);
 		}
@@ -7567,7 +7567,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task StoreAsync (int index, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task StoreAsync (int index, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
 			return StoreAsync (new [] { index }, annotations, cancellationToken);
 		}
@@ -7619,7 +7619,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Store (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Store (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously store the annotations for the specified messages.
@@ -7669,7 +7669,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task StoreAsync (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task StoreAsync (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
@@ -7722,7 +7722,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<int> Store (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<int> Store (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
@@ -7775,7 +7775,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<int>> StoreAsync (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<int>> StoreAsync (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Search the folder for messages matching the specified query.
@@ -7817,7 +7817,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IList<UniqueId> Search (SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			var results = Search (SearchOptions.None, query, cancellationToken);
 
@@ -7864,7 +7864,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual async Task<IList<UniqueId>> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<IList<UniqueId>> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			var results = await SearchAsync (SearchOptions.None, query, cancellationToken).ConfigureAwait (false);
 
@@ -7919,7 +7919,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			var uidSet = new UidSearchQuery (uids);
 
@@ -7977,7 +7977,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			var uidSet = new UidSearchQuery (uids);
 
@@ -8030,7 +8030,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query.
@@ -8075,7 +8075,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Search the subset of UIDs in the folder for messages matching the specified query.
@@ -8128,7 +8128,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			var uidSet = new UidSearchQuery (uids);
 
@@ -8189,7 +8189,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default)
 		{
 			var uidSet = new UidSearchQuery (uids);
 
@@ -8247,7 +8247,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			var results = Sort (SearchOptions.None, query, orderBy, cancellationToken);
 
@@ -8302,7 +8302,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual async Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			var results = await SortAsync (SearchOptions.None, query, orderBy, cancellationToken).ConfigureAwait (false);
 
@@ -8364,7 +8364,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Sort (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IList<UniqueId> Sort (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			var uidSet = new UidSearchQuery (uids);
 
@@ -8429,7 +8429,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> SortAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> SortAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			var uidSet = new UidSearchQuery (uids);
 
@@ -8489,7 +8489,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously sort messages matching the specified query.
@@ -8541,7 +8541,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Sort messages matching the specified query.
@@ -8600,7 +8600,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual SearchResults Sort (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual SearchResults Sort (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			var uidSet = new UidSearchQuery (uids);
 
@@ -8668,7 +8668,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<SearchResults> SortAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<SearchResults> SortAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
 			var uidSet = new UidSearchQuery (uids);
 
@@ -8724,7 +8724,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<MessageThread> Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<MessageThread> Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -8772,7 +8772,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -8828,7 +8828,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<MessageThread> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<MessageThread> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -8884,7 +8884,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Occurs when the folder is opened.

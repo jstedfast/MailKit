@@ -379,7 +379,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override Stream Connect (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream Connect (string host, int port, CancellationToken cancellationToken = default)
 		{
 			ValidateArguments (host, port);
 
@@ -477,7 +477,7 @@ namespace MailKit.Net.Proxy
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override async Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default)
 		{
 			ValidateArguments (host, port);
 

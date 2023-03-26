@@ -333,7 +333,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Connect (string host, int port, bool useSsl, CancellationToken cancellationToken = default (CancellationToken));
+		void Connect (string host, int port, bool useSsl, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously establish a connection to the specified mail server.
@@ -372,7 +372,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task ConnectAsync (string host, int port, bool useSsl, CancellationToken cancellationToken = default (CancellationToken));
+		Task ConnectAsync (string host, int port, bool useSsl, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Establish a connection to the specified mail server.
@@ -410,7 +410,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously establish a connection to the specified mail server.
@@ -449,7 +449,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Establish a connection to the specified mail server using the provided socket.
@@ -492,7 +492,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously establish a connection to the specified mail server using the provided socket.
@@ -536,7 +536,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Establish a connection to the specified mail server using the provided stream.
@@ -577,7 +577,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously establish a connection to the specified mail server using the provided stream.
@@ -619,7 +619,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Authenticate using the supplied credentials.
@@ -663,7 +663,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously authenticate using the supplied credentials.
@@ -708,7 +708,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Authenticate using the supplied credentials.
@@ -755,7 +755,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously authenticate using the supplied credentials.
@@ -803,7 +803,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Authenticate using the specified user name and password.
@@ -853,7 +853,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		void Authenticate (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default (CancellationToken));
+		void Authenticate (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously authenticate using the specified user name and password.
@@ -904,7 +904,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task AuthenticateAsync (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default (CancellationToken));
+		Task AuthenticateAsync (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Authenticate using the specified user name and password.
@@ -954,7 +954,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		void Authenticate (string userName, string password, CancellationToken cancellationToken = default (CancellationToken));
+		void Authenticate (string userName, string password, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously authenticate using the specified user name and password.
@@ -1002,7 +1002,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task AuthenticateAsync (string userName, string password, CancellationToken cancellationToken = default (CancellationToken));
+		Task AuthenticateAsync (string userName, string password, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Authenticate using the specified SASL mechanism.
@@ -1039,7 +1039,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken));
+		void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously authenticate using the specified SASL mechanism.
@@ -1077,7 +1077,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken));
+		Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Disconnect the service.
@@ -1106,7 +1106,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
+		void Disconnect (bool quit, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously disconnect the service.
@@ -1136,7 +1136,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken));
+		Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Ping the message service to keep the connection alive.
@@ -1163,7 +1163,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void NoOp (CancellationToken cancellationToken = default (CancellationToken));
+		void NoOp (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously ping the mail server to keep the connection alive.
@@ -1194,7 +1194,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task NoOpAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Occurs when the client has been successfully connected.

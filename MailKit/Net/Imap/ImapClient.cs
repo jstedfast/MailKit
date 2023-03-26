@@ -345,7 +345,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public void Compress (CancellationToken cancellationToken = default (CancellationToken))
+		public void Compress (CancellationToken cancellationToken = default)
 		{
 			CompressAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -416,7 +416,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken))
+		public override void EnableQuickResync (CancellationToken cancellationToken = default)
 		{
 			EnableQuickResyncAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -478,7 +478,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public void EnableUTF8 (CancellationToken cancellationToken = default (CancellationToken))
+		public void EnableUTF8 (CancellationToken cancellationToken = default)
 		{
 			EnableUTF8Async (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -574,7 +574,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public ImapImplementation Identify (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken))
+		public ImapImplementation Identify (ImapImplementation clientImplementation, CancellationToken cancellationToken = default)
 		{
 			return IdentifyAsync (clientImplementation, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1122,7 +1122,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default)
 		{
 			AuthenticateAsync (mechanism, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1317,12 +1317,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default)
 		{
 			AuthenticateAsync (encoding, credentials, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
+		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default)
 		{
 			CheckDisposed ();
 
@@ -1349,7 +1349,7 @@ namespace MailKit.Net.Imap {
 				OnAuthenticatedAsync (string.Empty, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
+		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default)
 		{
 			CheckDisposed ();
 
@@ -1617,7 +1617,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			ConnectAsync (host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1837,7 +1837,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			ConnectAsync (socket, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1901,7 +1901,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
 			ConnectAsync (stream, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -1943,7 +1943,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		public override void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Disconnect (bool quit, CancellationToken cancellationToken = default)
 		{
 			DisconnectAsync (quit, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2005,7 +2005,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
+		public override void NoOp (CancellationToken cancellationToken = default)
 		{
 			NoOpAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2094,7 +2094,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public void Idle (CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken))
+		public void Idle (CancellationToken doneToken, CancellationToken cancellationToken = default)
 		{
 			IdleAsync (doneToken, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2189,7 +2189,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public void Notify (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default (CancellationToken))
+		public void Notify (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default)
 		{
 			NotifyAsync (status, eventGroups, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2248,7 +2248,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public void DisableNotify (CancellationToken cancellationToken = default (CancellationToken))
+		public void DisableNotify (CancellationToken cancellationToken = default)
 		{
 			DisableNotifyAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2475,7 +2475,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
 			return GetFoldersAsync (@namespace, items, subscribedOnly, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2516,7 +2516,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken))
+		public override IMailFolder GetFolder (string path, CancellationToken cancellationToken = default)
 		{
 			if (path == null)
 				throw new ArgumentNullException (nameof (path));
@@ -2597,7 +2597,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken))
+		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (tag, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2715,7 +2715,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
 			return GetMetadataAsync (options, tags, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
@@ -2798,7 +2798,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
+		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
 			SetMetadataAsync (metadata, false, cancellationToken).GetAwaiter ().GetResult ();
 		}

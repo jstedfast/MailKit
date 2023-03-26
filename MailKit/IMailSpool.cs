@@ -74,7 +74,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message count.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
+		int GetMessageCount (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the message count.
@@ -84,7 +84,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message count.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the UID of the message at the specified index.
@@ -96,7 +96,7 @@ namespace MailKit {
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
+		string GetMessageUid (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the UID of the message at the specified index.
@@ -108,7 +108,7 @@ namespace MailKit {
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the full list of available message UIDs.
@@ -119,7 +119,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message UIDs.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<string> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
+		IList<string> GetMessageUids (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the full list of available message UIDs.
@@ -130,7 +130,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message UIDs.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the size of the specified message, in bytes.
@@ -141,7 +141,7 @@ namespace MailKit {
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
+		int GetMessageSize (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -152,7 +152,7 @@ namespace MailKit {
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the sizes for all available messages, in bytes.
@@ -162,7 +162,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<int> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
+		IList<int> GetMessageSizes (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the sizes for all available messages, in bytes.
@@ -172,7 +172,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers for the specified message.
@@ -183,7 +183,7 @@ namespace MailKit {
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken));
+		HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the headers for the specified message.
@@ -194,7 +194,7 @@ namespace MailKit {
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers for the specified messages.
@@ -205,7 +205,7 @@ namespace MailKit {
 		/// <returns>The headers for the specified messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<HeaderList> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		IList<HeaderList> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the headers for the specified messages.
@@ -216,7 +216,7 @@ namespace MailKit {
 		/// <returns>The headers for the specified messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers of the messages within the specified range.
@@ -228,7 +228,7 @@ namespace MailKit {
 		/// <param name="startIndex">The index of the first message to get.</param>
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers of the messages within the specified range.
@@ -240,7 +240,7 @@ namespace MailKit {
 		/// <param name="startIndex">The index of the first message to get.</param>
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the message at the specified index.
@@ -252,7 +252,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message at the specified index.
@@ -264,7 +264,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the messages at the specified indexes.
@@ -276,7 +276,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages at the specified indexes.
@@ -288,7 +288,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the messages within the specified range.
@@ -301,7 +301,7 @@ namespace MailKit {
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages within the specified range.
@@ -314,7 +314,7 @@ namespace MailKit {
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the message or header stream at the specified index.
@@ -327,7 +327,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header stream at the specified index.
@@ -340,7 +340,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the message or header streams at the specified index.
@@ -353,7 +353,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams at the specified indexes.
@@ -366,7 +366,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the message or header streams within the specified range.
@@ -380,7 +380,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams within the specified range.
@@ -394,7 +394,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Mark the specified message for deletion.
@@ -406,7 +406,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
+		void DeleteMessage (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously mark the specified message for deletion.
@@ -419,7 +419,7 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Mark the specified messages for deletion.
@@ -431,7 +431,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		void DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously mark the specified messages for deletion.
@@ -444,7 +444,7 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Mark the specified range of messages for deletion.
@@ -457,7 +457,7 @@ namespace MailKit {
 		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
 		/// <param name="count">The number of messages to mark for deletion.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously mark the specified range of messages for deletion.
@@ -471,7 +471,7 @@ namespace MailKit {
 		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
 		/// <param name="count">The number of messages to mark for deletion.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Mark all messages for deletion.
@@ -482,7 +482,7 @@ namespace MailKit {
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void DeleteAllMessages (CancellationToken cancellationToken = default (CancellationToken));
+		void DeleteAllMessages (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously mark all messages for deletion.
@@ -494,7 +494,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Reset the state of all messages marked for deletion.
@@ -505,7 +505,7 @@ namespace MailKit {
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Reset (CancellationToken cancellationToken = default (CancellationToken));
+		void Reset (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously reset the state of all messages marked for deletion.
@@ -517,6 +517,6 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task ResetAsync (CancellationToken cancellationToken = default (CancellationToken));
+		Task ResetAsync (CancellationToken cancellationToken = default);
 	}
 }
