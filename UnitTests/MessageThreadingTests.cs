@@ -46,7 +46,7 @@ namespace UnitTests {
 		{
 			var orderBy = new OrderBy[] { OrderBy.Arrival };
 			var messagesMissingInfo = new [] { new MessageSummary (0) };
-			var emptyOrderBy = new OrderBy[0];
+			var emptyOrderBy = Array.Empty<OrderBy> ();
 			int depth;
 
 			var summary = new MessageSummary (0);

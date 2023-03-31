@@ -34,8 +34,6 @@ using MimeKit;
 namespace MailKit {
 	public static partial class IMailFolderExtensions
 	{
-		#pragma warning disable CA1068 // CancellationToken parameters must come last
-
 		#region Append Extensions
 
 		/// <summary>
@@ -2175,7 +2173,5 @@ namespace MailKit {
 		}
 
 		#endregion Replace Extensions
-
-		#pragma warning restore CA1068 // CancellationToken parameters must come last
 	}
 }

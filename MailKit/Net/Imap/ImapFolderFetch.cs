@@ -882,9 +882,7 @@ namespace MailKit.Net.Imap
 
 			public override Task AddAsync (Section section, bool doAsync, CancellationToken cancellationToken)
 			{
-				MessageSummary message;
-
-				if (!ctx.TryGetValue (section.Index, out message))
+				if (!ctx.TryGetValue (section.Index, out var message))
 					return Task.CompletedTask;
 
 				var body = message.TextBody;
@@ -1764,7 +1762,6 @@ namespace MailKit.Net.Imap
 			bool flagsChanged = false;
 			long nread = 0, size = 0;
 			UniqueId? uid = null;
-			Section section;
 			Stream stream;
 			string name;
 			byte[] buf;
@@ -1926,7 +1923,7 @@ namespace MailKit.Net.Imap
 						stream = CommitStream (stream, uid.Value, name, offset, length);
 
 					// prevent leaks in the (invalid) case where a section may be returned twice
-					if (ctx.Contains (index, name, out section))
+					if (ctx.Contains (index, name, out var section))
 						section.Stream.Dispose ();
 
 					section = new Section (stream, index, uid, name, offset, length);
@@ -2077,9 +2074,7 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			string[] tags;
-
-			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid, GetBodyPartQuery (partSpecifier, true, out tags));
+			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid, GetBodyPartQuery (partSpecifier, true, out var tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			Section section;
@@ -2447,10 +2442,8 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			string[] tags;
-
 			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
-			var command = string.Format ("FETCH {0} ({1})\r\n", seqid, GetBodyPartQuery (partSpecifier, true, out tags));
+			var command = string.Format ("FETCH {0} ({1})\r\n", seqid, GetBodyPartQuery (partSpecifier, true, out var tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			Section section;
@@ -3031,14 +3024,11 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			string[] tags;
-
-			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid, GetBodyPartQuery (partSpecifier, false, out tags));
+			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid, GetBodyPartQuery (partSpecifier, false, out var tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			ChainedStream chained = null;
 			bool dispose = false;
-			Section section;
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
 			ic.UserData = ctx;
@@ -3056,7 +3046,7 @@ namespace MailKit.Net.Imap
 				chained = new ChainedStream ();
 
 				foreach (var tag in tags) {
-					if (!ctx.TryGetSection (uid, tag, out section, true))
+					if (!ctx.TryGetSection (uid, tag, out var section, true))
 						throw new MessageNotFoundException ("The IMAP server did not return the requested body part.");
 
 					if (!(section.Stream is MemoryStream || section.Stream is MemoryBlockStream))
@@ -3065,9 +3055,7 @@ namespace MailKit.Net.Imap
 					chained.Add (section.Stream);
 				}
 			} catch {
-				if (chained != null)
-					chained.Dispose ();
-
+				chained?.Dispose ();
 				throw;
 			} finally {
 				ctx.Dispose ();
@@ -3311,10 +3299,8 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			string[] tags;
-
 			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
-			var command = string.Format ("FETCH {0} ({1})\r\n", seqid, GetBodyPartQuery (partSpecifier, false, out tags));
+			var command = string.Format ("FETCH {0} ({1})\r\n", seqid, GetBodyPartQuery (partSpecifier, false, out var tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			ChainedStream chained = null;
@@ -3346,9 +3332,7 @@ namespace MailKit.Net.Imap
 					chained.Add (section.Stream);
 				}
 			} catch {
-				if (chained != null)
-					chained.Dispose ();
-
+				chained?.Dispose ();
 				throw;
 			} finally {
 				ctx.Dispose ();

@@ -149,7 +149,6 @@ namespace MailKit {
 		static IDictionary<string, ThreadableNode> CreateIdTable (IEnumerable<IMessageSummary> messages)
 		{
 			var ids = new Dictionary<string, ThreadableNode> (StringComparer.OrdinalIgnoreCase);
-			ThreadableNode node;
 
 			foreach (var message in messages) {
 				if (message.Envelope == null)
@@ -160,7 +159,7 @@ namespace MailKit {
 				if (string.IsNullOrEmpty (id))
 					id = MimeUtils.GenerateMessageId ();
 
-				if (ids.TryGetValue (id, out node)) {
+				if (ids.TryGetValue (id, out var node)) {
 					if (node.Message == null) {
 						// a previously processed message referenced this message
 						node.Message = message;

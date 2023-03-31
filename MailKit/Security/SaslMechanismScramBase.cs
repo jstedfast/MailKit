@@ -309,7 +309,7 @@ namespace MailKit.Security {
 
 			switch (state) {
 			case LoginState.Initial:
-				cnonce = cnonce ?? GenerateEntropy (18);
+				cnonce ??= GenerateEntropy (18);
 				client = "n=" + Normalize (Credentials.UserName) + ",r=" + cnonce;
 
 				// Note: RFC7677 states:

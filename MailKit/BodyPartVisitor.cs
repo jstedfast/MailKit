@@ -43,8 +43,7 @@ namespace MailKit {
 		/// <param name="body">The MIME body part.</param>
 		public virtual void Visit (BodyPart body)
 		{
-			if (body != null)
-				body.Accept (this);
+			body?.Accept (this);
 		}
 
 		/// <summary>
@@ -79,8 +78,7 @@ namespace MailKit {
 		/// <param name="message">The body part representing the message/rfc822 message.</param>
 		protected virtual void VisitMessage (BodyPart message)
 		{
-			if (message != null)
-				message.Accept (this);
+			message?.Accept (this);
 		}
 
 		/// <summary>

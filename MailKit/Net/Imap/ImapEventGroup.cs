@@ -293,7 +293,7 @@ namespace MailKit.Net.Imap {
 
 				this.folders = new ImapFolder[folders.Count];
 				for (int i = 0; i < folders.Count; i++) {
-					if (!(folders[i] is ImapFolder folder))
+					if (folders[i] is not ImapFolder folder)
 						throw new ArgumentException ("All folders must be ImapFolders.", nameof (folders));
 
 					this.folders[i] = folder;

@@ -339,7 +339,7 @@ namespace MailKit.Net.Imap {
 					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.");
 				}
 
-				if (!(Stream is NetworkStream))
+				if (Stream is not NetworkStream)
 					cancellationToken.ThrowIfCancellationRequested ();
 			} catch {
 				IsConnected = false;
@@ -1114,7 +1114,7 @@ namespace MailKit.Net.Imap {
 				}
 			} catch (Exception ex) {
 				IsConnected = false;
-				if (!(ex is OperationCanceledException))
+				if (ex is not OperationCanceledException)
 					cancellationToken.ThrowIfCancellationRequested ();
 				throw;
 			}
@@ -1220,7 +1220,7 @@ namespace MailKit.Net.Imap {
 				}
 			} catch (Exception ex) {
 				IsConnected = false;
-				if (!(ex is OperationCanceledException))
+				if (ex is not OperationCanceledException)
 					cancellationToken.ThrowIfCancellationRequested ();
 				throw;
 			}
@@ -1265,7 +1265,7 @@ namespace MailKit.Net.Imap {
 				outputIndex = 0;
 			} catch (Exception ex) {
 				IsConnected = false;
-				if (!(ex is OperationCanceledException))
+				if (ex is not OperationCanceledException)
 					cancellationToken.ThrowIfCancellationRequested ();
 				throw;
 			}
@@ -1330,7 +1330,7 @@ namespace MailKit.Net.Imap {
 				outputIndex = 0;
 			} catch (Exception ex) {
 				IsConnected = false;
-				if (!(ex is OperationCanceledException))
+				if (ex is not OperationCanceledException)
 					cancellationToken.ThrowIfCancellationRequested ();
 				throw;
 			}

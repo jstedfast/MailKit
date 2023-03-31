@@ -80,10 +80,10 @@ namespace MailKit.Net
 			token = null;
 
 			if (kind == ChannelBindingKind.Endpoint) {
-				channelBinding = tlsServerEndPoint = tlsServerEndPoint ?? GetChannelBinding (kind);
+				channelBinding = tlsServerEndPoint ??= GetChannelBinding (kind);
 				identifierLength = "tls-server-end-point:".Length;
 			} else if (kind == ChannelBindingKind.Unique) {
-				channelBinding = tlsUnique = tlsUnique ?? GetChannelBinding (kind);
+				channelBinding = tlsUnique ??= GetChannelBinding (kind);
 				identifierLength = "tls-unique:".Length;
 			} else {
 				return false;

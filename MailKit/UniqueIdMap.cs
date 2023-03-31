@@ -75,7 +75,7 @@ namespace MailKit {
 
 		UniqueIdMap ()
 		{
-			Destination = Source = new UniqueId[0];
+			Destination = Source = Array.Empty<UniqueId> ();
 		}
 
 		/// <summary>

@@ -191,8 +191,7 @@ namespace MailKit.Net.Pop3 {
 
 		void Initialize (Pop3Stream pop3)
 		{
-			if (stream != null)
-				stream.Dispose ();
+			stream?.Dispose ();
 
 			Capabilities = Pop3Capabilities.User;
 			AuthenticationMechanisms.Clear ();

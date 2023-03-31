@@ -184,8 +184,7 @@ namespace MailKit {
 				if (ContentDisposition != null)
 					filename = ContentDisposition.FileName;
 
-				if (filename == null)
-					filename = ContentType.Name;
+				filename ??= ContentType.Name;
 
 				return filename?.Trim ();
 			}

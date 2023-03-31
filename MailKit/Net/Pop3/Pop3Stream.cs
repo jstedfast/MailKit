@@ -768,7 +768,7 @@ namespace MailKit.Net.Pop3 {
 		void OnWriteException (Exception ex, CancellationToken cancellationToken)
 		{
 			IsConnected = false;
-			if (!(ex is OperationCanceledException))
+			if (ex is not OperationCanceledException)
 				cancellationToken.ThrowIfCancellationRequested ();
 		}
 

@@ -149,7 +149,7 @@ namespace MailKit.Security {
 
 				challenge = DigestChallenge.Parse (Encoding.UTF8.GetString (token, startIndex, length));
 				encoding = challenge.Charset != null ? Encoding.UTF8 : TextEncodings.Latin1;
-				cnonce = cnonce ?? GenerateEntropy (15);
+				cnonce ??= GenerateEntropy (15);
 
 				response = new DigestResponse (challenge, encoding, Uri.Scheme, Uri.DnsSafeHost, AuthorizationId, Credentials.UserName, Credentials.Password, cnonce);
 				state = LoginState.Final;
@@ -328,9 +328,7 @@ namespace MailKit.Security {
 			SkipWhiteSpace (token, ref index);
 
 			while (index < token.Length) {
-				string key, value;
-
-				if (!TryParseKeyValuePair (token, ref index, out key, out value))
+				if (!TryParseKeyValuePair (token, ref index, out var key, out var value))
 					throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
 
 				switch (key.ToLowerInvariant ()) {

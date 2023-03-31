@@ -1064,7 +1064,7 @@ namespace MailKit.Net.Imap {
 			if (parent == this)
 				throw new ArgumentException ("Cannot rename a folder using itself as the new parent folder.", nameof (parent));
 
-			if (!(parent is ImapFolder) || ((ImapFolder) parent).Engine != Engine)
+			if (parent is not ImapFolder || ((ImapFolder) parent).Engine != Engine)
 				throw new ArgumentException ("The parent folder does not belong to this ImapClient.", nameof (parent));
 
 			if (name == null)
@@ -3132,9 +3132,9 @@ namespace MailKit.Net.Imap {
 				return;
 
 			var command = new StringBuilder ("SETMETADATA %F (");
-			var args = new List<object> ();
-
-			args.Add (this);
+			var args = new List<object> {
+				this
+			};
 
 			for (int i = 0; i < metadata.Count; i++) {
 				if (i > 0)
@@ -3478,7 +3478,6 @@ namespace MailKit.Net.Imap {
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), this);
 			var ctx = new QuotaContext ();
-			Quota quota;
 
 			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuotaAsync);
 			ic.UserData = ctx;
@@ -3492,7 +3491,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SETQUOTA", ic);
 
-			if (ctx.Quotas.TryGetValue (EncodedName, out quota)) {
+			if (ctx.Quotas.TryGetValue (EncodedName, out var quota)) {
 				return new FolderQuota (this) {
 					CurrentMessageCount = quota.CurrentMessageCount,
 					CurrentStorageSize = quota.CurrentStorageSize,
@@ -3855,9 +3854,9 @@ namespace MailKit.Net.Imap {
 		{
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ("APPEND %F ");
-			var list = new List<object> ();
-
-			list.Add (this);
+			var list = new List<object> {
+				this
+			};
 
 			if ((request.Flags & SettableFlags) != 0 || numKeywords > 0) {
 				ImapUtils.FormatFlagsList (builder, request.Flags, numKeywords);
@@ -3888,8 +3887,9 @@ namespace MailKit.Net.Imap {
 			var command = builder.ToString ();
 			var args = list.ToArray ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args);
-			ic.Progress = request.TransferProgress;
+			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args) {
+				Progress = request.TransferProgress
+			};
 
 			Engine.QueueCommand (ic);
 
@@ -4046,9 +4046,9 @@ namespace MailKit.Net.Imap {
 		ImapCommand QueueMultiAppend (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken)
 		{
 			var builder = new StringBuilder ("APPEND %F");
-			var list = new List<object> ();
-
-			list.Add (this);
+			var list = new List<object> {
+				this
+			};
 
 			for (int i = 0; i < requests.Count; i++) {
 				int numKeywords = requests[i].Keywords != null ? requests[i].Keywords.Count : 0;
@@ -4087,8 +4087,9 @@ namespace MailKit.Net.Imap {
 			var command = builder.ToString ();
 			var args = list.ToArray ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args);
-			ic.Progress = requests[0].TransferProgress;
+			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args) {
+				Progress = requests[0].TransferProgress
+			};
 
 			Engine.QueueCommand (ic);
 
@@ -4278,9 +4279,9 @@ namespace MailKit.Net.Imap {
 		{
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ($"UID REPLACE {uid} %F ");
-			var list = new List<object> ();
-
-			list.Add (request.Destination ?? this);
+			var list = new List<object> {
+				request.Destination ?? this
+			};
 
 			if ((request.Flags & SettableFlags) != 0 || numKeywords > 0) {
 				ImapUtils.FormatFlagsList (builder, request.Flags, numKeywords);
@@ -4311,8 +4312,9 @@ namespace MailKit.Net.Imap {
 			var command = builder.ToString ();
 			var args = list.ToArray ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args);
-			ic.Progress = request.TransferProgress;
+			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args) {
+				Progress = request.TransferProgress
+			};
 
 			Engine.QueueCommand (ic);
 
@@ -4499,10 +4501,10 @@ namespace MailKit.Net.Imap {
 		{
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ($"REPLACE %d %F ");
-			var list = new List<object> ();
-
-			list.Add (index + 1);
-			list.Add (request.Destination ?? this);
+			var list = new List<object> {
+				index + 1,
+				request.Destination ?? this
+			};
 
 			if ((request.Flags & SettableFlags) != 0) {
 				ImapUtils.FormatFlagsList (builder, request.Flags, numKeywords);
@@ -4533,8 +4535,9 @@ namespace MailKit.Net.Imap {
 			var command = builder.ToString ();
 			var args = list.ToArray ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args);
-			ic.Progress = request.TransferProgress;
+			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args) {
+				Progress = request.TransferProgress
+			};
 
 			Engine.QueueCommand (ic);
 
@@ -4753,7 +4756,7 @@ namespace MailKit.Net.Imap {
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
 
-			if (!(destination is ImapFolder target) || (target.Engine != Engine))
+			if (destination is not ImapFolder target || (target.Engine != Engine))
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, false);
@@ -4928,7 +4931,7 @@ namespace MailKit.Net.Imap {
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
 
-			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
+			if (destination is not ImapFolder || ((ImapFolder) destination).Engine != Engine)
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, true);
@@ -5100,7 +5103,7 @@ namespace MailKit.Net.Imap {
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
 
-			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
+			if (destination is not ImapFolder || ((ImapFolder) destination).Engine != Engine)
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, false);
@@ -5246,7 +5249,7 @@ namespace MailKit.Net.Imap {
 			if (destination == null)
 				throw new ArgumentNullException (nameof (destination));
 
-			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
+			if (destination is not ImapFolder || ((ImapFolder) destination).Engine != Engine)
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, true);
@@ -5451,32 +5454,36 @@ namespace MailKit.Net.Imap {
 				uid = message.UniqueId;
 
 			if ((message.Fields & MessageSummaryItems.Flags) != 0) {
-				var args = new MessageFlagsChangedEventArgs (index, message.Flags.Value, (HashSet<string>) message.Keywords);
-				args.ModSeq = message.ModSeq;
-				args.UniqueId = uid;
+				var args = new MessageFlagsChangedEventArgs (index, message.Flags.Value, (HashSet<string>) message.Keywords) {
+					ModSeq = message.ModSeq,
+					UniqueId = uid
+				};
 
 				OnMessageFlagsChanged (args);
 			}
 
 			if ((message.Fields & MessageSummaryItems.GMailLabels) != 0) {
-				var args = new MessageLabelsChangedEventArgs (index, message.GMailLabels);
-				args.ModSeq = message.ModSeq;
-				args.UniqueId = uid;
+				var args = new MessageLabelsChangedEventArgs (index, message.GMailLabels) {
+					ModSeq = message.ModSeq,
+					UniqueId = uid
+				};
 
 				OnMessageLabelsChanged (args);
 			}
 
 			if ((message.Fields & MessageSummaryItems.Annotations) != 0) {
-				var args = new AnnotationsChangedEventArgs (index, message.Annotations);
-				args.ModSeq = message.ModSeq;
-				args.UniqueId = uid;
+				var args = new AnnotationsChangedEventArgs (index, message.Annotations) {
+					ModSeq = message.ModSeq,
+					UniqueId = uid
+				};
 
 				OnAnnotationsChanged (args);
 			}
 
 			if ((message.Fields & MessageSummaryItems.ModSeq) != 0) {
-				var args = new ModSeqChangedEventArgs (index, message.ModSeq.Value);
-				args.UniqueId = uid;
+				var args = new ModSeqChangedEventArgs (index, message.ModSeq.Value) {
+					UniqueId = uid
+				};
 
 				OnModSeqChanged (args);
 			}

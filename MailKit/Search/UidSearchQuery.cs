@@ -76,8 +76,9 @@ namespace MailKit.Search
 			if (!uid.IsValid)
 				throw new ArgumentException ("Cannot search for an invalid unique identifier.", nameof (uid));
 
-			Uids = new UniqueIdSet (SortOrder.Ascending);
-			Uids.Add (uid);
+			Uids = new UniqueIdSet (SortOrder.Ascending) {
+				uid
+			};
 		}
 
 		/// <summary>

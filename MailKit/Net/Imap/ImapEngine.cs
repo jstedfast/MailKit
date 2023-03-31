@@ -2036,62 +2036,53 @@ namespace MailKit.Net.Imap {
 
 					modseq = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
-					if (folder != null)
-						folder.UpdateHighestModSeq (modseq);
+					folder?.UpdateHighestModSeq (modseq);
 				} else if (atom.Equals ("MESSAGES", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
-					if (folder != null)
-						folder.OnExists ((int) count);
+					folder?.OnExists ((int) count);
 				} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
-					if (folder != null)
-						folder.OnRecent ((int) count);
+					folder?.OnRecent ((int) count);
 				} else if (atom.Equals ("UIDNEXT", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
-					if (folder != null)
-						folder.UpdateUidNext (uid > 0 ? new UniqueId (uid) : UniqueId.Invalid);
+					folder?.UpdateUidNext (uid > 0 ? new UniqueId (uid) : UniqueId.Invalid);
 				} else if (atom.Equals ("UIDVALIDITY", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
-					if (folder != null)
-						folder.UpdateUidValidity (uid);
+					folder?.UpdateUidValidity (uid);
 				} else if (atom.Equals ("UNSEEN", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
-					if (folder != null)
-						folder.UpdateUnread ((int) count);
+					folder?.UpdateUnread ((int) count);
 				} else if (atom.Equals ("APPENDLIMIT", StringComparison.OrdinalIgnoreCase)) {
 					if (token.Type == ImapTokenType.Atom) {
 						var limit = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
-						if (folder != null)
-							folder.UpdateAppendLimit (limit);
+						folder?.UpdateAppendLimit (limit);
 					} else {
 						AssertToken (token, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-						if (folder != null)
-							folder.UpdateAppendLimit (null);
+						folder?.UpdateAppendLimit (null);
 					}
 				} else if (atom.Equals ("SIZE", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 					var size = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
-					if (folder != null)
-						folder.UpdateSize (size);
+					folder?.UpdateSize (size);
 				} else if (atom.Equals ("MAILBOXID", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
@@ -2099,8 +2090,7 @@ namespace MailKit.Net.Imap {
 
 					AssertToken (token, ImapTokenType.Atom, GenericItemSyntaxErrorFormat, atom, token);
 
-					if (folder != null)
-						folder.UpdateId ((string) token.Value);
+					folder?.UpdateId ((string) token.Value);
 
 					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 

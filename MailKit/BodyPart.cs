@@ -428,9 +428,6 @@ namespace MailKit {
 
 		static bool TryParse (string text, ref int index, out ContentDisposition disposition)
 		{
-			IList<Parameter> parameters;
-			string value;
-
 			disposition = null;
 
 			while (index < text.Length && text[index] == ' ')
@@ -450,10 +447,10 @@ namespace MailKit {
 
 			index++;
 
-			if (!TryParse (text, ref index, out value))
+			if (!TryParse (text, ref index, out string value))
 				return false;
 
-			if (!TryParse (text, ref index, out parameters))
+			if (!TryParse (text, ref index, out IList<Parameter> parameters))
 				return false;
 
 			if (index >= text.Length || text[index] != ')')
@@ -471,7 +468,6 @@ namespace MailKit {
 
 		static bool TryParse (string text, ref int index, bool multipart, out ContentType contentType)
 		{
-			IList<Parameter> parameters;
 			string type, subtype;
 
 			contentType = null;
@@ -492,7 +488,7 @@ namespace MailKit {
 			if (!TryParse (text, ref index, out subtype))
 				return false;
 
-			if (!TryParse (text, ref index, out parameters))
+			if (!TryParse (text, ref index, out IList<Parameter> parameters))
 				return false;
 
 			contentType = new ContentType (type ?? "application", subtype ?? "octet-stream");
@@ -505,7 +501,6 @@ namespace MailKit {
 
 		static bool TryParse (string text, ref int index, string prefix, out IList<BodyPart> children)
 		{
-			BodyPart part;
 			string path;
 			int id = 1;
 
@@ -522,7 +517,7 @@ namespace MailKit {
 
 				path = prefix + id;
 
-				if (!TryParse (text, ref index, path, out part))
+				if (!TryParse (text, ref index, path, out BodyPart part))
 					return false;
 
 				while (index < text.Length && text[index] == ' ')
@@ -566,9 +561,7 @@ namespace MailKit {
 				var multipart = new BodyPartMultipart ();
 
 				if (text[index] == '(') {
-					IList<BodyPart> children;
-
-					if (!TryParse (text, ref index, prefix, out children))
+					if (!TryParse (text, ref index, prefix, out IList<BodyPart> children))
 						return false;
 
 					foreach (var child in children)
@@ -603,7 +596,6 @@ namespace MailKit {
 				BodyPartText txt = null;
 				BodyPartBasic basic;
 				string nstring;
-				uint number;
 
 				if (!TryParse (text, ref index, false, out contentType))
 					return false;
@@ -632,7 +624,7 @@ namespace MailKit {
 
 				basic.ContentTransferEncoding = nstring;
 
-				if (!TryParse (text, ref index, out number))
+				if (!TryParse (text, ref index, out uint number))
 					return false;
 
 				basic.Octets = number;
@@ -658,15 +650,12 @@ namespace MailKit {
 				basic.ContentLocation = location;
 
 				if (message != null) {
-					Envelope envelope;
-					BodyPart body;
-
-					if (!Envelope.TryParse (text, ref index, out envelope))
+					if (!Envelope.TryParse (text, ref index, out Envelope envelope))
 						return false;
 
 					message.Envelope = envelope;
 
-					if (!TryParse (text, ref index, path, out body))
+					if (!TryParse (text, ref index, path, out BodyPart body))
 						return false;
 
 					message.Body = body;

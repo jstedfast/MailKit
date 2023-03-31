@@ -113,7 +113,7 @@ namespace MailKit.Net.Imap {
 
 		static bool TryGetTimeZone (string text, ref int index, out TimeSpan timezone)
 		{
-			int tzone, sign = 1;
+			int sign = 1;
 
 			if (text[index] == '-') {
 				sign = -1;
@@ -122,7 +122,7 @@ namespace MailKit.Net.Imap {
 				index++;
 			}
 
-			if (!TryGetInt32 (text, ref index, out tzone)) {
+			if (!TryGetInt32 (text, ref index, out var tzone)) {
 				timezone = new TimeSpan ();
 				return false;
 			}
@@ -1319,8 +1319,9 @@ namespace MailKit.Net.Imap {
 
 				body = rfc822;
 			} else if (type.IsMimeType ("text", "*")) {
-				var text = new BodyPartText ();
-				text.Lines = await ReadNumberAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+				var text = new BodyPartText {
+					Lines = await ReadNumberAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false)
+				};
 				body = text;
 			} else {
 				isMultipart = type.IsMimeType ("multipart", "*");
@@ -1370,7 +1371,7 @@ namespace MailKit.Net.Imap {
 			return body;
 		}
 
-		struct EnvelopeAddress
+		readonly struct EnvelopeAddress
 		{
 			public readonly string Name;
 			public readonly string Route;

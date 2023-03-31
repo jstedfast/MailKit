@@ -790,8 +790,9 @@ namespace MailKit.Net.Imap
 
 			command += expr + "\r\n";
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			ic.UserData = new SearchResults (UidValidity, SortOrder.Ascending);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ()) {
+				UserData = new SearchResults (UidValidity, SortOrder.Ascending)
+			};
 
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
@@ -1251,8 +1252,9 @@ namespace MailKit.Net.Imap
 
 			command += order + " " + (charset ?? "US-ASCII") + " " + expr + "\r\n";
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			ic.UserData = new SearchResults (UidValidity);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ()) {
+				UserData = new SearchResults (UidValidity)
+			};
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);

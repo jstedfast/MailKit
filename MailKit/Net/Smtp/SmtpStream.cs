@@ -798,7 +798,7 @@ namespace MailKit.Net.Smtp {
 				}
 			} catch (Exception ex) {
 				IsConnected = false;
-				if (!(ex is OperationCanceledException))
+				if (ex is not OperationCanceledException)
 					cancellationToken.ThrowIfCancellationRequested ();
 				throw;
 			}
@@ -913,7 +913,7 @@ namespace MailKit.Net.Smtp {
 				}
 			} catch (Exception ex) {
 				IsConnected = false;
-				if (!(ex is OperationCanceledException))
+				if (ex is not OperationCanceledException)
 					cancellationToken.ThrowIfCancellationRequested ();
 				throw;
 			}
@@ -958,7 +958,7 @@ namespace MailKit.Net.Smtp {
 				outputIndex = 0;
 			} catch (Exception ex) {
 				IsConnected = false;
-				if (!(ex is OperationCanceledException))
+				if (ex is not OperationCanceledException)
 					cancellationToken.ThrowIfCancellationRequested ();
 				throw;
 			}
@@ -1022,7 +1022,7 @@ namespace MailKit.Net.Smtp {
 				outputIndex = 0;
 			} catch (Exception ex) {
 				IsConnected = false;
-				if (!(ex is OperationCanceledException))
+				if (ex is not OperationCanceledException)
 					cancellationToken.ThrowIfCancellationRequested ();
 				throw;
 			}

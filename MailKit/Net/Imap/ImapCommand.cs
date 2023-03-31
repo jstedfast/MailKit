@@ -677,8 +677,7 @@ namespace MailKit.Net.Imap {
 		{
 			nwritten += n;
 
-			if (Progress != null)
-				Progress.Report (nwritten, totalSize);
+			Progress?.Report (nwritten, totalSize);
 		}
 
 		static bool IsAtom (char c)

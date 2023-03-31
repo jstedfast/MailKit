@@ -212,9 +212,7 @@ namespace MailKit {
 			bool cid = uri.IsAbsoluteUri && uri.Scheme.ToLowerInvariant () == "cid";
 
 			for (int index = 0; index < Count; index++) {
-				var bodyPart = this[index] as BodyPartBasic;
-
-				if (bodyPart == null)
+				if (this[index] is not BodyPartBasic bodyPart)
 					continue;
 
 				if (uri.IsAbsoluteUri) {

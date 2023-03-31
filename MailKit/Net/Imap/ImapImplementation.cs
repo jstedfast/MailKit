@@ -55,9 +55,7 @@ namespace MailKit.Net.Imap {
 
 		string GetProperty (string property)
 		{
-			string value;
-
-			Properties.TryGetValue (property, out value);
+			Properties.TryGetValue (property, out var value);
 
 			return value;
 		}
