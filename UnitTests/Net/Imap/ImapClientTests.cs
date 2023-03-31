@@ -1380,6 +1380,71 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateInvalidTaggedByeDuringLogoutCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+statussize+objectid.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LOGOUT\r\n", Encoding.ASCII.GetBytes ("A00000005 BYE IMAP4rev1 Server logging out\r\n"))
+			};
+		}
+
+		[Test]
+		public void TestInvalidTaggedByeDuringLogout ()
+		{
+			var commands = CreateInvalidTaggedByeDuringLogoutCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Exceptions should be swallowed in Disconnect: {0}", ex);
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestInvalidTaggedByeDuringLogoutAsync ()
+		{
+			var commands = CreateInvalidTaggedByeDuringLogoutCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Exceptions should be swallowed in Disconnect: {0}", ex);
+				}
+			}
+		}
+
 		static List<ImapReplayCommand> CreatePreAuthGreetingCommands ()
 		{
 			return new List<ImapReplayCommand> {
