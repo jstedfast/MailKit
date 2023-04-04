@@ -278,13 +278,13 @@ I just wanted to let you know that Monica and I were going to go play some paint
             };
 
             using (var client = new SmtpClient ()) {
-                client.Connect ("smtp.friends.com", 587, false);
+                client.Connect (host: "smtp.friends.com", port: 587, useSsl: false);
 
                 // Note: only needed if the SMTP server requires authentication
-                client.Authenticate ("joey", "password");
+                client.Authenticate (userName: "joey", password: "password");
 
                 client.Send (message);
-                client.Disconnect (true);
+                client.Disconnect (quit: true);
             }
         }
     }
