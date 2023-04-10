@@ -695,14 +695,18 @@ namespace MailKit.Net.Pop3 {
 		unsafe bool TryQueueCommand (Encoder encoder, string command, ref int index)
 		{
 			fixed (char* cmd = command) {
+				int outputLeft = output.Length - outputIndex;
 				int charCount = command.Length - index;
 				char* chars = cmd + index;
 
+				var needed = encoder.GetByteCount (chars, charCount, true);
+				if (needed > outputLeft)
+					return false;
+
 				fixed (byte* outbuf = output) {
-					int byteCount = output.Length - outputIndex;
 					byte* outptr = outbuf + outputIndex;
 
-					encoder.Convert (chars, charCount, outptr, byteCount, true, out int charsUsed, out int bytesUsed, out bool completed);
+					encoder.Convert (chars, charCount, outptr, outputLeft, true, out int charsUsed, out int bytesUsed, out bool completed);
 					outputIndex += bytesUsed;
 					index += charsUsed;
 
