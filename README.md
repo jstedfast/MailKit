@@ -258,6 +258,7 @@ using System;
 using MailKit.Net.Smtp;
 using MailKit;
 using MimeKit;
+using MimeKit.Text;
 
 namespace TestClient {
     class Program
@@ -269,7 +270,7 @@ namespace TestClient {
             message.To.Add (new MailboxAddress ("Mrs. Chanandler Bong", "chandler@friends.com"));
             message.Subject = "How you doin'?";
 
-            message.Body = new TextPart ("plain") {
+            message.Body = new TextPart (TextFormat.Plain) {
                 Text = @"Hey Chandler,
 
 I just wanted to let you know that Monica and I were going to go play some paintball, you in?
