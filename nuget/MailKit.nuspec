@@ -88,21 +88,27 @@ Features include:
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll.config" target="lib\netstandard2.0\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.dll" target="lib\netstandard2.1\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.pdb" target="lib\netstandard2.1\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.xml" target="lib\netstandard2.1\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.dll.config" target="lib\netstandard2.1\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\net462\MailKit.dll" target="lib\net462\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net462\MailKit.pdb" target="lib\net462\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net462\MailKit.xml" target="lib\net462\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net462\MailKit.dll.config" target="lib\net462\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\net47\MailKit.dll" target="lib\net47\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net47\MailKit.pdb" target="lib\net47\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net47\MailKit.xml" target="lib\net47\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net47\MailKit.dll.config" target="lib\net47\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\net48\MailKit.dll" target="lib\net48\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net48\MailKit.pdb" target="lib\net48\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net48\MailKit.xml" target="lib\net48\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net48\MailKit.dll.config" target="lib\net48\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\net6.0\MailKit.dll" target="lib\net6.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net6.0\MailKit.pdb" target="lib\net6.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net6.0\MailKit.xml" target="lib\net6.0\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net6.0\MailKit.dll.config" target="lib\net6.0\MailKit.dll.config" />
     <file src="mailkit-50.png" target="icons\mailkit-50.png" />
   </files>
 </package>

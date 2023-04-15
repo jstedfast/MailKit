@@ -26,6 +26,8 @@
     <RootNamespace>MailKit</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyOriginatorKeyFile>mailkit.snk</AssemblyOriginatorKeyFile>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <DefineConstants>$(DefineConstants);MAILKIT_LITE</DefineConstants>
     <SignAssembly>true</SignAssembly>
     <DebugSymbols>true</DebugSymbols>
