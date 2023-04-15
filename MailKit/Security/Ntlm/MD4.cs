@@ -379,24 +379,26 @@ namespace MailKit.Security.Ntlm {
 
 		void Dispose (bool disposing)
 		{
-			if (buffered != null) {
-				Array.Clear (buffered, 0, buffered.Length);
-				buffered = null;
-			}
+			if (disposing) {
+				if (buffered != null) {
+					Array.Clear (buffered, 0, buffered.Length);
+					buffered = null;
+				}
 
-			if (state != null) {
-				Array.Clear (state, 0, state.Length);
-				state = null;
-			}
+				if (state != null) {
+					Array.Clear (state, 0, state.Length);
+					state = null;
+				}
 
-			if (count != null) {
-				Array.Clear (count, 0, count.Length);
-				count = null;
-			}
+				if (count != null) {
+					Array.Clear (count, 0, count.Length);
+					count = null;
+				}
 
-			if (x != null) {
-				Array.Clear (x, 0, x.Length);
-				x = null;
+				if (x != null) {
+					Array.Clear (x, 0, x.Length);
+					x = null;
+				}
 			}
 		}
 
