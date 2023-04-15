@@ -332,7 +332,7 @@
 
 * Ignore NIL tokens in the body-fld-lang token list.
   (issue [#953](https://github.com/jstedfast/MailKit/issues/953))
-* Added logic to handle unexpected <CRLF> in untagged FETCH responses.
+* Added logic to handle unexpected `<CR><LF>` in untagged FETCH responses.
   (issue [#954](https://github.com/jstedfast/MailKit/issues/954))
 * Added a way to override SmtpClient's preference for using BDAT vs DATA
   via a new PreferSendAsBinaryData virtual property.
@@ -473,7 +473,7 @@ this release breaks API/ABI.
 * Break apart IMAP commands with really long uid-sets.
   (issue [#834](https://github.com/jstedfast/MailKit/issues/834))
 * Rewrote Connect logic to use Socket.Connect (IPAddress, int) instead of Connect (string, int)
-  in an attempt to fix https://stackoverflow.com/q/55382267/87117
+  in an attempt to fix [StackOverflow 87117](https://stackoverflow.com/q/55382267/87117)
 * Fixed SmtpStream.ReadAheadAsync() to preserve remaining input.
   (issue [#842](https://github.com/jstedfast/MailKit/issues/842))
 
@@ -530,7 +530,7 @@ this release breaks API/ABI.
   (issue [#776](https://github.com/jstedfast/MailKit/issues/776))
 * Fixed ImapClient.GetFoldersAsync() to call ImapFolder.StatusAsync() instead of Status()
   when StatusItems are specified.
-* Changed ImapFolder.GetSubfolders() to return IList<IMailFolder> instead of IEnumerable<IMailFolder>.
+* Changed ImapFolder.GetSubfolders() to return IList&lt;IMailFolder&gt; instead of IEnumerable&lt;IMailFolder&gt;.
 * Fixed ImapClient's NAMESPACE parser - it had Shared and Other namespace ordering reversed.
 * Fixed ImapFolder.Create() (for special-use) to only use unique uses if any were specified multiple times.
 * Modified ImapFolder.Open() to allow devs to re-Open() a folder with the same access in case they
@@ -563,8 +563,8 @@ API Changes Since 2.0.x:
 * Obsoleted the IMessageSummary.UserFlags property in favor of IMessageSummary.Keywords.
 * Obsoleted the MessageFlagsChangedEventArgs.UserFlags property in favor of
   MessageFlagsChangedEventArgs.Keywords.
-* All IMailFolder.Fetch and IMailFolder.FetchAsync methods that took a HashSet<string> userFlags
-  argument now take an IEnumerable<string> keywords argument. Note: this only affects you if your
+* All IMailFolder.Fetch and IMailFolder.FetchAsync methods that took a HashSet&lt;string&gt; userFlags
+  argument now take an IEnumerable&lt;string&gt; keywords argument. Note: this only affects you if your
   code used named method parameters (e.g. userFlags: myUserFlags).
 
 ## MailKit 2.0.7 (2018-10-28)
@@ -989,14 +989,14 @@ client.Authenticate (oauth2);
 
 ## MailKit 1.2.9 (2015-08-08)
 
-* Fixed ImapFolder.Append() methods to make sure to encode the message with <CR><LF>
+* Fixed ImapFolder.Append() methods to make sure to encode the message with `<CR><LF>`
   line endings.
 * Added UniqueId.Invalid that can be used for error conditions.
 * Added UniqueId.IsValid property to check that the UniqueId is valid.
 * Added Opened and Closed events to IMailFolder.
 * Fixed the QRESYNC version of the IMailFolder.Open() method to take a uint uidValidity
   instead of a UniqueId uidValidity argument for consistency.
-* Updated MessageSorter.Sort() to be an extension method and added a List<T> overload.
+* Updated MessageSorter.Sort() to be an extension method and added a List&lt;T&gt; overload.
 * Updated MessageThreader.Thread() to be extension methods (required reordering of args).
 * Merged ISortable and IThreadable interfaces into IMessageSummary in order to
   remove duplicated properties and simplify things.
@@ -1016,7 +1016,7 @@ client.Authenticate (oauth2);
 * Added a MessageNotFoundException.
 * Added an ImapCommandResponse property to ImapCommandException.
 * Fixed SmtpClient to filter out duplicate recipient addresses in RCPT TO.
-* Modified MessageSorter/Threader to take IList<OrderBy> arguments instead of OrderBy[].
+* Modified MessageSorter/Threader to take IList&lt;OrderBy&gt; arguments instead of OrderBy[].
 * Added support for parsing group addresses in IMAP ENVELOPE responses.
 * Disable SASL-IR support for the LOGIN mechanism. (issue [#216](https://github.com/jstedfast/MailKit/issues/216))
 * Capture whether or not the IMAP server supports the I18NLEVEL and LANGUAGE extensions.
@@ -1235,8 +1235,8 @@ Note: If you are not yet ready to port your iOS application to the Unified API,
 
 ## MailKit 1.0.3 (2014-12-05)
 
-* Added a new ImapFolder.Fetch() overload that takes a HashSet<string>
-  of header fields to fetch instead of a HashSet<HeaderId> for
+* Added a new ImapFolder.Fetch() overload that takes a HashSet&lt;string&gt;
+  of header fields to fetch instead of a HashSet&lt;HeaderId&gt; for
   developers that need the ability to request custom headers not
   defined in the HeaderId enum.
 * Added an SmtpClient.MessageSent event and an OnMessageSent() method
