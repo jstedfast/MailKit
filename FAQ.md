@@ -4,7 +4,7 @@
 
 ### General
 
-* [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#CompletelyFree)
+* [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#completely-free)
 * [Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?](#SslHandshakeException)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
 * [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
@@ -46,7 +46,7 @@
 
 ## General
 
-### <a id="CompletelyFree">Q: Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</a>
+### <a id="completely-free">Q: Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</a>
 
 Yes. MimeKit and MailKit are both completely free and open source. They are both covered under the
 [MIT](https://opensource.org/licenses/MIT) license.
