@@ -41,18 +41,15 @@ namespace ImapClientDemo
 			void RenderMultipartRelated (MultipartRelated related)
 			{
 				var root = related.Root;
-				var multipart = root as Multipart;
 				var text = root as TextPart;
 
-				if (multipart != null) {
+				if (root is Multipart multipart) {
 					// Note: the root document can sometimes be a multipart/alternative.
 					// A multipart/alternative is just a collection of alternate views.
 					// The last part is the format that most closely matches what the
 					// user saw in his or her email client's WYSIWYG editor.
 					for (int i = multipart.Count; i > 0; i--) {
-						var body = multipart[i - 1] as TextPart;
-
-						if (body == null)
+						if (!(multipart[i - 1] is TextPart body))
 							continue;
 
 						// our preferred mime-type is text/html
@@ -61,8 +58,7 @@ namespace ImapClientDemo
 							break;
 						}
 
-						if (text == null)
-							text = body;
+						text ??= body;
 					}
 				}
 
@@ -143,9 +139,7 @@ namespace ImapClientDemo
 						// The last part is the format that most closely matches what the
 						// user saw in his or her email client's WYSIWYG editor.
 						for (int i = multipart.BodyParts.Count; i > 0; i--) {
-							var multi = multipart.BodyParts[i - 1] as BodyPartMultipart;
-
-							if (multi != null && multi.ContentType.IsMimeType ("multipart", "related")) {
+							if (multipart.BodyParts[i - 1] is BodyPartMultipart multi && multi.ContentType.IsMimeType ("multipart", "related")) {
 								if (multi.BodyParts.Count == 0)
 									continue;
 

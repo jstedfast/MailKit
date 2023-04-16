@@ -18,7 +18,7 @@ namespace ImapClientDemo.iOS
 
 		public static void MessageBox (string title, string message)
 		{
-			var av = new UIAlertView (title, message, null, "OK");
+			var av = new UIAlertView (title, message, (IUIAlertViewDelegate) null, "OK");
 			av.Show ();
 		}
 	}

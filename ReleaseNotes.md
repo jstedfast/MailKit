@@ -1,5 +1,11 @@
 # Release Notes
 
+## MailKit 4.0.0 (2023-04-15)
+
+* Marked the AccessRight and UniqueId structs as readonly.
+* Fixed POP3 client logic to calculate the needed bytes before converting commands into into the output buffer.
+* Ported to MimeKit v4.0 and BouncyCastle v2.1.1.
+
 ## MailKit 3.6.0 (2023-03-04)
 
 * Decrement ImapFolder.Count when ImapClient receives an untagged EXPUNGE notification and emit a CountChanged event.

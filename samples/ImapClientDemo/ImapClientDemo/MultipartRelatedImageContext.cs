@@ -51,9 +51,7 @@ namespace ImapClientDemo
 
 					// locate the index of the attachment within the multipart/related (if it exists)
 					if ((index = related.IndexOf (uri)) != -1) {
-						var attachment = related[index] as MimePart;
-
-						if (attachment == null) {
+						if (!(related[index] is MimePart attachment)) {
 							// the body part is not a basic leaf part (IOW it's a multipart or message-part)
 							htmlWriter.WriteAttribute (attribute);
 							continue;

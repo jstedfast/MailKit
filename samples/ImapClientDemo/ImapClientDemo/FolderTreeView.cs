@@ -73,9 +73,11 @@ namespace ImapClientDemo
 		{
 			Debug.Assert (SynchronizationContext.Current == Program.GuiContext);
 
-			var node = new TreeNode (folder.Name) { Tag = folder, ToolTipText = folder.FullName };
-
-			node.NodeFont = new Font (Font, FontStyle.Regular);
+			var node = new TreeNode (folder.Name) {
+				NodeFont = new Font (Font, FontStyle.Regular),
+				ToolTipText = folder.FullName,
+				Tag = folder
+			};
 
 			if (folder == connection.Client.Inbox)
 				node.SelectedImageKey = node.ImageKey = "inbox";

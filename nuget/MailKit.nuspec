@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>3.6.0</version>
+    <version>4.0.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,9 +26,9 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Decrement ImapFolder.Count when ImapClient receives an untagged EXPUNGE notification and emit a CountChanged event. (issue #1509)
-* Avoid using the NAMESPACE command for Exchange 2003. (issue #1512)
-* Added support for rfc8970 (IMAP4 Extension: Message Preview Generation).
+* Marked the AccessRight and UniqueId structs as readonly.
+* Fixed POP3 client logic to calculate the needed bytes before converting commands into into the output buffer.
+* Ported to MimeKit v4.0 and BouncyCastle v2.1.1.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -62,25 +62,25 @@ Features include:
     <dependencies>
       <group targetFramework="net462">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.6.0" />
+        <dependency id="MimeKit" version="4.0.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.6.0" />
+        <dependency id="MimeKit" version="4.0.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.6.0" />
+        <dependency id="MimeKit" version="4.0.0" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKit" version="3.6.0" />
+        <dependency id="MimeKit" version="4.0.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="3.6.0" />
+        <dependency id="MimeKit" version="4.0.0" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="MimeKit" version="3.6.0" />
+        <dependency id="MimeKit" version="4.0.0" />
       </group>
     </dependencies>
   </metadata>
