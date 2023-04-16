@@ -3,6 +3,7 @@
 ## Question Index
 
 ### General
+
 * [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#CompletelyFree)
 * [Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?](#SslHandshakeException)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
@@ -11,6 +12,7 @@
 * [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
 
 ### Messages
+
 * [How can I create a message with attachments?](#CreateAttachments)
 * [How can I get the main body of a message?](#MessageBody)
 * [How can I tell if a message has attachments?](#HasAttachments)
@@ -26,6 +28,7 @@
 * [Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5 app?](#GarbledText)
 
 ### ImapClient
+
 * [How can I get the number of unread messages in a folder?](#ImapUnreadCount)
 * [How can I search for messages delivered between two dates?](#ImapSearchBetween2Dates)
 * [What does "The ImapClient is currently busy processing a command." mean?](#ImapClientBusy)
@@ -35,20 +38,20 @@
 * [How can I re-synchronize the cache for an IMAP folder?](#ImapFolderResync)
 
 ### SmtpClient
+
 * [Why doesn't the message show up in the "Sent Mail" folder after sending it?](#SmtpSentFolder)
 * [How can I send email to the SpecifiedPickupDirectory?](#SpecifiedPickupDirectory)
 * [How can I request a notification when the message is read by the user?](#SmtpRequestReadReceipt)
 * [How can I process a read receipt notification?](#SmtpProcessReadReceipt)
 
-
 ## General
 
-### <a name="CompletelyFree">Q: Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</a>
+### <a id="CompletelyFree">Q: Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</a>
 
 Yes. MimeKit and MailKit are both completely free and open source. They are both covered under the
 [MIT](https://opensource.org/licenses/MIT) license.
 
-### <a name="SslHandshakeException">Q: Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?</a>
+### <a id="SslHandshakeException">Q: Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?</a>
 
 When you get an exception with that error message, it usually means that you are encountering
 one of the following scenarios:
@@ -205,7 +208,7 @@ using (var client = new SmtpClient ()) {
 }
 ```
 
-### <a name="ProtocolLog">Q: How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
+### <a id="ProtocolLog">Q: How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
 
 All of MailKit's client implementations have a constructor that takes a nifty
 [IProtocolLogger](http://www.mimekit.net/docs/html/T_MailKit_IProtocolLogger.htm)
@@ -229,7 +232,7 @@ encoded blob immediately following an `AUTHENTICATE` or `AUTH` command (dependin
 The only exception to this case is if you are authenticating with `NTLM` in which case I *may* need this
 information, but *only if* the bug/error is in the authentication step.
 
-### <a name="GMailHiddenMessages">Q: Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</a>
+### <a id="GMailHiddenMessages">Q: Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</a>
 
 By default, GMail's POP3 and IMAP server does not behave like standard POP3 or IMAP servers
 and hides messages from clients using those protocols (as well as having other non-standard
@@ -242,11 +245,12 @@ GMail Settings page and set your options to look like this:
 
 ![GMail POP3 and IMAP Settings](http://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
 
-### <a name="GMailAccess">Q: How can I access GMail using MailKit?</a>
+### <a id="GMailAccess">Q: How can I access GMail using MailKit?</a>
 
 As of the end of May, 2022, Google no longer allows enabling "Less secure apps".
 
 There are now only 2 options to choose from:
+
 1. Use [OAuth 2.0 authentication](#GMailOAuth2)
 2. Use an "App password"
 
@@ -270,16 +274,16 @@ using (var client = new ImapClient ()) {
 Connecting via POP3 or SMTP is identical except for the host names and ports (and, of course, you'd
 use a `Pop3Client` or `SmtpClient` as appropriate).
 
-### <a name="GMailOAuth2">Q: How can I log in to a GMail account using OAuth 2.0?</a>
+### <a id="GMailOAuth2">Q: How can I log in to a GMail account using OAuth 2.0?</a>
 
 The first thing you need to do is follow
-[Google's instructions](https://developers.google.com/accounts/docs/OAuth2) 
+[Google's instructions](https://developers.google.com/accounts/docs/OAuth2)
 for obtaining OAuth 2.0 credentials for your application.
 
 (Or, as an alternative set of step-by-step instructions, you can follow the directions that I have
 written in [GMailOAuth2.md](https://github.com/jstedfast/MailKit/blob/master/GMailOAuth2.md).)
 
-Once you've done that, the easiest way to obtain an access token is to use Google's 
+Once you've done that, the easiest way to obtain an access token is to use Google's
 [Google.Apis.Auth](https://www.nuget.org/packages/Google.Apis.Auth/) library:
 
 ```csharp
@@ -315,7 +319,7 @@ using (var client = new ImapClient ()) {
 
 ## Messages
 
-### <a name="CreateAttachments">Q: How can I create a message with attachments?</a>
+### <a id="CreateAttachments">Q: How can I create a message with attachments?</a>
 
 To construct a message with attachments, the first thing you'll need to do is create a `multipart/mixed`
 container which you'll then want to add the message body to first. Once you've added the body, you can
@@ -395,7 +399,7 @@ message.Body = builder.ToMessageBody ();
 
 For more information, see [Creating Messages](http://www.mimekit.net/docs/html/Creating-Messages.htm).
 
-### <a name="MessageBody">Q: How can I get the main body of a message?</a>
+### <a id="MessageBody">Q: How can I get the main body of a message?</a>
 
 (Note: for the TL;DR version, skip to [the end](#MessageBodyTLDR))
 
@@ -472,7 +476,7 @@ Likewise, the `TextBody` property can be used to get the `text/plain` version of
 
 For more information, see [Working with Messages](http://www.mimekit.net/docs/html/Working-With-Messages.htm).
 
-### <a name="HasAttachments">Q: How can I tell if a message has attachments?</a>
+### <a id="HasAttachments">Q: How can I tell if a message has attachments?</a>
 
 In most cases, a message with a body that has a MIME-type of `multipart/mixed` containing more than a
 single part probably has attachments. As illustrated above, the first part of a `multipart/mixed` is
@@ -763,7 +767,7 @@ Once you've rendered the message using the above technique, you'll have a list o
 were not used, even if they did not match the simplistic criteria used by the `MimeMessage.Attachments`
 property.
 
-### <a name="Serialize">Q: Why doesn't the `MimeMessage` class implement `ISerializable` so that I can serialize a message to disk and read it back later?</a>
+### <a id="Serialize">Q: Why doesn't the `MimeMessage` class implement `ISerializable` so that I can serialize a message to disk and read it back later?</a>
 
 The MimeKit API was designed to use the existing MIME format for serialization. In light of this, the ability
 to use the .NET serialization API and format did not make much sense to support.
@@ -776,7 +780,7 @@ For more information on this topic, see the following other two topics:
 * <a href="#LoadMessages">How can I parse messages?</a>
 * <a href="#SaveMessages">How can I save messages?</a>
 
-### <a name="LoadMessages">Q: How can I parse messages?</a>
+### <a id="LoadMessages">Q: How can I parse messages?</a>
 
 One of the more common operations that MimeKit is meant for is parsing email messages from arbitrary streams.
 There are two ways of accomplishing this task.
@@ -818,7 +822,7 @@ while (!parser.IsEndOfStream) {
 }
 ```
 
-### <a name="SaveMessages">Q: How can I save messages?</a>
+### <a id="SaveMessages">Q: How can I save messages?</a>
 
 One you've got a [MimeMessage](http://www.mimekit.net/docs/html/T_MimeKit_MimeMessage.htm), you can save
 it to a file using the [WriteTo](http://mimekit.net/docs/html/Overload_MimeKit_MimeMessage_WriteTo.htm) method:
@@ -850,7 +854,7 @@ strings due to the fact that each MIME part of the message *may* be encoded in a
 character set, thus making it impossible to convert the message into a unicode string using a
 single charset to do the conversion (which is *exactly* what `ToString` does).
 
-### <a name="SaveAttachments">Q: How can I save attachments?</a>
+### <a id="SaveAttachments">Q: How can I save attachments?</a>
 
 If you've already got a [MimePart](http://www.mimekit.net/docs/html/T_MimeKit_MimePart.htm) that represents
 the attachment that you'd like to save, here's how you might save it:
@@ -891,10 +895,10 @@ foreach (var attachment in message.Attachments) {
 }
 ```
 
-### <a name="AddressHeaders">Q: How can I get the email addresses in the From, To, and Cc headers?</a>
+### <a id="AddressHeaders">Q: How can I get the email addresses in the From, To, and Cc headers?</a>
 
-The [From](http://www.mimekit.net/docs/html/P_MimeKit_MimeMessage_From.htm), 
-[To](http://www.mimekit.net/docs/html/P_MimeKit_MimeMessage_To.htm), and 
+The [From](http://www.mimekit.net/docs/html/P_MimeKit_MimeMessage_From.htm),
+[To](http://www.mimekit.net/docs/html/P_MimeKit_MimeMessage_To.htm), and
 [Cc](http://www.mimekit.net/docs/html/P_MimeKit_MimeMessage_Cc.htm) properties of a
 [MimeMessage](http://www.mimekit.net/docs/html/T_MimeKit_MimeMessage.htm) are all of type
 [InternetAddressList](http://www.mimekit.net/docs/html/T_MimeKit_InternetAddressList.htm). An
@@ -949,7 +953,7 @@ foreach (var mailbox in message.To.Mailboxes)
     Console.WriteLine ("{0}'s email address is {1}", mailbox.Name, mailbox.Address);
 ```
 
-### <a name="UntitledAttachments">Q: Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</a>
+### <a id="UntitledAttachments">Q: Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</a>
 
 An attachment filename is stored as a MIME parameter on the `Content-Disposition` header. Unfortunately,
 the original MIME specifications did not specify a method for encoding non-ASCII filenames. In 1997,
@@ -983,7 +987,7 @@ foreach (var param in attachment.ContentDisposition.Parameters) {
 }
 ```
 
-### <a name="DecryptInlinePGP">Q: How can I decrypt PGP messages that are embedded in the main message text?</a>
+### <a id="DecryptInlinePGP">Q: How can I decrypt PGP messages that are embedded in the main message text?</a>
 
 Some PGP-enabled mail clients, such as Thunderbird, embed encrypted PGP blurbs within the `text/plain` body
 of the message rather than using the PGP/MIME format that MimeKit prefers.
@@ -1042,7 +1046,7 @@ public Stream GetDecryptedStream (Stream encryptedData)
 The first variant is useful in cases where the encrypted PGP blurb is also digitally signed, allowing you to get
 your hands on the list of digitial signatures in order for you to verify each of them.
 
-To decrypt the content of the message, you'll want to locate the `TextPart` (in this case, it'll just be 
+To decrypt the content of the message, you'll want to locate the `TextPart` (in this case, it'll just be
 `message.Body`) and then do this:
 
 ```csharp
@@ -1062,7 +1066,7 @@ static Stream DecryptEmbeddedPgp (TextPart text)
 What you do with that decrypted stream is up to you. It's up to you to figure out what the decrypted content is
 (is it text? a jpeg image? a video?) and how to display it to the user.
 
-### <a name="Reply">Q: How can I reply to a message?</a>
+### <a id="Reply">Q: How can I reply to a message?</a>
 
 Replying to a message is fairly simple. For the most part, you'd just create the reply message
 the same way you'd create any other message. There are only a few slight differences:
@@ -1401,7 +1405,7 @@ public static MimeMessage Reply (MimeMessage message, MailboxAddress from, bool 
 }
 ```
 
-### <a name="Forward">Q: How can I forward a message?</a>
+### <a id="Forward">Q: How can I forward a message?</a>
 
 There are 2 common ways of forwarding a message: attaching the original message as an attachment and inlining
 the message body much like replying typically does. Which method you choose is up to you.
@@ -1477,7 +1481,7 @@ public static MimeMessage Forward (MimeMessage original, MailboxAddress from, IE
 
 Keep in mind that not all messages will have a `TextBody` available, so you'll have to find a way to handle those cases.
 
-### <a name="GarbledText">Q: Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5 app?</a>
+### <a id="GarbledText">Q: Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5 app?</a>
 
 .NET Core (and ASP.NET Core by extension) and .NET 5 only provide the Unicode encodings, ASCII and ISO-8859-1 by default.
 Other text encodings are not available to your application unless your application
@@ -1495,7 +1499,7 @@ Note: The above code snippet should be safe to call in .NET Framework versions >
 
 ## ImapClient
 
-### <a name="ImapUnreadCount">Q: How can I get the number of unread messages in a folder?</a>
+### <a id="ImapUnreadCount">Q: How can I get the number of unread messages in a folder?</a>
 
 If the folder is open (via [Open](http://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_Open.htm)),
 then the [ImapFolder.Unread](http://www.mimekit.net/docs/html/P_MailKit_MailFolder_Unread.htm) property will be kept
@@ -1514,7 +1518,7 @@ int total = folder.Count;
 int unread = folder.Unread;
 ```
 
-### <a name="ImapSearchBetween2Dates">Q: How can I search for messages delivered between two dates?</a>
+### <a id="ImapSearchBetween2Dates">Q: How can I search for messages delivered between two dates?</a>
 
 The obvious solution is:
 
@@ -1535,7 +1539,7 @@ var query = SearchQuery.Not (SearchQuery.DeliveredBefore (dateRange.BeginDate)
 var results = folder.Search (query);
 ```
 
-### <a name="ImapClientBusy">Q: What does "The ImapClient is currently busy processing a command." mean?</a>
+### <a id="ImapClientBusy">Q: What does "The ImapClient is currently busy processing a command." mean?</a>
 
 If you get an InvalidOperationException with the message, "The ImapClient is currently busy processing a
 command.", it means that you are trying to use the
@@ -1557,7 +1561,7 @@ lock (client.SyncRoot) {
 Note: Locking the `SyncRoot` is only necessary when using the synchronous API's. All `Async()` method variants
 already do this locking for you.
 
-### <a name="FolderNotOpenException">Q: Why do I get InvalidOperationException: "The folder is not currently open."?</a>
+### <a id="FolderNotOpenException">Q: Why do I get InvalidOperationException: "The folder is not currently open."?</a>
 
 If you get this exception, it's probably because you thought you had to open the destination folder that you
 passed as an argument to one of the
@@ -1571,7 +1575,7 @@ close the previously opened folder.
 
 When copying or moving messages from one folder to another, you only need to have the source folder open.
 
-### <a name="ImapMoveDoesNotMove">Q: Why doesn't ImapFolder.MoveTo() move the message out of the source folder?</a>
+### <a id="ImapMoveDoesNotMove">Q: Why doesn't ImapFolder.MoveTo() move the message out of the source folder?</a>
 
 If you look at the source code for the `ImapFolder.MoveTo()` method, what you'll notice is that
 there are several code paths depending on the features that the IMAP server supports.
@@ -1596,7 +1600,7 @@ deleted messages with a strikeout (which you probably have disabled).
 So to answer your question more succinctly: After calling `folder.MoveTo (...);`, if you are confident
 that the messages marked for deletion should be expunged, call `folder.Expunge ();`
 
-### <a name="ImapMarkAsRead">Q: How can I mark messages as read for IMAP?</a>
+### <a id="ImapMarkAsRead">Q: How can I mark messages as read for IMAP?</a>
 
 The way to mark messages as read using the IMAP protocol is to set the `\Seen` flag on the message(s).
 
@@ -1616,7 +1620,7 @@ To mark messages as unread, you would *remove* the `\Seen` flag, like so:
 folder.RemoveFlags (uids, MessageFlags.Seen, true);
 ```
 
-### <a name="ImapFolderResync">Q: How can I re-synchronize the cache for an IMAP folder?</a>
+### <a id="ImapFolderResync">Q: How can I re-synchronize the cache for an IMAP folder?</a>
 
 Assuming your IMAP server does not support the `QRESYNC` extension (which simplifies this proceedure a ton),
 here is some simple code to illustrate how to go about re-synchronizing your cache with the remote IMAP
@@ -1715,7 +1719,7 @@ static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref 
 
 ## SmtpClient
 
-### <a name="SmtpSentFolder">Q: Why doesn't the message show up in the "Sent Mail" folder after sending it?</a>
+### <a id="SmtpSentFolder">Q: Why doesn't the message show up in the "Sent Mail" folder after sending it?</a>
 
 It seems to be a common misunderstanding that messages sent via SMTP will magically show up in the account's "Sent Mail" folder.
 
@@ -1768,7 +1772,7 @@ using (var client = new ImapClient ()) {
 }
 ```
 
-### <a name="SpecifiedPickupDirectory">Q: How can I send email to a SpecifiedPickupDirectory?</a>
+### <a id="SpecifiedPickupDirectory">Q: How can I send email to a SpecifiedPickupDirectory?</a>
 
 Based on Microsoft's [referencesource](https://github.com/Microsoft/referencesource/blob/master/System/net/System/Net/mail/SmtpClient.cs#L401),
 when `SmtpDeliveryMethod.SpecifiedPickupDirectory` is used, the `SmtpClient` saves the message to the
@@ -1829,7 +1833,8 @@ public static void SaveToPickupDirectory (MimeMessage message, string pickupDire
     } while (true);
 }
 ```
-### <a name="SmtpRequestReadReceipt">Q: How can I request a notification when the message is read by the user?</a>
+
+### <a id="SmtpRequestReadReceipt">Q: How can I request a notification when the message is read by the user?</a>
 
 The first thing I need to make clear is that requesting a notification does not guarantee that you'll actually
 get one. In order for you to receive a notification that the message was read by its recipient, the recipient's
@@ -1845,7 +1850,7 @@ message.Headers[HeaderId.DispositionNotificationTo] = new MailboxAddress ("My Na
 
 For more information on this topic, read [rfc3798](https://tools.ietf.org/html/rfc3798).
 
-### <a name="SmtpProcessReadReceipt">Q: How can I process a read receipt notification?</a>
+### <a id="SmtpProcessReadReceipt">Q: How can I process a read receipt notification?</a>
 
 A read receipt notification comes in the form of a MIME message with a top-level MIME part with a MIME-type
 of `multipart/report` that has a `report-type` parameter with a value of `disposition-notification`.
@@ -1874,4 +1879,5 @@ if (notification != null) {
     var messageId = notification.Fields["Original-Message-Id"];
 }
 ```
+
 For more information on this topic, read [rfc3798](https://tools.ietf.org/html/rfc3798).
