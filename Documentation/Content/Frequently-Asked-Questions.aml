@@ -815,7 +815,7 @@ message.WriteTo (options, stream);
           <codeEntityReference>T:MimeKit.Cryptography.OpenPgpContext</codeEntityReference>
           includes a
           <codeEntityReference>
-            M:MimeKit.Cryptography.OpenPgpContextBase.DecryptTo(System.IO.Stream,System.IO.Stream,System.Threading.CancellationToken)
+            M:MimeKit.Cryptography.OpenPgpContext.DecryptTo(System.IO.Stream,System.IO.Stream,System.Threading.CancellationToken)
           </codeEntityReference>
           method which can be used to get the raw decrypted stream.
         </para>
