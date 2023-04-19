@@ -61,7 +61,7 @@ namespace MailKit.Security
 #endif
 	public class SslHandshakeException : Exception
 	{
-		const string SslHandshakeHelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#SslHandshakeException";
+		const string SslHandshakeHelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ssl-handshake-exception";
 		const string DefaultMessage = "An error occurred while attempting to establish an SSL or TLS connection.";
 
 #if SERIALIZABLE
