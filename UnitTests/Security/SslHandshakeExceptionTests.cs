@@ -46,7 +46,7 @@ namespace UnitTests.Security {
 	[TestFixture]
 	public class SslHandshakeExceptionTests
 	{
-		const string HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#SslHandshakeException";
+		const string HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ssl-handshake-exception";
 
 		[Test]
 		public void TestSerialization ()

@@ -27,6 +27,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Formats.Asn1;
 using System.Net.Security;
 using System.Globalization;
 using System.Collections.Generic;
@@ -182,8 +183,8 @@ namespace MailKit.Security
 		internal static SslHandshakeException Create (ref SslCertificateValidationInfo validationInfo, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
 		{
 			var message = new StringBuilder (DefaultMessage);
-			X509Certificate certificate = null;
-			X509Certificate root = null;
+			X509Certificate2 certificate = null;
+			X509Certificate2 root = null;
 
 			if (ex is AggregateException aggregate) {
 				aggregate = aggregate.Flatten ();
@@ -207,7 +208,14 @@ namespace MailKit.Security
 					if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0) {
 						message.AppendLine ("The SSL certificate for the server was not available.");
 					} else if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0) {
-						message.AppendLine ("The host name did not match the name given in the server's SSL certificate.");
+						var dnsNames = GetDnsNames (certificate);
+
+						if (dnsNames.Count == 1) {
+							message.AppendLine ($"The host name ({host}) did not match the name given in the server's SSL certificate ({dnsNames.Single ()}).");
+						} else {
+							var formattedDnsNames = string.Join (Environment.NewLine, dnsNames.Select (dnsName => $"  \u2022 {dnsName}"));
+							message.AppendLine ($"The host name ({host}) did not match any of the names given in the server's SSL certificate:{Environment.NewLine}{formattedDnsNames}");
+						}
 					} else {
 						message.AppendLine ("The server's SSL certificate could not be validated for the following reasons:");
 
@@ -257,7 +265,7 @@ namespace MailKit.Security
 				message.AppendFormat (CultureInfo.InvariantCulture, "you intended to connect to {0} on the SSL port, try connecting to port {1} instead. Otherwise,{2}", protocol, sslPort, Environment.NewLine);
 				message.AppendLine ("if you intended to use STARTTLS, make sure to use the following code:");
 				message.AppendLine ();
-				message.AppendFormat ("client.Connect (\"{0}\", {1}, SecureSocketOptions.StartTls);{2}", host, port, Environment.NewLine);
+				message.AppendFormat (CultureInfo.InvariantCulture, "client.Connect (\"{0}\", {1}, SecureSocketOptions.StartTls);{2}", host, port, Environment.NewLine);
 			} else {
 				message.AppendLine ("This usually means that the SSL certificate presented by the server is not trusted by the system for one or more of");
 				message.AppendLine ("the following reasons:");
@@ -274,6 +282,47 @@ namespace MailKit.Security
 			}
 
 			return new SslHandshakeException (message.ToString (), ex) { ServerCertificate = certificate, RootCertificateAuthority = root };
+		}
+
+		// Adapted from Sebastian Krysmanski's https://github.com/skrysmanski/AppMotor/blob/main/src/AppMotor.Core/Certificates/SanExtensionHelpers.cs under the MIT license
+		static IReadOnlyCollection<string> GetDnsNames (X509Certificate2 certificate)
+		{
+			const string subjectAlternativeNameOid = "2.5.29.17";
+			var dnsNames = new SortedSet<string> ();
+
+			var dnsNameInfo = certificate.GetNameInfo (X509NameType.DnsName, forIssuer: false);
+			if (dnsNameInfo != null)
+				dnsNames.Add (dnsNameInfo);
+
+			var extension = certificate.Extensions[subjectAlternativeNameOid];
+			if (extension == null)
+				return dnsNames;
+
+			try {
+				// Tag value "2" is defined by:
+				//
+				//    dNSName                         [2]     IA5String,
+				//
+				// in: https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6
+				var dnsNameTag = new Asn1Tag (TagClass.ContextSpecific, tagValue: 2, isConstructed: false);
+				var asnReader = new AsnReader (extension.RawData, AsnEncodingRules.BER);
+				var sequenceReader = asnReader.ReadSequence (Asn1Tag.Sequence);
+
+				while (sequenceReader.HasData) {
+					var tag = sequenceReader.PeekTag ();
+					if (tag != dnsNameTag) {
+						sequenceReader.ReadEncodedValue ();
+						continue;
+					}
+
+					var dnsName = sequenceReader.ReadCharacterString (UniversalTagNumber.IA5String, dnsNameTag);
+					dnsNames.Add (dnsName);
+				}
+			} catch {
+				// ignore, the error message will not include subject alternative names
+			}
+
+			return dnsNames;
 		}
 	}
 
