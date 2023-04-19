@@ -30,6 +30,7 @@ using System.Text;
 using System.Net.Security;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 #if SERIALIZABLE
 using System.Security;
 using System.Runtime.Serialization;
@@ -182,8 +183,8 @@ namespace MailKit.Security
 		internal static SslHandshakeException Create (ref SslCertificateValidationInfo validationInfo, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
 		{
 			var message = new StringBuilder (DefaultMessage);
-			X509Certificate certificate = null;
-			X509Certificate root = null;
+			X509Certificate2 certificate = null;
+			X509Certificate2 root = null;
 
 			if (ex is AggregateException aggregate) {
 				aggregate = aggregate.Flatten ();
@@ -207,7 +208,12 @@ namespace MailKit.Security
 					if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0) {
 						message.AppendLine ("The SSL certificate for the server was not available.");
 					} else if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNameMismatch) != 0) {
-						message.AppendLine ("The host name did not match the name given in the server's SSL certificate.");
+						var dnsNames = GetDnsNames (certificate);
+						var (theName, dnsNamesDescription) = dnsNames.Count switch {
+							1 => ("the name", $" ({dnsNames.Single ()})."),
+							_ => ("any of the names", ":" + Environment.NewLine + string.Join (Environment.NewLine, dnsNames.Select (e => $"  \u2022 {e}"))),
+						};
+						message.AppendLine ($"The host name ({host}) did not match {theName} given in the server's SSL certificate{dnsNamesDescription}");
 					} else {
 						message.AppendLine ("The server's SSL certificate could not be validated for the following reasons:");
 
@@ -274,6 +280,45 @@ namespace MailKit.Security
 			}
 
 			return new SslHandshakeException (message.ToString (), ex) { ServerCertificate = certificate, RootCertificateAuthority = root };
+		}
+
+		// Adapted from https://stackoverflow.com/questions/16698307/how-do-you-parse-the-subject-alternate-names-from-an-x509certificate2/68608697#68608697
+		private static IReadOnlyCollection<string> GetDnsNames (X509Certificate2 certificate)
+		{
+			var dnsNames = new SortedSet<string> ();
+
+			var dnsNameInfo = certificate.GetNameInfo (X509NameType.DnsName, forIssuer: false);
+			if (dnsNameInfo != null)
+				dnsNames.Add (dnsNameInfo);
+
+			const string subjectAlternativeNameOid = "2.5.29.17";
+
+			var extension = certificate.Extensions[subjectAlternativeNameOid];
+			if (extension == null)
+				return dnsNames;
+
+			try {
+				var dnsNameTag = new Asn1Tag(TagClass.ContextSpecific, tagValue: 2, isConstructed: false);
+				var asnReader = new AsnReader(extension.RawData, AsnEncodingRules.BER);
+				var sequenceReader = asnReader.ReadSequence(Asn1Tag.Sequence);
+
+				while (sequenceReader.HasData)
+				{
+					var tag = sequenceReader.PeekTag();
+					if (tag != dnsNameTag)
+					{
+						sequenceReader.ReadEncodedValue();
+						continue;
+					}
+
+					var dnsName = sequenceReader.ReadCharacterString(UniversalTagNumber.IA5String, dnsNameTag);
+					dnsNames.Add(dnsName);
+				}
+			} catch {
+				// ignore, the error message will not include subject alternative names
+			}
+
+			return dnsNames;
 		}
 	}
 
