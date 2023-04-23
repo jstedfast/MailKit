@@ -2394,6 +2394,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the folder for the specified namespace.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
+		/// </example>
 		/// <returns>The folder.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <exception cref="System.ArgumentNullException">
