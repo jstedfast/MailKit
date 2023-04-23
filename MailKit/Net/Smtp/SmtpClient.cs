@@ -2657,6 +2657,9 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Expands a mailing address alias.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExpandAlias" />
+		/// </example>
 		/// <returns>The expanded list of mailbox addresses.</returns>
 		/// <param name="alias">The mailing address alias.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2673,7 +2676,7 @@ namespace MailKit.Net.Smtp {
 		/// The <see cref="SmtpClient"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
-		/// Authentication is required before verifying the existence of an address.
+		/// Authentication is required before expanding an alias.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
@@ -2728,6 +2731,9 @@ namespace MailKit.Net.Smtp {
 		/// Verifies the existence a mailbox address with the SMTP server, returning the expanded
 		/// mailbox address if it exists.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="VerifyAddress" />
+		/// </example>
 		/// <returns>The expanded mailbox address.</returns>
 		/// <param name="address">The mailbox address.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

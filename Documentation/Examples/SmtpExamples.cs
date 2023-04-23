@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2021 .NET Foundation and Contributors
+// Copyright (c) 2013-2023 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -87,7 +87,7 @@ namespace MailKit.Examples {
 				}
 			} while (true);
 		}
-		#endif
+		#endregion
 
 		#region ProtocolLogger
 		public static void SendMessage (MimeMessage message)
@@ -305,6 +305,43 @@ namespace MailKit.Examples {
 				foreach (var message in messages) {
 					client.Send (message);
 				}
+
+				client.Disconnect (true);
+			}
+		}
+		#endregion
+
+		#region VerifyAddress
+		public static void VerifyAddress ()
+		{
+			using (var client = new SmtpClient ()) {
+				client.Connect ("smtp.mail-server.com", 465, SecureSocketOptions.SslOnConnect);
+				client.Authenticate ("username", "password");
+
+				try {
+					var verified = client.Verify ("smith");
+					Console.WriteLine ($"'smith' was resolved the the following mailbox: {verified}");
+				} catch (SmtpCommandException ex) {
+					Console.WriteLine ($"'smith' is not a valid address: {ex.Message}");
+				}
+
+				client.Disconnect (true);
+			}
+		}
+		#endregion
+
+		#region ExpandAlias
+		public static void ExpandAlias (string alias)
+		{
+			using (var client = new SmtpClient ()) {
+				client.Connect ("smtp.mail-server.com", 465, SecureSocketOptions.SslOnConnect);
+				client.Authenticate ("username", "password");
+
+				var expanded = client.Expand (alias);
+
+				Console.WriteLine ($"Expanding the alias '{alias}' results in the following list of addresses:");
+				foreach (var mailbox in expanded.Mailboxes)
+					Console.WriteLine ($"* {mailbox}");
 
 				client.Disconnect (true);
 			}
