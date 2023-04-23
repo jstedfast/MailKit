@@ -2263,6 +2263,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// The personal folder namespaces contain a user's personal mailbox folders.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
+		/// </example>
 		/// <value>The personal namespaces.</value>
 		public override FolderNamespaceCollection PersonalNamespaces {
 			get { return engine.PersonalNamespaces; }
@@ -2274,6 +2277,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// The shared folder namespaces contain mailbox folders that are shared with the user.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
+		/// </example>
 		/// <value>The shared namespaces.</value>
 		public override FolderNamespaceCollection SharedNamespaces {
 			get { return engine.SharedNamespaces; }
@@ -2285,6 +2291,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// The other folder namespaces contain other mailbox folders.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
+		/// </example>
 		/// <value>The other namespaces.</value>
 		public override FolderNamespaceCollection OtherNamespaces {
 			get { return engine.OtherNamespaces; }

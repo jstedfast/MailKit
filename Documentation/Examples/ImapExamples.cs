@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2021 .NET Foundation and Contributors
+// Copyright (c) 2013-2023 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -116,6 +116,41 @@ namespace MailKit.Examples {
 					if (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References))
 						Console.WriteLine ("The IMAP server supports threading by references.");
 				}
+
+				client.Disconnect (true);
+			}
+		}
+		#endregion
+
+		#region Namespaces
+		public static void ShowNamespaces ()
+		{
+			using (var client = new ImapClient ()) {
+				client.Connect ("imap.mail-server.com", 993, SecureSocketOptions.SslOnConnect);
+				client.Authenticate ("username", "password");
+
+				Console.WriteLine ("Personal namespaces:");
+				foreach (var ns in client.PersonalNamespaces)
+					Console.WriteLine ($"* \"{ns.Path}\" \"{ns.DirectorySeparator}\"");
+				Console.WriteLine ();
+				Console.WriteLine ("Shared namespaces:");
+				foreach (var ns in client.SharedNamespaces)
+					Console.WriteLine ($"* \"{ns.Path}\" \"{ns.DirectorySeparator}\"");
+				Console.WriteLine ();
+				Console.WriteLine ("Other namespaces:");
+				foreach (var ns in client.OtherNamespaces)
+					Console.WriteLine ($"* \"{ns.Path}\" \"{ns.DirectorySeparator}\"");
+				Console.WriteLine ();
+
+				// get the folder that represents the first personal namespace
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+
+				// list the folders under the first personal namespace
+				var subfolders = personal.GetSubfolders ();
+
+				Console.WriteLine ("The list of folders that are direct children of the first personmal namespace:");
+				foreach (var folder in subfolders)
+					Console.WriteLine ($"* {folder.Name}");
 
 				client.Disconnect (true);
 			}
