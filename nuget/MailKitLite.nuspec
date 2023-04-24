@@ -46,14 +46,6 @@ Features include:
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.8" />
       <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.8" />
       <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.8" />
-      <frameworkAssembly assemblyName="System" targetFramework="monoandroid" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework="monoandroid" />
-      <frameworkAssembly assemblyName="System.Data" targetFramework="monoandroid" />
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="monoandroid" />
-      <frameworkAssembly assemblyName="System" targetFramework="xamarinios" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework="xamarinios" />
-      <frameworkAssembly assemblyName="System.Data" targetFramework="xamarinios" />
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="xamarinios" />
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net462">
