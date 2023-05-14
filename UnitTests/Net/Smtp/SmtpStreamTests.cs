@@ -289,5 +289,38 @@ namespace UnitTests.Net.Smtp {
 				memory.SetLength (0);
 			}
 		}
+
+		[Test]
+		public void TestQueueReallyLongCommand ()
+		{
+			using var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+			var command = "AUTH GSSAPI YIIkMgYGK" + new string ('X', 4096) + "\r\n";
+
+			stream.QueueCommand (command, default);
+			stream.Flush ();
+
+			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+
+			Assert.AreEqual (command, actual);
+		}
+
+		[Test]
+		public void TestQueueReallyLongCommandAfterShortCommand ()
+		{
+			using var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+
+			var shortCommand = "EHLO [192.168.1.1]\r\n";
+			var longCommand = "AUTH GSSAPI YIIkMgYGK" + new string ('X', 4096) + "\r\n";
+
+			stream.QueueCommand (shortCommand, default);
+			stream.QueueCommand (longCommand, default);
+			stream.Flush ();
+
+			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+
+			Assert.AreEqual (shortCommand + longCommand, actual);
+		}
 	}
 }

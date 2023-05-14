@@ -245,5 +245,38 @@ namespace UnitTests.Net.Pop3 {
 				memory.SetLength (0);
 			}
 		}
+
+		[Test]
+		public void TestQueueReallyLongCommand ()
+		{
+			using var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+			var command = "AUTH GSSAPI YIIkMgYGK" + new string ('X', 4096) + "\r\n";
+
+			stream.QueueCommand (Encoding.UTF8, command, default);
+			stream.Flush ();
+
+			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+
+			Assert.AreEqual (command, actual);
+		}
+
+		[Test]
+		public void TestQueueReallyLongCommandAfterShortCommand ()
+		{
+			using var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+
+			var shortCommand = "CAPA\r\n";
+			var longCommand = "AUTH GSSAPI YIIkMgYGK" + new string ('X', 4096) + "\r\n";
+
+			stream.QueueCommand (Encoding.UTF8, shortCommand, default);
+			stream.QueueCommand (Encoding.UTF8, longCommand, default);
+			stream.Flush ();
+
+			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+
+			Assert.AreEqual (shortCommand + longCommand, actual);
+		}
 	}
 }
