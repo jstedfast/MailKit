@@ -1,5 +1,14 @@
 # Release Notes
 
+## MailKit 4.1.0 (2023-06-17)
+
+* Fixed queueing logic for pipelining SMTP and POP3 commands.
+  (issue [#1568](https://github.com/jstedfast/MailKit/issues/1568))
+* Improve SslHandshakeException diagnostic messages.
+  (issue [#1554](https://github.com/jstedfast/MailKit/issues/1554))
+* Bumped System.Formats.Asn1 dependency to 7.0.0.
+* Bumped MimeKit dependency to 4.1.0.
+
 ## MailKit 4.0.0 (2023-04-15)
 
 * Marked the AccessRight and UniqueId structs as readonly.

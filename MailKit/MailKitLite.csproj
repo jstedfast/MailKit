@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
     <AssemblyTitle>MailKit</AssemblyTitle>
-    <VersionPrefix>4.0.0</VersionPrefix>
+    <VersionPrefix>4.1.0</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
     <LangVersion>9</LangVersion>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net47;net48;net6.0</TargetFrameworks>
@@ -46,13 +46,17 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net5')) Or $(TargetFramework.StartsWith('net6')) ">
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net6')) ">
     <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Formats.Asn1" Version="7.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+    <PackageReference Include="System.Formats.Asn1" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
