@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKitLite</id>
-    <version>4.1.0</version>
+    <version>4.1.0.1</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -34,6 +34,7 @@ Features include:
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
     <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net462 net47 net48 net6.0 netstandard netstandard2.0 netstandard2.1</tags>
+    <readme>docs\README.md</readme>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.2" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.2" />
@@ -52,33 +53,34 @@ Features include:
       <group targetFramework="net462">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="4.1.0" />
+        <dependency id="MimeKitLite" version="4.1.0.1" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="4.1.0" />
+        <dependency id="MimeKitLite" version="4.1.0.1" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="4.1.0" />
+        <dependency id="MimeKitLite" version="4.1.0.1" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKitLite" version="4.1.0" />
+        <dependency id="MimeKitLite" version="4.1.0.1" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="4.1.0" />
+        <dependency id="MimeKitLite" version="4.1.0.1" />
       </group>
       <group targetFramework="netstandard2.1">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
-        <dependency id="MimeKitLite" version="4.1.0" />
+        <dependency id="MimeKitLite" version="4.1.0.1" />
       </group>
     </dependencies>
   </metadata>
   <files>
+    <file src="..\README.md" target="docs\README.md" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKitLite.dll" target="lib\netstandard2.0\MailKitLite.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKitLite.pdb" target="lib\netstandard2.0\MailKitLite.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKitLite.xml" target="lib\netstandard2.0\MailKitLite.xml" />

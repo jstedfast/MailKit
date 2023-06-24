@@ -34,6 +34,7 @@ Features include:
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
     <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net462 net47 net48 net6.0 netstandard netstandard2.0 netstandard2.1</tags>
+    <readme>docs\README.md</readme>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.2" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5.2" />
@@ -82,6 +83,7 @@ Features include:
     </dependencies>
   </metadata>
   <files>
+    <file src="..\README.md" target="docs\README.md" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
