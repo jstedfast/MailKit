@@ -44,16 +44,13 @@ namespace MimeKit.Examples
 	{
 		List<MultipartRelated> stack = new List<MultipartRelated> ();
 		List<MimeEntity> attachments = new List<MimeEntity> ();
-		readonly string tempDir;
 		string body;
 
 		/// <summary>
 		/// Creates a new HtmlPreviewVisitor.
 		/// </summary>
-		/// <param name="tempDirectory">A temporary directory used for storing image files.</param>
-		public HtmlPreviewVisitor (string tempDirectory)
+		public HtmlPreviewVisitor ()
 		{
-			tempDir = tempDirectory;
 		}
 
 		/// <summary>
