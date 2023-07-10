@@ -486,7 +486,8 @@ namespace MailKit {
 			case "legacy.pop.mail.yahoo.com":
 				switch (issuer) {
 				case YahooCertificateIssuer:
-					return (serial == "01D722E4DFC71F6742BF762893BC67D0" && fingerprint == "407CF8B5518E5FF5219B6931995C31EEA856C8FC"); // Expires 8/2/2023 7:59:59 PM
+					return (serial == "01D722E4DFC71F6742BF762893BC67D0" && fingerprint == "407CF8B5518E5FF5219B6931995C31EEA856C8FC") // Expires 8/2/2023 7:59:59 PM
+						|| (serial == "0F372029DC5F77FB1F19AA462BB95003" && fingerprint == "925E927BC60420E3055B6609FA565E024ECCC996"); // Expires 12/27/2023 6:59:59 PM)
 				default:
 					return false;
 				}
