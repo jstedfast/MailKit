@@ -83,8 +83,9 @@ namespace UnitTests.Net.Proxy {
 				stream = proxy.Connect ("www.google.com", 80);
 				Assert.Fail ("www.google.com is not an HTTP proxy, so CONNECT should have failed.");
 			} catch (ProxyProtocolException ex) {
-				// This is expected since this proxy does not support Socks4a
-				Assert.AreEqual ("Failed to connect to www.google.com:80: HTTP/1.1 405 Method Not Allowed", ex.Message);
+				// This is expected since this is not an HTTP proxy
+				var response = ex.Message.Substring (0, ex.Message.IndexOf ("\r\n"));
+				Assert.AreEqual ("Failed to connect to www.google.com:80: HTTP/1.1 405 Method Not Allowed", response);
 			} catch (TimeoutException) {
 				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {
@@ -104,8 +105,9 @@ namespace UnitTests.Net.Proxy {
 				stream = await proxy.ConnectAsync ("www.google.com", 80);
 				Assert.Fail ("www.google.com is not an HTTP proxy, so CONNECT should have failed.");
 			} catch (ProxyProtocolException ex) {
-				// This is expected since this proxy does not support Socks4a
-				Assert.AreEqual ("Failed to connect to www.google.com:80: HTTP/1.1 405 Method Not Allowed", ex.Message);
+				// This is expected since this is not an HTTP proxy
+				var response = ex.Message.Substring (0, ex.Message.IndexOf ("\r\n"));
+				Assert.AreEqual ("Failed to connect to www.google.com:80: HTTP/1.1 405 Method Not Allowed", response);
 			} catch (TimeoutException) {
 				Assert.Inconclusive ("Timed out.");
 			} catch (Exception ex) {

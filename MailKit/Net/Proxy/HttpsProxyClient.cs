@@ -295,25 +295,26 @@ namespace MailKit.Net.Proxy {
 			try {
 				ssl.Write (command, 0, command.Length);
 
-				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
-				var builder = new StringBuilder ();
+				var builder = new ByteArrayBuilder (256);
+				var buffer = new byte[1];
+				var newline = false;
+				string response;
 
 				try {
-					var newline = false;
-
-					// read until we consume the end of the headers (it's ok if we read some of the content)
+					// read until we consume the end of the headers
 					do {
-						int nread = ssl.Read (buffer, 0, BufferSize);
-						int index = 0;
+						int nread = ssl.Read (buffer, 0, 1);
 
-						if (HttpProxyClient.TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
+						if (nread < 1 || HttpProxyClient.TryConsumeHeaders (builder, buffer[0], ref newline))
 							break;
 					} while (true);
+
+					response = builder.ToString ();
 				} finally {
-					ArrayPool<byte>.Shared.Return (buffer);
+					builder.Dispose ();
 				}
 
-				HttpProxyClient.ValidateHttpResponse (builder, host, port);
+				HttpProxyClient.ValidateHttpResponse (response, host, port);
 				return ssl;
 			} catch {
 				ssl.Dispose ();
@@ -375,25 +376,26 @@ namespace MailKit.Net.Proxy {
 			try {
 				await ssl.WriteAsync (command, 0, command.Length, cancellationToken).ConfigureAwait (false);
 
-				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
-				var builder = new StringBuilder ();
+				var builder = new ByteArrayBuilder (256);
+				var buffer = new byte[1];
+				var newline = false;
+				string response;
 
 				try {
-					var newline = false;
-
-					// read until we consume the end of the headers (it's ok if we read some of the content)
+					// read until we consume the end of the headers
 					do {
-						int nread = ssl.Read (buffer, 0, BufferSize);
-						int index = 0;
+						int nread = ssl.Read (buffer, 0, 1);
 
-						if (HttpProxyClient.TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
+						if (HttpProxyClient.TryConsumeHeaders (builder, buffer[0], ref newline))
 							break;
 					} while (true);
+
+					response = builder.ToString ();
 				} finally {
-					ArrayPool<byte>.Shared.Return (buffer);
+					builder.Dispose ();
 				}
 
-				HttpProxyClient.ValidateHttpResponse (builder, host, port);
+				HttpProxyClient.ValidateHttpResponse (response, host, port);
 				return ssl;
 			} catch {
 				ssl.Dispose ();

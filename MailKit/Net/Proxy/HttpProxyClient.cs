@@ -113,49 +113,30 @@ namespace MailKit.Net.Proxy
 			return Encoding.UTF8.GetBytes (builder.ToString ());
 		}
 
-		internal static bool TryConsumeHeaders (StringBuilder builder, byte[] buffer, ref int index, int count, ref bool newLine)
+		internal static bool TryConsumeHeaders (ByteArrayBuilder builder, byte c, ref bool newLine)
 		{
-			int endIndex = index + count;
-			int startIndex = index;
 			var endOfHeaders = false;
 
-			while (index < endIndex && !endOfHeaders) {
-				switch ((char) buffer[index]) {
-				case '\r':
-					break;
-				case '\n':
-					endOfHeaders = newLine;
-					newLine = true;
-					break;
-				default:
-					newLine = false;
-					break;
-				}
-
-				index++;
+			switch ((char) c) {
+			case '\r':
+				break;
+			case '\n':
+				endOfHeaders = newLine;
+				newLine = true;
+				break;
+			default:
+				newLine = false;
+				break;
 			}
 
-			var block = Encoding.UTF8.GetString (buffer, startIndex, index - startIndex);
-			builder.Append (block);
+			builder.Append (c);
 
 			return endOfHeaders;
 		}
 
-		internal static void ValidateHttpResponse (StringBuilder builder, string host, int port)
+		internal static void ValidateHttpResponse (string response, string host, int port)
 		{
-			int index = 0;
-
-			while (builder[index] != '\n')
-				index++;
-
-			if (index > 0 && builder[index - 1] == '\r')
-				index--;
-
-			// trim everything beyond the "HTTP/1.1 200 ..." part of the response
-			builder.Length = index;
-
-			var response = builder.ToString ();
-
+			// Verify that the response starts with something like "HTTP/1.1 200 ..."
 			if (response.Length >= 15 && response.StartsWith ("HTTP/1.", StringComparison.OrdinalIgnoreCase) &&
 				(response[7] == '1' || response[7] == '0') && response[8] == ' ' &&
 				response[9] == '2' && response[10] == '0' && response[11] == '0' &&
@@ -206,25 +187,26 @@ namespace MailKit.Net.Proxy
 			try {
 				Send (socket, command, 0, command.Length, cancellationToken);
 
-				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
-				var builder = new StringBuilder ();
+				var builder = new ByteArrayBuilder (256);
+				var buffer = new byte[1];
+				var newline = false;
+				string response;
 
 				try {
-					var newline = false;
-
-					// read until we consume the end of the headers (it's ok if we read some of the content)
+					// read until we consume the end of the headers
 					do {
-						int nread = Receive (socket, buffer, 0, BufferSize, cancellationToken);
-						int index = 0;
+						int nread = Receive (socket, buffer, 0, 1, cancellationToken);
 
-						if (TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
+						if (nread < 1 || TryConsumeHeaders (builder, buffer[0], ref newline))
 							break;
 					} while (true);
+
+					response = builder.ToString ();
 				} finally {
-					ArrayPool<byte>.Shared.Return (buffer);
+					builder.Dispose ();
 				}
 
-				ValidateHttpResponse (builder, host, port);
+				ValidateHttpResponse (response, host, port);
 				return new NetworkStream (socket, true);
 			} catch {
 				if (socket.Connected)
@@ -270,30 +252,30 @@ namespace MailKit.Net.Proxy
 
 			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken).ConfigureAwait (false);
 			var command = GetConnectCommand (host, port, ProxyCredentials);
-			int index;
 
 			try {
 				await SendAsync (socket, command, 0, command.Length, cancellationToken).ConfigureAwait (false);
 
-				var buffer = ArrayPool<byte>.Shared.Rent (BufferSize);
-				var builder = new StringBuilder ();
+				var builder = new ByteArrayBuilder (256);
+				var buffer = new byte[1];
+				var newline = false;
+				string response;
 
 				try {
-					var newline = false;
-
-					// read until we consume the end of the headers (it's ok if we read some of the content)
+					// read until we consume the end of the headers
 					do {
-						int nread = await ReceiveAsync (socket, buffer, 0, BufferSize, cancellationToken).ConfigureAwait (false);
-						index = 0;
+						int nread = await ReceiveAsync (socket, buffer, 0, 1, cancellationToken).ConfigureAwait (false);
 
-						if (TryConsumeHeaders (builder, buffer, ref index, nread, ref newline))
+						if (nread < 1 || TryConsumeHeaders (builder, buffer[0], ref newline))
 							break;
 					} while (true);
+
+					response = builder.ToString ();
 				} finally {
-					ArrayPool<byte>.Shared.Return (buffer);
+					builder.Dispose ();
 				}
 
-				ValidateHttpResponse (builder, host, port);
+				ValidateHttpResponse (response, host, port);
 				return new NetworkStream (socket, true);
 			} catch {
 				if (socket.Connected)
