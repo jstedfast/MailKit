@@ -3300,7 +3300,7 @@ namespace MailKit.Net.Imap {
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			while (token.Type != ImapTokenType.CloseParen) {
-				uint used, limit;
+				ulong used, limit;
 				string resource;
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
@@ -3311,18 +3311,22 @@ namespace MailKit.Net.Imap {
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-				used = ImapEngine.ParseNumber (token, false, format, token);
+				// Note: We parse these quota values as UInt64 because GMail uses 64bit integer values.
+				// See https://github.com/jstedfast/MailKit/issues/1602 for details.
+				used = ImapEngine.ParseNumber64 (token, false, format, token);
 
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
-				limit = ImapEngine.ParseNumber (token, false, format, token);
+				// Note: We parse these quota values as UInt64 because GMail uses 64bit integer values.
+				// See https://github.com/jstedfast/MailKit/issues/1602 for details.
+				limit = ImapEngine.ParseNumber64 (token, false, format, token);
 
 				if (resource.Equals ("MESSAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentMessageCount = used;
-					quota.MessageLimit = limit;
+					quota.CurrentMessageCount = (uint) (used & 0xffffffff);
+					quota.MessageLimit = (uint) (limit & 0xffffffff);
 				} else if (resource.Equals ("STORAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentStorageSize = used;
-					quota.StorageLimit = limit;
+					quota.CurrentStorageSize = (uint) (used & 0xffffffff);
+					quota.StorageLimit = (uint) (limit & 0xffffffff);
 				}
 
 				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);

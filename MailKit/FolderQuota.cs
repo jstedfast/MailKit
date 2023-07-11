@@ -24,8 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
-
 namespace MailKit {
 	/// <summary>
 	/// A folder quota.
