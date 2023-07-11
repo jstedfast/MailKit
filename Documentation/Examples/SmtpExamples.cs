@@ -89,6 +89,38 @@ namespace MailKit.Examples {
 		}
 		#endregion
 
+		#region ReadFromPickupDirectory
+		public static List<MimeMessage> ReadFromPickupDirectory (string pickupDirectory)
+		{
+			var messages = new List<MimeMessage> ();
+			string[] files = Directory.GetFiles (pickupDirectory, "*.eml");
+			foreach (var file in files) {
+				FileStream stream;
+				try {
+					stream = File.Open (file, FileMode.Open, FileAccess.Read, FileShare.None);
+				} catch (IOException) {
+					// This can happen when:
+					//  - the file cannot be opened exclusively (usually when it is still being written)
+					//  - the file has been flagged as malware by anti-virus
+					//  - the current user does not have permission to read the file
+					continue;
+				}
+
+				using (stream) {
+					using (var filtered = new FilteredStream (stream)) {
+						filtered.Add (new SmtpDataUnescapeFilter ());
+						try {
+							messages.Add (MimeMessage.Load (filtered));
+						} catch {
+							// This usually happens when the message is malformed on disk
+						}
+					}
+				}
+			}
+			return messages;
+		}
+		#endregion
+
 		#region ProtocolLogger
 		public static void SendMessage (MimeMessage message)
 		{

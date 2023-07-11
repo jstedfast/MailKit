@@ -32,20 +32,55 @@ using NUnit.Framework;
 
 using MimeKit.IO;
 using MailKit.Net.Smtp;
+using MimeKit.IO.Filters;
 
 namespace UnitTests.Net.Smtp {
 	[TestFixture]
 	public class SmtpDataFilterTests
 	{
-		const string SimpleDataInput = "This is a simple stream of text\r\nthat has no need to be byte-stuffed\r\nat all.\r\n\r\nPlease don't get byte-stuffed!\r\n";
-		const string ComplexDataInput = "This is a bit more complicated\r\n... This line starts with a '.' and\r\ntherefore needs to be byte-stuffed\r\n. And so does this line!\r\n";
-		const string ComplexDataOutput = "This is a bit more complicated\r\n.... This line starts with a '.' and\r\ntherefore needs to be byte-stuffed\r\n.. And so does this line!\r\n";
+		const string SimpleDataUnescaped = "This is a simple stream of text\r\nthat has no need to be byte-stuffed\r\nat all.\r\n\r\nPlease don't get byte-stuffed!\r\n";
+		const string ComplexDataUnescaped = "This is a bit more complicated\r\n... This line starts with a '.' and\r\ntherefore needs to be byte-stuffed\r\n. And so does this line!\r\n";
+		const string ComplexDataEscaped = "This is a bit more complicated\r\n.... This line starts with a '.' and\r\ntherefore needs to be byte-stuffed\r\n.. And so does this line!\r\n";
+
+		[Test]
+		public void TestSmtpDataUnescapeFilter ()
+		{
+			var inputs = new string[] { SimpleDataUnescaped, ComplexDataEscaped };
+			var outputs = new string[] { SimpleDataUnescaped, ComplexDataUnescaped };
+
+			var filter = new SmtpDataUnescapeFilter ();
+
+			for (int i = 0; i < inputs.Length; i++) {
+				using (var memory = new MemoryStream ()) {
+					byte[] buffer;
+					int n;
+
+					using (var filtered = new FilteredStream (memory)) {
+						filtered.Add (filter);
+
+						buffer = Encoding.ASCII.GetBytes (inputs[i]);
+						filtered.Write (buffer, 0, buffer.Length);
+						filtered.Flush ();
+					}
+
+					buffer = memory.GetBuffer ();
+					n = (int) memory.Length;
+
+					var text = Encoding.ASCII.GetString (buffer, 0, n);
+
+					Assert.AreEqual (outputs[i], text);
+
+					filter.Reset ();
+				}
+			}
+		}
 
 		[Test]
 		public void TestSmtpDataFilter ()
 		{
-			var inputs = new string[] { SimpleDataInput, ComplexDataInput };
-			var outputs = new string[] { SimpleDataInput, ComplexDataOutput };
+			var inputs = new string[] { SimpleDataUnescaped, ComplexDataUnescaped };
+			var outputs = new string[] { SimpleDataUnescaped, ComplexDataEscaped };
+
 			var filter = new SmtpDataFilter ();
 
 			for (int i = 0; i < inputs.Length; i++) {
@@ -76,8 +111,8 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestSmtpDataFilterEnsureNewLine ()
 		{
-			var inputs = new string[] { SimpleDataInput.TrimEnd (), ComplexDataInput.TrimEnd () };
-			var outputs = new string[] { SimpleDataInput, ComplexDataOutput };
+			var inputs = new string[] { SimpleDataUnescaped.TrimEnd (), ComplexDataUnescaped.TrimEnd () };
+			var outputs = new string[] { SimpleDataUnescaped, ComplexDataEscaped };
 			var filter = new SmtpDataFilter ();
 
 			for (int i = 0; i < inputs.Length; i++) {
