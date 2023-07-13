@@ -42,6 +42,38 @@ namespace UnitTests.Net.Smtp {
 		const string ComplexDataOutput = "This is a bit more complicated\r\n.... This line starts with a '.' and\r\ntherefore needs to be byte-stuffed\r\n.. And so does this line!\r\n";
 
 		[Test]
+		public void TestSmtpDataFilterDecode ()
+		{
+			var inputs = new string[] { SimpleDataInput, ComplexDataOutput };
+			var outputs = new string[] { SimpleDataInput, ComplexDataInput };
+			var filter = new SmtpDataFilter (decode: true);
+
+			for (int i = 0; i < inputs.Length; i++) {
+				using (var memory = new MemoryStream ()) {
+					byte[] buffer;
+					int n;
+
+					using (var filtered = new FilteredStream (memory)) {
+						filtered.Add (filter);
+
+						buffer = Encoding.ASCII.GetBytes (inputs[i]);
+						filtered.Write (buffer, 0, buffer.Length);
+						filtered.Flush ();
+					}
+
+					buffer = memory.GetBuffer ();
+					n = (int) memory.Length;
+
+					var text = Encoding.ASCII.GetString (buffer, 0, n);
+
+					Assert.AreEqual (outputs[i], text);
+
+					filter.Reset ();
+				}
+			}
+		}
+
+		[Test]
 		public void TestSmtpDataFilter ()
 		{
 			var inputs = new string[] { SimpleDataInput, ComplexDataInput };

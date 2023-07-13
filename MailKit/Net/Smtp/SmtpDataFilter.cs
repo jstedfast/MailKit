@@ -31,15 +31,17 @@ namespace MailKit.Net.Smtp {
 	/// An SMTP filter designed to format a message stream for the DATA command.
 	/// </summary>
 	/// <remarks>
-	/// A special stream filter that escapes lines beginning with a '.' as needed when
-	/// sending a message via the SMTP protocol or when saving a message to an IIS
-	/// message pickup directory.
+	/// A special stream filter that can encode or decode lines beginning with a '.' as
+	/// needed when sending/receiving a message via the SMTP protocol or when saving a
+	/// message to an IIS message pickup directory.
 	/// </remarks>
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory" />
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="LoadFromPickupDirectory" />
 	/// </example>
 	public class SmtpDataFilter : MimeFilterBase
 	{
+		readonly bool decode;
 		bool bol;
 
 		/// <summary>
@@ -48,29 +50,18 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Creates a new <see cref="SmtpDataFilter"/>.
 		/// </remarks>
+		/// <param name="decode"><c>true</c> if the filter should decode the content; otherwise, <c>false</c>.</param>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="LoadFromPickupDirectory" />
 		/// </example>
-		public SmtpDataFilter ()
+		public SmtpDataFilter (bool decode = false)
 		{
+			this.decode = decode;
 			bol = true;
 		}
 
-		/// <summary>
-		/// Filter the specified input.
-		/// </summary>
-		/// <remarks>
-		/// Filters the specified input buffer starting at the given index,
-		/// spanning across the specified number of bytes.
-		/// </remarks>
-		/// <returns>The filtered output.</returns>
-		/// <param name="input">The input buffer.</param>
-		/// <param name="startIndex">The starting index of the input buffer.</param>
-		/// <param name="length">The length of the input buffer, starting at <paramref name="startIndex"/>.</param>
-		/// <param name="outputIndex">The output index.</param>
-		/// <param name="outputLength">The output length.</param>
-		/// <param name="flush">If set to <c>true</c>, all internally buffered data should be flushed to the output buffer.</param>
-		protected override byte[] Filter (byte[] input, int startIndex, int length, out int outputIndex, out int outputLength, bool flush)
+		byte[] Encode (byte[] input, int startIndex, int length, out int outputIndex, out int outputLength, bool flush)
 		{
 			int inputEnd = startIndex + length;
 			bool escape = bol;
@@ -123,6 +114,51 @@ namespace MailKit.Net.Smtp {
 			outputIndex = 0;
 
 			return OutputBuffer;
+		}
+
+		byte[] Decode (byte[] input, int startIndex, int length, out int outputIndex, out int outputLength, bool flush)
+		{
+			int inputEnd = startIndex + length;
+			int index = startIndex;
+
+			EnsureOutputSize (length, false);
+			outputLength = 0;
+			outputIndex = 0;
+
+			while (index < inputEnd) {
+				byte c = input[index++];
+
+				if (bol && c == (byte) '.') {
+					bol = false;
+				} else {
+					OutputBuffer[outputLength++] = c;
+					bol = c == (byte) '\n';
+				}
+			}
+
+			return OutputBuffer;
+		}
+
+		/// <summary>
+		/// Filter the specified input.
+		/// </summary>
+		/// <remarks>
+		/// Filters the specified input buffer starting at the given index,
+		/// spanning across the specified number of bytes.
+		/// </remarks>
+		/// <returns>The filtered output.</returns>
+		/// <param name="input">The input buffer.</param>
+		/// <param name="startIndex">The starting index of the input buffer.</param>
+		/// <param name="length">The length of the input buffer, starting at <paramref name="startIndex"/>.</param>
+		/// <param name="outputIndex">The output index.</param>
+		/// <param name="outputLength">The output length.</param>
+		/// <param name="flush">If set to <c>true</c>, all internally buffered data should be flushed to the output buffer.</param>
+		protected override byte[] Filter (byte[] input, int startIndex, int length, out int outputIndex, out int outputLength, bool flush)
+		{
+			if (decode)
+				return Decode (input, startIndex, length, out outputIndex, out outputLength, flush);
+
+			return Encode (input, startIndex, length, out outputIndex, out outputLength, flush);
 		}
 
 		/// <summary>

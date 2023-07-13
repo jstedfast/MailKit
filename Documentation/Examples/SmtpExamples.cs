@@ -62,7 +62,7 @@ namespace MailKit.Examples {
 						// which means that lines beginning with "." need to be escaped
 						// by adding an extra "." to the beginning of the line.
 						//
-						// Use an SmtpDataFilter "byte-stuff" the message as it is written
+						// Use an SmtpDataFilter to "byte-stuff" the message as it is written
 						// to the file stream. This is the same process that an SmtpClient
 						// would use when sending the message in a `DATA` command.
 						using (var filtered = new FilteredStream (stream)) {
@@ -86,6 +86,26 @@ namespace MailKit.Examples {
 					throw;
 				}
 			} while (true);
+		}
+		#endregion
+
+		#region LoadFromPickupDirectory
+		public static MimeMessage LoadFromPickupDirectory (string fileName)
+		{
+			using (var stream = File.OpenRead (fileName)) {
+				// IIS pickup directories store messages that have been "byte-stuffed"
+				// which means that lines beginning with "." have been escaped by
+				// adding an extra "." to the beginning of the line.
+				//
+				// Use an SmtpDataFilter to decode the message as it is loaded from
+				// the file stream. This is the reverse process that an SmtpClient
+				// would use when sending the message in a `DATA` command.
+				using (var filtered = new FilteredStream (stream)) {
+					filtered.Add (new SmtpDataFilter (decode: true));
+
+					return MimeMessage.Load (filtered);
+				}
+			}
 		}
 		#endregion
 
