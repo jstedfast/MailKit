@@ -179,75 +179,67 @@ namespace MailKit.Security {
 			get; private set;
 		}
 
-		/// <summary>
-		/// Get whether or not the SASL mechanism supports channel binding.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the SASL mechanism supports channel binding.
-		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
-		public virtual bool SupportsChannelBinding {
-			get { return false; }
-		}
+        /// <summary>
+        /// Get whether or not the SASL mechanism supports channel binding.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the SASL mechanism supports channel binding.
+        /// </remarks>
+        /// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+        public virtual bool SupportsChannelBinding => false;
 
-		/// <summary>
-		/// Get whether or not the SASL mechanism supports an initial response (SASL-IR).
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the SASL mechanism supports an initial response (SASL-IR).</para>
-		/// <para>SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports an initial response; otherwise, <c>false</c>.</value>
-		public virtual bool SupportsInitialResponse {
-			get { return false; }
-		}
+        /// <summary>
+        /// Get whether or not the SASL mechanism supports an initial response (SASL-IR).
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not the SASL mechanism supports an initial response (SASL-IR).</para>
+        /// <para>SASL mechanisms that support sending an initial client response to the server
+        /// should return <value>true</value>.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the SASL mechanism supports an initial response; otherwise, <c>false</c>.</value>
+        public virtual bool SupportsInitialResponse => false;
 
-		/// <summary>
-		/// Get or set whether the SASL mechanism has finished authenticating.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets whether the SASL mechanism has finished authenticating.
-		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism has finished authenticating; otherwise, <c>false</c>.</value>
-		public bool IsAuthenticated {
+        /// <summary>
+        /// Get or set whether the SASL mechanism has finished authenticating.
+        /// </summary>
+        /// <remarks>
+        /// Gets or sets whether the SASL mechanism has finished authenticating.
+        /// </remarks>
+        /// <value><c>true</c> if the SASL mechanism has finished authenticating; otherwise, <c>false</c>.</value>
+        public bool IsAuthenticated {
 			get; protected set;
 		}
 
-		/// <summary>
-		/// Get whether or not channel-binding was negotiated by the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not channel-binding has been negotiated by the SASL mechanism.</para>
-		/// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
-		/// channel-bindings.</note>
-		/// </remarks>
-		/// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
-		public virtual bool NegotiatedChannelBinding {
-			get { return false; }
-		}
+        /// <summary>
+        /// Get whether or not channel-binding was negotiated by the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not channel-binding has been negotiated by the SASL mechanism.</para>
+        /// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
+        /// channel-bindings.</note>
+        /// </remarks>
+        /// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
+        public virtual bool NegotiatedChannelBinding => false;
 
-		/// <summary>
-		/// Get whether or not a security layer was negotiated by the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not a security layer has been negotiated by the SASL mechanism.</para>
-		/// <note type="note">Some SASL mechanisms, such as GSSAPI, are able to negotiate security layers
-		/// such as integrity and confidentiality protection.</note>
-		/// </remarks>
-		/// <value><c>true</c> if a security layer was negotiated; otherwise, <c>false</c>.</value>
-		public virtual bool NegotiatedSecurityLayer {
-			get { return false; }
-		}
+        /// <summary>
+        /// Get whether or not a security layer was negotiated by the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not a security layer has been negotiated by the SASL mechanism.</para>
+        /// <note type="note">Some SASL mechanisms, such as GSSAPI, are able to negotiate security layers
+        /// such as integrity and confidentiality protection.</note>
+        /// </remarks>
+        /// <value><c>true</c> if a security layer was negotiated; otherwise, <c>false</c>.</value>
+        public virtual bool NegotiatedSecurityLayer => false;
 
-		/// <summary>
-		/// Get or set the channel-binding context.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets the channel-binding context.
-		/// </remarks>
-		/// <value>The channel-binding context.</value>
-		internal IChannelBindingContext ChannelBindingContext {
+        /// <summary>
+        /// Get or set the channel-binding context.
+        /// </summary>
+        /// <remarks>
+        /// Gets or sets the channel-binding context.
+        /// </remarks>
+        /// <value>The channel-binding context.</value>
+        internal IChannelBindingContext ChannelBindingContext {
 			get; set;
 		}
 

@@ -107,25 +107,23 @@ namespace MailKit {
 			Dispose (false);
 		}
 
-		/// <summary>
-		/// Get the log stream.
-		/// </summary>
-		/// <remarks>
-		/// Gets the log stream.
-		/// </remarks>
-		/// <value>The log sstream.</value>
-		public Stream Stream {
-			get { return stream; }
-		}
+        /// <summary>
+        /// Get the log stream.
+        /// </summary>
+        /// <remarks>
+        /// Gets the log stream.
+        /// </remarks>
+        /// <value>The log sstream.</value>
+        public Stream Stream => stream;
 
-		/// <summary>
-		/// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
-		/// </summary>
-		/// <remarks>
-		/// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
-		/// </remarks>
-		/// <value>The default client prefix.</value>
-		public static string DefaultClientPrefix
+        /// <summary>
+        /// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
+        /// </summary>
+        /// <remarks>
+        /// Get or set the default client prefix to use when creating new <see cref="MailKit.ProtocolLogger"/> instances.
+        /// </remarks>
+        /// <value>The default client prefix.</value>
+        public static string DefaultClientPrefix
 		{
 			get { return Encoding.UTF8.GetString (defaultClientPrefix); }
 			set { defaultClientPrefix = Encoding.UTF8.GetBytes (value); }

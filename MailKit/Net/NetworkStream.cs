@@ -58,29 +58,17 @@ namespace MailKit.Net
 			get; private set;
 		}
 
-		public bool DataAvailable {
-			get { return connected && Socket.Available > 0; }
-		}
+        public bool DataAvailable => connected && Socket.Available > 0;
 
-		public override bool CanRead {
-			get { return connected; }
-		}
+        public override bool CanRead => connected;
 
-		public override bool CanWrite {
-			get { return connected; }
-		}
+        public override bool CanWrite => connected;
 
-		public override bool CanSeek {
-			get { return false; }
-		}
+        public override bool CanSeek => false;
 
-		public override bool CanTimeout {
-			get { return connected; }
-		}
+        public override bool CanTimeout => connected;
 
-		public override long Length {
-			get { throw new NotSupportedException (); }
-		}
+        public override long Length => throw new NotSupportedException();
 
 		public override long Position {
 			get { throw new NotSupportedException (); }

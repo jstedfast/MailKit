@@ -65,33 +65,25 @@ namespace MailKit {
 		/// Gets whether the stream supports reading.
 		/// </summary>
 		/// <value><c>true</c> if the stream supports reading; otherwise, <c>false</c>.</value>
-		public override bool CanRead {
-			get { return InnerStream.CanRead; }
-		}
+		public override bool CanRead => InnerStream.CanRead;
 
-		/// <summary>
-		/// Gets whether the stream supports writing.
-		/// </summary>
-		/// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
-		public override bool CanWrite {
-			get { return InnerStream.CanWrite; }
-		}
+        /// <summary>
+        /// Gets whether the stream supports writing.
+        /// </summary>
+        /// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
+        public override bool CanWrite => InnerStream.CanWrite;
 
-		/// <summary>
-		/// Gets whether the stream supports seeking.
-		/// </summary>
-		/// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
-		public override bool CanSeek {
-			get { return false; }
-		}
+        /// <summary>
+        /// Gets whether the stream supports seeking.
+        /// </summary>
+        /// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
+        public override bool CanSeek => false;
 
-		/// <summary>
-		/// Gets whether the stream supports I/O timeouts.
-		/// </summary>
-		/// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
-		public override bool CanTimeout {
-			get { return InnerStream.CanTimeout; }
-		}
+        /// <summary>
+        /// Gets whether the stream supports I/O timeouts.
+        /// </summary>
+        /// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
+        public override bool CanTimeout => InnerStream.CanTimeout;
 
 		/// <summary>
 		/// Gets or sets a value, in miliseconds, that determines how long the stream will attempt to read before timing out.
@@ -126,17 +118,15 @@ namespace MailKit {
 			set { throw new NotSupportedException (); }
 		}
 
-		/// <summary>
-		/// Gets the length in bytes of the stream.
-		/// </summary>
-		/// <returns>A long value representing the length of the stream in bytes.</returns>
-		/// <value>The length of the stream.</value>
-		/// <exception cref="System.NotSupportedException">
-		/// The stream does not support seeking.
-		/// </exception>
-		public override long Length {
-			get { throw new NotSupportedException (); }
-		}
+        /// <summary>
+        /// Gets the length in bytes of the stream.
+        /// </summary>
+        /// <returns>A long value representing the length of the stream in bytes.</returns>
+        /// <value>The length of the stream.</value>
+        /// <exception cref="System.NotSupportedException">
+        /// The stream does not support seeking.
+        /// </exception>
+        public override long Length => throw new NotSupportedException();
 
 		static void ValidateArguments (byte[] buffer, int offset, int count)
 		{

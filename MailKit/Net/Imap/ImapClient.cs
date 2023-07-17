@@ -122,48 +122,44 @@ namespace MailKit.Net.Imap {
 			engine.Alert += OnEngineAlert;
 		}
 
-		/// <summary>
-		/// Gets an object that can be used to synchronize access to the IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets an object that can be used to synchronize access to the IMAP server.</para>
-		/// <para>When using the non-Async methods from multiple threads, it is important to lock the
-		/// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
-		/// </remarks>
-		/// <value>The lock object.</value>
-		public override object SyncRoot {
-			get { return engine; }
-		}
+        /// <summary>
+        /// Gets an object that can be used to synchronize access to the IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets an object that can be used to synchronize access to the IMAP server.</para>
+        /// <para>When using the non-Async methods from multiple threads, it is important to lock the
+        /// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
+        /// </remarks>
+        /// <value>The lock object.</value>
+        public override object SyncRoot => engine;
 
-		/// <summary>
-		/// Get the protocol supported by the message service.
-		/// </summary>
-		/// <remarks>
-		/// Gets the protocol supported by the message service.
-		/// </remarks>
-		/// <value>The protocol.</value>
-		protected override string Protocol {
-			get { return "imap"; }
-		}
+        /// <summary>
+        /// Get the protocol supported by the message service.
+        /// </summary>
+        /// <remarks>
+        /// Gets the protocol supported by the message service.
+        /// </remarks>
+        /// <value>The protocol.</value>
+        protected override string Protocol => "imap";
 
-		/// <summary>
-		/// Get the capabilities supported by the IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made via one of
-		/// the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a> methods and may
-		/// change as a side-effect of calling one of the
-		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
-		/// methods.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The capabilities.</value>
-		/// <exception cref="System.ArgumentException">
-		/// Capabilities cannot be enabled, they may only be disabled.
-		/// </exception>
-		public ImapCapabilities Capabilities {
+        /// <summary>
+        /// Get the capabilities supported by the IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// The capabilities will not be known until a successful connection has been made via one of
+        /// the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a> methods and may
+        /// change as a side-effect of calling one of the
+        /// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
+        /// methods.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The capabilities.</value>
+        /// <exception cref="System.ArgumentException">
+        /// Capabilities cannot be enabled, they may only be disabled.
+        /// </exception>
+        public ImapCapabilities Capabilities {
 			get { return engine.Capabilities; }
 			set {
 				if ((engine.Capabilities | value) > engine.Capabilities)
@@ -173,48 +169,42 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		/// <summary>
-		/// Gets the maximum size of a message that can be appended to a folder.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets the maximum size of a message, in bytes, that can be appended to a folder.</para>
-		/// <note type="note">If the value is not set, then the limit is unspecified.</note>
-		/// </remarks>
-		/// <value>The append limit.</value>
-		public uint? AppendLimit {
-			get { return engine.AppendLimit; }
-		}
+        /// <summary>
+        /// Gets the maximum size of a message that can be appended to a folder.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets the maximum size of a message, in bytes, that can be appended to a folder.</para>
+        /// <note type="note">If the value is not set, then the limit is unspecified.</note>
+        /// </remarks>
+        /// <value>The append limit.</value>
+        public uint? AppendLimit => engine.AppendLimit;
 
-		/// <summary>
-		/// Gets the internationalization level supported by the IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets the internationalization level supported by the IMAP server.</para>
-		/// <para>For more information, see
-		/// <a href="https://tools.ietf.org/html/rfc5255#section-4">section 4 of rfc5255</a>.</para>
-		/// </remarks>
-		/// <value>The internationalization level.</value>
-		public int InternationalizationLevel {
-			get { return engine.I18NLevel; }
-		}
+        /// <summary>
+        /// Gets the internationalization level supported by the IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets the internationalization level supported by the IMAP server.</para>
+        /// <para>For more information, see
+        /// <a href="https://tools.ietf.org/html/rfc5255#section-4">section 4 of rfc5255</a>.</para>
+        /// </remarks>
+        /// <value>The internationalization level.</value>
+        public int InternationalizationLevel => engine.I18NLevel;
 
-		/// <summary>
-		/// Get the access rights supported by the IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// These rights are additional rights supported by the IMAP server beyond the standard rights
-		/// defined in <a href="https://tools.ietf.org/html/rfc4314#section-2.1">section 2.1 of rfc4314</a>
-		/// and will not be populated until the client is successfully connected.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The rights.</value>
-		public AccessRights Rights {
-			get { return engine.Rights; }
-		}
+        /// <summary>
+        /// Get the access rights supported by the IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// These rights are additional rights supported by the IMAP server beyond the standard rights
+        /// defined in <a href="https://tools.ietf.org/html/rfc4314#section-2.1">section 2.1 of rfc4314</a>
+        /// and will not be populated until the client is successfully connected.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The rights.</value>
+        public AccessRights Rights => engine.Rights;
 
-		void CheckDisposed ()
+        void CheckDisposed ()
 		{
 			if (disposed)
 				throw new ObjectDisposedException (nameof (ImapClient));
@@ -581,50 +571,46 @@ namespace MailKit.Net.Imap {
 
 		#region IMailService implementation
 
-		/// <summary>
-		/// Get the authentication mechanisms supported by the IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>The authentication mechanisms are queried as part of the
-		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
-		/// method.</para>
-		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
-		/// before authenticating.</note>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The authentication mechanisms.</value>
-		public override HashSet<string> AuthenticationMechanisms {
-			get { return engine.AuthenticationMechanisms; }
-		}
+        /// <summary>
+        /// Get the authentication mechanisms supported by the IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>The authentication mechanisms are queried as part of the
+        /// <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
+        /// method.</para>
+        /// <note type="tip">To prevent the usage of certain authentication mechanisms,
+        /// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+        /// before authenticating.</note>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The authentication mechanisms.</value>
+        public override HashSet<string> AuthenticationMechanisms => engine.AuthenticationMechanisms;
 
-		/// <summary>
-		/// Get the threading algorithms supported by the IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// The threading algorithms are queried as part of the
-		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
-		/// and <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The supported threading algorithms.</value>
-		public override HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
-			get { return engine.ThreadingAlgorithms; }
-		}
+        /// <summary>
+        /// Get the threading algorithms supported by the IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// The threading algorithms are queried as part of the
+        /// <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
+        /// and <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The supported threading algorithms.</value>
+        public override HashSet<ThreadingAlgorithm> ThreadingAlgorithms => engine.ThreadingAlgorithms;
 
-		/// <summary>
-		/// Get or set the timeout for network streaming operations, in milliseconds.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
-		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
-		/// </remarks>
-		/// <value>The timeout in milliseconds.</value>
-		public override int Timeout {
+        /// <summary>
+        /// Get or set the timeout for network streaming operations, in milliseconds.
+        /// </summary>
+        /// <remarks>
+        /// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
+        /// and <see cref="System.IO.Stream.WriteTimeout"/> values.
+        /// </remarks>
+        /// <value>The timeout in milliseconds.</value>
+        public override int Timeout {
 			get { return timeout; }
 			set {
 				if (IsConnected && engine.Stream.CanTimeout) {
@@ -636,68 +622,60 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		/// <summary>
-		/// Get whether or not the client is currently connected to an IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
-		/// one of the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
-		/// methods succeeds and is not set back to <c>false</c> until either the client
-		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
-		/// <see cref="ImapProtocolException"/> is thrown while attempting to read or write to
-		/// the underlying network socket.</para>
-		/// <para>When an <see cref="ImapProtocolException"/> is caught, the connection state of the
-		/// <see cref="ImapClient"/> should be checked before continuing.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public override bool IsConnected {
-			get { return engine.IsConnected; }
-		}
+        /// <summary>
+        /// Get whether or not the client is currently connected to an IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+        /// one of the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
+        /// methods succeeds and is not set back to <c>false</c> until either the client
+        /// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
+        /// <see cref="ImapProtocolException"/> is thrown while attempting to read or write to
+        /// the underlying network socket.</para>
+        /// <para>When an <see cref="ImapProtocolException"/> is caught, the connection state of the
+        /// <see cref="ImapClient"/> should be checked before continuing.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        public override bool IsConnected => engine.IsConnected;
 
-		/// <summary>
-		/// Get whether or not the connection is secure (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is secure (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
-		public override bool IsSecure {
-			get { return IsConnected && secure; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is secure (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is secure (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+        public override bool IsSecure => IsConnected && secure;
 
-		/// <summary>
-		/// Get whether or not the connection is encrypted (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
-		public override bool IsEncrypted {
-			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is encrypted (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is encrypted (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+        public override bool IsEncrypted => IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted;
 
-		/// <summary>
-		/// Get whether or not the connection is signed (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is signed (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
-		public override bool IsSigned {
-			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is signed (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is signed (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+        public override bool IsSigned => IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned;
 
-		/// <summary>
-		/// Get the negotiated SSL or TLS protocol version.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets the negotiated SSL or TLS protocol version once an SSL or TLS connection has been made.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
-		/// </example>
-		/// <value>The negotiated SSL or TLS protocol version.</value>
-		public override SslProtocols SslProtocol {
+        /// <summary>
+        /// Get the negotiated SSL or TLS protocol version.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets the negotiated SSL or TLS protocol version once an SSL or TLS connection has been made.</para>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
+        /// </example>
+        /// <value>The negotiated SSL or TLS protocol version.</value>
+        public override SslProtocols SslProtocol {
 			get {
 				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.SslProtocol;
@@ -838,32 +816,28 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		/// <summary>
-		/// Get whether or not the client is currently authenticated with the IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the client is currently authenticated with the IMAP server.</para>
-		/// <para>To authenticate with the IMAP server, use one of the
-		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
-		/// methods.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public override bool IsAuthenticated {
-			get { return engine.State >= ImapEngineState.Authenticated; }
-		}
+        /// <summary>
+        /// Get whether or not the client is currently authenticated with the IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not the client is currently authenticated with the IMAP server.</para>
+        /// <para>To authenticate with the IMAP server, use one of the
+        /// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
+        /// methods.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        public override bool IsAuthenticated => engine.State >= ImapEngineState.Authenticated;
 
-		/// <summary>
-		/// Get whether or not the client is currently in the IDLE state.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the client is currently in the IDLE state.
-		/// </remarks>
-		/// <value><c>true</c> if an IDLE command is active; otherwise, <c>false</c>.</value>
-		public bool IsIdle {
-			get { return engine.State == ImapEngineState.Idle; }
-		}
+        /// <summary>
+        /// Get whether or not the client is currently in the IDLE state.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the client is currently in the IDLE state.
+        /// </remarks>
+        /// <value><c>true</c> if an IDLE command is active; otherwise, <c>false</c>.</value>
+        public bool IsIdle => engine.State == ImapEngineState.Idle;
 
-		static AuthenticationException CreateAuthenticationException (ImapCommand ic)
+        static AuthenticationException CreateAuthenticationException (ImapCommand ic)
 		{
 			for (int i = 0; i < ic.RespCodes.Count; i++) {
 				if (ic.RespCodes[i].IsError || ic.RespCodes[i].Type == ImapResponseCodeType.Alert)
@@ -2257,80 +2231,72 @@ namespace MailKit.Net.Imap {
 
 		#region IMailStore implementation
 
-		/// <summary>
-		/// Get the personal namespaces.
-		/// </summary>
-		/// <remarks>
-		/// The personal folder namespaces contain a user's personal mailbox folders.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
-		/// </example>
-		/// <value>The personal namespaces.</value>
-		public override FolderNamespaceCollection PersonalNamespaces {
-			get { return engine.PersonalNamespaces; }
-		}
+        /// <summary>
+        /// Get the personal namespaces.
+        /// </summary>
+        /// <remarks>
+        /// The personal folder namespaces contain a user's personal mailbox folders.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
+        /// </example>
+        /// <value>The personal namespaces.</value>
+        public override FolderNamespaceCollection PersonalNamespaces => engine.PersonalNamespaces;
 
-		/// <summary>
-		/// Get the shared namespaces.
-		/// </summary>
-		/// <remarks>
-		/// The shared folder namespaces contain mailbox folders that are shared with the user.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
-		/// </example>
-		/// <value>The shared namespaces.</value>
-		public override FolderNamespaceCollection SharedNamespaces {
-			get { return engine.SharedNamespaces; }
-		}
+        /// <summary>
+        /// Get the shared namespaces.
+        /// </summary>
+        /// <remarks>
+        /// The shared folder namespaces contain mailbox folders that are shared with the user.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
+        /// </example>
+        /// <value>The shared namespaces.</value>
+        public override FolderNamespaceCollection SharedNamespaces => engine.SharedNamespaces;
 
-		/// <summary>
-		/// Get the other namespaces.
-		/// </summary>
-		/// <remarks>
-		/// The other folder namespaces contain other mailbox folders.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
-		/// </example>
-		/// <value>The other namespaces.</value>
-		public override FolderNamespaceCollection OtherNamespaces {
-			get { return engine.OtherNamespaces; }
-		}
+        /// <summary>
+        /// Get the other namespaces.
+        /// </summary>
+        /// <remarks>
+        /// The other folder namespaces contain other mailbox folders.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
+        /// </example>
+        /// <value>The other namespaces.</value>
+        public override FolderNamespaceCollection OtherNamespaces => engine.OtherNamespaces;
 
-		/// <summary>
-		/// Get whether or not the mail store supports quotas.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the mail store supports quotas.
-		/// </remarks>
-		/// <value><c>true</c> if the mail store supports quotas; otherwise, <c>false</c>.</value>
-		public override bool SupportsQuotas {
-			get { return (engine.Capabilities & ImapCapabilities.Quota) != 0; }
-		}
+        /// <summary>
+        /// Get whether or not the mail store supports quotas.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the mail store supports quotas.
+        /// </remarks>
+        /// <value><c>true</c> if the mail store supports quotas; otherwise, <c>false</c>.</value>
+        public override bool SupportsQuotas => (engine.Capabilities & ImapCapabilities.Quota) != 0;
 
-		/// <summary>
-		/// Get the Inbox folder.
-		/// </summary>
-		/// <remarks>
-		/// <para>The Inbox folder is the default folder and always exists on the server.</para>
-		/// <note type="note">This property will only be available after the client has been authenticated.</note>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
-		/// </example>
-		/// <value>The Inbox folder.</value>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		public override IMailFolder Inbox {
+        /// <summary>
+        /// Get the Inbox folder.
+        /// </summary>
+        /// <remarks>
+        /// <para>The Inbox folder is the default folder and always exists on the server.</para>
+        /// <note type="note">This property will only be available after the client has been authenticated.</note>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+        /// </example>
+        /// <value>The Inbox folder.</value>
+        /// <exception cref="System.ObjectDisposedException">
+        /// The <see cref="ImapClient"/> has been disposed.
+        /// </exception>
+        /// <exception cref="ServiceNotConnectedException">
+        /// The <see cref="ImapClient"/> is not connected.
+        /// </exception>
+        /// <exception cref="ServiceNotAuthenticatedException">
+        /// The <see cref="ImapClient"/> is not authenticated.
+        /// </exception>
+        public override IMailFolder Inbox {
 			get {
 				CheckDisposed ();
 				CheckConnected ();

@@ -75,44 +75,36 @@ namespace MailKit {
 			get; private set;
 		}
 
-		/// <summary>
-		/// Gets whether the stream supports reading.
-		/// </summary>
-		/// <value><c>true</c> if the stream supports reading; otherwise, <c>false</c>.</value>
-		public override bool CanRead {
-			get { return true; }
-		}
+        /// <summary>
+        /// Gets whether the stream supports reading.
+        /// </summary>
+        /// <value><c>true</c> if the stream supports reading; otherwise, <c>false</c>.</value>
+        public override bool CanRead => true;
 
-		/// <summary>
-		/// Gets whether the stream supports writing.
-		/// </summary>
-		/// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
-		public override bool CanWrite {
-			get { return true; }
-		}
+        /// <summary>
+        /// Gets whether the stream supports writing.
+        /// </summary>
+        /// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
+        public override bool CanWrite => true;
 
-		/// <summary>
-		/// Gets whether the stream supports seeking.
-		/// </summary>
-		/// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
-		public override bool CanSeek {
-			get { return false; }
-		}
+        /// <summary>
+        /// Gets whether the stream supports seeking.
+        /// </summary>
+        /// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
+        public override bool CanSeek => false;
 
-		/// <summary>
-		/// Gets whether the stream supports I/O timeouts.
-		/// </summary>
-		/// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
-		public override bool CanTimeout {
-			get { return InputStream.CanTimeout && OutputStream.CanTimeout; }
-		}
+        /// <summary>
+        /// Gets whether the stream supports I/O timeouts.
+        /// </summary>
+        /// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
+        public override bool CanTimeout => InputStream.CanTimeout && OutputStream.CanTimeout;
 
-		/// <summary>
-		/// Gets or sets a value, in miliseconds, that determines how long the stream will attempt to read before timing out.
-		/// </summary>
-		/// <returns>A value, in miliseconds, that determines how long the stream will attempt to read before timing out.</returns>
-		/// <value>The read timeout.</value>
-		public override int ReadTimeout {
+        /// <summary>
+        /// Gets or sets a value, in miliseconds, that determines how long the stream will attempt to read before timing out.
+        /// </summary>
+        /// <returns>A value, in miliseconds, that determines how long the stream will attempt to read before timing out.</returns>
+        /// <value>The read timeout.</value>
+        public override int ReadTimeout {
 			get { return InputStream.ReadTimeout; }
 			set { InputStream.ReadTimeout = value; }
 		}
@@ -140,19 +132,17 @@ namespace MailKit {
 			set { throw new NotSupportedException (); }
 		}
 
-		/// <summary>
-		/// Gets the length in bytes of the stream.
-		/// </summary>
-		/// <returns>A long value representing the length of the stream in bytes.</returns>
-		/// <value>The length of the stream.</value>
-		/// <exception cref="System.NotSupportedException">
-		/// The stream does not support seeking.
-		/// </exception>
-		public override long Length {
-			get { throw new NotSupportedException (); }
-		}
+        /// <summary>
+        /// Gets the length in bytes of the stream.
+        /// </summary>
+        /// <returns>A long value representing the length of the stream in bytes.</returns>
+        /// <value>The length of the stream.</value>
+        /// <exception cref="System.NotSupportedException">
+        /// The stream does not support seeking.
+        /// </exception>
+        public override long Length => throw new NotSupportedException();
 
-		static void ValidateArguments (byte[] buffer, int offset, int count)
+        static void ValidateArguments (byte[] buffer, int offset, int count)
 		{
 			if (buffer == null)
 				throw new ArgumentNullException (nameof (buffer));

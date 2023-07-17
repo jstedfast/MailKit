@@ -100,48 +100,42 @@ namespace MailKit {
 			get; private set;
 		}
 
-		/// <summary>
-		/// Gets the number of unique identifiers that have been remapped.
-		/// </summary>
-		/// <remarks>
-		/// Gets the number of unique identifiers that have been remapped.
-		/// </remarks>
-		/// <value>The count.</value>
-		public int Count {
-			get { return Source.Count; }
-		}
+        /// <summary>
+        /// Gets the number of unique identifiers that have been remapped.
+        /// </summary>
+        /// <remarks>
+        /// Gets the number of unique identifiers that have been remapped.
+        /// </remarks>
+        /// <value>The count.</value>
+        public int Count => Source.Count;
 
-		/// <summary>
-		/// Gets the keys.
-		/// </summary>
-		/// <remarks>
-		/// Gets the keys.
-		/// </remarks>
-		/// <value>The keys.</value>
-		public IEnumerable<UniqueId> Keys {
-			get { return Source; }
-		}
+        /// <summary>
+        /// Gets the keys.
+        /// </summary>
+        /// <remarks>
+        /// Gets the keys.
+        /// </remarks>
+        /// <value>The keys.</value>
+        public IEnumerable<UniqueId> Keys => Source;
 
-		/// <summary>
-		/// Gets the values.
-		/// </summary>
-		/// <remarks>
-		/// Gets the values.
-		/// </remarks>
-		/// <value>The values.</value>
-		public IEnumerable<UniqueId> Values {
-			get { return Destination; }
-		}
+        /// <summary>
+        /// Gets the values.
+        /// </summary>
+        /// <remarks>
+        /// Gets the values.
+        /// </remarks>
+        /// <value>The values.</value>
+        public IEnumerable<UniqueId> Values => Destination;
 
-		/// <summary>
-		/// Checks if the specified unique identifier has been remapped.
-		/// </summary>
-		/// <remarks>
-		/// Checks if the specified unique identifier has been remapped.
-		/// </remarks>
-		/// <returns><c>true</c> if the unique identifier has been remapped; otherwise, <c>false</c>.</returns>
-		/// <param name="key">The unique identifier.</param>
-		public bool ContainsKey (UniqueId key)
+        /// <summary>
+        /// Checks if the specified unique identifier has been remapped.
+        /// </summary>
+        /// <remarks>
+        /// Checks if the specified unique identifier has been remapped.
+        /// </remarks>
+        /// <returns><c>true</c> if the unique identifier has been remapped; otherwise, <c>false</c>.</returns>
+        /// <param name="key">The unique identifier.</param>
+        public bool ContainsKey (UniqueId key)
 		{
 			return Source.Contains (key);
 		}

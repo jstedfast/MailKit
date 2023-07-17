@@ -111,29 +111,25 @@ namespace MailKit.Security {
 		{
 		}
 
-		/// <summary>
-		/// Get the name of the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// Gets the name of the SASL mechanism.
-		/// </remarks>
-		/// <value>The name of the SASL mechanism.</value>
-		public override string MechanismName {
-			get { return "ANONYMOUS"; }
-		}
+        /// <summary>
+        /// Get the name of the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// Gets the name of the SASL mechanism.
+        /// </remarks>
+        /// <value>The name of the SASL mechanism.</value>
+        public override string MechanismName => "ANONYMOUS";
 
-		/// <summary>
-		/// Get whether or not the mechanism supports an initial response (SASL-IR).
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
-		/// <para>SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
-		public override bool SupportsInitialResponse {
-			get { return true; }
-		}
+        /// <summary>
+        /// Get whether or not the mechanism supports an initial response (SASL-IR).
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
+        /// <para>SASL mechanisms that support sending an initial client response to the server
+        /// should return <value>true</value>.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
+        public override bool SupportsInitialResponse => true;
 
 		/// <summary>
 		/// Parse the server's challenge token and return the next challenge response.

@@ -125,28 +125,26 @@ namespace MailKit {
 				throw new InvalidOperationException ("The HeaderSet is read-only.");
 		}
 
-		/// <summary>
-		/// Get the number of headers in the set.
-		/// </summary>
-		/// <remarks>
-		/// Gets the number of headers in the set.
-		/// </remarks>
-		/// <value>The number of headers.</value>
-		public int Count {
-			get { return hash.Count; }
-		}
+        /// <summary>
+        /// Get the number of headers in the set.
+        /// </summary>
+        /// <remarks>
+        /// Gets the number of headers in the set.
+        /// </remarks>
+        /// <value>The number of headers.</value>
+        public int Count => hash.Count;
 
-		/// <summary>
-		/// Get or set whether this set of headers is meant to be excluded when used with a <see cref="IFetchRequest"/>.
-		/// </summary>
-		/// <remarks>
-		/// Get or set whether this set of headers is meant to be excluded when used with a <see cref="IFetchRequest"/>.
-		/// </remarks>
-		/// <value><c>true</c> if the headers are meant to be excluded; otherwise, <c>false</c>.</value>
-		/// <exception cref="InvalidOperationException">
-		/// The operation is invalid because the <see cref="HeaderSet"/> is read-only.
-		/// </exception>
-		public bool Exclude {
+        /// <summary>
+        /// Get or set whether this set of headers is meant to be excluded when used with a <see cref="IFetchRequest"/>.
+        /// </summary>
+        /// <remarks>
+        /// Get or set whether this set of headers is meant to be excluded when used with a <see cref="IFetchRequest"/>.
+        /// </remarks>
+        /// <value><c>true</c> if the headers are meant to be excluded; otherwise, <c>false</c>.</value>
+        /// <exception cref="InvalidOperationException">
+        /// The operation is invalid because the <see cref="HeaderSet"/> is read-only.
+        /// </exception>
+        public bool Exclude {
 			get { return exclude; }
 			set {
 				CheckReadOnly ();

@@ -49,21 +49,13 @@ namespace MailKit.Security.Ntlm {
 			Dispose (false);
 		}
 
-		public bool CanReuseTransform {
-			get { return false; }
-		}
+        public bool CanReuseTransform => false;
 
-		public bool CanTransformMultipleBlocks {
-			get { return true; }
-		}
+        public bool CanTransformMultipleBlocks => true;
 
-		public int InputBlockSize {
-			get { return 1; }
-		}
+        public int InputBlockSize => 1;
 
-		public int OutputBlockSize {
-			get { return 1; }
-		}
+        public int OutputBlockSize => 1;
 
 		public override byte[] Key {
 			get {

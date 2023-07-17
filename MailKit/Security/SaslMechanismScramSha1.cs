@@ -68,26 +68,24 @@ namespace MailKit.Security {
 		{
 		}
 
-		/// <summary>
-		/// Get the name of the mechanism.
-		/// </summary>
-		/// <remarks>
-		/// Gets the name of the mechanism.
-		/// </remarks>
-		/// <value>The name of the mechanism.</value>
-		public override string MechanismName {
-			get { return "SCRAM-SHA-1"; }
-		}
+        /// <summary>
+        /// Get the name of the mechanism.
+        /// </summary>
+        /// <remarks>
+        /// Gets the name of the mechanism.
+        /// </remarks>
+        /// <value>The name of the mechanism.</value>
+        public override string MechanismName => "SCRAM-SHA-1";
 
-		/// <summary>
-		/// Create the HMAC context.
-		/// </summary>
-		/// <remarks>
-		/// Creates the HMAC context using the secret key.
-		/// </remarks>
-		/// <returns>The HMAC context.</returns>
-		/// <param name="key">The secret key.</param>
-		protected override KeyedHashAlgorithm CreateHMAC (byte[] key)
+        /// <summary>
+        /// Create the HMAC context.
+        /// </summary>
+        /// <remarks>
+        /// Creates the HMAC context using the secret key.
+        /// </remarks>
+        /// <returns>The HMAC context.</returns>
+        /// <param name="key">The secret key.</param>
+        protected override KeyedHashAlgorithm CreateHMAC (byte[] key)
 		{
 			return new HMACSHA1 (key);
 		}
@@ -149,26 +147,22 @@ namespace MailKit.Security {
 		{
 		}
 
-		/// <summary>
-		/// Get the name of the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// Gets the name of the SASL mechanism.
-		/// </remarks>
-		/// <value>The name of the SASL mechanism.</value>
-		public override string MechanismName {
-			get { return "SCRAM-SHA-1-PLUS"; }
-		}
+        /// <summary>
+        /// Get the name of the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// Gets the name of the SASL mechanism.
+        /// </remarks>
+        /// <value>The name of the SASL mechanism.</value>
+        public override string MechanismName => "SCRAM-SHA-1-PLUS";
 
-		/// <summary>
-		/// Get whether or not the SASL mechanism supports channel binding.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the SASL mechanism supports channel binding.
-		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
-		public override bool SupportsChannelBinding {
-			get { return true; }
-		}
-	}
+        /// <summary>
+        /// Get whether or not the SASL mechanism supports channel binding.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the SASL mechanism supports channel binding.
+        /// </remarks>
+        /// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+        public override bool SupportsChannelBinding => true;
+    }
 }

@@ -53,11 +53,9 @@ namespace MailKit {
 				End = end;
 			}
 
-			public int Count {
-				get { return (int) (Start <= End ? End - Start : Start - End) + 1; }
-			}
+            public int Count => (int)(Start <= End ? End - Start : Start - End) + 1;
 
-			public bool Contains (uint uid)
+            public bool Contains (uint uid)
 			{
 				if (Start <= End)
 					return uid >= Start && uid <= End;
@@ -193,31 +191,27 @@ namespace MailKit {
 			get; private set;
 		}
 
-		#region ICollection implementation
+        #region ICollection implementation
 
-		/// <summary>
-		/// Get the number of unique ids in the set.
-		/// </summary>
-		/// <remarks>
-		/// Gets the number of unique ids in the set.
-		/// </remarks>
-		/// <value>The count.</value>
-		public int Count {
-			get { return (int) Math.Min (count, int.MaxValue); }
-		}
+        /// <summary>
+        /// Get the number of unique ids in the set.
+        /// </summary>
+        /// <remarks>
+        /// Gets the number of unique ids in the set.
+        /// </remarks>
+        /// <value>The count.</value>
+        public int Count => (int)Math.Min(count, int.MaxValue);
 
-		/// <summary>
-		/// Get whether or not the set is read only.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the set is read-only.
-		/// </remarks>
-		/// <value><c>true</c> if the set is read only; otherwise, <c>false</c>.</value>
-		public bool IsReadOnly {
-			get { return false; }
-		}
+        /// <summary>
+        /// Get whether or not the set is read only.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the set is read-only.
+        /// </remarks>
+        /// <value><c>true</c> if the set is read only; otherwise, <c>false</c>.</value>
+        public bool IsReadOnly => false;
 
-		int BinarySearch (uint uid)
+        int BinarySearch (uint uid)
 		{
 			int min = 0, max = ranges.Count;
 

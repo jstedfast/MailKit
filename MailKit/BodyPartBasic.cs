@@ -162,9 +162,7 @@ namespace MailKit {
 		/// fetching summary information from an <see cref="IMailFolder"/>.</note>
 		/// </remarks>
 		/// <value><c>true</c> if this part is an attachment; otherwise, <c>false</c>.</value>
-		public bool IsAttachment {
-			get { return ContentDisposition != null && ContentDisposition.IsAttachment; }
-		}
+		public bool IsAttachment => ContentDisposition != null && ContentDisposition.IsAttachment;
 
 		/// <summary>
 		/// Get the name of the file.

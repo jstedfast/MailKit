@@ -106,47 +106,43 @@ namespace MailKit.Net.Pop3 {
 			get; set;
 		}
 
-		/// <summary>
-		/// Gets the underlying POP3 stream.
-		/// </summary>
-		/// <remarks>
-		/// Gets the underlying POP3 stream.
-		/// </remarks>
-		/// <value>The pop3 stream.</value>
-		public Pop3Stream Stream {
-			get { return stream; }
-		}
+        /// <summary>
+        /// Gets the underlying POP3 stream.
+        /// </summary>
+        /// <remarks>
+        /// Gets the underlying POP3 stream.
+        /// </remarks>
+        /// <value>The pop3 stream.</value>
+        public Pop3Stream Stream => stream;
 
-		/// <summary>
-		/// Gets or sets the state of the engine.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets the state of the engine.
-		/// </remarks>
-		/// <value>The engine state.</value>
-		public Pop3EngineState State {
+        /// <summary>
+        /// Gets or sets the state of the engine.
+        /// </summary>
+        /// <remarks>
+        /// Gets or sets the state of the engine.
+        /// </remarks>
+        /// <value>The engine state.</value>
+        public Pop3EngineState State {
 			get; internal set;
 		}
 
-		/// <summary>
-		/// Gets whether or not the engine is currently connected to a POP3 server.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the engine is currently connected to a POP3 server.
-		/// </remarks>
-		/// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
-		public bool IsConnected {
-			get { return stream != null && stream.IsConnected; }
-		}
+        /// <summary>
+        /// Gets whether or not the engine is currently connected to a POP3 server.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the engine is currently connected to a POP3 server.
+        /// </remarks>
+        /// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
+        public bool IsConnected => stream != null && stream.IsConnected;
 
-		/// <summary>
-		/// Gets the APOP authentication token.
-		/// </summary>
-		/// <remarks>
-		/// Gets the APOP authentication token.
-		/// </remarks>
-		/// <value>The APOP authentication token.</value>
-		public string ApopToken {
+        /// <summary>
+        /// Gets the APOP authentication token.
+        /// </summary>
+        /// <remarks>
+        /// Gets the APOP authentication token.
+        /// </remarks>
+        /// <value>The APOP authentication token.</value>
+        public string ApopToken {
 			get; private set;
 		}
 

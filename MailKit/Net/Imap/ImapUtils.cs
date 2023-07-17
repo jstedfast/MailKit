@@ -1386,15 +1386,11 @@ namespace MailKit.Net.Imap {
 				Domain = values[3];
 			}
 
-			public bool IsGroupStart {
-				get { return Name == null && Route == null && Mailbox != null && Domain == null; }
-			}
+            public bool IsGroupStart => Name == null && Route == null && Mailbox != null && Domain == null;
 
-			public bool IsGroupEnd {
-				get { return Name == null && Route == null && Mailbox == null && Domain == null; }
-			}
+            public bool IsGroupEnd => Name == null && Route == null && Mailbox == null && Domain == null;
 
-			public MailboxAddress ToMailboxAddress (ImapEngine engine)
+            public MailboxAddress ToMailboxAddress (ImapEngine engine)
 			{
 				if (engine.QuirksMode == ImapQuirksMode.GMail && Name != null && Name[0] == '<' && Name[Name.Length - 1] == '>' && Mailbox != null && Domain == null) {
 					// For whatever reason, GMail seems to sometimes break by reversing the Name and Mailbox tokens.

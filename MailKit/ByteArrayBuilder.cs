@@ -41,9 +41,7 @@ namespace MailKit
 			length = 0;
 		}
 
-		public int Length {
-			get { return length; }
-		}
+		public int Length => length;
 
 		void EnsureCapacity (int capacity)
 		{

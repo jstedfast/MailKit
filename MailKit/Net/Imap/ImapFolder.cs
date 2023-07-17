@@ -117,39 +117,35 @@ namespace MailKit.Net.Imap {
 			get; set;
 		}
 
-		/// <summary>
-		/// Gets an object that can be used to synchronize access to the IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets an object that can be used to synchronize access to the IMAP server.</para>
-		/// <para>When using the non-Async methods from multiple threads, it is important to lock the
-		/// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
-		/// </remarks>
-		/// <value>The lock object.</value>
-		public override object SyncRoot {
-			get { return Engine; }
-		}
+        /// <summary>
+        /// Gets an object that can be used to synchronize access to the IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets an object that can be used to synchronize access to the IMAP server.</para>
+        /// <para>When using the non-Async methods from multiple threads, it is important to lock the
+        /// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
+        /// </remarks>
+        /// <value>The lock object.</value>
+        public override object SyncRoot => Engine;
 
-		/// <summary>
-		/// Get the threading algorithms supported by the folder.
-		/// </summary>
-		/// <remarks>
-		/// Get the threading algorithms supported by the folder.
-		/// </remarks>
-		/// <value>The supported threading algorithms.</value>
-		public override HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
-			get { return Engine.ThreadingAlgorithms; }
-		}
+        /// <summary>
+        /// Get the threading algorithms supported by the folder.
+        /// </summary>
+        /// <remarks>
+        /// Get the threading algorithms supported by the folder.
+        /// </remarks>
+        /// <value>The supported threading algorithms.</value>
+        public override HashSet<ThreadingAlgorithm> ThreadingAlgorithms => Engine.ThreadingAlgorithms;
 
-		/// <summary>
-		/// Determine whether or not an <see cref="ImapFolder"/> supports a feature.
-		/// </summary>
-		/// <remarks>
-		/// Determines whether or not an <see cref="ImapFolder"/> supports a feature.
-		/// </remarks>
-		/// <param name="feature">The desired feature.</param>
-		/// <returns><c>true</c> if the feature is supported; otherwise, <c>false</c>.</returns>
-		public override bool Supports (FolderFeature feature)
+        /// <summary>
+        /// Determine whether or not an <see cref="ImapFolder"/> supports a feature.
+        /// </summary>
+        /// <remarks>
+        /// Determines whether or not an <see cref="ImapFolder"/> supports a feature.
+        /// </remarks>
+        /// <param name="feature">The desired feature.</param>
+        /// <returns><c>true</c> if the feature is supported; otherwise, <c>false</c>.</returns>
+        public override bool Supports (FolderFeature feature)
 		{
 			switch (feature) {
 			case FolderFeature.AccessRights: return (Engine.Capabilities & ImapCapabilities.Acl) != 0;
@@ -302,18 +298,16 @@ namespace MailKit.Net.Imap {
 
 		#region IMailFolder implementation
 
-		/// <summary>
-		/// Gets a value indicating whether the folder is currently open.
-		/// </summary>
-		/// <remarks>
-		/// Gets a value indicating whether the folder is currently open.
-		/// </remarks>
-		/// <value><c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
-		public override bool IsOpen {
-			get { return Engine.Selected == this; }
-		}
+        /// <summary>
+        /// Gets a value indicating whether the folder is currently open.
+        /// </summary>
+        /// <remarks>
+        /// Gets a value indicating whether the folder is currently open.
+        /// </remarks>
+        /// <value><c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
+        public override bool IsOpen => Engine.Selected == this;
 
-		static string SelectOrExamine (FolderAccess access)
+        static string SelectOrExamine (FolderAccess access)
 		{
 			return access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT";
 		}

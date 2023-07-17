@@ -248,16 +248,14 @@ namespace MailKit.Net.Imap {
 			get; set;
 		}
 
-		/// <summary>
-		/// Indicates whether or not the engine is busy processing commands.
-		/// </summary>
-		/// <remarks>
-		/// Indicates whether or not the engine is busy processing commands.
-		/// </remarks>
-		/// <value><c>true</c> if th e engine is busy processing commands; otherwise, <c>false</c>.</value>
-		internal bool IsBusy {
-			get { return current != null; }
-		}
+        /// <summary>
+        /// Indicates whether or not the engine is busy processing commands.
+        /// </summary>
+        /// <remarks>
+        /// Indicates whether or not the engine is busy processing commands.
+        /// </remarks>
+        /// <value><c>true</c> if th e engine is busy processing commands; otherwise, <c>false</c>.</value>
+        internal bool IsBusy => current != null;
 
 		/// <summary>
 		/// Get the capabilities version.
@@ -370,16 +368,14 @@ namespace MailKit.Net.Imap {
 			get; internal set;
 		}
 
-		/// <summary>
-		/// Get whether or not the engine is currently connected to a IMAP server.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the engine is currently connected to a IMAP server.
-		/// </remarks>
-		/// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
-		public bool IsConnected {
-			get { return Stream != null && Stream.IsConnected; }
-		}
+        /// <summary>
+        /// Get whether or not the engine is currently connected to a IMAP server.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the engine is currently connected to a IMAP server.
+        /// </remarks>
+        /// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
+        public bool IsConnected => Stream != null && Stream.IsConnected;
 
 		/// <summary>
 		/// Gets the personal folder namespaces.
@@ -425,16 +421,14 @@ namespace MailKit.Net.Imap {
 			get; internal set;
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the engine is disposed.
-		/// </summary>
-		/// <remarks>
-		/// Gets a value indicating whether the engine is disposed.
-		/// </remarks>
-		/// <value><c>true</c> if the engine is disposed; otherwise, <c>false</c>.</value>
-		public bool IsDisposed {
-			get { return disposed; }
-		}
+        /// <summary>
+        /// Gets a value indicating whether the engine is disposed.
+        /// </summary>
+        /// <remarks>
+        /// Gets a value indicating whether the engine is disposed.
+        /// </remarks>
+        /// <value><c>true</c> if the engine is disposed; otherwise, <c>false</c>.</value>
+        public bool IsDisposed => disposed;
 
 		/// <summary>
 		/// Gets whether the current NOTIFY status prevents using indexes and * for referencing messages.

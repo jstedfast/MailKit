@@ -274,47 +274,43 @@ namespace MailKit {
 			get; protected set;
 		}
 
-		/// <summary>
-		/// Get a value indicating whether the folder is subscribed.
-		/// </summary>
-		/// <remarks>
-		/// Gets a value indicating whether the folder is subscribed.
-		/// </remarks>
-		/// <value><c>true</c> if the folder is subscribed; otherwise, <c>false</c>.</value>
-		public bool IsSubscribed {
-			get { return (Attributes & FolderAttributes.Subscribed) != 0; }
-		}
+        /// <summary>
+        /// Get a value indicating whether the folder is subscribed.
+        /// </summary>
+        /// <remarks>
+        /// Gets a value indicating whether the folder is subscribed.
+        /// </remarks>
+        /// <value><c>true</c> if the folder is subscribed; otherwise, <c>false</c>.</value>
+        public bool IsSubscribed => (Attributes & FolderAttributes.Subscribed) != 0;
 
-		/// <summary>
-		/// Get a value indicating whether the folder is currently open.
-		/// </summary>
-		/// <remarks>
-		/// Gets a value indicating whether the folder is currently open.
-		/// </remarks>
-		/// <value><c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
-		public abstract bool IsOpen {
+        /// <summary>
+        /// Get a value indicating whether the folder is currently open.
+        /// </summary>
+        /// <remarks>
+        /// Gets a value indicating whether the folder is currently open.
+        /// </remarks>
+        /// <value><c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
+        public abstract bool IsOpen {
 			get;
 		}
 
-		/// <summary>
-		/// Get a value indicating whether the folder exists.
-		/// </summary>
-		/// <remarks>
-		/// Gets a value indicating whether the folder exists.
-		/// </remarks>
-		/// <value><c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
-		public bool Exists {
-			get { return (Attributes & FolderAttributes.NonExistent) == 0; }
-		}
+        /// <summary>
+        /// Get a value indicating whether the folder exists.
+        /// </summary>
+        /// <remarks>
+        /// Gets a value indicating whether the folder exists.
+        /// </remarks>
+        /// <value><c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
+        public bool Exists => (Attributes & FolderAttributes.NonExistent) == 0;
 
-		/// <summary>
-		/// Get the highest mod-sequence value of all messages in the mailbox.
-		/// </summary>
-		/// <remarks>
-		/// Gets the highest mod-sequence value of all messages in the mailbox.
-		/// </remarks>
-		/// <value>The highest mod-sequence value.</value>
-		public ulong HighestModSeq {
+        /// <summary>
+        /// Get the highest mod-sequence value of all messages in the mailbox.
+        /// </summary>
+        /// <remarks>
+        /// Gets the highest mod-sequence value of all messages in the mailbox.
+        /// </remarks>
+        /// <value>The highest mod-sequence value.</value>
+        public ulong HighestModSeq {
 			get; protected set;
 		}
 

@@ -174,45 +174,41 @@ namespace MailKit.Net.Smtp {
 			get; set;
 		}
 
-		/// <summary>
-		/// Gets an object that can be used to synchronize access to the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets an object that can be used to synchronize access to the SMTP server between multiple threads.</para>
-		/// <para>When using <see cref="SmtpClient"/> methods from multiple threads, it is important to lock the
-		/// <see cref="SyncRoot"/> object for thread safety.</para>
-		/// </remarks>
-		/// <value>The lock object.</value>
-		public override object SyncRoot {
-			get { return this; }
-		}
+        /// <summary>
+        /// Gets an object that can be used to synchronize access to the SMTP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets an object that can be used to synchronize access to the SMTP server between multiple threads.</para>
+        /// <para>When using <see cref="SmtpClient"/> methods from multiple threads, it is important to lock the
+        /// <see cref="SyncRoot"/> object for thread safety.</para>
+        /// </remarks>
+        /// <value>The lock object.</value>
+        public override object SyncRoot => this;
 
-		/// <summary>
-		/// Get the protocol supported by the message service.
-		/// </summary>
-		/// <remarks>
-		/// Gets the protocol supported by the message service.
-		/// </remarks>
-		/// <value>The protocol.</value>
-		protected override string Protocol {
-			get { return "smtp"; }
-		}
+        /// <summary>
+        /// Get the protocol supported by the message service.
+        /// </summary>
+        /// <remarks>
+        /// Gets the protocol supported by the message service.
+        /// </remarks>
+        /// <value>The protocol.</value>
+        protected override string Protocol => "smtp";
 
-		/// <summary>
-		/// Get the capabilities supported by the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made
-		/// and may change once the client is authenticated.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The capabilities.</value>
-		/// <exception cref="System.ArgumentException">
-		/// Capabilities cannot be enabled, they may only be disabled.
-		/// </exception>
-		public SmtpCapabilities Capabilities {
+        /// <summary>
+        /// Get the capabilities supported by the SMTP server.
+        /// </summary>
+        /// <remarks>
+        /// The capabilities will not be known until a successful connection has been made
+        /// and may change once the client is authenticated.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The capabilities.</value>
+        /// <exception cref="System.ArgumentException">
+        /// Capabilities cannot be enabled, they may only be disabled.
+        /// </exception>
+        public SmtpCapabilities Capabilities {
 			get { return capabilities; }
 			set {
 				if ((capabilities | value) > capabilities)
@@ -235,37 +231,35 @@ namespace MailKit.Net.Smtp {
 			get; set;
 		}
 
-		/// <summary>
-		/// Get whether or not the BDAT command is preferred over the DATA command.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the <c>BDAT</c> command is preferred over the standard <c>DATA</c>
-		/// command.</para>
-		/// <para>The <c>BDAT</c> command is normally only used when the message being sent contains binary data
-		/// (e.g. one mor more MIME parts contains a <c>Content-Transfer-Encoding: binary</c> header). This
-		/// option provides a way to override this behavior, forcing the <see cref="SmtpClient"/> to send
-		/// messages using the <c>BDAT</c> command instead of the <c>DATA</c> command even when it is not
-		/// necessary to do so.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the <c>BDAT</c> command is preferred over the <c>DATA</c> command; otherwise, <c>false</c>.</value>
-		protected virtual bool PreferSendAsBinaryData {
-			get { return false; }
-		}
+        /// <summary>
+        /// Get whether or not the BDAT command is preferred over the DATA command.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not the <c>BDAT</c> command is preferred over the standard <c>DATA</c>
+        /// command.</para>
+        /// <para>The <c>BDAT</c> command is normally only used when the message being sent contains binary data
+        /// (e.g. one mor more MIME parts contains a <c>Content-Transfer-Encoding: binary</c> header). This
+        /// option provides a way to override this behavior, forcing the <see cref="SmtpClient"/> to send
+        /// messages using the <c>BDAT</c> command instead of the <c>DATA</c> command even when it is not
+        /// necessary to do so.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the <c>BDAT</c> command is preferred over the <c>DATA</c> command; otherwise, <c>false</c>.</value>
+        protected virtual bool PreferSendAsBinaryData => false;
 
-		/// <summary>
-		/// Get the maximum message size supported by the server.
-		/// </summary>
-		/// <remarks>
-		/// <para>The maximum message size will not be known until a successful connection has
-		/// been made and may change once the client is authenticated.</para>
-		/// <note type="note">This value is only relevant if the <see cref="Capabilities"/> includes
-		/// the <see cref="SmtpCapabilities.Size"/> flag.</note>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The maximum message size supported by the server.</value>
-		public uint MaxSize {
+        /// <summary>
+        /// Get the maximum message size supported by the server.
+        /// </summary>
+        /// <remarks>
+        /// <para>The maximum message size will not be known until a successful connection has
+        /// been made and may change once the client is authenticated.</para>
+        /// <note type="note">This value is only relevant if the <see cref="Capabilities"/> includes
+        /// the <see cref="SmtpCapabilities.Size"/> flag.</note>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The maximum message size supported by the server.</value>
+        public uint MaxSize {
 			get; private set;
 		}
 
@@ -275,35 +269,33 @@ namespace MailKit.Net.Smtp {
 				throw new ObjectDisposedException (nameof (SmtpClient));
 		}
 
-		#region IMailService implementation
+        #region IMailService implementation
 
-		/// <summary>
-		/// Get the authentication mechanisms supported by the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>The authentication mechanisms are queried as part of the connection
-		/// process.</para>
-		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
-		/// before authenticating.</note>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The authentication mechanisms.</value>
-		public override HashSet<string> AuthenticationMechanisms {
-			get { return authenticationMechanisms; }
-		}
+        /// <summary>
+        /// Get the authentication mechanisms supported by the SMTP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>The authentication mechanisms are queried as part of the connection
+        /// process.</para>
+        /// <note type="tip">To prevent the usage of certain authentication mechanisms,
+        /// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+        /// before authenticating.</note>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The authentication mechanisms.</value>
+        public override HashSet<string> AuthenticationMechanisms => authenticationMechanisms;
 
-		/// <summary>
-		/// Get or set the timeout for network streaming operations, in milliseconds.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
-		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
-		/// </remarks>
-		/// <value>The timeout in milliseconds.</value>
-		public override int Timeout {
+        /// <summary>
+        /// Get or set the timeout for network streaming operations, in milliseconds.
+        /// </summary>
+        /// <remarks>
+        /// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
+        /// and <see cref="System.IO.Stream.WriteTimeout"/> values.
+        /// </remarks>
+        /// <value>The timeout in milliseconds.</value>
+        public override int Timeout {
 			get { return timeout; }
 			set {
 				if (IsConnected && Stream.CanTimeout) {
@@ -315,71 +307,63 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		/// <summary>
-		/// Get whether or not the client is currently connected to an SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
-		/// one of the <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
-		/// methods succeeds and is not set back to <c>false</c> until either the client
-		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
-		/// <see cref="SmtpProtocolException"/> is thrown while attempting to read or write to
-		/// the underlying network socket.</para>
-		/// <para>When an <see cref="SmtpProtocolException"/> is caught, the connection state of the
-		/// <see cref="SmtpClient"/> should be checked before continuing.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
-		/// </example>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public override bool IsConnected {
-			get { return connected; }
-		}
+        /// <summary>
+        /// Get whether or not the client is currently connected to an SMTP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+        /// one of the <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
+        /// methods succeeds and is not set back to <c>false</c> until either the client
+        /// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
+        /// <see cref="SmtpProtocolException"/> is thrown while attempting to read or write to
+        /// the underlying network socket.</para>
+        /// <para>When an <see cref="SmtpProtocolException"/> is caught, the connection state of the
+        /// <see cref="SmtpClient"/> should be checked before continuing.</para>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
+        /// </example>
+        /// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        public override bool IsConnected => connected;
 
-		/// <summary>
-		/// Get whether or not the connection is secure (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is secure (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
-		public override bool IsSecure {
-			get { return IsConnected && secure; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is secure (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is secure (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+        public override bool IsSecure => IsConnected && secure;
 
-		/// <summary>
-		/// Get whether or not the connection is encrypted (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
-		public override bool IsEncrypted {
-			get { return IsSecure && (Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is encrypted (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is encrypted (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+        public override bool IsEncrypted => IsSecure && (Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted;
 
-		/// <summary>
-		/// Get whether or not the connection is signed (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is signed (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
-		public override bool IsSigned {
-			get { return IsSecure && (Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is signed (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is signed (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+        public override bool IsSigned => IsSecure && (Stream.Stream is SslStream sslStream) && sslStream.IsSigned;
 
-		/// <summary>
-		/// Get the negotiated SSL or TLS protocol version.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets the negotiated SSL or TLS protocol version once an SSL or TLS connection has been made.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
-		/// </example>
-		/// <value>The negotiated SSL or TLS protocol version.</value>
-		public override SslProtocols SslProtocol {
+        /// <summary>
+        /// Get the negotiated SSL or TLS protocol version.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets the negotiated SSL or TLS protocol version once an SSL or TLS connection has been made.</para>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
+        /// </example>
+        /// <value>The negotiated SSL or TLS protocol version.</value>
+        public override SslProtocols SslProtocol {
 			get {
 				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.SslProtocol;
@@ -520,21 +504,19 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		/// <summary>
-		/// Get whether or not the client is currently authenticated with the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the client is currently authenticated with the SMTP server.</para>
-		/// <para>To authenticate with the SMTP server, use one of the
-		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a>
-		/// methods.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public override bool IsAuthenticated {
-			get { return authenticated; }
-		}
+        /// <summary>
+        /// Get whether or not the client is currently authenticated with the SMTP server.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not the client is currently authenticated with the SMTP server.</para>
+        /// <para>To authenticate with the SMTP server, use one of the
+        /// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a>
+        /// methods.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        public override bool IsAuthenticated => authenticated;
 
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			bool valid;
 

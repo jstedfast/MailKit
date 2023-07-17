@@ -122,53 +122,45 @@ namespace MailKit.Security {
 			get; set;
 		}
 
-		/// <summary>
-		/// Get the name of the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// Gets the name of the SASL mechanism.
-		/// </remarks>
-		/// <value>The name of the SASL mechanism.</value>
-		public override string MechanismName {
-			get { return "NTLM"; }
-		}
+        /// <summary>
+        /// Get the name of the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// Gets the name of the SASL mechanism.
+        /// </remarks>
+        /// <value>The name of the SASL mechanism.</value>
+        public override string MechanismName => "NTLM";
 
-		/// <summary>
-		/// Get whether or not the SASL mechanism supports channel binding.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the SASL mechanism supports channel binding.
-		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
-		public override bool SupportsChannelBinding {
-			get { return true; }
-		}
+        /// <summary>
+        /// Get whether or not the SASL mechanism supports channel binding.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the SASL mechanism supports channel binding.
+        /// </remarks>
+        /// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+        public override bool SupportsChannelBinding => true;
 
-		/// <summary>
-		/// Get whether or not channel-binding was negotiated by the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not channel-binding has been negotiated by the SASL mechanism.</para>
-		/// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
-		/// channel-bindings.</note>
-		/// </remarks>
-		/// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
-		public override bool NegotiatedChannelBinding {
-			get { return negotiatedChannelBinding; }
-		}
+        /// <summary>
+        /// Get whether or not channel-binding was negotiated by the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not channel-binding has been negotiated by the SASL mechanism.</para>
+        /// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
+        /// channel-bindings.</note>
+        /// </remarks>
+        /// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
+        public override bool NegotiatedChannelBinding => negotiatedChannelBinding;
 
-		/// <summary>
-		/// Get whether or not the mechanism supports an initial response (SASL-IR).
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
-		/// <para>SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
-		public override bool SupportsInitialResponse {
-			get { return true; }
-		}
+        /// <summary>
+        /// Get whether or not the mechanism supports an initial response (SASL-IR).
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
+        /// <para>SASL mechanisms that support sending an initial client response to the server
+        /// should return <value>true</value>.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
+        public override bool SupportsInitialResponse => true;
 
 		/// <summary>
 		/// Get or set a value indicating whether or not the NTLM SASL mechanism should allow channel-binding.

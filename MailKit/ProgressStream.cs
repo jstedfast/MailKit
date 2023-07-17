@@ -57,25 +57,15 @@ namespace MailKit {
 			get; set;
 		}
 
-		public override bool CanRead {
-			get { return Source.CanRead; }
-		}
+        public override bool CanRead => Source.CanRead;
 
-		public override bool CanWrite {
-			get { return Source.CanWrite; }
-		}
+        public override bool CanWrite => Source.CanWrite;
 
-		public override bool CanSeek {
-			get { return false; }
-		}
+        public override bool CanSeek => false;
 
-		public override bool CanTimeout {
-			get { return Source.CanTimeout; }
-		}
+        public override bool CanTimeout => Source.CanTimeout;
 
-		public override long Length {
-			get { return Source.Length; }
-		}
+        public override long Length => Source.Length;
 
 		public override long Position {
 			get { return Source.Position; }

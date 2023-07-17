@@ -55,28 +55,26 @@ namespace MailKit {
 
 		#region ICollection implementation
 
-		/// <summary>
-		/// Gets the number of folder namespaces contained in the collection.
-		/// </summary>
-		/// <remarks>
-		/// Gets the number of folder namespaces contained in the collection.
-		/// </remarks>
-		/// <value>The count.</value>
-		public int Count {
-			get { return namespaces.Count; }
-		}
+        /// <summary>
+        /// Gets the number of folder namespaces contained in the collection.
+        /// </summary>
+        /// <remarks>
+        /// Gets the number of folder namespaces contained in the collection.
+        /// </remarks>
+        /// <value>The count.</value>
+        public int Count => namespaces.Count;
 
-		/// <summary>
-		/// Adds the specified namespace.
-		/// </summary>
-		/// <remarks>
-		/// Adds the specified namespace.
-		/// </remarks>
-		/// <param name="namespace">The namespace to add.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
-		/// </exception>
-		public void Add (FolderNamespace @namespace)
+        /// <summary>
+        /// Adds the specified namespace.
+        /// </summary>
+        /// <remarks>
+        /// Adds the specified namespace.
+        /// </remarks>
+        /// <param name="namespace">The namespace to add.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="namespace"/> is <c>null</c>.
+        /// </exception>
+        public void Add (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException (nameof (@namespace));

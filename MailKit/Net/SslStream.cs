@@ -40,11 +40,9 @@ namespace MailKit.Net
 		{
 		}
 
-		new public Stream InnerStream {
-			get { return base.InnerStream; }
-		}
+        new public Stream InnerStream => base.InnerStream;
 
-		ChannelBinding GetChannelBinding (ChannelBindingKind kind)
+        ChannelBinding GetChannelBinding (ChannelBindingKind kind)
 		{
 			ChannelBinding channelBinding;
 

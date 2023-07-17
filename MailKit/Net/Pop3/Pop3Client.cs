@@ -115,45 +115,41 @@ namespace MailKit.Net.Pop3 {
 		{
 		}
 
-		/// <summary>
-		/// Gets an object that can be used to synchronize access to the POP3 server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets an object that can be used to synchronize access to the POP3 server.</para>
-		/// <para>When using the non-Async methods from multiple threads, it is important to lock the
-		/// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
-		/// </remarks>
-		/// <value>The lock object.</value>
-		public override object SyncRoot {
-			get { return engine; }
-		}
+        /// <summary>
+        /// Gets an object that can be used to synchronize access to the POP3 server.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets an object that can be used to synchronize access to the POP3 server.</para>
+        /// <para>When using the non-Async methods from multiple threads, it is important to lock the
+        /// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
+        /// </remarks>
+        /// <value>The lock object.</value>
+        public override object SyncRoot => engine;
 
-		/// <summary>
-		/// Gets the protocol supported by the message service.
-		/// </summary>
-		/// <remarks>
-		/// Gets the protocol supported by the message service.
-		/// </remarks>
-		/// <value>The protocol.</value>
-		protected override string Protocol {
-			get { return "pop"; }
-		}
+        /// <summary>
+        /// Gets the protocol supported by the message service.
+        /// </summary>
+        /// <remarks>
+        /// Gets the protocol supported by the message service.
+        /// </remarks>
+        /// <value>The protocol.</value>
+        protected override string Protocol => "pop";
 
-		/// <summary>
-		/// Gets the capabilities supported by the POP3 server.
-		/// </summary>
-		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made 
-		/// and may change once the client is authenticated.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The capabilities.</value>
-		/// <exception cref="System.ArgumentException">
-		/// Capabilities cannot be enabled, they may only be disabled.
-		/// </exception>
-		public Pop3Capabilities Capabilities {
+        /// <summary>
+        /// Gets the capabilities supported by the POP3 server.
+        /// </summary>
+        /// <remarks>
+        /// The capabilities will not be known until a successful connection has been made 
+        /// and may change once the client is authenticated.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The capabilities.</value>
+        /// <exception cref="System.ArgumentException">
+        /// Capabilities cannot be enabled, they may only be disabled.
+        /// </exception>
+        public Pop3Capabilities Capabilities {
 			get { return engine.Capabilities; }
 			set {
 				if ((engine.Capabilities | value) > engine.Capabilities)
@@ -163,54 +159,48 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		/// <summary>
-		/// Gets the expiration policy.
-		/// </summary>
-		/// <remarks>
-		/// <para>If the server supports the EXPIRE capability (<see cref="Pop3Capabilities.Expire"/>), the value
-		/// of the <see cref="ExpirePolicy"/> property will reflect the value advertized by the server.</para>
-		/// <para>A value of <c>-1</c> indicates that messages will never expire.</para>
-		/// <para>A value of <c>0</c> indicates that messages that have been retrieved during the current session
-		/// will be purged immediately after the connection is closed via the <c>QUIT</c> command.</para>
-		/// <para>Values larger than <c>0</c> indicate the minimum number of days that the server will retain
-		/// messages which have been retrieved.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The expiration policy.</value>
-		public int ExpirePolicy {
-			get { return engine.ExpirePolicy; }
-		}
+        /// <summary>
+        /// Gets the expiration policy.
+        /// </summary>
+        /// <remarks>
+        /// <para>If the server supports the EXPIRE capability (<see cref="Pop3Capabilities.Expire"/>), the value
+        /// of the <see cref="ExpirePolicy"/> property will reflect the value advertized by the server.</para>
+        /// <para>A value of <c>-1</c> indicates that messages will never expire.</para>
+        /// <para>A value of <c>0</c> indicates that messages that have been retrieved during the current session
+        /// will be purged immediately after the connection is closed via the <c>QUIT</c> command.</para>
+        /// <para>Values larger than <c>0</c> indicate the minimum number of days that the server will retain
+        /// messages which have been retrieved.</para>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The expiration policy.</value>
+        public int ExpirePolicy => engine.ExpirePolicy;
 
-		/// <summary>
-		/// Gets the implementation details of the server.
-		/// </summary>
-		/// <remarks>
-		/// If the server advertizes its implementation details, this value will be set to a string containing the
-		/// information details provided by the server.
-		/// </remarks>
-		/// <value>The implementation details.</value>
-		public string Implementation {
-			get { return engine.Implementation; }
-		}
+        /// <summary>
+        /// Gets the implementation details of the server.
+        /// </summary>
+        /// <remarks>
+        /// If the server advertizes its implementation details, this value will be set to a string containing the
+        /// information details provided by the server.
+        /// </remarks>
+        /// <value>The implementation details.</value>
+        public string Implementation => engine.Implementation;
 
-		/// <summary>
-		/// Gets the minimum delay, in milliseconds, between logins.
-		/// </summary>
-		/// <remarks>
-		/// If the server supports the LOGIN-DELAY capability (<see cref="Pop3Capabilities.LoginDelay"/>), this value
-		/// will be set to the minimum number of milliseconds that the client must wait between logins.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The login delay.</value>
-		public int LoginDelay {
-			get { return engine.LoginDelay; }
-		}
+        /// <summary>
+        /// Gets the minimum delay, in milliseconds, between logins.
+        /// </summary>
+        /// <remarks>
+        /// If the server supports the LOGIN-DELAY capability (<see cref="Pop3Capabilities.LoginDelay"/>), this value
+        /// will be set to the minimum number of milliseconds that the client must wait between logins.
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The login delay.</value>
+        public int LoginDelay => engine.LoginDelay;
 
-		void CheckDisposed ()
+        void CheckDisposed ()
 		{
 			if (disposed)
 				throw new ObjectDisposedException (nameof (Pop3Client));
@@ -298,40 +288,38 @@ namespace MailKit.Net.Pop3 {
 
 		#region IMailService implementation
 
-		/// <summary>
-		/// Gets the authentication mechanisms supported by the POP3 server.
-		/// </summary>
-		/// <remarks>
-		/// <para>The authentication mechanisms are queried as part of the
-		/// connection process.</para>
-		/// <para>Servers that do not support the SASL capability will typically
-		/// support either the <c>APOP</c> authentication mechanism
-		/// (<see cref="Pop3Capabilities.Apop"/>) or the ability to login using the
-		/// <c>USER</c> and <c>PASS</c> commands (<see cref="Pop3Capabilities.User"/>).
-		/// </para>
-		/// <note type="tip"><para>To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
-		/// before authenticating.</para>
-		/// <para>In the case of the APOP authentication mechanism, remove it from the
-		/// <see cref="Capabilities"/> property instead.</para></note>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
-		/// </example>
-		/// <value>The authentication mechanisms.</value>
-		public override HashSet<string> AuthenticationMechanisms {
-			get { return engine.AuthenticationMechanisms; }
-		}
+        /// <summary>
+        /// Gets the authentication mechanisms supported by the POP3 server.
+        /// </summary>
+        /// <remarks>
+        /// <para>The authentication mechanisms are queried as part of the
+        /// connection process.</para>
+        /// <para>Servers that do not support the SASL capability will typically
+        /// support either the <c>APOP</c> authentication mechanism
+        /// (<see cref="Pop3Capabilities.Apop"/>) or the ability to login using the
+        /// <c>USER</c> and <c>PASS</c> commands (<see cref="Pop3Capabilities.User"/>).
+        /// </para>
+        /// <note type="tip"><para>To prevent the usage of certain authentication mechanisms,
+        /// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+        /// before authenticating.</para>
+        /// <para>In the case of the APOP authentication mechanism, remove it from the
+        /// <see cref="Capabilities"/> property instead.</para></note>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
+        /// </example>
+        /// <value>The authentication mechanisms.</value>
+        public override HashSet<string> AuthenticationMechanisms => engine.AuthenticationMechanisms;
 
-		/// <summary>
-		/// Gets or sets the timeout for network streaming operations, in milliseconds.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
-		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
-		/// </remarks>
-		/// <value>The timeout in milliseconds.</value>
-		public override int Timeout {
+        /// <summary>
+        /// Gets or sets the timeout for network streaming operations, in milliseconds.
+        /// </summary>
+        /// <remarks>
+        /// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
+        /// and <see cref="System.IO.Stream.WriteTimeout"/> values.
+        /// </remarks>
+        /// <value>The timeout in milliseconds.</value>
+        public override int Timeout {
 			get { return timeout; }
 			set {
 				if (IsConnected && engine.Stream.CanTimeout) {
@@ -343,71 +331,63 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		/// <summary>
-		/// Gets whether or not the client is currently connected to an POP3 server.
-		/// </summary>
-		/// <remarks>
-		/// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
-		/// one of the <a href="Overload_MailKit_Net_Pop3_Pop3Client_Connect.htm">Connect</a>
-		/// methods succeeds and is not set back to <c>false</c> until either the client
-		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until a
-		/// <see cref="Pop3ProtocolException"/> is thrown while attempting to read or write to
-		/// the underlying network socket.</para>
-		/// <para>When an <see cref="Pop3ProtocolException"/> is caught, the connection state of the
-		/// <see cref="Pop3Client"/> should be checked before continuing.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="ExceptionHandling"/>
-		/// </example>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public override bool IsConnected {
-			get { return engine.IsConnected; }
-		}
+        /// <summary>
+        /// Gets whether or not the client is currently connected to an POP3 server.
+        /// </summary>
+        /// <remarks>
+        /// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+        /// one of the <a href="Overload_MailKit_Net_Pop3_Pop3Client_Connect.htm">Connect</a>
+        /// methods succeeds and is not set back to <c>false</c> until either the client
+        /// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until a
+        /// <see cref="Pop3ProtocolException"/> is thrown while attempting to read or write to
+        /// the underlying network socket.</para>
+        /// <para>When an <see cref="Pop3ProtocolException"/> is caught, the connection state of the
+        /// <see cref="Pop3Client"/> should be checked before continuing.</para>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\Pop3Examples.cs" region="ExceptionHandling"/>
+        /// </example>
+        /// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        public override bool IsConnected => engine.IsConnected;
 
-		/// <summary>
-		/// Get whether or not the connection is secure (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is secure (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
-		public override bool IsSecure {
-			get { return IsConnected && secure; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is secure (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is secure (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+        public override bool IsSecure => IsConnected && secure;
 
-		/// <summary>
-		/// Get whether or not the connection is encrypted (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
-		public override bool IsEncrypted {
-			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is encrypted (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is encrypted (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+        public override bool IsEncrypted => IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted;
 
-		/// <summary>
-		/// Get whether or not the connection is signed (typically via SSL or TLS).
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the connection is signed (typically via SSL or TLS).
-		/// </remarks>
-		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
-		public override bool IsSigned {
-			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
-		}
+        /// <summary>
+        /// Get whether or not the connection is signed (typically via SSL or TLS).
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the connection is signed (typically via SSL or TLS).
+        /// </remarks>
+        /// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+        public override bool IsSigned => IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned;
 
-		/// <summary>
-		/// Get the negotiated SSL or TLS protocol version.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets the negotiated SSL or TLS protocol version once an SSL or TLS connection has been made.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
-		/// </example>
-		/// <value>The negotiated SSL or TLS protocol version.</value>
-		public override SslProtocols SslProtocol {
+        /// <summary>
+        /// Get the negotiated SSL or TLS protocol version.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets the negotiated SSL or TLS protocol version once an SSL or TLS connection has been made.</para>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
+        /// </example>
+        /// <value>The negotiated SSL or TLS protocol version.</value>
+        public override SslProtocols SslProtocol {
 			get {
 				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.SslProtocol;
@@ -548,20 +528,18 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		/// <summary>
-		/// Get whether or not the client is currently authenticated with the POP3 server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the client is currently authenticated with the POP3 server.</para>
-		/// <para>To authenticate with the POP3 server, use one of the
-		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public override bool IsAuthenticated {
-			get { return engine.State == Pop3EngineState.Transaction; }
-		}
+        /// <summary>
+        /// Get whether or not the client is currently authenticated with the POP3 server.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not the client is currently authenticated with the POP3 server.</para>
+        /// <para>To authenticate with the POP3 server, use one of the
+        /// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        public override bool IsAuthenticated => engine.State == Pop3EngineState.Transaction;
 
-		Task ProcessStatResponse (Pop3Engine engine, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
+        Task ProcessStatResponse (Pop3Engine engine, Pop3Command pc, string text, bool doAsync, CancellationToken cancellationToken)
 		{
 			if (pc.Status != Pop3CommandStatus.Ok)
 				return Task.CompletedTask;
@@ -624,11 +602,9 @@ namespace MailKit.Net.Pop3 {
 				get; private set;
 			}
 
-			Pop3Engine Engine {
-				get { return client.engine; }
-			}
+            Pop3Engine Engine => client.engine;
 
-			void OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, CancellationToken cancellationToken)
+            void OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, CancellationToken cancellationToken)
 			{
 				while (pc.Status == Pop3CommandStatus.Continue && !mechanism.IsAuthenticated) {
 					var challenge = mechanism.Challenge (text, cancellationToken);
@@ -2256,11 +2232,9 @@ namespace MailKit.Net.Pop3 {
 				this.client = client;
 			}
 
-			protected Pop3Engine Engine {
-				get { return client.engine; }
-			}
+            protected Pop3Engine Engine => client.engine;
 
-			protected abstract T Parse (Pop3Stream data, CancellationToken cancellationToken);
+            protected abstract T Parse (Pop3Stream data, CancellationToken cancellationToken);
 
 			protected abstract Task<T> ParseAsync (Pop3Stream data, CancellationToken cancellationToken);
 

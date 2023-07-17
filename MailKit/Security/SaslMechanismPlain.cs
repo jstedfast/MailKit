@@ -131,51 +131,47 @@ namespace MailKit.Security {
 			get; set;
 		}
 
-		/// <summary>
-		/// Get the name of the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// Gets the name of the SASL mechanism.
-		/// </remarks>
-		/// <value>The name of the SASL mechanism.</value>
-		public override string MechanismName {
-			get { return "PLAIN"; }
-		}
+        /// <summary>
+        /// Get the name of the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// Gets the name of the SASL mechanism.
+        /// </remarks>
+        /// <value>The name of the SASL mechanism.</value>
+        public override string MechanismName => "PLAIN";
 
-		/// <summary>
-		/// Get whether or not the mechanism supports an initial response (SASL-IR).
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
-		/// <para>SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.</para>
-		/// </remarks>
-		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
-		public override bool SupportsInitialResponse {
-			get { return true; }
-		}
+        /// <summary>
+        /// Get whether or not the mechanism supports an initial response (SASL-IR).
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
+        /// <para>SASL mechanisms that support sending an initial client response to the server
+        /// should return <value>true</value>.</para>
+        /// </remarks>
+        /// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
+        public override bool SupportsInitialResponse => true;
 
-		/// <summary>
-		/// Parse the server's challenge token and return the next challenge response.
-		/// </summary>
-		/// <remarks>
-		/// Parses the server's challenge token and returns the next challenge response.
-		/// </remarks>
-		/// <returns>The next challenge response.</returns>
-		/// <param name="token">The server's challenge token.</param>
-		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
-		/// <param name="length">The length of the server's challenge.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.NotSupportedException">
-		/// The SASL mechanism does not support SASL-IR.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="SaslException">
-		/// An error has occurred while parsing the server's challenge token.
-		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+        /// <summary>
+        /// Parse the server's challenge token and return the next challenge response.
+        /// </summary>
+        /// <remarks>
+        /// Parses the server's challenge token and returns the next challenge response.
+        /// </remarks>
+        /// <returns>The next challenge response.</returns>
+        /// <param name="token">The server's challenge token.</param>
+        /// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
+        /// <param name="length">The length of the server's challenge.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="System.NotSupportedException">
+        /// The SASL mechanism does not support SASL-IR.
+        /// </exception>
+        /// <exception cref="System.OperationCanceledException">
+        /// The operation was canceled via the cancellation token.
+        /// </exception>
+        /// <exception cref="SaslException">
+        /// An error has occurred while parsing the server's challenge token.
+        /// </exception>
+        protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
 		{
 			if (IsAuthenticated)
 				return null;

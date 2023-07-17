@@ -59,21 +59,15 @@ namespace MailKit {
 				Message = message;
 			}
 
-			public bool HasParent {
-				get { return Parent != null; }
-			}
+            public bool HasParent => Parent != null;
 
-			public bool HasChildren {
-				get { return Children.Count > 0; }
-			}
+            public bool HasChildren => Children.Count > 0;
 
-			public IMailFolder Folder => null;
+            public IMailFolder Folder => null;
 
-			public MessageSummaryItems Fields {
-				get { return MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.ModSeq | MessageSummaryItems.Size; }
-			}
+            public MessageSummaryItems Fields => MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.ModSeq | MessageSummaryItems.Size;
 
-			public BodyPart Body => null;
+            public BodyPart Body => null;
 
 			public BodyPartText TextBody => null;
 
@@ -85,61 +79,41 @@ namespace MailKit {
 
 			public string PreviewText => null;
 
-			public Envelope Envelope {
-				get { return Message != null ? Message.Envelope : Children[0].Envelope; }
-			}
+            public Envelope Envelope => Message != null ? Message.Envelope : Children[0].Envelope;
 
-			public string NormalizedSubject {
-				get { return Message != null ? Message.NormalizedSubject : Children[0].NormalizedSubject; }
-			}
+            public string NormalizedSubject => Message != null ? Message.NormalizedSubject : Children[0].NormalizedSubject;
 
-			public DateTimeOffset Date {
-				get { return Message != null ? Message.Date : Children[0].Date; }
-			}
+            public DateTimeOffset Date => Message != null ? Message.Date : Children[0].Date;
 
-			public bool IsReply {
-				get { return Message != null && Message.IsReply; }
-			}
+            public bool IsReply => Message != null && Message.IsReply;
 
-			public MessageFlags? Flags => null;
+            public MessageFlags? Flags => null;
 
 			public IReadOnlySetOfStrings Keywords => null;
 
-			public IReadOnlyList<Annotation> Annotations {
-				get { return Message != null ? Message.Annotations : Children[0].Annotations; }
-			}
+            public IReadOnlyList<Annotation> Annotations => Message != null ? Message.Annotations : Children[0].Annotations;
 
-			public HeaderList Headers => null;
+            public HeaderList Headers => null;
 
 			public DateTimeOffset? InternalDate => null;
 
 			public DateTimeOffset? SaveDate => null;
 
-			public uint? Size {
-				get { return Message != null ? Message.Size : Children[0].Size; }
-			}
+            public uint? Size => Message != null ? Message.Size : Children[0].Size;
 
-			public ulong? ModSeq {
-				get { return Message != null ? Message.ModSeq : Children[0].ModSeq; }
-			}
+            public ulong? ModSeq => Message != null ? Message.ModSeq : Children[0].ModSeq;
 
-			public MessageIdList References {
-				get { return Message != null ? Message.References : Children[0].References; }
-			}
+            public MessageIdList References => Message != null ? Message.References : Children[0].References;
 
-			public string EmailId => null;
+            public string EmailId => null;
 
 			public string ThreadId => null;
 
-			public UniqueId UniqueId {
-				get { return Message != null ? Message.UniqueId : Children[0].UniqueId; }
-			}
+            public UniqueId UniqueId => Message != null ? Message.UniqueId : Children[0].UniqueId;
 
-			public int Index {
-				get { return Message != null ? Message.Index : Children[0].Index; }
-			}
+            public int Index => Message != null ? Message.Index : Children[0].Index;
 
-			public ulong? GMailMessageId => null;
+            public ulong? GMailMessageId => null;
 
 			public ulong? GMailThreadId => null;
 

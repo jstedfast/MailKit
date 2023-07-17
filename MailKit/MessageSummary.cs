@@ -338,60 +338,56 @@ namespace MailKit {
 			yield return basic;
 		}
 
-		/// <summary>
-		/// Gets the body parts of the message.
-		/// </summary>
-		/// <remarks>
-		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
-		/// <see cref="BodyPartBasic"/> objects.</para>
-		/// <para>This property will only be usable if either the
-		/// <see cref="MessageSummaryItems.Body"/> flag or the
-		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
-		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
-		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
-		/// methods.</para>
-		/// </remarks>
-		/// <value>The body parts.</value>
-		public IEnumerable<BodyPartBasic> BodyParts {
-			get { return EnumerateBodyParts (Body, false); }
-		}
+        /// <summary>
+        /// Gets the body parts of the message.
+        /// </summary>
+        /// <remarks>
+        /// <para>Traverses over the <see cref="Body"/>, enumerating all of the
+        /// <see cref="BodyPartBasic"/> objects.</para>
+        /// <para>This property will only be usable if either the
+        /// <see cref="MessageSummaryItems.Body"/> flag or the
+        /// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
+        /// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+        /// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+        /// methods.</para>
+        /// </remarks>
+        /// <value>The body parts.</value>
+        public IEnumerable<BodyPartBasic> BodyParts => EnumerateBodyParts(Body, false);
 
-		/// <summary>
-		/// Gets the attachments.
-		/// </summary>
-		/// <remarks>
-		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
-		/// <see cref="BodyPartBasic"/> objects that have a <c>Content-Disposition</c>
-		/// header set to <c>"attachment"</c>.</para>
-		/// <para>This property will only be usable if the
-		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
-		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
-		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
-		/// methods.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
-		/// </example>
-		/// <value>The attachments.</value>
-		public IEnumerable<BodyPartBasic> Attachments {
-			get { return EnumerateBodyParts (Body, true); }
-		}
+        /// <summary>
+        /// Gets the attachments.
+        /// </summary>
+        /// <remarks>
+        /// <para>Traverses over the <see cref="Body"/>, enumerating all of the
+        /// <see cref="BodyPartBasic"/> objects that have a <c>Content-Disposition</c>
+        /// header set to <c>"attachment"</c>.</para>
+        /// <para>This property will only be usable if the
+        /// <see cref="MessageSummaryItems.BodyStructure"/> flag is passed to
+        /// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+        /// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+        /// methods.</para>
+        /// </remarks>
+        /// <example>
+        /// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+        /// </example>
+        /// <value>The attachments.</value>
+        public IEnumerable<BodyPartBasic> Attachments => EnumerateBodyParts(Body, true);
 
-		/// <summary>
-		/// Gets the preview text of the message.
-		/// </summary>
-		/// <remarks>
-		/// <para>The preview text is a short snippet of the beginning of the message
-		/// text, typically shown in a mail client's message list to provide the user
-		/// with a sense of what the message is about.</para>
-		/// <para>This property will only be set if the
-		/// <see cref="MessageSummaryItems.PreviewText"/> flag is passed to
-		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
-		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
-		/// methods.</para>
-		/// </remarks>
-		/// <value>The preview text.</value>
-		public string PreviewText {
+        /// <summary>
+        /// Gets the preview text of the message.
+        /// </summary>
+        /// <remarks>
+        /// <para>The preview text is a short snippet of the beginning of the message
+        /// text, typically shown in a mail client's message list to provide the user
+        /// with a sense of what the message is about.</para>
+        /// <para>This property will only be set if the
+        /// <see cref="MessageSummaryItems.PreviewText"/> flag is passed to
+        /// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+        /// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+        /// methods.</para>
+        /// </remarks>
+        /// <value>The preview text.</value>
+        public string PreviewText {
 			get; set;
 		}
 
@@ -446,31 +442,29 @@ namespace MailKit {
 			}
 		}
 
-		/// <summary>
-		/// Gets the Date header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Date header value. If the Date header is not present, the arrival date is used.
-		/// If neither are known, <see cref="System.DateTimeOffset.MinValue"/> is returned.
-		/// </remarks>
-		/// <value>The date.</value>
-		public DateTimeOffset Date {
-			get { return Envelope?.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
-		}
+        /// <summary>
+        /// Gets the Date header value.
+        /// </summary>
+        /// <remarks>
+        /// Gets the Date header value. If the Date header is not present, the arrival date is used.
+        /// If neither are known, <see cref="System.DateTimeOffset.MinValue"/> is returned.
+        /// </remarks>
+        /// <value>The date.</value>
+        public DateTimeOffset Date => Envelope?.Date ?? InternalDate ?? DateTimeOffset.MinValue;
 
-		/// <summary>
-		/// Gets the message flags, if available.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets the message flags, if available.</para>
-		/// <para>This property will only be set if the
-		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
-		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
-		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
-		/// methods.</para>
-		/// </remarks>
-		/// <value>The message flags.</value>
-		public MessageFlags? Flags {
+        /// <summary>
+        /// Gets the message flags, if available.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets the message flags, if available.</para>
+        /// <para>This property will only be set if the
+        /// <see cref="MessageSummaryItems.Flags"/> flag is passed to
+        /// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+        /// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
+        /// methods.</para>
+        /// </remarks>
+        /// <value>The message flags.</value>
+        public MessageFlags? Flags {
 			get; set;
 		}
 

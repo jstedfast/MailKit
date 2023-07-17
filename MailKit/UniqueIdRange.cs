@@ -113,84 +113,70 @@ namespace MailKit {
 			this.end = end.Id;
 		}
 
-		/// <summary>
-		/// Gets the validity, if non-zero.
-		/// </summary>
-		/// <remarks>
-		/// Gets the UidValidity of the containing folder.
-		/// </remarks>
-		/// <value>The UidValidity of the containing folder.</value>
-		public uint Validity {
-			get { return validity; }
-		}
+        /// <summary>
+        /// Gets the validity, if non-zero.
+        /// </summary>
+        /// <remarks>
+        /// Gets the UidValidity of the containing folder.
+        /// </remarks>
+        /// <value>The UidValidity of the containing folder.</value>
+        public uint Validity => validity;
 
-		/// <summary>
-		/// Gets the minimum unique identifier in the range.
-		/// </summary>
-		/// <remarks>
-		/// Gets the minimum unique identifier in the range.
-		/// </remarks>
-		/// <value>The minimum unique identifier.</value>
-		public UniqueId Min {
-			get { return start < end ? new UniqueId (validity, start) : new UniqueId (validity, end); }
-		}
+        /// <summary>
+        /// Gets the minimum unique identifier in the range.
+        /// </summary>
+        /// <remarks>
+        /// Gets the minimum unique identifier in the range.
+        /// </remarks>
+        /// <value>The minimum unique identifier.</value>
+        public UniqueId Min => start < end ? new UniqueId(validity, start) : new UniqueId(validity, end);
 
-		/// <summary>
-		/// Gets the maximum unique identifier in the range.
-		/// </summary>
-		/// <remarks>
-		/// Gets the maximum unique identifier in the range.
-		/// </remarks>
-		/// <value>The maximum unique identifier.</value>
-		public UniqueId Max {
-			get { return start > end ? new UniqueId (validity, start) : new UniqueId (validity, end); }
-		}
+        /// <summary>
+        /// Gets the maximum unique identifier in the range.
+        /// </summary>
+        /// <remarks>
+        /// Gets the maximum unique identifier in the range.
+        /// </remarks>
+        /// <value>The maximum unique identifier.</value>
+        public UniqueId Max => start > end ? new UniqueId(validity, start) : new UniqueId(validity, end);
 
-		/// <summary>
-		/// Get the start of the unique identifier range.
-		/// </summary>
-		/// <remarks>
-		/// Gets the start of the unique identifier range.
-		/// </remarks>
-		/// <value>The start of the range.</value>
-		public UniqueId Start {
-			get { return new UniqueId (validity, start); }
-		}
+        /// <summary>
+        /// Get the start of the unique identifier range.
+        /// </summary>
+        /// <remarks>
+        /// Gets the start of the unique identifier range.
+        /// </remarks>
+        /// <value>The start of the range.</value>
+        public UniqueId Start => new UniqueId(validity, start);
 
-		/// <summary>
-		/// Get the end of the unique identifier range.
-		/// </summary>
-		/// <remarks>
-		/// Gets the end of the unique identifier range.
-		/// </remarks>
-		/// <value>The end of the range.</value>
-		public UniqueId End {
-			get { return new UniqueId (validity, end); }
-		}
+        /// <summary>
+        /// Get the end of the unique identifier range.
+        /// </summary>
+        /// <remarks>
+        /// Gets the end of the unique identifier range.
+        /// </remarks>
+        /// <value>The end of the range.</value>
+        public UniqueId End => new UniqueId(validity, end);
 
 		#region ICollection implementation
 
-		/// <summary>
-		/// Get the number of unique identifiers in the range.
-		/// </summary>
-		/// <remarks>
-		/// Gets the number of unique identifiers in the range.
-		/// </remarks>
-		/// <value>The count.</value>
-		public int Count {
-			get { return (int) (start <= end ? end - start : start - end) + 1; }
-		}
+        /// <summary>
+        /// Get the number of unique identifiers in the range.
+        /// </summary>
+        /// <remarks>
+        /// Gets the number of unique identifiers in the range.
+        /// </remarks>
+        /// <value>The count.</value>
+        public int Count => (int)(start <= end ? end - start : start - end) + 1;
 
-		/// <summary>
-		/// Get whether or not the range is read only.
-		/// </summary>
-		/// <remarks>
-		/// A <see cref="UniqueIdRange"/> is always read-only.
-		/// </remarks>
-		/// <value><c>true</c> if the range is read only; otherwise, <c>false</c>.</value>
-		public bool IsReadOnly {
-			get { return true; }
-		}
+        /// <summary>
+        /// Get whether or not the range is read only.
+        /// </summary>
+        /// <remarks>
+        /// A <see cref="UniqueIdRange"/> is always read-only.
+        /// </remarks>
+        /// <value><c>true</c> if the range is read only; otherwise, <c>false</c>.</value>
+        public bool IsReadOnly => true;
 
 		/// <summary>
 		/// Adds the unique identifier to the range.

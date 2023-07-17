@@ -95,59 +95,51 @@ namespace MailKit.Net.Smtp {
 			get; private set;
 		}
 
-		/// <summary>
-		/// Get whether the stream supports reading.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether the stream supports reading.
-		/// </remarks>
-		/// <value><c>true</c> if the stream supports reading; otherwise, <c>false</c>.</value>
-		public override bool CanRead {
-			get { return Stream.CanRead; }
-		}
+        /// <summary>
+        /// Get whether the stream supports reading.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether the stream supports reading.
+        /// </remarks>
+        /// <value><c>true</c> if the stream supports reading; otherwise, <c>false</c>.</value>
+        public override bool CanRead => Stream.CanRead;
 
-		/// <summary>
-		/// Get whether the stream supports writing.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether the stream supports writing.
-		/// </remarks>
-		/// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
-		public override bool CanWrite {
-			get { return Stream.CanWrite; }
-		}
+        /// <summary>
+        /// Get whether the stream supports writing.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether the stream supports writing.
+        /// </remarks>
+        /// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
+        public override bool CanWrite => Stream.CanWrite;
 
-		/// <summary>
-		/// Get whether the stream supports seeking.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether the stream supports seeking.
-		/// </remarks>
-		/// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
-		public override bool CanSeek {
-			get { return false; }
-		}
+        /// <summary>
+        /// Get whether the stream supports seeking.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether the stream supports seeking.
+        /// </remarks>
+        /// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
+        public override bool CanSeek => false;
 
-		/// <summary>
-		/// Get whether the stream supports I/O timeouts.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether the stream supports I/O timeouts.
-		/// </remarks>
-		/// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
-		public override bool CanTimeout {
-			get { return Stream.CanTimeout; }
-		}
+        /// <summary>
+        /// Get whether the stream supports I/O timeouts.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether the stream supports I/O timeouts.
+        /// </remarks>
+        /// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
+        public override bool CanTimeout => Stream.CanTimeout;
 
-		/// <summary>
-		/// Get or set a value, in milliseconds, that determines how long the stream will attempt to read before timing out.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets a value, in milliseconds, that determines how long the stream will attempt to read before timing out.
-		/// </remarks>
-		/// <returns>A value, in milliseconds, that determines how long the stream will attempt to read before timing out.</returns>
-		/// <value>The read timeout.</value>
-		public override int ReadTimeout {
+        /// <summary>
+        /// Get or set a value, in milliseconds, that determines how long the stream will attempt to read before timing out.
+        /// </summary>
+        /// <remarks>
+        /// Gets or sets a value, in milliseconds, that determines how long the stream will attempt to read before timing out.
+        /// </remarks>
+        /// <returns>A value, in milliseconds, that determines how long the stream will attempt to read before timing out.</returns>
+        /// <value>The read timeout.</value>
+        public override int ReadTimeout {
 			get { return Stream.ReadTimeout; }
 			set { Stream.ReadTimeout = value; }
 		}
@@ -187,25 +179,23 @@ namespace MailKit.Net.Smtp {
 			set { throw new NotSupportedException (); }
 		}
 
-		/// <summary>
-		/// Get the length of the stream, in bytes.
-		/// </summary>
-		/// <remarks>
-		/// Gets the length of the stream, in bytes.
-		/// </remarks>
-		/// <returns>A long value representing the length of the stream in bytes.</returns>
-		/// <value>The length of the stream.</value>
-		/// <exception cref="System.NotSupportedException">
-		/// The stream does not support seeking.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The stream has been disposed.
-		/// </exception>
-		public override long Length {
-			get { return Stream.Length; }
-		}
+        /// <summary>
+        /// Get the length of the stream, in bytes.
+        /// </summary>
+        /// <remarks>
+        /// Gets the length of the stream, in bytes.
+        /// </remarks>
+        /// <returns>A long value representing the length of the stream in bytes.</returns>
+        /// <value>The length of the stream.</value>
+        /// <exception cref="System.NotSupportedException">
+        /// The stream does not support seeking.
+        /// </exception>
+        /// <exception cref="System.ObjectDisposedException">
+        /// The stream has been disposed.
+        /// </exception>
+        public override long Length => Stream.Length;
 
-		void AlignReadAheadBuffer (out int offset, out int count)
+        void AlignReadAheadBuffer (out int offset, out int count)
 		{
 			int left = inputEnd - inputIndex;
 

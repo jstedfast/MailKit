@@ -102,54 +102,48 @@ namespace MailKit {
 			this.id = id;
 		}
 
-		/// <summary>
-		/// Gets the identifier.
-		/// </summary>
-		/// <remarks>
-		/// The identifier.
-		/// </remarks>
-		/// <value>The identifier.</value>
-		public uint Id {
-			get { return id; }
-		}
+        /// <summary>
+        /// Gets the identifier.
+        /// </summary>
+        /// <remarks>
+        /// The identifier.
+        /// </remarks>
+        /// <value>The identifier.</value>
+        public uint Id => id;
 
-		/// <summary>
-		/// Gets the validity, if non-zero.
-		/// </summary>
-		/// <remarks>
-		/// Gets the UidValidity of the containing folder.
-		/// </remarks>
-		/// <value>The UidValidity of the containing folder.</value>
-		public uint Validity {
-			get { return validity; }
-		}
+        /// <summary>
+        /// Gets the validity, if non-zero.
+        /// </summary>
+        /// <remarks>
+        /// Gets the UidValidity of the containing folder.
+        /// </remarks>
+        /// <value>The UidValidity of the containing folder.</value>
+        public uint Validity => validity;
 
-		/// <summary>
-		/// Gets whether or not the unique identifier is valid.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the unique identifier is valid.
-		/// </remarks>
-		/// <value><c>true</c> if the unique identifier is valid; otherwise, <c>false</c>.</value>
-		public bool IsValid {
-			get { return Id != 0; }
-		}
+        /// <summary>
+        /// Gets whether or not the unique identifier is valid.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the unique identifier is valid.
+        /// </remarks>
+        /// <value><c>true</c> if the unique identifier is valid; otherwise, <c>false</c>.</value>
+        public bool IsValid => Id != 0;
 
 		#region IComparable implementation
 
-		/// <summary>
-		/// Compares two <see cref="UniqueId"/> objects.
-		/// </summary>
-		/// <remarks>
-		/// Compares two <see cref="UniqueId"/> objects.
-		/// </remarks>
-		/// <returns>
-		/// A value less than <c>0</c> if this <see cref="UniqueId"/> is less than <paramref name="other"/>,
-		/// a value of <c>0</c> if this <see cref="UniqueId"/> is equal to <paramref name="other"/>, or
-		/// a value greater than <c>0</c> if this <see cref="UniqueId"/> is greater than <paramref name="other"/>.
-		/// </returns>
-		/// <param name="other">The other unique identifier.</param>
-		public int CompareTo (UniqueId other)
+        /// <summary>
+        /// Compares two <see cref="UniqueId"/> objects.
+        /// </summary>
+        /// <remarks>
+        /// Compares two <see cref="UniqueId"/> objects.
+        /// </remarks>
+        /// <returns>
+        /// A value less than <c>0</c> if this <see cref="UniqueId"/> is less than <paramref name="other"/>,
+        /// a value of <c>0</c> if this <see cref="UniqueId"/> is equal to <paramref name="other"/>, or
+        /// a value greater than <c>0</c> if this <see cref="UniqueId"/> is greater than <paramref name="other"/>.
+        /// </returns>
+        /// <param name="other">The other unique identifier.</param>
+        public int CompareTo (UniqueId other)
 		{
 			return Id.CompareTo (other.Id);
 		}

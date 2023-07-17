@@ -68,16 +68,14 @@ namespace MailKit.Security {
 		{
 		}
 
-		/// <summary>
-		/// Get the name of the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// Gets the name of the SASL mechanism.
-		/// </remarks>
-		/// <value>The name of the SASL mechanism.</value>
-		public override string MechanismName {
-			get { return "SCRAM-SHA-512"; }
-		}
+        /// <summary>
+        /// Get the name of the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// Gets the name of the SASL mechanism.
+        /// </remarks>
+        /// <value>The name of the SASL mechanism.</value>
+        public override string MechanismName => "SCRAM-SHA-512";
 
 		/// <summary>
 		/// Create the HMAC context.
@@ -149,26 +147,22 @@ namespace MailKit.Security {
 		{
 		}
 
-		/// <summary>
-		/// Get the name of the SASL mechanism.
-		/// </summary>
-		/// <remarks>
-		/// Gets the name of the SASL mechanism.
-		/// </remarks>
-		/// <value>The name of the SASL mechanism.</value>
-		public override string MechanismName {
-			get { return "SCRAM-SHA-512-PLUS"; }
-		}
+        /// <summary>
+        /// Get the name of the SASL mechanism.
+        /// </summary>
+        /// <remarks>
+        /// Gets the name of the SASL mechanism.
+        /// </remarks>
+        /// <value>The name of the SASL mechanism.</value>
+        public override string MechanismName => "SCRAM-SHA-512-PLUS";
 
-		/// <summary>
-		/// Get whether or not the SASL mechanism supports channel binding.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the SASL mechanism supports channel binding.
-		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
-		public override bool SupportsChannelBinding {
-			get { return true; }
-		}
-	}
+        /// <summary>
+        /// Get whether or not the SASL mechanism supports channel binding.
+        /// </summary>
+        /// <remarks>
+        /// Gets whether or not the SASL mechanism supports channel binding.
+        /// </remarks>
+        /// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+        public override bool SupportsChannelBinding => true;
+    }
 }

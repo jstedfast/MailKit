@@ -59,9 +59,7 @@ namespace MailKit {
 		/// Gets the number of body parts in the collection.
 		/// </remarks>
 		/// <value>The count.</value>
-		public int Count {
-			get { return collection.Count; }
-		}
+		public int Count => collection.Count;
 
 		/// <summary>
 		/// Get whether or not this body part collection is read only.
@@ -70,9 +68,7 @@ namespace MailKit {
 		/// Gets whether or not this body part collection is read only.
 		/// </remarks>
 		/// <value><c>true</c> if this collection is read only; otherwise, <c>false</c>.</value>
-		public bool IsReadOnly {
-			get { return false; }
-		}
+		public bool IsReadOnly => false;
 
 		/// <summary>
 		/// Add the specified body part to the collection.
