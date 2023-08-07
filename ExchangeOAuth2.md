@@ -2,16 +2,24 @@
 
 ## Quick Index
 
-* [Register Your Application with Microsoft](#register-your-application-with-microsoft)
-* [Authenticating with OAuth2](#authenticating-with-oauth2)
+* Desktop and Mobile Applications
+  * [Registering Your Desktop or Mobile Application with Microsoft](#registering-your-desktop-or-mobile-application-with-microsoft)
+  * [Authenticating a Desktop or Mobile Application with OAuth2](#authenticating-a-desktop-or-mobile-application-with-oauth2)
+* Web Services
+  * [Registering Your Web Service with Microsoft](#registering-your-web-service-with-microsoft)
+  * [Registering Service Principals for Your Web Service](#registering-service-principals-for-your-web-service)
+  * [Granting Permissions for Your Web Service](#granting-permissions-for-your-web-service)
+  * [Authenticating a Web Service with OAuth2](#authenticating-a-web-service-with-oauth2)
 * [Additional Resources](#additional-resources)
 
-## Register Your Application with Microsoft
+## Desktop and Mobile Applications
+
+### Registering Your Desktop or Mobile Application with Microsoft
 
 Go to Microsoft's [Quickstart guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
 for registering an application with the Microsoft identity platform and follow the instructions.
 
-## Authenticating with OAuth2
+### Authenticating a Desktop or Mobile Application with OAuth2
 
 Now that you have the **Client ID** and **Tenant ID** strings, you'll need to plug those values into
 your application.
@@ -24,6 +32,9 @@ server.
 var options = new PublicClientApplicationOptions {
     ClientId = "Application (client) ID",
     TenantId = "Directory (tenant) ID",
+
+    // Use "https://login.microsoftonline.com/common/oauth2/nativeclient" for apps using
+    // embedded browsers or "http://localhost" for apps that use system browsers.
     RedirectUri = "https://login.microsoftonline.com/common/oauth2/nativeclient"
 };
  
@@ -57,6 +68,95 @@ the following code:
 ```csharp
 var authToken = await publicClientApplication.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
 ```
+
+## Web Services
+
+### Registering Your Web Service with Microsoft
+
+Go to Microsoft's [Quickstart guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+for registering an application with the Microsoft identity platform and follow the instructions.
+
+### Registering Service Principals for Your Web Service
+
+Once your web service has been registered, the tenant admin will need to register your service principal.
+
+To use the New-ServicePrincipal cmdlet, install ExchangeOnlineManagement and connect to your tenant as shown in the following snippet:
+
+```powershell
+Install-Module -Name ExchangeOnlineManagement -allowprerelease
+Import-module ExchangeOnlineManagement 
+Connect-ExchangeOnline -Organization <tenantId>
+```
+
+Next, register your the Service Principal for your web service:
+
+```powershell
+New-ServicePrincipal -AppId <APPLICATION_ID> -ObjectId <OBJECT_ID> [-Organization <ORGANIZATION_ID>]
+```
+
+### Granting Permissions for Your Web Service
+
+In order to grant permissions for your web service to access an Office365 and/or Exchange account, you'll need to first get the
+Service Pricipal ID registered in the previous step using the following command:
+
+```powershell
+Get-ServicePrincipal | fl
+```
+
+Once you have the Service Principal ID for your web service, use the following command to add full
+mailbox permissions for the email account that your web service will be accessing:
+
+```powershelllo;.k,;
+Add-MailboxPermission -Identity "john.smith@example.com" -User 
+<SERVICE_PRINCIPAL_ID> -AccessRights FullAccess
+```
+
+### Authenticating a Web Service with OAuth2
+
+Now that you have the **Client ID** and **Tenant ID** strings, you'll need to plug those values into
+your application.
+
+The following sample code uses the [Microsoft.Identity.Client](https://www.nuget.org/packages/Microsoft.Identity.Client/)
+nuget package for obtaining the access token which will be needed by MailKit to pass on to the Exchange
+server.
+
+```csharp
+var options = new ConfidentialClientApplicationOptions {
+    ClientId = "Application (client) ID",
+    TenantId = "Directory (tenant) ID"
+};
+ 
+var confidentialClientApplication = ConfidentialClientApplicationBuilder
+    .CreateWithApplicationOptions (options)
+    .Build ();
+ 
+var scopes = new string[] {
+    // For IMAP and POP3, use the following scope
+    "https://ps.outlook.com/.default"
+
+    // For SMTP, use the following scope
+    // "https://outlook.office365.com/.default"
+};
+
+var authToken = await confidentialClientApplication.AcquireTokenInteractive (scopes).ExecuteAsync ();
+
+var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
+
+using (var client = new ImapClient ()) {
+	await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
+	await client.AuthenticateAsync (oauth2);
+	await client.DisconnectAsync (true);
+}
+```
+
+Note: Once you've acquired an auth token using the interactive method above, you can avoid prompting the user
+if you cache the `authToken.Account` information and then silently reacquire auth tokens in the future using
+the following code:
+
+```csharp
+var authToken = await publicClientApplication.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
+```
+
 
 ## Additional Resources
 
