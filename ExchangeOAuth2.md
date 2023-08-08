@@ -97,7 +97,7 @@ New-ServicePrincipal -AppId <APPLICATION_ID> -ObjectId <OBJECT_ID> [-Organizatio
 ### Granting Permissions for Your Web Service
 
 In order to grant permissions for your web service to access an Office365 and/or Exchange account, you'll need to first get the
-Service Pricipal ID registered in the previous step using the following command:
+Service Principal ID registered in the previous step using the following command:
 
 ```powershell
 Get-ServicePrincipal | fl
