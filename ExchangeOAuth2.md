@@ -55,9 +55,9 @@ var authToken = await publicClientApplication.AcquireTokenInteractive (scopes).E
 var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
 using (var client = new ImapClient ()) {
-	await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
-	await client.AuthenticateAsync (oauth2);
-	await client.DisconnectAsync (true);
+    await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
+    await client.AuthenticateAsync (oauth2);
+    await client.DisconnectAsync (true);
 }
 ```
 
@@ -143,9 +143,9 @@ var authToken = await confidentialClientApplication.AcquireTokenInteractive (sco
 var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
 using (var client = new ImapClient ()) {
-	await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
-	await client.AuthenticateAsync (oauth2);
-	await client.DisconnectAsync (true);
+    await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
+    await client.AuthenticateAsync (oauth2);
+    await client.DisconnectAsync (true);
 }
 ```
 
