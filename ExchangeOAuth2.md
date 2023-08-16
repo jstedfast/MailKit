@@ -51,7 +51,6 @@ var scopes = new string[] {
 };
 
 var authToken = await publicClientApplication.AcquireTokenInteractive (scopes).ExecuteAsync ();
-
 var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
 using (var client = new ImapClient ()) {
@@ -139,7 +138,6 @@ var scopes = new string[] {
 };
 
 var authToken = await confidentialClientApplication.AcquireTokenForClient (scopes).ExecuteAsync ();
-
 var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
 using (var client = new ImapClient ()) {
