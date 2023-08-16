@@ -138,7 +138,7 @@ var scopes = new string[] {
     // "https://outlook.office365.com/.default"
 };
 
-var authToken = await confidentialClientApplication.AcquireTokenInteractive (scopes).ExecuteAsync ();
+var authToken = await confidentialClientApplication.AcquireClientToken (scopes).ExecuteAsync ();
 
 var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
