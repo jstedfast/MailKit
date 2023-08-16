@@ -210,6 +210,33 @@ namespace MailKit.Net.Pop3 {
 			get { return engine.LoginDelay; }
 		}
 
+		/// <summary>
+		/// Get the size of the POP3 mailbox, in bytes.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the size of the POP3 mailbox, in bytes.</para>
+		/// <para>This value is updated as a side-effect of calling <see cref="GetMessageCount"/> or <see cref="GetMessageCountAsync"/>.</para>
+		/// </remarks>
+		/// <value>The size of the mailbox if available.</value>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		public long Size {
+			get {
+				CheckDisposed ();
+				CheckConnected ();
+				CheckAuthenticated ();
+
+				return octets;
+			}
+		}
+
 		void CheckDisposed ()
 		{
 			if (disposed)

@@ -1217,6 +1217,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				try {
 					var sizes = client.GetMessageSizes ();
@@ -1305,6 +1306,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				try {
 					var sizes = await client.GetMessageSizesAsync ();
@@ -1390,6 +1392,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				try {
 					var sizes = client.GetMessageSizes ();
@@ -1475,6 +1478,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				try {
 					var sizes = await client.GetMessageSizesAsync ();
@@ -1555,6 +1559,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				client.GetMessageUids ();
 
@@ -1606,6 +1611,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				await client.GetMessageUidsAsync ();
 
@@ -1656,6 +1662,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.Throws<NotSupportedException> (() => client.GetMessageUids ());
 
@@ -1706,6 +1713,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<NotSupportedException> (() => client.GetMessageUidsAsync ());
 
@@ -1849,6 +1857,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.AreEqual (LangCapa1, client.Capabilities);
 					Assert.AreEqual (3, client.Count, "Expected 3 messages");
+					Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 					try {
 						client.EnableUTF8 ();
@@ -1904,6 +1913,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.AreEqual (LangCapa1, client.Capabilities);
 					Assert.AreEqual (3, client.Count, "Expected 3 messages");
+					Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 					try {
 						await client.EnableUTF8Async ();
@@ -2053,6 +2063,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageCount ());
 				Assert.IsTrue (client.IsConnected);
@@ -2115,6 +2126,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageCountAsync ());
 				Assert.IsTrue (client.IsConnected);
@@ -2177,6 +2189,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSize (0));
 				Assert.IsTrue (client.IsConnected);
@@ -2239,6 +2252,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizeAsync (0));
 				Assert.IsTrue (client.IsConnected);
@@ -2301,6 +2315,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSizes ());
 				Assert.IsTrue (client.IsConnected);
@@ -2363,6 +2378,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizesAsync ());
 				Assert.IsTrue (client.IsConnected);
@@ -2421,6 +2437,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageUid (0));
 				Assert.IsTrue (client.IsConnected);
@@ -2476,6 +2493,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageUidAsync (0));
 				Assert.IsTrue (client.IsConnected);
@@ -2531,6 +2549,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageUids ());
 				Assert.IsTrue (client.IsConnected);
@@ -2586,6 +2605,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageUidsAsync ());
 				Assert.IsTrue (client.IsConnected);
@@ -2649,6 +2669,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				try {
 					client.Disconnect (true);
@@ -2706,6 +2727,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2804,6 +2826,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 					Assert.AreEqual (3, client.Count, "Expected 3 messages");
+					Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 					try {
 						client.Disconnect (true);
@@ -2861,6 +2884,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 					Assert.AreEqual (3, client.Count, "Expected 3 messages");
+					Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 					try {
 						await client.DisconnectAsync (true);
@@ -2923,6 +2947,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 					Assert.AreEqual (7, client.Count, "Expected 7 messages");
+					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 					try {
 						client.Disconnect (true);
@@ -2985,6 +3010,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 					Assert.AreEqual (7, client.Count, "Expected 7 messages");
+					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 					try {
 						await client.DisconnectAsync (true);
@@ -3039,6 +3065,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.AreEqual (-1, client.ExpirePolicy);
 
 					Assert.AreEqual (7, client.Count, "Expected 7 messages");
+					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 					try {
 						client.Disconnect (true);
@@ -3094,6 +3121,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.AreEqual (-1, client.ExpirePolicy);
 
 					Assert.AreEqual (7, client.Count, "Expected 7 messages");
+					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 					try {
 						await client.DisconnectAsync (true);
@@ -3156,6 +3184,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 					Assert.AreEqual (7, client.Count, "Expected 7 messages");
+					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 					try {
 						client.Disconnect (true);
@@ -3217,6 +3246,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 					Assert.AreEqual (7, client.Count, "Expected 7 messages");
+					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 					try {
 						await client.DisconnectAsync (true);
@@ -3281,6 +3311,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				try {
 					var uids = client.GetMessageUids ();
@@ -3357,6 +3388,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				try {
 					var uids = await client.GetMessageUidsAsync ();
@@ -3448,6 +3480,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				if (disablePipelining)
 					client.Capabilities &= ~Pop3Capabilities.Pipelining;
@@ -3693,6 +3726,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				if (disablePipelining)
 					client.Capabilities &= ~Pop3Capabilities.Pipelining;
@@ -4024,6 +4058,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				int count = 0;
 				foreach (var message in client)
@@ -4089,6 +4124,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				var languages = client.GetLanguages ();
 				Assert.AreEqual (6, languages.Count);
@@ -4161,6 +4197,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				var languages = await client.GetLanguagesAsync ();
 				Assert.AreEqual (6, languages.Count);
@@ -4224,6 +4261,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				Assert.Throws<NotSupportedException> (() => client.GetLanguages ());
 				Assert.Throws<NotSupportedException> (() => client.SetLanguage ("en"));
@@ -4278,6 +4316,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				try {
 					client.GetMessage (0);
@@ -4344,6 +4383,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
 
 				try {
 					await client.GetMessageAsync (0);
