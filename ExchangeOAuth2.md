@@ -121,7 +121,7 @@ server.
 
 ```csharp
 var confidentialClientApplication = ConfidentialClientApplicationBuilder.Create (clientId)
-    .WithCertificate (certificate) // or .WithCliehtSecret (clientSecret)
+    .WithCertificate (certificate) // or .WithClientSecret (clientSecret)
     .Build ();
  
 var scopes = new string[] {
