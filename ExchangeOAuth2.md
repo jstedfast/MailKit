@@ -120,13 +120,8 @@ nuget package for obtaining the access token which will be needed by MailKit to 
 server.
 
 ```csharp
-var options = new ConfidentialClientApplicationOptions {
-    ClientId = "Application (client) ID",
-    TenantId = "Directory (tenant) ID"
-};
- 
-var confidentialClientApplication = ConfidentialClientApplicationBuilder
-    .CreateWithApplicationOptions (options)
+var confidentialClientApplication = ConfidentialClientApplicationBuilder.Create (clientId)
+    .WithCertificate (certificate) // or .WithCliehtSecret (clientSecret)
     .Build ();
  
 var scopes = new string[] {
@@ -137,7 +132,8 @@ var scopes = new string[] {
     // "https://outlook.office365.com/.default"
 };
 
-var authToken = await confidentialClientApplication.AcquireTokenForClient (scopes).ExecuteAsync ();
+var authToken = await confidentialClientApplication.AcquireTokenForClient (scopes)
+    .WithAuthority (AzureCloudInstance.AzurePublic, "{tenantID}").ExecuteAsync ();
 var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
 using (var client = new ImapClient ()) {
