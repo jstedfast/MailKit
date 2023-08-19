@@ -2842,7 +2842,6 @@ namespace MailKit.Net.Imap {
 		/// Queries the namespaces.
 		/// </summary>
 		/// <returns>The command result.</returns>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapCommandResponse QueryNamespaces (CancellationToken cancellationToken)
 		{
@@ -2876,7 +2875,6 @@ namespace MailKit.Net.Imap {
 		/// Asynchronously queries the namespaces.
 		/// </summary>
 		/// <returns>The command result.</returns>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapCommandResponse> QueryNamespacesAsync (CancellationToken cancellationToken)
 		{
