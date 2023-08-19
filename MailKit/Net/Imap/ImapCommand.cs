@@ -846,7 +846,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public async Task<bool> StepAsync (bool doAsync)
+		public bool Step ()
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
 			var response = ImapCommandResponse.None;
@@ -859,19 +859,13 @@ namespace MailKit.Net.Imap {
 
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
 
-				if (doAsync)
-					await Engine.Stream.WriteAsync (buf, 0, buf.Length, CancellationToken).ConfigureAwait (false);
-				else
-					Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
+				Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
 			}
 
 			do {
 				var command = parts[current].Command;
 
-				if (doAsync)
-					await Engine.Stream.WriteAsync (command, 0, command.Length, CancellationToken).ConfigureAwait (false);
-				else
-					Engine.Stream.Write (command, 0, command.Length, CancellationToken);
+				Engine.Stream.Write (command, 0, command.Length, CancellationToken);
 
 				// if the server doesn't support LITERAL+ (or LITERAL-), we'll need to wait
 				// for a "+" response before writing out the any literals...
@@ -879,10 +873,7 @@ namespace MailKit.Net.Imap {
 					break;
 
 				// otherwise, we can write out any and all literal tokens we have...
-				if (doAsync)
-					await parts[current].Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
-				else
-					parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+				parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 
 				if (current + 1 >= parts.Count)
 					break;
@@ -890,10 +881,7 @@ namespace MailKit.Net.Imap {
 				current++;
 			} while (true);
 
-			if (doAsync)
-				await Engine.Stream.FlushAsync (CancellationToken).ConfigureAwait (false);
-			else
-				Engine.Stream.Flush (CancellationToken);
+			Engine.Stream.Flush (CancellationToken);
 
 			// now we need to read the response...
 			do {
@@ -906,44 +894,38 @@ namespace MailKit.Net.Imap {
 					}
 
 					try {
-						token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
+						token = Engine.ReadToken (CancellationToken);
 					} finally {
 						if (Engine.Stream != null && Engine.Stream.IsConnected && Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = timeout;
 					}
 				} else {
-					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
+					token = Engine.ReadToken (CancellationToken);
 				}
 
 				// FIXME: can we have a '+' token instead of using an Atom?
 				if (token.Type == ImapTokenType.Atom && token.Value.ToString () == "+") {
 					// we've gotten a continuation response from the server
-					var text = (await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false)).Trim ();
+					var text = Engine.ReadLine (CancellationToken).Trim ();
 
 					// if we've got a Literal pending, the '+' means we can send it now...
 					if (!supportsLiteralPlus && parts[current].Literal != null) {
-						if (doAsync)
-							await parts[current].Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
-						else
-							parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+						parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 						break;
 					}
 
 					if (ContinuationHandler != null) {
-						await ContinuationHandler (Engine, this, text, doAsync).ConfigureAwait (false);
-					} else if (doAsync) {
-						await Engine.Stream.WriteAsync (NewLine, 0, NewLine.Length, CancellationToken).ConfigureAwait (false);
-						await Engine.Stream.FlushAsync (CancellationToken).ConfigureAwait (false);
+						ContinuationHandler (Engine, this, text, false);
 					} else {
 						Engine.Stream.Write (NewLine, 0, NewLine.Length, CancellationToken);
 						Engine.Stream.Flush (CancellationToken);
 					}
 				} else if (token.Type == ImapTokenType.Asterisk) {
 					// we got an untagged response, let the engine handle this...
-					await Engine.ProcessUntaggedResponseAsync (doAsync, CancellationToken).ConfigureAwait (false);
+					Engine.ProcessUntaggedResponseAsync (false, CancellationToken).GetAwaiter ().GetResult ();
 				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
 					// the next token should be "OK", "NO", or "BAD"
-					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
+					token = Engine.ReadToken (CancellationToken);
 
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, "Syntax error in tagged response. {0}", token);
 
@@ -952,13 +934,13 @@ namespace MailKit.Net.Imap {
 					if (!IsOkNoOrBad (atom, out response))
 						throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. {0}", token);
 
-					token = await Engine.ReadTokenAsync (doAsync, CancellationToken).ConfigureAwait (false);
+					token = Engine.ReadToken (CancellationToken);
 					if (token.Type == ImapTokenType.OpenBracket) {
-						var code = await Engine.ParseResponseCodeAsync (true, doAsync, CancellationToken).ConfigureAwait (false);
+						var code = Engine.ParseResponseCodeAsync (true, false, CancellationToken).GetAwaiter ().GetResult ();
 						RespCodes.Add (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
 						// consume the rest of the line...
-						var line = (await Engine.ReadLineAsync (doAsync, CancellationToken).ConfigureAwait (false)).TrimEnd ();
+						var line = Engine.ReadLine (CancellationToken).TrimEnd ();
 						ResponseText = token.Value.ToString () + line;
 					}
 
@@ -970,7 +952,149 @@ namespace MailKit.Net.Imap {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
 					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
-					var code = await Engine.ParseResponseCodeAsync (false, doAsync, CancellationToken).ConfigureAwait (false);
+					var code = Engine.ParseResponseCodeAsync (false, false, CancellationToken).GetAwaiter ().GetResult ();
+					RespCodes.Add (code);
+				} else {
+					// no clue what we got...
+					throw ImapEngine.UnexpectedToken ("Syntax error in response. Unexpected token: {0}", token);
+				}
+			} while (Status == ImapCommandStatus.Active);
+
+			if (Status == ImapCommandStatus.Active) {
+				current++;
+
+				if (current >= parts.Count || response != ImapCommandResponse.None) {
+					Status = ImapCommandStatus.Complete;
+					Response = response;
+					return false;
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Sends the next part of the command to the server.
+		/// </summary>
+		/// <returns><c>true</c> if there are more command parts to send; otherwise, <c>false</c>.</returns>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public async Task<bool> StepAsync ()
+		{
+			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
+			var response = ImapCommandResponse.None;
+			var idle = UserData as ImapIdleContext;
+			ImapToken token;
+
+			// construct and write the command tag if this is the initial state
+			if (current == 0) {
+				Tag = string.Format (CultureInfo.InvariantCulture, "{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
+
+				var buf = Encoding.ASCII.GetBytes (Tag + " ");
+
+				await Engine.Stream.WriteAsync (buf, 0, buf.Length, CancellationToken).ConfigureAwait (false);
+			}
+
+			do {
+				var command = parts[current].Command;
+
+				await Engine.Stream.WriteAsync (command, 0, command.Length, CancellationToken).ConfigureAwait (false);
+
+				// if the server doesn't support LITERAL+ (or LITERAL-), we'll need to wait
+				// for a "+" response before writing out the any literals...
+				if (parts[current].WaitForContinuation)
+					break;
+
+				// otherwise, we can write out any and all literal tokens we have...
+				await parts[current].Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
+
+				if (current + 1 >= parts.Count)
+					break;
+
+				current++;
+			} while (true);
+
+			await Engine.Stream.FlushAsync (CancellationToken).ConfigureAwait (false);
+
+			// now we need to read the response...
+			do {
+				if (Engine.State == ImapEngineState.Idle) {
+					int timeout = Timeout.Infinite;
+
+					if (Engine.Stream.CanTimeout) {
+						timeout = Engine.Stream.ReadTimeout;
+						Engine.Stream.ReadTimeout = Timeout.Infinite;
+					}
+
+					try {
+						token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
+					} finally {
+						if (Engine.Stream != null && Engine.Stream.IsConnected && Engine.Stream.CanTimeout)
+							Engine.Stream.ReadTimeout = timeout;
+					}
+				} else {
+					token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
+				}
+
+				// FIXME: can we have a '+' token instead of using an Atom?
+				if (token.Type == ImapTokenType.Atom && token.Value.ToString () == "+") {
+					// we've gotten a continuation response from the server
+					var text = (await Engine.ReadLineAsync (CancellationToken).ConfigureAwait (false)).Trim ();
+
+					// if we've got a Literal pending, the '+' means we can send it now...
+					if (!supportsLiteralPlus && parts[current].Literal != null) {
+						await parts[current].Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
+						break;
+					}
+
+					if (ContinuationHandler != null) {
+						await ContinuationHandler (Engine, this, text, true).ConfigureAwait (false);
+					} else {
+						await Engine.Stream.WriteAsync (NewLine, 0, NewLine.Length, CancellationToken).ConfigureAwait (false);
+						await Engine.Stream.FlushAsync (CancellationToken).ConfigureAwait (false);
+					}
+				} else if (token.Type == ImapTokenType.Asterisk) {
+					// we got an untagged response, let the engine handle this...
+					await Engine.ProcessUntaggedResponseAsync (true, CancellationToken).ConfigureAwait (false);
+				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
+					// the next token should be "OK", "NO", or "BAD"
+					token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
+
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, "Syntax error in tagged response. {0}", token);
+
+					string atom = (string) token.Value;
+
+					if (!IsOkNoOrBad (atom, out response))
+						throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. {0}", token);
+
+					token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
+					if (token.Type == ImapTokenType.OpenBracket) {
+						var code = await Engine.ParseResponseCodeAsync (true, true, CancellationToken).ConfigureAwait (false);
+						RespCodes.Add (code);
+					} else if (token.Type != ImapTokenType.Eoln) {
+						// consume the rest of the line...
+						var line = (await Engine.ReadLineAsync (CancellationToken).ConfigureAwait (false)).TrimEnd ();
+						ResponseText = token.Value.ToString () + line;
+					}
+
+					var folder = Folder ?? Engine.Selected;
+
+					folder?.FlushQueuedEvents ();
+					break;
+				} else if (token.Type == ImapTokenType.OpenBracket) {
+					// Note: this is a work-around for broken IMAP servers like Office365.com that
+					// return RESP-CODES that are not preceded by "* OK " such as the example in
+					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
+					var code = await Engine.ParseResponseCodeAsync (false, true, CancellationToken).ConfigureAwait (false);
 					RespCodes.Add (code);
 				} else {
 					// no clue what we got...

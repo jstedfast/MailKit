@@ -2415,7 +2415,7 @@ namespace MailKit.Net.Imap {
 			current.Status = ImapCommandStatus.Active;
 
 			try {
-				while (current.StepAsync (false).GetAwaiter ().GetResult ()) {
+				while (current.Step ()) {
 					// more literal data to send...
 				}
 
@@ -2442,7 +2442,7 @@ namespace MailKit.Net.Imap {
 			current.Status = ImapCommandStatus.Active;
 
 			try {
-				while (await current.StepAsync (true).ConfigureAwait (false)) {
+				while (await current.StepAsync ().ConfigureAwait (false)) {
 					// more literal data to send...
 				}
 
