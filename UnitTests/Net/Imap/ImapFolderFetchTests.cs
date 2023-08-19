@@ -526,14 +526,17 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadOnly);
 
 				var messages = inbox.Fetch (UniqueIdRange.All, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
+				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
 
 				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
+				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
 
 				messages = inbox.Fetch (0, -1, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
+				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
 
@@ -576,14 +579,17 @@ namespace UnitTests.Net.Imap {
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
 
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
+				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
 
 				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
+				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
 
 				messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
+				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
 

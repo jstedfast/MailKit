@@ -178,7 +178,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The count.</value>
 		public int Count {
-			get { return (int) (start <= end ? end - start : start - end) + 1; }
+			get { return (int) Math.Min ((start <= end ? end - start : start - end) + 1, int.MaxValue); }
 		}
 
 		/// <summary>
