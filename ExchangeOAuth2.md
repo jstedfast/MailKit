@@ -134,7 +134,7 @@ var scopes = new string[] {
 };
 
 var authToken = await confidentialClientApplication.AcquireTokenForClient (scopes).ExecuteAsync ();
-var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
+var oauth2 = new SaslMechanismOAuth2 (accountEmailAddress, authToken.AccessToken);
 
 using (var client = new ImapClient ()) {
     await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
