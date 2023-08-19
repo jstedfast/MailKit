@@ -121,6 +121,7 @@ server.
 
 ```csharp
 var confidentialClientApplication = ConfidentialClientApplicationBuilder.Create (clientId)
+    .WithAuthority ($"https://login.microsoftonline.com/{tenantId}/v2.0")
     .WithCertificate (certificate) // or .WithClientSecret (clientSecret)
     .Build ();
  
@@ -132,8 +133,7 @@ var scopes = new string[] {
     // "https://outlook.office365.com/.default"
 };
 
-var authToken = await confidentialClientApplication.AcquireTokenForClient (scopes)
-    .WithAuthority (AzureCloudInstance.AzurePublic, "{tenantID}").ExecuteAsync ();
+var authToken = await confidentialClientApplication.AcquireTokenForClient (scopes).ExecuteAsync ();
 var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
 
 using (var client = new ImapClient ()) {
