@@ -2282,10 +2282,7 @@ namespace MailKit.Net.Imap {
 			return result;
 		}
 
-		/// <summary>
-		/// Iterate the command pipeline.
-		/// </summary>
-		async Task IterateAsync (bool doAsync)
+		void PopNextCommand ()
 		{
 			lock (queue) {
 				if (queue.Count == 0)
@@ -2305,6 +2302,63 @@ namespace MailKit.Net.Imap {
 					throw;
 				}
 			}
+		}
+
+		void OnImapProtocolException ()
+		{
+			var ic = current;
+
+			Disconnect ();
+
+			if (ic.Bye) {
+				if (ic.RespCodes.Count > 0) {
+					var code = ic.RespCodes[ic.RespCodes.Count - 1];
+
+					if (code.Type == ImapResponseCodeType.Alert) {
+						OnAlert (code.Message);
+
+						throw new ImapProtocolException (code.Message);
+					}
+				}
+
+				if (!string.IsNullOrEmpty (ic.ResponseText))
+					throw new ImapProtocolException (ic.ResponseText);
+			}
+		}
+
+		/// <summary>
+		/// Iterate the command pipeline.
+		/// </summary>
+		void Iterate ()
+		{
+			PopNextCommand ();
+
+			current.Status = ImapCommandStatus.Active;
+
+			try {
+				while (current.StepAsync (false).GetAwaiter ().GetResult ()) {
+					// more literal data to send...
+				}
+
+				if (current.Bye && !current.Logout)
+					throw new ImapProtocolException ("Bye.");
+			} catch (ImapProtocolException) {
+				OnImapProtocolException ();
+				throw;
+			} catch {
+				Disconnect ();
+				throw;
+			} finally {
+				current = null;
+			}
+		}
+
+		/// <summary>
+		/// Asynchronously iterate the command pipeline.
+		/// </summary>
+		async Task IterateAsync (bool doAsync)
+		{
+			PopNextCommand ();
 
 			current.Status = ImapCommandStatus.Active;
 
@@ -2316,25 +2370,7 @@ namespace MailKit.Net.Imap {
 				if (current.Bye && !current.Logout)
 					throw new ImapProtocolException ("Bye.");
 			} catch (ImapProtocolException) {
-				var ic = current;
-
-				Disconnect ();
-
-				if (ic.Bye) {
-					if (ic.RespCodes.Count > 0) {
-						var code = ic.RespCodes[ic.RespCodes.Count - 1];
-
-						if (code.Type == ImapResponseCodeType.Alert) {
-							OnAlert (code.Message);
-
-							throw new ImapProtocolException (code.Message);
-						}
-					}
-
-					if (!string.IsNullOrEmpty (ic.ResponseText))
-						throw new ImapProtocolException (ic.ResponseText);
-				}
-
+				OnImapProtocolException ();
 				throw;
 			} catch {
 				Disconnect ();
@@ -2342,6 +2378,52 @@ namespace MailKit.Net.Imap {
 			} finally {
 				current = null;
 			}
+		}
+
+		/// <summary>
+		/// Wait for the specified command to finish.
+		/// </summary>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="ic"/> is <c>null</c>.
+		/// </exception>
+		public ImapCommandResponse Run (ImapCommand ic)
+		{
+			if (ic == null)
+				throw new ArgumentNullException (nameof (ic));
+
+			while (ic.Status < ImapCommandStatus.Complete) {
+				// continue processing commands...
+				Iterate ();
+			}
+
+			ProcessResponseCodes (ic);
+
+			return ic.Response;
+		}
+
+		/// <summary>
+		/// Wait for the specified command to finish.
+		/// </summary>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="ic"/> is <c>null</c>.
+		/// </exception>
+		public async Task<ImapCommandResponse> RunAsync (ImapCommand ic)
+		{
+			if (ic == null)
+				throw new ArgumentNullException (nameof (ic));
+
+			while (ic.Status < ImapCommandStatus.Complete) {
+				// continue processing commands...
+				await IterateAsync (true).ConfigureAwait (false);
+			}
+
+			ProcessResponseCodes (ic);
+
+			return ic.Response;
 		}
 
 		/// <summary>

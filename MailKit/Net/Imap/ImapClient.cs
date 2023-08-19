@@ -278,7 +278,7 @@ namespace MailKit.Net.Imap {
 			return valid;
 		}
 
-		async Task CompressAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueCompressCommand (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -290,14 +290,14 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("Compression must be enabled before selecting a folder.");
 
 #if MAILKIT_LITE
-			await Task.Delay (0).ConfigureAwait (false);
 			throw new NotSupportedException ("MailKitLite does not support the COMPRESS extension.");
 #else
-			int capabilitiesVersion = engine.CapabilitiesVersion;
-			var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
+			return engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
+#endif
+		}
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessCompressResponse (ImapCommand ic)
+		{
 			if (ic.Response != ImapCommandResponse.Ok) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
 					if (ic.RespCodes[i].Type == ImapResponseCodeType.CompressionActive)
@@ -308,7 +308,6 @@ namespace MailKit.Net.Imap {
 			}
 
 			engine.Stream.Stream = new CompressedStream (engine.Stream.Stream);
-#endif
 		}
 
 		/// <summary>
@@ -347,10 +346,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Compress (CancellationToken cancellationToken = default)
 		{
-			CompressAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueCompressCommand (cancellationToken);
+
+			engine.Run (ic);
+
+			ProcessCompressResponse (ic);
 		}
 
-		async Task EnableQuickResyncAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueEnableQuickResyncCommand (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -363,12 +366,13 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
 			if (engine.QResyncEnabled)
-				return;
+				return null;
 
-			var ic = engine.QueueCommand (cancellationToken, null, "ENABLE QRESYNC CONDSTORE\r\n");
+			return engine.QueueCommand (cancellationToken, null, "ENABLE QRESYNC CONDSTORE\r\n");
+		}
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		static void ProcessEnableResponse (ImapCommand ic)
+		{
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
 		}
@@ -418,10 +422,17 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void EnableQuickResync (CancellationToken cancellationToken = default)
 		{
-			EnableQuickResyncAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueEnableQuickResyncCommand (cancellationToken);
+
+			if (ic == null)
+				return;
+
+			engine.Run (ic);
+
+			ProcessEnableResponse (ic);
 		}
 
-		async Task EnableUTF8Async (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueEnableUTF8Command (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -434,14 +445,9 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the UTF8=ACCEPT extension.");
 
 			if (engine.UTF8Enabled)
-				return;
+				return null;
 
-			var ic = engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
-
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("ENABLE", ic);
+			return engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
 		}
 
 		/// <summary>
@@ -480,10 +486,17 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void EnableUTF8 (CancellationToken cancellationToken = default)
 		{
-			EnableUTF8Async (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueEnableUTF8Command (cancellationToken);
+
+			if (ic == null)
+				return;
+
+			engine.Run (ic);
+
+			ProcessEnableResponse (ic);
 		}
 
-		async Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueIdentifyCommand (ImapImplementation clientImplementation, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -518,8 +531,11 @@ namespace MailKit.Net.Imap {
 
 			engine.QueueCommand (ic);
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		static ImapImplementation ProcessIdentifyResponse (ImapCommand ic)
+		{
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ID", ic);
 
@@ -576,7 +592,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapImplementation Identify (ImapImplementation clientImplementation, CancellationToken cancellationToken = default)
 		{
-			return IdentifyAsync (clientImplementation, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueIdentifyCommand (clientImplementation, cancellationToken);
+
+			engine.Run (ic);
+
+			return ProcessIdentifyResponse (ic);
 		}
 
 		#region IMailService implementation
@@ -1906,29 +1926,6 @@ namespace MailKit.Net.Imap {
 			ConnectAsync (stream, host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		async Task DisconnectAsync (bool quit, bool doAsync, CancellationToken cancellationToken)
-		{
-			CheckDisposed ();
-
-			if (!engine.IsConnected)
-				return;
-
-			if (quit) {
-				try {
-					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
-					await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-				} catch (OperationCanceledException) {
-				} catch (ImapProtocolException) {
-				} catch (ImapCommandException) {
-				} catch (IOException) {
-				}
-			}
-
-			disconnecting = true;
-
-			engine.Disconnect ();
-		}
-
 		/// <summary>
 		/// Disconnect the service.
 		/// </summary>
@@ -1945,19 +1942,38 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Disconnect (bool quit, CancellationToken cancellationToken = default)
 		{
-			DisconnectAsync (quit, false, cancellationToken).GetAwaiter ().GetResult ();
+			CheckDisposed ();
+
+			if (!engine.IsConnected)
+				return;
+
+			if (quit) {
+				try {
+					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
+					engine.Run (ic);
+				} catch (OperationCanceledException) {
+				} catch (ImapProtocolException) {
+				} catch (ImapCommandException) {
+				} catch (IOException) {
+				}
+			}
+
+			disconnecting = true;
+
+			engine.Disconnect ();
 		}
 
-		async Task NoOpAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueNoOpCommand (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			var ic = engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
+			return engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
+		}
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		static void ProcessNoOpResponse (ImapCommand ic)
+		{
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOOP", ic);
 		}
@@ -2007,10 +2023,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void NoOp (CancellationToken cancellationToken = default)
 		{
-			NoOpAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueNoOpCommand (cancellationToken);
+
+			engine.Run (ic);
+
+			ProcessNoOpResponse (ic);
 		}
 
-		async Task IdleAsync (CancellationToken doneToken, bool doAsync, CancellationToken cancellationToken)
+		void CheckCanIdle (CancellationToken doneToken)
 		{
 			if (!doneToken.CanBeCanceled)
 				throw new ArgumentException ("The doneToken must be cancellable.", nameof (doneToken));
@@ -2024,20 +2044,21 @@ namespace MailKit.Net.Imap {
 
 			if (engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("An ImapFolder has not been opened.");
+		}
 
-			if (doneToken.IsCancellationRequested)
-				return;
+		ImapCommand QueueIdleCommand (ImapIdleContext context, CancellationToken cancellationToken)
+		{
+			var ic = engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
+			ic.ContinuationHandler = context.ContinuationHandler;
+			ic.UserData = context;
 
-			using (var context = new ImapIdleContext (engine, doneToken, cancellationToken)) {
-				var ic = engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
-				ic.ContinuationHandler = context.ContinuationHandler;
-				ic.UserData = context;
+			return ic;
+		}
 
-				await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("IDLE", ic);
-			}
+		static void ProcessIdleResponse (ImapCommand ic)
+		{
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("IDLE", ic);
 		}
 
 		/// <summary>
@@ -2096,10 +2117,21 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Idle (CancellationToken doneToken, CancellationToken cancellationToken = default)
 		{
-			IdleAsync (doneToken, false, cancellationToken).GetAwaiter ().GetResult ();
+			CheckCanIdle (doneToken);
+
+			if (doneToken.IsCancellationRequested)
+				return;
+
+			using (var context = new ImapIdleContext (engine, doneToken, cancellationToken)) {
+				var ic = QueueIdleCommand (context, cancellationToken);
+
+				engine.Run (ic);
+
+				ProcessIdleResponse (ic);
+			}
 		}
 
-		async Task NotifyAsync (bool status, IList<ImapEventGroup> eventGroups, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueNotifyCommand (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken, out bool notifySelectedNewExpunge)
 		{
 			if (eventGroups == null)
 				throw new ArgumentNullException (nameof (eventGroups));
@@ -2114,8 +2146,9 @@ namespace MailKit.Net.Imap {
 			if ((engine.Capabilities & ImapCapabilities.Notify) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the NOTIFY extension.");
 
+			notifySelectedNewExpunge = false;
+
 			var command = new StringBuilder ("NOTIFY SET");
-			var notifySelectedNewExpunge = false;
 			var args = new List<object> ();
 
 			if (status)
@@ -2133,8 +2166,11 @@ namespace MailKit.Net.Imap {
 
 			engine.QueueCommand (ic);
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		void ProcessNotifyResponse (ImapCommand ic, bool notifySelectedNewExpunge)
+		{
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOTIFY", ic);
 
@@ -2191,10 +2227,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Notify (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default)
 		{
-			NotifyAsync (status, eventGroups, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueNotifyCommand (status, eventGroups, cancellationToken, out bool notifySelectedNewExpunge);
+
+			engine.Run (ic);
+
+			ProcessNotifyResponse (ic, notifySelectedNewExpunge);
 		}
 
-		async Task DisableNotifyAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueDisableNotifyCommand (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2207,8 +2247,11 @@ namespace MailKit.Net.Imap {
 
 			engine.QueueCommand (ic);
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		void ProcessDisableNotifyResponse (ImapCommand ic)
+		{
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOTIFY", ic);
 
@@ -2250,7 +2293,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void DisableNotify (CancellationToken cancellationToken = default)
 		{
-			DisableNotifyAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueDisableNotifyCommand (cancellationToken);
+
+			engine.Run (ic);
+
+			ProcessDisableNotifyResponse (ic);
 		}
 
 		#endregion
@@ -2540,7 +2587,7 @@ namespace MailKit.Net.Imap {
 			return engine.GetFolderAsync (path, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
-		async Task<string> GetMetadataAsync (MetadataTag tag, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetMetadataCommand (MetadataTag tag, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2556,11 +2603,15 @@ namespace MailKit.Net.Imap {
 
 			engine.QueueCommand (ic);
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		string ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
+		{
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
 
+			var metadata = (MetadataCollection) ic.UserData;
 			string value = null;
 
 			for (int i = 0; i < metadata.Count; i++) {
@@ -2611,10 +2662,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
-			return GetMetadataAsync (tag, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueGetMetadataCommand (tag, cancellationToken);
+
+			engine.Run (ic);
+
+			return ProcessGetMetadataResponse (ic, tag);
 		}
 
-		async Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetMetadataCommand (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -2664,7 +2719,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			if (args.Count == 0)
-				return new MetadataCollection ();
+				return null;
 
 			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
 			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadataAsync);
@@ -2673,8 +2728,11 @@ namespace MailKit.Net.Imap {
 
 			engine.QueueCommand (ic);
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		MetadataCollection ProcessGetMetadataResponse (ImapCommand ic, MetadataOptions options)
+		{
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
 
@@ -2729,10 +2787,17 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
-			return GetMetadataAsync (options, tags, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueGetMetadataCommand (options, tags, cancellationToken);
+
+			if (ic == null)
+				return new MetadataCollection ();
+
+			engine.Run (ic);
+
+			return ProcessGetMetadataResponse (ic, options);
 		}
 
-		async Task SetMetadataAsync (MetadataCollection metadata, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken)
 		{
 			if (metadata == null)
 				throw new ArgumentNullException (nameof (metadata));
@@ -2745,7 +2810,7 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the METADATA or METADATA-SERVER extension.");
 
 			if (metadata.Count == 0)
-				return;
+				return null;
 
 			var command = new StringBuilder ("SETMETADATA \"\" (");
 			var args = new List<object> ();
@@ -2769,8 +2834,11 @@ namespace MailKit.Net.Imap {
 
 			engine.QueueCommand (ic);
 
-			await engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		static void ProcessSetMetadataResponse (ImapCommand ic)
+		{
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SETMETADATA", ic);
 		}
@@ -2812,7 +2880,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
-			SetMetadataAsync (metadata, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueSetMetadataCommand (metadata, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			engine.Run (ic);
+
+			ProcessSetMetadataResponse (ic);
 		}
 
 		#endregion

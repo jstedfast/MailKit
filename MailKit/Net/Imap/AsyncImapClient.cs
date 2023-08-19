@@ -74,9 +74,13 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task CompressAsync (CancellationToken cancellationToken = default)
+		public async Task CompressAsync (CancellationToken cancellationToken = default)
 		{
-			return CompressAsync (true, cancellationToken);
+			var ic = QueueCompressCommand (cancellationToken);
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessCompressResponse (ic);
 		}
 
 		/// <summary>
@@ -123,9 +127,13 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override Task EnableQuickResyncAsync (CancellationToken cancellationToken = default)
+		public override async Task EnableQuickResyncAsync (CancellationToken cancellationToken = default)
 		{
-			return EnableQuickResyncAsync (true, cancellationToken);
+			var ic = QueueEnableQuickResyncCommand (cancellationToken);
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessEnableResponse (ic);
 		}
 
 		/// <summary>
@@ -163,9 +171,16 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task EnableUTF8Async (CancellationToken cancellationToken = default)
+		public async Task EnableUTF8Async (CancellationToken cancellationToken = default)
 		{
-			return EnableUTF8Async (true, cancellationToken);
+			var ic = QueueEnableUTF8Command (cancellationToken);
+
+			if (ic == null)
+				return;
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessEnableResponse (ic);
 		}
 
 		/// <summary>
@@ -213,9 +228,13 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, CancellationToken cancellationToken = default)
+		public async Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, CancellationToken cancellationToken = default)
 		{
-			return IdentifyAsync (clientImplementation, true, cancellationToken);
+			var ic = QueueIdentifyCommand (clientImplementation, cancellationToken);
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessIdentifyResponse (ic);
 		}
 
 		/// <summary>
@@ -545,9 +564,27 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		public override Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default)
+		public override async Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default)
 		{
-			return DisconnectAsync (quit, true, cancellationToken);
+			CheckDisposed ();
+
+			if (!engine.IsConnected)
+				return;
+
+			if (quit) {
+				try {
+					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
+					await engine.RunAsync (ic).ConfigureAwait (false);
+				} catch (OperationCanceledException) {
+				} catch (ImapProtocolException) {
+				} catch (ImapCommandException) {
+				} catch (IOException) {
+				}
+			}
+
+			disconnecting = true;
+
+			engine.Disconnect ();
 		}
 
 		/// <summary>
@@ -594,9 +631,13 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override Task NoOpAsync (CancellationToken cancellationToken = default)
+		public override async Task NoOpAsync (CancellationToken cancellationToken = default)
 		{
-			return NoOpAsync (true, cancellationToken);
+			var ic = QueueNoOpCommand (cancellationToken);
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessNoOpResponse (ic);
 		}
 
 		/// <summary>
@@ -651,9 +692,20 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public Task IdleAsync (CancellationToken doneToken, CancellationToken cancellationToken = default)
+		public async Task IdleAsync (CancellationToken doneToken, CancellationToken cancellationToken = default)
 		{
-			return IdleAsync (doneToken, true, cancellationToken);
+			CheckCanIdle (doneToken);
+
+			if (doneToken.IsCancellationRequested)
+				return;
+
+			using (var context = new ImapIdleContext (engine, doneToken, cancellationToken)) {
+				var ic = QueueIdleCommand (context, cancellationToken);
+
+				await engine.RunAsync (ic).ConfigureAwait (false);
+
+				ProcessIdleResponse (ic);
+			}
 		}
 
 		/// <summary>
@@ -705,9 +757,13 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public Task NotifyAsync (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default)
+		public async Task NotifyAsync (bool status, IList<ImapEventGroup> eventGroups, CancellationToken cancellationToken = default)
 		{
-			return NotifyAsync (status, eventGroups, true, cancellationToken);
+			var ic = QueueNotifyCommand (status, eventGroups, cancellationToken, out bool notifySelectedNewExpunge);
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessNotifyResponse (ic, notifySelectedNewExpunge);
 		}
 
 		/// <summary>
@@ -744,9 +800,13 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public Task DisableNotifyAsync (CancellationToken cancellationToken = default)
+		public async Task DisableNotifyAsync (CancellationToken cancellationToken = default)
 		{
-			return DisableNotifyAsync (true, cancellationToken);
+			var ic = QueueDisableNotifyCommand (cancellationToken);
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessDisableNotifyResponse (ic);
 		}
 
 		/// <summary>
@@ -873,9 +933,13 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
+		public override async Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
-			return GetMetadataAsync (tag, true, cancellationToken);
+			var ic = QueueGetMetadataCommand (tag, cancellationToken);
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetMetadataResponse (ic, tag);
 		}
 
 		/// <summary>
@@ -917,9 +981,16 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
+		public override async Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
-			return GetMetadataAsync (options, tags, true, cancellationToken);
+			var ic = QueueGetMetadataCommand (options, tags, cancellationToken);
+
+			if (ic == null)
+				return new MetadataCollection ();
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetMetadataResponse (ic, options);
 		}
 
 		/// <summary>
@@ -958,9 +1029,16 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default)
+		public override async Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
-			return SetMetadataAsync (metadata, true, cancellationToken);
+			var ic = QueueSetMetadataCommand (metadata, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			await engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessSetMetadataResponse (ic);
 		}
 	}
 }
