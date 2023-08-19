@@ -2413,24 +2413,6 @@ namespace MailKit.Net.Imap {
 			throw new FolderNotFoundException (@namespace.Path);
 		}
 
-		async Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (@namespace == null)
-				throw new ArgumentNullException (nameof (@namespace));
-
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
-
-			var folders = await engine.GetFoldersAsync (@namespace, items, subscribedOnly, doAsync, cancellationToken).ConfigureAwait (false);
-			var list = new IMailFolder[folders.Count];
-
-			for (int i = 0; i < list.Length; i++)
-				list[i] = (IMailFolder) folders[i];
-
-			return list;
-		}
-
 		/// <summary>
 		/// Get all of the folders within the specified namespace.
 		/// </summary>
@@ -2471,7 +2453,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
-			return GetFoldersAsync (@namespace, items, subscribedOnly, false, cancellationToken).GetAwaiter ().GetResult ();
+			if (@namespace == null)
+				throw new ArgumentNullException (nameof (@namespace));
+
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			return engine.GetFolders (@namespace, items, subscribedOnly, cancellationToken);
 		}
 
 		/// <summary>
@@ -2519,7 +2508,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			return engine.GetFolderAsync (path, false, cancellationToken).GetAwaiter ().GetResult ();
+			return engine.GetFolder (path, cancellationToken);
 		}
 
 		ImapCommand QueueGetMetadataCommand (MetadataTag tag, CancellationToken cancellationToken)

@@ -3132,20 +3132,8 @@ namespace MailKit.Net.Imap {
 			return folder;
 		}
 
-		/// <summary>
-		/// Gets the folder for the specified path.
-		/// </summary>
-		/// <returns>The folder.</returns>
-		/// <param name="path">The folder path.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task<ImapFolder> GetFolderAsync (string path, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetFolderCommand (string encodedName, CancellationToken cancellationToken)
 		{
-			var encodedName = EncodeMailboxName (path);
-
-			if (TryGetCachedFolder (encodedName, out var folder))
-				return folder;
-
 			var command = new StringBuilder ("LIST \"\" %S");
 			var list = new List<ImapFolder> ();
 			var returnsSubscribed = false;
@@ -3164,7 +3152,14 @@ namespace MailKit.Net.Imap {
 
 			QueueCommand (ic);
 
-			await RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
+
+		ImapFolder ProcessGetFolderResponse (ImapCommand ic, string path, string encodedName, out List<ImapFolder> list)
+		{
+			ImapFolder folder;
+
+			list = (List<ImapFolder>) ic.UserData;
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
@@ -3172,7 +3167,53 @@ namespace MailKit.Net.Imap {
 			if ((folder = GetFolder (list, encodedName)) == null)
 				throw new FolderNotFoundException (path);
 
-			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
+			return folder;
+		}
+
+		/// <summary>
+		/// Gets the folder for the specified path.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="path">The folder path.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public ImapFolder GetFolder (string path, CancellationToken cancellationToken)
+		{
+			var encodedName = EncodeMailboxName (path);
+
+			if (TryGetCachedFolder (encodedName, out var folder))
+				return folder;
+
+			var ic = QueueGetFolderCommand (encodedName, cancellationToken);
+
+			Run (ic);
+
+			folder = ProcessGetFolderResponse (ic, path, encodedName, out var list);
+
+			LookupParentFolders (list, cancellationToken);
+
+			return folder;
+		}
+
+		/// <summary>
+		/// Gets the folder for the specified path.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="path">The folder path.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public async Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken)
+		{
+			var encodedName = EncodeMailboxName (path);
+
+			if (TryGetCachedFolder (encodedName, out var folder))
+				return folder;
+
+			var ic = QueueGetFolderCommand (encodedName, cancellationToken);
+
+			await RunAsync (ic).ConfigureAwait (false);
+
+			folder = ProcessGetFolderResponse (ic, path, encodedName, out var list);
+
+			await LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
 
 			return folder;
 		}
@@ -3217,27 +3258,16 @@ namespace MailKit.Net.Imap {
 			return flags.TrimEnd ();
 		}
 
-		/// <summary>
-		/// Get all of the folders within the specified namespace.
-		/// </summary>
-		/// <remarks>
-		/// Gets all of the folders within the specified namespace.
-		/// </remarks>
-		/// <returns>The list of folders.</returns>
-		/// <param name="namespace">The namespace.</param>
-		/// <param name="items">The status items to pre-populate.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task<IList<ImapFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetFoldersCommand (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, out bool status)
 		{
 			var encodedName = EncodeMailboxName (@namespace.Path);
 			var pattern = encodedName.Length > 0 ? encodedName + @namespace.DirectorySeparator : string.Empty;
-			var status = items != StatusItems.None;
 			var list = new List<ImapFolder> ();
 			var command = new StringBuilder ();
 			var returnsSubscribed = false;
 			var lsub = subscribedOnly;
+
+			status = items != StatusItems.None;
 
 			if (!TryGetCachedFolder (encodedName, out var folder))
 				throw new FolderNotFoundException (@namespace.Path);
@@ -3293,21 +3323,83 @@ namespace MailKit.Net.Imap {
 
 			QueueCommand (ic);
 
-			await RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
+
+		IList<IMailFolder> ToListOfIMailFolder (List<ImapFolder> list)
+		{
+			var folders = new IMailFolder[list.Count];
+			for (int i = 0; i < folders.Length; i++)
+				folders[i] = list[i];
+
+			return folders;
+		}
+
+		/// <summary>
+		/// Get all of the folders within the specified namespace.
+		/// </summary>
+		/// <remarks>
+		/// Gets all of the folders within the specified namespace.
+		/// </remarks>
+		/// <returns>The list of folders.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <param name="items">The status items to pre-populate.</param>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
+		{
+			var ic = QueueGetFoldersCommand (@namespace, items, subscribedOnly, cancellationToken, out bool status);
+			var list = (List<ImapFolder>) ic.UserData;
+
+			Run (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create (lsub ? "LSUB" : "LIST", ic);
+				throw ImapCommandException.Create (ic.Lsub ? "LSUB" : "LIST", ic);
 
-			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
+			LookupParentFolders (list, cancellationToken);
 
 			if (status) {
 				for (int i = 0; i < list.Count; i++) {
 					if (list[i].Exists)
-						await list[i].StatusAsync (items, doAsync, false, cancellationToken).ConfigureAwait (false);
+						list[i].StatusAsync (items, false, false, cancellationToken).GetAwaiter ().GetResult ();
 				}
 			}
 
-			return list;
+			return ToListOfIMailFolder (list);
+		}
+
+		/// <summary>
+		/// Get all of the folders within the specified namespace.
+		/// </summary>
+		/// <remarks>
+		/// Gets all of the folders within the specified namespace.
+		/// </remarks>
+		/// <returns>The list of folders.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <param name="items">The status items to pre-populate.</param>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public async Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
+		{
+			var ic = QueueGetFoldersCommand (@namespace, items, subscribedOnly, cancellationToken, out bool status);
+			var list = (List<ImapFolder>) ic.UserData;
+
+			await RunAsync (ic).ConfigureAwait (false);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create (ic.Lsub ? "LSUB" : "LIST", ic);
+
+			await LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
+
+			if (status) {
+				for (int i = 0; i < list.Count; i++) {
+					if (list[i].Exists)
+						await list[i].StatusAsync (items, true, false, cancellationToken).ConfigureAwait (false);
+				}
+			}
+
+			return ToListOfIMailFolder (list);
 		}
 
 		/// <summary>

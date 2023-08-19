@@ -1196,7 +1196,14 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
-			return GetFoldersAsync (@namespace, items, subscribedOnly, true, cancellationToken);
+			if (@namespace == null)
+				throw new ArgumentNullException (nameof (@namespace));
+
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			return engine.GetFoldersAsync (@namespace, items, subscribedOnly, cancellationToken);
 		}
 
 		/// <summary>
@@ -1235,7 +1242,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override async Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default)
+		public override Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default)
 		{
 			if (path == null)
 				throw new ArgumentNullException (nameof (path));
@@ -1244,7 +1251,7 @@ namespace MailKit.Net.Imap
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			return await engine.GetFolderAsync (path, true, cancellationToken).ConfigureAwait (false);
+			return engine.GetFolderAsync (path, cancellationToken);
 		}
 
 		/// <summary>
