@@ -183,7 +183,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the
-		/// <see cref="ConnectAsync"/> method.
+		/// <see cref="Connect"/> or <see cref="ConnectAsync"/> methods.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
@@ -240,8 +240,8 @@ namespace MailKit.Net.Imap {
 		/// Get the capabilities supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection
-		/// has been made via the <see cref="ConnectAsync"/> method.
+		/// The capabilities will not be known until a successful connection has been
+		/// made via the <see cref="Connect"/> or <see cref="ConnectAsync"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public ImapCapabilities Capabilities {
@@ -599,22 +599,7 @@ namespace MailKit.Net.Imap {
 			Stream = stream;
 		}
 
-		/// <summary>
-		/// Takes posession of the <see cref="ImapStream"/> and reads the greeting.
-		/// </summary>
-		/// <param name="stream">The IMAP stream.</param>
-		/// <param name="doAsync">Whether or not asyncrhonois IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// An IMAP protocol error occurred.
-		/// </exception>
-		public async Task ConnectAsync (ImapStream stream, bool doAsync, CancellationToken cancellationToken)
+		void Initialize (ImapStream stream)
 		{
 			TagPrefix = (char) ('A' + (TagPrefixIndex++ % 26));
 			ProtocolVersion = ImapProtocolVersion.Unknown;
@@ -638,35 +623,89 @@ namespace MailKit.Net.Imap {
 			Stream = stream;
 			I18NLevel = 0;
 			Tag = 0;
+		}
+
+		ImapEngineState ParseConnectedState (ImapToken token, out bool bye)
+		{
+			var atom = (string) token.Value;
+
+			bye = false;
+
+			if (atom.Equals ("OK", StringComparison.OrdinalIgnoreCase)) {
+				return ImapEngineState.Connected;
+			} else if (atom.Equals ("BYE", StringComparison.OrdinalIgnoreCase)) {
+				bye = true;
+
+				return State;
+			} else if (atom.Equals ("PREAUTH", StringComparison.OrdinalIgnoreCase)) {
+				return ImapEngineState.Authenticated;
+			} else {
+				throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
+			}
+		}
+
+		void DetectQuirksMode (string text)
+		{
+			if (text.StartsWith ("Courier-IMAP ready.", StringComparison.Ordinal))
+				QuirksMode = ImapQuirksMode.Courier;
+			else if (text.Contains (" Cyrus IMAP "))
+				QuirksMode = ImapQuirksMode.Cyrus;
+			else if (text.StartsWith ("Domino IMAP4 Server", StringComparison.Ordinal))
+				QuirksMode = ImapQuirksMode.Domino;
+			else if (text.StartsWith ("Dovecot ready.", StringComparison.Ordinal))
+				QuirksMode = ImapQuirksMode.Dovecot;
+			else if (text.StartsWith ("Microsoft Exchange Server 2003 IMAP4rev1", StringComparison.Ordinal))
+				QuirksMode = ImapQuirksMode.Exchange2003;
+			else if (text.StartsWith ("Microsoft Exchange Server 2007 IMAP4 service is ready", StringComparison.Ordinal))
+				QuirksMode = ImapQuirksMode.Exchange2007;
+			else if (text.StartsWith ("The Microsoft Exchange IMAP4 service is ready.", StringComparison.Ordinal))
+				QuirksMode = ImapQuirksMode.Exchange;
+			else if (text.StartsWith ("Gimap ready", StringComparison.Ordinal))
+				QuirksMode = ImapQuirksMode.GMail;
+			else if (text.StartsWith ("IMAPrev1", StringComparison.Ordinal)) // https://github.com/hmailserver/hmailserver/blob/master/hmailserver/source/Server/IMAP/IMAPConnection.cpp#L127
+				QuirksMode = ImapQuirksMode.hMailServer;
+			else if (text.Contains (" IMAP4rev1 2007f.") || text.Contains (" Panda IMAP "))
+				QuirksMode = ImapQuirksMode.UW;
+			else if (text.Contains ("SmarterMail"))
+				QuirksMode = ImapQuirksMode.SmarterMail;
+			else if (text.Contains ("Yandex IMAP4rev1 "))
+				QuirksMode = ImapQuirksMode.Yandex;
+		}
+
+		/// <summary>
+		/// Takes posession of the <see cref="ImapStream"/> and reads the greeting.
+		/// </summary>
+		/// <param name="stream">The IMAP stream.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void Connect (ImapStream stream, CancellationToken cancellationToken)
+		{
+			Initialize (stream);
 
 			try {
-				var token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				var token = ReadToken (cancellationToken);
 
 				AssertToken (token, ImapTokenType.Asterisk, GreetingSyntaxErrorFormat, token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				AssertToken (token, ImapTokenType.Atom, GreetingSyntaxErrorFormat, token);
 
-				var atom = (string) token.Value;
+				var state = ParseConnectedState (token, out bool bye);
 				var text = string.Empty;
-				var state = State;
-				var bye = false;
 
-				if (atom.Equals ("OK", StringComparison.OrdinalIgnoreCase)) {
-					state = ImapEngineState.Connected;
-				} else if (atom.Equals ("BYE", StringComparison.OrdinalIgnoreCase)) {
-					bye = true;
-				} else if (atom.Equals ("PREAUTH", StringComparison.OrdinalIgnoreCase)) {
-					state = ImapEngineState.Authenticated;
-				} else {
-					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
-				}
-
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
+					var code = ParseResponseCodeAsync (false, false, cancellationToken).GetAwaiter ().GetResult ();
 					if (code.Type == ImapResponseCodeType.Alert) {
 						OnAlert (code.Message);
 
@@ -676,7 +715,7 @@ namespace MailKit.Net.Imap {
 						text = code.Message;
 					}
 				} else if (token.Type != ImapTokenType.Eoln) {
-					text = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					text = ReadLine (cancellationToken).TrimEnd ();
 					text = token.Value.ToString () + text;
 
 					if (bye)
@@ -685,30 +724,68 @@ namespace MailKit.Net.Imap {
 					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.");
 				}
 
-				if (text.StartsWith ("Courier-IMAP ready.", StringComparison.Ordinal))
-					QuirksMode = ImapQuirksMode.Courier;
-				else if (text.Contains (" Cyrus IMAP "))
-					QuirksMode = ImapQuirksMode.Cyrus;
-				else if (text.StartsWith ("Domino IMAP4 Server", StringComparison.Ordinal))
-					QuirksMode = ImapQuirksMode.Domino;
-				else if (text.StartsWith ("Dovecot ready.", StringComparison.Ordinal))
-					QuirksMode = ImapQuirksMode.Dovecot;
-				else if (text.StartsWith ("Microsoft Exchange Server 2003 IMAP4rev1", StringComparison.Ordinal))
-					QuirksMode = ImapQuirksMode.Exchange2003;
-				else if (text.StartsWith ("Microsoft Exchange Server 2007 IMAP4 service is ready", StringComparison.Ordinal))
-					QuirksMode = ImapQuirksMode.Exchange2007;
-				else if (text.StartsWith ("The Microsoft Exchange IMAP4 service is ready.", StringComparison.Ordinal))
-					QuirksMode = ImapQuirksMode.Exchange;
-				else if (text.StartsWith ("Gimap ready", StringComparison.Ordinal))
-					QuirksMode = ImapQuirksMode.GMail;
-				else if (text.StartsWith ("IMAPrev1", StringComparison.Ordinal)) // https://github.com/hmailserver/hmailserver/blob/master/hmailserver/source/Server/IMAP/IMAPConnection.cpp#L127
-					QuirksMode = ImapQuirksMode.hMailServer;
-				else if (text.Contains (" IMAP4rev1 2007f.") || text.Contains (" Panda IMAP "))
-					QuirksMode = ImapQuirksMode.UW;
-				else if (text.Contains ("SmarterMail"))
-					QuirksMode = ImapQuirksMode.SmarterMail;
-				else if (text.Contains ("Yandex IMAP4rev1 "))
-					QuirksMode = ImapQuirksMode.Yandex;
+				DetectQuirksMode (text);
+
+				State = state;
+			} catch {
+				Disconnect ();
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Takes posession of the <see cref="ImapStream"/> and reads the greeting.
+		/// </summary>
+		/// <param name="stream">The IMAP stream.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public async Task ConnectAsync (ImapStream stream, CancellationToken cancellationToken)
+		{
+			Initialize (stream);
+
+			try {
+				var token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				AssertToken (token, ImapTokenType.Asterisk, GreetingSyntaxErrorFormat, token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				AssertToken (token, ImapTokenType.Atom, GreetingSyntaxErrorFormat, token);
+
+				var state = ParseConnectedState (token, out bool bye);
+				var text = string.Empty;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.OpenBracket) {
+					var code = await ParseResponseCodeAsync (false, true, cancellationToken).ConfigureAwait (false);
+					if (code.Type == ImapResponseCodeType.Alert) {
+						OnAlert (code.Message);
+
+						if (bye)
+							throw new ImapProtocolException (code.Message);
+					} else {
+						text = code.Message;
+					}
+				} else if (token.Type != ImapTokenType.Eoln) {
+					text = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					text = token.Value.ToString () + text;
+
+					if (bye)
+						throw new ImapProtocolException (text);
+				} else if (bye) {
+					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.");
+				}
+
+				DetectQuirksMode (text);
 
 				State = state;
 			} catch {
@@ -1445,7 +1522,7 @@ namespace MailKit.Net.Imap {
 
 						namespaces[n].Add (new FolderNamespace (delim, DecodeMailboxName (path)));
 
-						if (!GetCachedFolder (path, out var folder)) {
+						if (!TryGetCachedFolder (path, out var folder)) {
 							folder = CreateImapFolder (path, FolderAttributes.None, delim);
 							CacheFolder (folder);
 						}
@@ -2013,7 +2090,7 @@ namespace MailKit.Net.Imap {
 
 			// Note: if the folder is null, then it probably means the user is using NOTIFY
 			// and hasn't yet requested the folder. That's ok.
-			GetCachedFolder (name, out var folder);
+			TryGetCachedFolder (name, out var folder);
 
 			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
 
@@ -2554,6 +2631,32 @@ namespace MailKit.Net.Imap {
 		/// <returns>The command result.</returns>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		public ImapCommandResponse QueryCapabilities (CancellationToken cancellationToken)
+		{
+			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
+
+			return Run (ic);
+		}
+
+		/// <summary>
+		/// Queries the capabilities.
+		/// </summary>
+		/// <returns>The command result.</returns>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public Task<ImapCommandResponse> QueryCapabilitiesAsync (CancellationToken cancellationToken)
+		{
+			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
+
+			return RunAsync (ic);
+		}
+
+		/// <summary>
+		/// Queries the capabilities.
+		/// </summary>
+		/// <returns>The command result.</returns>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public Task<ImapCommandResponse> QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
@@ -2579,9 +2682,99 @@ namespace MailKit.Net.Imap {
 		/// <returns><c>true</c> if the folder was retreived from the cache; otherwise, <c>false</c>.</returns>
 		/// <param name="encodedName">The encoded folder name.</param>
 		/// <param name="folder">The cached folder.</param>
-		public bool GetCachedFolder (string encodedName, out ImapFolder folder)
+		public bool TryGetCachedFolder (string encodedName, out ImapFolder folder)
 		{
 			return FolderCache.TryGetValue (encodedName, out folder);
+		}
+
+		bool RequiresParentLookup (ImapFolder folder, out string encodedParentName)
+		{
+			encodedParentName = null;
+
+			if (folder.ParentFolder != null)
+				return false;
+
+			int index;
+
+			// FIXME: should this search EncodedName instead of FullName?
+			if ((index = folder.FullName.LastIndexOf (folder.DirectorySeparator)) != -1) {
+				if (index == 0)
+					return false;
+
+				var parentName = folder.FullName.Substring (0, index);
+				encodedParentName = EncodeMailboxName (parentName);
+			} else {
+				encodedParentName = string.Empty;
+			}
+
+			if (TryGetCachedFolder (encodedParentName, out var parent)) {
+				folder.ParentFolder = parent;
+				return false;
+			}
+
+			return true;
+		}
+
+		ImapCommand QueueLookupParentFolderCommand (string encodedName, CancellationToken cancellationToken)
+		{
+			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
+			// in order to reduce the list of folders returned by our LIST command.
+			var pattern = encodedName.Replace ('*', '%');
+			var command = new StringBuilder ("LIST \"\" %S");
+			var returnsSubscribed = false;
+
+			if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+				// Try to get the \Subscribed and \HasChildren or \HasNoChildren attributes
+				command.Append (" RETURN (SUBSCRIBED CHILDREN)");
+				returnsSubscribed = true;
+			}
+
+			command.Append ("\r\n");
+
+			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.ListReturnsSubscribed = returnsSubscribed;
+			ic.UserData = new List<ImapFolder> ();
+
+			QueueCommand (ic);
+
+			return ic;
+		}
+
+		void ProcessLookupParentFolderResponse (ImapCommand ic, List<ImapFolder> list, ImapFolder folder, string encodedParentName)
+		{
+			if (!TryGetCachedFolder (encodedParentName, out var parent)) {
+				parent = CreateImapFolder (encodedParentName, FolderAttributes.NonExistent, folder.DirectorySeparator);
+				CacheFolder (parent);
+			} else if (parent.ParentFolder == null && !parent.IsNamespace) {
+				list.Add (parent);
+			}
+
+			folder.ParentFolder = parent;
+		}
+
+		/// <summary>
+		/// Looks up and sets the <see cref="MailFolder.ParentFolder"/> property of each of the folders.
+		/// </summary>
+		/// <param name="folders">The IMAP folders.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		internal void LookupParentFolders (IEnumerable<ImapFolder> folders, CancellationToken cancellationToken)
+		{
+			var list = new List<ImapFolder> (folders);
+
+			// Note: we use a for-loop instead of foreach because we conditionally add items to the list.
+			for (int i = 0; i < list.Count; i++) {
+				var folder = list[i];
+
+				if (!RequiresParentLookup (folder, out var encodedParentName))
+					continue;
+
+				var ic = QueueLookupParentFolderCommand (encodedParentName, cancellationToken);
+
+				Run (ic);
+
+				ProcessLookupParentFolderResponse (ic, list, folder, encodedParentName);
+			}
 		}
 
 		/// <summary>
@@ -2590,67 +2783,76 @@ namespace MailKit.Net.Imap {
 		/// <param name="folders">The IMAP folders.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		internal async Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, bool doAsync, CancellationToken cancellationToken)
+		internal async Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, CancellationToken cancellationToken)
 		{
 			var list = new List<ImapFolder> (folders);
-			string encodedName, pattern;
-			int index;
 
 			// Note: we use a for-loop instead of foreach because we conditionally add items to the list.
 			for (int i = 0; i < list.Count; i++) {
 				var folder = list[i];
 
-				if (folder.ParentFolder != null)
+				if (!RequiresParentLookup (folder, out var encodedParentName))
 					continue;
 
-				// FIXME: should this search EncodedName instead of FullName?
-				if ((index = folder.FullName.LastIndexOf (folder.DirectorySeparator)) != -1) {
-					if (index == 0)
-						continue;
+				var ic = QueueLookupParentFolderCommand (encodedParentName, cancellationToken);
 
-					var parentName = folder.FullName.Substring (0, index);
-					encodedName = EncodeMailboxName (parentName);
-				} else {
-					encodedName = string.Empty;
+				await RunAsync (ic).ConfigureAwait (false);
+
+				ProcessLookupParentFolderResponse (ic, list, folder, encodedParentName);
+			}
+		}
+
+		/// <summary>
+		/// Looks up and sets the <see cref="MailFolder.ParentFolder"/> property of each of the folders.
+		/// </summary>
+		/// <param name="folders">The IMAP folders.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		internal Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, bool doAsync, CancellationToken cancellationToken)
+		{
+			if (doAsync)
+				return LookupParentFoldersAsync (folders, cancellationToken);
+
+			LookupParentFolders (folders, cancellationToken);
+
+			return Task.CompletedTask;
+		}
+
+		void ProcessNamespaceResponse (ImapCommand ic)
+		{
+			if (QuirksMode == ImapQuirksMode.Exchange && ic.Response == ImapCommandResponse.Bad) {
+				State = ImapEngineState.Connected; // Reset back to Connected-but-not-Authenticated state
+				throw ImapCommandException.Create ("NAMESPACE", ic);
+			}
+		}
+
+		ImapCommand QueueListNamespaceCommand (List<ImapFolder> list, CancellationToken cancellationToken)
+		{
+			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"\"\r\n");
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.UserData = list;
+
+			QueueCommand (ic);
+
+			return ic;
+		}
+
+		void ProcessListNamespaceResponse (ImapCommand ic, List<ImapFolder> list)
+		{
+			PersonalNamespaces.Clear ();
+			SharedNamespaces.Clear ();
+			OtherNamespaces.Clear ();
+
+			if (list.Count > 0) {
+				var empty = list.FirstOrDefault (x => x.EncodedName.Length == 0);
+
+				if (empty == null) {
+					empty = CreateImapFolder (string.Empty, FolderAttributes.None, list[0].DirectorySeparator);
+					CacheFolder (empty);
 				}
 
-				if (GetCachedFolder (encodedName, out var parent)) {
-					folder.ParentFolder = parent;
-					continue;
-				}
-
-				// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
-				// in order to reduce the list of folders returned by our LIST command.
-				pattern = encodedName.Replace ('*', '%');
-
-				var command = new StringBuilder ("LIST \"\" %S");
-				var returnsSubscribed = false;
-
-				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
-					// Try to get the \Subscribed and \HasChildren or \HasNoChildren attributes
-					command.Append (" RETURN (SUBSCRIBED CHILDREN)");
-					returnsSubscribed = true;
-				}
-
-				command.Append ("\r\n");
-
-				var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern);
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
-				ic.ListReturnsSubscribed = returnsSubscribed;
-				ic.UserData = new List<ImapFolder> ();
-
-				QueueCommand (ic);
-
-				await RunAsync (ic, doAsync).ConfigureAwait (false);
-
-				if (!GetCachedFolder (encodedName, out parent)) {
-					parent = CreateImapFolder (encodedName, FolderAttributes.NonExistent, folder.DirectorySeparator);
-					CacheFolder (parent);
-				} else if (parent.ParentFolder == null && !parent.IsNamespace) {
-					list.Add (parent);
-				}
-
-				folder.ParentFolder = parent;
+				PersonalNamespaces.Add (new FolderNamespace (empty.DirectorySeparator, empty.FullName));
+				empty.UpdateIsNamespace (true);
 			}
 		}
 
@@ -2660,48 +2862,63 @@ namespace MailKit.Net.Imap {
 		/// <returns>The command result.</returns>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task<ImapCommandResponse> QueryNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
+		public ImapCommandResponse QueryNamespaces (CancellationToken cancellationToken)
 		{
 			ImapCommand ic;
 
 			// Note: It seems that on Exchange 2003 (maybe Chinese-only version?), the NAMESPACE command causes the server
 			// to immediately drop the connection. Avoid this issue by not using the NAMESPACE command if we detect that
 			// the server is Microsoft Exchange 2003. See https://github.com/jstedfast/MailKit/issues/1512 for details.
-			if (QuirksMode != ImapQuirksMode.Exchange2003  && (Capabilities & ImapCapabilities.Namespace) != 0) {
+			if (QuirksMode != ImapQuirksMode.Exchange2003 && (Capabilities & ImapCapabilities.Namespace) != 0) {
 				ic = QueueCommand (cancellationToken, null, "NAMESPACE\r\n");
-				await RunAsync (ic, doAsync).ConfigureAwait (false);
 
-				if (QuirksMode == ImapQuirksMode.Exchange && ic.Response == ImapCommandResponse.Bad) {
-					State = ImapEngineState.Connected; // Reset back to Connected-but-not-Authenticated state
-					throw ImapCommandException.Create ("NAMESPACE", ic);
-				}
+				Run (ic);
+
+				ProcessNamespaceResponse (ic);
 			} else {
 				var list = new List<ImapFolder> ();
 
-				ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"\"\r\n");
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
-				ic.UserData = list;
+				ic = QueueListNamespaceCommand (list, cancellationToken);
 
-				QueueCommand (ic);
-				await RunAsync (ic, doAsync).ConfigureAwait (false);
+				Run (ic);
 
-				PersonalNamespaces.Clear ();
-				SharedNamespaces.Clear ();
-				OtherNamespaces.Clear ();
+				ProcessListNamespaceResponse (ic, list);
 
-				if (list.Count > 0) {
-					var empty = list.FirstOrDefault (x => x.EncodedName.Length == 0);
+				LookupParentFolders (list, cancellationToken);
+			}
 
-					if (empty == null) {
-						empty = CreateImapFolder (string.Empty, FolderAttributes.None, list[0].DirectorySeparator);
-						CacheFolder (empty);
-					}
+			return ic.Response;
+		}
 
-					PersonalNamespaces.Add (new FolderNamespace (empty.DirectorySeparator, empty.FullName));
-					empty.UpdateIsNamespace (true);
-				}
+		/// <summary>
+		/// Asynchronously queries the namespaces.
+		/// </summary>
+		/// <returns>The command result.</returns>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public async Task<ImapCommandResponse> QueryNamespacesAsync (CancellationToken cancellationToken)
+		{
+			ImapCommand ic;
 
-				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
+			// Note: It seems that on Exchange 2003 (maybe Chinese-only version?), the NAMESPACE command causes the server
+			// to immediately drop the connection. Avoid this issue by not using the NAMESPACE command if we detect that
+			// the server is Microsoft Exchange 2003. See https://github.com/jstedfast/MailKit/issues/1512 for details.
+			if (QuirksMode != ImapQuirksMode.Exchange2003 && (Capabilities & ImapCapabilities.Namespace) != 0) {
+				ic = QueueCommand (cancellationToken, null, "NAMESPACE\r\n");
+
+				await RunAsync (ic).ConfigureAwait (false);
+
+				ProcessNamespaceResponse (ic);
+			} else {
+				var list = new List<ImapFolder> ();
+
+				ic = QueueListNamespaceCommand (list, cancellationToken);
+
+				await RunAsync (ic).ConfigureAwait (false);
+
+				ProcessListNamespaceResponse (ic, list);
+
+				await LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
 			}
 
 			return ic.Response;
@@ -2751,17 +2968,12 @@ namespace MailKit.Net.Imap {
 				AssignSpecialFolder (list[i]);
 		}
 
-		/// <summary>
-		/// Queries the special folders.
-		/// </summary>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task QuerySpecialFoldersAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueListInboxCommand (CancellationToken cancellationToken, out StringBuilder command, out List<ImapFolder> list)
 		{
-			var command = new StringBuilder ("LIST \"\" \"INBOX\"");
-			var list = new List<ImapFolder> ();
-			var returnsSubscribed = false;
-			ImapCommand ic;
+			bool returnsSubscribed = false;
+
+			command = new StringBuilder ("LIST \"\" \"INBOX\"");
+			list = new List<ImapFolder> ();
 
 			if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
 				command.Append (" RETURN (SUBSCRIBED CHILDREN)");
@@ -2770,65 +2982,128 @@ namespace MailKit.Net.Imap {
 
 			command.Append ("\r\n");
 
-			ic = new ImapCommand (this, cancellationToken, null, command.ToString ());
+			var ic = new ImapCommand (this, cancellationToken, null, command.ToString ());
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 
 			QueueCommand (ic);
 
-			await RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
-			GetCachedFolder ("INBOX", out var folder);
+		void ProcessListInboxResponse (ImapCommand ic, StringBuilder command, List<ImapFolder> list)
+		{
+			TryGetCachedFolder ("INBOX", out var folder);
 			Inbox = folder;
 
+			command.Clear ();
 			list.Clear ();
+		}
+
+		ImapCommand QueueListSpecialUseCommand (StringBuilder command, List<ImapFolder> list, CancellationToken cancellationToken)
+		{
+			bool returnsSubscribed = false;
+
+			command.Append ("LIST ");
+
+			// Note: Some IMAP servers like ProtonMail respond to SPECIAL-USE LIST queries with BAD, so fall
+			// back to just issuing a standard LIST command and hope we get back some SPECIAL-USE attributes.
+			//
+			// See https://github.com/jstedfast/MailKit/issues/674 for dertails.
+			if (QuirksMode != ImapQuirksMode.ProtonMail)
+				command.Append ("(SPECIAL-USE) \"\" \"*\"");
+			else
+				command.Append ("\"\" \"%%\"");
+
+			if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+				command.Append (" RETURN (SUBSCRIBED CHILDREN)");
+				returnsSubscribed = true;
+			}
+
+			command.Append ("\r\n");
+
+			var ic = new ImapCommand (this, cancellationToken, null, command.ToString ());
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.ListReturnsSubscribed = returnsSubscribed;
+			ic.UserData = list;
+
+			QueueCommand (ic);
+
+			return ic;
+		}
+
+		ImapCommand QueueXListCommand (List<ImapFolder> list, CancellationToken cancellationToken)
+		{
+			var ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
+			ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderListAsync);
+			ic.UserData = list;
+
+			QueueCommand (ic);
+
+			return ic;
+		}
+
+		/// <summary>
+		/// Queries the special folders.
+		/// </summary>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public void QuerySpecialFolders (CancellationToken cancellationToken)
+		{
+			var ic = QueueListInboxCommand (cancellationToken, out var command, out var list);
+
+			Run (ic);
+
+			ProcessListInboxResponse (ic, command, list);
 
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
-				// Note: Some IMAP servers like ProtonMail respond to SPECIAL-USE LIST queries with BAD, so fall
-				// back to just issuing a standard LIST command and hope we get back some SPECIAL-USE attributes.
-				//
-				// See https://github.com/jstedfast/MailKit/issues/674 for dertails.
-				returnsSubscribed = false;
-				command.Clear ();
+				ic = QueueListSpecialUseCommand (command, list, cancellationToken);
 
-				command.Append ("LIST ");
+				Run (ic);
 
-				if (QuirksMode != ImapQuirksMode.ProtonMail)
-					command.Append ("(SPECIAL-USE) \"\" \"*\"");
-				else
-					command.Append ("\"\" \"%%\"");
-
-				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
-					command.Append (" RETURN (SUBSCRIBED CHILDREN)");
-					returnsSubscribed = true;
-				}
-
-				command.Append ("\r\n");
-
-				ic = new ImapCommand (this, cancellationToken, null, command.ToString ());
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
-				ic.ListReturnsSubscribed = returnsSubscribed;
-				ic.UserData = list;
-
-				QueueCommand (ic);
-
-				await RunAsync (ic, doAsync).ConfigureAwait (false);
-				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
-
-				AssignSpecialFolders (list);
+				// Note: We specifically don't throw if we get a LIST error.
 			} else if ((Capabilities & ImapCapabilities.XList) != 0) {
-				ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
-				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderListAsync);
-				ic.UserData = list;
+				ic = QueueXListCommand (list, cancellationToken);
 
-				QueueCommand (ic);
+				Run (ic);
 
-				await RunAsync (ic, doAsync).ConfigureAwait (false);
-				await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
-
-				AssignSpecialFolders (list);
+				// Note: We specifically don't throw if we get a XLIST error.
 			}
+
+			LookupParentFolders (list, cancellationToken);
+
+			AssignSpecialFolders (list);
+		}
+
+		/// <summary>
+		/// Queries the special folders.
+		/// </summary>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public async Task QuerySpecialFoldersAsync (CancellationToken cancellationToken)
+		{
+			var ic = QueueListInboxCommand (cancellationToken, out var command, out var list);
+
+			await RunAsync (ic).ConfigureAwait (false);
+
+			ProcessListInboxResponse (ic, command, list);
+
+			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
+				ic = QueueListSpecialUseCommand (command, list, cancellationToken);
+
+				await RunAsync (ic).ConfigureAwait (false);
+
+				// Note: We specifically don't throw if we get a LIST error.
+			} else if ((Capabilities & ImapCapabilities.XList) != 0) {
+				ic = QueueXListCommand (list, cancellationToken);
+
+				await RunAsync (ic).ConfigureAwait (false);
+
+				// Note: We specifically don't throw if we get a LIST error.
+			}
+
+			await LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
+
+			AssignSpecialFolders (list);
 		}
 
 		/// <summary>
@@ -2840,7 +3115,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<ImapFolder> GetQuotaRootFolderAsync (string quotaRoot, bool doAsync, CancellationToken cancellationToken)
 		{
-			if (GetCachedFolder (quotaRoot, out var folder))
+			if (TryGetCachedFolder (quotaRoot, out var folder))
 				return folder;
 
 			var command = new StringBuilder ("LIST \"\" %S");
@@ -2888,7 +3163,7 @@ namespace MailKit.Net.Imap {
 		{
 			var encodedName = EncodeMailboxName (path);
 
-			if (GetCachedFolder (encodedName, out var folder))
+			if (TryGetCachedFolder (encodedName, out var folder))
 				return folder;
 
 			var command = new StringBuilder ("LIST \"\" %S");
@@ -2984,7 +3259,7 @@ namespace MailKit.Net.Imap {
 			var returnsSubscribed = false;
 			var lsub = subscribedOnly;
 
-			if (!GetCachedFolder (encodedName, out var folder))
+			if (!TryGetCachedFolder (encodedName, out var folder))
 				throw new FolderNotFoundException (@namespace.Path);
 
 			if (subscribedOnly) {

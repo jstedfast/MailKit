@@ -586,7 +586,7 @@ namespace MailKit.Net.Imap {
 				ImapEngine.AssertToken (token, ImapTokenType.Eoln, format, token);
 			}
 
-			if (folder != null || engine.GetCachedFolder (encodedName, out folder)) {
+			if (folder != null || engine.TryGetCachedFolder (encodedName, out folder)) {
 				if ((attrs & FolderAttributes.NonExistent) != 0) {
 					folder.UnsetPermanentFlags ();
 					folder.UnsetAcceptedFlags ();

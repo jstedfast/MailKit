@@ -270,7 +270,25 @@ namespace UnitTests.Net.Imap {
 				using (var tokenizer = new ImapStream (input, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
 						try {
-							engine.ConnectAsync (tokenizer, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							engine.Connect (tokenizer, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing greeting failed: {0}", ex);
+							return;
+						}
+
+						Assert.AreEqual (expected, engine.QuirksMode);
+					}
+				}
+			}
+		}
+
+		async Task TestGreetingDetectionAsync (string server, string fileName, ImapQuirksMode expected)
+		{
+			using (var input = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + server + "." + fileName)) {
+				using (var tokenizer = new ImapStream (input, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						try {
+							await engine.ConnectAsync (tokenizer, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing greeting failed: {0}", ex);
 							return;
@@ -289,9 +307,21 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public Task TestCourierImapDetectionAsync ()
+		{
+			return TestGreetingDetectionAsync ("courier", "greeting.txt", ImapQuirksMode.Courier);
+		}
+
+		[Test]
 		public void TestCyrusImapDetection ()
 		{
 			TestGreetingDetection ("cyrus", "greeting.txt", ImapQuirksMode.Cyrus);
+		}
+
+		[Test]
+		public Task TestCyrusImapDetectionAsync ()
+		{
+			return TestGreetingDetectionAsync ("cyrus", "greeting.txt", ImapQuirksMode.Cyrus);
 		}
 
 		[Test]
@@ -301,9 +331,21 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public Task TestDominoImapDetectionAsync ()
+		{
+			return TestGreetingDetectionAsync ("domino", "greeting.txt", ImapQuirksMode.Domino);
+		}
+
+		[Test]
 		public void TestDovecotImapDetection ()
 		{
 			TestGreetingDetection ("dovecot", "greeting.txt", ImapQuirksMode.Dovecot);
+		}
+
+		[Test]
+		public Task TestDovecotImapDetectionAsync ()
+		{
+			return TestGreetingDetectionAsync ("dovecot", "greeting.txt", ImapQuirksMode.Dovecot);
 		}
 
 		[Test]
@@ -313,9 +355,21 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public Task TestExchangeImapDetectionAsync ()
+		{
+			return TestGreetingDetectionAsync ("exchange", "greeting.txt", ImapQuirksMode.Exchange);
+		}
+
+		[Test]
 		public void TestExchange2003ImapDetection ()
 		{
 			TestGreetingDetection ("exchange", "greeting-2003.txt", ImapQuirksMode.Exchange2003);
+		}
+
+		[Test]
+		public Task TestExchange2003ImapDetectionAsync ()
+		{
+			return TestGreetingDetectionAsync ("exchange", "greeting-2003.txt", ImapQuirksMode.Exchange2003);
 		}
 
 		[Test]
@@ -325,9 +379,21 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public Task TestExchange2007ImapDetectionAsync ()
+		{
+			return TestGreetingDetectionAsync ("exchange", "greeting-2007.txt", ImapQuirksMode.Exchange2007);
+		}
+
+		[Test]
 		public void TestUWImapDetection ()
 		{
 			TestGreetingDetection ("uw", "greeting.txt", ImapQuirksMode.UW);
+		}
+
+		[Test]
+		public Task TestUWImapDetectionAsync ()
+		{
+			return TestGreetingDetectionAsync ("uw", "greeting.txt", ImapQuirksMode.UW);
 		}
 	}
 }

@@ -1702,7 +1702,7 @@ namespace MailKit.Net.Imap {
 			var encodedName = Engine.EncodeMailboxName (fullName);
 			List<ImapFolder> list;
 
-			if (Engine.GetCachedFolder (encodedName, out var folder))
+			if (Engine.TryGetCachedFolder (encodedName, out var folder))
 				return folder;
 
 			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
