@@ -195,7 +195,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The compression algorithms are populated by the
-		/// <see cref="QueryCapabilitiesAsync"/> method.
+		/// <see cref="QueryCapabilities"/> and
+		/// <see cref="QueryCapabilitiesAsync"/> methods.
 		/// </remarks>
 		/// <value>The compression algorithms.</value>
 		public HashSet<string> CompressionAlgorithms {
@@ -207,7 +208,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The threading algorithms are populated by the
-		/// <see cref="QueryCapabilitiesAsync"/> method.
+		/// <see cref="QueryCapabilities"/> and
+		/// <see cref="QueryCapabilitiesAsync"/> methods.
 		/// </remarks>
 		/// <value>The threading algorithms.</value>
 		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
@@ -2433,14 +2435,14 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Asynchronously iterate the command pipeline.
 		/// </summary>
-		async Task IterateAsync (bool doAsync)
+		async Task IterateAsync ()
 		{
 			PopNextCommand ();
 
 			current.Status = ImapCommandStatus.Active;
 
 			try {
-				while (await current.StepAsync (doAsync).ConfigureAwait (false)) {
+				while (await current.StepAsync (true).ConfigureAwait (false)) {
 					// more literal data to send...
 				}
 
@@ -2461,7 +2463,6 @@ namespace MailKit.Net.Imap {
 		/// Wait for the specified command to finish.
 		/// </summary>
 		/// <param name="ic">The IMAP command.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="ic"/> is <c>null</c>.
 		/// </exception>
@@ -2484,7 +2485,6 @@ namespace MailKit.Net.Imap {
 		/// Wait for the specified command to finish.
 		/// </summary>
 		/// <param name="ic">The IMAP command.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="ic"/> is <c>null</c>.
 		/// </exception>
@@ -2495,7 +2495,7 @@ namespace MailKit.Net.Imap {
 
 			while (ic.Status < ImapCommandStatus.Complete) {
 				// continue processing commands...
-				await IterateAsync (true).ConfigureAwait (false);
+				await IterateAsync ().ConfigureAwait (false);
 			}
 
 			ProcessResponseCodes (ic);
@@ -2511,19 +2511,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="ic"/> is <c>null</c>.
 		/// </exception>
-		public async Task<ImapCommandResponse> RunAsync (ImapCommand ic, bool doAsync)
+		public Task<ImapCommandResponse> RunAsync (ImapCommand ic, bool doAsync)
 		{
-			if (ic == null)
-				throw new ArgumentNullException (nameof (ic));
+			if (doAsync)
+				return RunAsync (ic);
 
-			while (ic.Status < ImapCommandStatus.Complete) {
-				// continue processing commands...
-				await IterateAsync (doAsync).ConfigureAwait (false);
-			}
+			var response = Run (ic);
 
-			ProcessResponseCodes (ic);
-
-			return ic.Response;
+			return Task.FromResult (response);
 		}
 
 		public IEnumerable<ImapCommand> CreateCommands (CancellationToken cancellationToken, ImapFolder folder, string format, IList<UniqueId> uids, params object[] args)
@@ -2649,19 +2644,6 @@ namespace MailKit.Net.Imap {
 			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
 
 			return RunAsync (ic);
-		}
-
-		/// <summary>
-		/// Queries the capabilities.
-		/// </summary>
-		/// <returns>The command result.</returns>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public Task<ImapCommandResponse> QueryCapabilitiesAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
-
-			return RunAsync (ic, doAsync);
 		}
 
 		/// <summary>
