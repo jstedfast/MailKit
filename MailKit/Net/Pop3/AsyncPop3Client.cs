@@ -282,6 +282,15 @@ namespace MailKit.Net.Pop3
 			await OnAuthenticatedAsync (message, cancellationToken).ConfigureAwait (false);
 		}
 
+		async Task SslHandshakeAsync (SslStream ssl, string host, CancellationToken cancellationToken)
+		{
+#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+			await ssl.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
+#else
+			await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
+#endif
+		}
+
 		/// <summary>
 		/// Asynchronously establish a connection to the specified POP3 or POP3/S server.
 		/// </summary>
@@ -349,7 +358,7 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override async Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
-			ValidateArguments (host, port);
+			CheckCanConnect (host, port);
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
@@ -363,11 +372,7 @@ namespace MailKit.Net.Pop3
 				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
-#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-					await ssl.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
-#else
-					await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-#endif
+					await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
@@ -407,11 +412,7 @@ namespace MailKit.Net.Pop3
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 						engine.Stream.Stream = tls;
 
-#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-						await tls.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
-#else
-						await tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-#endif
+						await SslHandshakeAsync (tls, host, cancellationToken).ConfigureAwait (false);
 					} catch (Exception ex) {
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
 					}
@@ -498,7 +499,7 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
-			ValidateArguments (socket, host, port);
+			CheckCanConnect (socket, host, port);
 
 			return ConnectAsync (new NetworkStream (socket, true), host, port, options, cancellationToken);
 		}
@@ -568,7 +569,7 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override async Task ConnectAsync (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
-			ValidateArguments (stream, host, port);
+			CheckCanConnect (stream, host, port);
 
 			Stream network;
 

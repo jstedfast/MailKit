@@ -1078,7 +1078,7 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		void ValidateArguments (string host, int port)
+		void CheckCanConnect (string host, int port)
 		{
 			if (host == null)
 				throw new ArgumentNullException (nameof (host));
@@ -1093,6 +1093,15 @@ namespace MailKit.Net.Pop3 {
 
 			if (IsConnected)
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
+		}
+
+		void SslHandshake (SslStream ssl, string host, CancellationToken cancellationToken)
+		{
+#if NET5_0_OR_GREATER
+			ssl.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
+#else
+			ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
+#endif
 		}
 
 		/// <summary>
@@ -1161,7 +1170,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
-			ValidateArguments (host, port);
+			CheckCanConnect (host, port);
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
@@ -1175,11 +1184,7 @@ namespace MailKit.Net.Pop3 {
 				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
-#if NET5_0_OR_GREATER
-					ssl.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
+					SslHandshake (ssl, host, cancellationToken);
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
@@ -1219,11 +1224,7 @@ namespace MailKit.Net.Pop3 {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 						engine.Stream.Stream = tls;
 
-#if NET5_0_OR_GREATER
-						tls.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
+						SslHandshake (tls, host, cancellationToken);
 					} catch (Exception ex) {
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
 					}
@@ -1243,15 +1244,15 @@ namespace MailKit.Net.Pop3 {
 			OnConnected (host, port, options);
 		}
 
-		void ValidateArguments (Stream stream, string host, int port)
+		void CheckCanConnect (Stream stream, string host, int port)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
 
-			ValidateArguments (host, port);
+			CheckCanConnect (host, port);
 		}
 
-		void ValidateArguments (Socket socket, string host, int port)
+		void CheckCanConnect (Socket socket, string host, int port)
 		{
 			if (socket == null)
 				throw new ArgumentNullException (nameof (socket));
@@ -1259,7 +1260,7 @@ namespace MailKit.Net.Pop3 {
 			if (!socket.Connected)
 				throw new ArgumentException ("The socket is not connected.", nameof (socket));
 
-			ValidateArguments (host, port);
+			CheckCanConnect (host, port);
 		}
 
 		/// <summary>
@@ -1328,7 +1329,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
-			ValidateArguments (socket, host, port);
+			CheckCanConnect (socket, host, port);
 
 			Connect (new NetworkStream (socket, true), host, port, options, cancellationToken);
 		}
@@ -1397,7 +1398,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Connect (Stream stream, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default)
 		{
-			ValidateArguments (stream, host, port);
+			CheckCanConnect (stream, host, port);
 
 			Stream network;
 
@@ -1409,11 +1410,7 @@ namespace MailKit.Net.Pop3 {
 				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
-#if NET5_0_OR_GREATER
-					ssl.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
+					SslHandshake (ssl, host, cancellationToken);
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
@@ -1458,11 +1455,7 @@ namespace MailKit.Net.Pop3 {
 					engine.Stream.Stream = tls;
 
 					try {
-#if NET5_0_OR_GREATER
-						tls.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
+						SslHandshake (tls, host, cancellationToken);
 					} catch (Exception ex) {
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
 					}
