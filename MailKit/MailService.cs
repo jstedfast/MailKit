@@ -434,27 +434,24 @@ namespace MailKit {
 			case "imap.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "6808B17DFC188CB20ACE5039A6703BC9" && fingerprint == "0D31960CDB2C28974F987854E28D179BEF7D0AE5") // Expires 8/11/2023 12:57:41 PM
-						|| (serial == "028FA806913A329C1099D40854E3FC73" && fingerprint == "8F4BFC95A27F4F3856520F6D5B41F8EC9FAB65B1") // Expires 8/14/2023 4:22:02 AM
-						|| (serial == "5304A1A279E839101214E27338E568A8" && fingerprint == "D30B2CB64691EFF93EDD1BC5C089BE4FB1F83610"); // Expires 9/11/2023 8:20:40 AM
+					return (serial == "5304A1A279E839101214E27338E568A8" && fingerprint == "D30B2CB64691EFF93EDD1BC5C089BE4FB1F83610") // Expires 9/11/2023 8:20:40 AM
+						|| (serial == "009CB89906FDD8FF4912F82DF7826D8D50" && fingerprint == "938D660D783BAF1D67DA32F628807094628C8BAE"); // Expires 10/23/2023 4:22:05 AM
 				default:
 					return false;
 				}
 			case "pop.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "200D83A43AE9E871128D5A8811048406" && fingerprint == "950734455840CAA4705B2DF5A66C3FEE332B1E12") // Expires 8/11/2023 12:57:41 PM
-						|| (serial == "70D3A98F87BE4F7A0AFA36B424EF96F2" && fingerprint == "8B604B77506A22C50946AF0EDC808F2E6EAD9E29") // Expires 8/14/2023 4:22:02 AM
-						|| (serial == "00B8D5634D578BBB7A10EFF1D9548787D3" && fingerprint == "802D2CB302499AD9F7A2FDB0C9ABD52A6D7E467F"); // Expires 9/11/2023 8:20:44 AM
+					return (serial == "00B8D5634D578BBB7A10EFF1D9548787D3" && fingerprint == "802D2CB302499AD9F7A2FDB0C9ABD52A6D7E467F") // Expires 9/11/2023 8:20:44 AM
+						|| (serial == "00F3C1D5E8EE0E649C0948A9C738EF8AED" && fingerprint == "BF0F04D6D179C4B9930512D2FBDC321A4F070F21"); // Expires 10/23/2023 4:22:25 AM
 				default:
 					return false;
 				}
 			case "smtp.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "34C6DBF6C98CFA350AA8495AA7AC43F8" && fingerprint == "F3AC9D0771B2C072CDD70DB2D4A0EDE68D3C6CDB") // Expires 8/11/2023 12:57:37 PM
-						|| (serial == "1A1AEA9BC6709869120C900EC7D88D5D" && fingerprint == "8703C33D9A1DF95C953DD28D5BD7AF20D328ECB9") // Expires 8/14/2023 4:22:00 AM
-						|| (serial == "1A9835E3FC82F909127941A8213B6C12" && fingerprint == "D415E92E049C92D269365337994A8D016D81B767"); // Expires 9/11/2023 8:20:45 AM
+					return (serial == "1A9835E3FC82F909127941A8213B6C12" && fingerprint == "D415E92E049C92D269365337994A8D016D81B767") // Expires 9/11/2023 8:20:45 AM
+						|| (serial == "2EBFE332642F434A0976DCDC474215AE" && fingerprint == "6FE522B7A90F81F21FB670AEF0CBF6D45A28D753"); // Expires 10/23/2023 4:22:12 AM
 				default:
 					return false;
 				}
