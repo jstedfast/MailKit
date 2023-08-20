@@ -1823,7 +1823,7 @@ namespace MailKit.Net.Imap {
 
 					labels.Add (label);
 				} else {
-					labels.Add ("NIL");
+					labels.Add ((string) token.Value);
 				}
 
 				token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
