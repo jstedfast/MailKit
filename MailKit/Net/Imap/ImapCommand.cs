@@ -903,8 +903,7 @@ namespace MailKit.Net.Imap {
 					token = Engine.ReadToken (CancellationToken);
 				}
 
-				// FIXME: can we have a '+' token instead of using an Atom?
-				if (token.Type == ImapTokenType.Atom && token.Value.ToString () == "+") {
+				if (token.Type == ImapTokenType.Plus) {
 					// we've gotten a continuation response from the server
 					var text = Engine.ReadLine (CancellationToken).Trim ();
 
@@ -1045,8 +1044,7 @@ namespace MailKit.Net.Imap {
 					token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
 				}
 
-				// FIXME: can we have a '+' token instead of using an Atom?
-				if (token.Type == ImapTokenType.Atom && token.Value.ToString () == "+") {
+				if (token.Type == ImapTokenType.Plus) {
 					// we've gotten a continuation response from the server
 					var text = (await Engine.ReadLineAsync (CancellationToken).ConfigureAwait (false)).Trim ();
 
