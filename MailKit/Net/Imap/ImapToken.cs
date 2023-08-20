@@ -137,17 +137,21 @@ namespace MailKit.Net.Imap {
 				}
 			} else if (type == ImapTokenType.Atom) {
 				if (builder.Equals ("NIL", true)) {
-					foreach (var token in NilTokens) {
-						value = (string) token.Value;
+					// Look for the cached NIL token that matches this capitalization.
+					lock (NilTokens) {
+						foreach (var token in NilTokens) {
+							value = (string) token.Value;
 
-						if (builder.Equals (value))
-							return token;
+							if (builder.Equals (value))
+								return token;
+						}
+
+						// Add this new variation to our NIL token cache.
+						var nil = new ImapToken (ImapTokenType.Nil, builder.ToString ());
+						NilTokens.Add (nil);
+
+						return nil;
 					}
-
-					var nil = new ImapToken (ImapTokenType.Nil, builder.ToString ());
-					NilTokens.Add (nil);
-
-					return nil;
 				}
 
 				if (builder.Equals ("FETCH", false))
