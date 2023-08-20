@@ -194,6 +194,7 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.QString:      return MimeUtils.Quote ((string) Value);
 			case ImapTokenType.Literal:      return string.Format (CultureInfo.InvariantCulture, "{{{0}}}", (int) Value);
 			case ImapTokenType.Eoln:         return "'\\n'";
+			case ImapTokenType.Plus:         return "'+'";
 			case ImapTokenType.OpenParen:    return "'('";
 			case ImapTokenType.CloseParen:   return "')'";
 			case ImapTokenType.Asterisk:     return "'*'";
