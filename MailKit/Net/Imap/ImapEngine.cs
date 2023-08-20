@@ -2208,13 +2208,11 @@ namespace MailKit.Net.Imap {
 		/// Processes an untagged response.
 		/// </summary>
 		/// <returns>The untagged response.</returns>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		internal async Task<ImapUntaggedResult> ProcessUntaggedResponseAsync (bool doAsync, CancellationToken cancellationToken)
+		internal void ProcessUntaggedResponse (CancellationToken cancellationToken)
 		{
-			var token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var token = ReadToken (cancellationToken);
 			var folder = current.Folder ?? Selected;
-			var result = ImapUntaggedResult.Handled;
 			ImapUntaggedHandler handler;
 			string atom;
 
@@ -2227,20 +2225,20 @@ namespace MailKit.Net.Imap {
 			} else if (token.Type != ImapTokenType.Atom) {
 				// if we get anything else here, just ignore it?
 				Stream.UngetToken (token);
-				await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
-				return result;
+				SkipLine (cancellationToken);
+				return;
 			} else {
 				atom = (string) token.Value;
 			}
 
 			if (atom.Equals ("BYE", StringComparison.OrdinalIgnoreCase)) {
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
+					var code = ParseResponseCodeAsync (false, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
 					current.RespCodes.Add (code);
 				} else {
-					var text = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					var text = ReadLine (cancellationToken).TrimEnd ();
 					current.ResponseText = token.Value.ToString () + text;
 				}
 
@@ -2255,13 +2253,13 @@ namespace MailKit.Net.Imap {
 				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
 					current.Status = ImapCommandStatus.Complete;
 			} else if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase)) {
-				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync, cancellationToken).ConfigureAwait (false);
+				UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
 
 				// read the eoln token
-				await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				ReadToken (cancellationToken);
 			} else if (atom.Equals ("ENABLED", StringComparison.OrdinalIgnoreCase)) {
 				do {
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 					if (token.Type == ImapTokenType.Eoln)
 						break;
@@ -2276,29 +2274,29 @@ namespace MailKit.Net.Imap {
 				} while (true);
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
-				var flags = await ImapUtils.ParseFlagsListAsync (this, atom, keywords, doAsync, cancellationToken).ConfigureAwait (false);
+				var flags = ImapUtils.ParseFlagsListAsync (this, atom, keywords, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
 				folder.UpdateAcceptedFlags (flags, keywords);
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 			} else if (atom.Equals ("NAMESPACE", StringComparison.OrdinalIgnoreCase)) {
-				await UpdateNamespacesAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				UpdateNamespacesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 			} else if (atom.Equals ("STATUS", StringComparison.OrdinalIgnoreCase)) {
-				await UpdateStatusAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			} else if (IsOkNoOrBad (atom, out result)) {
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				UpdateStatusAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			} else if (IsOkNoOrBad (atom, out var result)) {
+				token = ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (false, doAsync, cancellationToken).ConfigureAwait (false);
+					var code = ParseResponseCodeAsync (false, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
 					current.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
-					var text = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					var text = ReadLine (cancellationToken).TrimEnd ();
 					current.ResponseText = token.Value.ToString () + text;
 				}
 			} else {
 				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out uint number)) {
 					// we probably have something like "* 1 EXISTS"
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 					AssertToken (token, ImapTokenType.Atom, "Syntax error in untagged response. {0}", token);
 
@@ -2306,7 +2304,7 @@ namespace MailKit.Net.Imap {
 
 					if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 						// the command registered an untagged handler for this atom...
-						await handler (this, current, (int) number - 1, doAsync).ConfigureAwait (false);
+						handler (this, current, (int) number - 1, false).GetAwaiter ().GetResult ();
 					} else if (folder != null) {
 						if (atom.Equals ("EXISTS", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnExists ((int) number);
@@ -2321,7 +2319,7 @@ namespace MailKit.Net.Imap {
 							//if (number == 0)
 							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
-							await folder.OnFetchAsync (this, (int) number - 1, doAsync, cancellationToken).ConfigureAwait (false);
+							folder.OnFetchAsync (this, (int) number - 1, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
 						} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnRecent ((int) number);
 						} else {
@@ -2331,34 +2329,185 @@ namespace MailKit.Net.Imap {
 						//Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
 					}
 
-					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					SkipLine (cancellationToken);
 				} else if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 					// the command registered an untagged handler for this atom...
-					await handler (this, current, -1, doAsync).ConfigureAwait (false);
-					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					handler (this, current, -1, false).GetAwaiter ().GetResult ();
+					SkipLine (cancellationToken);
 				} else if (atom.Equals ("LIST", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
-					await ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync, cancellationToken).ConfigureAwait (false);
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+					token = ReadToken (cancellationToken);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
 				} else if (atom.Equals ("METADATA", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited METADATA response - probably due to NOTIFY MailboxMetadataChange or ServerMetadataChange
 					var metadata = new MetadataCollection ();
-					await ImapUtils.ParseMetadataAsync (this, metadata, doAsync, cancellationToken).ConfigureAwait (false);
+					ImapUtils.ParseMetadataAsync (this, metadata, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
 					ProcessMetadataChanges (metadata);
 
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
 				} else if (atom.Equals ("VANISHED", StringComparison.OrdinalIgnoreCase) && folder != null) {
-					await folder.OnVanishedAsync (this, doAsync, cancellationToken).ConfigureAwait (false);
-					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					folder.OnVanishedAsync (this, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+					SkipLine (cancellationToken);
 				} else {
 					// don't know how to handle this... eat it?
-					await SkipLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					SkipLine (cancellationToken);
 				}
 			}
+		}
 
-			return result;
+		/// <summary>
+		/// Processes an untagged response.
+		/// </summary>
+		/// <returns>The untagged response.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		internal async Task ProcessUntaggedResponseAsync (CancellationToken cancellationToken)
+		{
+			var token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			var folder = current.Folder ?? Selected;
+			ImapUntaggedHandler handler;
+			string atom;
+
+			// Note: work around broken IMAP servers such as home.pl which sends "* [COPYUID ...]" resp-codes
+			// See https://github.com/jstedfast/MailKit/issues/115#issuecomment-313684616 for details.
+			if (token.Type == ImapTokenType.OpenBracket) {
+				// unget the '[' token and then pretend that we got an "OK"
+				Stream.UngetToken (token);
+				atom = "OK";
+			} else if (token.Type != ImapTokenType.Atom) {
+				// if we get anything else here, just ignore it?
+				Stream.UngetToken (token);
+				await SkipLineAsync (cancellationToken).ConfigureAwait (false);
+				return;
+			} else {
+				atom = (string) token.Value;
+			}
+
+			if (atom.Equals ("BYE", StringComparison.OrdinalIgnoreCase)) {
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.OpenBracket) {
+					var code = await ParseResponseCodeAsync (false, doAsync: true, cancellationToken).ConfigureAwait (false);
+					current.RespCodes.Add (code);
+				} else {
+					var text = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					current.ResponseText = token.Value.ToString () + text;
+				}
+
+				current.Bye = true;
+
+				// Note: Yandex IMAP is broken and will continue sending untagged BYE responses until the client closes
+				// the connection. In order to avoid this scenario, consider this command complete as soon as we receive
+				// the very first untagged BYE response and do not hold out hoping for a tagged response following the
+				// untagged BYE.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/938 for details.
+				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
+					current.Status = ImapCommandStatus.Complete;
+			} else if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase)) {
+				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync: true, cancellationToken).ConfigureAwait (false);
+
+				// read the eoln token
+				await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			} else if (atom.Equals ("ENABLED", StringComparison.OrdinalIgnoreCase)) {
+				do {
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.Eoln)
+						break;
+
+					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
+
+					var feature = (string) token.Value;
+					if (feature.Equals ("UTF8=ACCEPT", StringComparison.OrdinalIgnoreCase))
+						UTF8Enabled = true;
+					else if (feature.Equals ("QRESYNC", StringComparison.OrdinalIgnoreCase))
+						QResyncEnabled = true;
+				} while (true);
+			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
+				var keywords = new HashSet<string> (StringComparer.Ordinal);
+				var flags = await ImapUtils.ParseFlagsListAsync (this, atom, keywords, doAsync: true, cancellationToken).ConfigureAwait (false);
+				folder.UpdateAcceptedFlags (flags, keywords);
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
+			} else if (atom.Equals ("NAMESPACE", StringComparison.OrdinalIgnoreCase)) {
+				await UpdateNamespacesAsync (doAsync: true, cancellationToken).ConfigureAwait (false);
+			} else if (atom.Equals ("STATUS", StringComparison.OrdinalIgnoreCase)) {
+				await UpdateStatusAsync (doAsync: true, cancellationToken).ConfigureAwait (false);
+			} else if (IsOkNoOrBad (atom, out var result)) {
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.OpenBracket) {
+					var code = await ParseResponseCodeAsync (false, doAsync: true, cancellationToken).ConfigureAwait (false);
+					current.RespCodes.Add (code);
+				} else if (token.Type != ImapTokenType.Eoln) {
+					var text = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
+					current.ResponseText = token.Value.ToString () + text;
+				}
+			} else {
+				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out uint number)) {
+					// we probably have something like "* 1 EXISTS"
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					AssertToken (token, ImapTokenType.Atom, "Syntax error in untagged response. {0}", token);
+
+					atom = (string) token.Value;
+
+					if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+						// the command registered an untagged handler for this atom...
+						await handler (this, current, (int) number - 1, doAsync: true).ConfigureAwait (false);
+					} else if (folder != null) {
+						if (atom.Equals ("EXISTS", StringComparison.OrdinalIgnoreCase)) {
+							folder.OnExists ((int) number);
+						} else if (atom.Equals ("EXPUNGE", StringComparison.OrdinalIgnoreCase)) {
+							if (number == 0)
+								throw UnexpectedToken ("Syntax error in untagged EXPUNGE response. Unexpected message index: 0");
+
+							folder.OnExpunge ((int) number - 1);
+						} else if (atom.Equals ("FETCH", StringComparison.OrdinalIgnoreCase)) {
+							// Apparently Courier-IMAP (2004) will reply with "* 0 FETCH ..." sometimes.
+							// See https://github.com/jstedfast/MailKit/issues/428 for details.
+							//if (number == 0)
+							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
+
+							await folder.OnFetchAsync (this, (int) number - 1, doAsync: true, cancellationToken).ConfigureAwait (false);
+						} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
+							folder.OnRecent ((int) number);
+						} else {
+							//Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
+						}
+					} else {
+						//Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
+					}
+
+					await SkipLineAsync (cancellationToken).ConfigureAwait (false);
+				} else if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+					// the command registered an untagged handler for this atom...
+					await handler (this, current, -1, doAsync: true).ConfigureAwait (false);
+					await SkipLineAsync (cancellationToken).ConfigureAwait (false);
+				} else if (atom.Equals ("LIST", StringComparison.OrdinalIgnoreCase)) {
+					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
+					await ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync: true, cancellationToken).ConfigureAwait (false);
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
+				} else if (atom.Equals ("METADATA", StringComparison.OrdinalIgnoreCase)) {
+					// unsolicited METADATA response - probably due to NOTIFY MailboxMetadataChange or ServerMetadataChange
+					var metadata = new MetadataCollection ();
+					await ImapUtils.ParseMetadataAsync (this, metadata, doAsync: true, cancellationToken).ConfigureAwait (false);
+					ProcessMetadataChanges (metadata);
+
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
+				} else if (atom.Equals ("VANISHED", StringComparison.OrdinalIgnoreCase) && folder != null) {
+					await folder.OnVanishedAsync (this, doAsync: true, cancellationToken).ConfigureAwait (false);
+					await SkipLineAsync (cancellationToken).ConfigureAwait (false);
+				} else {
+					// don't know how to handle this... eat it?
+					await SkipLineAsync (cancellationToken).ConfigureAwait (false);
+				}
+			}
 		}
 
 		void PopNextCommand ()
