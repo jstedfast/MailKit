@@ -79,7 +79,8 @@ for registering an application with the Microsoft identity platform and follow t
 
 Once your web service has been registered, the tenant admin will need to register your service principal.
 
-To use the New-ServicePrincipal cmdlet, install ExchangeOnlineManagement and connect to your tenant as shown in the following snippet:
+To use the New-ServicePrincipal cmdlet, open an [Azure Powershell](https://learn.microsoft.com/en-us/powershell/azure/new-azureps-module-az?view=azps-10.2.0)
+terminal and install ExchangeOnlineManagement and connect to your tenant as shown below:
 
 ```powershell
 Install-Module -Name ExchangeOnlineManagement -allowprerelease
