@@ -135,19 +135,21 @@ namespace MailKit.Net.Imap {
 					if (builder.Equals (value, true))
 						return token;
 				}
-			} else if (builder.Equals ("NIL", true)) {
-				foreach (var token in NilTokens) {
-					value = (string) token.Value;
+			} else if (type == ImapTokenType.Atom) {
+				if (builder.Equals ("NIL", true)) {
+					foreach (var token in NilTokens) {
+						value = (string) token.Value;
 
-					if (builder.Equals (value))
-						return token;
+						if (builder.Equals (value))
+							return token;
+					}
+
+					var nil = new ImapToken (ImapTokenType.Nil, builder.ToString ());
+					NilTokens.Add (nil);
+
+					return nil;
 				}
 
-				var nil = new ImapToken (ImapTokenType.Nil, builder.ToString ());
-				NilTokens.Add (nil);
-
-				return nil;
-			} else {
 				if (builder.Equals ("FETCH", false))
 					return Fetch;
 				if (builder.Equals ("BODY", false))
