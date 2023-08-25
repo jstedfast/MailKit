@@ -1852,6 +1852,64 @@ namespace MailKit {
 		Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
+		/// Get a body part as a stream.
+		/// </summary>
+		/// <remarks>
+		/// Gets a body part as a stream.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartStreamsByUniqueId"/>
+		/// </example>
+		/// <returns>The body part stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+
+		/// <summary>
+		/// Asynchronously get a body part as a stream.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets a body part as a stream.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartStreamsByUniqueId"/>
+		/// </example>
+		/// <returns>The body part stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+
+		/// <summary>
+		/// Get a body part as a stream.
+		/// </summary>
+		/// <remarks>
+		/// Gets a body part as a stream.
+		/// </remarks>
+		/// <returns>The body part stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+
+		/// <summary>
+		/// Asynchronously get a body part as a stream.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets a body part as a stream.
+		/// </remarks>
+		/// <returns>The body part stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+
+		/// <summary>
 		/// Get a substream of the specified body part.
 		/// </summary>
 		/// <remarks>

@@ -215,6 +215,74 @@ namespace MailKit.Examples {
 		}
 		#endregion
 
+		#region GetBodyPartStreamsByUniqueId
+		public static void CacheBodyParts (string baseDirectory)
+		{
+			using (var client = new ImapClient ()) {
+				client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+
+				client.Authenticate ("username", "password");
+
+				client.Inbox.Open (FolderAccess.ReadOnly);
+
+				// search for messages where the Subject header contains either "MimeKit" or "MailKit"
+				var query = SearchQuery.SubjectContains ("MimeKit").Or (SearchQuery.SubjectContains ("MailKit"));
+				var uids = client.Inbox.Search (query);
+
+				// fetch summary information for the search results (we will want the UID and the BODYSTRUCTURE
+				// of each message so that we can extract the text body and the attachments)
+				var items = client.Inbox.Fetch (uids, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
+
+				foreach (var item in items) {
+					// determine a directory to save stuff in
+					var directory = Path.Combine (baseDirectory, item.UniqueId.ToString ());
+
+					// create the directory
+					Directory.CreateDirectory (directory);
+
+					// IMessageSummary.TextBody is a convenience property that finds the 'text/plain' body part for us
+					var bodyPart = item.TextBody;
+
+					if (bodyPart != null) {
+						// cache the raw 'text/plain' MIME part for later use
+						using (var stream = client.Inbox.GetStream (item.UniqueId, bodyPart)) {
+							var path = path.Combine (directory, bodyPart.PartSpecifier);
+
+							using (var output = File.Create (path))
+								stream.CopyTo (output);
+						}
+					}
+
+					// IMessageSummary.HtmlBody is a convenience property that finds the 'text/html' body part for us
+					bodyPart = item.HtmlBody;
+
+					if (bodyPart != null) {
+						// cache the raw 'text/html' MIME part for later use
+						using (var stream = client.Inbox.GetStream (item.UniqueId, bodyPart)) {
+							var path = path.Combine (directory, bodyPart.PartSpecifier);
+
+							using (var output = File.Create (path))
+								stream.CopyTo (output);
+						}
+					}
+
+					// now iterate over all of the attachments and save them to disk
+					foreach (var attachment in item.Attachments) {
+						// cache the raw MIME attachment just like we did with the body
+						using (var stream = client.Inbox.GetStream (item.UniqueId, attachment)) {
+							var path = path.Combine (directory, attachment.PartSpecifier);
+
+							using (var output = File.Create (path))
+								stream.CopyTo (output);
+						}
+					}
+				}
+
+				client.Disconnect (true);
+			}
+		}
+		#endregion
+
 		#region GetBodyPartStreamsByUniqueIdAndSpecifier
 		public static void CacheBodyParts (string baseDirectory)
 		{
