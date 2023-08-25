@@ -1094,6 +1094,19 @@ namespace MailKit.Net.Imap
 			return string.Format ("UID FETCH %s {0}{1}\r\n", query, changedSince);
 		}
 
+		static int EstimateInitialCapacity (IList<UniqueId> uids)
+		{
+			if (uids is UniqueIdRange || uids is UniqueIdSet) {
+				// UniqueIdRange is likely to refer to UIDs that have not yet been assigned or have been expunged,
+				// so cap our maximum initial capacity to 1024 (a reasonable limit?).
+				return Math.Min (uids.Count, 1024);
+			}
+
+			// If the user supplied an exact set of UIDs, then we'll assume they all exist
+			// and therefore we can use the capacity of `uids` as our initial capacity.
+			return uids.Count;
+		}
+
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>
@@ -1154,7 +1167,7 @@ namespace MailKit.Net.Imap
 				return Array.Empty<IMessageSummary> ();
 
 			var command = CreateFetchCommand (uids, request, out bool previewText);
-			var ctx = new FetchSummaryContext (4); // FIXME: do a better guesstimate than '4'
+			var ctx = new FetchSummaryContext (EstimateInitialCapacity (uids));
 
 			MessageExpunged += ctx.OnMessageExpunged;
 
@@ -1242,7 +1255,7 @@ namespace MailKit.Net.Imap
 				return Array.Empty<IMessageSummary> ();
 
 			var command = CreateFetchCommand (uids, request, out bool previewText);
-			var ctx = new FetchSummaryContext (4); // FIXME: do a better guesstimate than '4'
+			var ctx = new FetchSummaryContext (EstimateInitialCapacity (uids));
 
 			MessageExpunged += ctx.OnMessageExpunged;
 
