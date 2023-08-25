@@ -50,10 +50,10 @@ namespace MailKit.Net.Imap {
 	/// An IMAP folder.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
 	/// </example>
 	/// <example>
-	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+	/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 	/// </example>
 	public partial class ImapFolder : MailFolder, IImapFolder
 	{

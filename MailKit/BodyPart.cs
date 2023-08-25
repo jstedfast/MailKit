@@ -42,7 +42,7 @@ namespace MailKit {
 	/// <see cref="BodyPartMultipart"/>.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+	/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 	/// </example>
 	public abstract class BodyPart
 	{
@@ -74,7 +74,7 @@ namespace MailKit {
 		/// Gets the part specifier.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueIdAndSpecifier"/>
 		/// </example>
 		/// <value>The part specifier.</value>
 		public string PartSpecifier {

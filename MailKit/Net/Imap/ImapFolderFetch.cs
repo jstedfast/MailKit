@@ -1107,7 +1107,7 @@ namespace MailKit.Net.Imap
 		/// not requested at all.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1195,7 +1195,7 @@ namespace MailKit.Net.Imap
 		/// not requested at all.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -3208,6 +3208,9 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// Gets the specified body part.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueIdAndSpecifier"/>
+		/// </example>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="partSpecifier">The body part specifier.</param>
@@ -3257,6 +3260,9 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// Gets the specified body part.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueIdAndSpecifier"/>
+		/// </example>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="partSpecifier">The body part specifier.</param>
@@ -3307,7 +3313,7 @@ namespace MailKit.Net.Imap
 		/// Gets the specified body part.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -3365,7 +3371,7 @@ namespace MailKit.Net.Imap
 		/// Gets the specified body part.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -3777,8 +3783,8 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// Fetches a substream of the message. If the starting offset is beyond
 		/// the end of the message, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the message, a truncated stream
-		/// will be returned.
+		/// bytes desired extends beyond the end of the message, the stream will
+		/// end where the message ends.
 		/// </remarks>
 		/// <returns>The stream.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -3832,8 +3838,8 @@ namespace MailKit.Net.Imap
 		/// <remarks>
 		/// Fetches a substream of the message. If the starting offset is beyond
 		/// the end of the message, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the message, a truncated stream
-		/// will be returned.
+		/// bytes desired extends beyond the end of the message,  the stream will
+		/// end where the message ends.
 		/// </remarks>
 		/// <returns>The stream.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -4034,6 +4040,9 @@ namespace MailKit.Net.Imap
 		/// <para>For more information about how to construct the <paramref name="section"/>,
 		/// see Section 6.4.5 of RFC3501.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartStreamsByUniqueIdAndSpecifier"/>
+		/// </example>
 		/// <returns>The stream.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
@@ -4085,6 +4094,9 @@ namespace MailKit.Net.Imap
 		/// <para>For more information about how to construct the <paramref name="section"/>,
 		/// see Section 6.4.5 of RFC3501.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartStreamsByUniqueIdAndSpecifier"/>
+		/// </example>
 		/// <returns>The stream.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="section">The desired section of the message.</param>

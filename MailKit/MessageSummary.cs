@@ -273,7 +273,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
 		/// <value>The text body if it exists; otherwise, <c>null</c>.</value>
 		public BodyPartText TextBody {
@@ -301,6 +301,9 @@ namespace MailKit {
 		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
 		/// methods.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
+		/// </example>
 		/// <value>The html body if it exists; otherwise, <c>null</c>.</value>
 		public BodyPartText HtmlBody {
 			get {
@@ -370,7 +373,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
 		/// <value>The attachments.</value>
 		public IEnumerable<BodyPartBasic> Attachments {

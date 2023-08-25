@@ -519,7 +519,7 @@ namespace MailKit.Net.Imap
 		/// populated.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
 		/// </example>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="host">The host name to connect to.</param>
@@ -903,7 +903,7 @@ namespace MailKit.Net.Imap
 		/// If <paramref name="quit"/> is <c>true</c>, a <c>LOGOUT</c> command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
 		/// </example>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="quit">If set to <c>true</c>, a <c>LOGOUT</c> command will be issued in order to disconnect cleanly.</param>

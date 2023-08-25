@@ -40,10 +40,10 @@ namespace MailKit.Net.Imap {
 	/// Implemented by <see cref="MailKit.Net.Imap.ImapFolder"/>.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
 	/// </example>
 	/// <example>
-	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadBodyParts"/>
+	/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 	/// </example>
 	public interface IImapFolder : IMailFolder
 	{
