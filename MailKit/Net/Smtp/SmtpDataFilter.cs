@@ -36,8 +36,8 @@ namespace MailKit.Net.Smtp {
 	/// message to an IIS message pickup directory.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory" />
-	/// <code language="c#" source="Examples\SmtpExamples.cs" region="LoadFromPickupDirectory" />
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory"/>
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="LoadFromPickupDirectory"/>
 	/// </example>
 	public class SmtpDataFilter : MimeFilterBase
 	{
@@ -52,8 +52,8 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <param name="decode"><c>true</c> if the filter should decode the content; otherwise, <c>false</c>.</param>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory" />
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="LoadFromPickupDirectory" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="LoadFromPickupDirectory"/>
 		/// </example>
 		public SmtpDataFilter (bool decode = false)
 		{

@@ -66,7 +66,7 @@ namespace MailKit.Net.Smtp {
 	/// large number of messages to the same SMTP server over a short period of time.</para>
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages" />
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages"/>
 	/// </example>
 	public partial class SmtpClient : MailTransport, ISmtpClient
 	{
@@ -135,7 +135,7 @@ namespace MailKit.Net.Smtp {
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a> methods.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages"/>
 		/// </example>
 		public SmtpClient () : this (new NullProtocolLogger ())
 		{
@@ -2658,7 +2658,7 @@ namespace MailKit.Net.Smtp {
 		/// Expands a mailing address alias.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExpandAlias" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExpandAlias"/>
 		/// </example>
 		/// <returns>The expanded list of mailbox addresses.</returns>
 		/// <param name="alias">The mailing address alias.</param>
@@ -2732,7 +2732,7 @@ namespace MailKit.Net.Smtp {
 		/// mailbox address if it exists.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="VerifyAddress" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="VerifyAddress"/>
 		/// </example>
 		/// <returns>The expanded mailbox address.</returns>
 		/// <param name="address">The mailbox address.</param>

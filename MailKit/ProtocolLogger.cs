@@ -37,7 +37,7 @@ namespace MailKit {
 	/// A default protocol logger for logging the communication between a client and server.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger" />
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
 	/// </example>
 	public class ProtocolLogger : IProtocolLogger
 	{
@@ -68,7 +68,7 @@ namespace MailKit {
 		/// Creates a new <see cref="ProtocolLogger"/> to log to a specified file. The file is created if it does not exist.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
 		/// </example>
 		/// <param name="fileName">The file name.</param>
 		/// <param name="append"><c>true</c> if the file should be appended to; otherwise, <c>false</c>. Defaults to <c>true</c>.</param>

@@ -325,7 +325,7 @@ namespace MailKit {
 		/// Gets the total number of messages in the folder.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByIndex" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByIndex"/>
 		/// </example>
 		/// <value>The total number of messages.</value>
 		int Count { get; }
@@ -1672,7 +1672,7 @@ namespace MailKit {
 		/// Gets the specified message.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 		/// </example>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -1687,7 +1687,7 @@ namespace MailKit {
 		/// Asynchronously gets the specified message.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 		/// </example>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -1702,7 +1702,7 @@ namespace MailKit {
 		/// Gets the specified message.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByIndex" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByIndex"/>
 		/// </example>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
@@ -1717,7 +1717,7 @@ namespace MailKit {
 		/// Asynchronously gets the specified message.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByIndex" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByIndex"/>
 		/// </example>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
@@ -1782,6 +1782,66 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+
+		/// <summary>
+		/// Get a message stream.
+		/// </summary>
+		/// <remarks>
+		/// Gets a message stream.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessageStreamsByUniqueId"/>
+		/// </example>
+		/// <returns>The message stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+
+		/// <summary>
+		/// Asynchronously get a message stream.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets a message stream.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessageStreamsByUniqueId"/>
+		/// </example>
+		/// <returns>The message stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+
+		/// <summary>
+		/// Get a message stream.
+		/// </summary>
+		/// <remarks>
+		/// Gets a message stream.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessageStreamsByIndex"/>
+		/// </example>
+		/// <returns>The message stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+
+		/// <summary>
+		/// Asynchronously get a message stream.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets a message stream.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessageStreamsByIndex"/>
+		/// </example>
+		/// <returns>The message stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.

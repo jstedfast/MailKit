@@ -181,6 +181,30 @@ namespace MailKit.Examples {
 		}
 		#endregion
 
+		#region DownloadMessageStreamsByUniqueId
+		public static void DownloadMessages ()
+		{
+			using (var client = new ImapClient ()) {
+				client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+
+				client.Authenticate ("username", "password");
+
+				client.Inbox.Open (FolderAccess.ReadOnly);
+
+				var uids = client.Inbox.Search (SearchQuery.All);
+
+				foreach (var uid in uids) {
+					using (var stream = client.Inbox.GetStream (uid)) {
+						using (var output = File.Create ($"{uid}.eml"))
+							stream.CopyTo (output);
+					}
+				}
+
+				client.Disconnect (true);
+			}
+		}
+		#endregion
+
 		#region DownloadMessagesByIndex
 		public static void DownloadMessages ()
 		{
@@ -196,6 +220,28 @@ namespace MailKit.Examples {
 
 					// write the message to a file
 					message.WriteTo (string.Format ("{0}.eml", index));
+				}
+
+				client.Disconnect (true);
+			}
+		}
+		#endregion
+
+		#region DownloadMessageStreamsByIndex
+		public static void DownloadMessages ()
+		{
+			using (var client = new ImapClient ()) {
+				client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+
+				client.Authenticate ("username", "password");
+
+				client.Inbox.Open (FolderAccess.ReadOnly);
+
+				for (int index = 0; index < client.Inbox.Count; index++) {
+					using (var stream = client.Inbox.GetStream (index)) {
+						using (var output = File.Create ($"{index}.eml"))
+							stream.CopyTo (output);
+					}
 				}
 
 				client.Disconnect (true);

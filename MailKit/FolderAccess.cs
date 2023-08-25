@@ -32,7 +32,7 @@ namespace MailKit {
 	/// A folder access mode.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 	/// </example>
 	public enum FolderAccess {
 		/// <summary>

@@ -34,7 +34,7 @@ namespace MailKit {
 	/// An interface for logging the communication between a client and server.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger" />
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
 	/// </example>
 	public interface IProtocolLogger : IDisposable
 	{

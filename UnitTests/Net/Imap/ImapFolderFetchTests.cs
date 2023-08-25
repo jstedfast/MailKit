@@ -303,6 +303,12 @@ namespace UnitTests.Net.Imap {
 				//Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.GetBodyPartAsync (UniqueId.MinValue, (string) null));
 
 				// GetStream
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStream (-1));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.GetStreamAsync (-1));
+
+				Assert.Throws<ArgumentException> (() => inbox.GetStream (UniqueId.Invalid));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.GetStreamAsync (UniqueId.Invalid));
+
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStream (-1, "1.2"));
 				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.GetStreamAsync (-1, "1.2"));
 				Assert.Throws<ArgumentNullException> (() => inbox.GetStream (0, (string) null));
@@ -313,15 +319,15 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (() => inbox.GetStream (UniqueId.MinValue, (string) null));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.GetStreamAsync (UniqueId.MinValue, (string) null));
 
-				//Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStream (-1, bodyPart));
-				//Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.GetStreamAsync (-1, bodyPart));
-				//Assert.Throws<ArgumentNullException> (() => inbox.GetStream (0, (BodyPart) null));
-				//Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.GetStreamAsync (0, (BodyPart) null));
+				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStream (-1, bodyPart));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.GetStreamAsync (-1, bodyPart));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetStream (0, (BodyPart) null));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.GetStreamAsync (0, (BodyPart) null));
 
-				//Assert.Throws<ArgumentException> (() => inbox.GetStream (UniqueId.Invalid, bodyPart));
-				//Assert.ThrowsAsync<ArgumentException> (async () => await inbox.GetStreamAsync (UniqueId.Invalid, bodyPart));
-				//Assert.Throws<ArgumentNullException> (() => inbox.GetStream (UniqueId.MinValue, (BodyPart) null));
-				//Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.GetStreamAsync (UniqueId.MinValue, (BodyPart) null));
+				Assert.Throws<ArgumentException> (() => inbox.GetStream (UniqueId.Invalid, bodyPart));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.GetStreamAsync (UniqueId.Invalid, bodyPart));
+				Assert.Throws<ArgumentNullException> (() => inbox.GetStream (UniqueId.MinValue, (BodyPart) null));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.GetStreamAsync (UniqueId.MinValue, (BodyPart) null));
 
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetStream (-1, 0, 1024));
 				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.GetStreamAsync (-1, 0, 1024));

@@ -1208,7 +1208,7 @@ namespace MailKit.Net.Smtp
 		/// Expands a mailing address alias.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExpandAlias" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExpandAlias"/>
 		/// </example>
 		/// <returns>The expanded list of mailbox addresses.</returns>
 		/// <param name="alias">The mailing address alias.</param>
@@ -1255,7 +1255,7 @@ namespace MailKit.Net.Smtp
 		/// mailbox address if it exists.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="VerifyAddress" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="VerifyAddress"/>
 		/// </example>
 		/// <returns>The expanded mailbox address.</returns>
 		/// <param name="address">The mailbox address.</param>

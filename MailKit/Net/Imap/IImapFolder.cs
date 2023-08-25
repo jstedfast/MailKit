@@ -40,7 +40,7 @@ namespace MailKit.Net.Imap {
 	/// Implemented by <see cref="MailKit.Net.Imap.ImapFolder"/>.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 	/// </example>
 	/// <example>
 	/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>

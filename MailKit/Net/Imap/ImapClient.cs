@@ -55,7 +55,7 @@ namespace MailKit.Net.Imap {
 	/// SSL-wrapped connection.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 	/// </example>
 	/// <example>
 	/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
@@ -86,7 +86,7 @@ namespace MailKit.Net.Imap {
 		/// methods.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 		/// </example>
 		public ImapClient () : this (new NullProtocolLogger ())
 		{
@@ -1477,7 +1477,7 @@ namespace MailKit.Net.Imap {
 		/// populated.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 		/// </example>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
@@ -1868,7 +1868,7 @@ namespace MailKit.Net.Imap {
 		/// If <paramref name="quit"/> is <c>true</c>, a <c>LOGOUT</c> command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 		/// </example>
 		/// <param name="quit">If set to <c>true</c>, a <c>LOGOUT</c> command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2300,7 +2300,7 @@ namespace MailKit.Net.Imap {
 		/// <note type="note">This property will only be available after the client has been authenticated.</note>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId" />
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
 		/// </example>
 		/// <value>The Inbox folder.</value>
 		/// <exception cref="System.ObjectDisposedException">
