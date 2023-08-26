@@ -94,10 +94,12 @@ namespace MailKit.Net.Imap {
 		static readonly ImapToken XGMMsgId = new ImapToken (ImapTokenType.Atom, "X-GM-MSGID");
 		static readonly ImapToken XGMThrId = new ImapToken (ImapTokenType.Atom, "X-GM-THRID");
 
+		static readonly ImapTokenCache Cache = new ImapTokenCache ();
+
 		public readonly ImapTokenType Type;
 		public readonly object Value;
 
-		ImapToken (ImapTokenType type, object value = null)
+		internal ImapToken (ImapTokenType type, object value = null)
 		{
 			Value = value;
 			Type = type;
@@ -123,6 +125,30 @@ namespace MailKit.Net.Imap {
 		public static ImapToken Create (ImapTokenType type, int literalLength)
 		{
 			return new ImapToken (type, literalLength);
+		}
+
+		static bool IsCacheable (ByteArrayBuilder builder)
+		{
+			if (builder.Length < 2 || builder.Length > 32)
+				return false;
+
+			// Any atom token that starts with a digit is likely to be an integer value, so don't cache it.
+			if (builder[0] >= (byte) '0' && builder[0] <= (byte) '9')
+				return false;
+
+			// Any atom token that starts with 'A'->'Z' and is followed by digits is a tag token. Ignore.
+			if (builder[0] >= (byte) 'A' && builder[0] <= (byte) 'Z' && builder[1] >= (byte) '0' && builder[1] <= (byte) '9')
+				return false;
+
+			for (int i = 0; i < builder.Length; i++) {
+				byte c = (byte) builder[i];
+
+				// Disregard any non-ASCII "atoms".
+				if (c <= 32 || c >= 127)
+					return false;
+			}
+
+			return true;
 		}
 
 		public static ImapToken Create (ImapTokenType type, ByteArrayBuilder builder)
@@ -182,6 +208,9 @@ namespace MailKit.Net.Imap {
 				if (builder.Equals ("X-GM-THRID", false))
 					return XGMThrId;
 			}
+
+			if (IsCacheable (builder))
+				return Cache.AddOrGet (type, builder);
 
 			value = builder.ToString ();
 
