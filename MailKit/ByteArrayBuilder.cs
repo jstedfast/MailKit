@@ -45,6 +45,15 @@ namespace MailKit
 			get { return length; }
 		}
 
+		public byte this[int index] {
+			get { return buffer[index]; }
+		}
+
+		public byte[] GetBuffer ()
+		{
+			return buffer;
+		}
+
 		void EnsureCapacity (int capacity)
 		{
 			if (capacity > buffer.Length) {
