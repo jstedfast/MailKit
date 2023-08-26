@@ -587,9 +587,7 @@ namespace MailKit.Net.Imap {
 				while (!TryReadQuotedString (builder, ref escaped))
 					ReadAhead (2, cancellationToken);
 
-				var qstring = builder.ToString ();
-
-				return ImapToken.Create (ImapTokenType.QString, qstring);
+				return ImapToken.Create (ImapTokenType.QString, builder);
 			}
 		}
 
@@ -604,9 +602,7 @@ namespace MailKit.Net.Imap {
 				while (!TryReadQuotedString (builder, ref escaped))
 					await ReadAheadAsync (2, cancellationToken).ConfigureAwait (false);
 
-				var qstring = builder.ToString ();
-
-				return ImapToken.Create (ImapTokenType.QString, qstring);
+				return ImapToken.Create (ImapTokenType.QString, builder);
 			}
 		}
 
@@ -739,7 +735,7 @@ namespace MailKit.Net.Imap {
 				inputIndex++;
 
 				if (!builder.TryParse (1, endIndex, out literalDataLeft))
-					return ImapToken.Create (ImapTokenType.Error, builder.ToString ());
+					return ImapToken.CreateError (builder);
 
 				Mode = ImapStreamMode.Literal;
 
@@ -781,7 +777,7 @@ namespace MailKit.Net.Imap {
 				inputIndex++;
 
 				if (!builder.TryParse (1, endIndex, out literalDataLeft) || literalDataLeft < 0)
-					return ImapToken.Create (ImapTokenType.Error, builder.ToString ());
+					return ImapToken.CreateError (builder);
 
 				Mode = ImapStreamMode.Literal;
 

@@ -36,44 +36,49 @@ namespace MailKit.Net.Imap
 
 		readonly Dictionary<ImapTokenKey, LinkedListNode<ImapTokenItem>> cache;
 		readonly LinkedList<ImapTokenItem> list;
+		readonly ImapTokenKey lookupKey;
 
 		public ImapTokenCache ()
 		{
 			cache = new Dictionary<ImapTokenKey, LinkedListNode<ImapTokenItem>> ();
 			list = new LinkedList<ImapTokenItem> ();
+			lookupKey = new ImapTokenKey ();
 		}
 
 		public ImapToken AddOrGet (ImapTokenType type, ByteArrayBuilder builder)
 		{
-			// Note: This ImapTokenKey .ctor does not duplicate the buffer and is meant as a temporary key
-			// in order to avoid memory allocations for lookup purposes.
-			var key = new ImapTokenKey (builder.GetBuffer (), builder.Length);
-
 			lock (cache) {
-				if (cache.TryGetValue (key, out var node)) {
+				// lookupKey is a pre-allocated key used for lookups
+				lookupKey.Init (type, builder.GetBuffer (), builder.Length);
+
+				if (cache.TryGetValue (lookupKey, out var node)) {
 					// move the node to the head of the list
 					list.Remove (node);
 					list.AddFirst (node);
+					node.Value.Count++;
 
 					return node.Value.Token;
 				}
+
+				var token = new ImapToken (type, builder.ToString ());
 
 				if (cache.Count >= capacity) {
 					// remove the least recently used token
 					node = list.Last;
 					list.RemoveLast ();
 					cache.Remove (node.Value.Key);
+
+					// re-use the node, item and key to avoid allocations
+					node.Value.Key.Init (type, (string) token.Value);
+					node.Value.Token = token;
+				} else {
+					var key = new ImapTokenKey (type, (string) token.Value);
+					var item = new ImapTokenItem (key, token);
+
+					node = new LinkedListNode<ImapTokenItem> (item);
 				}
 
-				var token = new ImapToken (type, builder.ToString ());
-
-				// Note: We recreate the key here so we have a permanent key. Also this allows for reuse of the token's Value string.
-				key = new ImapTokenKey ((string) token.Value);
-
-				var item = new ImapTokenItem (key, token);
-
-				node = new LinkedListNode<ImapTokenItem> (item);
-				cache.Add (key, node);
+				cache.Add (node.Value.Key, node);
 				list.AddFirst (node);
 
 				return token;
@@ -82,33 +87,49 @@ namespace MailKit.Net.Imap
 
 		class ImapTokenKey
 		{
-			readonly byte[] byteArrayKey;
-			readonly string stringKey;
-			readonly int length;
-			readonly int hashCode;
+			ImapTokenType type;
+			byte[] byteArrayKey;
+			string stringKey;
+			int length;
+			int hashCode;
 
-			public ImapTokenKey (byte[] key, int len)
+			public ImapTokenKey ()
 			{
-				byteArrayKey = key;
-				length = len;
+			}
+
+			public ImapTokenKey (ImapTokenType type, string key)
+			{
+				Init (type, key);
+			}
+
+			public void Init (ImapTokenType type, byte[] key, int length)
+			{
+				this.type = type;
+				this.byteArrayKey = key;
+				this.stringKey = null;
+				this.length = length;
 
 				var hash = new HashCode ();
+				hash.Add ((int) type);
 				for (int i = 0; i < length; i++)
 					hash.Add ((char) key[i]);
 
-				hashCode = hash.ToHashCode ();
+				this.hashCode = hash.ToHashCode ();
 			}
 
-			public ImapTokenKey (string key)
+			public void Init (ImapTokenType type, string key)
 			{
-				stringKey = key;
-				length = key.Length;
+				this.type = type;
+				this.byteArrayKey = null;
+				this.stringKey = key;
+				this.length = key.Length;
 
 				var hash = new HashCode ();
+				hash.Add ((int) type);
 				for (int i = 0; i < length; i++)
 					hash.Add (key[i]);
 
-				hashCode = hash.ToHashCode ();
+				this.hashCode = hash.ToHashCode ();
 			}
 
 			static bool Equals (string str, byte[] bytes)
@@ -123,7 +144,7 @@ namespace MailKit.Net.Imap
 
 			static bool Equals (ImapTokenKey self, ImapTokenKey other)
 			{
-				if (self.length != other.length)
+				if (self.type != other.type || self.length != other.length)
 					return false;
 
 				if (self.stringKey != null) {
@@ -153,17 +174,29 @@ namespace MailKit.Net.Imap
 			{
 				return hashCode;
 			}
+
+			public override string ToString ()
+			{
+				return string.Format ("{0}: {1}", type, stringKey ?? Encoding.UTF8.GetString (byteArrayKey, 0, length));
+			}
 		}
 
 		class ImapTokenItem
 		{
-			public readonly ImapTokenKey Key;
-			public readonly ImapToken Token;
+			public ImapTokenKey Key;
+			public ImapToken Token;
+			public int Count;
 
 			public ImapTokenItem (ImapTokenKey key, ImapToken token)
 			{
 				Key = key;
 				Token = token;
+				Count = 1;
+			}
+
+			public override string ToString ()
+			{
+				return $"{Count}";
 			}
 		}
 	}
