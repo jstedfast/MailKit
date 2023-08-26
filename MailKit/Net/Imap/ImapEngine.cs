@@ -2773,7 +2773,6 @@ namespace MailKit.Net.Imap {
 		/// Queries the capabilities.
 		/// </summary>
 		/// <returns>The command result.</returns>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapCommandResponse QueryCapabilities (CancellationToken cancellationToken)
 		{
@@ -2786,7 +2785,6 @@ namespace MailKit.Net.Imap {
 		/// Queries the capabilities.
 		/// </summary>
 		/// <returns>The command result.</returns>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public Task<ImapCommandResponse> QueryCapabilitiesAsync (CancellationToken cancellationToken)
 		{
@@ -2912,7 +2910,6 @@ namespace MailKit.Net.Imap {
 		/// Looks up and sets the <see cref="MailFolder.ParentFolder"/> property of each of the folders.
 		/// </summary>
 		/// <param name="folders">The IMAP folders.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		internal async Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, CancellationToken cancellationToken)
 		{
@@ -3494,7 +3491,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="namespace">The namespace.</param>
 		/// <param name="items">The status items to pre-populate.</param>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
 		{
