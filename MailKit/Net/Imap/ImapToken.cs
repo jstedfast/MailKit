@@ -74,6 +74,7 @@ namespace MailKit.Net.Imap {
 			Nil
 		};
 
+		static readonly ImapToken Ok = new ImapToken (ImapTokenType.Atom, "OK");
 		static readonly ImapToken Fetch = new ImapToken (ImapTokenType.Atom, "FETCH");
 		//static readonly ImapToken Annotation = new ImapToken (ImapTokenType.Atom, "ANNOTATION");
 		static readonly ImapToken Body = new ImapToken (ImapTokenType.Atom, "BODY");
@@ -154,6 +155,8 @@ namespace MailKit.Net.Imap {
 					}
 				}
 
+				if (builder.Equals ("OK", false))
+					return Ok;
 				if (builder.Equals ("FETCH", false))
 					return Fetch;
 				if (builder.Equals ("BODY", false))
