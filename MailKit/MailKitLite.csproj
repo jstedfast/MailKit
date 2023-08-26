@@ -70,6 +70,7 @@
 
   <ItemGroup>
     <Compile Include="Net\Imap\AsyncImapClient.cs" />
+    <Compile Include="Net\Imap\HashCode.cs" Condition=" $(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0' " />
     <Compile Include="Net\Imap\IImapClient.cs" />
     <Compile Include="Net\Imap\IImapFolder.cs" />
     <Compile Include="Net\Imap\ImapAuthenticationSecretDetector.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs" />
     <Compile Include="Net\Imap\ImapStream.cs" />
     <Compile Include="Net\Imap\ImapToken.cs" />
+    <Compile Include="Net\Imap\ImapTokenCache.cs" />
     <Compile Include="Net\Imap\ImapUtils.cs" />
     <Compile Include="Net\Pop3\AsyncPop3Client.cs" />
     <Compile Include="Net\Pop3\IPop3Client.cs" />
