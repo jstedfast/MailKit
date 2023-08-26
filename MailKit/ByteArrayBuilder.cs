@@ -48,6 +48,15 @@ namespace MailKit
 			get { return length; }
 		}
 
+		public byte this[int index] {
+			get { return buffer[index]; }
+		}
+
+		public byte[] GetBuffer ()
+		{
+			return buffer;
+		}
+
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		void EnsureCapacity (int capacity)
 		{
