@@ -738,7 +738,7 @@ namespace MailKit.Net.Imap {
 				// skip over the '\n'
 				inputIndex++;
 
-				if (!builder.TryParse (1, endIndex, out literalDataLeft) || literalDataLeft < 0)
+				if (!builder.TryParse (1, endIndex, out literalDataLeft))
 					return ImapToken.Create (ImapTokenType.Error, builder.ToString ());
 
 				Mode = ImapStreamMode.Literal;
