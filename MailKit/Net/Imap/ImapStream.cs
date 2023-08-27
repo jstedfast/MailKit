@@ -74,6 +74,7 @@ namespace MailKit.Net.Imap {
 		readonly byte[] output = new byte[BlockSize];
 		int outputIndex;
 
+		readonly ByteArrayBuilder tokenBuilder;
 		readonly Stack<ImapToken> tokens;
 		readonly IProtocolLogger logger;
 		int literalDataLeft;
@@ -89,6 +90,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="protocolLogger">The protocol logger.</param>
 		public ImapStream (Stream source, IProtocolLogger protocolLogger)
 		{
+			tokenBuilder = new ByteArrayBuilder (64);
 			tokens = new Stack<ImapToken> ();
 			logger = protocolLogger;
 			IsConnected = true;
@@ -590,14 +592,14 @@ namespace MailKit.Net.Imap {
 			// skip over the opening '"'
 			inputIndex++;
 
-			using (var builder = new ByteArrayBuilder (64)) {
-				while (!TryReadQuotedString (builder, ref escaped))
-					ReadAhead (2, cancellationToken);
+			tokenBuilder.Clear ();
 
-				var qstring = builder.ToString ();
+			while (!TryReadQuotedString (tokenBuilder, ref escaped))
+				ReadAhead (2, cancellationToken);
 
-				return ImapToken.Create (ImapTokenType.QString, qstring);
-			}
+			var qstring = tokenBuilder.ToString ();
+
+			return ImapToken.Create (ImapTokenType.QString, qstring);
 		}
 
 		async ValueTask<ImapToken> ReadQuotedStringTokenAsync (CancellationToken cancellationToken)
@@ -607,14 +609,14 @@ namespace MailKit.Net.Imap {
 			// skip over the opening '"'
 			inputIndex++;
 
-			using (var builder = new ByteArrayBuilder (64)) {
-				while (!TryReadQuotedString (builder, ref escaped))
-					await ReadAheadAsync (2, cancellationToken).ConfigureAwait (false);
+			tokenBuilder.Clear ();
 
-				var qstring = builder.ToString ();
+			while (!TryReadQuotedString (tokenBuilder, ref escaped))
+				await ReadAheadAsync (2, cancellationToken).ConfigureAwait (false);
 
-				return ImapToken.Create (ImapTokenType.QString, qstring);
-			}
+			var qstring = tokenBuilder.ToString ();
+
+			return ImapToken.Create (ImapTokenType.QString, qstring);
 		}
 
 		bool TryReadAtomString (ImapTokenType type, ByteArrayBuilder builder, string specials)
@@ -634,28 +636,28 @@ namespace MailKit.Net.Imap {
 
 		ImapToken ReadAtomString (ImapTokenType type, string specials, CancellationToken cancellationToken)
 		{
-			using (var builder = new ByteArrayBuilder (32)) {
-				if (type == ImapTokenType.Flag)
-					builder.Append ((byte) '\\');
+			tokenBuilder.Clear ();
 
-				while (!TryReadAtomString (type, builder, specials))
-					ReadAhead (1, cancellationToken);
+			if (type == ImapTokenType.Flag)
+				tokenBuilder.Append ((byte) '\\');
 
-				return ImapToken.Create (type, builder);
-			}
+			while (!TryReadAtomString (type, tokenBuilder, specials))
+				ReadAhead (1, cancellationToken);
+
+			return ImapToken.Create (type, tokenBuilder);
 		}
 
 		async ValueTask<ImapToken> ReadAtomStringAsync (ImapTokenType type, string specials, CancellationToken cancellationToken)
 		{
-			using (var builder = new ByteArrayBuilder (32)) {
-				if (type == ImapTokenType.Flag)
-					builder.Append ((byte) '\\');
+			tokenBuilder.Clear ();
 
-				while (!TryReadAtomString (type, builder, specials))
-					await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+			if (type == ImapTokenType.Flag)
+				tokenBuilder.Append ((byte) '\\');
 
-				return ImapToken.Create (type, builder);
-			}
+			while (!TryReadAtomString (type, tokenBuilder, specials))
+				await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+
+			return ImapToken.Create (type, tokenBuilder);
 		}
 
 		ImapToken ReadAtomToken (string specials, CancellationToken cancellationToken)
@@ -714,86 +716,86 @@ namespace MailKit.Net.Imap {
 
 		ImapToken ReadLiteralToken (CancellationToken cancellationToken)
 		{
-			using (var builder = new ByteArrayBuilder (16)) {
-				// skip over the '{'
-				builder.Append (input[inputIndex++]);
+			tokenBuilder.Clear ();
 
-				while (!TryReadLiteralTokenValue (builder))
+			// skip over the '{'
+			tokenBuilder.Append (input[inputIndex++]);
+
+			while (!TryReadLiteralTokenValue (tokenBuilder))
+				ReadAhead (1, cancellationToken);
+
+			int endIndex = tokenBuilder.Length;
+
+			if (input[inputIndex] == (byte) '+')
+				tokenBuilder.Append (input[inputIndex++]);
+
+			// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
+			ReadAhead (2, cancellationToken);
+
+			if (input[inputIndex] != (byte) '}') {
+				// PROTOCOL ERROR... but maybe we can work around it?
+				while (!TryReadUntilCloseCurlyBrace (tokenBuilder))
 					ReadAhead (1, cancellationToken);
-
-				int endIndex = builder.Length;
-
-				if (input[inputIndex] == (byte) '+')
-					builder.Append (input[inputIndex++]);
-
-				// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
-				ReadAhead (2, cancellationToken);
-
-				if (input[inputIndex] != (byte) '}') {
-					// PROTOCOL ERROR... but maybe we can work around it?
-					while (!TryReadUntilCloseCurlyBrace (builder))
-						ReadAhead (1, cancellationToken);
-				}
-
-				// skip over the '}'
-				builder.Append (input[inputIndex++]);
-
-				// read until we get a new line...
-				while (!TrySkipUntilNewLine ())
-					ReadAhead (1, cancellationToken);
-
-				// skip over the '\n'
-				inputIndex++;
-
-				if (!builder.TryParse (1, endIndex, out literalDataLeft))
-					return ImapToken.Create (ImapTokenType.Error, builder.ToString ());
-
-				Mode = ImapStreamMode.Literal;
-
-				return ImapToken.Create (ImapTokenType.Literal, literalDataLeft);
 			}
+
+			// skip over the '}'
+			tokenBuilder.Append (input[inputIndex++]);
+
+			// read until we get a new line...
+			while (!TrySkipUntilNewLine ())
+				ReadAhead (1, cancellationToken);
+
+			// skip over the '\n'
+			inputIndex++;
+
+			if (!tokenBuilder.TryParse (1, endIndex, out literalDataLeft))
+				return ImapToken.Create (ImapTokenType.Error, tokenBuilder.ToString ());
+
+			Mode = ImapStreamMode.Literal;
+
+			return ImapToken.Create (ImapTokenType.Literal, literalDataLeft);
 		}
 
 		async ValueTask<ImapToken> ReadLiteralTokenAsync (CancellationToken cancellationToken)
 		{
-			using (var builder = new ByteArrayBuilder (16)) {
-				// skip over the '{'
-				builder.Append (input[inputIndex++]);
+			tokenBuilder.Clear ();
 
-				while (!TryReadLiteralTokenValue (builder))
+			// skip over the '{'
+			tokenBuilder.Append (input[inputIndex++]);
+
+			while (!TryReadLiteralTokenValue (tokenBuilder))
+				await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+
+			int endIndex = tokenBuilder.Length;
+
+			if (input[inputIndex] == (byte) '+')
+				tokenBuilder.Append (input[inputIndex++]);
+
+			// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
+			await ReadAheadAsync (2, cancellationToken).ConfigureAwait (false);
+
+			if (input[inputIndex] != (byte) '}') {
+				// PROTOCOL ERROR... but maybe we can work around it?
+				while (!TryReadUntilCloseCurlyBrace (tokenBuilder))
 					await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
-
-				int endIndex = builder.Length;
-
-				if (input[inputIndex] == (byte) '+')
-					builder.Append (input[inputIndex++]);
-
-				// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
-				await ReadAheadAsync (2, cancellationToken).ConfigureAwait (false);
-
-				if (input[inputIndex] != (byte) '}') {
-					// PROTOCOL ERROR... but maybe we can work around it?
-					while (!TryReadUntilCloseCurlyBrace (builder))
-						await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
-				}
-
-				// skip over the '}'
-				builder.Append (input[inputIndex++]);
-
-				// read until we get a new line...
-				while (!TrySkipUntilNewLine ())
-					await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
-
-				// skip over the '\n'
-				inputIndex++;
-
-				if (!builder.TryParse (1, endIndex, out literalDataLeft) || literalDataLeft < 0)
-					return ImapToken.Create (ImapTokenType.Error, builder.ToString ());
-
-				Mode = ImapStreamMode.Literal;
-
-				return ImapToken.Create (ImapTokenType.Literal, literalDataLeft);
 			}
+
+			// skip over the '}'
+			tokenBuilder.Append (input[inputIndex++]);
+
+			// read until we get a new line...
+			while (!TrySkipUntilNewLine ())
+				await ReadAheadAsync (1, cancellationToken).ConfigureAwait (false);
+
+			// skip over the '\n'
+			inputIndex++;
+
+			if (!tokenBuilder.TryParse (1, endIndex, out literalDataLeft) || literalDataLeft < 0)
+				return ImapToken.Create (ImapTokenType.Error, tokenBuilder.ToString ());
+
+			Mode = ImapStreamMode.Literal;
+
+			return ImapToken.Create (ImapTokenType.Literal, literalDataLeft);
 		}
 
 		bool TrySkipWhiteSpace ()
@@ -1392,6 +1394,7 @@ namespace MailKit.Net.Imap {
 		{
 			if (disposing && !disposed) {
 				IsConnected = false;
+				tokenBuilder.Dispose ();
 				Stream.Dispose ();
 			}
 
