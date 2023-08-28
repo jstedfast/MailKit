@@ -38,7 +38,7 @@ namespace MailKit.Examples {
 	public static class ImapBodyPartExamples
 	{
 		#region GetBodyPartsByUniqueId
-		public static void DownloadBodyParts (string baseDirectory)
+		public static void DownloadBodyAndAttachments (string baseDirectory)
 		{
 			using (var client = new ImapClient ()) {
 				client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
@@ -105,8 +105,16 @@ namespace MailKit.Examples {
 						} else {
 							var part = (MimePart) entity;
 
-							// note: it's possible for this to be null, but most will specify a filename
-							var fileName = part.FileName;
+							// default to using the sending client's suggested fileName value
+							var fileName = attachment.FileName;
+
+							if (string.IsNullOrEmpty (fileName)) {
+								// the FileName wasn't defined, so generate one...
+								if (!MimeTypes.TryGetExtension (attachment.ContentType.MimeType, out string extension))
+									extension = ".dat";
+
+								fileName = Guid.NewGuid ().ToString () + extension;
+							}
 
 							var path = Path.Combine (directory, fileName);
 
@@ -123,7 +131,7 @@ namespace MailKit.Examples {
 		#endregion
 
 		#region GetBodyPartsByUniqueIdAndSpecifier
-		public static void DownloadBodyParts (string baseDirectory)
+		public static void DownloadBodyAndAttachments (string baseDirectory)
 		{
 			using (var client = new ImapClient ()) {
 				client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
@@ -198,8 +206,16 @@ namespace MailKit.Examples {
 						} else {
 							var part = (MimePart) entity;
 
-							// note: it's possible for this to be null, but most will specify a filename
-							var fileName = part.FileName;
+							// default to using the sending client's suggested fileName value
+							var fileName = attachment.FileName;
+
+							if (string.IsNullOrEmpty (fileName)) {
+								// the FileName wasn't defined, so generate one...
+								if (!MimeTypes.TryGetExtension (attachment.ContentType.MimeType, out string extension))
+									extension = ".dat";
+
+								fileName = Guid.NewGuid ().ToString () + extension;
+							}
 
 							var path = Path.Combine (directory, fileName);
 
@@ -240,37 +256,11 @@ namespace MailKit.Examples {
 					// create the directory
 					Directory.CreateDirectory (directory);
 
-					// IMessageSummary.TextBody is a convenience property that finds the 'text/plain' body part for us
-					var bodyPart = item.TextBody;
-
-					if (bodyPart != null) {
-						// cache the raw 'text/plain' MIME part for later use
+					// now iterate over all of the body parts and save them to disk
+					foreach (var bodyPart in item.BodyParts) {
+						// cache the raw body part MIME just like we did with the body
 						using (var stream = client.Inbox.GetStream (item.UniqueId, bodyPart)) {
-							var path = path.Combine (directory, bodyPart.PartSpecifier);
-
-							using (var output = File.Create (path))
-								stream.CopyTo (output);
-						}
-					}
-
-					// IMessageSummary.HtmlBody is a convenience property that finds the 'text/html' body part for us
-					bodyPart = item.HtmlBody;
-
-					if (bodyPart != null) {
-						// cache the raw 'text/html' MIME part for later use
-						using (var stream = client.Inbox.GetStream (item.UniqueId, bodyPart)) {
-							var path = path.Combine (directory, bodyPart.PartSpecifier);
-
-							using (var output = File.Create (path))
-								stream.CopyTo (output);
-						}
-					}
-
-					// now iterate over all of the attachments and save them to disk
-					foreach (var attachment in item.Attachments) {
-						// cache the raw MIME attachment just like we did with the body
-						using (var stream = client.Inbox.GetStream (item.UniqueId, attachment)) {
-							var path = path.Combine (directory, attachment.PartSpecifier);
+							var path = Path.Combine (directory, bodyPart.PartSpecifier);
 
 							using (var output = File.Create (path))
 								stream.CopyTo (output);
@@ -284,7 +274,7 @@ namespace MailKit.Examples {
 		#endregion
 
 		#region GetBodyPartStreamsByUniqueIdAndSpecifier
-		public static void CacheBodyParts (string baseDirectory)
+		public static void SaveAttachments (string baseDirectory)
 		{
 			using (var client = new ImapClient ()) {
 				client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
@@ -308,40 +298,36 @@ namespace MailKit.Examples {
 					// create the directory
 					Directory.CreateDirectory (directory);
 
-					// IMessageSummary.TextBody is a convenience property that finds the 'text/plain' body part for us
-					var bodyPart = item.TextBody;
-
-					if (bodyPart != null) {
-						// cache the raw 'text/plain' MIME part for later use
-						using (var stream = client.Inbox.GetStream (item.UniqueId, bodyPart.PartSpecifier)) {
-							var path = path.Combine (directory, bodyPart.PartSpecifier);
-
-							using (var output = File.Create (path))
-								stream.CopyTo (output);
-						}
-					}
-
-					// IMessageSummary.HtmlBody is a convenience property that finds the 'text/html' body part for us
-					bodyPart = item.HtmlBody;
-
-					if (bodyPart != null) {
-						// cache the raw 'text/html' MIME part for later use
-						using (var stream = client.Inbox.GetStream (item.UniqueId, bodyPart.PartSpecifier)) {
-							var path = path.Combine (directory, bodyPart.PartSpecifier);
-
-							using (var output = File.Create (path))
-								stream.CopyTo (output);
-						}
-					}
-
-					// now iterate over all of the attachments and save them to disk
+					// now iterate over all of the attachments and decode/save the content to disk
 					foreach (var attachment in item.Attachments) {
-						// cache the raw MIME attachment just like we did with the body
-						using (var stream = client.Inbox.GetStream (item.UniqueId, attachment.PartSpecifier)) {
-							var path = path.Combine (directory, attachment.PartSpecifier);
+						// default to using the sending client's suggested fileName value
+						string fileName = attachment.FileName;
 
-							using (var output = File.Create (path))
-								stream.CopyTo (output);
+						if (string.IsNullOrEmpty (fileName)) {
+							// the FileName wasn't defined, so generate one...
+							if (!MimeTypes.TryGetExtension (attachment.ContentType.MimeType, out string extension))
+								extension = ".dat";
+
+							fileName = Guid.NewGuid ().ToString () + extension;
+						}
+
+						// we'll need the Content-Transfer-Encoding value so that we can decode it...
+						ContentEncoding encoding;
+
+						if (string.IsNullOrEmpty (attachment.ContentTransferEncoding) || !MimeUtils.TryParse (attachment.ContentTransferEncoding, out encoding))
+							encoding = ContentEncoding.Default;
+
+						// if all we want is the content (rather than the entire MIME part including the headers), then
+						// we want the ".TEXT" section of the part
+						using (var stream = client.Inbox.GetStream (item.UniqueId, attachment.PartSpecifier + ".TEXT")) {
+							// wrap the attachment content in a MimeContent object to help us decode it
+							using (var content = new MimeContent (stream, encoding)) {
+								var path = Path.Combine (directory, fileName);
+
+								// decode the attachment content to the file stream
+								using (var output = File.Create (path))
+									content.DecodeTo (output);
+							}
 						}
 					}
 				}
