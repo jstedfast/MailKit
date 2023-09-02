@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKitLite</id>
-    <version>4.1.0.1</version>
+    <version>4.2.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,10 +26,16 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Fixed queueing logic for pipelining SMTP and POP3 commands. (issue #1568)
-* Improve SslHandshakeException diagnostic messages. (issue #1554)
-* Bumped System.Formats.Asn1 dependency to 7.0.0.
-* Bumped MimeKit dependency to 4.1.0.
+* Fixed a bug where the HttpProxyClient and HttpsProxyClient could end up reading the mail server greeting, causing a connection failure for the ImapClient/Pop3Client/SmtpClient. (issue #1603)
+* Parse IMAP quota values as ulongs instead of uints for GMail compatibility. (issue #1602)
+* Added support for decoding SMTP DATA to the SmtpDataFilter. (issue #1607)
+* Added a Pop3Client.Size property. (issue #1623)
+* Refactored more ImapClient commands to split sync/async implementations in order to improve performance and reduce GC pressure. (issue #1335)
+* Added new IMailFolder.GetStream() methods that just take a uid/index and a BodyPart.
+* Added IMailFolder.GetStream/Async() methods that just take a uid or index.
+* Improved initial List&lt;IMessageSummary&gt; capacity estimation for Fetch(IList&lt;UniqueId&gt;, ...).
+* Fixed ByteArrayBuilder.TrimNewLine() to check array bounds properly. (issue #1634)
+* Bumped MimeKit dependency to 4.2.0.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -53,29 +59,29 @@ Features include:
       <group targetFramework="net462">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="4.1.0.1" />
+        <dependency id="MimeKitLite" version="4.2.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="4.1.0.1" />
+        <dependency id="MimeKitLite" version="4.2.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="4.1.0.1" />
+        <dependency id="MimeKitLite" version="4.2.0" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKitLite" version="4.1.0.1" />
+        <dependency id="MimeKitLite" version="4.2.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKitLite" version="4.1.0.1" />
+        <dependency id="MimeKitLite" version="4.2.0" />
       </group>
       <group targetFramework="netstandard2.1">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
-        <dependency id="MimeKitLite" version="4.1.0.1" />
+        <dependency id="MimeKitLite" version="4.2.0" />
       </group>
     </dependencies>
   </metadata>

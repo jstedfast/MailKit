@@ -1,5 +1,23 @@
 # Release Notes
 
+## MailKit 4.2.0 (2023-09-02)
+
+* Fixed a bug where the HttpProxyClient and HttpsProxyClient could end up reading the mail server greeting,
+  causing a connection failure for the ImapClient/Pop3Client/SmtpClient.
+  (issue [#1603](https://github.com/jstedfast/MailKit/issues/1603))
+* Parse IMAP quota values as ulongs instead of uints for GMail compatibility.
+  (issue [#1602](https://github.com/jstedfast/MailKit/issues/1602))
+* Added support for decoding SMTP DATA to the SmtpDataFilter.
+  (issue [#1607](https://github.com/jstedfast/MailKit/issues/1607))
+* Added a Pop3Client.Size property. (issue [#1623](https://github.com/jstedfast/MailKit/issues/1623))
+* Refactored more ImapClient commands to split sync/async implementations in order to improve
+  performance and reduce GC pressure. (issue [#1335](https://github.com/jstedfast/MailKit/issues/1335))
+* Added new IMailFolder.GetStream() methods that just take a uid/index and a BodyPart.
+* Added IMailFolder.GetStream/Async() methods that just take a uid or index.
+* Improved initial `List<IMessageSummary>` capacity estimation for `Fetch (IList<UniqueId>, ...)`.
+* Fixed ByteArrayBuilder.TrimNewLine() to check array bounds properly.
+  (issue [#1634](https://github.com/jstedfast/MailKit/issues/1634))
+
 ## MailKit 4.1.0 (2023-06-17)
 
 * Fixed queueing logic for pipelining SMTP and POP3 commands.

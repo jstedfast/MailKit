@@ -298,6 +298,7 @@ namespace MailKit.Net.Imap {
 
 		void ProcessCompressResponse (ImapCommand ic)
 		{
+#if !MAILKIT_LITE
 			if (ic.Response != ImapCommandResponse.Ok) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
 					if (ic.RespCodes[i].Type == ImapResponseCodeType.CompressionActive)
@@ -308,6 +309,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			engine.Stream.Stream = new CompressedStream (engine.Stream.Stream);
+#endif
 		}
 
 		/// <summary>
