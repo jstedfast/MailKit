@@ -132,6 +132,11 @@ jobs:
         run: |
           dotnet restore $env:SOLUTION_PATH
 
+      - name: Run .NET tool restore
+        shell: pwsh
+        run: |
+          dotnet tool restore
+
       - name: Build solution
         id: build_solution
         continue-on-error: true
