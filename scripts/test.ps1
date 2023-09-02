@@ -27,37 +27,12 @@ $OutputDir = Join-Path "UnitTests" "bin" $Configuration $targetFramework.InnerTe
 $UnitTestsAssembly = Join-Path $OutputDir "UnitTests.dll"
 
 if ($GenerateCodeCoverage -eq 'yes') {
-    # Get the OpenCover executable path
-    $packageReference = $project.SelectSingleNode("/Project/ItemGroup/PackageReference[@Include='OpenCover']")
-    $openCoverVersion = $packageReference.GetAttribute("Version")
-    $openCoverToolsDir = Join-Path $nugetPackagesDir "opencover" $openCoverVersion "tools"
+    Write-Output "Instrumenting code..."
 
-    $OpenCoverProfiler32 = Join-Path $openCoverToolsDir "x86" "OpenCover.Profiler.dll"
-    $OpenCoverProfiler64 = Join-Path $openCoverToolsDir "x64" "OpenCover.Profiler.dll"
-    $OpenCover = Join-Path $openCoverToolsDir "OpenCover.Console.exe"
-
-    try {
-        & regsvr32 $OpenCoverProfiler32
-    } catch {
-        Write-Output "Failed to register $OpenCoverProfiler32"
-    }
-
-    try {
-        & regsvr32 $OpenCoverProfiler64
-    } catch {
-        Write-Output "Failed to register $OpenCoverProfiler64"
-    }
-
-    Write-Output "Running the UnitTests (code coverage enabled)"
-
-    # Run OpenCover
-    & $OpenCover -filter:"+[MailKit]* -[MimeKit]* -[UnitTests]*" `
-        -target:"$NUnitConsoleRunner" `
-        -targetargs:"--domain:single $UnitTestsAssembly" `
-        -output:opencover.xml
-} else {
-    Write-Output "Running the UnitTests"
-
-    # Run OpenCover
-    & $NUnitConsoleRunner --domain:single $UnitTestsAssembly
+    & dotnet AltCover -i="$OutputDir" --inplace -s="System.*" -s="Microsoft.*" -s="Org.BouncyCastle.*" -s="Mono.*" -s="NUnit*" -s="AltCover.*" -s="testhost" -s="UnitTests"
+    # & dotnet AltCover Runner --recorderDirectory=$OutputDir --executable=$NUnitConsoleRunner --summary=O -- --domain:single $UnitTestsAssembly
 }
+
+Write-Output "Running the UnitTests"
+
+& $NUnitConsoleRunner --domain:single $UnitTestsAssembly
