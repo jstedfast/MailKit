@@ -27,6 +27,8 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Buffers;
+using System.Diagnostics;
 
 namespace MailKit.Net.Imap
 {
@@ -59,7 +61,7 @@ namespace MailKit.Net.Imap
 		{
 			lock (cache) {
 				// lookupKey is a pre-allocated key used for lookups
-				lookupKey.Init (decoders, chars, type, builder.GetBuffer (), builder.Length);
+				lookupKey.Init (decoders, chars, type, builder.GetBuffer (), builder.Length, out var decoder, out int charsNeeded);
 
 				if (cache.TryGetValue (lookupKey, out var node)) {
 					// move the node to the head of the list
@@ -70,7 +72,27 @@ namespace MailKit.Net.Imap
 					return node.Value.Token;
 				}
 
-				var token = new ImapToken (type, builder.ToString ());
+				string value;
+
+				if (charsNeeded <= chars.Length) {
+					// If the number of needed chars is <= the length of our temp buffer, then it should all be contained.
+					value = new string (chars, 0, charsNeeded);
+				} else {
+					var buffer = ArrayPool<char>.Shared.Rent (charsNeeded);
+					try {
+						// Note: This conversion should go flawlessly, so we'll just Debug.Assert() our expectations.
+						decoder.Convert (builder.GetBuffer (), 0, builder.Length, buffer, 0, buffer.Length, true, out var bytesUsed, out var charsUsed, out var completed);
+						Debug.Assert (bytesUsed == builder.Length);
+						Debug.Assert (charsUsed == charsNeeded);
+						Debug.Assert (completed);
+						value = new string (buffer, 0, charsUsed);
+					} finally {
+						ArrayPool<char>.Shared.Return (buffer);
+						decoder.Reset ();
+					}
+				}
+
+				var token = new ImapToken (type, value);
 
 				if (cache.Count >= capacity) {
 					// remove the least recently used token
@@ -112,7 +134,7 @@ namespace MailKit.Net.Imap
 				Init (type, key);
 			}
 
-			public void Init (Decoder[] decoders, char[] chars, ImapTokenType type, byte[] key, int length)
+			public void Init (Decoder[] decoders, char[] chars, ImapTokenType type, byte[] key, int length, out Decoder correctDecoder, out int charsNeeded)
 			{
 				this.type = type;
 				this.byteArrayKey = key;
@@ -122,13 +144,19 @@ namespace MailKit.Net.Imap
 				var hash = new HashCode ();
 				hash.Add ((int) type);
 
+				correctDecoder = null;
+				charsNeeded = 0;
+
 				foreach (var decoder in decoders) {
 					bool completed;
 					int index = 0;
 
+					correctDecoder = decoder;
+
 					do {
 						try {
 							decoder.Convert (key, index, length - index, chars, 0, chars.Length, true, out var bytesUsed, out var charsUsed, out completed);
+							charsNeeded += charsUsed;
 							index += bytesUsed;
 
 							for (int i = 0; i < charsUsed; i++)
@@ -138,6 +166,7 @@ namespace MailKit.Net.Imap
 							hash = new HashCode ();
 							hash.Add ((int) type);
 							completed = false;
+							charsNeeded = 0;
 							break;
 						}
 					} while (!completed);
