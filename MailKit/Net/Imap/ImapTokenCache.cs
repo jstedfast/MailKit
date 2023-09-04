@@ -59,62 +59,60 @@ namespace MailKit.Net.Imap
 
 		public ImapToken AddOrGet (ImapTokenType type, ByteArrayBuilder builder)
 		{
-			lock (cache) {
-				// lookupKey is a pre-allocated key used for lookups
-				lookupKey.Init (decoders, chars, type, builder.GetBuffer (), builder.Length, out var decoder, out int charsNeeded);
+			// lookupKey is a pre-allocated key used for lookups
+			lookupKey.Init (decoders, chars, type, builder.GetBuffer (), builder.Length, out var decoder, out int charsNeeded);
 
-				if (cache.TryGetValue (lookupKey, out var node)) {
-					// move the node to the head of the list
-					list.Remove (node);
-					list.AddFirst (node);
-					node.Value.Count++;
-
-					return node.Value.Token;
-				}
-
-				string value;
-
-				if (charsNeeded <= chars.Length) {
-					// If the number of needed chars is <= the length of our temp buffer, then it should all be contained.
-					value = new string (chars, 0, charsNeeded);
-				} else {
-					var buffer = ArrayPool<char>.Shared.Rent (charsNeeded);
-					try {
-						// Note: This conversion should go flawlessly, so we'll just Debug.Assert() our expectations.
-						decoder.Convert (builder.GetBuffer (), 0, builder.Length, buffer, 0, buffer.Length, true, out var bytesUsed, out var charsUsed, out var completed);
-						Debug.Assert (bytesUsed == builder.Length);
-						Debug.Assert (charsUsed == charsNeeded);
-						Debug.Assert (completed);
-						value = new string (buffer, 0, charsUsed);
-					} finally {
-						ArrayPool<char>.Shared.Return (buffer);
-						decoder.Reset ();
-					}
-				}
-
-				var token = new ImapToken (type, value);
-
-				if (cache.Count >= capacity) {
-					// remove the least recently used token
-					node = list.Last;
-					list.RemoveLast ();
-					cache.Remove (node.Value.Key);
-
-					// re-use the node, item and key to avoid allocations
-					node.Value.Key.Init (type, (string) token.Value);
-					node.Value.Token = token;
-				} else {
-					var key = new ImapTokenKey (type, (string) token.Value);
-					var item = new ImapTokenItem (key, token);
-
-					node = new LinkedListNode<ImapTokenItem> (item);
-				}
-
-				cache.Add (node.Value.Key, node);
+			if (cache.TryGetValue (lookupKey, out var node)) {
+				// move the node to the head of the list
+				list.Remove (node);
 				list.AddFirst (node);
+				node.Value.Count++;
 
-				return token;
+				return node.Value.Token;
 			}
+
+			string value;
+
+			if (charsNeeded <= chars.Length) {
+				// If the number of needed chars is <= the length of our temp buffer, then it should all be contained.
+				value = new string (chars, 0, charsNeeded);
+			} else {
+				var buffer = ArrayPool<char>.Shared.Rent (charsNeeded);
+				try {
+					// Note: This conversion should go flawlessly, so we'll just Debug.Assert() our expectations.
+					decoder.Convert (builder.GetBuffer (), 0, builder.Length, buffer, 0, buffer.Length, true, out var bytesUsed, out var charsUsed, out var completed);
+					Debug.Assert (bytesUsed == builder.Length);
+					Debug.Assert (charsUsed == charsNeeded);
+					Debug.Assert (completed);
+					value = new string (buffer, 0, charsUsed);
+				} finally {
+					ArrayPool<char>.Shared.Return (buffer);
+					decoder.Reset ();
+				}
+			}
+
+			var token = new ImapToken (type, value);
+
+			if (cache.Count >= capacity) {
+				// remove the least recently used token
+				node = list.Last;
+				list.RemoveLast ();
+				cache.Remove (node.Value.Key);
+
+				// re-use the node, item and key to avoid allocations
+				node.Value.Key.Init (type, (string) token.Value);
+				node.Value.Token = token;
+			} else {
+				var key = new ImapTokenKey (type, (string) token.Value);
+				var item = new ImapTokenItem (key, token);
+
+				node = new LinkedListNode<ImapTokenItem> (item);
+			}
+
+			cache.Add (node.Value.Key, node);
+			list.AddFirst (node);
+
+			return token;
 		}
 
 		class ImapTokenKey
