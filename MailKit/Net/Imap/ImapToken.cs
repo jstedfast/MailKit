@@ -127,19 +127,6 @@ namespace MailKit.Net.Imap {
 			return new ImapToken (type, literalLength);
 		}
 
-		static bool IsAscii (ByteArrayBuilder builder)
-		{
-			for (int i = 0; i < builder.Length; i++) {
-				byte c = builder[i];
-
-				// Disregard any non-ASCII tokens.
-				if (c < 32 || c >= 127)
-					return false;
-			}
-
-			return true;
-		}
-
 		static bool IsCacheable (ByteArrayBuilder builder)
 		{
 			if (builder.Length < 2 || builder.Length > 32)
@@ -153,7 +140,7 @@ namespace MailKit.Net.Imap {
 			if (builder[0] >= (byte) 'A' && builder[0] <= (byte) 'Z' && builder[1] >= (byte) '0' && builder[1] <= (byte) '9')
 				return false;
 
-			return IsAscii (builder);
+			return true;
 		}
 
 		public static ImapToken Create (ImapTokenType type, ByteArrayBuilder builder)
@@ -169,7 +156,7 @@ namespace MailKit.Net.Imap {
 						return token;
 				}
 
-				cachable = IsAscii (builder);
+				cachable = true;
 			} else if (type == ImapTokenType.Atom) {
 				if (builder.Equals ("NIL", true)) {
 					// Look for the cached NIL token that matches this capitalization.
@@ -218,7 +205,7 @@ namespace MailKit.Net.Imap {
 
 				cachable = IsCacheable (builder);
 			} else if (type == ImapTokenType.QString) {
-				cachable = IsAscii (builder);
+				cachable = true;
 			}
 
 			if (cachable)
