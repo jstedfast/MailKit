@@ -37,19 +37,29 @@ namespace MailKit.Net.Imap
 		readonly Dictionary<ImapTokenKey, LinkedListNode<ImapTokenItem>> cache;
 		readonly LinkedList<ImapTokenItem> list;
 		readonly ImapTokenKey lookupKey;
+		readonly Decoder[] decoders;
+		readonly char[] chars;
 
 		public ImapTokenCache ()
 		{
 			cache = new Dictionary<ImapTokenKey, LinkedListNode<ImapTokenItem>> ();
 			list = new LinkedList<ImapTokenItem> ();
 			lookupKey = new ImapTokenKey ();
+
+			// Start with the assumption that token values will be valid UTF-8 and then fall back to iso-8859-1.
+			decoders = new Decoder[2] {
+				TextEncodings.UTF8.GetDecoder (),
+				TextEncodings.Latin1.GetDecoder ()
+			};
+
+			chars = new char[128];
 		}
 
 		public ImapToken AddOrGet (ImapTokenType type, ByteArrayBuilder builder)
 		{
 			lock (cache) {
 				// lookupKey is a pre-allocated key used for lookups
-				lookupKey.Init (type, builder.GetBuffer (), builder.Length);
+				lookupKey.Init (decoders, chars, type, builder.GetBuffer (), builder.Length);
 
 				if (cache.TryGetValue (lookupKey, out var node)) {
 					// move the node to the head of the list
@@ -102,7 +112,7 @@ namespace MailKit.Net.Imap
 				Init (type, key);
 			}
 
-			public void Init (ImapTokenType type, byte[] key, int length)
+			public void Init (Decoder[] decoders, char[] chars, ImapTokenType type, byte[] key, int length)
 			{
 				this.type = type;
 				this.byteArrayKey = key;
@@ -111,8 +121,32 @@ namespace MailKit.Net.Imap
 
 				var hash = new HashCode ();
 				hash.Add ((int) type);
-				for (int i = 0; i < length; i++)
-					hash.Add ((char) key[i]);
+
+				foreach (var decoder in decoders) {
+					bool completed;
+					int index = 0;
+
+					do {
+						try {
+							decoder.Convert (key, index, length - index, chars, 0, chars.Length, true, out var bytesUsed, out var charsUsed, out completed);
+							index += bytesUsed;
+
+							for (int i = 0; i < charsUsed; i++)
+								hash.Add (chars[i]);
+						} catch (DecoderFallbackException) {
+							// Restart the hash...
+							hash = new HashCode ();
+							hash.Add ((int) type);
+							completed = false;
+							break;
+						}
+					} while (!completed);
+
+					decoder.Reset ();
+
+					if (completed)
+						break;
+				}
 
 				this.hashCode = hash.ToHashCode ();
 			}
