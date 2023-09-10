@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Globalization;
@@ -318,9 +317,9 @@ namespace MailKit.Net.Imap {
 			return access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT";
 		}
 
-		static Task QResyncFetchAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		static Task UntaggedQResyncFetchHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
-			return ic.Folder.OnFetchAsync (engine, index, doAsync, ic.CancellationToken);
+			return ic.Folder.OnUntaggedFetchResponse (engine, index, doAsync, ic.CancellationToken);
 		}
 
 		async Task<FolderAccess> OpenAsync (ImapCommand ic, FolderAccess access, bool doAsync, CancellationToken cancellationToken)
@@ -397,7 +396,7 @@ namespace MailKit.Net.Imap {
 
 			var command = string.Format ("{0} %F {1}\r\n", SelectOrExamine (access), qresync);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
-			ic.RegisterUntaggedHandler ("FETCH", QResyncFetchAsync);
+			ic.RegisterUntaggedHandler ("FETCH", UntaggedQResyncFetchHandler);
 
 			return OpenAsync (ic, access, doAsync, cancellationToken);
 		}
@@ -730,7 +729,7 @@ namespace MailKit.Net.Imap {
 			var list = new List<ImapFolder> ();
 			ImapFolder folder;
 
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
@@ -1563,7 +1562,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), pattern.ToString ());
-			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.UntaggedListHandler);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 			ic.Lsub = lsub;
@@ -1710,7 +1709,7 @@ namespace MailKit.Net.Imap {
 			var pattern = encodedName.Replace ('*', '%');
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", pattern);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.UserData = list = new List<ImapFolder> ();
 
 			Engine.QueueCommand (ic);
@@ -2038,20 +2037,7 @@ namespace MailKit.Net.Imap {
 			return StatusAsync (items, true, true, cancellationToken);
 		}
 
-		static async Task<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
-		{
-			var token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
-
-			switch (token.Type) {
-			case ImapTokenType.Literal: return await engine.ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			case ImapTokenType.QString: return (string) token.Value;
-			case ImapTokenType.Atom:    return (string) token.Value;
-			default:
-				throw ImapEngine.UnexpectedToken (format, token);
-			}
-		}
-
-		static async Task UntaggedAclAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		static void ParseAcl (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ACL", "{0}");
 			var acl = (AccessControlList) ic.UserData;
@@ -2059,16 +2045,46 @@ namespace MailKit.Net.Imap {
 			ImapToken token;
 
 			// read the mailbox name
-			await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 
 			do {
-				name = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
-				rights = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+				name = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
+				rights = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 
 				acl.Add (new AccessControl (name, rights));
 
-				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (ic.CancellationToken);
 			} while (token.Type != ImapTokenType.Eoln);
+		}
+
+		static async Task ParseAclAsync (ImapEngine engine, ImapCommand ic)
+		{
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ACL", "{0}");
+			var acl = (AccessControlList) ic.UserData;
+			string name, rights;
+			ImapToken token;
+
+			// read the mailbox name
+			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+
+			do {
+				name = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+				rights = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+
+				acl.Add (new AccessControl (name, rights));
+
+				token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+			} while (token.Type != ImapTokenType.Eoln);
+		}
+
+		static Task UntaggedAclHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			if (doAsync)
+				return ParseAclAsync (engine, ic);
+
+			ParseAcl (engine, ic);
+
+			return Task.CompletedTask;
 		}
 
 		async Task<AccessControlList> GetAccessControlListAsync (bool doAsync, CancellationToken cancellationToken)
@@ -2079,7 +2095,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETACL %F\r\n", this);
-			ic.RegisterUntaggedHandler ("ACL", UntaggedAclAsync);
+			ic.RegisterUntaggedHandler ("ACL", UntaggedAclHandler);
 			ic.UserData = new AccessControlList ();
 
 			Engine.QueueCommand (ic);
@@ -2168,25 +2184,56 @@ namespace MailKit.Net.Imap {
 			return GetAccessControlListAsync (true, cancellationToken);
 		}
 
-		static async Task UntaggedListRightsAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		static void ParseListRights (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "LISTRIGHTS", "{0}");
 			var access = (AccessRights) ic.UserData;
 			ImapToken token;
 
 			// read the mailbox name
-			await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 
 			// read the identity name
-			await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 
 			do {
-				var rights = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+				var rights = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 
 				access.AddRange (rights);
 
-				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (ic.CancellationToken);
 			} while (token.Type != ImapTokenType.Eoln);
+		}
+
+		static async Task ParseListRightsAsync (ImapEngine engine, ImapCommand ic)
+		{
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "LISTRIGHTS", "{0}");
+			var access = (AccessRights) ic.UserData;
+			ImapToken token;
+
+			// read the mailbox name
+			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+
+			// read the identity name
+			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+
+			do {
+				var rights = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+
+				access.AddRange (rights);
+
+				token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+			} while (token.Type != ImapTokenType.Eoln);
+		}
+
+		static Task UntaggedListRightsHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			if (doAsync)
+				return ParseListRightsAsync (engine, ic);
+
+			ParseListRights (engine, ic);
+
+			return Task.CompletedTask;
 		}
 
 		async Task<AccessRights> GetAccessRightsAsync (string name, bool doAsync, CancellationToken cancellationToken)
@@ -2200,7 +2247,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LISTRIGHTS %F %S\r\n", this, name);
-			ic.RegisterUntaggedHandler ("LISTRIGHTS", UntaggedListRightsAsync);
+			ic.RegisterUntaggedHandler ("LISTRIGHTS", UntaggedListRightsHandler);
 			ic.UserData = new AccessRights ();
 
 			Engine.QueueCommand (ic);
@@ -2297,16 +2344,38 @@ namespace MailKit.Net.Imap {
 			return GetAccessRightsAsync (name, true, cancellationToken);
 		}
 
-		static async Task UntaggedMyRightsAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		static void ParseMyRights (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "MYRIGHTS", "{0}");
 			var access = (AccessRights) ic.UserData;
 
 			// read the mailbox name
-			await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 
 			// read the access rights
-			access.AddRange (await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false));
+			access.AddRange (ImapUtils.ReadStringToken (engine, format, ic.CancellationToken));
+		}
+
+		static async Task ParseMyRightsAsync (ImapEngine engine, ImapCommand ic)
+		{
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "MYRIGHTS", "{0}");
+			var access = (AccessRights) ic.UserData;
+
+			// read the mailbox name
+			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+
+			// read the access rights
+			access.AddRange (await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false));
+		}
+
+		static Task UntaggedMyRightsHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			if (doAsync)
+				return ParseMyRightsAsync (engine, ic);
+
+			ParseMyRights (engine, ic);
+
+			return Task.CompletedTask;
 		}
 
 		async Task<AccessRights> GetMyAccessRightsAsync (bool doAsync, CancellationToken cancellationToken)
@@ -2317,7 +2386,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "MYRIGHTS %F\r\n", this);
-			ic.RegisterUntaggedHandler ("MYRIGHTS", UntaggedMyRightsAsync);
+			ic.RegisterUntaggedHandler ("MYRIGHTS", UntaggedMyRightsHandler);
 			ic.UserData = new AccessRights ();
 
 			Engine.QueueCommand (ic);
@@ -2853,7 +2922,7 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETMETADATA %F %S\r\n", this, tag.Id);
-			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadataAsync);
+			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.UntaggedMetadataHandler);
 			var metadata = new MetadataCollection ();
 			ic.UserData = metadata;
 
@@ -3010,7 +3079,7 @@ namespace MailKit.Net.Imap {
 				return new MetadataCollection ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args.ToArray ());
-			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadataAsync);
+			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.UntaggedMetadataHandler);
 			ic.UserData = new MetadataCollection ();
 			options.LongEntries = 0;
 
@@ -3269,33 +3338,70 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static async Task UntaggedQuotaRootAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		static void ParseQuotaRoot (ImapEngine engine, ImapCommand ic)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTAROOT", "{0}");
 			var ctx = (QuotaContext) ic.UserData;
 
 			// The first token should be the mailbox name
-			await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 
 			// ...followed by 0 or more quota roots
-			var token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			var token = engine.PeekToken (ic.CancellationToken);
 
 			while (token.Type != ImapTokenType.Eoln) {
-				var root = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+				var root = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 				ctx.QuotaRoots.Add (root);
 
-				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (ic.CancellationToken);
 			}
 		}
 
-		static async Task UntaggedQuotaAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		static async Task ParseQuotaRootAsync (ImapEngine engine, ImapCommand ic)
+		{
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTAROOT", "{0}");
+			var ctx = (QuotaContext) ic.UserData;
+
+			// The first token should be the mailbox name
+			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+
+			// ...followed by 0 or more quota roots
+			var token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+			while (token.Type != ImapTokenType.Eoln) {
+				var root = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+				ctx.QuotaRoots.Add (root);
+
+				token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+			}
+		}
+
+		/// <summary>
+		/// Handles an untagged QUOTAROOT response.
+		/// </summary>
+		/// <returns>An asynchronous task.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="index">The index.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		static Task UntaggedQuotaRootHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			if (doAsync)
+				return ParseQuotaRootAsync (engine, ic);
+
+			ParseQuotaRoot (engine, ic);
+
+			return Task.CompletedTask;
+		}
+
+		static void ParseQuota (ImapEngine engine, ImapCommand ic)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
-			var quotaRoot = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
+			var quotaRoot = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
 			var ctx = (QuotaContext) ic.UserData;
 			var quota = new Quota ();
 
-			var token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (ic.CancellationToken);
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
@@ -3303,19 +3409,19 @@ namespace MailKit.Net.Imap {
 				ulong used, limit;
 				string resource;
 
-				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.ReadToken (ic.CancellationToken);
 
 				ImapEngine.AssertToken (token, ImapTokenType.Atom, format, token);
 
 				resource = (string) token.Value;
 
-				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.ReadToken (ic.CancellationToken);
 
 				// Note: We parse these quota values as UInt64 because GMail uses 64bit integer values.
 				// See https://github.com/jstedfast/MailKit/issues/1602 for details.
 				used = ImapEngine.ParseNumber64 (token, false, format, token);
 
-				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.ReadToken (ic.CancellationToken);
 
 				// Note: We parse these quota values as UInt64 because GMail uses 64bit integer values.
 				// See https://github.com/jstedfast/MailKit/issues/1602 for details.
@@ -3329,13 +3435,81 @@ namespace MailKit.Net.Imap {
 					quota.StorageLimit = (uint) (limit & 0xffffffff);
 				}
 
-				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (ic.CancellationToken);
 			}
 
 			// read the closing paren
-			await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			engine.ReadToken (ic.CancellationToken);
 
 			ctx.Quotas[quotaRoot] = quota;
+		}
+
+		static async Task ParseQuotaAsync (ImapEngine engine, ImapCommand ic)
+		{
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
+			var quotaRoot = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+			var ctx = (QuotaContext) ic.UserData;
+			var quota = new Quota ();
+
+			var token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+
+			while (token.Type != ImapTokenType.CloseParen) {
+				ulong used, limit;
+				string resource;
+
+				token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+				ImapEngine.AssertToken (token, ImapTokenType.Atom, format, token);
+
+				resource = (string) token.Value;
+
+				token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+				// Note: We parse these quota values as UInt64 because GMail uses 64bit integer values.
+				// See https://github.com/jstedfast/MailKit/issues/1602 for details.
+				used = ImapEngine.ParseNumber64 (token, false, format, token);
+
+				token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+				// Note: We parse these quota values as UInt64 because GMail uses 64bit integer values.
+				// See https://github.com/jstedfast/MailKit/issues/1602 for details.
+				limit = ImapEngine.ParseNumber64 (token, false, format, token);
+
+				if (resource.Equals ("MESSAGE", StringComparison.OrdinalIgnoreCase)) {
+					quota.CurrentMessageCount = (uint) (used & 0xffffffff);
+					quota.MessageLimit = (uint) (limit & 0xffffffff);
+				} else if (resource.Equals ("STORAGE", StringComparison.OrdinalIgnoreCase)) {
+					quota.CurrentStorageSize = (uint) (used & 0xffffffff);
+					quota.StorageLimit = (uint) (limit & 0xffffffff);
+				}
+
+				token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+			}
+
+			// read the closing paren
+			await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+			ctx.Quotas[quotaRoot] = quota;
+		}
+
+		/// <summary>
+		/// Handles an untagged QUOTA response.
+		/// </summary>
+		/// <returns>An asynchronous task.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="index">The index.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		static Task UntaggedQuotaHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			if (doAsync)
+				return ParseQuotaAsync (engine, ic);
+
+			ParseQuota (engine, ic);
+
+			return Task.CompletedTask;
 		}
 
 		async Task<FolderQuota> GetQuotaAsync (bool doAsync, CancellationToken cancellationToken)
@@ -3348,8 +3522,8 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETQUOTAROOT %F\r\n", this);
 			var ctx = new QuotaContext ();
 
-			ic.RegisterUntaggedHandler ("QUOTAROOT", UntaggedQuotaRootAsync);
-			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuotaAsync);
+			ic.RegisterUntaggedHandler ("QUOTAROOT", UntaggedQuotaRootHandler);
+			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuotaHandler);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -3483,7 +3657,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), this);
 			var ctx = new QuotaContext ();
 
-			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuotaAsync);
+			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuotaHandler);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -4731,9 +4905,9 @@ namespace MailKit.Net.Imap {
 			var results = new SearchResults (SortOrder.Ascending);
 
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
-				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatchesAsync);
+				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 
-			ic.RegisterUntaggedHandler ("SEARCH", SearchMatchesAsync);
+			ic.RegisterUntaggedHandler ("SEARCH", UntaggedSearchHandler);
 			ic.UserData = results;
 
 			Engine.QueueCommand (ic);
@@ -5496,14 +5670,14 @@ namespace MailKit.Net.Imap {
 				OnMessageSummaryFetched (message);
 		}
 
-		internal Task OnFetchAsync (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)
+		internal Task OnUntaggedFetchResponse (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)
 		{
 			var message = new MessageSummary (this, index);
 
 			if (doAsync)
-				return FetchSummaryItemsAsync (engine, message, OnFetchAsyncCompleted, cancellationToken);
+				return ParseSummaryItemsAsync (engine, message, OnFetchAsyncCompleted, cancellationToken);
 
-			FetchSummaryItems (engine, message, OnFetchAsyncCompleted, cancellationToken);
+			ParseSummaryItems (engine, message, OnFetchAsyncCompleted, cancellationToken);
 
 			return Task.CompletedTask;
 		}

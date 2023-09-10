@@ -337,12 +337,10 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="ic">The IMAP command.</param>
-		/// <param name="index">The index.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		public static async Task ParseImplementationAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		static void ParseImplementation (ImapEngine engine, ImapCommand ic)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ID", "{0}");
-			var token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (ic.CancellationToken);
 			ImapImplementation implementation;
 
 			if (token.Type == ImapTokenType.Nil)
@@ -350,23 +348,76 @@ namespace MailKit.Net.Imap {
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
-			token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			token = engine.PeekToken (ic.CancellationToken);
 
 			implementation = new ImapImplementation ();
 
 			while (token.Type != ImapTokenType.CloseParen) {
-				var property = await ReadStringTokenAsync (engine, format, doAsync, ic.CancellationToken).ConfigureAwait (false);
-				var value = await ReadNStringTokenAsync (engine, format, false, doAsync, ic.CancellationToken).ConfigureAwait (false);
+				var property = ReadStringToken (engine, format, ic.CancellationToken);
+				var value = ReadNStringToken (engine, format, false, ic.CancellationToken);
 
 				implementation.Properties[property] = value;
 
-				token = await engine.PeekTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (ic.CancellationToken);
 			}
 
 			ic.UserData = implementation;
 
 			// read the ')' token
-			await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			engine.ReadToken (ic.CancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously parses an untagged ID response.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		static async Task ParseImplementationAsync (ImapEngine engine, ImapCommand ic)
+		{
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ID", "{0}");
+			var token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+			ImapImplementation implementation;
+
+			if (token.Type == ImapTokenType.Nil)
+				return;
+
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+
+			token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+			implementation = new ImapImplementation ();
+
+			while (token.Type != ImapTokenType.CloseParen) {
+				var property = await ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+				var value = await ReadNStringTokenAsync (engine, format, false, ic.CancellationToken).ConfigureAwait (false);
+
+				implementation.Properties[property] = value;
+
+				token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+			}
+
+			ic.UserData = implementation;
+
+			// read the ')' token
+			await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+		}
+
+		/// <summary>
+		/// Handles an untagged ID response.
+		/// </summary>
+		/// <returns>An asynchronous task.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="index">The index.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		public static Task UntaggedIdHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			if (doAsync)
+				return ParseImplementationAsync (engine, ic);
+
+			ParseImplementation (engine, ic);
+
+			return Task.CompletedTask;
 		}
 
 		/// <summary>
@@ -403,14 +454,14 @@ namespace MailKit.Net.Imap {
 			return string.Compare (mailboxName, "INBOX", StringComparison.OrdinalIgnoreCase) == 0;
 		}
 
-		static async Task<string> ReadFolderNameAsync (ImapEngine engine, char delim, string format, bool doAsync, CancellationToken cancellationToken)
+		static string ReadFolderName (ImapEngine engine, char delim, string format, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 			string encodedName;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
-				encodedName = await engine.ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				encodedName = engine.ReadLiteral (cancellationToken);
 				break;
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
@@ -420,7 +471,7 @@ namespace MailKit.Net.Imap {
 				//
 				// See https://github.com/jstedfast/MailKit/issues/945 for details.
 				if (engine.QuirksMode == ImapQuirksMode.Exchange) {
-					var line = await engine.ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					var line = engine.ReadLine (cancellationToken);
 
 					// unget the \r\n sequence
 					engine.Stream.UngetToken (ImapToken.Eoln);
@@ -438,154 +489,90 @@ namespace MailKit.Net.Imap {
 			return encodedName.TrimEnd (delim);
 		}
 
-		/// <summary>
-		/// Parses an untagged LIST or LSUB response.
-		/// </summary>
-		/// <param name="engine">The IMAP engine.</param>
-		/// <param name="list">The list of folders to be populated.</param>
-		/// <param name="isLsub"><c>true</c> if it is an LSUB response; otherwise, <c>false</c>.</param>
-		/// <param name="returnsSubscribed"><c>true</c> if the LIST response is expected to return \Subscribed flags; otherwise, <c>false</c>.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async Task ParseFolderListAsync (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, bool doAsync, CancellationToken cancellationToken)
+		static async Task<string> ReadFolderNameAsync (ImapEngine engine, char delim, string format, CancellationToken cancellationToken)
 		{
-			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, isLsub ? "LSUB" : "LIST", "{0}");
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			var attrs = FolderAttributes.None;
-			ImapFolder folder = null;
+			var token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, cancellationToken).ConfigureAwait (false);
 			string encodedName;
-			char delim;
 
-			// parse the folder attributes list
-			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+			switch (token.Type) {
+			case ImapTokenType.Literal:
+				encodedName = await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				encodedName = (string) token.Value;
 
-			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				// Note: Exchange apparently doesn't quote folder names that contain tabs.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/945 for details.
+				if (engine.QuirksMode == ImapQuirksMode.Exchange) {
+					var line = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
 
-			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom) {
-				var atom = (string) token.Value;
+					// unget the \r\n sequence
+					engine.Stream.UngetToken (ImapToken.Eoln);
 
-				if (atom.Equals ("\\noinferiors", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.NoInferiors;
-				else if (atom.Equals ("\\noselect", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.NoSelect;
-				else if (atom.Equals ("\\marked", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Marked;
-				else if (atom.Equals ("\\unmarked", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Unmarked;
-				else if (atom.Equals ("\\nonexistent", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.NonExistent;
-				else if (atom.Equals ("\\subscribed", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Subscribed;
-				else if (atom.Equals ("\\remote", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Remote;
-				else if (atom.Equals ("\\haschildren", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.HasChildren;
-				else if (atom.Equals ("\\hasnochildren", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.HasNoChildren;
-				else if (atom.Equals ("\\all", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.All;
-				else if (atom.Equals ("\\archive", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Archive;
-				else if (atom.Equals ("\\drafts", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Drafts;
-				else if (atom.Equals ("\\flagged", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Flagged;
-				else if (atom.Equals ("\\important", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Important;
-				else if (atom.Equals ("\\junk", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Junk;
-				else if (atom.Equals ("\\sent", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Sent;
-				else if (atom.Equals ("\\trash", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Trash;
-				// XLIST flags:
-				else if (atom.Equals ("\\allmail", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.All;
-				else if (atom.Equals ("\\inbox", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Inbox;
-				else if (atom.Equals ("\\spam", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Junk;
-				else if (atom.Equals ("\\starred", StringComparison.OrdinalIgnoreCase))
-					attrs |= FolderAttributes.Flagged;
-
-				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			}
-
-			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
-
-			// parse the path delimeter
-			token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-			if (token.Type == ImapTokenType.QString) {
-				var qstring = (string) token.Value;
-
-				delim = qstring[0];
-			} else if (token.Type == ImapTokenType.Nil) {
-				delim = '\0';
-			} else {
+					encodedName += line;
+				}
+				break;
+			case ImapTokenType.Nil:
+				// Note: according to rfc3501, section 4.5, NIL is acceptable as a mailbox name.
+				return "NIL";
+			default:
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			encodedName = await ReadFolderNameAsync (engine, delim, format, doAsync, cancellationToken).ConfigureAwait (false);
+			return encodedName.TrimEnd (delim);
+		}
 
-			if (IsInbox (encodedName))
+		static void AddFolderAttribute (ref FolderAttributes attrs, string atom)
+		{
+			if (atom.Equals ("\\noinferiors", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.NoInferiors;
+			else if (atom.Equals ("\\noselect", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.NoSelect;
+			else if (atom.Equals ("\\marked", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Marked;
+			else if (atom.Equals ("\\unmarked", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Unmarked;
+			else if (atom.Equals ("\\nonexistent", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.NonExistent;
+			else if (atom.Equals ("\\subscribed", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Subscribed;
+			else if (atom.Equals ("\\remote", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Remote;
+			else if (atom.Equals ("\\haschildren", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.HasChildren;
+			else if (atom.Equals ("\\hasnochildren", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.HasNoChildren;
+			else if (atom.Equals ("\\all", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.All;
+			else if (atom.Equals ("\\archive", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Archive;
+			else if (atom.Equals ("\\drafts", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Drafts;
+			else if (atom.Equals ("\\flagged", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Flagged;
+			else if (atom.Equals ("\\important", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Important;
+			else if (atom.Equals ("\\junk", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Junk;
+			else if (atom.Equals ("\\sent", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Sent;
+			else if (atom.Equals ("\\trash", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Trash;
+			// XLIST flags:
+			else if (atom.Equals ("\\allmail", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.All;
+			else if (atom.Equals ("\\inbox", StringComparison.OrdinalIgnoreCase))
 				attrs |= FolderAttributes.Inbox;
+			else if (atom.Equals ("\\spam", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Junk;
+			else if (atom.Equals ("\\starred", StringComparison.OrdinalIgnoreCase))
+				attrs |= FolderAttributes.Flagged;
+		}
 
-			// peek at the next token to see if we have a LIST extension
-			token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-			if (token.Type == ImapTokenType.OpenParen) {
-				var renamed = false;
-
-				// read the '(' token
-				await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-				do {
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					if (token.Type == ImapTokenType.CloseParen)
-						break;
-
-					// a LIST extension
-
-					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
-
-					var atom = (string) token.Value;
-
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
-
-					do {
-						token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-						if (token.Type == ImapTokenType.CloseParen)
-							break;
-
-						engine.Stream.UngetToken (token);
-
-						if (!renamed && atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
-							var oldEncodedName = await ReadFolderNameAsync (engine, delim, format, doAsync, cancellationToken).ConfigureAwait (false);
-
-							if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
-								var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
-
-								engine.FolderCache.Remove (oldEncodedName);
-								engine.FolderCache[encodedName] = oldFolder;
-								oldFolder.OnRenamed (args);
-								folder = oldFolder;
-							}
-
-							renamed = true;
-						} else {
-							await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
-						}
-					} while (true);
-				} while (true);
-			} else {
-				ImapEngine.AssertToken (token, ImapTokenType.Eoln, format, token);
-			}
-
+		static void AddFolder (ImapEngine engine, List<ImapFolder> list, ImapFolder folder, string encodedName, char delim, FolderAttributes attrs, bool isLsub, bool returnsSubscribed)
+		{
 			if (folder != null || engine.TryGetCachedFolder (encodedName, out folder)) {
 				if ((attrs & FolderAttributes.NonExistent) != 0) {
 					folder.UnsetPermanentFlags ();
@@ -625,14 +612,236 @@ namespace MailKit.Net.Imap {
 		/// Parses an untagged LIST or LSUB response.
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="list">The list of folders to be populated.</param>
+		/// <param name="isLsub"><c>true</c> if it is an LSUB response; otherwise, <c>false</c>.</param>
+		/// <param name="returnsSubscribed"><c>true</c> if the LIST response is expected to return \Subscribed flags; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static void ParseFolderList (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, CancellationToken cancellationToken)
+		{
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, isLsub ? "LSUB" : "LIST", "{0}");
+			var token = engine.ReadToken (cancellationToken);
+			var attrs = FolderAttributes.None;
+			ImapFolder folder = null;
+			string encodedName;
+			char delim;
+
+			// parse the folder attributes list
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+
+			token = engine.ReadToken (cancellationToken);
+
+			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom) {
+				var atom = (string) token.Value;
+
+				AddFolderAttribute (ref attrs, atom);
+
+				token = engine.ReadToken (cancellationToken);
+			}
+
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
+
+			// parse the path delimeter
+			token = engine.ReadToken (cancellationToken);
+
+			if (token.Type == ImapTokenType.QString) {
+				var qstring = (string) token.Value;
+
+				delim = qstring[0];
+			} else if (token.Type == ImapTokenType.Nil) {
+				delim = '\0';
+			} else {
+				throw ImapEngine.UnexpectedToken (format, token);
+			}
+
+			encodedName = ReadFolderName (engine, delim, format, cancellationToken);
+
+			if (IsInbox (encodedName))
+				attrs |= FolderAttributes.Inbox;
+
+			// peek at the next token to see if we have a LIST extension
+			token = engine.PeekToken (cancellationToken);
+
+			if (token.Type == ImapTokenType.OpenParen) {
+				var renamed = false;
+
+				// read the '(' token
+				engine.ReadToken (cancellationToken);
+
+				do {
+					token = engine.ReadToken (cancellationToken);
+
+					if (token.Type == ImapTokenType.CloseParen)
+						break;
+
+					// a LIST extension
+
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
+
+					var atom = (string) token.Value;
+
+					token = engine.ReadToken (cancellationToken);
+
+					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+
+					do {
+						token = engine.ReadToken (cancellationToken);
+
+						if (token.Type == ImapTokenType.CloseParen)
+							break;
+
+						engine.Stream.UngetToken (token);
+
+						if (!renamed && atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
+							var oldEncodedName = ReadFolderName (engine, delim, format, cancellationToken);
+
+							if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
+								var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
+
+								engine.FolderCache.Remove (oldEncodedName);
+								engine.FolderCache[encodedName] = oldFolder;
+								oldFolder.OnRenamed (args);
+								folder = oldFolder;
+							}
+
+							renamed = true;
+						} else {
+							ReadNStringToken (engine, format, false, cancellationToken);
+						}
+					} while (true);
+				} while (true);
+			} else {
+				ImapEngine.AssertToken (token, ImapTokenType.Eoln, format, token);
+			}
+
+			AddFolder (engine, list, folder, encodedName, delim, attrs, isLsub, returnsSubscribed);
+		}
+
+
+		/// <summary>
+		/// Asynchronously parses an untagged LIST or LSUB response.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="list">The list of folders to be populated.</param>
+		/// <param name="isLsub"><c>true</c> if it is an LSUB response; otherwise, <c>false</c>.</param>
+		/// <param name="returnsSubscribed"><c>true</c> if the LIST response is expected to return \Subscribed flags; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static async Task ParseFolderListAsync (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, CancellationToken cancellationToken)
+		{
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, isLsub ? "LSUB" : "LIST", "{0}");
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			var attrs = FolderAttributes.None;
+			ImapFolder folder = null;
+			string encodedName;
+			char delim;
+
+			// parse the folder attributes list
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+
+			token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom) {
+				var atom = (string) token.Value;
+
+				AddFolderAttribute (ref attrs, atom);
+
+				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			}
+
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
+
+			// parse the path delimeter
+			token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			if (token.Type == ImapTokenType.QString) {
+				var qstring = (string) token.Value;
+
+				delim = qstring[0];
+			} else if (token.Type == ImapTokenType.Nil) {
+				delim = '\0';
+			} else {
+				throw ImapEngine.UnexpectedToken (format, token);
+			}
+
+			encodedName = await ReadFolderNameAsync (engine, delim, format, cancellationToken).ConfigureAwait (false);
+
+			if (IsInbox (encodedName))
+				attrs |= FolderAttributes.Inbox;
+
+			// peek at the next token to see if we have a LIST extension
+			token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			if (token.Type == ImapTokenType.OpenParen) {
+				var renamed = false;
+
+				// read the '(' token
+				await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				do {
+					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.CloseParen)
+						break;
+
+					// a LIST extension
+
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
+
+					var atom = (string) token.Value;
+
+					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+
+					do {
+						token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+						if (token.Type == ImapTokenType.CloseParen)
+							break;
+
+						engine.Stream.UngetToken (token);
+
+						if (!renamed && atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
+							var oldEncodedName = await ReadFolderNameAsync (engine, delim, format, cancellationToken).ConfigureAwait (false);
+
+							if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
+								var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
+
+								engine.FolderCache.Remove (oldEncodedName);
+								engine.FolderCache[encodedName] = oldFolder;
+								oldFolder.OnRenamed (args);
+								folder = oldFolder;
+							}
+
+							renamed = true;
+						} else {
+							await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
+						}
+					} while (true);
+				} while (true);
+			} else {
+				ImapEngine.AssertToken (token, ImapTokenType.Eoln, format, token);
+			}
+
+			AddFolder (engine, list, folder, encodedName, delim, attrs, isLsub, returnsSubscribed);
+		}
+
+		/// <summary>
+		/// Handles an untagged LIST or LSUB response.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="ic">The IMAP command.</param>
 		/// <param name="index">The index.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		public static Task ParseFolderListAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		public static Task UntaggedListHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var list = (List<ImapFolder>) ic.UserData;
 
-			return ParseFolderListAsync (engine, list, ic.Lsub, ic.ListReturnsSubscribed, doAsync, ic.CancellationToken);
+			if (doAsync)
+				return ParseFolderListAsync (engine, list, ic.Lsub, ic.ListReturnsSubscribed, ic.CancellationToken);
+
+			ParseFolderList (engine, list, ic.Lsub, ic.ListReturnsSubscribed, ic.CancellationToken);
+
+			return Task.CompletedTask;
 		}
 
 		/// <summary>
@@ -641,42 +850,75 @@ namespace MailKit.Net.Imap {
 		/// <returns>The encoded name of the folder that the metadata belongs to.</returns>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="metadata">The metadata collection to be populated.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async Task ParseMetadataAsync (ImapEngine engine, MetadataCollection metadata, bool doAsync, CancellationToken cancellationToken)
+		public static void ParseMetadata (ImapEngine engine, MetadataCollection metadata, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
-			var encodedName = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+			var encodedName = ReadStringToken (engine, format, cancellationToken);
 
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (cancellationToken);
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
 			while (token.Type != ImapTokenType.CloseParen) {
-				var tag = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
-				var value = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+				var tag = ReadStringToken (engine, format, cancellationToken);
+				var value = ReadStringToken (engine, format, cancellationToken);
 
 				metadata.Add (new Metadata (MetadataTag.Create (tag), value) { EncodedName = encodedName });
 
-				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (cancellationToken);
 			}
 
 			// read the closing paren
-			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			engine.ReadToken (cancellationToken);
 		}
 
 		/// <summary>
-		/// Parses an untagged METADATA response.
+		/// Asynchronously parses an untagged METADATA response.
+		/// </summary>
+		/// <returns>The encoded name of the folder that the metadata belongs to.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="metadata">The metadata collection to be populated.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static async Task ParseMetadataAsync (ImapEngine engine, MetadataCollection metadata, CancellationToken cancellationToken)
+		{
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
+			var encodedName = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
+
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
+
+			while (token.Type != ImapTokenType.CloseParen) {
+				var tag = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
+				var value = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
+
+				metadata.Add (new Metadata (MetadataTag.Create (tag), value) { EncodedName = encodedName });
+
+				token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+			}
+
+			// read the closing paren
+			await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+		}
+
+		/// <summary>
+		/// Handles an untagged METADATA response.
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="ic">The IMAP command.</param>
 		/// <param name="index">The index.</param>
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		public static Task ParseMetadataAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		public static Task UntaggedMetadataHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var metadata = (MetadataCollection) ic.UserData;
 
-			return ParseMetadataAsync (engine, metadata, doAsync, ic.CancellationToken);
+			if (doAsync)
+				return ParseMetadataAsync (engine, metadata, ic.CancellationToken);
+
+			ParseMetadata (engine, metadata, ic.CancellationToken);
+
+			return Task.CompletedTask;
 		}
 
 		internal static string ReadStringToken (ImapEngine engine, string format, CancellationToken cancellationToken)
@@ -1834,9 +2076,9 @@ namespace MailKit.Net.Imap {
 			return new ReadOnlyCollection<string> (labels);
 		}
 
-		static async Task<MessageThread> ParseThreadAsync (ImapEngine engine, uint uidValidity, bool doAsync, CancellationToken cancellationToken)
+		static MessageThread ParseThread (ImapEngine engine, uint uidValidity, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (cancellationToken);
 			MessageThread thread, node, child;
 			uint uid;
 
@@ -1844,10 +2086,10 @@ namespace MailKit.Net.Imap {
 				thread = new MessageThread ((UniqueId?) null /*UniqueId.Invalid*/);
 
 				do {
-					child = await ParseThreadAsync (engine, uidValidity, doAsync, cancellationToken).ConfigureAwait (false);
+					child = ParseThread (engine, uidValidity, cancellationToken);
 					thread.Children.Add (child);
 
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (cancellationToken);
 				} while (token.Type != ImapTokenType.CloseParen);
 
 				return thread;
@@ -1857,13 +2099,55 @@ namespace MailKit.Net.Imap {
 			node = thread = new MessageThread (new UniqueId (uidValidity, uid));
 
 			do {
-				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = engine.ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
 				if (token.Type == ImapTokenType.OpenParen) {
-					child = await ParseThreadAsync (engine, uidValidity, doAsync, cancellationToken).ConfigureAwait (false);
+					child = ParseThread (engine, uidValidity, cancellationToken);
+					node.Children.Add (child);
+				} else {
+					uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+					child = new MessageThread (new UniqueId (uidValidity, uid));
+					node.Children.Add (child);
+					node = child;
+				}
+			} while (true);
+
+			return thread;
+		}
+
+		static async Task<MessageThread> ParseThreadAsync (ImapEngine engine, uint uidValidity, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			MessageThread thread, node, child;
+			uint uid;
+
+			if (token.Type == ImapTokenType.OpenParen) {
+				thread = new MessageThread ((UniqueId?) null /*UniqueId.Invalid*/);
+
+				do {
+					child = await ParseThreadAsync (engine, uidValidity, cancellationToken).ConfigureAwait (false);
+					thread.Children.Add (child);
+
+					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				} while (token.Type != ImapTokenType.CloseParen);
+
+				return thread;
+			}
+
+			uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+			node = thread = new MessageThread (new UniqueId (uidValidity, uid));
+
+			do {
+				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				if (token.Type == ImapTokenType.OpenParen) {
+					child = await ParseThreadAsync (engine, uidValidity, cancellationToken).ConfigureAwait (false);
 					node.Children.Add (child);
 				} else {
 					uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
@@ -1877,32 +2161,77 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Parses the threads.
+		/// Parses an untagged THREAD response.
 		/// </summary>
-		/// <returns>The threads.</returns>
+		/// <returns>The task.</returns>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="uidValidity">The UIDVALIDITY of the folder.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="threads">The list of threads that this method will append to.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async Task<IList<MessageThread>> ParseThreadsAsync (ImapEngine engine, uint uidValidity, bool doAsync, CancellationToken cancellationToken)
+		public static void ParseThreads (ImapEngine engine, uint uidValidity, List<MessageThread> threads, CancellationToken cancellationToken)
 		{
-			var threads = new List<MessageThread> ();
 			ImapToken token;
 
 			do {
-				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.Eoln)
 					break;
 
-				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = engine.ReadToken (cancellationToken);
 
 				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
 
-				threads.Add (await ParseThreadAsync (engine, uidValidity, doAsync, cancellationToken).ConfigureAwait (false));
+				threads.Add (ParseThread (engine, uidValidity, cancellationToken));
 			} while (true);
+		}
 
-			return threads;
+		/// <summary>
+		/// Parses the threads.
+		/// </summary>
+		/// <returns>The task.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="uidValidity">The UIDVALIDITY of the folder.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static async Task ParseThreadsAsync (ImapEngine engine, uint uidValidity, List<MessageThread> threads, CancellationToken cancellationToken)
+		{
+			ImapToken token;
+
+			do {
+				token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.Eoln)
+					break;
+
+				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+
+				threads.Add (await ParseThreadAsync (engine, uidValidity, cancellationToken).ConfigureAwait (false));
+			} while (true);
+		}
+
+		/// <summary>
+		/// Handles an untagged THREAD response.
+		/// </summary>
+		/// <returns>The task.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="index">THe index.</param>
+		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		public static Task UntaggedThreadHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			var threads = new List<MessageThread> ();
+
+			ic.UserData = threads;
+
+			if (doAsync)
+				return ParseThreadsAsync (engine, ic.Folder.UidValidity, threads, ic.CancellationToken);
+
+			ParseThreads (engine, ic.Folder.UidValidity, threads, ic.CancellationToken);
+
+			return Task.CompletedTask;
 		}
 	}
 }

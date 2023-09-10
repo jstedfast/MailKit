@@ -236,7 +236,7 @@ namespace MailKit.Net.Imap
 
 		delegate void FetchSummaryItemsCompletedCallback (MessageSummary message);
 
-		void FetchSummaryItems (ImapEngine engine, MessageSummary message, FetchSummaryItemsCompletedCallback completed, CancellationToken cancellationToken)
+		void ParseSummaryItems (ImapEngine engine, MessageSummary message, FetchSummaryItemsCompletedCallback completed, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
@@ -472,7 +472,7 @@ namespace MailKit.Net.Imap
 			completed (message);
 		}
 
-		async Task FetchSummaryItemsAsync (ImapEngine engine, MessageSummary message, FetchSummaryItemsCompletedCallback completed, CancellationToken cancellationToken)
+		async Task ParseSummaryItemsAsync (ImapEngine engine, MessageSummary message, FetchSummaryItemsCompletedCallback completed, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -708,7 +708,7 @@ namespace MailKit.Net.Imap
 			completed (message);
 		}
 
-		Task FetchSummaryItemsAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		Task UntaggedFetchSummaryItemsHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var ctx = (FetchSummaryContext) ic.UserData;
 
@@ -718,9 +718,9 @@ namespace MailKit.Net.Imap
 			}
 
 			if (doAsync)
-				return FetchSummaryItemsAsync (engine, message, OnMessageSummaryFetched, ic.CancellationToken);
+				return ParseSummaryItemsAsync (engine, message, OnMessageSummaryFetched, ic.CancellationToken);
 
-			FetchSummaryItems (engine, message, OnMessageSummaryFetched, ic.CancellationToken);
+			ParseSummaryItems (engine, message, OnMessageSummaryFetched, ic.CancellationToken);
 
 			return Task.CompletedTask;
 		}
@@ -1173,7 +1173,7 @@ namespace MailKit.Net.Imap
 
 			try {
 				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
-					ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
+					ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 					ic.UserData = ctx;
 
 					Engine.QueueCommand (ic);
@@ -1261,7 +1261,7 @@ namespace MailKit.Net.Imap
 
 			try {
 				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
-					ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
+					ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 					ic.UserData = ctx;
 
 					Engine.QueueCommand (ic);
@@ -1313,7 +1313,7 @@ namespace MailKit.Net.Imap
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (indexes.Count);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
+			ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -1511,7 +1511,7 @@ namespace MailKit.Net.Imap
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (capacity);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItemsAsync);
+			ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);

@@ -3523,12 +3523,12 @@ namespace UnitTests.Net.Imap {
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
-						IList<MessageThread> threads;
+						var threads = new List<MessageThread> ();
 
 						engine.SetStream (tokenizer);
 
 						try {
-							threads = ImapUtils.ParseThreadsAsync (engine, 0, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							ImapUtils.ParseThreads (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
 							return;
@@ -3578,12 +3578,12 @@ namespace UnitTests.Net.Imap {
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
-						IList<MessageThread> threads;
+						var threads = new List<MessageThread> ();
 
 						engine.SetStream (tokenizer);
 
 						try {
-							threads = await ImapUtils.ParseThreadsAsync (engine, 0, true, CancellationToken.None);
+							await ImapUtils.ParseThreadsAsync (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
 							return;
@@ -3633,12 +3633,12 @@ namespace UnitTests.Net.Imap {
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
-						IList<MessageThread> threads;
+						var threads = new List<MessageThread> ();
 
 						engine.SetStream (tokenizer);
 
 						try {
-							threads = ImapUtils.ParseThreadsAsync (engine, 0, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							ImapUtils.ParseThreads (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
 							return;
@@ -3669,12 +3669,12 @@ namespace UnitTests.Net.Imap {
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
-						IList<MessageThread> threads;
+						var threads = new List<MessageThread> ();
 
 						engine.SetStream (tokenizer);
 
 						try {
-							threads = await ImapUtils.ParseThreadsAsync (engine, 0, true, CancellationToken.None);
+							await ImapUtils.ParseThreadsAsync (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
 							return;
@@ -3705,12 +3705,12 @@ namespace UnitTests.Net.Imap {
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
-						IList<MessageThread> threads;
+						var threads = new List<MessageThread> ();
 
 						engine.SetStream (tokenizer);
 
 						try {
-							threads = ImapUtils.ParseThreadsAsync (engine, 0, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							ImapUtils.ParseThreads (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
 							return;
@@ -3742,12 +3742,12 @@ namespace UnitTests.Net.Imap {
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine (null)) {
-						IList<MessageThread> threads;
+						var threads = new List<MessageThread> ();
 
 						engine.SetStream (tokenizer);
 
 						try {
-							threads = await ImapUtils.ParseThreadsAsync (engine, 0, true, CancellationToken.None);
+							await ImapUtils.ParseThreadsAsync (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
 							return;
@@ -4020,7 +4020,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							ImapUtils.ParseFolderListAsync (engine, list, false, false, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							ImapUtils.ParseFolderList (engine, list, false, false, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing LIST response failed: {0}", ex);
 							return;
@@ -4050,7 +4050,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							await ImapUtils.ParseFolderListAsync (engine, list, false, false, true, CancellationToken.None);
+							await ImapUtils.ParseFolderListAsync (engine, list, false, false, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing LIST response failed: {0}", ex);
 							return;

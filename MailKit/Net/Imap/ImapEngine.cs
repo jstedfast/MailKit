@@ -982,6 +982,52 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Reads the next token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public ImapToken ReadToken (string specials, CancellationToken cancellationToken)
+		{
+			return Stream.ReadToken (specials, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously reads the next token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public ValueTask<ImapToken> ReadTokenAsync (string specials, CancellationToken cancellationToken)
+		{
+			return Stream.ReadTokenAsync (specials, cancellationToken);
+		}
+
+		/// <summary>
 		/// Peeks at the next token.
 		/// </summary>
 		/// <returns>The next token.</returns>
@@ -2319,7 +2365,7 @@ namespace MailKit.Net.Imap {
 							//if (number == 0)
 							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
-							folder.OnFetchAsync (this, (int) number - 1, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+							folder.OnUntaggedFetchResponse (this, (int) number - 1, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
 						} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnRecent ((int) number);
 						} else {
@@ -2336,13 +2382,13 @@ namespace MailKit.Net.Imap {
 					SkipLine (cancellationToken);
 				} else if (atom.Equals ("LIST", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
-					ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+					ImapUtils.ParseFolderList (this, null, false, true, cancellationToken);
 					token = ReadToken (cancellationToken);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
 				} else if (atom.Equals ("METADATA", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited METADATA response - probably due to NOTIFY MailboxMetadataChange or ServerMetadataChange
 					var metadata = new MetadataCollection ();
-					ImapUtils.ParseMetadataAsync (this, metadata, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+					ImapUtils.ParseMetadata (this, metadata, cancellationToken);
 					ProcessMetadataChanges (metadata);
 
 					token = ReadToken (cancellationToken);
@@ -2472,7 +2518,7 @@ namespace MailKit.Net.Imap {
 							//if (number == 0)
 							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
-							await folder.OnFetchAsync (this, (int) number - 1, doAsync: true, cancellationToken).ConfigureAwait (false);
+							await folder.OnUntaggedFetchResponse (this, (int) number - 1, doAsync: true, cancellationToken).ConfigureAwait (false);
 						} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnRecent ((int) number);
 						} else {
@@ -2489,13 +2535,13 @@ namespace MailKit.Net.Imap {
 					await SkipLineAsync (cancellationToken).ConfigureAwait (false);
 				} else if (atom.Equals ("LIST", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
-					await ImapUtils.ParseFolderListAsync (this, null, false, true, doAsync: true, cancellationToken).ConfigureAwait (false);
+					await ImapUtils.ParseFolderListAsync (this, null, false, true, cancellationToken).ConfigureAwait (false);
 					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
 				} else if (atom.Equals ("METADATA", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited METADATA response - probably due to NOTIFY MailboxMetadataChange or ServerMetadataChange
 					var metadata = new MetadataCollection ();
-					await ImapUtils.ParseMetadataAsync (this, metadata, doAsync: true, cancellationToken).ConfigureAwait (false);
+					await ImapUtils.ParseMetadataAsync (this, metadata, cancellationToken).ConfigureAwait (false);
 					ProcessMetadataChanges (metadata);
 
 					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -2861,7 +2907,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = new List<ImapFolder> ();
 
@@ -2957,7 +3003,7 @@ namespace MailKit.Net.Imap {
 		ImapCommand QueueListNamespaceCommand (List<ImapFolder> list, CancellationToken cancellationToken)
 		{
 			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"\"\r\n");
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.UserData = list;
 
 			QueueCommand (ic);
@@ -3109,7 +3155,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString ());
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 
@@ -3150,7 +3196,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString ());
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 
@@ -3162,7 +3208,7 @@ namespace MailKit.Net.Imap {
 		ImapCommand QueueXListCommand (List<ImapFolder> list, CancellationToken cancellationToken)
 		{
 			var ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
-			ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("XLIST", ImapUtils.UntaggedListHandler);
 			ic.UserData = list;
 
 			QueueCommand (ic);
@@ -3256,7 +3302,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), quotaRoot);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 
@@ -3292,7 +3338,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 
@@ -3462,7 +3508,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern + "*");
-			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderListAsync);
+			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.UntaggedListHandler);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
 			ic.Lsub = lsub;

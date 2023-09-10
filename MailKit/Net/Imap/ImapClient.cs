@@ -529,7 +529,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
-			ic.RegisterUntaggedHandler ("ID", ImapUtils.ParseImplementationAsync);
+			ic.RegisterUntaggedHandler ("ID", ImapUtils.UntaggedIdHandler);
 
 			engine.QueueCommand (ic);
 
@@ -2523,7 +2523,7 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			var ic = new ImapCommand (engine, cancellationToken, null, "GETMETADATA \"\" %S\r\n", tag.Id);
-			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadataAsync);
+			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.UntaggedMetadataHandler);
 			var metadata = new MetadataCollection ();
 			ic.UserData = metadata;
 
@@ -2648,7 +2648,7 @@ namespace MailKit.Net.Imap {
 				return null;
 
 			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
-			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.ParseMetadataAsync);
+			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.UntaggedMetadataHandler);
 			ic.UserData = new MetadataCollection ();
 			options.LongEntries = 0;
 
