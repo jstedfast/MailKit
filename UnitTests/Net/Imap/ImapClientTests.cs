@@ -5506,11 +5506,16 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				var inbox = client.Inbox;
-
-				inbox.Open (FolderAccess.ReadWrite);
-
 				using (var done = new CancellationTokenSource ()) {
+					Assert.Throws<ArgumentException> (() => client.Idle (CancellationToken.None));
+
+					// Should throw InvalidOperationException until a folder is selected.
+					Assert.Throws<InvalidOperationException> (() => client.Idle (done.Token));
+
+					var inbox = client.Inbox;
+
+					inbox.Open (FolderAccess.ReadWrite);
+
 					int count = 0, expunged = 0, flags = 0;
 					bool droppedToZero = false;
 
@@ -5563,11 +5568,16 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
-				var inbox = client.Inbox;
-
-				await inbox.OpenAsync (FolderAccess.ReadWrite);
-
 				using (var done = new CancellationTokenSource ()) {
+					Assert.ThrowsAsync<ArgumentException> (() => client.IdleAsync (CancellationToken.None));
+
+					// Should throw InvalidOperationException until a folder is selected.
+					Assert.ThrowsAsync<InvalidOperationException> (() => client.IdleAsync (done.Token));
+
+					var inbox = client.Inbox;
+
+					await inbox.OpenAsync (FolderAccess.ReadWrite);
+
 					int count = 0, expunged = 0, flags = 0;
 					bool droppedToZero = false;
 
@@ -5595,6 +5605,88 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (21, flags, "Unexpected number of FlagsChanged events");
 					Assert.AreEqual (1, inbox.Count, "Count");
 				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateIdleNotSupportedCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 LOGOUT\r\n", "gmail.logout.txt")
+			};
+		}
+
+		[Test]
+		public void TestIdleNotSupported ()
+		{
+			var commands = CreateIdleNotSupportedCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadWrite);
+
+				// disable IDLE
+				client.Capabilities &= ~ImapCapabilities.Idle;
+
+				using (var done = new CancellationTokenSource ())
+					Assert.Throws<NotSupportedException> (() => client.Idle (done.Token));
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestIdleNotSupportedAsync ()
+		{
+			var commands = CreateIdleNotSupportedCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				// disable IDLE
+				client.Capabilities &= ~ImapCapabilities.Idle;
+
+				using (var done = new CancellationTokenSource ())
+					Assert.ThrowsAsync<NotSupportedException> (() => client.IdleAsync (done.Token));
 
 				await client.DisconnectAsync (true);
 			}
