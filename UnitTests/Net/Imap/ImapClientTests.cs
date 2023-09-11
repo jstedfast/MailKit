@@ -2262,9 +2262,8 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
 				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
 				new ImapReplayCommand ("A00000005 ENABLE UTF8=ACCEPT\r\n", "gmail.utf8accept.txt"),
-				new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35+}\r\n1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"),
-				new ImapReplayCommand ("A00000007 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"),
-				new ImapReplayCommand ("A00000008 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt")
+				new ImapReplayCommand ("A00000006 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"),
+				new ImapReplayCommand ("A00000007 SETQUOTA \"\" (MESSAGE 1000000 STORAGE 5242880)\r\n", "common.setquota.txt")
 			};
 		}
 
@@ -2315,18 +2314,6 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
 				client.EnableUTF8 ();
-
-				var implementation = new ImapImplementation {
-					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc.", Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
-				};
-
-				implementation = client.Identify (implementation);
-				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
-				Assert.AreEqual ("GImap", implementation.Name);
-				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
-				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
-				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
-				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2401,18 +2388,6 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.SupportsQuotas, "SupportsQuotas");
 
 				await client.EnableUTF8Async ();
-
-				var implementation = new ImapImplementation {
-					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc.", Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
-				};
-
-				implementation = await client.IdentifyAsync (implementation);
-				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
-				Assert.AreEqual ("GImap", implementation.Name);
-				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
-				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
-				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
-				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -5467,6 +5442,179 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (personal.IsNamespace, "IsNamespace");
 
 				await client.DisconnectAsync (true);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateIdentifyCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 ID NIL\r\n", "common.id.txt"),
+				new ImapReplayCommand ("A00000006 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" {35+}\r\n1 Memorial Dr.\r\nCambridge, MA 02142)\r\n", "common.id.txt"),
+				new ImapReplayCommand ("A00000007 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\" \"address\" NIL)\r\n", "common.id.txt"),
+			};
+		}
+
+		[Test]
+		public void TestIdentify ()
+		{
+			var commands = CreateIdentifyCommands ();
+
+			using (var client = new ImapClient ()) {
+				ImapImplementation implementation;
+
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				try {
+					client.Authenticate (new NetworkCredential ("username", "password"));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
+
+				implementation = client.Identify (null);
+				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
+				Assert.AreEqual ("GImap", implementation.Name);
+				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
+				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
+				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
+				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
+
+				implementation = new ImapImplementation {
+					Name = "MailKit",
+					Version = "1.0",
+					Vendor = "Xamarin Inc.",
+					Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
+				};
+
+				implementation = client.Identify (implementation);
+				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
+				Assert.AreEqual ("GImap", implementation.Name);
+				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
+				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
+				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
+				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
+
+				implementation = new ImapImplementation {
+					Name = "MailKit",
+					Version = "1.0",
+					Vendor = "Xamarin Inc.",
+					Address = null
+				};
+
+				implementation = client.Identify (implementation);
+				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
+				Assert.AreEqual ("GImap", implementation.Name);
+				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
+				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
+				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
+				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
+
+				// disable ID support
+				client.Capabilities &= ~ImapCapabilities.Id;
+				Assert.Throws<NotSupportedException> (() => client.Identify (null));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestIdentifyAsync ()
+		{
+			var commands = CreateIdentifyCommands ();
+
+			using (var client = new ImapClient ()) {
+				ImapImplementation implementation;
+
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+
+				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (5, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				try {
+					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
+
+				implementation = await client.IdentifyAsync (null);
+				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
+				Assert.AreEqual ("GImap", implementation.Name);
+				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
+				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
+				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
+				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
+
+				implementation = new ImapImplementation {
+					Name = "MailKit",
+					Version = "1.0",
+					Vendor = "Xamarin Inc.",
+					Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
+				};
+
+				implementation = await client.IdentifyAsync (implementation);
+				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
+				Assert.AreEqual ("GImap", implementation.Name);
+				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
+				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
+				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
+				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
+
+				implementation = new ImapImplementation {
+					Name = "MailKit",
+					Version = "1.0",
+					Vendor = "Xamarin Inc.",
+					Address = null
+				};
+
+				implementation = await client.IdentifyAsync (implementation);
+				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
+				Assert.AreEqual ("GImap", implementation.Name);
+				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
+				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
+				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
+				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
+
+				// disable ID support
+				client.Capabilities &= ~ImapCapabilities.Id;
+				Assert.ThrowsAsync<NotSupportedException> (() => client.IdentifyAsync (null));
+
+				await client.DisconnectAsync (false);
 			}
 		}
 
