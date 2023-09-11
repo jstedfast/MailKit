@@ -1499,8 +1499,8 @@ namespace MailKit.Net.Imap
 
 		ImapCommand QueueFetchCommand (int min, int max, IFetchRequest request, CancellationToken cancellationToken, out bool previewText)
 		{
+			int capacity = Math.Max (max < 0 || max > Count ? Count : max, min) - min;
 			var query = FormatSummaryItems (Engine, request, out previewText);
-			int capacity = (max == -1 || max > Count ? Count : max) - min;
 			var set = GetFetchRange (min, max);
 			var changedSince = string.Empty;
 
