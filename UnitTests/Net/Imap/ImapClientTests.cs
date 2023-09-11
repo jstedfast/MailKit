@@ -6120,12 +6120,13 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
 				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
 				new ImapReplayCommand ("A00000005 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.OK),
-				new ImapReplayCommand ("A00000006 COMPRESS DEFLATE\r\n", ImapReplayCommandResponse.NO, true),
-				new ImapReplayCommand ("A00000007 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt", true),
-				new ImapReplayCommand ("A00000008 UID SEARCH RETURN (ALL) ALL\r\n", "gmail.search.txt", true),
-				new ImapReplayCommand ("A00000009 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK, true),
-				new ImapReplayCommand ("A00000010 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt", true),
-				new ImapReplayCommand ("A00000011 LOGOUT\r\n", "gmail.logout.txt", true)
+				new ImapReplayCommand ("A00000006 COMPRESS DEFLATE\r\n", Encoding.ASCII.GetBytes ("A00000006 NO [COMPRESSIONACTIVE] DEFLATE active via COMPRESS\r\n"), true),
+				new ImapReplayCommand ("A00000007 COMPRESS DEFLATE\r\n", Encoding.ASCII.GetBytes ("A00000007 NO Compress failed for an unknown reason.\r\n"), true),
+				new ImapReplayCommand ("A00000008 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt", true),
+				new ImapReplayCommand ("A00000009 UID SEARCH RETURN (ALL) ALL\r\n", "gmail.search.txt", true),
+				new ImapReplayCommand ("A00000010 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK, true),
+				new ImapReplayCommand ("A00000011 UID EXPUNGE 1:3\r\n", "gmail.expunge.txt", true),
+				new ImapReplayCommand ("A00000012 LOGOUT\r\n", "gmail.logout.txt", true)
 			};
 		}
 
@@ -6150,7 +6151,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				client.Compress ();
-
+				client.Compress ();
 				Assert.Throws<ImapCommandException> (() => client.Compress ());
 
 				int changed = 0, expunged = 0;
@@ -6196,8 +6197,8 @@ namespace UnitTests.Net.Imap {
 				}
 
 				await client.CompressAsync ();
-
-				Assert.ThrowsAsync<ImapCommandException> (async () => await client.CompressAsync ());
+				await client.CompressAsync ();
+				Assert.ThrowsAsync<ImapCommandException> (() => client.CompressAsync ());
 
 				int changed = 0, expunged = 0;
 				var inbox = client.Inbox;

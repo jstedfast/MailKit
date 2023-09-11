@@ -171,6 +171,15 @@ namespace UnitTests.Net.Imap {
 						CommandBuffer = memory.ToArray ();
 					}
 				}
+
+				using (var memory = new MemoryStream ()) {
+					using (Stream compress = new CompressedStream (memory)) {
+						compress.Write (response, 0, response.Length);
+						compress.Flush ();
+
+						Response = memory.ToArray ();
+					}
+				}
 			}
 		}
 
