@@ -75,8 +75,11 @@ namespace MailKit.Net.Imap
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Response != ImapCommandResponse.Ok)
+				if (ic.Response != ImapCommandResponse.Ok) {
+					// TODO: Do something with the AnnotateResponseCode if it exists??
+
 					throw ImapCommandException.Create ("STORE", ic);
+				}
 
 				ProcessUnmodified (ic, ref unmodified, modseq);
 			}
@@ -344,8 +347,11 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok) {
+				// TODO: Do something with the AnnotateResponseCode if it exists??
+
 				throw ImapCommandException.Create ("STORE", ic);
+			}
 
 			return GetUnmodified (ic, modseq);
 		}

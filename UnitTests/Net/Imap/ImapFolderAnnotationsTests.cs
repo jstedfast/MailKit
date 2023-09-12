@@ -1119,7 +1119,9 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000007 STORE 1 ANNOTATION (/altsubject (value.shared NIL))\r\n", ImapReplayCommandResponse.OK),
 				new ImapReplayCommand ("A00000008 UID STORE 1 ANNOTATION (/altsubject (value.shared NIL))\r\n", ImapReplayCommandResponse.OK),
 				new ImapReplayCommand ("A00000009 STORE 1 (UNCHANGEDSINCE 42) ANNOTATION (/altsubject (value.shared NIL))\r\n", ImapReplayCommandResponse.OK),
-				new ImapReplayCommand ("A00000010 UID STORE 1 (UNCHANGEDSINCE 42) ANNOTATION (/altsubject (value.shared NIL))\r\n", ImapReplayCommandResponse.OK)
+				new ImapReplayCommand ("A00000010 UID STORE 1 (UNCHANGEDSINCE 42) ANNOTATION (/altsubject (value.shared NIL))\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000011 STORE 1 ANNOTATION (/altsubject (value.shared \"This alternate subject will cause an error.\"))\r\n", Encoding.ASCII.GetBytes ("A00000011 NO [ANNOTATE TOOBIG] Annotate failed.\r\n")),
+				new ImapReplayCommand ("A00000012 UID STORE 1 ANNOTATION (/altsubject (value.shared \"This alternate subject will cause an error.\"))\r\n", Encoding.ASCII.GetBytes ("A00000012 NO [ANNOTATE TOOMANY] Annotate failed.\r\n")),
 			};
 		}
 
@@ -1170,6 +1172,14 @@ namespace UnitTests.Net.Imap {
 
 				inbox.Store (new[] { 0 }, 42, annotations);
 				inbox.Store (new[] { new UniqueId (1) }, 42, annotations);
+
+				annotation = new Annotation (AnnotationEntry.AltSubject);
+				annotation.Properties.Add (AnnotationAttribute.SharedValue, "This alternate subject will cause an error.");
+
+				annotations = new[] { annotation };
+
+				Assert.Throws<ImapCommandException> (() => inbox.Store (0, annotations));
+				Assert.Throws<ImapCommandException> (() => inbox.Store (new UniqueId (1), annotations));
 
 				client.Disconnect (false);
 			}
@@ -1222,6 +1232,14 @@ namespace UnitTests.Net.Imap {
 
 				await inbox.StoreAsync (new[] { 0 }, 42, annotations);
 				await inbox.StoreAsync (new[] { new UniqueId (1) }, 42, annotations);
+
+				annotation = new Annotation (AnnotationEntry.AltSubject);
+				annotation.Properties.Add (AnnotationAttribute.SharedValue, "This alternate subject will cause an error.");
+
+				annotations = new[] { annotation };
+
+				Assert.ThrowsAsync<ImapCommandException> (() => inbox.StoreAsync (0, annotations));
+				Assert.ThrowsAsync<ImapCommandException> (() => inbox.StoreAsync (new UniqueId (1), annotations));
 
 				await client.DisconnectAsync (false);
 			}
