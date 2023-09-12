@@ -368,6 +368,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+create-special-use.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+preview.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+savedate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+statussize+objectid.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+webalert.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability.txt" />
@@ -406,6 +407,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-peek-html-only.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-peek-text-alternative.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-peek-text-only.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-savedate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\expunge-during-fetch.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\get-indexes.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\go-ahead.txt" />

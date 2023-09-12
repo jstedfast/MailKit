@@ -136,12 +136,18 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (-1, -1, MessageSummaryItems.All));
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (5, 1, MessageSummaryItems.All));
 				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (5, 1, MessageSummaryItems.All));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (0, -1, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.FetchAsync (0, -1, null));
 
 				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<UniqueId>) null, MessageSummaryItems.All));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<UniqueId>) null, MessageSummaryItems.All));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (uids, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.FetchAsync (uids, null));
 
 				Assert.Throws<ArgumentNullException> (() => inbox.Fetch ((IList<int>) null, MessageSummaryItems.All));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.FetchAsync ((IList<int>) null, MessageSummaryItems.All));
+				Assert.Throws<ArgumentNullException> (() => inbox.Fetch (indexes, null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.FetchAsync (indexes, null));
 
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Fetch (-1, -1, MessageSummaryItems.All, headerIds));
 				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.FetchAsync (-1, -1, MessageSummaryItems.All, headerIds));
@@ -1228,6 +1234,101 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateFetchSaveDateCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+savedate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"),
+				new ImapReplayCommand ("A00000006 FETCH 1:* (UID SAVEDATE)\r\n", "gmail.fetch-savedate.txt"),
+				new ImapReplayCommand ("A00000007 LOGOUT\r\n", "gmail.logout.txt")
+			};
+		}
+
+		[Test]
+		public void TestFetchSaveDate ()
+		{
+			var commands = CreateFetchSaveDateCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), "SAVEDATE");
+
+				var inbox = client.Inbox;
+				inbox.Open (FolderAccess.ReadOnly);
+
+				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.SaveDate);
+				var dto = new DateTimeOffset (2023, 9, 12, 13, 39, 01, new TimeSpan (-4, 0, 0));
+
+				Assert.AreEqual (4, messages.Count, "Count");
+				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
+				Assert.AreEqual (dto, messages[0].SaveDate, "SaveDate");
+				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
+				Assert.AreEqual (dto, messages[1].SaveDate, "SaveDate");
+				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
+				Assert.AreEqual (dto, messages[2].SaveDate, "SaveDate");
+				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
+				Assert.AreEqual (null, messages[3].SaveDate, "SaveDate");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchSaveDateAsync ()
+		{
+			var commands = CreateFetchSaveDateCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), "SAVEDATE");
+
+				var inbox = client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.SaveDate);
+				var dto = new DateTimeOffset (2023, 9, 12, 13, 39, 01, new TimeSpan (-4, 0, 0));
+
+				Assert.AreEqual (4, messages.Count, "Count");
+				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
+				Assert.AreEqual (dto, messages[0].SaveDate, "SaveDate");
+				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
+				Assert.AreEqual (dto, messages[1].SaveDate, "SaveDate");
+				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
+				Assert.AreEqual (dto, messages[2].SaveDate, "SaveDate");
+				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
+				Assert.AreEqual (null, messages[3].SaveDate, "SaveDate");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateFetchAnnotationsCommands ()
 		{
 			return new List<ImapReplayCommand> {
@@ -1484,6 +1585,83 @@ namespace UnitTests.Net.Imap {
 				}
 
 				client.Disconnect (false);
+			}
+		}
+
+		[TestCase ("ALL", MessageSummaryItems.All)]
+		[TestCase ("FAST", MessageSummaryItems.Fast)]
+		[TestCase ("FULL", MessageSummaryItems.Full)]
+		public void TestFormatFetchSummaryItemsMacros (string expected, MessageSummaryItems items)
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest (items);
+				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+
+				Assert.AreEqual (expected, command);
+			}
+		}
+
+		[Test]
+		public void TestFormatFetchSummaryItemsExcludeHeaders ()
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest () {
+					Headers = new HeaderSet () {
+						Exclude = true
+					}
+				};
+				bool previewText;
+				string command;
+
+				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				Assert.AreEqual ("BODY.PEEK[HEADER]", command);
+
+				request = new FetchRequest () {
+					Headers = new HeaderSet (new[] { "FROM", "SUBJECT", "DATE" }) {
+						Exclude = true
+					}
+				};
+
+				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				Assert.AreEqual ("BODY.PEEK[HEADER.FIELDS.NOT (FROM SUBJECT DATE)]", command);
+			}
+		}
+
+		[Test]
+		public void TestFormatFetchSummaryItemsReferences ()
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest (MessageSummaryItems.References);
+				bool previewText;
+				string command;
+
+				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				Assert.AreEqual ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]", command);
+
+				request = new FetchRequest () {
+					Headers = new HeaderSet (new[] { "REFERENCES" })
+				};
+
+				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				Assert.AreEqual ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]", command);
+
+				request = new FetchRequest (MessageSummaryItems.References) {
+					Headers = new HeaderSet (new[] { "REFERENCES" })
+				};
+
+				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				Assert.AreEqual ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]", command);
+			}
+		}
+
+		[Test]
+		public void TestFormatFetchSummaryItemsAllHeaders ()
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest (MessageSummaryItems.Headers);
+
+				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				Assert.AreEqual ("BODY.PEEK[HEADER]", command);
 			}
 		}
 	}
