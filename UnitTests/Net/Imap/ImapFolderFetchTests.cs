@@ -1588,6 +1588,154 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static IList<ImapReplayCommand> CreateFetchStreamUnsolicitedInfoCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate+annotate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate.txt"),
+				new ImapReplayCommand ("A00000006 UID FETCH 1 (BODY.PEEK[HEADER])\r\n", "gmail.headers.1+unsolicited-info.txt"),
+				new ImapReplayCommand ("A00000007 UID FETCH 1 (BODY.PEEK[])\r\n", "gmail.fetch.1+unsolicited-info.txt"),
+				new ImapReplayCommand ("A00000008 UID FETCH 1 (BODY.PEEK[])\r\n", "gmail.fetch.1+unsolicited-info.txt")
+			};
+		}
+
+		[Test]
+		public void TestFetchStreamUnsolicitedInfo ()
+		{
+			var commands = CreateFetchStreamUnsolicitedInfoCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Annotate), "ANNOTATE-EXPERIMENT-1");
+
+				var inbox = client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
+				//Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
+				//Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+
+				// Keep track of various folder events
+				var annotationsChanged = new List<AnnotationsChangedEventArgs> ();
+				var flagsChanged = new List<MessageFlagsChangedEventArgs> ();
+				var labelsChanged = new List<MessageLabelsChangedEventArgs> ();
+				var modSeqChanged = new List<ModSeqChangedEventArgs> ();
+
+				inbox.AnnotationsChanged += (sender, e) => {
+					annotationsChanged.Add (e);
+				};
+
+				inbox.MessageFlagsChanged += (sender, e) => {
+					flagsChanged.Add (e);
+				};
+
+				inbox.MessageLabelsChanged += (sender, e) => {
+					labelsChanged.Add (e);
+				};
+
+				inbox.ModSeqChanged += (sender, e) => {
+					modSeqChanged.Add (e);
+				};
+
+				Assert.AreEqual (2, inbox.HighestModSeq, "HIGHESTMODSEQ #1");
+
+				var headers = inbox.GetHeaders (new UniqueId (1));
+				var message = inbox.GetMessage (new UniqueId (1));
+				var stream = inbox.GetStream (new UniqueId (1));
+
+				Assert.AreEqual (29233, inbox.HighestModSeq, "HIGHESTMODSEQ #2");
+
+				Assert.AreEqual (3, annotationsChanged.Count, "AnnotationsChanged");
+				Assert.AreEqual (3, flagsChanged.Count, "FlagsChanged");
+				Assert.AreEqual (3, labelsChanged.Count, "LabelsChanged");
+				Assert.AreEqual (3, modSeqChanged.Count, "ModSeqChanged");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchStreamUnsolicitedInfoAsync ()
+		{
+			var commands = CreateFetchStreamUnsolicitedInfoCommands ();
+
+			using (var client = new ImapClient ()) {
+				try {
+					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Annotate), "ANNOTATE-EXPERIMENT-1");
+
+				var inbox = client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
+				//Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
+				//Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+
+				// Keep track of various folder events
+				var annotationsChanged = new List<AnnotationsChangedEventArgs> ();
+				var flagsChanged = new List<MessageFlagsChangedEventArgs> ();
+				var labelsChanged = new List<MessageLabelsChangedEventArgs> ();
+				var modSeqChanged = new List<ModSeqChangedEventArgs> ();
+
+				inbox.AnnotationsChanged += (sender, e) => {
+					annotationsChanged.Add (e);
+				};
+
+				inbox.MessageFlagsChanged += (sender, e) => {
+					flagsChanged.Add (e);
+				};
+
+				inbox.MessageLabelsChanged += (sender, e) => {
+					labelsChanged.Add (e);
+				};
+
+				inbox.ModSeqChanged += (sender, e) => {
+					modSeqChanged.Add (e);
+				};
+
+				Assert.AreEqual (2, inbox.HighestModSeq, "HIGHESTMODSEQ #1");
+
+				var headers = await inbox.GetHeadersAsync (new UniqueId (1));
+				var message = await inbox.GetMessageAsync (new UniqueId (1));
+				var stream = await inbox.GetStreamAsync (new UniqueId (1));
+
+				Assert.AreEqual (29233, inbox.HighestModSeq, "HIGHESTMODSEQ #2");
+
+				Assert.AreEqual (3, annotationsChanged.Count, "AnnotationsChanged");
+				Assert.AreEqual (3, flagsChanged.Count, "FlagsChanged");
+				Assert.AreEqual (3, labelsChanged.Count, "LabelsChanged");
+				Assert.AreEqual (3, modSeqChanged.Count, "ModSeqChanged");
+
+				client.Disconnect (false);
+			}
+		}
+
 		[TestCase ("ALL", MessageSummaryItems.All)]
 		[TestCase ("FAST", MessageSummaryItems.Fast)]
 		[TestCase ("FULL", MessageSummaryItems.Full)]

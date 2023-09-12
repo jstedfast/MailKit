@@ -1,0 +1,16 @@
+* 1 FETCH (UID 1 MODSEQ (29233) ANNOTATION (/comment (value.priv "My comment" value.shared NIL size.priv "10" size.shared "0")) FLAGS (\Seen \Deleted) X-GM-LABELS ("Trash") BODY[HEADER] {515}
+Return-Path: <nsb>
+Received: by greenbush.bellcore.com (4.1/4.7)
+	id <AA12840> for nsb; Thu, 19 Sep 91 12:41:43 EDT
+Date: Thu, 19 Sep 91 12:41:43 EDT
+From: nsb (Nathaniel Borenstein)
+Message-Id: <9109191641.AA12840@greenbush.bellcore.com>
+To: abel, bianchi, braun, cameron, carmen, jfp, jxr, kraut, lamb, lowery, lynn,
+        mlittman, nancyg, sau, shoshi, slr, stornett@flash, tkl
+Cc: nsb, trina@flash
+Subject: Star Trek Party!
+MIME-Version: 1.0
+Content-type: multipart/mixed; boundary=Outermost_Trek
+ 
+)
+A######## OK Success

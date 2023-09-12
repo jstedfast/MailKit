@@ -55,7 +55,6 @@ namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapClientTests
 	{
-		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		static readonly ImapCapabilities GreetingCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
 			ImapCapabilities.Namespace | ImapCapabilities.Unselect;
 		static readonly ImapCapabilities DovecotInitialCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
@@ -3747,7 +3746,7 @@ namespace UnitTests.Net.Imap {
 					length = stream.Length;
 					stream.Position = 0;
 
-					using (var reader = new StreamReader (stream, Latin1))
+					using (var reader = new StreamReader (stream, TextEncodings.Latin1))
 						latin1 = reader.ReadToEnd ();
 				}
 
@@ -5132,7 +5131,7 @@ namespace UnitTests.Net.Imap {
 					length = stream.Length;
 					stream.Position = 0;
 
-					using (var reader = new StreamReader (stream, Latin1))
+					using (var reader = new StreamReader (stream, TextEncodings.Latin1))
 						latin1 = reader.ReadToEnd ();
 				}
 

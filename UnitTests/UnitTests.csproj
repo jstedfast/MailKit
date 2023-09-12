@@ -366,6 +366,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.49.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\append.50.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+annotate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+create-special-use.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+preview.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+savedate.txt" />
@@ -380,6 +381,8 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\create-mailboxid.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\examine-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\expunge.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\expunge-during-fetch.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.1+unsolicited-info.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.3.txt" />
@@ -408,10 +411,10 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-peek-text-alternative.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-previewtext-peek-text-only.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch-savedate.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\gmail\expunge-during-fetch.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\get-indexes.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\go-ahead.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\headers.1+unsolicited-info.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\idle.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\idle-done.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all.txt" />
