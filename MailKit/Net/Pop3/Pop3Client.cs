@@ -1104,6 +1104,55 @@ namespace MailKit.Net.Pop3 {
 #endif
 		}
 
+		void PostConnect (Stream stream, string host, int port, SecureSocketOptions options, bool starttls, CancellationToken cancellationToken)
+		{
+			probed = ProbedCapabilities.None;
+
+			try {
+				ProtocolLogger.LogConnect (engine.Uri);
+			} catch {
+				stream.Dispose ();
+				secure = false;
+				throw;
+			}
+
+			var pop3 = new Pop3Stream (stream, ProtocolLogger);
+
+			engine.Connect (pop3, cancellationToken);
+
+			try {
+				engine.QueryCapabilities (cancellationToken);
+
+				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & Pop3Capabilities.StartTLS) == 0)
+					throw new NotSupportedException ("The POP3 server does not support the STLS extension.");
+
+				if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
+					SendCommand (cancellationToken, "STLS\r\n");
+
+					try {
+						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+						engine.Stream.Stream = tls;
+
+						SslHandshake (tls, host, cancellationToken);
+					} catch (Exception ex) {
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
+					}
+
+					secure = true;
+
+					// re-issue a CAPA command
+					engine.QueryCapabilities (cancellationToken);
+				}
+			} catch {
+				engine.Disconnect ();
+				secure = false;
+				throw;
+			}
+
+			engine.Disconnected += OnEngineDisconnected;
+			OnConnected (host, port, options);
+		}
+
 		/// <summary>
 		/// Establish a connection to the specified POP3 or POP3/S server.
 		/// </summary>
@@ -1197,51 +1246,7 @@ namespace MailKit.Net.Pop3 {
 				secure = false;
 			}
 
-			probed = ProbedCapabilities.None;
-
-			try {
-				ProtocolLogger.LogConnect (uri);
-			} catch {
-				stream.Dispose ();
-				secure = false;
-				throw;
-			}
-
-			var pop3 = new Pop3Stream (stream, ProtocolLogger);
-
-			engine.Connect (pop3, cancellationToken);
-
-			try {
-				engine.QueryCapabilities (cancellationToken);
-
-				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & Pop3Capabilities.StartTLS) == 0)
-					throw new NotSupportedException ("The POP3 server does not support the STLS extension.");
-
-				if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
-					SendCommand (cancellationToken, "STLS\r\n");
-
-					try {
-						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						engine.Stream.Stream = tls;
-
-						SslHandshake (tls, host, cancellationToken);
-					} catch (Exception ex) {
-						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
-					}
-
-					secure = true;
-
-					// re-issue a CAPA command
-					engine.QueryCapabilities (cancellationToken);
-				}
-			} catch {
-				engine.Disconnect ();
-				secure = false;
-				throw;
-			}
-
-			engine.Disconnected += OnEngineDisconnected;
-			OnConnected (host, port, options);
+			PostConnect (stream, host, port, options, starttls, cancellationToken);
 		}
 
 		void CheckCanConnect (Stream stream, string host, int port)
@@ -1424,55 +1429,12 @@ namespace MailKit.Net.Pop3 {
 				secure = false;
 			}
 
-			probed = ProbedCapabilities.None;
 			if (network.CanTimeout) {
 				network.WriteTimeout = timeout;
 				network.ReadTimeout = timeout;
 			}
 
-			try {
-				ProtocolLogger.LogConnect (uri);
-			} catch {
-				network.Dispose ();
-				secure = false;
-				throw;
-			}
-
-			var pop3 = new Pop3Stream (network, ProtocolLogger);
-
-			engine.Connect (pop3, cancellationToken);
-
-			try {
-				engine.QueryCapabilities (cancellationToken);
-
-				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & Pop3Capabilities.StartTLS) == 0)
-					throw new NotSupportedException ("The POP3 server does not support the STLS extension.");
-
-				if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
-					SendCommand (cancellationToken, "STLS\r\n");
-
-					var tls = new SslStream (network, false, ValidateRemoteCertificate);
-					engine.Stream.Stream = tls;
-
-					try {
-						SslHandshake (tls, host, cancellationToken);
-					} catch (Exception ex) {
-						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
-					}
-
-					secure = true;
-
-					// re-issue a CAPA command
-					engine.QueryCapabilities (cancellationToken);
-				}
-			} catch {
-				engine.Disconnect ();
-				secure = false;
-				throw;
-			}
-
-			engine.Disconnected += OnEngineDisconnected;
-			OnConnected (host, port, options);
+			PostConnect (network, host, port, options, starttls, cancellationToken);
 		}
 
 		/// <summary>

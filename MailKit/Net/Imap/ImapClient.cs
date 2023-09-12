@@ -1463,6 +1463,76 @@ namespace MailKit.Net.Imap {
 #endif
 		}
 
+		void PostConnect (Stream stream, string host, int port, SecureSocketOptions options, bool starttls, CancellationToken cancellationToken)
+		{
+			try {
+				ProtocolLogger.LogConnect (engine.Uri);
+			} catch {
+				stream.Dispose ();
+				secure = false;
+				throw;
+			}
+
+			connecting = true;
+
+			try {
+				engine.Connect (new ImapStream (stream, ProtocolLogger), cancellationToken);
+			} catch {
+				connecting = false;
+				secure = false;
+				throw;
+			}
+
+			try {
+				// Only query the CAPABILITIES if the greeting didn't include them.
+				if (engine.CapabilitiesVersion == 0)
+					engine.QueryCapabilities (cancellationToken);
+
+				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & ImapCapabilities.StartTLS) == 0)
+					throw new NotSupportedException ("The IMAP server does not support the STARTTLS extension.");
+
+				if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
+					var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
+
+					engine.Run (ic);
+
+					if (ic.Response == ImapCommandResponse.Ok) {
+						try {
+							var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+							engine.Stream.Stream = tls;
+
+							SslHandshake (tls, host, cancellationToken);
+						} catch (Exception ex) {
+							throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "IMAP", host, port, 993, 143);
+						}
+
+						secure = true;
+
+						// Query the CAPABILITIES again if the server did not include an
+						// untagged CAPABILITIES response to the STARTTLS command.
+						if (engine.CapabilitiesVersion == 1)
+							engine.QueryCapabilities (cancellationToken);
+					} else if (options == SecureSocketOptions.StartTls) {
+						throw ImapCommandException.Create ("STARTTLS", ic);
+					}
+				}
+			} catch {
+				secure = false;
+				engine.Disconnect ();
+				throw;
+			} finally {
+				connecting = false;
+			}
+
+			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
+			var authenticated = engine.State == ImapEngineState.Authenticated;
+
+			OnConnected (host, port, options);
+
+			if (authenticated)
+				OnAuthenticated (string.Empty, cancellationToken);
+		}
+
 		/// <summary>
 		/// Establish a connection to the specified IMAP server.
 		/// </summary>
@@ -1553,72 +1623,7 @@ namespace MailKit.Net.Imap {
 				secure = false;
 			}
 
-			try {
-				ProtocolLogger.LogConnect (uri);
-			} catch {
-				stream.Dispose ();
-				secure = false;
-				throw;
-			}
-
-			connecting = true;
-
-			try {
-				engine.Connect (new ImapStream (stream, ProtocolLogger), cancellationToken);
-			} catch {
-				connecting = false;
-				secure = false;
-				throw;
-			}
-
-			try {
-				// Only query the CAPABILITIES if the greeting didn't include them.
-				if (engine.CapabilitiesVersion == 0)
-					engine.QueryCapabilities (cancellationToken);
-
-				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & ImapCapabilities.StartTLS) == 0)
-					throw new NotSupportedException ("The IMAP server does not support the STARTTLS extension.");
-
-				if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
-					var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
-
-					engine.Run (ic);
-
-					if (ic.Response == ImapCommandResponse.Ok) {
-						try {
-							var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-							engine.Stream.Stream = tls;
-
-							SslHandshake (tls, host, cancellationToken);
-						} catch (Exception ex) {
-							throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "IMAP", host, port, 993, 143);
-						}
-
-						secure = true;
-
-						// Query the CAPABILITIES again if the server did not include an
-						// untagged CAPABILITIES response to the STARTTLS command.
-						if (engine.CapabilitiesVersion == 1)
-							engine.QueryCapabilities (cancellationToken);
-					} else if (options == SecureSocketOptions.StartTls) {
-						throw ImapCommandException.Create ("STARTTLS", ic);
-					}
-				}
-			} catch {
-				secure = false;
-				engine.Disconnect ();
-				throw;
-			} finally {
-				connecting = false;
-			}
-
-			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
-			var authenticated = engine.State == ImapEngineState.Authenticated;
-
-			OnConnected (host, port, options);
-
-			if (authenticated)
-				OnAuthenticated (string.Empty, cancellationToken);
+			PostConnect (stream, host, port, options, starttls, cancellationToken);
 		}
 
 		void CheckCanConnect (Stream stream, string host, int port)
@@ -1800,71 +1805,7 @@ namespace MailKit.Net.Imap {
 				network.ReadTimeout = timeout;
 			}
 
-			try {
-				ProtocolLogger.LogConnect (uri);
-			} catch {
-				network.Dispose ();
-				secure = false;
-				throw;
-			}
-
-			connecting = true;
-
-			try {
-				engine.Connect (new ImapStream (network, ProtocolLogger), cancellationToken);
-			} catch {
-				connecting = false;
-				throw;
-			}
-
-			try {
-				// Only query the CAPABILITIES if the greeting didn't include them.
-				if (engine.CapabilitiesVersion == 0)
-					engine.QueryCapabilities (cancellationToken);
-
-				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & ImapCapabilities.StartTLS) == 0)
-					throw new NotSupportedException ("The IMAP server does not support the STARTTLS extension.");
-
-				if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
-					var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
-
-					engine.Run (ic);
-
-					if (ic.Response == ImapCommandResponse.Ok) {
-						var tls = new SslStream (network, false, ValidateRemoteCertificate);
-						engine.Stream.Stream = tls;
-
-						try {
-							SslHandshake (tls, host, cancellationToken);
-						} catch (Exception ex) {
-							throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "IMAP", host, port, 993, 143);
-						}
-
-						secure = true;
-
-						// Query the CAPABILITIES again if the server did not include an
-						// untagged CAPABILITIES response to the STARTTLS command.
-						if (engine.CapabilitiesVersion == 1)
-							engine.QueryCapabilities (cancellationToken);
-					} else if (options == SecureSocketOptions.StartTls) {
-						throw ImapCommandException.Create ("STARTTLS", ic);
-					}
-				}
-			} catch {
-				secure = false;
-				engine.Disconnect ();
-				throw;
-			} finally {
-				connecting = false;
-			}
-
-			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
-			var authenticated = engine.State == ImapEngineState.Authenticated;
-
-			OnConnected (host, port, options);
-
-			if (authenticated)
-				OnAuthenticated (string.Empty, cancellationToken);
+			PostConnect (network, host, port, options, starttls, cancellationToken);
 		}
 
 		/// <summary>

@@ -1252,6 +1252,71 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		void SslHandshake (SslStream ssl, string host, CancellationToken cancellationToken)
+		{
+#if NET5_0_OR_GREATER
+			ssl.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
+#else
+			ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
+#endif
+		}
+
+		void PostConnect (Stream stream, string host, int port, SecureSocketOptions options, bool starttls, CancellationToken cancellationToken)
+		{
+			try {
+				ProtocolLogger.LogConnect (uri);
+			} catch {
+				stream.Dispose ();
+				secure = false;
+				throw;
+			}
+
+			Stream = new SmtpStream (stream, ProtocolLogger);
+
+			try {
+				// read the greeting
+				var response = Stream.ReadResponse (cancellationToken);
+
+				if (response.StatusCode != SmtpStatusCode.ServiceReady)
+					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+				// Send EHLO and get a list of supported extensions
+				Ehlo (cancellationToken);
+
+				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
+					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
+
+				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
+					response = Stream.SendCommand ("STARTTLS\r\n", cancellationToken);
+					if (response.StatusCode != SmtpStatusCode.ServiceReady)
+						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+					try {
+						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+						Stream.Stream = tls;
+
+						SslHandshake (tls, host, cancellationToken);
+					} catch (Exception ex) {
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "SMTP", host, port, 465, 25, 587);
+					}
+
+					secure = true;
+
+					// Send EHLO again and get the new list of supported extensions
+					Ehlo (cancellationToken);
+				}
+
+				connected = true;
+			} catch {
+				Stream.Dispose ();
+				secure = false;
+				Stream = null;
+				throw;
+			}
+
+			OnConnected (host, port, options);
+		}
+
 		void ValidateArguments (string host, int port)
 		{
 			if (host == null)
@@ -1358,11 +1423,7 @@ namespace MailKit.Net.Smtp {
 				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
-#if NET5_0_OR_GREATER
-					ssl.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
+					SslHandshake (ssl, host, cancellationToken);
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
@@ -1375,58 +1436,7 @@ namespace MailKit.Net.Smtp {
 				secure = false;
 			}
 
-			Stream = new SmtpStream (stream, ProtocolLogger);
-
-			try {
-				SmtpResponse response;
-
-				ProtocolLogger.LogConnect (uri);
-
-				// read the greeting
-				response = Stream.ReadResponse (cancellationToken);
-
-				if (response.StatusCode != SmtpStatusCode.ServiceReady)
-					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
-
-				// Send EHLO and get a list of supported extensions
-				Ehlo (cancellationToken);
-
-				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
-					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
-
-				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
-					response = Stream.SendCommand ("STARTTLS\r\n", cancellationToken);
-					if (response.StatusCode != SmtpStatusCode.ServiceReady)
-						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
-
-					try {
-						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						Stream.Stream = tls;
-
-#if NET5_0_OR_GREATER
-						tls.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
-					} catch (Exception ex) {
-						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "SMTP", host, port, 465, 25, 587);
-					}
-
-					secure = true;
-
-					// Send EHLO again and get the new list of supported extensions
-					Ehlo (cancellationToken);
-				}
-
-				connected = true;
-			} catch {
-				Stream.Dispose ();
-				secure = false;
-				Stream = null;
-				throw;
-			}
-
-			OnConnected (host, port, options);
+			PostConnect (stream, host, port, options, starttls, cancellationToken);
 		}
 
 		void ValidateArguments (Socket socket, string host, int port)
@@ -1587,20 +1597,15 @@ namespace MailKit.Net.Smtp {
 			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
-			SmtpResponse response;
-			Stream network;
-
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
+
+			Stream network;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 				try {
-#if NET5_0_OR_GREATER
-					ssl.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-					ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
+					SslHandshake (ssl, host, cancellationToken);
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
@@ -1619,56 +1624,7 @@ namespace MailKit.Net.Smtp {
 				network.ReadTimeout = timeout;
 			}
 
-			Stream = new SmtpStream (network, ProtocolLogger);
-
-			try {
-				ProtocolLogger.LogConnect (uri);
-
-				// read the greeting
-				response = Stream.ReadResponse (cancellationToken);
-
-				if (response.StatusCode != SmtpStatusCode.ServiceReady)
-					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
-
-				// Send EHLO and get a list of supported extensions
-				Ehlo (cancellationToken);
-
-				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
-					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
-
-				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
-					response = Stream.SendCommand ("STARTTLS\r\n", cancellationToken);
-					if (response.StatusCode != SmtpStatusCode.ServiceReady)
-						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
-
-					var tls = new SslStream (network, false, ValidateRemoteCertificate);
-					Stream.Stream = tls;
-
-					try {
-#if NET5_0_OR_GREATER
-						tls.AuthenticateAsClient (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate));
-#else
-						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-#endif
-					} catch (Exception ex) {
-						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "SMTP", host, port, 465, 25, 587);
-					}
-
-					secure = true;
-
-					// Send EHLO again and get the new list of supported extensions
-					Ehlo (cancellationToken);
-				}
-
-				connected = true;
-			} catch {
-				Stream.Dispose ();
-				secure = false;
-				Stream = null;
-				throw;
-			}
-
-			OnConnected (host, port, options);
+			PostConnect (network, host, port, options, starttls, cancellationToken);
 		}
 
 		/// <summary>
