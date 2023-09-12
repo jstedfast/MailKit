@@ -129,7 +129,8 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task EnableQuickResyncAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueEnableQuickResyncCommand (cancellationToken);
+			if (!TryQueueEnableQuickResyncCommand (cancellationToken, out var ic))
+				return;
 
 			await engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -173,9 +174,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public async Task EnableUTF8Async (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueEnableUTF8Command (cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueEnableUTF8Command (cancellationToken, out var ic))
 				return;
 
 			await engine.RunAsync (ic).ConfigureAwait (false);
@@ -1337,9 +1336,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetMetadataCommand (options, tags, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueGetMetadataCommand (options, tags, cancellationToken, out var ic))
 				return new MetadataCollection ();
 
 			await engine.RunAsync (ic).ConfigureAwait (false);
@@ -1385,9 +1382,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSetMetadataCommand (metadata, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueSetMetadataCommand (metadata, cancellationToken, out var ic))
 				return;
 
 			await engine.RunAsync (ic).ConfigureAwait (false);

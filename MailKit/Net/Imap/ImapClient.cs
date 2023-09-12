@@ -355,7 +355,7 @@ namespace MailKit.Net.Imap {
 			ProcessCompressResponse (ic);
 		}
 
-		ImapCommand QueueEnableQuickResyncCommand (CancellationToken cancellationToken)
+		bool TryQueueEnableQuickResyncCommand (CancellationToken cancellationToken, out ImapCommand ic)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -367,10 +367,14 @@ namespace MailKit.Net.Imap {
 			if ((engine.Capabilities & ImapCapabilities.QuickResync) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
-			if (engine.QResyncEnabled)
-				return null;
+			if (engine.QResyncEnabled) {
+				ic = null;
+				return false;
+			}
 
-			return engine.QueueCommand (cancellationToken, null, "ENABLE QRESYNC CONDSTORE\r\n");
+			ic = engine.QueueCommand (cancellationToken, null, "ENABLE QRESYNC CONDSTORE\r\n");
+
+			return true;
 		}
 
 		static void ProcessEnableResponse (ImapCommand ic)
@@ -424,9 +428,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void EnableQuickResync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueEnableQuickResyncCommand (cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueEnableQuickResyncCommand (cancellationToken, out var ic))
 				return;
 
 			engine.Run (ic);
@@ -434,7 +436,7 @@ namespace MailKit.Net.Imap {
 			ProcessEnableResponse (ic);
 		}
 
-		ImapCommand QueueEnableUTF8Command (CancellationToken cancellationToken)
+		bool TryQueueEnableUTF8Command (CancellationToken cancellationToken, out ImapCommand ic)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -446,10 +448,14 @@ namespace MailKit.Net.Imap {
 			if ((engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UTF8=ACCEPT extension.");
 
-			if (engine.UTF8Enabled)
-				return null;
+			if (engine.UTF8Enabled) {
+				ic = null;
+				return false;
+			}
 
-			return engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
+			ic = engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
+
+			return true;
 		}
 
 		/// <summary>
@@ -488,9 +494,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void EnableUTF8 (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueEnableUTF8Command (cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueEnableUTF8Command (cancellationToken, out var ic))
 				return;
 
 			engine.Run (ic);
@@ -2595,7 +2599,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetMetadataResponse (ic, tag);
 		}
 
-		ImapCommand QueueGetMetadataCommand (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken)
+		bool TryQueueGetMetadataCommand (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken, out ImapCommand ic)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -2644,17 +2648,19 @@ namespace MailKit.Net.Imap {
 
 			command.Append ("\r\n");
 
-			if (args.Count == 0)
-				return null;
+			if (args.Count == 0) {
+				ic = null;
+				return false;
+			}
 
-			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
+			ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
 			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.UntaggedMetadataHandler);
 			ic.UserData = new MetadataCollection ();
 			options.LongEntries = 0;
 
 			engine.QueueCommand (ic);
 
-			return ic;
+			return true;
 		}
 
 		MetadataCollection ProcessGetMetadataResponse (ImapCommand ic, MetadataOptions options)
@@ -2713,9 +2719,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetMetadataCommand (options, tags, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueGetMetadataCommand (options, tags, cancellationToken, out var ic))
 				return new MetadataCollection ();
 
 			engine.Run (ic);
@@ -2723,7 +2727,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetMetadataResponse (ic, options);
 		}
 
-		ImapCommand QueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken)
+		bool TryQueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken, out ImapCommand ic)
 		{
 			if (metadata == null)
 				throw new ArgumentNullException (nameof (metadata));
@@ -2735,8 +2739,10 @@ namespace MailKit.Net.Imap {
 			if ((engine.Capabilities & (ImapCapabilities.Metadata | ImapCapabilities.MetadataServer)) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the METADATA or METADATA-SERVER extension.");
 
-			if (metadata.Count == 0)
-				return null;
+			if (metadata.Count == 0) {
+				ic = null;
+				return false;
+			}
 
 			var command = new StringBuilder ("SETMETADATA \"\" (");
 			var args = new List<object> ();
@@ -2756,11 +2762,11 @@ namespace MailKit.Net.Imap {
 			}
 			command.Append (")\r\n");
 
-			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
+			ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
 
 			engine.QueueCommand (ic);
 
-			return ic;
+			return true;
 		}
 
 		static void ProcessSetMetadataResponse (ImapCommand ic)
@@ -2806,9 +2812,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSetMetadataCommand (metadata, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueSetMetadataCommand (metadata, cancellationToken, out var ic))
 				return;
 
 			engine.Run (ic);
