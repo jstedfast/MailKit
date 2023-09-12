@@ -187,7 +187,7 @@ namespace UnitTests.Net.Imap {
 		public void TestReadToken ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
-				var data = Encoding.ASCII.GetBytes ("* atom (\\flag \"qstring\" NIL) [] \r\n");
+				var data = Encoding.ASCII.GetBytes ("* atom (\\flag \"qstring\" NIL Nil nil) [] \r\n");
 
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;
@@ -219,6 +219,14 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("NIL", token.ToString ());
 
 				token = stream.ReadToken (CancellationToken.None);
+				Assert.AreEqual (ImapTokenType.Nil, token.Type);
+				Assert.AreEqual ("Nil", token.ToString ());
+
+				token = stream.ReadToken (CancellationToken.None);
+				Assert.AreEqual (ImapTokenType.Nil, token.Type);
+				Assert.AreEqual ("nil", token.ToString ());
+
+				token = stream.ReadToken (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.CloseParen, token.Type);
 				Assert.AreEqual ("')'", token.ToString ());
 
@@ -245,7 +253,7 @@ namespace UnitTests.Net.Imap {
 		public async Task TestReadTokenAsync ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
-				var data = Encoding.ASCII.GetBytes ("* atom (\\flag \"qstring\" NIL) [] \r\n");
+				var data = Encoding.ASCII.GetBytes ("* atom (\\flag \"qstring\" NIL Nil nil) [] \r\n");
 
 				stream.Stream.Write (data, 0, data.Length);
 				stream.Stream.Position = 0;
@@ -276,6 +284,14 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (ImapTokenType.Nil, token.Type);
 				Assert.AreEqual ("NIL", token.ToString ());
 
+				token = stream.ReadToken (CancellationToken.None);
+				Assert.AreEqual (ImapTokenType.Nil, token.Type);
+				Assert.AreEqual ("Nil", token.ToString ());
+
+				token = stream.ReadToken (CancellationToken.None);
+				Assert.AreEqual (ImapTokenType.Nil, token.Type);
+				Assert.AreEqual ("nil", token.ToString ());
+
 				token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.CloseParen, token.Type);
 				Assert.AreEqual ("')'", token.ToString ());
@@ -296,6 +312,36 @@ namespace UnitTests.Net.Imap {
 				token = await stream.ReadTokenAsync (CancellationToken.None);
 				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
 				Assert.AreEqual ("'\\n'", token.ToString ());
+			}
+		}
+
+		[Test]
+		public void TestReadContinuationToken ()
+		{
+			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var data = Encoding.ASCII.GetBytes ("+ Please continue...\r\n");
+
+				stream.Stream.Write (data, 0, data.Length);
+				stream.Stream.Position = 0;
+
+				var token = stream.ReadToken (CancellationToken.None);
+				Assert.AreEqual (ImapTokenType.Plus, token.Type);
+				Assert.AreEqual ("'+'", token.ToString ());
+			}
+		}
+
+		[Test]
+		public async Task TestReadContinuationTokenAsync ()
+		{
+			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var data = Encoding.ASCII.GetBytes ("+ Please continue...\r\n");
+
+				stream.Stream.Write (data, 0, data.Length);
+				stream.Stream.Position = 0;
+
+				var token = await stream.ReadTokenAsync (CancellationToken.None);
+				Assert.AreEqual (ImapTokenType.Plus, token.Type);
+				Assert.AreEqual ("'+'", token.ToString ());
 			}
 		}
 
