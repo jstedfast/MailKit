@@ -1913,7 +1913,7 @@ namespace MailKit.Net.Imap
 				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.Eoln) {
-					// Note: Most likely the the message body was calculated to be 1 or 2 bytes too
+					// Note: Most likely the message body was calculated to be 1 or 2 bytes too
 					// short (e.g. did not include the trailing <CRLF>) and that is the EOLN we just
 					// reached. Ignore it and continue as normal.
 					//
@@ -2101,7 +2101,7 @@ namespace MailKit.Net.Imap
 					labels.ModSeq = modseq;
 					flags.ModSeq = modseq;
 					modSeqChanged = true;
-				} else if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
+				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
 					flags.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) flags.Keywords, doAsync, ic.CancellationToken).ConfigureAwait (false);
