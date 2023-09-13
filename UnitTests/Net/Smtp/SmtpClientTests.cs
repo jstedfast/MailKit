@@ -31,6 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
+using System.Net.Security;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Authentication;
@@ -736,6 +737,7 @@ namespace UnitTests.Net.Smtp {
 			Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 			Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
 			Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
+			Assert.IsTrue (client.SslCipherSuite == TlsCipherSuite.TLS_AES_128_GCM_SHA256 || client.SslCipherSuite == TlsCipherSuite.TLS_AES_256_GCM_SHA384, "Unexpected SslCipherSuite: {0}", client.SslCipherSuite);
 			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
 			Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
 			Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
@@ -752,6 +754,7 @@ namespace UnitTests.Net.Smtp {
 			Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
 			Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
 			Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
+			Assert.IsNull (client.SslCipherSuite, "Expected SslCipherSuite to be null after disconnecting");
 			Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
 			Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
 			Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
