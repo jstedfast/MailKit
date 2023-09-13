@@ -574,6 +574,33 @@ namespace UnitTests.Net.Pop3 {
 			}
 		}
 
+		[Test]
+		public void TestProtocolLoggerExceptions ()
+		{
+			var commands = new List<Pop3ReplayCommand> {
+				new Pop3ReplayCommand ("", "comcast.greeting.txt"),
+				new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt")
+			};
+
+			using (var client = new Pop3Client (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogConnect)))
+				Assert.Throws<NotImplementedException> (() => client.Connect (Stream.Null, "pop.gmail.com", 110, SecureSocketOptions.None), "LogConnect");
+
+			using (var client = new Pop3Client (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogConnect)))
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (Stream.Null, "pop.gmail.com", 110, SecureSocketOptions.None), "LogConnect Async");
+
+			using (var client = new Pop3Client (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogServer)))
+				Assert.Throws<NotImplementedException> (() => client.Connect (new Pop3ReplayStream (commands, false), "pop.gmail.com", 110, SecureSocketOptions.None), "LogServer");
+
+			using (var client = new Pop3Client (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogServer)))
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (new Pop3ReplayStream (commands, true), "pop.gmail.com", 110, SecureSocketOptions.None), "LogServer Async");
+
+			using (var client = new Pop3Client (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogClient)))
+				Assert.Throws<NotImplementedException> (() => client.Connect (new Pop3ReplayStream (commands, false), "pop.gmail.com", 110, SecureSocketOptions.None), "LogClient");
+
+			using (var client = new Pop3Client (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogClient)))
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (new Pop3ReplayStream (commands, true), "pop.gmail.com", 110, SecureSocketOptions.None), "LogClient Async");
+		}
+
 		void AssertGMailIsConnected (IMailService client)
 		{
 			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");

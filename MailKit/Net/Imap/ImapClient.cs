@@ -122,6 +122,12 @@ namespace MailKit.Net.Imap {
 			engine.Alert += OnEngineAlert;
 		}
 
+		// Note: This is only needed for UnitTests.
+		internal char TagPrefix {
+			get { return engine.TagPrefix; }
+			set { engine.TagPrefix = value; }
+		}
+
 		/// <summary>
 		/// Gets an object that can be used to synchronize access to the IMAP server.
 		/// </summary>

@@ -176,6 +176,8 @@ namespace MailKit.Net.Imap {
 			Capabilities = ImapCapabilities.None;
 			QuirksMode = ImapQuirksMode.None;
 			queue = new List<ImapCommand> ();
+
+			TagPrefix = (char) ('A' + (TagPrefixIndex++ % 26));
 		}
 
 		/// <summary>
@@ -603,7 +605,6 @@ namespace MailKit.Net.Imap {
 
 		void Initialize (ImapStream stream)
 		{
-			TagPrefix = (char) ('A' + (TagPrefixIndex++ % 26));
 			ProtocolVersion = ImapProtocolVersion.Unknown;
 			Capabilities = ImapCapabilities.None;
 			AuthenticationMechanisms.Clear ();
@@ -1265,16 +1266,6 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} while (token.Type != ImapTokenType.Eoln);
-		}
-
-		Task SkipLineAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return SkipLineAsync (cancellationToken);
-
-			SkipLine (cancellationToken);
-
-			return Task.CompletedTask;
 		}
 
 		static bool TryParseUInt32 (string text, int startIndex, out uint value)

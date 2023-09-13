@@ -119,6 +119,7 @@
     <Compile Include="DuplexStreamTests.cs" />
     <Compile Include="EnvelopeTests.cs" />
     <Compile Include="EventArgsTests.cs" />
+    <Compile Include="ExceptionalProtocolLogger.cs" />
     <Compile Include="ExceptionTests.cs" />
     <Compile Include="FolderNamespaceTests.cs" />
     <Compile Include="HeaderSetTests.cs" />

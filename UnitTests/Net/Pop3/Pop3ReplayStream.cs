@@ -66,7 +66,7 @@ namespace UnitTests.Net.Pop3 {
 		bool isAsync;
 		int index;
 
-		public Pop3ReplayStream (IList<Pop3ReplayCommand> commands, bool asyncIO, bool testUnixFormat)
+		public Pop3ReplayStream (IList<Pop3ReplayCommand> commands, bool asyncIO, bool testUnixFormat = false)
 		{
 			stream = GetResourceStream (commands[0].Resource);
 			state = Pop3ReplayState.SendResponse;

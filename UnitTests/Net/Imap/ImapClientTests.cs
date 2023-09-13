@@ -422,6 +422,33 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		[Test]
+		public void TestProtocolLoggerExceptions ()
+		{
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+			};
+
+			using (var client = new ImapClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogConnect)) { TagPrefix = 'A' })
+				Assert.Throws<NotImplementedException> (() => client.Connect (Stream.Null, "imap.gmail.com", 143, SecureSocketOptions.None), "LogConnect");
+
+			using (var client = new ImapClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogConnect)) { TagPrefix = 'A' })
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (Stream.Null, "imap.gmail.com", 143, SecureSocketOptions.None), "LogConnect Async");
+
+			using (var client = new ImapClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogServer)) { TagPrefix = 'A' })
+				Assert.Throws<NotImplementedException> (() => client.Connect (new ImapReplayStream (commands, false), "imap.gmail.com", 143, SecureSocketOptions.None), "LogServer");
+
+			using (var client = new ImapClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogServer)) { TagPrefix = 'A' })
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (new ImapReplayStream (commands, true), "imap.gmail.com", 143, SecureSocketOptions.None), "LogServer Async");
+
+			using (var client = new ImapClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogClient)) { TagPrefix = 'A' })
+				Assert.Throws<NotImplementedException> (() => client.Connect (new ImapReplayStream (commands, false), "imap.gmail.com", 143, SecureSocketOptions.None), "LogClient");
+
+			using (var client = new ImapClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogClient)) { TagPrefix = 'A' })
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (new ImapReplayStream (commands, true), "imap.gmail.com", 143, SecureSocketOptions.None), "LogClient Async");
+		}
+
 		static void AssertGMailIsConnected (IMailService client)
 		{
 			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");

@@ -704,6 +704,33 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		[Test]
+		public void TestProtocolLoggerExceptions ()
+		{
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+			};
+
+			using (var client = new SmtpClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogConnect)))
+				Assert.Throws<NotImplementedException> (() => client.Connect (Stream.Null, "smtp.gmail.com", 587, SecureSocketOptions.None), "LogConnect");
+
+			using (var client = new SmtpClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogConnect)))
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (Stream.Null, "smtp.gmail.com", 587, SecureSocketOptions.None), "LogConnect Async");
+
+			using (var client = new SmtpClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogServer)) { LocalDomain = "unit-tests.mimekit.org" })
+				Assert.Throws<NotImplementedException> (() => client.Connect (new SmtpReplayStream (commands, false), "smtp.gmail.com", 587, SecureSocketOptions.None), "LogServer");
+
+			using (var client = new SmtpClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogServer)) { LocalDomain = "unit-tests.mimekit.org" })
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (new SmtpReplayStream (commands, true), "smtp.gmail.com", 587, SecureSocketOptions.None), "LogServer Async");
+
+			using (var client = new SmtpClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogClient)) { LocalDomain = "unit-tests.mimekit.org" })
+				Assert.Throws<NotImplementedException> (() => client.Connect (new SmtpReplayStream (commands, false), "smtp.gmail.com", 587, SecureSocketOptions.None), "LogClient");
+
+			using (var client = new SmtpClient (new ExceptionalProtocolLogger (ExceptionalProtocolLoggerMode.ThrowOnLogClient)) { LocalDomain = "unit-tests.mimekit.org" })
+				Assert.ThrowsAsync<NotImplementedException> (() => client.ConnectAsync (new SmtpReplayStream (commands, true), "smtp.gmail.com", 587, SecureSocketOptions.None), "LogClient Async");
+		}
+
 		static void AssertGMailIsConnected (IMailService client)
 		{
 			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
