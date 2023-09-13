@@ -96,12 +96,6 @@ namespace UnitTests.Net.Pop3 {
 			using (var client = new Pop3Client ()) {
 				var credentials = new NetworkCredential ("username", "password");
 
-				// ReplayConnect
-				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect (null, Stream.Null));
-				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect ("host", null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.ReplayConnectAsync (null, Stream.Null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.ReplayConnectAsync ("host", null));
-
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.ConnectAsync ((Uri) null));
@@ -359,7 +353,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ServiceNotConnectedException> (() => client.DeleteMessages (new int [] { 0 }));
 
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -488,7 +482,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.ThrowsAsync<ServiceNotConnectedException> (async () => await client.DeleteMessagesAsync (new int[] { 0 }));
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1106,7 +1100,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1139,7 +1133,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1170,7 +1164,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					Assert.Fail ("Expected Connect to fail.");
 				} catch (Pop3ProtocolException) {
 					Assert.Pass ();
@@ -1188,7 +1182,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					Assert.Fail ("Expected Connect to fail.");
 				} catch (Pop3ProtocolException) {
 					Assert.Pass ();
@@ -1216,7 +1210,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1305,7 +1299,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1394,7 +1388,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, true));
+					client.Connect (new Pop3ReplayStream (commands, false, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1480,7 +1474,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, true));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1564,7 +1558,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1616,7 +1610,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1667,7 +1661,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1718,7 +1712,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1766,7 +1760,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client ()) {
 					try {
-						client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1814,7 +1808,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client ()) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1864,7 +1858,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client ()) {
 					try {
-						client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1920,7 +1914,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client ()) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1973,7 +1967,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client ()) {
 					try {
-						client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -2016,7 +2010,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client ()) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -2065,7 +2059,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2128,7 +2122,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2191,7 +2185,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2254,7 +2248,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2317,7 +2311,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2380,7 +2374,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2442,7 +2436,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2498,7 +2492,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2554,7 +2548,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2610,7 +2604,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2665,7 +2659,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2723,7 +2717,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2825,7 +2819,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
 					try {
-						client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -2883,7 +2877,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -2942,7 +2936,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
 					try {
-						client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -3005,7 +2999,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -3067,7 +3061,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
 					try {
-						client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -3123,7 +3117,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -3180,7 +3174,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
 					try {
-						client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -3242,7 +3236,7 @@ namespace UnitTests.Net.Pop3 {
 			using (var stream = new MemoryStream ()) {
 				using (var client = new Pop3Client (new ProtocolLogger (stream, true) { RedactSecrets = true })) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -3305,7 +3299,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3382,7 +3376,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3486,7 +3480,7 @@ namespace UnitTests.Net.Pop3 {
 		{
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3732,7 +3726,7 @@ namespace UnitTests.Net.Pop3 {
 		{
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -4064,7 +4058,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -4123,7 +4117,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -4196,7 +4190,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -4267,7 +4261,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -4322,7 +4316,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false, false));
+					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -4389,7 +4383,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new Pop3ReplayStream (commands, true, false));
+					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}

@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using MailKit;
+using MailKit.Security;
 using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {
@@ -50,11 +51,11 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt")
 			};
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -219,7 +220,7 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentNullException> (() => inbox.StoreAsync (new int[] { 0 }, (StoreFlagsRequest) null));
 
 				var labels = new string [] { "Label1", "Label2" };
-				var emptyLabels = new string[0];
+				var emptyLabels = Array.Empty<string> ();
 
 				// AddLabels
 				Assert.Throws<ArgumentException> (() => inbox.AddLabels (-1, labels, true));
@@ -347,11 +348,11 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000004 SELECT INBOX\r\n", "common.select-inbox-no-modseq.txt")
 			};
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -445,11 +446,11 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt")
 			};
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -469,8 +470,8 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadWrite);
 
 				ulong modseq = 409601020304;
-				var uids = new UniqueId[0];
-				var indexes = new int[0];
+				var uids = Array.Empty<UniqueId> ();
+				var indexes = Array.Empty<int> ();
 				IList<UniqueId> unmodifiedUids;
 				IList<int> unmodifiedIndexes;
 

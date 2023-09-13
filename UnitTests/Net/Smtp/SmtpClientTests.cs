@@ -129,14 +129,8 @@ namespace UnitTests.Net.Smtp {
 				var message = CreateSimpleMessage ();
 				var sender = message.From.Mailboxes.FirstOrDefault ();
 				var recipients = message.To.Mailboxes.ToList ();
+				var empty = Array.Empty<MailboxAddress> ();
 				var options = FormatOptions.Default;
-				var empty = new MailboxAddress[0];
-
-				// ReplayConnect
-				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect (null, Stream.Null));
-				Assert.Throws<ArgumentNullException> (() => client.ReplayConnect ("host", null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.ReplayConnectAsync (null, Stream.Null));
-				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.ReplayConnectAsync ("host", null));
 
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
@@ -414,7 +408,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "127.0.0.1";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -436,7 +430,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "::1";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -458,7 +452,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "::FFFF:129.144.52.38";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -483,7 +477,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 					try {
-						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -509,7 +503,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -574,7 +568,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ServiceNotConnectedException> (() => client.Verify ("user@example.com"));
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -632,7 +626,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.ThrowsAsync<ServiceNotConnectedException> (async () => await client.VerifyAsync ("user@example.com"));
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -667,12 +661,13 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestServiceNotReady ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "greeting-not-ready.txt"));
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "greeting-not-ready.txt")
+			};
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					Assert.Fail ("Connect is expected to fail.");
 				} catch (SmtpCommandException ex) {
 					Assert.AreEqual (SmtpErrorCode.UnexpectedStatusCode, ex.ErrorCode, "ErrorCode");
@@ -687,12 +682,13 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestServiceNotReadyAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "greeting-not-ready.txt"));
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "greeting-not-ready.txt")
+			};
 
 			using (var client = new SmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					Assert.Fail ("Connect is expected to fail.");
 				} catch (SmtpCommandException ex) {
 					Assert.AreEqual (SmtpErrorCode.UnexpectedStatusCode, ex.ErrorCode, "ErrorCode");
@@ -1229,17 +1225,18 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestSaslInitialResponse ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1270,17 +1267,18 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public async Task TestSaslInitialResponseAsync ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
 
 			using (var client = new SmtpClient ()) {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1331,7 +1329,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1380,7 +1378,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1479,7 +1477,7 @@ namespace UnitTests.Net.Smtp {
 					client.LocalDomain = "unit-tests.mimekit.org";
 
 					try {
-						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1522,7 +1520,7 @@ namespace UnitTests.Net.Smtp {
 					client.LocalDomain = "unit-tests.mimekit.org";
 
 					try {
-						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1575,7 +1573,7 @@ namespace UnitTests.Net.Smtp {
 					client.LocalDomain = "unit-tests.mimekit.org";
 
 					try {
-						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1616,7 +1614,7 @@ namespace UnitTests.Net.Smtp {
 					client.LocalDomain = "unit-tests.mimekit.org";
 
 					try {
-						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1669,7 +1667,7 @@ namespace UnitTests.Net.Smtp {
 					client.LocalDomain = "unit-tests.mimekit.org";
 
 					try {
-						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1710,7 +1708,7 @@ namespace UnitTests.Net.Smtp {
 					client.LocalDomain = "unit-tests.mimekit.org";
 
 					try {
-						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -1755,7 +1753,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false, mode));
+					client.Connect (new SmtpReplayStream (commands, false, mode), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1805,7 +1803,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "::1";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1833,7 +1831,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "::1";
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1892,7 +1890,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2029,7 +2027,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2178,7 +2176,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2232,7 +2230,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2298,7 +2296,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("elwood.innosoft.com", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "elwood.innosoft.com", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2360,7 +2358,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					await client.ReplayConnectAsync ("elwood.innosoft.com", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "elwood.innosoft.com", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2434,7 +2432,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2481,7 +2479,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2549,7 +2547,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2607,7 +2605,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2706,7 +2704,7 @@ namespace UnitTests.Net.Smtp {
 
 				using (var client = new SmtpClient ()) {
 					try {
-						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -2792,7 +2790,7 @@ namespace UnitTests.Net.Smtp {
 
 				using (var client = new SmtpClient ()) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -2864,7 +2862,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2922,7 +2920,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -2991,7 +2989,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3043,7 +3041,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3108,7 +3106,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3160,7 +3158,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3242,7 +3240,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3298,7 +3296,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3366,7 +3364,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3422,7 +3420,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3489,7 +3487,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3535,7 +3533,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3629,7 +3627,7 @@ namespace UnitTests.Net.Smtp {
 
 				using (var client = new DsnSmtpClient ()) {
 					try {
-						client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -3687,7 +3685,7 @@ namespace UnitTests.Net.Smtp {
 
 				using (var client = new DsnSmtpClient ()) {
 					try {
-						await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
 						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 					}
@@ -3756,7 +3754,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new DsnSmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3817,7 +3815,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new DsnSmtpClient ()) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3905,7 +3903,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ServiceNotConnectedException> (() => client.SendCommand ("COMMAND"));
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -3968,7 +3966,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.ThrowsAsync<ServiceNotConnectedException> (async () => await client.SendCommandAsync ("COMMAND"));
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}

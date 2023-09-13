@@ -1172,43 +1172,6 @@ namespace MailKit.Net.Smtp {
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
 
-		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default)
-		{
-			CheckDisposed ();
-
-			if (host == null)
-				throw new ArgumentNullException (nameof (host));
-
-			if (replayStream == null)
-				throw new ArgumentNullException (nameof (replayStream));
-
-			Stream = new SmtpStream (replayStream, ProtocolLogger);
-			capabilities = SmtpCapabilities.None;
-			AuthenticationMechanisms.Clear ();
-			uri = new Uri ($"smtp://{host}:25");
-			secure = false;
-			MaxSize = 0;
-
-			try {
-				// read the greeting
-				var response = Stream.ReadResponse (cancellationToken);
-
-				if (response.StatusCode != SmtpStatusCode.ServiceReady)
-					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
-
-				// Send EHLO and get a list of supported extensions
-				Ehlo (cancellationToken);
-
-				connected = true;
-			} catch {
-				Stream.Dispose ();
-				Stream = null;
-				throw;
-			}
-
-			OnConnected (host, 25, SecureSocketOptions.None);
-		}
-
 		internal static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
 		{
 			switch (options) {

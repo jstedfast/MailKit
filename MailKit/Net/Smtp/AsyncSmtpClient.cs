@@ -396,43 +396,6 @@ namespace MailKit.Net.Smtp
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
 
-		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default)
-		{
-			CheckDisposed ();
-
-			if (host == null)
-				throw new ArgumentNullException (nameof (host));
-
-			if (replayStream == null)
-				throw new ArgumentNullException (nameof (replayStream));
-
-			Stream = new SmtpStream (replayStream, ProtocolLogger);
-			capabilities = SmtpCapabilities.None;
-			AuthenticationMechanisms.Clear ();
-			uri = new Uri ($"smtp://{host}:25");
-			secure = false;
-			MaxSize = 0;
-
-			try {
-				// read the greeting
-				var response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
-
-				if (response.StatusCode != SmtpStatusCode.ServiceReady)
-					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
-
-				// Send EHLO and get a list of supported extensions
-				await EhloAsync (cancellationToken).ConfigureAwait (false);
-
-				connected = true;
-			} catch {
-				Stream.Dispose ();
-				Stream = null;
-				throw;
-			}
-
-			OnConnected (host, 25, SecureSocketOptions.None);
-		}
-
 		async Task SslHandshakeAsync (SslStream ssl, string host, CancellationToken cancellationToken)
 		{
 #if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER

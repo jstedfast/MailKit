@@ -37,6 +37,7 @@ using MimeKit;
 
 using MailKit;
 using MailKit.Search;
+using MailKit.Security;
 using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {
@@ -62,11 +63,11 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate.txt")
 			};
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -140,11 +141,11 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000005 SELECT INBOX (ANNOTATE)\r\n", "common.select-inbox-annotate-no-modseq.txt")
 			};
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -215,11 +216,11 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate.txt")
 			};
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -337,9 +338,9 @@ namespace UnitTests.Net.Imap {
 
 			var commands = CreateAppendWithAnnotationsCommands (withInternalDates, out var messages, out var flags, out var internalDates, out var annotations);
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -379,9 +380,9 @@ namespace UnitTests.Net.Imap {
 
 			var commands = CreateAppendWithAnnotationsCommands (withInternalDates, out var messages, out var flags, out var internalDates, out var annotations);
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -514,9 +515,9 @@ namespace UnitTests.Net.Imap {
 
 			var commands = CreateMultiAppendWithAnnotationsCommands (withInternalDates, out requests);
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -563,9 +564,9 @@ namespace UnitTests.Net.Imap {
 
 			var commands = CreateMultiAppendWithAnnotationsCommands (withInternalDates, out requests);
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -663,9 +664,9 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateReplaceWithAnnotationsCommands (false, out var requests);
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -698,9 +699,9 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateReplaceWithAnnotationsCommands (false, out var requests);
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -733,9 +734,9 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateReplaceWithAnnotationsCommands (true, out var requests);
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -768,9 +769,9 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateReplaceWithAnnotationsCommands (true, out var requests);
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
-					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -815,11 +816,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateSelectAnnotateNoneCommands ();
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -851,11 +852,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateSelectAnnotateNoneCommands ();
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -902,11 +903,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateSearchAnnotationsCommands ();
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -948,11 +949,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateSearchAnnotationsCommands ();
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1008,11 +1009,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateSortAnnotationsCommands ();
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1059,11 +1060,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateSortAnnotationsCommands ();
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1130,11 +1131,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateStoreCommands ();
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1190,11 +1191,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var commands = CreateStoreCommands ();
 
-			using (var client = new ImapClient ()) {
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
 				try {
-					await client.ReplayConnectAsync ("localhost", new ImapReplayStream (commands, true));
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}

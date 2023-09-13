@@ -995,46 +995,6 @@ namespace MailKit.Net.Pop3 {
 			OnAuthenticated (message, cancellationToken);
 		}
 
-		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default)
-		{
-			if (host == null)
-				throw new ArgumentNullException (nameof (host));
-
-			if (replayStream == null)
-				throw new ArgumentNullException (nameof (replayStream));
-
-			CheckDisposed ();
-
-			probed = ProbedCapabilities.None;
-			secure = false;
-
-			engine.Uri = new Uri ($"pop://{host}:110");
-			engine.Connect (new Pop3Stream (replayStream, ProtocolLogger), cancellationToken);
-			engine.QueryCapabilities (cancellationToken);
-			engine.Disconnected += OnEngineDisconnected;
-			OnConnected (host, 110, SecureSocketOptions.None);
-		}
-
-		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default)
-		{
-			if (host == null)
-				throw new ArgumentNullException (nameof (host));
-
-			if (replayStream == null)
-				throw new ArgumentNullException (nameof (replayStream));
-
-			CheckDisposed ();
-
-			probed = ProbedCapabilities.None;
-			secure = false;
-
-			engine.Uri = new Uri ($"pop://{host}:110");
-			await engine.ConnectAsync (new Pop3Stream (replayStream, ProtocolLogger), cancellationToken).ConfigureAwait (false);
-			await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
-			engine.Disconnected += OnEngineDisconnected;
-			OnConnected (host, 110, SecureSocketOptions.None);
-		}
-
 		internal static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
 		{
 			switch (options) {

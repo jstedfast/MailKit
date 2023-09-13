@@ -124,7 +124,6 @@ namespace MailKit.Net.Imap {
 
 		// Note: This is only needed for UnitTests.
 		internal char TagPrefix {
-			get { return engine.TagPrefix; }
 			set { engine.TagPrefix = value; }
 		}
 
@@ -1344,60 +1343,6 @@ namespace MailKit.Net.Imap {
 				engine.QueryCapabilities (cancellationToken);
 
 			OnAuthenticated (ic.ResponseText ?? string.Empty, cancellationToken);
-		}
-
-		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default)
-		{
-			CheckDisposed ();
-
-			if (host == null)
-				throw new ArgumentNullException (nameof (host));
-
-			if (replayStream == null)
-				throw new ArgumentNullException (nameof (replayStream));
-
-			engine.Uri = new Uri ($"imap://{host}:143");
-			engine.Connect (new ImapStream (replayStream, ProtocolLogger), cancellationToken);
-			engine.TagPrefix = 'A';
-			secure = false;
-
-			if (engine.CapabilitiesVersion == 0)
-				engine.QueryCapabilities (cancellationToken);
-
-			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
-			var authenticated = engine.State == ImapEngineState.Authenticated;
-
-			OnConnected (host, 143, SecureSocketOptions.None);
-
-			if (authenticated)
-				OnAuthenticated (string.Empty, cancellationToken);
-		}
-
-		internal async Task ReplayConnectAsync (string host, Stream replayStream, CancellationToken cancellationToken = default)
-		{
-			CheckDisposed ();
-
-			if (host == null)
-				throw new ArgumentNullException (nameof (host));
-
-			if (replayStream == null)
-				throw new ArgumentNullException (nameof (replayStream));
-
-			engine.Uri = new Uri ($"imap://{host}:143");
-			await engine.ConnectAsync (new ImapStream (replayStream, ProtocolLogger), cancellationToken).ConfigureAwait (false);
-			engine.TagPrefix = 'A';
-			secure = false;
-
-			if (engine.CapabilitiesVersion == 0)
-				await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
-
-			// Note: we capture the state here in case someone calls Authenticate() from within the Connected event handler.
-			var authenticated = engine.State == ImapEngineState.Authenticated;
-
-			OnConnected (host, 143, SecureSocketOptions.None);
-
-			if (authenticated)
-				await OnAuthenticatedAsync (string.Empty, cancellationToken).ConfigureAwait (false);
 		}
 
 		internal static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
