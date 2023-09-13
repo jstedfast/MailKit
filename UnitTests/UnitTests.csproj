@@ -146,6 +146,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\acl\getacl.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\listrights.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\myrights.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\common\basic-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\fetch-annotations.txt" />

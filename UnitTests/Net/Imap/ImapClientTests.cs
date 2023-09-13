@@ -332,7 +332,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestSslHandshakeExceptions ()
 		{
-			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+			using (var client = new ImapClient ()) {
 				Socket socket;
 
 				// 1. Test connecting to a non-SSL port fails with an SslHandshakeException.
@@ -376,7 +376,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestSslHandshakeExceptionsAsync ()
 		{
-			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+			using (var client = new ImapClient ()) {
 				Socket socket;
 
 				// 1. Test connecting to a non-SSL port fails with an SslHandshakeException.
@@ -415,6 +415,21 @@ namespace UnitTests.Net.Imap {
 					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
 				}
 			}
+		}
+
+		[Test]
+		public void TestStartTlsNotSupported ()
+		{
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "common.basic-greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "common.capability.txt"),
+			};
+
+			using (var client = new ImapClient () { TagPrefix = 'A' })
+				Assert.Throws<NotSupportedException> (() => client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.StartTls), "STARTTLS");
+
+			using (var client = new ImapClient () { TagPrefix = 'A' })
+				Assert.ThrowsAsync<NotSupportedException> (() => client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.StartTls), "STARTTLS Async");
 		}
 
 		[Test]

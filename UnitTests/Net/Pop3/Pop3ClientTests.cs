@@ -572,6 +572,21 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
+		public void TestStartTlsNotSupported ()
+		{
+			var commands = new List<Pop3ReplayCommand> {
+				new Pop3ReplayCommand ("", "comcast.greeting.txt"),
+				new Pop3ReplayCommand ("CAPA\r\n", "comcast.err.txt")
+			};
+
+			using (var client = new Pop3Client ())
+				Assert.Throws<NotSupportedException> (() => client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.StartTls), "STLS");
+
+			using (var client = new Pop3Client ())
+				Assert.ThrowsAsync<NotSupportedException> (() => client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.StartTls), "STLS Async");
+		}
+
+		[Test]
 		public void TestProtocolLoggerExceptions ()
 		{
 			var commands = new List<Pop3ReplayCommand> {
@@ -1671,6 +1686,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.Throws<NotSupportedException> (() => client.GetMessageUids ());
+				Assert.Throws<NotSupportedException> (() => client.GetMessageUid (0));
 
 				try {
 					client.Disconnect (true);
@@ -1723,6 +1739,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<NotSupportedException> (() => client.GetMessageUidsAsync ());
+				Assert.ThrowsAsync<NotSupportedException> (() => client.GetMessageUidAsync (0));
 
 				try {
 					await client.DisconnectAsync (true);

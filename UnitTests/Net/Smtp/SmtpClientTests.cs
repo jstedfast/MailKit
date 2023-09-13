@@ -660,6 +660,22 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
+		public void TestStartTlsNotSupported ()
+		{
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "ehlo-failed.txt"),
+				new SmtpReplayCommand ("HELO unit-tests.mimekit.org\r\n", "helo.txt"),
+			};
+
+			using (var client = new SmtpClient () { LocalDomain = "unit-tests.mimekit.org" })
+				Assert.Throws<NotSupportedException> (() => client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.StartTls), "STARTTLS");
+
+			using (var client = new SmtpClient () { LocalDomain = "unit-tests.mimekit.org" })
+				Assert.ThrowsAsync<NotSupportedException> (() => client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.StartTls), "STARTTLS Async");
+		}
+
+		[Test]
 		public void TestServiceNotReady ()
 		{
 			var commands = new List<SmtpReplayCommand> {
