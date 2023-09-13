@@ -2046,6 +2046,82 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static IList<ImapReplayCommand> CreateSuperfluousUntaggedOkNoOrBadCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 UID MOVE 1 \"[Gmail]/Trash\"\r\n", Encoding.ASCII.GetBytes ("* OK The good,\r\n* BAD the bad,\r\n* NO and the ugly.\r\n* OK [COPYUID 123456 1 2]\r\n* 1 EXPUNGE\r\nA00000006 OK Completed.\r\n"))
+			};
+		}
+
+		[Test]
+		public void TesSuperfluousUntaggedOkNoOrBad ()
+		{
+			var commands = CreateSuperfluousUntaggedOkNoOrBadCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var trash = client.GetFolder (SpecialFolder.Trash);
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadWrite);
+				var moved = inbox.MoveTo (UniqueId.MinValue, trash);
+				Assert.AreEqual (2, moved.Value.Id);
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestSuperfluousUntaggedOkNoOrBadAsync ()
+		{
+			var commands = CreateSuperfluousUntaggedOkNoOrBadCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var trash = client.GetFolder (SpecialFolder.Trash);
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+				var moved = await inbox.MoveToAsync (UniqueId.MinValue, trash);
+				Assert.AreEqual (2, moved.Value.Id);
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateLoginCommands ()
 		{
 			return new List<ImapReplayCommand> {
