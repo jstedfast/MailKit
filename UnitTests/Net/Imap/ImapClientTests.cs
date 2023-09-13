@@ -1824,6 +1824,71 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateInvalidUntaggedResponseCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"Buggy Folder Listing\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.ASCII.GetBytes ("* {25}\r\nThis should be skipped...\r\n* LIST (\\NoSelect) \"/\" \"Buggy Folder Listing\"\r\nA00000005 OK LIST completed.\r\n")),
+			};
+		}
+
+		[Test]
+		public void TestInvalidUntaggedResponse ()
+		{
+			var commands = CreateInvalidUntaggedResponseCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var folder = client.GetFolder ("Buggy Folder Listing");
+				Assert.AreEqual ("Buggy Folder Listing", folder.Name, "Name");
+				Assert.AreEqual (FolderAttributes.NoSelect, folder.Attributes, "Attributes");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestInvalidUntaggedResponseAsync ()
+		{
+			var commands = CreateInvalidUntaggedResponseCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var folder = await client.GetFolderAsync ("Buggy Folder Listing");
+				Assert.AreEqual ("Buggy Folder Listing", folder.Name, "Name");
+				Assert.AreEqual (FolderAttributes.NoSelect, folder.Attributes, "Attributes");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateInvalidUntaggedBadResponseCommands (out string alertText)
 		{
 			alertText = "Please enable IMAP access in your account settings first.";
@@ -1900,6 +1965,82 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.AreEqual (5, alerts, "Unexpected number of alerts: {0}", alerts);
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateUntaggedRespCodeCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 UID MOVE 1 \"[Gmail]/Trash\"\r\n", Encoding.ASCII.GetBytes ("* [COPYUID 123456 1 2]\r\n* 1 EXPUNGE\r\nA00000006 OK Completed.\r\n"))
+			};
+		}
+
+		[Test]
+		public void TestUntaggedRespCode ()
+		{
+			var commands = CreateUntaggedRespCodeCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var trash = client.GetFolder (SpecialFolder.Trash);
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadWrite);
+				var moved = inbox.MoveTo (UniqueId.MinValue, trash);
+				Assert.AreEqual (2, moved.Value.Id);
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestUntaggedRespCodeAsync ()
+		{
+			var commands = CreateUntaggedRespCodeCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				var trash = client.GetFolder (SpecialFolder.Trash);
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+				var moved = await inbox.MoveToAsync (UniqueId.MinValue, trash);
+				Assert.AreEqual (2, moved.Value.Id);
 
 				await client.DisconnectAsync (false);
 			}
