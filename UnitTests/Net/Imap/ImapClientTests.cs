@@ -958,6 +958,20 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestUnexpectedGreeting ()
+		{
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* INVALID\r\n"))
+			};
+
+			using (var client = new ImapClient () { TagPrefix = 'A' })
+				Assert.Throws<ImapProtocolException> (() => client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None), "Connect");
+
+			using (var client = new ImapClient () { TagPrefix = 'A' })
+				Assert.ThrowsAsync<ImapProtocolException> (() => client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None), "ConnectAsync");
+		}
+
+		[Test]
 		public void TestGreetingCapabilities ()
 		{
 			var commands = new List<ImapReplayCommand> {

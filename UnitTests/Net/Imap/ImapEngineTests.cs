@@ -29,6 +29,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Globalization;
 
 using NUnit.Framework;
 
@@ -39,6 +40,113 @@ namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapEngineTests
 	{
+		[TestCase ('*', (int) ImapTokenType.Asterisk, (int) ImapTokenType.Atom)]
+		[TestCase ("ATOM", (int) ImapTokenType.Atom, (int) ImapTokenType.Asterisk)]
+		[TestCase ("\\Flagged", (int) ImapTokenType.Flag, (int) ImapTokenType.QString)]
+		[TestCase ("QSTRING", (int) ImapTokenType.QString, (int) ImapTokenType.Atom)]
+		[TestCase (123456, (int) ImapTokenType.Literal, (int) ImapTokenType.Atom)]
+		[TestCase ("NIL", (int) ImapTokenType.Nil, (int) ImapTokenType.QString)]
+
+		public void TestAssertToken (object value, int actual, int expected)
+		{
+			using (var builder = new ByteArrayBuilder (64)) {
+				ImapToken token;
+
+				if (value is string str) {
+					foreach (var c in str)
+						builder.Append ((byte) c);
+
+					token = ImapToken.Create ((ImapTokenType) actual, builder);
+				} else if (value is char c) {
+					token = ImapToken.Create ((ImapTokenType) actual, c);
+				} else if (value is int literal) {
+					token = ImapToken.Create ((ImapTokenType) actual, literal);
+				} else {
+					return;
+				}
+
+				Assert.Throws<ImapProtocolException> (() => ImapEngine.AssertToken (token, (ImapTokenType) expected, "Unexpected token: {0}", token));
+			}
+		}
+
+		[Test]
+		public void TestParseNumber ()
+		{
+			using (var builder = new ByteArrayBuilder (64)) {
+				ImapToken token;
+				uint value;
+
+				builder.Append ((byte) '0');
+
+				token = ImapToken.Create (ImapTokenType.Atom, builder);
+				value = ImapEngine.ParseNumber (token, false, "Unexpected number: {0}", token);
+				Assert.AreEqual (0, value, "number");
+
+				Assert.Throws<ImapProtocolException> (() => ImapEngine.ParseNumber (token, true, "Unexpected number: {0}", token), "nz-number");
+
+				builder.Clear ();
+				var max = uint.MaxValue.ToString (CultureInfo.InvariantCulture);
+				for (int i = 0; i < max.Length; i++)
+					builder.Append ((byte) max[i]);
+
+				token = ImapToken.Create (ImapTokenType.Atom, builder);
+				value = ImapEngine.ParseNumber (token, false, "Unexpected number: {0}", token);
+				Assert.AreEqual (uint.MaxValue, value, "max number");
+			}
+		}
+
+		[Test]
+		public void TestParseNumber64 ()
+		{
+			using (var builder = new ByteArrayBuilder (64)) {
+				ImapToken token;
+				ulong value;
+
+				builder.Append ((byte) '0');
+
+				token = ImapToken.Create (ImapTokenType.Atom, builder);
+				value = ImapEngine.ParseNumber64 (token, false, "Unexpected number: {0}", token);
+				Assert.AreEqual (0, value, "number64");
+
+				Assert.Throws<ImapProtocolException> (() => ImapEngine.ParseNumber64 (token, true, "Unexpected number: {0}", token), "nz-number64");
+
+				builder.Clear ();
+				var max = ulong.MaxValue.ToString (CultureInfo.InvariantCulture);
+				for (int i = 0; i < max.Length; i++)
+					builder.Append ((byte) max[i]);
+
+				token = ImapToken.Create (ImapTokenType.Atom, builder);
+				value = ImapEngine.ParseNumber64 (token, false, "Unexpected number: {0}", token);
+				Assert.AreEqual (ulong.MaxValue, value, "max number64");
+			}
+		}
+
+		[Test]
+		public void TestParseUidSet ()
+		{
+			using (var builder = new ByteArrayBuilder (64)) {
+				UniqueId? min, max;
+				UniqueIdSet uids;
+				ImapToken token;
+
+				builder.Append ((byte) '0');
+
+				token = ImapToken.Create (ImapTokenType.Atom, builder);
+				Assert.Throws<ImapProtocolException> (() => ImapEngine.ParseUidSet (token, 0, out min, out max, "Unexpected uid-set: {0}", token), "0");
+
+				builder.Clear ();
+				var bytes = Encoding.ASCII.GetBytes ("1:500");
+				for (int i = 0; i < bytes.Length; i++)
+					builder.Append (bytes[i]);
+
+				token = ImapToken.Create (ImapTokenType.Atom, builder);
+				uids = ImapEngine.ParseUidSet (token, 0, out min, out max, "Unexpected uid-set: {0}", token);
+				Assert.AreEqual ("1:500", uids.ToString (), "uid-set");
+				Assert.AreEqual ("1", min.ToString (), "min");
+				Assert.AreEqual ("500", max.ToString (), "max");
+			}
+		}
+
 		[Test]
 		public void TestGetResponseCodeType ()
 		{
