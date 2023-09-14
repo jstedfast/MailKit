@@ -45,10 +45,16 @@ namespace UnitTests.Net.Imap {
 			Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (ImapMailboxFilter.Selected, null));
 
 			Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Mailboxes (null));
-			Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes (Array.Empty<IMailFolder> ()));
+			Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Mailboxes ((IList<IMailFolder>) null));
+
+			Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes ());
+			Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes ((IList<IMailFolder>) Array.Empty<IMailFolder> ()));
 
 			Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Subtree (null));
-			Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree (Array.Empty<IMailFolder> ()));
+			Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Subtree ((IList<IMailFolder>) null));
+
+			Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree ());
+			Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree ((IList<IMailFolder>) Array.Empty<IMailFolder> ()));
 
 			Assert.Throws<ArgumentNullException> (() => new ImapEvent.MessageNew (null));
 		}
@@ -179,6 +185,15 @@ namespace UnitTests.Net.Imap {
 		public void TestFormatEventGroup_MessageNew_WithSpecificHeaderIds ()
 		{
 			var headers = new HashSet<HeaderId> (new HeaderId[] { HeaderId.From, HeaderId.Subject, HeaderId.Date });
+			var eventGroup = new ImapEventGroup (ImapMailboxFilter.Selected, new ImapEvent.MessageNew (MessageSummaryItems.None, headers), ImapEvent.MessageExpunge);
+
+			AssertFormatEventGroup (eventGroup, "(SELECTED (MessageNew (BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)]) MessageExpunge))", true);
+		}
+
+		[Test]
+		public void TestFormatEventGroup_MessageNew_WithSpecificHeaderNames ()
+		{
+			var headers = new HashSet<string> (new string[] { "From", "Subject", "Date" });
 			var eventGroup = new ImapEventGroup (ImapMailboxFilter.Selected, new ImapEvent.MessageNew (MessageSummaryItems.None, headers), ImapEvent.MessageExpunge);
 
 			AssertFormatEventGroup (eventGroup, "(SELECTED (MessageNew (BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)]) MessageExpunge))", true);

@@ -279,7 +279,7 @@ namespace MailKit.Net.Imap {
 			/// <para>The list of <paramref name="folders"/> contains folders that are not of
 			/// type <see cref="ImapFolder"/>.</para>
 			/// </exception>
-			public Mailboxes (params IMailFolder[] folders) : this ("MAILBOXES", folders)
+			public Mailboxes (params IMailFolder[] folders) : this ((IList<IMailFolder>) folders)
 			{
 			}
 
@@ -396,7 +396,7 @@ namespace MailKit.Net.Imap {
 			/// <para>The list of <paramref name="folders"/> contains folders that are not of
 			/// type <see cref="ImapFolder"/>.</para>
 			/// </exception>
-			public Subtree (params IMailFolder[] folders) : base ("SUBTREE", folders)
+			public Subtree (params IMailFolder[] folders) : this ((IList<IMailFolder>) folders)
 			{
 			}
 		}
