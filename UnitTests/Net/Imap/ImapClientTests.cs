@@ -208,13 +208,8 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.NotifyAsync (true, null));
 				Assert.Throws<ArgumentException> (() => client.Notify (true, Array.Empty<ImapEventGroup> ()));
 				Assert.ThrowsAsync<ArgumentException> (async () => await client.NotifyAsync (true, Array.Empty<ImapEventGroup> ()));
-				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (null, new List<ImapEvent> ()));
-				Assert.Throws<ArgumentNullException> (() => new ImapEventGroup (ImapMailboxFilter.Selected, null));
-				Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Subtree (null));
-				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree (new List<IMailFolder> ()));
+
 				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Subtree (client.Inbox, null));
-				Assert.Throws<ArgumentNullException> (() => new ImapMailboxFilter.Mailboxes (null));
-				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes (new List<IMailFolder> ()));
 				Assert.Throws<ArgumentException> (() => new ImapMailboxFilter.Mailboxes (client.Inbox, null));
 
 				Assert.Throws<ArgumentNullException> (() => client.GetFolder ((string) null));
@@ -5504,9 +5499,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.Throws<NotSupportedException> (() => client.EnableQuickResync ());
 				Assert.Throws<NotSupportedException> (() => client.Notify (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Inboxes, new List<ImapEvent> {
-						ImapEvent.FlagChange
-					})
+					new ImapEventGroup (ImapMailboxFilter.Inboxes, ImapEvent.FlagChange, new ImapEvent.MessageNew (), ImapEvent.MessageExpunge)
 				}));
 				Assert.Throws<NotSupportedException> (() => client.DisableNotify ());
 
@@ -5669,9 +5662,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.ThrowsAsync<NotSupportedException> (async () => await client.EnableQuickResyncAsync ());
 				Assert.ThrowsAsync<NotSupportedException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Inboxes, new List<ImapEvent> {
-						ImapEvent.FlagChange
-					})
+					new ImapEventGroup (ImapMailboxFilter.Inboxes, ImapEvent.FlagChange, new ImapEvent.MessageNew (), ImapEvent.MessageExpunge)
 				}));
 				Assert.ThrowsAsync<NotSupportedException> (async () => await client.DisableNotifyAsync ());
 
@@ -6316,7 +6307,9 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000006 IDLE\r\n", "dovecot.notify-idle.txt"),
 				new ImapReplayCommand ("A00000006", "DONE\r\n", "dovecot.notify-idle-done.txt"),
 				new ImapReplayCommand ("A00000007 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK),
-				new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt")
+				new ImapReplayCommand ("A00000008 NOTIFY SET STATUS (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (REFERENCES)]) MessageExpunge FlagChange)) (MAILBOXES INBOX (MessageNew MessageExpunge MailboxMetadataChange ServerMetadataChange))\r\n", "dovecot.notify.txt"),
+				new ImapReplayCommand ("A00000009 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000010 LOGOUT\r\n", "gmail.logout.txt")
 			};
 		}
 
@@ -6346,45 +6339,6 @@ namespace UnitTests.Net.Imap {
 				var unsubscribeMe = folders.FirstOrDefault (x => x.Name == "UnsubscribeMe");
 
 				folder.Open (FolderAccess.ReadOnly);
-
-				// Test some InvalidOperationExceptions
-
-				// This fires due to non-message events for a Selected mailbox filter
-				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						ImapEvent.MailboxName,
-					})
-				}));
-
-				// This fires due to having MessageNew, but not MessageExpunged
-				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (items, new HashSet<HeaderId> ())
-					})
-				}));
-
-				// This fires due to having MessageNew, but not MessageExpunged
-				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (items, new HashSet<string> ())
-					})
-				}));
-
-				// This fires due to having FlagsChanged but not MessageNew and MessageExpunged
-				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						ImapEvent.AnnotationChange, ImapEvent.FlagChange
-					})
-				}));
-
-				// This fires due to MessageNew being aded to a non-Selected folder
-				Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
-						new ImapEvent.MessageNew (items, new HashSet<string> ())
-					})
-				}));
-
-				Assert.Throws<ArgumentNullException> (() => new ImapEvent.MessageNew (null));
 
 				client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
@@ -6518,6 +6472,22 @@ namespace UnitTests.Net.Imap {
 
 				client.DisableNotify ();
 
+				client.Notify (true, new List<ImapEventGroup> {
+					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
+						new ImapEvent.MessageNew (items | MessageSummaryItems.References),
+						ImapEvent.MessageExpunge,
+						ImapEvent.FlagChange
+					}),
+					new ImapEventGroup (new ImapMailboxFilter.Mailboxes (inbox), new List<ImapEvent> {
+						new ImapEvent.MessageNew (),
+						ImapEvent.MessageExpunge,
+						ImapEvent.MailboxMetadataChange,
+						ImapEvent.ServerMetadataChange
+					}),
+				});
+
+				client.DisableNotify ();
+
 				client.Disconnect (true);
 			}
 		}
@@ -6548,43 +6518,6 @@ namespace UnitTests.Net.Imap {
 				var unsubscribeMe = folders.FirstOrDefault (x => x.Name == "UnsubscribeMe");
 
 				await folder.OpenAsync (FolderAccess.ReadOnly);
-
-				// Test some InvalidOperationExceptions
-
-				// This fires due to non-message events for a Selected mailbox filter
-				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						ImapEvent.MailboxName,
-					})
-				}));
-
-				// This fires due to having MessageNew, but not MessageExpunged
-				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (items, new HashSet<HeaderId> ())
-					})
-				}));
-
-				// This fires due to having MessageNew, but not MessageExpunged
-				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (items, new HashSet<string> ())
-					})
-				}));
-
-				// This fires due to having FlagsChanged but not MessageNew and MessageExpunged
-				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						ImapEvent.AnnotationChange, ImapEvent.FlagChange
-					})
-				}));
-
-				// This fires due to MessageNew being aded to a non-Selected folder
-				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
-					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
-						new ImapEvent.MessageNew (items, new HashSet<string> ())
-					})
-				}));
 
 				await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
@@ -6715,6 +6648,22 @@ namespace UnitTests.Net.Imap {
 				Assert.IsNotNull (fetched.Body, "fetched.Body");
 				Assert.AreEqual (3028, body.Octets, "fetched.Body.Octets");
 				Assert.AreEqual (1, fetched.ModSeq.Value, "fetched.ModSeq");
+
+				await client.DisableNotifyAsync ();
+
+				await client.NotifyAsync (true, new List<ImapEventGroup> {
+					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
+						new ImapEvent.MessageNew (items | MessageSummaryItems.References),
+						ImapEvent.MessageExpunge,
+						ImapEvent.FlagChange
+					}),
+					new ImapEventGroup (new ImapMailboxFilter.Mailboxes (inbox), new List<ImapEvent> {
+						new ImapEvent.MessageNew (),
+						ImapEvent.MessageExpunge,
+						ImapEvent.MailboxMetadataChange,
+						ImapEvent.ServerMetadataChange
+					}),
+				});
 
 				await client.DisableNotifyAsync ();
 
