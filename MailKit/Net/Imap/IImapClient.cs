@@ -57,7 +57,7 @@ namespace MailKit.Net.Imap {
 		ImapCapabilities Capabilities { get; set; }
 
 		/// <summary>
-		/// Gets the maximum size of a message that can be appended to a folder.
+		/// Get the maximum size of a message that can be appended to a folder.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the maximum size of a message, in bytes, that can be appended to a folder.</para>
@@ -67,7 +67,7 @@ namespace MailKit.Net.Imap {
 		uint? AppendLimit { get; }
 
 		/// <summary>
-		/// Gets the internationalization level supported by the IMAP server.
+		/// Get the internationalization level supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the internationalization level supported by the IMAP server.</para>
