@@ -24,12 +24,8 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Text;
 using System.Globalization;
-
-using NUnit.Framework;
 
 using MimeKit.IO;
 using MimeKit.IO.Filters;

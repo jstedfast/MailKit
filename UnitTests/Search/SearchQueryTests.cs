@@ -24,15 +24,10 @@
 // THE SOFTWARE.
 //
 
-using System;
-
-using NUnit.Framework;
-
 using MailKit;
 using MailKit.Search;
 
-namespace UnitTests.Search
-{
+namespace UnitTests.Search {
 	[TestFixture]
 	public class SearchQueryTests
 	{

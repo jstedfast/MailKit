@@ -24,17 +24,9 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Net;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Security.Cryptography;
-
-using NUnit.Framework;
 
 using MimeKit;
 

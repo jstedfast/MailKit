@@ -24,18 +24,13 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-
-using NUnit.Framework;
 
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Net.Pop3;
 
-namespace UnitTests
-{
+namespace UnitTests {
 	[TestFixture]
 	public class ExceptionTests
 	{

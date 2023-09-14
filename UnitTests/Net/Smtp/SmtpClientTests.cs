@@ -24,20 +24,12 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Net;
-using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-
-using NUnit.Framework;
 
 using MimeKit;
 using MimeKit.IO;

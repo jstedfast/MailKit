@@ -24,13 +24,10 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Net;
 using System.Text;
 using System.Security;
 using System.Security.Authentication.ExtendedProtection;
-
-using NUnit.Framework;
 
 using MailKit.Security;
 using MailKit.Security.Ntlm;

@@ -24,13 +24,8 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using NUnit.Framework;
 
 using MailKit;
 using MailKit.Search;

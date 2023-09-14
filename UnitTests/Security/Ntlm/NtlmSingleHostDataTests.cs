@@ -24,10 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
-
-using NUnit.Framework;
-
 using MailKit.Security.Ntlm;
 
 namespace UnitTests.Security.Ntlm {

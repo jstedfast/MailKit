@@ -24,14 +24,8 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Globalization;
-
-using NUnit.Framework;
 
 using MailKit;
 using MailKit.Net.Imap;

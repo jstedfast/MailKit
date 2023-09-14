@@ -24,8 +24,6 @@
 // THE SOFTWARE.
 //
 
-using NUnit.Framework;
-
 using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {

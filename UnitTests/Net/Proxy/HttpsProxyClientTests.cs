@@ -24,14 +24,9 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Net;
-using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-
-using NUnit.Framework;
 
 using MailKit.Net.Proxy;
 

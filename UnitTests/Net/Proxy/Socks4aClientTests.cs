@@ -26,13 +26,8 @@
 
 // Note: Find Socks4 proxy list here: https://hideip.me/en/proxy/socks4list
 
-using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
-
-using NUnit.Framework;
 
 using MailKit.Net.Proxy;
 

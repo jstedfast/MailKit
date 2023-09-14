@@ -24,9 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
-
 namespace UnitTests.Net {
 	public class DummyNetworkStream : MemoryStream
 	{

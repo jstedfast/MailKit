@@ -24,11 +24,7 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Text;
-using System.Collections.Generic;
-
-using NUnit.Framework;
 
 using MailKit;
 using MailKit.Net.Pop3;

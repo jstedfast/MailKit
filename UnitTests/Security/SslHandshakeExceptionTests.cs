@@ -24,20 +24,13 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.Serialization.Formatters.Binary;
-
-using NUnit.Framework;
 
 using MailKit;
 using MailKit.Security;

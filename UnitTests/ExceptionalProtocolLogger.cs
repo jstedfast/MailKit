@@ -1,6 +1,4 @@
-﻿using System;
-
-using MailKit;
+﻿using MailKit;
 
 namespace UnitTests {
 	enum ExceptionalProtocolLoggerMode

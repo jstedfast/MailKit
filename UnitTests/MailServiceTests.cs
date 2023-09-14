@@ -24,11 +24,8 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-
-using NUnit.Framework;
 
 using MailKit;
 using MailKit.Security;

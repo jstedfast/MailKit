@@ -24,14 +24,12 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Text;
 using System.Security.Authentication.ExtendedProtection;
 
 using MailKit.Net;
 
-namespace UnitTests.Security
-{
+namespace UnitTests.Security {
 	class ChannelBindingContext : IChannelBindingContext
 	{
 		readonly ChannelBindingKind supportedKind;

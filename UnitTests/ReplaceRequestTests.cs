@@ -24,16 +24,10 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-
-using NUnit.Framework;
-
 using MimeKit;
 using MailKit;
 
-namespace UnitTests
-{
+namespace UnitTests {
 	[TestFixture]
 	public class ReplaceRequestTests
 	{

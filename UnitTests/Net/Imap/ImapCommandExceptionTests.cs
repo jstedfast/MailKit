@@ -25,15 +25,11 @@
 // THE SOFTWARE.
 //
 
-using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-
-using NUnit.Framework;
 
 using MailKit.Net.Imap;
 
-namespace UnitTests.Net.Imap
-{
+namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapCommandExceptionTests
 	{

@@ -26,13 +26,8 @@
 
 // Note: Find Socks5 proxy list here: http://www.gatherproxy.com/sockslist/country/?c=United%20States
 
-using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
-
-using NUnit.Framework;
 
 using MailKit.Security;
 using MailKit.Net.Proxy;

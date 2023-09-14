@@ -24,15 +24,10 @@
 // THE SOFTWARE.
 //
 
-using System;
-
-using NUnit.Framework;
-
 using MailKit;
 using MailKit.Search;
 
-namespace UnitTests
-{
+namespace UnitTests {
 	[TestFixture]
 	public class ArgumentExceptionTests
 	{

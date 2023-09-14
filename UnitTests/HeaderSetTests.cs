@@ -24,12 +24,7 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Linq;
 using System.Collections;
-using System.Collections.Generic;
-
-using NUnit.Framework;
 
 using MimeKit;
 using MailKit;

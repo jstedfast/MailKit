@@ -24,18 +24,12 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Linq;
-
-using NUnit.Framework;
-
 using MimeKit;
 using MimeKit.Utils;
 
 using MailKit;
 
-namespace UnitTests
-{
+namespace UnitTests {
 	[TestFixture]
 	public class EnvelopeTests
 	{
