@@ -468,7 +468,9 @@ namespace UnitTests.Net.Imap {
 			Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
 			Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
 			Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
+#if !MONO
 			Assert.IsTrue (client.SslCipherSuite == TlsCipherSuite.TLS_AES_128_GCM_SHA256 || client.SslCipherSuite == TlsCipherSuite.TLS_AES_256_GCM_SHA384, "Unexpected SslCipherSuite: {0}", client.SslCipherSuite);
+#endif
 			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
 			Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
 			Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
@@ -485,7 +487,9 @@ namespace UnitTests.Net.Imap {
 			Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
 			Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
 			Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
+#if !MONO
 			Assert.IsNull (client.SslCipherSuite, "Expected SslCipherSuite to be null after disconnecting");
+#endif
 			Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
 			Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
 			Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
@@ -1970,6 +1974,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		// Tests issue https://github.com/jstedfast/MailKit/issues/115#issuecomment-313684616
 		static IList<ImapReplayCommand> CreateUntaggedRespCodeCommands ()
 		{
 			return new List<ImapReplayCommand> {
