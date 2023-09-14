@@ -191,6 +191,15 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("Indexes and '*' cannot be used while MessageNew/MessageExpunge is registered with NOTIFY for SELECTED.");
 		}
 
+		void CheckValidDestination (IMailFolder destination)
+		{
+			if (destination == null)
+				throw new ArgumentNullException (nameof (destination));
+
+			if (destination is not ImapFolder target || (target.Engine != Engine))
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
+		}
+
 		internal void Reset ()
 		{
 			// basic state
@@ -1503,7 +1512,7 @@ namespace MailKit.Net.Imap {
 			// in order to reduce the list of folders returned by our LIST command.
 			var pattern = new StringBuilder (EncodedName.Length + 2);
 			pattern.Append (EncodedName);
-			for (int i = 0; i < EncodedName.Length; i++) {
+			for (int i = 0; i < pattern.Length; i++) {
 				if (pattern[i] == '*')
 					pattern[i] = '%';
 			}
@@ -4931,11 +4940,7 @@ namespace MailKit.Net.Imap {
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
-			if (destination is not ImapFolder target || (target.Engine != Engine))
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
+			CheckValidDestination (destination);
 
 			CheckState (true, false);
 
@@ -5106,11 +5111,7 @@ namespace MailKit.Net.Imap {
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
-			if (destination is not ImapFolder || ((ImapFolder) destination).Engine != Engine)
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
+			CheckValidDestination (destination);
 
 			CheckState (true, true);
 
@@ -5278,11 +5279,7 @@ namespace MailKit.Net.Imap {
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
-			if (destination is not ImapFolder || ((ImapFolder) destination).Engine != Engine)
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
+			CheckValidDestination (destination);
 
 			CheckState (true, false);
 			CheckAllowIndexes ();
@@ -5424,11 +5421,7 @@ namespace MailKit.Net.Imap {
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
-			if (destination == null)
-				throw new ArgumentNullException (nameof (destination));
-
-			if (destination is not ImapFolder || ((ImapFolder) destination).Engine != Engine)
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
+			CheckValidDestination (destination);
 
 			CheckState (true, true);
 			CheckAllowIndexes ();
