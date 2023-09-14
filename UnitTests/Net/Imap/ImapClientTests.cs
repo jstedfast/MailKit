@@ -494,9 +494,7 @@ namespace UnitTests.Net.Imap {
 			Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
 			Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
 			Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-#if !MONO
 			Assert.IsNull (client.SslCipherSuite, "Expected SslCipherSuite to be null after disconnecting");
-#endif
 			Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
 			Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
 			Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
