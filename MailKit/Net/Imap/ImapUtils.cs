@@ -2166,7 +2166,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The task.</returns>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="uidValidity">The UIDVALIDITY of the folder.</param>
-		/// <param name="threads">The list of threads that this method will append to.</param>
+		/// <param name="threads">The list of message threads that this method will append to.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static void ParseThreads (ImapEngine engine, uint uidValidity, List<MessageThread> threads, CancellationToken cancellationToken)
 		{
@@ -2192,7 +2192,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The task.</returns>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="uidValidity">The UIDVALIDITY of the folder.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
+		/// <param name="threads">THe list of message threads that will be appended to.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static async Task ParseThreadsAsync (ImapEngine engine, uint uidValidity, List<MessageThread> threads, CancellationToken cancellationToken)
 		{
