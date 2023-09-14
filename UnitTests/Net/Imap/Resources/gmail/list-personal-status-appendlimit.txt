@@ -1,0 +1,4 @@
+* LIST (\HasNoChildren) "/" "INBOX"
+* STATUS "INBOX" (APPENDLIMIT 1234567890 MESSAGES 10 UNSEEN 1 SIZE 123456789)
+* LIST (\Noselect \HasChildren) "/" "[Gmail]"
+A######## OK Success

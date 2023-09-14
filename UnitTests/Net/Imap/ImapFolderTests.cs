@@ -498,6 +498,101 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static IList<ImapReplayCommand> CreateAppendLimitCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate-no-appendlimit-value.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 STATUS INBOX (APPENDLIMIT)\r\n", "gmail.status-inbox-appendlimit.txt"),
+				new ImapReplayCommand ("A00000006 STATUS INBOX (APPENDLIMIT)\r\n", "gmail.status-inbox-appendlimit-nil.txt"),
+				new ImapReplayCommand ("A00000007 LIST \"\" \"%\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES UNSEEN APPENDLIMIT SIZE))\r\n", "gmail.list-personal-status-appendlimit.txt")
+			};
+		}
+
+		[Test]
+		public void TestAppendLimit ()
+		{
+			var commands = CreateAppendLimitCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.AppendLimit), "ImapCapabilities.AppendLimit");
+				Assert.IsNull (client.AppendLimit, "AppendLimit");
+
+				client.Inbox.Status (StatusItems.AppendLimit);
+				Assert.AreEqual (35651584, client.Inbox.AppendLimit, "Inbox.AppendLimit");
+
+				client.Inbox.Status (StatusItems.AppendLimit);
+				Assert.IsNull (client.Inbox.AppendLimit, "Inbox.AppendLimit NIL");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var subfolders = personal.GetSubfolders (StatusItems.Count | StatusItems.Unread | StatusItems.Size | StatusItems.AppendLimit, subscribedOnly: false);
+				Assert.AreEqual (2, subfolders.Count, "Count");
+				Assert.AreEqual ("INBOX", subfolders[0].Name);
+				Assert.AreEqual (1234567890, subfolders[0].AppendLimit, "Inbox.AppendLimit");
+				Assert.AreEqual (10, subfolders[0].Count, "Inbox.Count");
+				Assert.AreEqual (1, subfolders[0].Unread, "Inbox.Unread");
+				Assert.AreEqual (123456789, subfolders[0].Size, "Inbox.Size");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestAppendLimitAsync ()
+		{
+			var commands = CreateAppendLimitCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.AppendLimit), "ImapCapabilities.AppendLimit");
+				Assert.IsNull (client.AppendLimit, "AppendLimit");
+
+				await client.Inbox.StatusAsync (StatusItems.AppendLimit);
+				Assert.AreEqual (35651584, client.Inbox.AppendLimit, "Inbox.AppendLimit");
+
+				await client.Inbox.StatusAsync (StatusItems.AppendLimit);
+				Assert.IsNull (client.Inbox.AppendLimit, "Inbox.AppendLimit NIL");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var subfolders = await personal.GetSubfoldersAsync (StatusItems.Count | StatusItems.Unread | StatusItems.Size | StatusItems.AppendLimit, subscribedOnly: false);
+				Assert.AreEqual (2, subfolders.Count, "Count");
+				Assert.AreEqual ("INBOX", subfolders[0].Name);
+				Assert.AreEqual (1234567890, subfolders[0].AppendLimit, "Inbox.AppendLimit");
+				Assert.AreEqual (10, subfolders[0].Count, "Inbox.Count");
+				Assert.AreEqual (1, subfolders[0].Unread, "Inbox.Unread");
+				Assert.AreEqual (123456789, subfolders[0].Size, "Inbox.Size");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateAppendCommands (bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> {

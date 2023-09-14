@@ -374,6 +374,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+savedate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+statussize+objectid.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate+webalert.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate-no-appendlimit-value.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability+login.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\capability+logindisabled.txt" />
@@ -431,6 +432,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-level2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-level3.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-personal.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-personal-status-appendlimit.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-sublevel1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-sublevel2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-toplevel1.txt" />
@@ -457,6 +459,8 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\status-drafts.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\status-important.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\status-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-inbox-appendlimit.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\status-inbox-appendlimit-nil.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\status-sent-mail.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\status-spam.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\status-starred.txt" />
