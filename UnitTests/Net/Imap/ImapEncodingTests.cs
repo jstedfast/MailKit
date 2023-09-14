@@ -35,6 +35,18 @@ namespace UnitTests.Net.Imap {
 	public class ImapEncodingTests
 	{
 		[Test]
+		public void TestAmpersand ()
+		{
+			const string text = "Jack & Jill";
+
+			var encoded = ImapEncoding.Encode (text);
+			Assert.AreEqual ("Jack &- Jill", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+
+			var decoded = ImapEncoding.Decode (encoded);
+			Assert.AreEqual (text, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+		}
+
+		[Test]
 		public void TestArabicExample ()
 		{
 			const string arabic = "هل تتكلم اللغة الإنجليزية /العربية؟";
@@ -100,6 +112,15 @@ namespace UnitTests.Net.Imap {
 		public void TestDecodeBadRfc3501Example ()
 		{
 			const string encoded = "&Jjo!";
+
+			var decoded = ImapEncoding.Decode (encoded);
+			Assert.AreEqual (encoded, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+		}
+
+		[Test]
+		public void TestDecodeInvalidUtf7 ()
+		{
+			const string encoded = "&台北日本語";
 
 			var decoded = ImapEncoding.Decode (encoded);
 			Assert.AreEqual (encoded, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
