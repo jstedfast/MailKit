@@ -66,6 +66,23 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEventGroup"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEventGroup"/> class.
+		/// </remarks>
+		/// <param name="mailboxFilter">The mailbox filter.</param>
+		/// <param name="events">The list of IMAP events.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="mailboxFilter"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="events"/> is <c>null</c>.</para>
+		/// </exception>
+		public ImapEventGroup (ImapMailboxFilter mailboxFilter, params ImapEvent[] events) : this (mailboxFilter, (IList<ImapEvent>) events)
+		{
+		}
+
+		/// <summary>
 		/// Get the mailbox filter.
 		/// </summary>
 		/// <remarks>
@@ -645,9 +662,8 @@ namespace MailKit.Net.Imap {
 			/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent.MessageNew"/> class.
 			/// </remarks>
 			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
-			public MessageNew (MessageSummaryItems items = MessageSummaryItems.None) : base ("MessageNew", true)
+			public MessageNew (MessageSummaryItems items = MessageSummaryItems.None) : this (new FetchRequest (items))
 			{
-				request = new FetchRequest (items);
 			}
 
 			/// <summary>
@@ -664,9 +680,8 @@ namespace MailKit.Net.Imap {
 			/// <exception cref="ArgumentException">
 			/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 			/// </exception>
-			public MessageNew (MessageSummaryItems items, IEnumerable<HeaderId> headers) : base ("MessageNew", true)
+			public MessageNew (MessageSummaryItems items, IEnumerable<HeaderId> headers) : this (new FetchRequest (items, headers))
 			{
-				request = new FetchRequest (items, headers);
 			}
 
 			/// <summary>
@@ -683,9 +698,8 @@ namespace MailKit.Net.Imap {
 			/// <exception cref="ArgumentException">
 			/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
 			/// </exception>
-			public MessageNew (MessageSummaryItems items, IEnumerable<string> headers) : base ("MessageNew", true)
+			public MessageNew (MessageSummaryItems items, IEnumerable<string> headers) : this (new FetchRequest (items, headers))
 			{
-				request = new FetchRequest (items, headers);
 			}
 
 			/// <summary>
