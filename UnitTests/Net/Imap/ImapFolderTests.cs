@@ -2154,7 +2154,105 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		static List<ImapReplayCommand> CreateMoveToCommands (bool disableMove)
+		static List<ImapReplayCommand> CreateMoveToCommands ()
+		{
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "gmail.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 LIST \"\" \"Archived Messages\"\r\n", "gmail.list-archived-messages.txt"),
+				new ImapReplayCommand ("A00000007 MOVE 1:21 \"Archived Messages\"\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000008 COPY 1:21 \"Archived Messages\"\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000009 STORE 1:21 +FLAGS.SILENT (\\Deleted)\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000010 LOGOUT\r\n", "gmail.logout.txt")
+			};
+
+			return commands;
+		}
+
+		[Test]
+		public void TestMoveTo ()
+		{
+			var commands = CreateMoveToCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), "Expected UIDPLUS extension");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var indexes = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+				var archived = personal.GetSubfolder ("Archived Messages");
+
+				inbox.MoveTo (indexes, archived);
+
+				client.Capabilities &= ~ImapCapabilities.Move;
+				inbox.MoveTo (indexes, archived);
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestMoveToAsync ()
+		{
+			var commands = CreateMoveToCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), "Expected UIDPLUS extension");
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				var indexes = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
+				var archived = await personal.GetSubfolderAsync ("Archived Messages");
+
+				await inbox.MoveToAsync (indexes, archived);
+
+				client.Capabilities &= ~ImapCapabilities.Move;
+				await inbox.MoveToAsync (indexes, archived);
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateUidMoveToCommands (bool disableMove)
 		{
 			var commands = new List<ImapReplayCommand> {
 				new ImapReplayCommand ("", "gmail.greeting.txt"),
@@ -2186,7 +2284,7 @@ namespace UnitTests.Net.Imap {
 		[TestCase (false, TestName = "TestUidMoveToDisableUidPlus")]
 		public void TestUidMoveTo (bool disableMove)
 		{
-			var commands = CreateMoveToCommands (disableMove);
+			var commands = CreateUidMoveToCommands (disableMove);
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
@@ -2245,7 +2343,7 @@ namespace UnitTests.Net.Imap {
 		[TestCase (false, TestName = "TestUidMoveToDisableUidPlusAsync")]
 		public async Task TestUidMoveToAsync (bool disableMove)
 		{
-			var commands = CreateMoveToCommands (disableMove);
+			var commands = CreateUidMoveToCommands (disableMove);
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
