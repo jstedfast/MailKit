@@ -85,7 +85,11 @@ namespace UnitTests.Net.Imap {
 		static readonly ImapCapabilities MetadataAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Metadata;
 		const CipherAlgorithmType GmxDeCipherAlgorithm = CipherAlgorithmType.Aes256;
 		const int GmxDeCipherStrength = 256;
+#if !MONO
 		const HashAlgorithmType GmxDeHashAlgorithm = HashAlgorithmType.Sha384;
+#else
+		const HashAlgorithmType GmxDeHashAlgorithm = HashAlgorithmType.None;
+#endif
 		const ExchangeAlgorithmType EcdhEphemeral = (ExchangeAlgorithmType) 44550;
 
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
@@ -470,8 +474,11 @@ namespace UnitTests.Net.Imap {
 			Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
 #if !MONO
 			Assert.IsTrue (client.SslCipherSuite == TlsCipherSuite.TLS_AES_128_GCM_SHA256 || client.SslCipherSuite == TlsCipherSuite.TLS_AES_256_GCM_SHA384, "Unexpected SslCipherSuite: {0}", client.SslCipherSuite);
-#endif
 			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
+#else
+			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.None, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
+#endif
+
 			Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
 			Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
 			Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
