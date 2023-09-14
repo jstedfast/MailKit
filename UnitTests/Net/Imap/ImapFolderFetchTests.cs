@@ -1331,7 +1331,8 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
 				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
 				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate-readonly.txt"),
-				new ImapReplayCommand ("A00000005 FETCH 1:* (UID ANNOTATION (/* (value size)))\r\n", "common.fetch-annotations.txt")
+				new ImapReplayCommand ("A00000005 FETCH 1:* (UID ANNOTATION (/* (value size)))\r\n", "common.fetch-annotations.txt"),
+				new ImapReplayCommand ("A00000006 NOOP\r\n", "common.fetch-annotations.txt"),
 			};
 		}
 
@@ -1399,6 +1400,16 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
 				Assert.AreEqual ("10", annotations[0].Properties[AnnotationAttribute.PrivateSize], "annotations[0] size.priv");
 				Assert.AreEqual ("0", annotations[0].Properties[AnnotationAttribute.SharedSize], "annotations[0] size.shared");
+
+				var annotationsChanged = new List<AnnotationsChangedEventArgs> ();
+
+				inbox.AnnotationsChanged += (sender, e) => {
+					annotationsChanged.Add (e);
+				};
+
+				client.NoOp ();
+
+				Assert.AreEqual (3, annotationsChanged.Count, "# AnnotationsChanged events");
 
 				client.Disconnect (false);
 			}
@@ -1468,6 +1479,16 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
 				Assert.AreEqual ("10", annotations[0].Properties[AnnotationAttribute.PrivateSize], "annotations[0] size.priv");
 				Assert.AreEqual ("0", annotations[0].Properties[AnnotationAttribute.SharedSize], "annotations[0] size.shared");
+
+				var annotationsChanged = new List<AnnotationsChangedEventArgs> ();
+
+				inbox.AnnotationsChanged += (sender, e) => {
+					annotationsChanged.Add (e);
+				};
+
+				await client.NoOpAsync ();
+
+				Assert.AreEqual (3, annotationsChanged.Count, "# AnnotationsChanged events");
 
 				client.Disconnect (false);
 			}
