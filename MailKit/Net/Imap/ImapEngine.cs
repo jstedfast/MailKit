@@ -1396,6 +1396,8 @@ namespace MailKit.Net.Imap {
 				Capabilities |= ImapCapabilities.MetadataServer;
 			} else if (atom.Equals ("NOTIFY", StringComparison.OrdinalIgnoreCase)) {
 				Capabilities |= ImapCapabilities.Notify;
+			} else if (atom.Equals ("FILTERS", StringComparison.OrdinalIgnoreCase)) {
+				Capabilities |= ImapCapabilities.Filters;
 			} else if (atom.Equals ("LIST-STATUS", StringComparison.OrdinalIgnoreCase)) {
 				Capabilities |= ImapCapabilities.ListStatus;
 			} else if (atom.Equals ("SORT=DISPLAY", StringComparison.OrdinalIgnoreCase)) {
