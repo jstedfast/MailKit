@@ -47,6 +47,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Net\Imap\Resources\**\*.*" />
+    <None Remove="Net\Pop3\Resources\**\*.*" />
+    <None Remove="Net\Smtp\Resources\**\*.*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Net\Imap\Resources\**\*.*" />
     <EmbeddedResource Include="Net\Pop3\Resources\**\*.*" />
     <EmbeddedResource Include="Net\Smtp\Resources\**\*.*" />

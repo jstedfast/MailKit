@@ -3965,7 +3965,7 @@ namespace UnitTests.Net.Imap {
 			return message;
 		}
 
-		List<ImapReplayCommand> CreateDovecotCommands (out List<DateTimeOffset> internalDates, out List<MimeMessage> messages, out List<MessageFlags> flags)
+		static List<ImapReplayCommand> CreateDovecotCommands (out List<DateTimeOffset> internalDates, out List<MimeMessage> messages, out List<MessageFlags> flags)
 		{
 			var commands = new List<ImapReplayCommand> {
 				new ImapReplayCommand ("", "dovecot.greeting.txt"),
@@ -4268,10 +4268,11 @@ namespace UnitTests.Net.Imap {
 				modSeqChanged.Clear ();
 				flagsChanged.Clear ();
 
-				var answered = new UniqueIdSet (SortOrder.Ascending);
-				answered.Add (appended[0]); // A
-				answered.Add (appended[1]); // B
-				answered.Add (appended[2]); // C
+				var answered = new UniqueIdSet (SortOrder.Ascending) {
+					appended[0], // A
+					appended[1], // B
+					appended[2] // C
+				};
 				folder.AddFlags (answered, MessageFlags.Answered, true);
 				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events");
 				Assert.AreEqual (3, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
@@ -4451,9 +4452,10 @@ namespace UnitTests.Net.Imap {
 				destination.Open (FolderAccess.ReadWrite);
 				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected UnitTests.Destination to be opened in READ-WRITE mode");
 
-				var fetchHeaders = new HashSet<HeaderId> ();
-				fetchHeaders.Add (HeaderId.References);
-				fetchHeaders.Add (HeaderId.XMailer);
+				var fetchHeaders = new HashSet<HeaderId> {
+					HeaderId.References,
+					HeaderId.XMailer
+				};
 
 				var indexes = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
 
@@ -4903,10 +4905,11 @@ namespace UnitTests.Net.Imap {
 				modSeqChanged.Clear ();
 				flagsChanged.Clear ();
 
-				var answered = new UniqueIdSet (SortOrder.Ascending);
-				answered.Add (appended[0]); // A
-				answered.Add (appended[1]); // B
-				answered.Add (appended[2]); // C
+				var answered = new UniqueIdSet (SortOrder.Ascending) {
+					appended[0], // A
+					appended[1], // B
+					appended[2] // C
+				};
 				await folder.AddFlagsAsync (answered, MessageFlags.Answered, true);
 				Assert.AreEqual (0, flagsChanged.Count, "Unexpected number of FlagsChanged events");
 				Assert.AreEqual (3, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");
@@ -5081,9 +5084,10 @@ namespace UnitTests.Net.Imap {
 				await destination.OpenAsync (FolderAccess.ReadWrite);
 				Assert.AreEqual (FolderAccess.ReadWrite, access, "Expected UnitTests.Destination to be opened in READ-WRITE mode");
 
-				var fetchHeaders = new HashSet<HeaderId> ();
-				fetchHeaders.Add (HeaderId.References);
-				fetchHeaders.Add (HeaderId.XMailer);
+				var fetchHeaders = new HashSet<HeaderId> {
+					HeaderId.References,
+					HeaderId.XMailer
+				};
 
 				var indexes = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
 
@@ -5250,8 +5254,9 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual ("MIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n", text);
 				}
 
-				var custom = new HashSet<string> ();
-				custom.Add ("$MailKit");
+				var custom = new HashSet<string> {
+					"$MailKit"
+				};
 
 				var unchanged1 = await destination.AddFlagsAsync (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
 				Assert.AreEqual (14, modSeqChanged.Count, "Unexpected number of ModSeqChanged events");

@@ -74,7 +74,7 @@ namespace UnitTests.Net.Imap {
 				// Search
 				var searchOptions = SearchOptions.All | SearchOptions.Min | SearchOptions.Max | SearchOptions.Count;
 				var orderBy = new OrderBy [] { OrderBy.Arrival };
-				var emptyOrderBy = new OrderBy[0];
+				var emptyOrderBy = Array.Empty<OrderBy> ();
 
 				Assert.Throws<ArgumentNullException> (() => inbox.Search ((SearchQuery) null));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.SearchAsync ((SearchQuery) null));
@@ -145,6 +145,335 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.ThreadAsync (UniqueIdRange.All, ThreadingAlgorithm.References, null));
 
 				client.Disconnect (false);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateSearchFilterCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+filters.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000005 UID SEARCH RETURN (ALL) FILTER MyFilter\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) FILTER MyUndefinedFilter\r\n", Encoding.ASCII.GetBytes ("A00000006 NO [UNDEFINED-FILTER MyUndefinedFilter] THe specified filter is undefined.\r\n")),
+			};
+		}
+
+		[Test]
+		public void TestSearchFilter ()
+		{
+			var commands = CreateSearchFilterCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Filters), "ImapCapabilities.Filters");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var uids = inbox.Search (SearchQuery.Filter ("MyFilter"));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				Assert.Throws<ImapCommandException> (() => inbox.Search (SearchQuery.Filter ("MyUndefinedFilter")));
+
+				// Now disable the FILTERS extension and try again...
+				client.Capabilities &= ~ImapCapabilities.Filters;
+				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.Filter ("MyFilter")));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestSearchFilterAsync ()
+		{
+			var commands = CreateSearchFilterCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Filters), "ImapCapabilities.Filters");
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				var uids = await inbox.SearchAsync (SearchQuery.Filter ("MyFilter"));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				Assert.ThrowsAsync<ImapCommandException> (() => inbox.SearchAsync (SearchQuery.Filter ("MyUndefinedFilter")));
+
+				// Now disable the SAVEDATE extension and try again...
+				client.Capabilities &= ~ImapCapabilities.Filters;
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.Filter ("MyFilter")));
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateSearchFuzzyCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+fuzzy.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000005 UID SEARCH RETURN (ALL) FUZZY BODY fuzzy-match\r\n", "dovecot.search-all.txt"),
+			};
+		}
+
+		[Test]
+		public void TestSearchFuzzy ()
+		{
+			var commands = CreateSearchFuzzyCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.FuzzySearch), "ImapCapabilities.FuzzySearch");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var uids = inbox.Search (SearchQuery.Fuzzy (SearchQuery.BodyContains ("fuzzy-match")));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				// Now disable the FUZZY extension and try again...
+				client.Capabilities &= ~ImapCapabilities.FuzzySearch;
+				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.Fuzzy (SearchQuery.BodyContains ("fuzzy-match"))));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestSearchFuzzyAsync ()
+		{
+			var commands = CreateSearchFuzzyCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.FuzzySearch), "ImapCapabilities.FuzzySearch");
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				var uids = await inbox.SearchAsync (SearchQuery.Fuzzy (SearchQuery.BodyContains ("fuzzy-match")));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				// Now disable the FUZZY extension and try again...
+				client.Capabilities &= ~ImapCapabilities.FuzzySearch;
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.Fuzzy (SearchQuery.BodyContains ("fuzzy-match"))));
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateSearchSaveDateCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+savedate.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000005 UID SEARCH RETURN (ALL) SAVEDATESUPPORTED\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) SAVEDBEFORE 12-Oct-2016\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000007 UID SEARCH RETURN (ALL) SAVEDON 12-Oct-2016\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000008 UID SEARCH RETURN (ALL) SAVEDSINCE 12-Oct-2016\r\n", "dovecot.search-all.txt"),
+			};
+		}
+
+		[Test]
+		public void TestSearchSaveDate ()
+		{
+			var commands = CreateSearchSaveDateCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), "ImapCapabilities.SaveDate");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var uids = inbox.Search (SearchQuery.SaveDateSupported);
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				uids = inbox.Search (SearchQuery.SavedBefore (new DateTime (2016, 10, 12)));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				uids = inbox.Search (SearchQuery.SavedOn (new DateTime (2016, 10, 12)));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				uids = inbox.Search (SearchQuery.SavedSince (new DateTime (2016, 10, 12)));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				// Now disable the SAVEDATE extension and try again...
+				client.Capabilities &= ~ImapCapabilities.SaveDate;
+				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.SaveDateSupported));
+				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.SavedBefore (new DateTime (2016, 10, 12))));
+				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.SavedOn (new DateTime (2016, 10, 12))));
+				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.SavedSince (new DateTime (2016, 10, 12))));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestSearchSaveDateAsync ()
+		{
+			var commands = CreateSearchSaveDateCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), "ImapCapabilities.SaveDate");
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				var uids = await inbox.SearchAsync (SearchQuery.SaveDateSupported);
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				uids = await inbox.SearchAsync (SearchQuery.SavedBefore (new DateTime (2016, 10, 12)));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				uids = await inbox.SearchAsync (SearchQuery.SavedOn (new DateTime (2016, 10, 12)));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				uids = await inbox.SearchAsync (SearchQuery.SavedSince (new DateTime (2016, 10, 12)));
+				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+
+				// Now disable the SAVEDATE extension and try again...
+				client.Capabilities &= ~ImapCapabilities.SaveDate;
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SaveDateSupported));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SavedBefore (new DateTime (2016, 10, 12))));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SavedOn (new DateTime (2016, 10, 12))));
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SavedSince (new DateTime (2016, 10, 12))));
+
+				await client.DisconnectAsync (false);
 			}
 		}
 
