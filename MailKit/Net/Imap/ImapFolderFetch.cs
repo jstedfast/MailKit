@@ -154,6 +154,8 @@ namespace MailKit.Net.Imap
 
 		static void SkipParenthesizedList (ImapEngine engine, CancellationToken cancellationToken)
 		{
+			int depth = 1;
+
 			do {
 				var token = engine.PeekToken (cancellationToken);
 
@@ -161,20 +163,23 @@ namespace MailKit.Net.Imap
 					return;
 
 				// token is safe to read, so pop it off the queue
-				engine.ReadToken (cancellationToken);
+				token = engine.ReadToken (cancellationToken);
 
-				if (token.Type == ImapTokenType.CloseParen)
-					break;
-
-				if (token.Type == ImapTokenType.OpenParen) {
-					// skip the inner parenthesized list
-					SkipParenthesizedList (engine, cancellationToken);
+				if (token.Type == ImapTokenType.CloseParen) {
+					depth--;
+				} else if (token.Type == ImapTokenType.OpenParen) {
+					depth++;
+				} else if (token.Type == ImapTokenType.Literal) {
+					// consume the literal string
+					ReadLiteralData (engine, cancellationToken);
 				}
-			} while (true);
+			} while (depth > 0);
 		}
 
 		static async Task SkipParenthesizedListAsync (ImapEngine engine, CancellationToken cancellationToken)
 		{
+			int depth = 1;
+
 			do {
 				var token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -182,16 +187,17 @@ namespace MailKit.Net.Imap
 					return;
 
 				// token is safe to read, so pop it off the queue
-				await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-				if (token.Type == ImapTokenType.CloseParen)
-					break;
-
-				if (token.Type == ImapTokenType.OpenParen) {
-					// skip the inner parenthesized list
-					await SkipParenthesizedListAsync (engine, cancellationToken).ConfigureAwait (false);
+				if (token.Type == ImapTokenType.CloseParen) {
+					depth--;
+				} else if (token.Type == ImapTokenType.OpenParen) {
+					depth++;
+				} else if (token.Type == ImapTokenType.Literal) {
+					// consume the literal string
+					await ReadLiteralDataAsync (engine, cancellationToken).ConfigureAwait (false);
 				}
-			} while (true);
+			} while (depth > 0);
 		}
 
 		static Task SkipParenthesizedListAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
