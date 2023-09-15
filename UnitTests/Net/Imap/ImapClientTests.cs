@@ -71,6 +71,10 @@ namespace UnitTests.Net.Imap {
 			ImapCapabilities.ESearch | ImapCapabilities.Compress | ImapCapabilities.Enable | ImapCapabilities.ListExtended |
 			ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.UTF8Accept | ImapCapabilities.XList |
 			ImapCapabilities.GMailExt1 | ImapCapabilities.LiteralMinus | ImapCapabilities.AppendLimit;
+		static readonly ImapCapabilities IMAP4rev2CoreCapabilities = ImapCapabilities.IMAP4rev2 | ImapCapabilities.Status |
+			ImapCapabilities.Namespace | ImapCapabilities.Unselect | ImapCapabilities.UidPlus | ImapCapabilities.ESearch |
+			ImapCapabilities.SearchResults | ImapCapabilities.Enable | ImapCapabilities.Idle | ImapCapabilities.SaslIR | ImapCapabilities.ListExtended |
+			ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.LiteralMinus | ImapCapabilities.SpecialUse;
 		static readonly ImapCapabilities AclInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Acl;
 		static readonly ImapCapabilities AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Acl;
 		static readonly ImapCapabilities MetadataInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Metadata;
@@ -227,6 +231,47 @@ namespace UnitTests.Net.Imap {
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 
 				client.Disconnect (false);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateIMAP4rev2Commands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK [CAPABILITY STARTTLS AUTH=SCRAM-SHA-256 LOGINDISABLED IMAP4rev2] IMAP4rev2 Service Ready\r\n")),
+			};
+		}
+
+		[Test]
+		public void TestIMAP4rev2 ()
+		{
+			var commands = CreateIMAP4rev2Commands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.AreEqual (IMAP4rev2CoreCapabilities | ImapCapabilities.StartTLS | ImapCapabilities.LoginDisabled, client.Capabilities, "Capabilities");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("SCRAM-SHA-256"), "AUTH=SCRAM-SHA-256");
+			}
+		}
+
+		[Test]
+		public async Task TestIMAP4rev2Async ()
+		{
+			var commands = CreateIMAP4rev2Commands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.AreEqual (IMAP4rev2CoreCapabilities | ImapCapabilities.StartTLS | ImapCapabilities.LoginDisabled, client.Capabilities, "Capabilities");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("SCRAM-SHA-256"), "AUTH=SCRAM-SHA-256");
 			}
 		}
 

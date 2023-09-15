@@ -56,7 +56,7 @@ namespace MailKit.Net.Imap {
 		IMAP4rev1        = 1L << 1,
 
 		/// <summary>
-		/// The server implements the core IMAP4rev2 commands.
+		/// The server implements the core IMAP4rev2 commands described in <a href="https://tools.ietf.org/html/rfc9051">rfc9051</a>.
 		/// </summary>
 		IMAP4rev2        = 1L << 2,
 

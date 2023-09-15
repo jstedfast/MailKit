@@ -117,3 +117,6 @@ The following IETF specifications define the IMAP, POP3 and SMTP protocols:
 * [8514](https://tools.ietf.org/html/rfc8514): Internet Message Access Protocol (IMAP) - SAVEDATE Extension
 * [8689](https://tools.ietf.org/html/rfc8689): SMTP Require TLS Option
 * [8970](https://tools.ietf.org/html/rfc8970): IMAP4 Extension: Message Preview Generation
+* [9051](https://tools.ietf.org/html/rfc9051): Internet Message Access Protocol (IMAP) - Version 4rev2
+* [9208](https://tools.ietf.org/html/rfc9208): IMAP QUOTA Extension (Obsoletes rfc2087)
+* [9394](https://tools.ietf.org/html/rfc9394): IMAP PARTIAL Extension for Paged SEARCH and FETCH

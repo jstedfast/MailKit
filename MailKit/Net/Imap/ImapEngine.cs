@@ -78,7 +78,8 @@ namespace MailKit.Net.Imap {
 	enum ImapProtocolVersion {
 		Unknown,
 		IMAP4,
-		IMAP4rev1
+		IMAP4rev1,
+		IMAP4rev2,
 	}
 
 	enum ImapUntaggedResult {
@@ -1330,6 +1331,8 @@ namespace MailKit.Net.Imap {
 				Capabilities |= ImapCapabilities.IMAP4;
 			} else if (atom.Equals ("IMAP4REV1", StringComparison.OrdinalIgnoreCase)) {
 				Capabilities |= ImapCapabilities.IMAP4rev1;
+			} else if (atom.Equals ("IMAP4REV2", StringComparison.OrdinalIgnoreCase)) {
+				Capabilities |= ImapCapabilities.IMAP4rev2;
 			} else if (atom.Equals ("STATUS", StringComparison.OrdinalIgnoreCase)) {
 				Capabilities |= ImapCapabilities.Status;
 			} else if (atom.Equals ("ACL", StringComparison.OrdinalIgnoreCase)) {
@@ -1448,7 +1451,19 @@ namespace MailKit.Net.Imap {
 
 		void StandardizeCapabilities ()
 		{
-			if ((Capabilities & ImapCapabilities.IMAP4rev1) != 0) {
+			if ((Capabilities & ImapCapabilities.IMAP4rev2) != 0) {
+				ProtocolVersion = ImapProtocolVersion.IMAP4rev2;
+
+				// Rfc9051, Appendix E defines the capabilities that IMAP4rev2 should be assumed to implement:
+				Capabilities |= ImapCapabilities.Status |
+					ImapCapabilities.Namespace | ImapCapabilities.Unselect | ImapCapabilities.UidPlus | ImapCapabilities.ESearch |
+					ImapCapabilities.SearchResults | ImapCapabilities.Enable | ImapCapabilities.Idle | ImapCapabilities.SaslIR | ImapCapabilities.ListExtended |
+					ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.LiteralMinus | ImapCapabilities.SpecialUse;
+
+				// Note: IMAP4rev2 also supports the FETCH portion of the 'BINARY' extension but not the APPEND portion. Since
+				// we currently have no way to distinguish between them using the ImapCapabilities enum, we do not enable the
+				// ImapCapabilities.Binary extension flag.
+			} else if ((Capabilities & ImapCapabilities.IMAP4rev1) != 0) {
 				ProtocolVersion = ImapProtocolVersion.IMAP4rev1;
 				Capabilities |= ImapCapabilities.Status;
 			} else if ((Capabilities & ImapCapabilities.IMAP4) != 0) {
