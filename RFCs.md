@@ -1,6 +1,6 @@
 ### Specifications
 
-MailKit implements the following IETF specifications:
+The following IETF specifications define the IMAP, POP3 and SMTP protocols:
 
 * [821](https://tools.ietf.org/html/rfc821): SIMPLE MAIL TRANSFER PROTOCOL
 * [822](https://tools.ietf.org/html/rfc822): STANDARD FOR THE FORMAT OF ARPA INTERNET TEXT MESSAGES
