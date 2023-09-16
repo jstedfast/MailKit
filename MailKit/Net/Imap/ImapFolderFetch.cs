@@ -1960,18 +1960,11 @@ namespace MailKit.Net.Imap
 									break;
 
 								// the header field names will generally be atoms or qstrings but may also be literals
-								switch (token.Type) {
-								case ImapTokenType.Literal:
-									sectionBuilder.Append (await engine.ReadLiteralAsync (doAsync, ic.CancellationToken).ConfigureAwait (false));
-									break;
-								case ImapTokenType.QString:
-								case ImapTokenType.Atom:
-									sectionBuilder.Append ((string) token.Value);
-									break;
-								default:
-									throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-								}
+								engine.Stream.UngetToken (token);
 
+								var field = await ImapUtils.ReadStringTokenAsync (engine, ImapEngine.FetchBodySyntaxErrorFormat, doAsync, ic.CancellationToken).ConfigureAwait (false);
+
+								sectionBuilder.Append (field);
 								sectionBuilder.Append (' ');
 							} while (true);
 
