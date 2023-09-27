@@ -1819,6 +1819,9 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Gets or sets how much of the message to include in any failed delivery status notifications.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
+		/// </example>
 		/// <value>A value indicating how much of the message to include in a failure delivery status notification.</value>
 		public DeliveryStatusNotificationType DeliveryStatusNotificationType {
 			get; set;
