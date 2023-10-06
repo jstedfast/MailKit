@@ -1483,7 +1483,12 @@ namespace MailKit.Net.Imap {
 
 			var token = ReadToken (cancellationToken);
 
-			while (token.Type == ImapTokenType.Atom) {
+			// Note: Some buggy IMAP servers mistakenly put a space between "LITERAL" and "+" which causes our tokenizer to read
+			// a '+' token thereby causing an "Unexpected token: '+'" exception to be thrown. If we treat '+' tokens as atoms
+			// like we did in v4.1.0 (and older), then we can avoid this exception.
+			//
+			// See https://github.com/jstedfast/MailKit/issues/1654 for details.
+			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Plus) {
 				var atom = (string) token.Value;
 
 				ProcessCapabilityToken (atom);
@@ -1505,7 +1510,12 @@ namespace MailKit.Net.Imap {
 
 			var token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-			while (token.Type == ImapTokenType.Atom) {
+			// Note: Some buggy IMAP servers mistakenly put a space between "LITERAL" and "+" which causes our tokenizer to read
+			// a '+' token thereby causing an "Unexpected token: '+'" exception to be thrown. If we treat '+' tokens as atoms
+			// like we did in v4.1.0 (and older), then we can avoid this exception.
+			//
+			// See https://github.com/jstedfast/MailKit/issues/1654 for details.
+			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Plus) {
 				var atom = (string) token.Value;
 
 				ProcessCapabilityToken (atom);
