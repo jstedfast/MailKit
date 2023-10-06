@@ -1489,7 +1489,7 @@ namespace MailKit.Net.Imap {
 			//
 			// See https://github.com/jstedfast/MailKit/issues/1654 for details.
 			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Plus) {
-				var atom = (string) token.Value;
+				var atom = token.Value.ToString ();
 
 				ProcessCapabilityToken (atom);
 
@@ -1516,7 +1516,7 @@ namespace MailKit.Net.Imap {
 			//
 			// See https://github.com/jstedfast/MailKit/issues/1654 for details.
 			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Plus) {
-				var atom = (string) token.Value;
+				var atom = token.Value.ToString ();
 
 				ProcessCapabilityToken (atom);
 
