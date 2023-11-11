@@ -20,7 +20,7 @@ namespace Examples {
         }
         #endregion // ParseMessage
 
-        #region ParseMboxSpool
+        #region ParseMbox
         public static void ParseMbox (string fileName)
         {
             // Load every message from a Unix mbox spool.

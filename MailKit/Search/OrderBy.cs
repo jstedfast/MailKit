@@ -40,6 +40,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Search.OrderBy"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="OrderBy"/> instance.
+		/// </remarks>
 		/// <param name="type">The field to sort by.</param>
 		/// <param name="order">The sort order.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">

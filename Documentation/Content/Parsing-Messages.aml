@@ -38,9 +38,9 @@
         For the most part, using the MimeParser directly is not necessary unless
         you wish to parse a Unix mbox file stream. However, this is how you would
         do it:</para>
-        <code language="c#" source="Examples\MimeParserParseMessage.cs" />
+        <code language="c#" source="Examples\MimeParserExamples.cs" region="ParseMessage" />
         <para>For Unix mbox file streams, you would use the parser like this:</para>
-        <code language="c#" source="Examples\MimeParserMbox.cs" />
+        <code language="c#" source="Examples\MimeParserExamples.cs" region="ParseMbox" />
       </content>
     </section>
 
