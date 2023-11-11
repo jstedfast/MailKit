@@ -1,5 +1,15 @@
 # Release Notes
 
+## MailKit 4.3.0 (2023-11-11)
+
+* Fixed an ArgumentOutOfRangeException error in Fetch(int min, int max, ...) where min and max were greater
+  than folder.Count. (issue [#1640](https://github.com/jstedfast/MailKit/issues/1640))
+* Fixed parsing of IMAP FETCH (message/stream) responses with unsolicited FLAGS.
+* Fixed support for the IMAP FILTERS extension. Previously this extension was not properly detected.
+* When parsing IMAP CAPABILITIES, treat lone '+' tokens as atoms.
+  (issue [#1654](https://github.com/jstedfast/MailKit/issues/1654))
+* Bumped MimeKit dependency to 4.3.0.
+
 ## MailKit 4.2.0 (2023-09-02)
 
 * Fixed a bug where the HttpProxyClient and HttpsProxyClient could end up reading the mail server greeting,
@@ -17,6 +27,7 @@
 * Improved initial `List<IMessageSummary>` capacity estimation for `Fetch (IList<UniqueId>, ...)`.
 * Fixed ByteArrayBuilder.TrimNewLine() to check array bounds properly.
   (issue [#1634](https://github.com/jstedfast/MailKit/issues/1634))
+* Bumped MimeKit dependency to 4.2.0.
 
 ## MailKit 4.1.0 (2023-06-17)
 
