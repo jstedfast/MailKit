@@ -231,7 +231,7 @@ directory and select **Git Sync...** in the menu. Once you do that, you'll need 
 
 In the top-level MailKit directory, there are a number of solution files; they are:
 
-* **MailKit.sln** - includes the projects for .NET 4.5/4.6/4.7/4.8, .NETStandard 1.3/1.6/2.0 as well as the unit tests.
+* **MailKit.sln** - includes the projects for .NET Framework 4.6.2/4.7/4.8, .NETStandard 2.0/2.1, .NET6.0 as well as the unit tests.
 * **MailKit.Coverity.sln** - this is used to generate Coverity static analysis builds and is not generally useful.
 * **MailKit.Documentation.sln** - this is used to generate the documentation found at https://mimekit.net/docs
 
