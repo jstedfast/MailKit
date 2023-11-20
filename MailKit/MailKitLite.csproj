@@ -51,12 +51,12 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Formats.Asn1" Version="7.0.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-    <PackageReference Include="System.Formats.Asn1" Version="7.0.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
