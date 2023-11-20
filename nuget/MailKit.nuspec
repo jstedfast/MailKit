@@ -73,6 +73,9 @@ Features include:
       <group targetFramework="net6.0">
         <dependency id="MimeKit" version="4.3.0" />
       </group>
+      <group targetFramework="net8.0">
+        <dependency id="MimeKit" version="4.3.0" />
+      </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="7.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
@@ -112,6 +115,10 @@ Features include:
     <file src="..\MailKit\bin\Release\net6.0\MailKit.pdb" target="lib\net6.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net6.0\MailKit.xml" target="lib\net6.0\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net6.0\MailKit.dll.config" target="lib\net6.0\MailKit.dll.config" />
+    <file src="..\MailKit\bin\Release\net8.0\MailKit.dll" target="lib\net8.0\MailKit.dll" />
+    <file src="..\MailKit\bin\Release\net8.0\MailKit.pdb" target="lib\net8.0\MailKit.pdb" />
+    <file src="..\MailKit\bin\Release\net8.0\MailKit.xml" target="lib\net8.0\MailKit.xml" />
+    <file src="..\MailKit\bin\Release\net8.0\MailKit.dll.config" target="lib\net8.0\MailKit.dll.config" />
     <file src="mailkit-50.png" target="icons\mailkit-50.png" />
   </files>
 </package>
