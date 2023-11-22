@@ -56,7 +56,6 @@ namespace MailKit.Net.Proxy {
 #else
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls12 | (SslProtocols) 12288;
 #endif
-		const int BufferSize = 4096;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.HttpsProxyClient"/> class.

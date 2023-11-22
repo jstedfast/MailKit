@@ -70,6 +70,8 @@ namespace MailKit.Net.Pop3 {
 			UIDL   = (1 << 1)
 		}
 
+		static readonly char[] Space = new char[] { ' ' };
+
 		readonly Pop3AuthenticationSecretDetector detector = new Pop3AuthenticationSecretDetector ();
 		readonly MimeParser parser = new MimeParser (Stream.Null);
 		readonly Pop3Engine engine;
@@ -594,7 +596,7 @@ namespace MailKit.Net.Pop3 {
 				return Task.CompletedTask;
 
 			// the response should be "<count> <total size>"
-			var tokens = text.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			var tokens = text.Split (Space, StringSplitOptions.RemoveEmptyEntries);
 
 			if (tokens.Length < 2) {
 				pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the STAT command: {0}", text);
@@ -1594,7 +1596,7 @@ namespace MailKit.Net.Pop3 {
 				if (response == ".")
 					break;
 
-				var tokens = response.Split (new[] { ' ' }, 2);
+				var tokens = response.Split (Space, 2);
 				if (tokens.Length != 2)
 					continue;
 
@@ -1796,7 +1798,7 @@ namespace MailKit.Net.Pop3 {
 			if (pc.Status != Pop3CommandStatus.Ok)
 				return Task.CompletedTask;
 
-			var tokens = text.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			var tokens = text.Split (Space, StringSplitOptions.RemoveEmptyEntries);
 			int seqid = GetExpectedSequenceId (pc);
 
 			if (tokens.Length < 2) {
@@ -1893,7 +1895,7 @@ namespace MailKit.Net.Pop3 {
 
 		static void ParseUidlAllResponse (Pop3Command pc, string response)
 		{
-			var tokens = response.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			var tokens = response.Split (Space, StringSplitOptions.RemoveEmptyEntries);
 			var uids = (List<string>) pc.UserData;
 
 			if (tokens.Length < 2) {
@@ -2005,7 +2007,7 @@ namespace MailKit.Net.Pop3 {
 			if (pc.Status != Pop3CommandStatus.Ok)
 				return Task.CompletedTask;
 
-			var tokens = text.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			var tokens = text.Split (Space, StringSplitOptions.RemoveEmptyEntries);
 			int seqid = GetExpectedSequenceId (pc);
 
 			if (tokens.Length < 2) {
@@ -2084,7 +2086,7 @@ namespace MailKit.Net.Pop3 {
 
 		static void ParseListAllResponse (Pop3Command pc, string response)
 		{
-			var tokens = response.Split (new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			var tokens = response.Split (Space, StringSplitOptions.RemoveEmptyEntries);
 			var sizes = (List<int>) pc.UserData;
 
 			if (tokens.Length < 2) {

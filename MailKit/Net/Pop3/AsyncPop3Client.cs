@@ -774,7 +774,7 @@ namespace MailKit.Net.Pop3
 				if (response == ".")
 					break;
 
-				var tokens = response.Split (new[] { ' ' }, 2);
+				var tokens = response.Split (Space, 2);
 				if (tokens.Length != 2)
 					continue;
 

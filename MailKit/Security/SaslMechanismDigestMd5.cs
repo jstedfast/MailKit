@@ -319,6 +319,8 @@ namespace MailKit.Security {
 			return true;
 		}
 
+		static readonly char[] Comma = new char[] { ',' };
+
 		public static DigestChallenge Parse (string token)
 		{
 			var challenge = new DigestChallenge ();
@@ -333,7 +335,7 @@ namespace MailKit.Security {
 
 				switch (key.ToLowerInvariant ()) {
 				case "realm":
-					challenge.Realms = value.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+					challenge.Realms = value.Split (Comma, StringSplitOptions.RemoveEmptyEntries);
 					break;
 				case "nonce":
 					if (challenge.Nonce != null)
@@ -341,13 +343,13 @@ namespace MailKit.Security {
 					challenge.Nonce = value;
 					break;
 				case "qop":
-					foreach (var qop in value.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+					foreach (var qop in value.Split (Comma, StringSplitOptions.RemoveEmptyEntries))
 						challenge.Qop.Add (qop.Trim ());
 					break;
 				case "stale":
 					if (challenge.Stale.HasValue)
 						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
-					challenge.Stale = value.ToLowerInvariant () == "true";
+					challenge.Stale = value.Equals ("true", StringComparison.OrdinalIgnoreCase);
 					break;
 				case "maxbuf":
 					if (challenge.MaxBuf.HasValue || !int.TryParse (value, NumberStyles.None, CultureInfo.InvariantCulture, out maxbuf))
@@ -367,7 +369,7 @@ namespace MailKit.Security {
 				case "cipher":
 					if (challenge.Ciphers.Count > 0)
 						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
-					foreach (var cipher in value.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+					foreach (var cipher in value.Split (Comma, StringSplitOptions.RemoveEmptyEntries))
 						challenge.Ciphers.Add (cipher.Trim ());
 					break;
 				}

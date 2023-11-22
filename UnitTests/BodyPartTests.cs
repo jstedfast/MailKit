@@ -276,7 +276,7 @@ namespace UnitTests {
 			return new BodyPartBasic { ContentType = CreateContentType (type, subtype, partSpecifier) };
 		}
 
-		static BodyPartBasic CreateText (string type, string subtype, string partSpecifier)
+		static BodyPartText CreateText (string type, string subtype, string partSpecifier)
 		{
 			return new BodyPartText { ContentType = CreateContentType (type, subtype, partSpecifier) };
 		}
@@ -287,14 +287,12 @@ namespace UnitTests {
 
 			Assert.AreEqual (expected, part.PartSpecifier, "The part-specifier does not match for {0}", part.ContentType.MimeType);
 
-			var message = part as BodyPartMessage;
-			if (message != null) {
+			if (part is BodyPartMessage message) {
 				VerifyPartSpecifier (message.Body);
 				return;
 			}
 
-			var multipart = part as BodyPartMultipart;
-			if (multipart != null) {
+			if (part is BodyPartMultipart multipart) {
 				for (int i = 0; i < multipart.BodyParts.Count; i++)
 					VerifyPartSpecifier (multipart.BodyParts[i]);
 				return;
@@ -303,7 +301,7 @@ namespace UnitTests {
 
 		class TestVisitor : BodyPartVisitor
 		{
-			StringBuilder builder = new StringBuilder ();
+			readonly StringBuilder builder = new StringBuilder ();
 			int indent;
 
 			public override void Visit (BodyPart body)

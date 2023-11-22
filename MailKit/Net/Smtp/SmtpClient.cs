@@ -71,6 +71,7 @@ namespace MailKit.Net.Smtp {
 	public partial class SmtpClient : MailTransport, ISmtpClient
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes (".\r\n");
+		static readonly char[] NewLineCharacters = { '\r', '\n' };
 		internal static string DefaultLocalDomain;
 		const int MaxLineLength = 998;
 
@@ -1703,7 +1704,7 @@ namespace MailKit.Net.Smtp {
 			return message.From.Mailboxes.FirstOrDefault ();
 		}
 
-		static void AddUnique (IList<MailboxAddress> recipients, HashSet<string> unique, IEnumerable<MailboxAddress> mailboxes)
+		static void AddUnique (List<MailboxAddress> recipients, HashSet<string> unique, IEnumerable<MailboxAddress> mailboxes)
 		{
 			foreach (var mailbox in mailboxes) {
 				if (unique.Add (mailbox.Address))
@@ -2546,7 +2547,7 @@ namespace MailKit.Net.Smtp {
 			if (alias.Length == 0)
 				throw new ArgumentException ("The alias cannot be empty.", nameof (alias));
 
-			if (alias.IndexOfAny (new [] { '\r', '\n' }) != -1)
+			if (alias.IndexOfAny (NewLineCharacters) != -1)
 				throw new ArgumentException ("The alias cannot contain newline characters.", nameof (alias));
 
 			CheckDisposed ();
@@ -2627,7 +2628,7 @@ namespace MailKit.Net.Smtp {
 			if (address.Length == 0)
 				throw new ArgumentException ("The address cannot be empty.", nameof (address));
 
-			if (address.IndexOfAny (new [] { '\r', '\n' }) != -1)
+			if (address.IndexOfAny (NewLineCharacters) != -1)
 				throw new ArgumentException ("The address cannot contain newline characters.", nameof (address));
 
 			CheckDisposed ();

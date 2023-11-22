@@ -401,7 +401,7 @@ namespace MailKit.Net.Imap
 			return StoreAsync (indexes, request, true, cancellationToken);
 		}
 
-		void AppendLabelList (StringBuilder command, ISet<string> labels, ICollection<object> args)
+		void AppendLabelList (StringBuilder command, ISet<string> labels, List<object> args)
 		{
 			command.Append ('(');
 

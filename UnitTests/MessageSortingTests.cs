@@ -38,7 +38,7 @@ namespace UnitTests {
 		{
 			var messages = new List<MessageSummary> { new MessageSummary (0) };
 			var orderBy = new OrderBy[] { OrderBy.Subject };
-			var emptyOrderBy = new OrderBy[0];
+			var emptyOrderBy = Array.Empty<OrderBy> ();
 
 			Assert.Throws<ArgumentNullException> (() => MessageSorter.Sort ((List<MessageSummary>) null, orderBy));
 			Assert.Throws<ArgumentNullException> (() => MessageSorter.Sort (messages, null));

@@ -115,7 +115,7 @@ namespace UnitTests {
 			return basic;
 		}
 
-		static BodyPartBasic CreateText (string type, string subtype, string partSpecifier, bool attachment)
+		static BodyPartText CreateText (string type, string subtype, string partSpecifier, bool attachment)
 		{
 			var text = new BodyPartText { ContentType = CreateContentType (type, subtype, partSpecifier) };
 			if (attachment)
