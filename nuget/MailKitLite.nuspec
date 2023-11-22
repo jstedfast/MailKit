@@ -52,17 +52,17 @@ Features include:
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="System.Formats.Asn1" version="7.0.0" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
         <dependency id="MimeKitLite" version="4.3.0" />
       </group>
       <group targetFramework="net47">
-        <dependency id="System.Formats.Asn1" version="7.0.0" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
         <dependency id="MimeKitLite" version="4.3.0" />
       </group>
       <group targetFramework="net48">
-        <dependency id="System.Formats.Asn1" version="7.0.0" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
         <dependency id="MimeKitLite" version="4.3.0" />
       </group>
@@ -73,12 +73,12 @@ Features include:
         <dependency id="MimeKit" version="4.3.0" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="System.Formats.Asn1" version="7.0.0" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
         <dependency id="MimeKitLite" version="4.3.0" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="System.Formats.Asn1" version="7.0.0" />
+        <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="MimeKitLite" version="4.3.0" />
       </group>
     </dependencies>
