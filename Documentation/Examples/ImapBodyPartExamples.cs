@@ -77,7 +77,7 @@ namespace MailKit.Examples {
 					}
 
 					// IMessageSummary.HtmlBody is a convenience property that finds the 'text/html' body part for us
-					bodyPart = item.TextBody;
+					bodyPart = item.HtmlBody;
 
 					if (bodyPart != null) {
 						// download the 'text/html' body part
