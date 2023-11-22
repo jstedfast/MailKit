@@ -31,7 +31,7 @@
     <DefineConstants>$(DefineConstants);MAILKIT_LITE</DefineConstants>
     <SignAssembly>true</SignAssembly>
     <DebugSymbols>true</DebugSymbols>
-    <NoWarn>1701;1702;CA1068;CA1510;CA1835;IDE0016;IDE0056;IDE0057;IDE0060;IDE0063;IDE0066;IDE0090;IDE0180</NoWarn>
+    <NoWarn>1701;1702;CA1068;CA1510;CA1512;CA1513;CA1835;CA2012;IDE0016;IDE0056;IDE0057;IDE0060;IDE0063;IDE0066;IDE0090;IDE0180;IDE0251</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

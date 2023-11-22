@@ -90,18 +90,18 @@ namespace UnitTests {
 			Assert.AreEqual (5, depth, "#5b");
 		}
 
-		MessageSummary MakeThreadable (ref int index, string subject, string msgid, string date, string refs)
-		{
-			DateTimeOffset value;
+		static readonly char[] Space = new[] { ' ' };
 
-			DateUtils.TryParse (date, out value);
+		static MessageSummary MakeThreadable (ref int index, string subject, string msgid, string date, string refs)
+		{
+			DateUtils.TryParse (date, out var value);
 
 			var summary = new MessageSummary (++index);
 			summary.UniqueId = new UniqueId ((uint) summary.Index);
 			summary.Envelope = new Envelope ();
 			summary.References = new MessageIdList ();
 			if (refs != null) {
-				foreach (var id in refs.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+				foreach (var id in refs.Split (Space, StringSplitOptions.RemoveEmptyEntries))
 					summary.References.Add (id);
 			}
 			summary.Envelope.MessageId = MimeUtils.EnumerateReferences (msgid).FirstOrDefault ();
