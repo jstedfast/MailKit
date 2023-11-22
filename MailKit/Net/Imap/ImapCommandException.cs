@@ -57,6 +57,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
 		[SecuritySafeCritical]
+		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
 		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			Response = (ImapCommandResponse) info.GetValue ("Response", typeof (ImapCommandResponse));
@@ -178,6 +179,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
 		[SecurityCritical]
+#if NET8_0_OR_GREATER
+		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+#endif
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

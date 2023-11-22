@@ -82,6 +82,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
+		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
 		protected SaslException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			ErrorCode = (SaslErrorCode) info.GetInt32 ("ErrorCode");
@@ -124,6 +125,9 @@ namespace MailKit.Security {
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
 		[SecurityCritical]
+#if NET8_0_OR_GREATER
+		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+#endif
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

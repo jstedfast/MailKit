@@ -77,6 +77,7 @@ namespace MailKit.Security
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
+		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
 		protected SslHandshakeException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			var base64 = info.GetString ("ServerCertificate");
@@ -164,6 +165,9 @@ namespace MailKit.Security
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
 		[SecurityCritical]
+#if NET8_0_OR_GREATER
+		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
+#endif
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

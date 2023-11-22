@@ -56,6 +56,7 @@ namespace MailKit {
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
 		[SecuritySafeCritical]
+		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
 		protected ServiceNotAuthenticatedException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
