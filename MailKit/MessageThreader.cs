@@ -146,7 +146,7 @@ namespace MailKit {
 			public IList<string> GMailLabels => null;
 		}
 
-		static IDictionary<string, ThreadableNode> CreateIdTable (IEnumerable<IMessageSummary> messages)
+		static Dictionary<string, ThreadableNode> CreateIdTable (IEnumerable<IMessageSummary> messages)
 		{
 			var ids = new Dictionary<string, ThreadableNode> (StringComparer.OrdinalIgnoreCase);
 
@@ -350,7 +350,7 @@ namespace MailKit {
 			}
 		}
 
-		static IList<MessageThread> ThreadByReferences (IEnumerable<IMessageSummary> messages, IList<OrderBy> orderBy)
+		static List<MessageThread> ThreadByReferences (IEnumerable<IMessageSummary> messages, IList<OrderBy> orderBy)
 		{
 			var threads = new List<MessageThread> ();
 			var ids = CreateIdTable (messages);
@@ -364,7 +364,7 @@ namespace MailKit {
 			return threads;
 		}
 
-		static IList<MessageThread> ThreadBySubject (IEnumerable<IMessageSummary> messages, IList<OrderBy> orderBy)
+		static List<MessageThread> ThreadBySubject (IEnumerable<IMessageSummary> messages, IList<OrderBy> orderBy)
 		{
 			var threads = new List<MessageThread> ();
 			var root = new ThreadableNode (null);

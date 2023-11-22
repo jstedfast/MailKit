@@ -3338,11 +3338,11 @@ namespace MailKit.Net.Imap {
 				QuotaRoots = new List<string> ();
 			}
 
-			public IList<string> QuotaRoots {
+			public List<string> QuotaRoots {
 				get; private set;
 			}
 
-			public IDictionary<string, Quota> Quotas {
+			public Dictionary<string, Quota> Quotas {
 				get; private set;
 			}
 		}

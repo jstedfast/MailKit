@@ -3365,7 +3365,7 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		ImapFolder ProcessGetFolderResponse (ImapCommand ic, string path, string encodedName, out List<ImapFolder> list)
+		static ImapFolder ProcessGetFolderResponse (ImapCommand ic, string path, string encodedName, out List<ImapFolder> list)
 		{
 			ImapFolder folder;
 
@@ -3536,7 +3536,7 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		IList<IMailFolder> ToListOfIMailFolder (List<ImapFolder> list)
+		static IList<IMailFolder> ToListOfIMailFolder (List<ImapFolder> list)
 		{
 			var folders = new IMailFolder[list.Count];
 			for (int i = 0; i < folders.Length; i++)

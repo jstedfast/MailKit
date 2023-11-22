@@ -34,7 +34,7 @@ namespace MailKit {
 	{
 		#region Store Flags Extensions
 
-		static IStoreFlagsRequest GetStoreFlagsRequest (StoreAction action, bool silent, MessageFlags flags, HashSet<string> keywords = null, ulong? modseq = null)
+		static StoreFlagsRequest GetStoreFlagsRequest (StoreAction action, bool silent, MessageFlags flags, HashSet<string> keywords = null, ulong? modseq = null)
 		{
 			if (action != StoreAction.Set && flags == MessageFlags.None && (keywords == null || keywords.Count == 0))
 				throw new ArgumentException ("No flags were specified.", nameof (flags));
@@ -3623,7 +3623,7 @@ namespace MailKit {
 
 		#region Store Labels Extensions
 
-		static IStoreLabelsRequest GetStoreLabelsRequest (StoreAction action, bool silent, IList<string> labels, ulong? modseq = null)
+		static StoreLabelsRequest GetStoreLabelsRequest (StoreAction action, bool silent, IList<string> labels, ulong? modseq = null)
 		{
 			if (labels == null)
 				throw new ArgumentNullException (nameof (labels));

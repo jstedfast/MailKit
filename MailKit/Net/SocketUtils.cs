@@ -81,7 +81,11 @@ namespace MailKit.Net
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
+#if NET6_0_OR_GREATER
+			var ipAddresses = await Dns.GetHostAddressesAsync (host, cancellationToken).ConfigureAwait (false);
+#else
 			var ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
+#endif
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				cancellationToken.ThrowIfCancellationRequested ();

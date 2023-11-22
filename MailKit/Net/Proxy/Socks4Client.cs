@@ -152,7 +152,11 @@ namespace MailKit.Net.Proxy
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
+#if NET6_0_OR_GREATER
+			var ipAddresses = await Dns.GetHostAddressesAsync (host, cancellationToken).ConfigureAwait (false);
+#else
 			var ipAddresses = await Dns.GetHostAddressesAsync (host).ConfigureAwait (false);
+#endif
 
 			return Resolve (host, ipAddresses);
 		}
