@@ -104,7 +104,7 @@ namespace UnitTests.Security {
 			foreach (var c in prohibited) {
 				try {
 					SaslMechanism.SaslPrep (c.ToString ());
-					Assert.Fail ("prohibited: '\\u{0:X}'", c);
+					Assert.Fail ($"prohibited: '\\u{c:X}'");
 				} catch (ArgumentException) {
 				}
 			}

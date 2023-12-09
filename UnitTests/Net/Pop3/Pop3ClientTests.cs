@@ -235,7 +235,7 @@ namespace UnitTests.Net.Pop3 {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 
 				try {
@@ -250,7 +250,7 @@ namespace UnitTests.Net.Pop3 {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -279,7 +279,7 @@ namespace UnitTests.Net.Pop3 {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 
 				try {
@@ -294,7 +294,7 @@ namespace UnitTests.Net.Pop3 {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -353,7 +353,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -430,7 +430,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -483,7 +483,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -560,7 +560,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1123,7 +1123,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1137,7 +1137,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1157,7 +1157,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1171,7 +1171,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1192,7 +1192,7 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Pop3ProtocolException) {
 					Assert.Pass ();
 				} catch (Exception ex) {
-					Assert.Fail ("Expected Pop3ProtocolException from Connect: {0}", ex);
+					Assert.Fail ($"Expected Pop3ProtocolException from Connect: {ex}");
 				}
 			}
 		}
@@ -1211,7 +1211,7 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Pop3ProtocolException) {
 					Assert.Pass ();
 				} catch (Exception ex) {
-					Assert.Fail ("Expected Pop3ProtocolException from Connect: {0}", ex);
+					Assert.Fail ($"Expected Pop3ProtocolException from Connect: {ex}");
 				}
 			}
 		}
@@ -1242,7 +1242,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1257,7 +1257,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -1276,14 +1276,14 @@ namespace UnitTests.Net.Pop3 {
 					for (int i = 0; i < sizes.Count; i++)
 						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
 					var size = client.GetMessageSize (0);
 					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
@@ -1291,20 +1291,20 @@ namespace UnitTests.Net.Pop3 {
 						// TODO: assert that the message is byte-identical to what we expect
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessage: {ex}");
 				}
 
 				try {
 					var count = client.GetMessageCount ();
 					Assert.AreEqual (7, count, "Expected 7 messages again");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageCount: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1320,7 +1320,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1335,7 +1335,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -1354,14 +1354,14 @@ namespace UnitTests.Net.Pop3 {
 					for (int i = 0; i < sizes.Count; i++)
 						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
 					var size = await client.GetMessageSizeAsync (0);
 					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
@@ -1369,20 +1369,20 @@ namespace UnitTests.Net.Pop3 {
 						// TODO: assert that the message is byte-identical to what we expect
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessage: {ex}");
 				}
 
 				try {
 					var count = await client.GetMessageCountAsync ();
 					Assert.AreEqual (7, count, "Expected 7 messages again");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageCount: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1398,7 +1398,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1410,7 +1410,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -1429,14 +1429,14 @@ namespace UnitTests.Net.Pop3 {
 					for (int i = 0; i < sizes.Count; i++)
 						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
 					var size = client.GetMessageSize (0);
 					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
@@ -1444,20 +1444,20 @@ namespace UnitTests.Net.Pop3 {
 						// TODO: assert that the message is byte-identical to what we expect
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessage: {ex}");
 				}
 
 				try {
 					var count = client.GetMessageCount ();
 					Assert.AreEqual (7, count, "Expected 7 messages again");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageCount: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1473,7 +1473,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1485,7 +1485,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -1504,14 +1504,14 @@ namespace UnitTests.Net.Pop3 {
 					for (int i = 0; i < sizes.Count; i++)
 						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
 					var size = await client.GetMessageSizeAsync (0);
 					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
@@ -1519,20 +1519,20 @@ namespace UnitTests.Net.Pop3 {
 						// TODO: assert that the message is byte-identical to what we expect
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessage: {ex}");
 				}
 
 				try {
 					var count = await client.GetMessageCountAsync ();
 					Assert.AreEqual (7, count, "Expected 7 messages again");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageCount: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1558,7 +1558,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1570,7 +1570,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (Pop3Capabilities.User | Pop3Capabilities.UIDL, client.Capabilities);
@@ -1585,7 +1585,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1611,7 +1611,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1623,7 +1623,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (Pop3Capabilities.User | Pop3Capabilities.UIDL, client.Capabilities);
@@ -1638,7 +1638,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1663,7 +1663,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1675,7 +1675,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
@@ -1691,7 +1691,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1716,7 +1716,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1728,7 +1728,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
@@ -1744,7 +1744,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1766,7 +1766,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1779,20 +1779,20 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.EnableUTF8 ();
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in EnableUTF8: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in EnableUTF8: {ex}");
 					}
 
 					// Try to enable UTF8 again even though we've done it. This should just no-op and not send another command.
 					try {
 						client.EnableUTF8 ();
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception from second call to EnableUTF8: {0}", ex);
+						Assert.Fail ($"Did not expect an exception from second call to EnableUTF8: {ex}");
 					}
 
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1815,7 +1815,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1828,20 +1828,20 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.EnableUTF8Async ();
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in EnableUTF8: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in EnableUTF8: {ex}");
 					}
 
 					// Try to enable UTF8 again even though we've done it. This should just no-op and not send another command.
 					try {
 						await client.EnableUTF8Async ();
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception from second call to EnableUTF8: {0}", ex);
+						Assert.Fail ($"Did not expect an exception from second call to EnableUTF8: {ex}");
 					}
 
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1866,7 +1866,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1879,7 +1879,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Authenticate ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (LangCapa1, client.Capabilities);
@@ -1892,13 +1892,13 @@ namespace UnitTests.Net.Pop3 {
 					} catch (InvalidOperationException) {
 						Assert.Pass ();
 					} catch (Exception ex) {
-						Assert.Fail ("Unexpected exception thrown by EnableUTF8: {0}", ex);
+						Assert.Fail ($"Unexpected exception thrown by EnableUTF8: {ex}");
 					}
 
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1923,7 +1923,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1936,7 +1936,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.AuthenticateAsync ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (LangCapa1, client.Capabilities);
@@ -1949,13 +1949,13 @@ namespace UnitTests.Net.Pop3 {
 					} catch (InvalidOperationException) {
 						Assert.Pass ();
 					} catch (Exception ex) {
-						Assert.Fail ("Unexpected exception thrown by EnableUTF8Async: {0}", ex);
+						Assert.Fail ($"Unexpected exception thrown by EnableUTF8Async: {ex}");
 					}
 
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1977,7 +1977,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1993,13 +1993,13 @@ namespace UnitTests.Net.Pop3 {
 					} catch (NotSupportedException) {
 						Assert.Pass ();
 					} catch (Exception ex) {
-						Assert.Fail ("Unexpected exception thrown by EnableUTF8: {0}", ex);
+						Assert.Fail ($"Unexpected exception thrown by EnableUTF8: {ex}");
 					}
 
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2021,7 +2021,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2037,13 +2037,13 @@ namespace UnitTests.Net.Pop3 {
 					} catch (NotSupportedException) {
 						Assert.Pass ();
 					} catch (Exception ex) {
-						Assert.Fail ("Unexpected exception thrown by EnableUTF8Async: {0}", ex);
+						Assert.Fail ($"Unexpected exception thrown by EnableUTF8Async: {ex}");
 					}
 
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2071,7 +2071,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2083,7 +2083,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -2108,7 +2108,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2135,7 +2135,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2147,7 +2147,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -2172,7 +2172,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2199,7 +2199,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2211,7 +2211,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -2236,7 +2236,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2263,7 +2263,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2275,7 +2275,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -2300,7 +2300,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2327,7 +2327,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2339,7 +2339,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -2364,7 +2364,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2391,7 +2391,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2403,7 +2403,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -2428,7 +2428,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2454,7 +2454,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2467,7 +2467,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -2485,7 +2485,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2511,7 +2511,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2524,7 +2524,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -2542,7 +2542,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2568,7 +2568,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2581,7 +2581,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -2599,7 +2599,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2625,7 +2625,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2638,7 +2638,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -2656,7 +2656,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2681,7 +2681,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2699,7 +2699,7 @@ namespace UnitTests.Net.Pop3 {
 
 					client.Authenticate (sasl);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
@@ -2715,7 +2715,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2740,7 +2740,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2758,7 +2758,7 @@ namespace UnitTests.Net.Pop3 {
 
 					await client.AuthenticateAsync (sasl);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
@@ -2774,7 +2774,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2843,7 +2843,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2856,13 +2856,13 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.EnableUTF8 ();
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in EnableUTF8: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in EnableUTF8: {ex}");
 					}
 
 					try {
 						client.Authenticate ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (LangCapa2, client.Capabilities);
@@ -2874,7 +2874,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2902,7 +2902,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2915,13 +2915,13 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.EnableUTF8Async ();
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in EnableUTF8: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in EnableUTF8: {ex}");
 					}
 
 					try {
 						await client.AuthenticateAsync ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (LangCapa2, client.Capabilities);
@@ -2933,7 +2933,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2962,7 +2962,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2981,7 +2981,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Authenticate ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (ExchangeCapa, client.Capabilities);
@@ -2997,7 +2997,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3026,7 +3026,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3045,7 +3045,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.AuthenticateAsync ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (ExchangeCapa, client.Capabilities);
@@ -3061,7 +3061,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3089,7 +3089,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3101,7 +3101,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Authenticate ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -3117,7 +3117,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3146,7 +3146,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3158,7 +3158,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.AuthenticateAsync ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (ComcastCapa2, client.Capabilities);
@@ -3174,7 +3174,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3204,7 +3204,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3222,7 +3222,7 @@ namespace UnitTests.Net.Pop3 {
 
 						client.Authenticate (sasl);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (ExchangeCapa, client.Capabilities);
@@ -3238,7 +3238,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3267,7 +3267,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3285,7 +3285,7 @@ namespace UnitTests.Net.Pop3 {
 
 						await client.AuthenticateAsync (sasl);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (ExchangeCapa, client.Capabilities);
@@ -3301,7 +3301,7 @@ namespace UnitTests.Net.Pop3 {
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3331,7 +3331,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3351,7 +3351,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
@@ -3368,7 +3368,7 @@ namespace UnitTests.Net.Pop3 {
 					var uids = client.GetMessageUids ();
 					Assert.AreEqual (7, uids.Count, "Expected 7 uids");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageUids: {ex}");
 				}
 
 				try {
@@ -3376,13 +3376,13 @@ namespace UnitTests.Net.Pop3 {
 						// TODO: assert that the message is byte-identical to what we expect
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessage: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3409,7 +3409,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3429,7 +3429,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (ExchangeCapa, client.Capabilities);
@@ -3446,7 +3446,7 @@ namespace UnitTests.Net.Pop3 {
 					var uids = await client.GetMessageUidsAsync ();
 					Assert.AreEqual (7, uids.Count, "Expected 7 uids");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageUids: {ex}");
 				}
 
 				try {
@@ -3454,13 +3454,13 @@ namespace UnitTests.Net.Pop3 {
 						// TODO: assert that the message is byte-identical to what we expect
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessage: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3514,7 +3514,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3527,7 +3527,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -3578,7 +3578,7 @@ namespace UnitTests.Net.Pop3 {
 						}
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessage: {ex}");
 				}
 
 				try {
@@ -3601,7 +3601,7 @@ namespace UnitTests.Net.Pop3 {
 						message.Dispose ();
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessages: {ex}");
 				}
 
 				try {
@@ -3624,7 +3624,7 @@ namespace UnitTests.Net.Pop3 {
 						message.Dispose ();
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessages: {ex}");
 				}
 
 				try {
@@ -3632,7 +3632,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.AreEqual ("Test inline image", header[HeaderId.Subject]);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
 
 				try {
@@ -3642,7 +3642,7 @@ namespace UnitTests.Net.Pop3 {
 					for (int i = 0; i < headers.Count; i++)
 						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
 
 				try {
@@ -3652,14 +3652,14 @@ namespace UnitTests.Net.Pop3 {
 					for (int i = 0; i < headers.Count; i++)
 						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
 
 				try {
 					using (var stream = client.GetStream (0)) {
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetStream: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetStream: {ex}");
 				}
 
 				try {
@@ -3670,7 +3670,7 @@ namespace UnitTests.Net.Pop3 {
 						streams[i].Dispose ();
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetStreams: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetStreams: {ex}");
 				}
 
 				try {
@@ -3681,67 +3681,67 @@ namespace UnitTests.Net.Pop3 {
 						streams[i].Dispose ();
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetStreams: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetStreams: {ex}");
 				}
 
 				try {
 					client.NoOp ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in NoOp: {ex}");
 				}
 
 				try {
 					client.DeleteMessage (0);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in DeleteMessage: {ex}");
 				}
 
 				try {
 					client.Reset ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Reset: {ex}");
 				}
 
 				try {
 					client.DeleteMessages (new [] { 0, 1, 2 });
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in DeleteMessages: {ex}");
 				}
 
 				try {
 					client.Reset ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Reset: {ex}");
 				}
 
 				try {
 					client.DeleteMessages (0, 3);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in DeleteMessages: {ex}");
 				}
 
 				try {
 					client.Reset ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Reset: {ex}");
 				}
 
 				try {
 					client.DeleteAllMessages ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteAllMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in DeleteAllMessages: {ex}");
 				}
 
 				try {
 					client.Reset ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Reset: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3760,7 +3760,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3773,7 +3773,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -3824,7 +3824,7 @@ namespace UnitTests.Net.Pop3 {
 						}
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessage: {ex}");
 				}
 
 				try {
@@ -3847,7 +3847,7 @@ namespace UnitTests.Net.Pop3 {
 						message.Dispose ();
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessages: {ex}");
 				}
 
 				try {
@@ -3870,7 +3870,7 @@ namespace UnitTests.Net.Pop3 {
 						message.Dispose ();
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessages: {ex}");
 				}
 
 				try {
@@ -3878,7 +3878,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.AreEqual ("Test inline image", header[HeaderId.Subject]);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
 
 				try {
@@ -3888,7 +3888,7 @@ namespace UnitTests.Net.Pop3 {
 					for (int i = 0; i < headers.Count; i++)
 						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
 
 				try {
@@ -3898,14 +3898,14 @@ namespace UnitTests.Net.Pop3 {
 					for (int i = 0; i < headers.Count; i++)
 						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageHeaders: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
 
 				try {
 					using (var stream = await client.GetStreamAsync (0)) {
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetStream: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetStream: {ex}");
 				}
 
 				try {
@@ -3916,7 +3916,7 @@ namespace UnitTests.Net.Pop3 {
 						streams[i].Dispose ();
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetStreams: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetStreams: {ex}");
 				}
 
 				try {
@@ -3927,67 +3927,67 @@ namespace UnitTests.Net.Pop3 {
 						streams[i].Dispose ();
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetStreams: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in GetStreams: {ex}");
 				}
 
 				try {
 					await client.NoOpAsync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in NoOp: {ex}");
 				}
 
 				try {
 					await client.DeleteMessageAsync (0);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessage: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in DeleteMessage: {ex}");
 				}
 
 				try {
 					await client.ResetAsync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Reset: {ex}");
 				}
 
 				try {
 					await client.DeleteMessagesAsync (new [] { 0, 1, 2 });
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in DeleteMessages: {ex}");
 				}
 
 				try {
 					await client.ResetAsync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Reset: {ex}");
 				}
 
 				try {
 					await client.DeleteMessagesAsync (0, 3);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in DeleteMessages: {ex}");
 				}
 
 				try {
 					await client.ResetAsync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Reset: {ex}");
 				}
 
 				try {
 					await client.DeleteAllMessagesAsync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteAllMessages: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in DeleteAllMessages: {ex}");
 				}
 
 				try {
 					await client.ResetAsync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Reset: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Reset: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -4094,7 +4094,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4107,7 +4107,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -4128,7 +4128,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -4154,7 +4154,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4167,13 +4167,13 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.EnableUTF8 ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in EnableUTF8: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in EnableUTF8: {ex}");
 				}
 
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (LangCapa2, client.Capabilities);
@@ -4202,7 +4202,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -4228,7 +4228,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4241,13 +4241,13 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.EnableUTF8Async ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in EnableUTF8: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in EnableUTF8: {ex}");
 				}
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (LangCapa2, client.Capabilities);
@@ -4276,7 +4276,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -4300,7 +4300,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4313,7 +4313,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -4330,7 +4330,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -4356,7 +4356,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Connect (new Pop3ReplayStream (commands, false), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4369,7 +4369,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -4383,7 +4383,7 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Pop3ProtocolException pex) {
 					Assert.IsInstanceOf<FormatException> (pex.InnerException);
 				} catch (Exception ex) {
-					Assert.Fail ("Unexpected exception thrown by GetMessage: {0}", ex);
+					Assert.Fail ($"Unexpected exception thrown by GetMessage: {ex}");
 				}
 
 				try {
@@ -4392,13 +4392,13 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Pop3ProtocolException pex) {
 					Assert.IsInstanceOf<FormatException> (pex.InnerException);
 				} catch (Exception ex) {
-					Assert.Fail ("Unexpected exception thrown by GetMessageHeaders: {0}", ex);
+					Assert.Fail ($"Unexpected exception thrown by GetMessageHeaders: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -4424,7 +4424,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.ConnectAsync (new Pop3ReplayStream (commands, true), "localhost", 110, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4437,7 +4437,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
@@ -4451,7 +4451,7 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Pop3ProtocolException pex) {
 					Assert.IsInstanceOf<FormatException> (pex.InnerException);
 				} catch (Exception ex) {
-					Assert.Fail ("Unexpected exception thrown by GetMessageAsync: {0}", ex);
+					Assert.Fail ($"Unexpected exception thrown by GetMessageAsync: {ex}");
 				}
 
 				try {
@@ -4460,13 +4460,13 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Pop3ProtocolException pex) {
 					Assert.IsInstanceOf<FormatException> (pex.InnerException);
 				} catch (Exception ex) {
-					Assert.Fail ("Unexpected exception thrown by GetMessageHeadersAsync: {0}", ex);
+					Assert.Fail ($"Unexpected exception thrown by GetMessageHeadersAsync: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");

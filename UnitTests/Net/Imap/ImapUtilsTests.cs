@@ -195,7 +195,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							labels = ImapUtils.ParseLabelsListAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing X-GM-LABELS failed: {0}", ex);
+							Assert.Fail ($"Parsing X-GM-LABELS failed: {ex}");
 							return;
 						}
 
@@ -221,7 +221,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							labels = await ImapUtils.ParseLabelsListAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing X-GM-LABELS failed: {0}", ex);
+							Assert.Fail ($"Parsing X-GM-LABELS failed: {ex}");
 							return;
 						}
 
@@ -248,7 +248,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODY failed: {0}", ex);
+							Assert.Fail ($"Parsing BODY failed: {ex}");
 							return;
 						}
 
@@ -286,7 +286,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODY failed: {0}", ex);
+							Assert.Fail ($"Parsing BODY failed: {ex}");
 							return;
 						}
 
@@ -323,7 +323,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -374,7 +374,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -425,7 +425,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -476,7 +476,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -529,7 +529,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -577,7 +577,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -624,7 +624,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -672,7 +672,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -720,7 +720,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -767,7 +767,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -813,7 +813,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -859,7 +859,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -908,7 +908,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -955,7 +955,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -1000,7 +1000,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -1027,7 +1027,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -1055,7 +1055,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -1084,7 +1084,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -1114,7 +1114,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -1143,7 +1143,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = ImapUtils.ParseEnvelopeAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -1171,7 +1171,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
+							Assert.Fail ($"Parsing ENVELOPE failed: {ex}");
 							return;
 						}
 
@@ -1200,7 +1200,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1239,7 +1239,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1277,7 +1277,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1320,7 +1320,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1363,7 +1363,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1432,7 +1432,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1500,7 +1500,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1567,7 +1567,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1634,7 +1634,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1701,7 +1701,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1768,7 +1768,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1835,7 +1835,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1907,7 +1907,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -1956,7 +1956,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2003,7 +2003,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2082,7 +2082,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2163,7 +2163,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2213,7 +2213,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2261,7 +2261,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2301,7 +2301,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2341,7 +2341,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2381,7 +2381,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2421,7 +2421,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2461,7 +2461,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2501,7 +2501,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2543,7 +2543,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2586,7 +2586,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2630,7 +2630,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2672,7 +2672,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2715,7 +2715,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2760,7 +2760,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2812,7 +2812,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2864,7 +2864,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2918,7 +2918,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -2973,7 +2973,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3035,7 +3035,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3094,7 +3094,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3130,7 +3130,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3167,7 +3167,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3204,7 +3204,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3239,7 +3239,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3298,7 +3298,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = await ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3357,7 +3357,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3475,7 +3475,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							body = ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
 							return;
 						}
 
@@ -3520,7 +3520,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							ImapUtils.ParseThreads (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							Assert.Fail ($"Parsing THREAD response failed: {ex}");
 							return;
 						}
 
@@ -3575,7 +3575,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							await ImapUtils.ParseThreadsAsync (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							Assert.Fail ($"Parsing THREAD response failed: {ex}");
 							return;
 						}
 
@@ -3630,7 +3630,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							ImapUtils.ParseThreads (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							Assert.Fail ($"Parsing THREAD response failed: {ex}");
 							return;
 						}
 
@@ -3666,7 +3666,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							await ImapUtils.ParseThreadsAsync (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							Assert.Fail ($"Parsing THREAD response failed: {ex}");
 							return;
 						}
 
@@ -3702,7 +3702,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							ImapUtils.ParseThreads (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							Assert.Fail ($"Parsing THREAD response failed: {ex}");
 							return;
 						}
 
@@ -3739,7 +3739,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							await ImapUtils.ParseThreadsAsync (engine, 0, threads, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							Assert.Fail ($"Parsing THREAD response failed: {ex}");
 							return;
 						}
 
@@ -3801,7 +3801,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
 						}
 
@@ -3833,7 +3833,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							annotations = await ImapUtils.ParseAnnotationsAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
 						}
 
@@ -3865,7 +3865,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
 						}
 
@@ -3901,7 +3901,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							annotations = await ImapUtils.ParseAnnotationsAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
 						}
 
@@ -3937,7 +3937,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
 						}
 
@@ -3971,7 +3971,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							annotations = await ImapUtils.ParseAnnotationsAsync (engine, true, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing ANNOTATION response failed: {0}", ex);
+							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
 						}
 
@@ -4012,7 +4012,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							ImapUtils.ParseFolderList (engine, list, false, false, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing LIST response failed: {0}", ex);
+							Assert.Fail ($"Parsing LIST response failed: {ex}");
 							return;
 						}
 
@@ -4042,7 +4042,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							await ImapUtils.ParseFolderListAsync (engine, list, false, false, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing LIST response failed: {0}", ex);
+							Assert.Fail ($"Parsing LIST response failed: {ex}");
 							return;
 						}
 

@@ -343,7 +343,7 @@ namespace UnitTests.Security {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -365,7 +365,7 @@ namespace UnitTests.Security {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -383,7 +383,7 @@ namespace UnitTests.Security {
 					Assert.IsNull (ex.ServerCertificate, "ServerCertificate");
 					Assert.IsNull (ex.RootCertificateAuthority, "RootCertificateAuthority");
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -401,7 +401,7 @@ namespace UnitTests.Security {
 					Assert.IsNull (ex.ServerCertificate, "ServerCertificate");
 					Assert.IsNull (ex.RootCertificateAuthority, "RootCertificateAuthority");
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}

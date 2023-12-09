@@ -320,7 +320,7 @@ namespace UnitTests.Net.Smtp {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 
 				try {
@@ -335,7 +335,7 @@ namespace UnitTests.Net.Smtp {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -364,7 +364,7 @@ namespace UnitTests.Net.Smtp {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 
 				try {
@@ -379,7 +379,7 @@ namespace UnitTests.Net.Smtp {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -407,7 +407,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.Disconnect (true);
@@ -429,7 +429,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.Disconnect (true);
@@ -451,7 +451,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.Disconnect (true);
@@ -476,7 +476,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 				using (var message = CreateSimpleMessage ()) {
@@ -502,7 +502,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				using (var message = CreateSimpleMessage ()) {
@@ -567,7 +567,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect ("host", 465, SecureSocketOptions.SslOnConnect));
@@ -584,7 +584,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.Throws<InvalidOperationException> (() => client.Authenticate ("username", "password"));
@@ -625,7 +625,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync ("host", 465, SecureSocketOptions.SslOnConnect));
@@ -642,7 +642,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.AuthenticateAsync ("username", "password"));
@@ -687,7 +687,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (SmtpStatusCode.ServiceClosingTransmissionChannel, ex.StatusCode, "StatusCode");
 					Assert.AreEqual ("ESMTP server not ready", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception: {0}", ex);
+					Assert.Fail ($"Did not expect this exception: {ex}");
 				}
 			}
 		}
@@ -708,7 +708,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (SmtpStatusCode.ServiceClosingTransmissionChannel, ex.StatusCode, "StatusCode");
 					Assert.AreEqual ("ESMTP server not ready", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception: {0}", ex);
+					Assert.Fail ($"Did not expect this exception: {ex}");
 				}
 			}
 		}
@@ -1257,7 +1257,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1270,13 +1270,13 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate (new SaslMechanismPlain ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1299,7 +1299,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1312,13 +1312,13 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1350,7 +1350,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1366,7 +1366,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (AuthenticationException ex) {
 					Assert.AreEqual ("535: authentication failed", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -1375,13 +1375,13 @@ namespace UnitTests.Net.Smtp {
 				} catch (AuthenticationException ex) {
 					Assert.AreEqual ("535: authentication failed", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1399,7 +1399,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1415,7 +1415,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (AuthenticationException ex) {
 					Assert.AreEqual ("535: authentication failed", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -1424,13 +1424,13 @@ namespace UnitTests.Net.Smtp {
 				} catch (AuthenticationException ex) {
 					Assert.AreEqual ("535: authentication failed", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1498,7 +1498,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1513,13 +1513,13 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Authenticate ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1541,7 +1541,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1556,13 +1556,13 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.AuthenticateAsync ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1594,7 +1594,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1607,13 +1607,13 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Authenticate (new SaslMechanismPlain ("username", "password"));
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1635,7 +1635,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1648,13 +1648,13 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password"));
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1688,7 +1688,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1701,13 +1701,13 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Authenticate (new SaslMechanismLogin ("username", "password"));
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1729,7 +1729,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1742,13 +1742,13 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.AuthenticateAsync (new SaslMechanismLogin ("username", "password"));
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1774,7 +1774,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false, mode), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1796,7 +1796,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1824,7 +1824,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1834,7 +1834,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1852,7 +1852,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1862,7 +1862,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -1911,7 +1911,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1941,7 +1941,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				MailboxAddress vrfy = null;
@@ -1949,7 +1949,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					vrfy = client.Verify ("Smith");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Verify: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Verify: {ex}");
 				}
 
 				Assert.NotNull (vrfy, "VRFY result");
@@ -1961,7 +1961,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					expn = client.Expand ("Example-People");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Expand: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Expand: {ex}");
 				}
 
 				Assert.NotNull (expn, "EXPN result");
@@ -1983,7 +1983,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.NoOp ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in NoOp: {ex}");
 				}
 
 				using (var message = CreateSimpleMessage ()) {
@@ -1993,7 +1993,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						response = client.Send (message);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
 					}
 
@@ -2002,7 +2002,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						response = client.Send (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
 					}
 
@@ -2011,7 +2011,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						response = client.Send (options, message);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
 					}
 
@@ -2020,7 +2020,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						response = client.Send (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
 					}
 
@@ -2030,7 +2030,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2048,7 +2048,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2078,7 +2078,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				MailboxAddress vrfy = null;
@@ -2086,7 +2086,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					vrfy = await client.VerifyAsync ("Smith");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Verify: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Verify: {ex}");
 				}
 
 				Assert.NotNull (vrfy, "VRFY result");
@@ -2098,7 +2098,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					expn = await client.ExpandAsync ("Example-People");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Expand: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Expand: {ex}");
 				}
 
 				Assert.NotNull (expn, "EXPN result");
@@ -2120,7 +2120,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.NoOpAsync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in NoOp: {ex}");
 				}
 
 				using (var message = CreateSimpleMessage ()) {
@@ -2130,7 +2130,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						response = await client.SendAsync (message);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
 					}
 
@@ -2139,7 +2139,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						response = await client.SendAsync (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
 					}
 
@@ -2148,7 +2148,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						response = await client.SendAsync (options, message);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
 					}
 
@@ -2157,7 +2157,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						response = await client.SendAsync (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
 					}
 
@@ -2167,7 +2167,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2197,7 +2197,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2227,13 +2227,13 @@ namespace UnitTests.Net.Smtp {
 
 					client.Authenticate (sasl);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2251,7 +2251,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2281,13 +2281,13 @@ namespace UnitTests.Net.Smtp {
 
 					await client.AuthenticateAsync (sasl);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2317,7 +2317,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "elwood.innosoft.com", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2353,7 +2353,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (AuthenticationException ax) {
 					// yay!
 				} catch (Exception ex) {
-					Assert.Fail ("Unexpected exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Unexpected exception in Authenticate: {ex}");
 				}
 
 				Assert.IsFalse (client.IsAuthenticated, "IsAuthenticated");
@@ -2361,7 +2361,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2379,7 +2379,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "elwood.innosoft.com", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2415,7 +2415,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (AuthenticationException ax) {
 					// yay!
 				} catch (Exception ex) {
-					Assert.Fail ("Unexpected exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Unexpected exception in Authenticate: {ex}");
 				}
 
 				Assert.IsFalse (client.IsAuthenticated, "IsAuthenticated");
@@ -2423,7 +2423,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2453,7 +2453,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2471,20 +2471,20 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					using (var message = CreateEightBitMessage ())
 						client.Send (message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2500,7 +2500,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2518,20 +2518,20 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					using (var message = CreateEightBitMessage ())
 						await client.SendAsync (message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2568,7 +2568,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2587,14 +2587,14 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				using (var message = CreateEightBitMessage ()) {
 					try {
 						client.Send (message, mailbox, new MailboxAddress[] { mailbox });
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
 
 					// Disable SMTPUTF8
@@ -2603,14 +2603,14 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Send (message, mailbox, new MailboxAddress[] { mailbox });
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2626,7 +2626,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2645,14 +2645,14 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				using (var message = CreateEightBitMessage ()) {
 					try {
 						await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
 
 					// Disable SMTPUTF8
@@ -2661,14 +2661,14 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2725,7 +2725,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2743,7 +2743,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Authenticate ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
@@ -2760,13 +2760,13 @@ namespace UnitTests.Net.Smtp {
 							client.Send (message);
 						}
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
 
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2811,7 +2811,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2829,7 +2829,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.AuthenticateAsync ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
@@ -2846,13 +2846,13 @@ namespace UnitTests.Net.Smtp {
 							await client.SendAsync (message);
 						}
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
 
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2883,7 +2883,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2902,7 +2902,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -2918,13 +2918,13 @@ namespace UnitTests.Net.Smtp {
 						}
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -2941,7 +2941,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2960,7 +2960,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -2976,13 +2976,13 @@ namespace UnitTests.Net.Smtp {
 						}
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3010,7 +3010,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3028,7 +3028,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -3038,7 +3038,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
@@ -3046,7 +3046,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3062,7 +3062,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3080,7 +3080,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -3090,7 +3090,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
@@ -3098,7 +3098,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3127,7 +3127,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3145,7 +3145,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -3155,7 +3155,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
@@ -3163,7 +3163,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3179,7 +3179,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3197,7 +3197,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -3207,7 +3207,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
@@ -3215,7 +3215,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3261,7 +3261,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3279,7 +3279,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -3290,7 +3290,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
 					Assert.AreEqual (sex.StatusCode, SmtpStatusCode.TransactionFailed, "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.AreEqual (1, client.NotAccepted, "NotAccepted");
@@ -3301,7 +3301,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3317,7 +3317,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3335,7 +3335,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -3346,7 +3346,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
 					Assert.AreEqual (sex.StatusCode, SmtpStatusCode.TransactionFailed, "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.AreEqual (1, client.NotAccepted, "NotAccepted");
@@ -3357,7 +3357,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3385,7 +3385,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3403,7 +3403,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -3414,7 +3414,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (SmtpErrorCode.MessageNotAccepted, sex.ErrorCode, "Unexpected SmtpErrorCode");
 					Assert.AreEqual (SmtpStatusCode.TransactionFailed, sex.StatusCode, "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.AreEqual (1, client.NotAccepted, "NotAccepted");
@@ -3425,7 +3425,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3441,7 +3441,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3459,7 +3459,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -3470,7 +3470,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
 					Assert.AreEqual (sex.StatusCode, SmtpStatusCode.TransactionFailed, "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.AreEqual (1, client.NotAccepted, "NotAccepted");
@@ -3481,7 +3481,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3508,7 +3508,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3530,7 +3530,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (ServiceNotAuthenticatedException) {
 					// this is the expected exception
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
@@ -3538,7 +3538,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3554,7 +3554,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3576,7 +3576,7 @@ namespace UnitTests.Net.Smtp {
 				} catch (ServiceNotAuthenticatedException) {
 					// this is the expected exception
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
@@ -3584,7 +3584,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3648,7 +3648,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3668,7 +3668,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Authenticate ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					// disable pipelining
@@ -3680,13 +3680,13 @@ namespace UnitTests.Net.Smtp {
 					try {
 						client.Send (message);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
 
 					try {
 						client.Disconnect (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3706,7 +3706,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3726,7 +3726,7 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.AuthenticateAsync ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					// disable pipelining
@@ -3738,13 +3738,13 @@ namespace UnitTests.Net.Smtp {
 					try {
 						await client.SendAsync (message);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
 
 					try {
 						await client.DisconnectAsync (true);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
 					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3775,7 +3775,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3795,7 +3795,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				// disable pipelining
@@ -3814,13 +3814,13 @@ namespace UnitTests.Net.Smtp {
 						client.Send (message);
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3836,7 +3836,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3856,7 +3856,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				// disable pipelining
@@ -3875,13 +3875,13 @@ namespace UnitTests.Net.Smtp {
 						await client.SendAsync (message);
 					}
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
 				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
@@ -3924,7 +3924,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3955,7 +3955,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					response = client.SendCommand ("VRFY Smith");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Verify: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Verify: {ex}");
 				}
 
 				Assert.NotNull (response, "VRFY result");
@@ -3965,7 +3965,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					response = client.SendCommand ("EXPN Example-People");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Expand: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Expand: {ex}");
 				}
 
 				Assert.NotNull (response, "EXPN result");
@@ -3987,7 +3987,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4018,7 +4018,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					response = await client.SendCommandAsync ("VRFY Smith");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Verify: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Verify: {ex}");
 				}
 
 				Assert.NotNull (response, "VRFY result");
@@ -4028,7 +4028,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					response = await client.SendCommandAsync ("EXPN Example-People");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Expand: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Expand: {ex}");
 				}
 
 				Assert.NotNull (response, "EXPN result");

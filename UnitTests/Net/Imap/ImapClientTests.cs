@@ -175,7 +175,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				// Authenticate
@@ -204,7 +204,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate (credentials);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				// Notify
@@ -250,7 +250,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (IMAP4rev2CoreCapabilities | ImapCapabilities.StartTLS | ImapCapabilities.LoginDisabled, client.Capabilities, "Capabilities");
@@ -267,7 +267,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (IMAP4rev2CoreCapabilities | ImapCapabilities.StartTLS | ImapCapabilities.LoginDisabled, client.Capabilities, "Capabilities");
@@ -389,7 +389,7 @@ namespace UnitTests.Net.Imap {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 
 				try {
@@ -404,7 +404,7 @@ namespace UnitTests.Net.Imap {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -433,7 +433,7 @@ namespace UnitTests.Net.Imap {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 
 				try {
@@ -448,7 +448,7 @@ namespace UnitTests.Net.Imap {
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
 						SslHandshakeExceptionTests.AssertRootCertificate (root);
 				} catch (Exception ex) {
-					Assert.Ignore ("SSL handshake failure inconclusive: {0}", ex);
+					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
 			}
 		}
@@ -1023,7 +1023,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1045,7 +1045,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1070,7 +1070,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("The IMAP server unexpectedly refused the connection.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				client.Disconnect (false);
@@ -1091,7 +1091,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("The IMAP server unexpectedly refused the connection.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				await client.DisconnectAsync (false);
@@ -1119,7 +1119,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("Too many connections.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (1, alerts, "Expected 1 alert");
@@ -1149,7 +1149,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("Too many connections.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (1, alerts, "Expected 1 alert");
@@ -1172,7 +1172,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("Too many connections.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				client.Disconnect (false);
@@ -1193,7 +1193,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("Too many connections.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				await client.DisconnectAsync (false);
@@ -1222,13 +1222,13 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -1237,7 +1237,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("System going down for a reboot.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Open: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Open: {ex}");
 				}
 
 				client.Disconnect (false);
@@ -1253,13 +1253,13 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -1268,7 +1268,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("System going down for a reboot.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Open: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Open: {ex}");
 				}
 
 				await client.DisconnectAsync (false);
@@ -1295,7 +1295,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("Autologout; idle for too long (1)", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				client.Disconnect (false);
@@ -1314,7 +1314,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("Autologout; idle for too long (1)", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				await client.DisconnectAsync (false);
@@ -1350,13 +1350,13 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -1365,7 +1365,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("System going down for a reboot.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Open: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Open: {ex}");
 				}
 
 				Assert.AreEqual (1, alerts, "Expected 1 alert");
@@ -1390,13 +1390,13 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
@@ -1405,7 +1405,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException ex) {
 					Assert.AreEqual ("System going down for a reboot.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Open: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Open: {ex}");
 				}
 
 				Assert.AreEqual (1, alerts, "Expected 1 alert");
@@ -1432,7 +1432,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1443,7 +1443,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException pex) {
 					Assert.AreEqual ("you are not allowed to act as a proxy server", pex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected ImapProtocolException, but got: {0}", ex);
+					Assert.Fail ($"Expected ImapProtocolException, but got: {ex}");
 				}
 			}
 		}
@@ -1457,7 +1457,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1468,7 +1468,7 @@ namespace UnitTests.Net.Imap {
 				} catch (ImapProtocolException pex) {
 					Assert.AreEqual ("you are not allowed to act as a proxy server", pex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected ImapProtocolException, but got: {0}", ex);
+					Assert.Fail ($"Expected ImapProtocolException, but got: {ex}");
 				}
 			}
 		}
@@ -1495,19 +1495,19 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					client.Disconnect (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Exceptions should be swallowed in Disconnect: {0}", ex);
+					Assert.Fail ($"Exceptions should be swallowed in Disconnect: {ex}");
 				}
 			}
 		}
@@ -1521,19 +1521,19 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect this exception in Connect: {ex}");
 				}
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				try {
 					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
-					Assert.Fail ("Exceptions should be swallowed in Disconnect: {0}", ex);
+					Assert.Fail ($"Exceptions should be swallowed in Disconnect: {ex}");
 				}
 			}
 		}
@@ -1563,7 +1563,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1598,7 +1598,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1642,7 +1642,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1677,7 +1677,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -1732,7 +1732,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.AuthenticationMechanisms.Clear ();
@@ -1743,7 +1743,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual (alert, ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, alerts, "Expected 1 alert");
@@ -1779,7 +1779,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.AuthenticationMechanisms.Clear ();
@@ -1790,7 +1790,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual (alert, ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, alerts, "Expected 1 alert");
@@ -1820,7 +1820,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.AuthenticationMechanisms.Clear ();
@@ -1831,7 +1831,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual (respText, ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				client.Disconnect (false);
@@ -1847,7 +1847,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.AuthenticationMechanisms.Clear ();
@@ -1858,7 +1858,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual (respText, ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				await client.DisconnectAsync (false);
@@ -1887,13 +1887,13 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var folder = client.GetFolder ("Buggy Folder Listing");
@@ -1913,13 +1913,13 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var folder = await client.GetFolderAsync ("Buggy Folder Listing");
@@ -1952,7 +1952,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.AuthenticationMechanisms.Clear ();
@@ -1968,7 +1968,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual (alertText, ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (5, alerts, "Unexpected number of alerts: {0}", alerts);
@@ -1986,7 +1986,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				client.AuthenticationMechanisms.Clear ();
@@ -2002,7 +2002,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual (alertText, ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (5, alerts, "Unexpected number of alerts: {0}", alerts);
@@ -2035,7 +2035,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2043,7 +2043,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var trash = client.GetFolder (SpecialFolder.Trash);
@@ -2066,7 +2066,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2074,7 +2074,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var trash = client.GetFolder (SpecialFolder.Trash);
@@ -2111,7 +2111,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2119,7 +2119,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var trash = client.GetFolder (SpecialFolder.Trash);
@@ -2142,7 +2142,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2150,7 +2150,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var trash = client.GetFolder (SpecialFolder.Trash);
@@ -2185,7 +2185,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2213,7 +2213,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate (new NetworkCredential ("Indiana \"Han Solo\" Jones", "p@ss\\word"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -2233,7 +2233,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2261,7 +2261,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("Indiana \"Han Solo\" Jones", "p@ss\\word"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -2293,7 +2293,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2321,7 +2321,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "pass%word");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -2341,7 +2341,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2369,7 +2369,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "pass%word");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -2398,7 +2398,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2418,7 +2418,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual ("AUTHENTICATE failed", ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				client.AuthenticationMechanisms.Clear ();
@@ -2429,7 +2429,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual ("The LOGIN command is disabled.", ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				client.Disconnect (false);
@@ -2445,7 +2445,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (GMailInitialCapabilities | ImapCapabilities.LoginDisabled, client.Capabilities);
@@ -2462,7 +2462,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual ("AUTHENTICATE failed", ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				client.AuthenticationMechanisms.Clear ();
@@ -2473,7 +2473,7 @@ namespace UnitTests.Net.Imap {
 				} catch (AuthenticationException ax) {
 					Assert.AreEqual ("The LOGIN command is disabled.", ax.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				await client.DisconnectAsync (false);
@@ -2500,7 +2500,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.SaslIR | ImapCapabilities.UidPlus | ImapCapabilities.Id |
@@ -2519,7 +2519,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (ImapCommandResponse.Bad, cx.Response);
 					Assert.AreEqual ("User is authenticated but not connected.", cx.ResponseText);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				client.Disconnect (false);
@@ -2535,7 +2535,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.SaslIR | ImapCapabilities.UidPlus | ImapCapabilities.Id |
@@ -2554,7 +2554,7 @@ namespace UnitTests.Net.Imap {
 					Assert.AreEqual (ImapCommandResponse.Bad, cx.Response);
 					Assert.AreEqual ("User is authenticated but not connected.", cx.ResponseText);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				await client.DisconnectAsync (false);
@@ -2587,7 +2587,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2617,7 +2617,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -2661,7 +2661,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2691,7 +2691,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -2753,7 +2753,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				// Note: Do not try XOAUTH2 or PLAIN
@@ -2763,7 +2763,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				client.EnableUTF8 ();
@@ -2791,7 +2791,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				// Note: Do not try XOAUTH2 or PLAIN
@@ -2801,7 +2801,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				await client.EnableUTF8Async ();
@@ -2843,7 +2843,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2872,7 +2872,7 @@ namespace UnitTests.Net.Imap {
 
 					client.Authenticate (sasl);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -2892,7 +2892,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2921,7 +2921,7 @@ namespace UnitTests.Net.Imap {
 
 					await client.AuthenticateAsync (sasl);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -2953,7 +2953,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -2981,7 +2981,7 @@ namespace UnitTests.Net.Imap {
 
 					client.Authenticate (sasl);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -3001,7 +3001,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3029,7 +3029,7 @@ namespace UnitTests.Net.Imap {
 
 					await client.AuthenticateAsync (sasl);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -3110,7 +3110,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3138,7 +3138,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						client.Authenticate ("username", "pass%word");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -3162,7 +3162,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3190,7 +3190,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						await client.AuthenticateAsync ("username", "pass%word");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -3226,7 +3226,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3245,7 +3245,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						client.Authenticate ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -3267,7 +3267,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3286,7 +3286,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						await client.AuthenticateAsync ("username", "password");
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -3322,7 +3322,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3351,7 +3351,7 @@ namespace UnitTests.Net.Imap {
 
 						client.Authenticate (sasl);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -3375,7 +3375,7 @@ namespace UnitTests.Net.Imap {
 					try {
 						await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
 					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3404,7 +3404,7 @@ namespace UnitTests.Net.Imap {
 
 						await client.AuthenticateAsync (sasl);
 					} catch (Exception ex) {
-						Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
 					Assert.AreEqual (1, authenticated, "Authenticated event was not emitted the expected number of times");
@@ -3440,7 +3440,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3457,7 +3457,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -3481,7 +3481,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3498,7 +3498,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -3534,7 +3534,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (DovecotInitialCapabilities, client.Capabilities);
@@ -3550,7 +3550,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (DovecotAuthenticatedCapabilities, client.Capabilities);
@@ -3576,7 +3576,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.AreEqual (DovecotInitialCapabilities, client.Capabilities);
@@ -3592,7 +3592,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (DovecotAuthenticatedCapabilities, client.Capabilities);
@@ -3668,7 +3668,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3687,7 +3687,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities | ImapCapabilities.StatusSize | ImapCapabilities.ObjectID, client.Capabilities);
@@ -3776,7 +3776,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3795,7 +3795,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities | ImapCapabilities.StatusSize | ImapCapabilities.ObjectID, client.Capabilities);
@@ -3898,7 +3898,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3917,7 +3917,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -3949,7 +3949,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -3968,7 +3968,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -4143,7 +4143,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4161,7 +4161,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (DovecotAuthenticatedCapabilities, client.Capabilities);
@@ -4219,7 +4219,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.EnableQuickResync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception when enabling QRESYNC: {0}", ex);
+					Assert.Fail ($"Did not expect an exception when enabling QRESYNC: {ex}");
 				}
 
 				Assert.IsTrue (client.Inbox.Supports (FolderFeature.QuickResync));
@@ -4793,7 +4793,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -4811,7 +4811,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (DovecotAuthenticatedCapabilities, client.Capabilities);
@@ -4859,7 +4859,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.EnableQuickResyncAsync ();
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception when enabling QRESYNC: {0}", ex);
+					Assert.Fail ($"Did not expect an exception when enabling QRESYNC: {ex}");
 				}
 
 				// take advantage of LIST-STATUS to get top-level personal folders...
@@ -5521,7 +5521,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -5540,7 +5540,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -5684,7 +5684,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -5703,7 +5703,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -5863,7 +5863,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -5871,7 +5871,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var level3 = client.GetFolder ("Level1/Level2/Level3");
@@ -5910,7 +5910,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -5918,7 +5918,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var level3 = await client.GetFolderAsync ("Level1/Level2/Level3");
@@ -5974,7 +5974,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -5991,7 +5991,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -6053,7 +6053,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6070,7 +6070,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
@@ -6146,7 +6146,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6154,7 +6154,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				using (var done = new CancellationTokenSource ()) {
@@ -6208,7 +6208,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6216,7 +6216,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				using (var done = new CancellationTokenSource ()) {
@@ -6284,7 +6284,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6292,7 +6292,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var inbox = client.Inbox;
@@ -6318,7 +6318,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6326,7 +6326,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				var inbox = client.Inbox;
@@ -6373,7 +6373,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6552,7 +6552,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6750,7 +6750,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6758,7 +6758,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				client.Compress ();
@@ -6796,7 +6796,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6804,7 +6804,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				await client.CompressAsync ();
@@ -6861,7 +6861,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6880,7 +6880,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (AclAuthenticatedCapabilities, client.Capabilities);
@@ -6960,7 +6960,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -6979,7 +6979,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (AclAuthenticatedCapabilities, client.Capabilities);
@@ -7088,7 +7088,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -7106,7 +7106,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (MetadataAuthenticatedCapabilities, client.Capabilities);
@@ -7216,7 +7216,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -7234,7 +7234,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (MetadataAuthenticatedCapabilities, client.Capabilities);
@@ -7354,7 +7354,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -7362,7 +7362,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, client.PersonalNamespaces.Count, "PersonalNamespaces.Count");
@@ -7390,7 +7390,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -7398,7 +7398,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, client.PersonalNamespaces.Count, "PersonalNamespaces.Count");
@@ -7433,7 +7433,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
@@ -7441,7 +7441,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				Assert.AreEqual (1, client.PersonalNamespaces.Count, "PersonalNamespaces.Count");

@@ -106,7 +106,7 @@ namespace UnitTests.Security {
 				Assert.AreEqual (code, sex.ErrorCode, "ErrorCode");
 				return;
 			} catch (Exception ex) {
-				Assert.Fail ("SaslException expected, but got: {0}", ex.GetType ().Name);
+				Assert.Fail ($"SaslException expected, but got: {ex.GetType ().Name}");
 				return;
 			}
 

@@ -175,7 +175,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							respCode = engine.ParseResponseCodeAsync (true, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							Assert.Fail ($"Parsing RESP-CODE failed: {ex}");
 							return;
 						}
 
@@ -206,7 +206,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							respCode = engine.ParseResponseCodeAsync (true, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							Assert.Fail ($"Parsing RESP-CODE failed: {ex}");
 							return;
 						}
 
@@ -235,7 +235,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							respCode = engine.ParseResponseCodeAsync (true, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							Assert.Fail ($"Parsing RESP-CODE failed: {ex}");
 							return;
 						}
 
@@ -264,7 +264,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							respCode = engine.ParseResponseCodeAsync (true, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							Assert.Fail ($"Parsing RESP-CODE failed: {ex}");
 							return;
 						}
 
@@ -293,7 +293,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							respCode = engine.ParseResponseCodeAsync (false, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							Assert.Fail ($"Parsing RESP-CODE failed: {ex}");
 							return;
 						}
 
@@ -322,7 +322,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							respCode = engine.ParseResponseCodeAsync (true, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							Assert.Fail ($"Parsing RESP-CODE failed: {ex}");
 							return;
 						}
 
@@ -352,7 +352,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							respCode = engine.ParseResponseCodeAsync (true, false, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing RESP-CODE failed: {0}", ex);
+							Assert.Fail ($"Parsing RESP-CODE failed: {ex}");
 							return;
 						}
 
@@ -374,7 +374,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							engine.Connect (tokenizer, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing greeting failed: {0}", ex);
+							Assert.Fail ($"Parsing greeting failed: {ex}");
 							return;
 						}
 
@@ -392,7 +392,7 @@ namespace UnitTests.Net.Imap {
 						try {
 							await engine.ConnectAsync (tokenizer, CancellationToken.None);
 						} catch (Exception ex) {
-							Assert.Fail ("Parsing greeting failed: {0}", ex);
+							Assert.Fail ($"Parsing greeting failed: {ex}");
 							return;
 						}
 

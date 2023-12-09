@@ -165,7 +165,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Parse ("/comment");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual ("/comment", entry.Entry, "Entry");
@@ -176,7 +176,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Parse ("/comment.priv");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual ("/comment.priv", entry.Entry, "Entry");
@@ -187,7 +187,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Parse ("/comment.shared");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			entry = new AnnotationEntry ("/comment", AnnotationScope.Shared);
@@ -199,7 +199,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Parse ("/1.2.3.4/comment");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual ("/1.2.3.4/comment", entry.Entry, "Entry");
@@ -210,7 +210,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Parse ("/1.2.3.4/comment.priv");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual ("/1.2.3.4/comment.priv", entry.Entry, "Entry");
@@ -221,7 +221,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Parse ("/1.2.3.4/comment.shared");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual ("/1.2.3.4/comment.shared", entry.Entry, "Entry");
@@ -238,7 +238,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/comment");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.Comment, entry, "/comment");
@@ -246,7 +246,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/comment.priv");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.PrivateComment, entry, "/comment.priv");
@@ -254,7 +254,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/comment.shared");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.SharedComment, entry, "/comment.shared");
@@ -262,7 +262,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/flags");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.Flags, entry, "/flags");
@@ -270,7 +270,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/flags.priv");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.PrivateFlags, entry, "/flags.priv");
@@ -278,7 +278,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/flags.shared");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.SharedFlags, entry, "/flags.shared");
@@ -286,7 +286,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/altsubject");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.AltSubject, entry, "/altsubject");
@@ -294,7 +294,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/altsubject.priv");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.PrivateAltSubject, entry, "/altsubject.priv");
@@ -302,7 +302,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/altsubject.shared");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual (AnnotationEntry.SharedAltSubject, entry, "/altsubject.shared");
@@ -310,7 +310,7 @@ namespace UnitTests {
 			try {
 				entry = AnnotationEntry.Create ("/1.2.3.4/comment");
 			} catch (Exception ex) {
-				Assert.Fail ("Did not expect: {0}", ex);
+				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
 			Assert.AreEqual ("/1.2.3.4/comment", entry.Entry, "Entry");
