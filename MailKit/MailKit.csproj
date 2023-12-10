@@ -45,8 +45,8 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <!-- Enable serializable support for net4.x, net6.0 and net8.0 -->
-  <PropertyGroup Condition=" ! $(TargetFramework.StartsWith('netstandard')) ">
+  <!-- Enable serializable support for net4.x and net6.0 -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net6')) ">
     <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 

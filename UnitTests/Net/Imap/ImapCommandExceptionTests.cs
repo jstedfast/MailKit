@@ -25,6 +25,8 @@
 // THE SOFTWARE.
 //
 
+#if NET6_0
+
 using System.Runtime.Serialization.Formatters.Binary;
 
 using MailKit.Net.Imap;
@@ -73,3 +75,5 @@ namespace UnitTests.Net.Imap {
 		}
 	}
 }
+
+#endif // NET6_0

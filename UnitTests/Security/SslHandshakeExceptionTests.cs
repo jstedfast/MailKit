@@ -41,6 +41,8 @@ namespace UnitTests.Security {
 	{
 		const string HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ssl-handshake-exception";
 
+#if NET6_0
+
 		[Test]
 		public void TestSerialization ()
 		{
@@ -143,6 +145,8 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
 			}
 		}
+
+#endif // NET6_0
 
 		class FakeClient : MailService
 		{

@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+#if NET6_0
+
 using System.Runtime.Serialization.Formatters.Binary;
 
 using MailKit.Net.Pop3;
@@ -94,3 +96,5 @@ namespace UnitTests.Net.Pop3 {
 		}
 	}
 }
+
+#endif // NET6_0

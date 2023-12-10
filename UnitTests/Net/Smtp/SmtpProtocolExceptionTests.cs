@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+#if NET6_0
+
 using System.Runtime.Serialization.Formatters.Binary;
 
 using MailKit.Net.Smtp;
@@ -70,3 +72,5 @@ namespace UnitTests.Net.Smtp {
 		}
 	}
 }
+
+#endif // NET6_0

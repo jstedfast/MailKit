@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+#if NET6_0
+
 using System.Runtime.Serialization.Formatters.Binary;
 
 using MailKit;
@@ -342,3 +344,5 @@ namespace UnitTests {
 		}
 	}
 }
+
+#endif // NET6_0

@@ -38,6 +38,8 @@ namespace UnitTests.Security {
 			Assert.Throws<ArgumentNullException> (() => new SaslException (null, SaslErrorCode.MissingChallenge, "message"));
 		}
 
+#if NET6_0
+
 		[Test]
 		public void TestSerialization ()
 		{
@@ -54,5 +56,6 @@ namespace UnitTests.Security {
 				Assert.AreEqual (expected.ErrorCode, ex.ErrorCode, "Unexpected ErrorCode.");
 			}
 		}
+#endif // NET6_0
 	}
 }
