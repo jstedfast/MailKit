@@ -434,21 +434,24 @@ namespace MailKit {
 			case "imap.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "7659DEB20394714710429A1027216CEA" && fingerprint == "4BE1F9D70579875497D0BBD426A2716FED7FF982"); // Expires 1/8/2024 3:09:50 AM
+					return (serial == "7659DEB20394714710429A1027216CEA" && fingerprint == "4BE1F9D70579875497D0BBD426A2716FED7FF982") // Expires 1/8/2024 3:09:50 AM
+						|| (serial == "00834343AFFBA3A9A809878375A26D8645" && fingerprint == "ACF146DFE90CF994EC68E5D3F042CD9F307ECB21"); // Expires 2/12/2024 3:08:34 AM
 				default:
 					return false;
 				}
 			case "pop.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "00D5604DF47DE692141031D79A675A1DBA" && fingerprint == "C9D5128A41DA89A72ED5793487A6411109E1C832"); // Expires 1/8/2024 3:09:45 AM
+					return (serial == "00D5604DF47DE692141031D79A675A1DBA" && fingerprint == "C9D5128A41DA89A72ED5793487A6411109E1C832") // Expires 1/8/2024 3:09:45 AM
+						|| (serial == "6698D5CEDF55DC3B0940C64366D7213B" && fingerprint == "E100D56A871E434C2CEBA0108D92E1BBCB244291"); // Expires 2/12/2024 3:08:28 AM
 				default:
 					return false;
 				}
 			case "smtp.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "78F52E9140007CB71059FE898EAC8ECC" && fingerprint == "0EA97794262EF5C1162C43EDBF8D4094A1880761"); // Expires 1/8/2024 3:09:50 AM
+					return (serial == "78F52E9140007CB71059FE898EAC8ECC" && fingerprint == "0EA97794262EF5C1162C43EDBF8D4094A1880761") // Expires 1/8/2024 3:09:50 AM
+						|| (serial == "0080724CB5177600BC09880853DD46E740" && fingerprint == "5D077045C3D5D46FAB32894C26424FDEDB83E617"); // Expires 2/12/2024 3:09:16 AM
 				default:
 					return false;
 				}
@@ -464,7 +467,7 @@ namespace MailKit {
 			case "imap.mail.me.com":
 				switch (issuer) {
 				case AppleCertificateIssuer:
-					return (serial == "017EE0660A4756CCDFE3CB2B197288D2" && fingerprint == "E724371A435CB7F694AD98F18FF25E155ACCC91A"); // Expires 11/20/2023 3:23:23 PM
+					return (serial == "625E7F1A7241224E0C16B50D41FD382D" && fingerprint == "84B2DABA1580A494BD5E832CA459437E95ABED55"); // Expires 2/12/2024 1:43:17 PM
 				default:
 					return false;
 				}
@@ -480,15 +483,15 @@ namespace MailKit {
 			case "legacy.pop.mail.yahoo.com":
 				switch (issuer) {
 				case YahooCertificateIssuer:
-					return (serial == "0F372029DC5F77FB1F19AA462BB95003" && fingerprint == "925E927BC60420E3055B6609FA565E024ECCC996"); // Expires 12/27/2023 6:59:59 PM)
+					return (serial == "0F372029DC5F77FB1F19AA462BB95003" && fingerprint == "925E927BC60420E3055B6609FA565E024ECCC996") // Expires 12/27/2023 6:59:59 PM
+						|| (serial == "06F64B8F2C7EE1D013AA50C457405784" && fingerprint == "15D40ADFBCC052DA608ACCF62058FA5E42FB16D8"); // Expires 5/22/2024 7:59:59 PM
 				default:
 					return false;
 				}
 			case "smtp.mail.yahoo.com":
 				switch (issuer) {
 				case YahooCertificateIssuer:
-					return (serial == "0CCD3B84C15855A0F25D96BF142EEE17" && fingerprint == "EC6FF72768B2A313D3CBD5190E9C68AA408F3188") // Expires 11/22/2023 6:59:59 PM
-						|| (serial == "0C20E581DFEBEB1AC48CCE5C1B52AE44" && fingerprint == "B48E87C5530A0EC347C323ED02B060B3B7281C25"); // Expires 4/17/2024 7:59:59 PM
+					return (serial == "0C20E581DFEBEB1AC48CCE5C1B52AE44" && fingerprint == "B48E87C5530A0EC347C323ED02B060B3B7281C25"); // Expires 4/17/2024 7:59:59 PM
 				default:
 					return false;
 				}
