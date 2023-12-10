@@ -47,7 +47,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (FolderNotFoundException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.FolderName, ex.FolderName, "Unexpected FolderName.");
+				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
 			}
 
 			expected = new FolderNotFoundException ("This is the error message.", "Inbox");
@@ -58,8 +58,8 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (FolderNotFoundException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.FolderName, ex.FolderName, "Unexpected FolderName.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
 			}
 
 			expected = new FolderNotFoundException ("This is the error message.", "Inbox", new IOException ("Inner Exception"));
@@ -70,8 +70,8 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (FolderNotFoundException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.FolderName, ex.FolderName, "Unexpected FolderName.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
 			}
 
 			Assert.Throws<ArgumentNullException> (() => new FolderNotFoundException (null));
@@ -90,8 +90,8 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (FolderNotOpenException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.FolderName, ex.FolderName, "Unexpected FolderName.");
-				Assert.AreEqual (expected.FolderAccess, ex.FolderAccess, "Unexpected FolderAcess.");
+				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
+				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAcess.");
 			}
 
 			expected = new FolderNotOpenException ("Inbox", FolderAccess.ReadWrite, "This is the error message.");
@@ -102,8 +102,8 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (FolderNotOpenException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.FolderName, ex.FolderName, "Unexpected FolderName.");
-				Assert.AreEqual (expected.FolderAccess, ex.FolderAccess, "Unexpected FolderAcess.");
+				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
+				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAcess.");
 			}
 
 			expected = new FolderNotOpenException ("Inbox", FolderAccess.ReadWrite, "This is the error message.", new IOException ("Inner Exception"));
@@ -114,8 +114,8 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (FolderNotOpenException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.FolderName, ex.FolderName, "Unexpected FolderName.");
-				Assert.AreEqual (expected.FolderAccess, ex.FolderAccess, "Unexpected FolderAcess.");
+				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
+				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAcess.");
 			}
 
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly));
@@ -134,7 +134,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (MessageNotFoundException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 
 			expected = new MessageNotFoundException ("This is the message.", new IOException ("Inner Exception"));
@@ -145,7 +145,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (MessageNotFoundException)formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 		}
 
@@ -160,7 +160,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ServiceNotAuthenticatedException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 
 			expected = new ServiceNotAuthenticatedException ("This is the message.");
@@ -171,7 +171,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ServiceNotAuthenticatedException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 
 			expected = new ServiceNotAuthenticatedException ("This is the message.", new IOException ("Inner Exception"));
@@ -182,7 +182,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ServiceNotAuthenticatedException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 		}
 
@@ -197,7 +197,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ServiceNotConnectedException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 
 			expected = new ServiceNotConnectedException ("This is the message.");
@@ -208,7 +208,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ServiceNotConnectedException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 
 			expected = new ServiceNotConnectedException ("This is the message.", new IOException ("Inner Exception"));
@@ -219,7 +219,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ServiceNotConnectedException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 		}
 
@@ -234,8 +234,8 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ImapCommandException)formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Response, ex.Response, "Unexpected Response.");
-				Assert.AreEqual (expected.ResponseText, ex.ResponseText, "Unexpected ResponseText.");
+				Assert.That (ex.Response, Is.EqualTo (expected.Response), "Unexpected Response.");
+				Assert.That (ex.ResponseText, Is.EqualTo (expected.ResponseText), "Unexpected ResponseText.");
 			}
 
 			expected = new ImapCommandException (ImapCommandResponse.Bad, "Bad boys, bad boys. Whatcha gonna do?", "Message");
@@ -246,8 +246,8 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ImapCommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Response, ex.Response, "Unexpected Response.");
-				Assert.AreEqual (expected.ResponseText, ex.ResponseText, "Unexpected ResponseText.");
+				Assert.That (ex.Response, Is.EqualTo (expected.Response), "Unexpected Response.");
+				Assert.That (ex.ResponseText, Is.EqualTo (expected.ResponseText), "Unexpected ResponseText.");
 			}
 		}
 
@@ -262,7 +262,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ImapProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = new ImapProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
@@ -273,7 +273,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ImapProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = new ImapProtocolException ();
@@ -284,7 +284,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (ImapProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 		}
 
@@ -302,7 +302,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (Pop3CommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.StatusText, ex.StatusText, "Unexpected StatusText.");
+				Assert.That (ex.StatusText, Is.EqualTo (expected.StatusText), "Unexpected StatusText.");
 			}
 		}
 
@@ -317,7 +317,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (Pop3ProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = new Pop3ProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
@@ -328,7 +328,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (Pop3ProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = new Pop3ProtocolException ();
@@ -339,7 +339,7 @@ namespace UnitTests {
 				stream.Position = 0;
 
 				var ex = (Pop3ProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 		}
 	}

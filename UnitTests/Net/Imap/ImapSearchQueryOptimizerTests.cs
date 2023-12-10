@@ -39,11 +39,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var query = optimizer.Reduce (SearchQuery.And (SearchQuery.All, SearchQuery.Answered));
 
-			Assert.AreEqual (SearchQuery.Answered, query);
+			Assert.That (query, Is.EqualTo (SearchQuery.Answered));
 
 			query = optimizer.Reduce (SearchQuery.And (SearchQuery.Answered, SearchQuery.All));
 
-			Assert.AreEqual (SearchQuery.Answered, query);
+			Assert.That (query, Is.EqualTo (SearchQuery.Answered));
 		}
 
 		[Test]
@@ -51,11 +51,11 @@ namespace UnitTests.Net.Imap {
 		{
 			var query = optimizer.Reduce (SearchQuery.Or (SearchQuery.All, SearchQuery.Answered));
 
-			Assert.AreEqual (SearchQuery.All, query);
+			Assert.That (query, Is.EqualTo (SearchQuery.All));
 
 			query = optimizer.Reduce (SearchQuery.Or (SearchQuery.Answered, SearchQuery.All));
 
-			Assert.AreEqual (SearchQuery.All, query);
+			Assert.That (query, Is.EqualTo (SearchQuery.All));
 		}
 
 		[Test]
@@ -68,17 +68,17 @@ namespace UnitTests.Net.Imap {
 				var query = SearchQuery.Not (SearchQuery.HasFlags (flag));
 				var optimized = optimizer.Reduce (query);
 
-				Assert.AreEqual ("Not" + flag.ToString (), optimized.Term.ToString (), "NOT ({0})", flag);
+				Assert.That (optimized.Term.ToString (), Is.EqualTo ("Not" + flag.ToString ()), $"NOT ({flag})");
 
 				query = SearchQuery.Not (SearchQuery.NotFlags (flag));
 				optimized = optimizer.Reduce (query);
 
-				Assert.AreEqual (flag.ToString (), optimized.Term.ToString (), "NOT ({0})", query.Operand.Term);
+				Assert.That (optimized.Term.ToString (), Is.EqualTo (flag.ToString ()), $"NOT ({query.Operand.Term})");
 
 				query = SearchQuery.Not (SearchQuery.Not (SearchQuery.HasFlags (flag)));
 				optimized = optimizer.Reduce (query);
 
-				Assert.AreEqual (flag.ToString (), optimized.Term.ToString (), "NOT (NOT ({0}))", flag);
+				Assert.That (optimized.Term.ToString (), Is.EqualTo (flag.ToString ()), $"NOT (NOT ({flag}))");
 			}
 		}
 
@@ -88,17 +88,17 @@ namespace UnitTests.Net.Imap {
 			var query = SearchQuery.Not (SearchQuery.HasKeyword ("custom"));
 			var optimized = optimizer.Reduce (query);
 
-			Assert.AreEqual (SearchTerm.NotKeyword, optimized.Term, "NOT KEYWORD");
+			Assert.That (optimized.Term, Is.EqualTo (SearchTerm.NotKeyword), "NOT KEYWORD");
 
 			query = SearchQuery.Not (SearchQuery.NotKeyword ("custom"));
 			optimized = optimizer.Reduce (query);
 
-			Assert.AreEqual (SearchTerm.Keyword, optimized.Term, "NOT NOTKEYWORD", query.Operand.Term);
+			Assert.That (optimized.Term, Is.EqualTo (SearchTerm.Keyword), $"NOT NOTKEYWORD");
 
 			query = SearchQuery.Not (SearchQuery.Not (SearchQuery.HasKeyword ("custom")));
 			optimized = optimizer.Reduce (query);
 
-			Assert.AreEqual (SearchTerm.Keyword, optimized.Term, "NOT NOT KEYWORD");
+			Assert.That (optimized.Term, Is.EqualTo (SearchTerm.Keyword), "NOT NOT KEYWORD");
 		}
 	}
 }

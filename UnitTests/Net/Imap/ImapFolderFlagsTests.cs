@@ -473,47 +473,47 @@ namespace UnitTests.Net.Imap {
 
 				// AddFlags
 				unmodifiedIndexes = inbox.AddFlags (indexes, modseq, MessageFlags.Seen, true);
-				Assert.AreEqual (0, unmodifiedIndexes.Count);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
 
 				unmodifiedUids = inbox.AddFlags (uids, modseq, MessageFlags.Seen, true);
-				Assert.AreEqual (0, unmodifiedUids.Count);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
 
 				// RemoveFlags
 				unmodifiedIndexes = inbox.RemoveFlags (indexes, modseq, MessageFlags.Seen, true);
-				Assert.AreEqual (0, unmodifiedIndexes.Count);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
 
 				unmodifiedUids = inbox.RemoveFlags (uids, modseq, MessageFlags.Seen, true);
-				Assert.AreEqual (0, unmodifiedUids.Count);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
 
 				// SetFlags
 				unmodifiedIndexes = inbox.SetFlags (indexes, modseq, MessageFlags.Seen, true);
-				Assert.AreEqual (0, unmodifiedIndexes.Count);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
 
 				unmodifiedUids = inbox.SetFlags (uids, modseq, MessageFlags.Seen, true);
-				Assert.AreEqual (0, unmodifiedUids.Count);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
 
 				var labels = new string[] { "Label1", "Label2" };
 
 				// AddLabels
 				unmodifiedIndexes = inbox.AddLabels (indexes, modseq, labels, true);
-				Assert.AreEqual (0, unmodifiedIndexes.Count);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
 
 				unmodifiedUids = inbox.AddLabels (uids, modseq, labels, true);
-				Assert.AreEqual (0, unmodifiedUids.Count);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
 
 				// RemoveLabels
 				unmodifiedIndexes = inbox.RemoveLabels (indexes, modseq, labels, true);
-				Assert.AreEqual (0, unmodifiedIndexes.Count);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
 
 				unmodifiedUids = inbox.RemoveLabels (uids, modseq, labels, true);
-				Assert.AreEqual (0, unmodifiedUids.Count);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
 
 				// SetLabels
 				unmodifiedIndexes = inbox.SetLabels (indexes, modseq, labels, true);
-				Assert.AreEqual (0, unmodifiedIndexes.Count);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
 
 				unmodifiedUids = inbox.SetLabels (uids, modseq, labels, true);
-				Assert.AreEqual (0, unmodifiedUids.Count);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
 
 				client.Disconnect (false);
 			}

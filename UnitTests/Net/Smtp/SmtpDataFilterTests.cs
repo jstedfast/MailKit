@@ -62,7 +62,7 @@ namespace UnitTests.Net.Smtp {
 
 					var text = Encoding.ASCII.GetString (buffer, 0, n);
 
-					Assert.AreEqual (outputs[i], text);
+					Assert.That (text, Is.EqualTo (outputs[i]));
 
 					filter.Reset ();
 				}
@@ -94,7 +94,7 @@ namespace UnitTests.Net.Smtp {
 
 					var text = Encoding.ASCII.GetString (buffer, 0, n);
 
-					Assert.AreEqual (outputs[i], text);
+					Assert.That (text, Is.EqualTo (outputs[i]));
 
 					filter.Reset ();
 				}
@@ -126,7 +126,7 @@ namespace UnitTests.Net.Smtp {
 
 					var text = Encoding.ASCII.GetString (buffer, 0, n);
 
-					Assert.AreEqual (outputs[i], text);
+					Assert.That (text, Is.EqualTo (outputs[i]));
 
 					filter.Reset ();
 				}
@@ -160,7 +160,7 @@ namespace UnitTests.Net.Smtp {
 
 				var text = Encoding.ASCII.GetString (buffer, 0, n);
 
-				Assert.AreEqual (output, text);
+				Assert.That (text, Is.EqualTo (output));
 			}
 		}
 
@@ -191,7 +191,7 @@ namespace UnitTests.Net.Smtp {
 
 				var text = Encoding.ASCII.GetString (buffer, 0, n);
 
-				Assert.AreEqual (output, text);
+				Assert.That (text, Is.EqualTo (output));
 			}
 		}
 
@@ -222,7 +222,7 @@ namespace UnitTests.Net.Smtp {
 
 				var text = Encoding.ASCII.GetString (buffer, 0, n);
 
-				Assert.AreEqual (output, text);
+				Assert.That (text, Is.EqualTo (output));
 			}
 		}
 
@@ -253,7 +253,7 @@ namespace UnitTests.Net.Smtp {
 
 				var text = Encoding.ASCII.GetString (buffer, 0, n);
 
-				Assert.AreEqual (output, text);
+				Assert.That (text, Is.EqualTo (output));
 			}
 		}
 	}

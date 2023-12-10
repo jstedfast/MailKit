@@ -114,15 +114,15 @@ namespace UnitTests.Search {
 		{
 			var query = new FilterSearchQuery (MetadataTag.Create ("/private/filters/values/private-unread"));
 
-			Assert.AreEqual ("private-unread", query.Name);
+			Assert.That (query.Name, Is.EqualTo ("private-unread"));
 
 			query = new FilterSearchQuery (MetadataTag.Create ("/shared/filters/values/shared-unread"));
 
-			Assert.AreEqual ("shared-unread", query.Name);
+			Assert.That (query.Name, Is.EqualTo ("shared-unread"));
 
 			query = (FilterSearchQuery) SearchQuery.Filter ("basic");
 
-			Assert.AreEqual ("basic", query.Name);
+			Assert.That (query.Name, Is.EqualTo ("basic"));
 		}
 
 		[Test]
@@ -130,13 +130,13 @@ namespace UnitTests.Search {
 		{
 			var query = new UidSearchQuery (new UniqueId (5));
 
-			Assert.AreEqual (1, query.Uids.Count);
-			Assert.AreEqual ((uint) 5, query.Uids[0].Id);
+			Assert.That (query.Uids.Count, Is.EqualTo (1));
+			Assert.That (query.Uids[0].Id, Is.EqualTo ((uint) 5));
 
 			query = SearchQuery.Uids (new UniqueId[] { new UniqueId (5) });
 
-			Assert.AreEqual (1, query.Uids.Count);
-			Assert.AreEqual ((uint)5, query.Uids [0].Id);
+			Assert.That (query.Uids.Count, Is.EqualTo (1));
+			Assert.That (query.Uids [0].Id, Is.EqualTo ((uint)5));
 		}
 
 		[Test]
@@ -144,7 +144,7 @@ namespace UnitTests.Search {
 		{
 			var query = new SearchQuery ();
 
-			Assert.AreEqual (SearchTerm.All, query.Term, "Default .ctor");
+			Assert.That (query.Term, Is.EqualTo (SearchTerm.All), "Default .ctor");
 		}
 
 		[Test]
@@ -156,32 +156,32 @@ namespace UnitTests.Search {
 			var query = SearchQuery.HasKeywords (new [] { "custom1" });
 			Assert.IsInstanceOf<TextSearchQuery> (query);
 			text = (TextSearchQuery)query;
-			Assert.AreEqual (SearchTerm.Keyword, text.Term);
-			Assert.AreEqual ("custom1", text.Text);
+			Assert.That (text.Term, Is.EqualTo (SearchTerm.Keyword));
+			Assert.That (text.Text, Is.EqualTo ("custom1"));
 
 			query = SearchQuery.HasKeywords (new [] { "custom1", "custom2" });
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery)query;
-			Assert.AreEqual (SearchTerm.And, binary.Term);
+			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
 			Assert.IsInstanceOf<TextSearchQuery> (binary.Left);
 			Assert.IsInstanceOf<TextSearchQuery> (binary.Right);
-			Assert.AreEqual ("custom1", ((TextSearchQuery)binary.Left).Text);
-			Assert.AreEqual ("custom2", ((TextSearchQuery)binary.Right).Text);
+			Assert.That (((TextSearchQuery)binary.Left).Text, Is.EqualTo ("custom1"));
+			Assert.That (((TextSearchQuery)binary.Right).Text, Is.EqualTo ("custom2"));
 
 			query = SearchQuery.NotKeywords (new [] { "custom1" });
 			Assert.IsInstanceOf<TextSearchQuery> (query);
 			text = (TextSearchQuery) query;
-			Assert.AreEqual (SearchTerm.NotKeyword, text.Term);
-			Assert.AreEqual ("custom1", text.Text);
+			Assert.That (text.Term, Is.EqualTo (SearchTerm.NotKeyword));
+			Assert.That (text.Text, Is.EqualTo ("custom1"));
 
 			query = SearchQuery.NotKeywords (new [] { "custom1", "custom2" });
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
-			Assert.AreEqual (SearchTerm.And, binary.Term);
+			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
 			Assert.IsInstanceOf<TextSearchQuery> (binary.Left);
 			Assert.IsInstanceOf<TextSearchQuery> (binary.Right);
-			Assert.AreEqual ("custom1", ((TextSearchQuery) binary.Left).Text);
-			Assert.AreEqual ("custom2", ((TextSearchQuery) binary.Right).Text);
+			Assert.That (((TextSearchQuery) binary.Left).Text, Is.EqualTo ("custom1"));
+			Assert.That (((TextSearchQuery) binary.Right).Text, Is.EqualTo ("custom2"));
 		}
 
 		[Test]
@@ -192,44 +192,44 @@ namespace UnitTests.Search {
 			var query = SearchQuery.HasFlags (MessageFlags.Answered | MessageFlags.Seen);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
-			Assert.AreEqual (SearchTerm.And, binary.Term);
-			Assert.AreEqual (SearchQuery.Seen.Term, binary.Left.Term);
-			Assert.AreEqual (SearchQuery.Answered.Term, binary.Right.Term);
+			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
+			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.Seen.Term));
+			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.Answered.Term));
 
 			query = SearchQuery.HasFlags (MessageFlags.Flagged | MessageFlags.Deleted);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
-			Assert.AreEqual (SearchTerm.And, binary.Term);
-			Assert.AreEqual (SearchQuery.Flagged.Term, binary.Left.Term);
-			Assert.AreEqual (SearchQuery.Deleted.Term, binary.Right.Term);
+			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
+			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.Flagged.Term));
+			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.Deleted.Term));
 
 			query = SearchQuery.HasFlags (MessageFlags.Draft | MessageFlags.Recent);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
-			Assert.AreEqual (SearchTerm.And, binary.Term);
-			Assert.AreEqual (SearchQuery.Draft.Term, binary.Left.Term);
-			Assert.AreEqual (SearchQuery.Recent.Term, binary.Right.Term);
+			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
+			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.Draft.Term));
+			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.Recent.Term));
 
 			query = SearchQuery.NotFlags (MessageFlags.Answered | MessageFlags.Seen);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
-			Assert.AreEqual (SearchTerm.And, binary.Term);
-			Assert.AreEqual (SearchQuery.NotSeen.Term, binary.Left.Term);
-			Assert.AreEqual (SearchQuery.NotAnswered.Term, binary.Right.Term);
+			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
+			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.NotSeen.Term));
+			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.NotAnswered.Term));
 
 			query = SearchQuery.NotFlags (MessageFlags.Flagged | MessageFlags.Deleted);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
-			Assert.AreEqual (SearchTerm.And, binary.Term);
-			Assert.AreEqual (SearchQuery.NotFlagged.Term, binary.Left.Term);
-			Assert.AreEqual (SearchQuery.NotDeleted.Term, binary.Right.Term);
+			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
+			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.NotFlagged.Term));
+			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.NotDeleted.Term));
 
 			query = SearchQuery.NotFlags (MessageFlags.Draft | MessageFlags.Recent);
 			Assert.IsInstanceOf<BinarySearchQuery> (query);
 			binary = (BinarySearchQuery) query;
-			Assert.AreEqual (SearchTerm.And, binary.Term);
-			Assert.AreEqual (SearchQuery.NotDraft.Term, binary.Left.Term);
-			Assert.AreEqual (SearchQuery.NotRecent.Term, binary.Right.Term);
+			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
+			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.NotDraft.Term));
+			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.NotRecent.Term));
 		}
 
 		[Test]
@@ -237,23 +237,23 @@ namespace UnitTests.Search {
 		{
 			var numeric = SearchQuery.GMailMessageId (512);
 
-			Assert.AreEqual (SearchTerm.GMailMessageId, numeric.Term);
-			Assert.AreEqual (512, numeric.Value);
+			Assert.That (numeric.Term, Is.EqualTo (SearchTerm.GMailMessageId));
+			Assert.That (numeric.Value, Is.EqualTo (512));
 
 			numeric = SearchQuery.GMailThreadId (1024);
 
-			Assert.AreEqual (SearchTerm.GMailThreadId, numeric.Term);
-			Assert.AreEqual (1024, numeric.Value);
+			Assert.That (numeric.Term, Is.EqualTo (SearchTerm.GMailThreadId));
+			Assert.That (numeric.Value, Is.EqualTo (1024));
 
 			var text = SearchQuery.HasGMailLabel ("label");
 
-			Assert.AreEqual (SearchTerm.GMailLabels, text.Term);
-			Assert.AreEqual ("label", text.Text);
+			Assert.That (text.Term, Is.EqualTo (SearchTerm.GMailLabels));
+			Assert.That (text.Text, Is.EqualTo ("label"));
 
 			text = SearchQuery.GMailRawSearch ("raw");
 
-			Assert.AreEqual (SearchTerm.GMailRaw, text.Term);
-			Assert.AreEqual ("raw", text.Text);
+			Assert.That (text.Term, Is.EqualTo (SearchTerm.GMailRaw));
+			Assert.That (text.Text, Is.EqualTo ("raw"));
 		}
 	}
 }

@@ -49,7 +49,7 @@ namespace UnitTests.Security {
 			var expected = new SslHandshakeException ("Bad boys, bad boys. Whatcha gonna do?", new IOException ("I/O Error."));
 			SslCertificateValidationInfo info = null;
 
-			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
+			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -57,13 +57,13 @@ namespace UnitTests.Security {
 				stream.Position = 0;
 
 				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = new SslHandshakeException ("Bad boys, bad boys. Whatcha gonna do?");
 
-			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
+			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -71,13 +71,13 @@ namespace UnitTests.Security {
 				stream.Position = 0;
 
 				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = new SslHandshakeException ();
 
-			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
+			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -85,13 +85,13 @@ namespace UnitTests.Security {
 				stream.Position = 0;
 
 				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
 
-			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
+			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -99,13 +99,13 @@ namespace UnitTests.Security {
 				stream.Position = 0;
 
 				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
 
-			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
+			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -113,13 +113,13 @@ namespace UnitTests.Security {
 				stream.Position = 0;
 
 				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
 
-			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
+			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -127,13 +127,13 @@ namespace UnitTests.Security {
 				stream.Position = 0;
 
 				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 
 			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
 
-			Assert.AreEqual (HelpLink, expected.HelpLink, "Unexpected HelpLink.");
+			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
 
 			using (var stream = new MemoryStream ()) {
 				var formatter = new BinaryFormatter ();
@@ -141,8 +141,8 @@ namespace UnitTests.Security {
 				stream.Position = 0;
 
 				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.HelpLink, ex.HelpLink, "Unexpected HelpLink.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
 			}
 		}
 
@@ -316,18 +316,18 @@ namespace UnitTests.Security {
 
 		public static void AssertServerCertificate (X509Certificate2 certificate)
 		{
-			Assert.AreEqual ("*.badssl.com", certificate.GetNameInfo (X509NameType.SimpleName, false), "CommonName");
-			Assert.AreEqual ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US", certificate.Issuer, "Issuer");
-			//Assert.AreEqual ("008040A36688A3B1F2", certificate.SerialNumber, "SerialNumber");
-			//Assert.AreEqual ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D", certificate.Thumbprint, "Thumbprint");
+			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("*.badssl.com"), "CommonName");
+			Assert.That (certificate.Issuer, Is.EqualTo ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US"), "Issuer");
+			//Assert.That (certificate.SerialNumber, Is.EqualTo ("008040A36688A3B1F2"), "SerialNumber");
+			//Assert.That (certificate.Thumbprint, Is.EqualTo ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D"), "Thumbprint");
 		}
 
 		public static void AssertRootCertificate (X509Certificate2 certificate)
 		{
-			Assert.AreEqual ("BadSSL Untrusted Root Certificate Authority", certificate.GetNameInfo (X509NameType.SimpleName, false), "CommonName");
-			Assert.AreEqual ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US", certificate.Issuer, "Issuer");
-			Assert.AreEqual ("0097A0FCFAD7E528FD", certificate.SerialNumber, "SerialNumber");
-			Assert.AreEqual ("7890C8934D5869B25D2F8D0D646F9A5D7385BA85", certificate.Thumbprint, "Thumbprint");
+			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("BadSSL Untrusted Root Certificate Authority"), "CommonName");
+			Assert.That (certificate.Issuer, Is.EqualTo ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US"), "Issuer");
+			Assert.That (certificate.SerialNumber, Is.EqualTo ("0097A0FCFAD7E528FD"), "SerialNumber");
+			Assert.That (certificate.Thumbprint, Is.EqualTo ("7890C8934D5869B25D2F8D0D646F9A5D7385BA85"), "Thumbprint");
 		}
 
 		[Test]
@@ -340,7 +340,7 @@ namespace UnitTests.Security {
 					client.Connect ("untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -362,7 +362,7 @@ namespace UnitTests.Security {
 					await client.ConnectAsync ("untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -384,8 +384,8 @@ namespace UnitTests.Security {
 					client.Connect ("www.google.com", 80, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with www.google.com:80.");
 				} catch (SslHandshakeException ex) {
-					Assert.IsNull (ex.ServerCertificate, "ServerCertificate");
-					Assert.IsNull (ex.RootCertificateAuthority, "RootCertificateAuthority");
+					Assert.That (ex.ServerCertificate, Is.Null, "ServerCertificate");
+					Assert.That (ex.RootCertificateAuthority, Is.Null, "RootCertificateAuthority");
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -402,8 +402,8 @@ namespace UnitTests.Security {
 					await client.ConnectAsync ("www.google.com", 80, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with www.google.com:80.");
 				} catch (SslHandshakeException ex) {
-					Assert.IsNull (ex.ServerCertificate, "ServerCertificate");
-					Assert.IsNull (ex.RootCertificateAuthority, "RootCertificateAuthority");
+					Assert.That (ex.ServerCertificate, Is.Null, "ServerCertificate");
+					Assert.That (ex.RootCertificateAuthority, Is.Null, "RootCertificateAuthority");
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}

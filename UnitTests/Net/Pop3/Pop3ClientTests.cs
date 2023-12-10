@@ -148,21 +148,21 @@ namespace UnitTests.Net.Pop3 {
 			Pop3Client.ComputeDefaultValues (host, ref port, ref options, out Uri uri, out bool starttls);
 
 			if (expected.PathAndQuery == "/?starttls=when-available") {
-				Assert.AreEqual (SecureSocketOptions.StartTlsWhenAvailable, options, "{0}", expected);
-				Assert.IsTrue (starttls, "{0}", expected);
+				Assert.That (options, Is.EqualTo (SecureSocketOptions.StartTlsWhenAvailable), $"{expected}");
+				Assert.That (starttls, Is.True, $"{expected}");
 			} else if (expected.PathAndQuery == "/?starttls=always") {
-				Assert.AreEqual (SecureSocketOptions.StartTls, options, "{0}", expected);
-				Assert.IsTrue (starttls, "{0}", expected);
+				Assert.That (options, Is.EqualTo (SecureSocketOptions.StartTls), $"{expected}");
+				Assert.That (starttls, Is.True, $"{expected}");
 			} else if (expected.Scheme == "pops") {
-				Assert.AreEqual (SecureSocketOptions.SslOnConnect, options, "{0}", expected);
-				Assert.IsFalse (starttls, "{0}", expected);
+				Assert.That (options, Is.EqualTo (SecureSocketOptions.SslOnConnect), $"{expected}");
+				Assert.That (starttls, Is.False, $"{expected}");
 			} else {
-				Assert.AreEqual (SecureSocketOptions.None, options, "{0}", expected);
-				Assert.IsFalse (starttls, "{0}", expected);
+				Assert.That (options, Is.EqualTo (SecureSocketOptions.None), $"{expected}");
+				Assert.That (starttls, Is.False, $"{expected}");
 			}
 
-			Assert.AreEqual (expected.ToString (), uri.ToString ());
-			Assert.AreEqual (expected.Port, port, "{0}", expected);
+			Assert.That (uri.ToString (), Is.EqualTo (expected.ToString ()));
+			Assert.That (port, Is.EqualTo (expected.Port), $"{expected}");
 		}
 
 		[Test]
@@ -228,7 +228,7 @@ namespace UnitTests.Net.Pop3 {
 					client.Connect ("untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -243,7 +243,7 @@ namespace UnitTests.Net.Pop3 {
 					client.Connect (socket, "untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -272,7 +272,7 @@ namespace UnitTests.Net.Pop3 {
 					await client.ConnectAsync ("untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -287,7 +287,7 @@ namespace UnitTests.Net.Pop3 {
 					await client.ConnectAsync (socket, "untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -356,12 +356,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
-				Assert.AreEqual (0, client.LoginDelay);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
+				Assert.That (client.LoginDelay, Is.EqualTo (0));
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= Pop3Capabilities.Apop);
 				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
@@ -370,7 +370,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentException> (() => client.SetLanguage (string.Empty));
 
 				Assert.Throws<AuthenticationException> (() => client.Authenticate ("username", "password"));
-				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
+				Assert.That (client.IsConnected, Is.True, "AuthenticationException should not cause a disconnect.");
 
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageSizes ());
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.GetMessageSize (0));
@@ -388,10 +388,10 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessage (0));
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessages (0, 1));
 				Assert.Throws<ServiceNotAuthenticatedException> (() => client.DeleteMessages (new int[] { 0 }));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+				Assert.That (client.IsConnected, Is.True, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				client.Authenticate (Encoding.UTF8, "username", "password");
-				Assert.IsTrue (client.IsAuthenticated, "IsAuthenticated");
+				Assert.That (client.IsAuthenticated, Is.True, "IsAuthenticated");
 
 				Assert.Throws<InvalidOperationException> (() => client.Authenticate ("username", "password"));
 				Assert.Throws<InvalidOperationException> (() => client.Authenticate (new NetworkCredential ("username", "password")));
@@ -420,12 +420,12 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentNullException> (() => client.DeleteMessages (null));
 				Assert.Throws<ArgumentException> (() => client.DeleteMessages (new int[] { -1 }));
 
-				Assert.AreEqual (0, client.GetStreams (0, 0).Count);
-				Assert.AreEqual (0, client.GetStreams (Array.Empty<int> ()).Count);
-				Assert.AreEqual (0, client.GetMessages (0, 0).Count);
-				Assert.AreEqual (0, client.GetMessages (Array.Empty<int> ()).Count);
-				Assert.AreEqual (0, client.GetMessageHeaders (0, 0).Count);
-				Assert.AreEqual (0, client.GetMessageHeaders (Array.Empty<int> ()).Count);
+				Assert.That (client.GetStreams (0, 0).Count, Is.EqualTo (0));
+				Assert.That (client.GetStreams (Array.Empty<int> ()).Count, Is.EqualTo (0));
+				Assert.That (client.GetMessages (0, 0).Count, Is.EqualTo (0));
+				Assert.That (client.GetMessages (Array.Empty<int> ()).Count, Is.EqualTo (0));
+				Assert.That (client.GetMessageHeaders (0, 0).Count, Is.EqualTo (0));
+				Assert.That (client.GetMessageHeaders (Array.Empty<int> ()).Count, Is.EqualTo (0));
 
 				try {
 					client.Disconnect (true);
@@ -433,7 +433,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -486,12 +486,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
-				Assert.AreEqual (0, client.LoginDelay);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
+				Assert.That (client.LoginDelay, Is.EqualTo (0));
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= Pop3Capabilities.Apop);
 				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
@@ -500,7 +500,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.ThrowsAsync<ArgumentException> (async () => await client.SetLanguageAsync (string.Empty));
 
 				Assert.ThrowsAsync<AuthenticationException> (async () => await client.AuthenticateAsync ("username", "password"));
-				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
+				Assert.That (client.IsConnected, Is.True, "AuthenticationException should not cause a disconnect.");
 
 				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.GetMessageSizesAsync ());
 				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.GetMessageSizeAsync (0));
@@ -518,10 +518,10 @@ namespace UnitTests.Net.Pop3 {
 				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.DeleteMessageAsync (0));
 				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.DeleteMessagesAsync (0, 1));
 				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.DeleteMessagesAsync (new int[] { 0 }));
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+				Assert.That (client.IsConnected, Is.True, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				await client.AuthenticateAsync (Encoding.UTF8, "username", "password");
-				Assert.IsTrue (client.IsAuthenticated, "IsAuthenticated");
+				Assert.That (client.IsAuthenticated, Is.True, "IsAuthenticated");
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.AuthenticateAsync ("username", "password"));
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
@@ -550,12 +550,12 @@ namespace UnitTests.Net.Pop3 {
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.DeleteMessagesAsync (null));
 				Assert.ThrowsAsync<ArgumentException> (async () => await client.DeleteMessagesAsync (new int[] { -1 }));
 
-				Assert.AreEqual (0, (await client.GetStreamsAsync (0, 0)).Count);
-				Assert.AreEqual (0, (await client.GetStreamsAsync (Array.Empty<int> ())).Count);
-				Assert.AreEqual (0, (await client.GetMessagesAsync (0, 0)).Count);
-				Assert.AreEqual (0, (await client.GetMessagesAsync (Array.Empty<int> ())).Count);
-				Assert.AreEqual (0, (await client.GetMessageHeadersAsync (0, 0)).Count);
-				Assert.AreEqual (0, (await client.GetMessageHeadersAsync (Array.Empty<int> ())).Count);
+				Assert.That ((await client.GetStreamsAsync (0, 0)).Count, Is.EqualTo (0));
+				Assert.That ((await client.GetStreamsAsync (Array.Empty<int> ())).Count, Is.EqualTo (0));
+				Assert.That ((await client.GetMessagesAsync (0, 0)).Count, Is.EqualTo (0));
+				Assert.That ((await client.GetMessagesAsync (Array.Empty<int> ())).Count, Is.EqualTo (0));
+				Assert.That ((await client.GetMessageHeadersAsync (0, 0)).Count, Is.EqualTo (0));
+				Assert.That ((await client.GetMessageHeadersAsync (Array.Empty<int> ())).Count, Is.EqualTo (0));
 
 				try {
 					await client.DisconnectAsync (true);
@@ -563,7 +563,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -611,39 +611,39 @@ namespace UnitTests.Net.Pop3 {
 
 		static void AssertGMailIsConnected (IMailService client)
 		{
-			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-			Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-			Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-			Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-			Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-			Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
-			Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
+			Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+			Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+			Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+			Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+			Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+			Assert.That (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, Is.True, $"Unexpected SslCipherAlgorithm: {client.SslCipherAlgorithm}");
+			Assert.That (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, Is.True, $"Unexpected SslCipherStrength: {client.SslCipherStrength}");
 #if !MONO
-			Assert.IsTrue (client.SslCipherSuite == TlsCipherSuite.TLS_AES_128_GCM_SHA256 || client.SslCipherSuite == TlsCipherSuite.TLS_AES_256_GCM_SHA384, "Unexpected SslCipherSuite: {0}", client.SslCipherSuite);
-			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
+			Assert.That (client.SslCipherSuite == TlsCipherSuite.TLS_AES_128_GCM_SHA256 || client.SslCipherSuite == TlsCipherSuite.TLS_AES_256_GCM_SHA384, Is.True, $"Unexpected SslCipherSuite: {client.SslCipherSuite}");
+			Assert.That (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, Is.True, $"Unexpected SslHashAlgorithm: {client.SslHashAlgorithm}");
 #else
-			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.None, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
+			Assert.That (client.SslHashAlgorithm == HashAlgorithmType.None, Is.True, $"Unexpected SslHashAlgorithm: {client.SslHashAlgorithm}");
 #endif
-			Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-			Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-			Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-			Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+			Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+			Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+			Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+			Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
 		}
 
 		static void AssertClientIsDisconnected (IMailService client)
 		{
-			Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-			Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-			Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-			Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-			Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-			Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-			Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-			Assert.IsNull (client.SslCipherSuite, "Expected SslCipherSuite to be null after disconnecting");
-			Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-			Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-			Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-			Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+			Assert.That (client.IsConnected, Is.False, "Expected the client to be disconnected");
+			Assert.That (client.IsSecure, Is.False, "Expected IsSecure to be false after disconnecting");
+			Assert.That (client.IsEncrypted, Is.False, "Expected IsEncrypted to be false after disconnecting");
+			Assert.That (client.IsSigned, Is.False, "Expected IsSigned to be false after disconnecting");
+			Assert.That (client.SslProtocol, Is.EqualTo (SslProtocols.None), "Expected SslProtocol to be None after disconnecting");
+			Assert.That (client.SslCipherAlgorithm, Is.Null, "Expected SslCipherAlgorithm to be null after disconnecting");
+			Assert.That (client.SslCipherStrength, Is.Null, "Expected SslCipherStrength to be null after disconnecting");
+			Assert.That (client.SslCipherSuite, Is.Null, "Expected SslCipherSuite to be null after disconnecting");
+			Assert.That (client.SslHashAlgorithm, Is.Null, "Expected SslHashAlgorithm to be null after disconnecting");
+			Assert.That (client.SslHashStrength, Is.Null, "Expected SslHashStrength to be null after disconnecting");
+			Assert.That (client.SslKeyExchangeAlgorithm, Is.Null, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
+			Assert.That (client.SslKeyExchangeStrength, Is.Null, "Expected SslKeyExchangeStrength to be null after disconnecting");
 		}
 
 		[Test]
@@ -657,29 +657,29 @@ namespace UnitTests.Net.Pop3 {
 				int connected = 0, disconnected = 0;
 
 				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 					connected++;
 				};
 
 				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+					Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 					disconnected++;
 				};
 
 				client.Connect (host, 0, options);
 				AssertGMailIsConnected (client);
-				Assert.AreEqual (1, connected, "ConnectedEvent");
+				Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
 
 				client.Disconnect (true);
 				AssertClientIsDisconnected (client);
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+				Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 			}
 		}
 
@@ -694,29 +694,29 @@ namespace UnitTests.Net.Pop3 {
 				int connected = 0, disconnected = 0;
 
 				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 					connected++;
 				};
 
 				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+					Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 					disconnected++;
 				};
 
 				await client.ConnectAsync (host, 0, options);
 				AssertGMailIsConnected (client);
-				Assert.AreEqual (1, connected, "ConnectedEvent");
+				Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
 
 				await client.DisconnectAsync (true);
 				AssertClientIsDisconnected (client);
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+				Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 			}
 		}
 
@@ -734,17 +734,17 @@ namespace UnitTests.Net.Pop3 {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
@@ -763,13 +763,13 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail (ex.Message);
 					}
 					AssertGMailIsConnected (client);
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
 
 					client.Disconnect (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -788,17 +788,17 @@ namespace UnitTests.Net.Pop3 {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
@@ -817,13 +817,13 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail (ex.Message);
 					}
 					AssertGMailIsConnected (client);
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
 
 					await client.DisconnectAsync (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -839,17 +839,17 @@ namespace UnitTests.Net.Pop3 {
 				int connected = 0, disconnected = 0;
 
 				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 					connected++;
 				};
 
 				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+					Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 					disconnected++;
 				};
 
@@ -861,13 +861,13 @@ namespace UnitTests.Net.Pop3 {
 
 				client.Connect (socket, host, port, SecureSocketOptions.Auto);
 				AssertGMailIsConnected (client);
-				Assert.AreEqual (1, connected, "ConnectedEvent");
+				Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect (socket, "pop.gmail.com", 995, SecureSocketOptions.Auto));
 
 				client.Disconnect (true);
 				AssertClientIsDisconnected (client);
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+				Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 			}
 		}
 
@@ -882,17 +882,17 @@ namespace UnitTests.Net.Pop3 {
 				int connected = 0, disconnected = 0;
 
 				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 					connected++;
 				};
 
 				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+					Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 					disconnected++;
 				};
 
@@ -904,13 +904,13 @@ namespace UnitTests.Net.Pop3 {
 
 				await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto);
 				AssertGMailIsConnected (client);
-				Assert.AreEqual (1, connected, "ConnectedEvent");
+				Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto));
 
 				await client.DisconnectAsync (true);
 				AssertClientIsDisconnected (client);
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+				Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 			}
 		}
 
@@ -926,39 +926,39 @@ namespace UnitTests.Net.Pop3 {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
 					var uri = new Uri ($"pop://{host}/?starttls=always");
 					client.Connect (uri, cancel.Token);
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (GmxDeCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (GmxDeCipherStrength, client.SslCipherStrength);
-					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-					Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+					Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+					Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+					Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+					Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+					Assert.That (client.SslCipherAlgorithm, Is.EqualTo (GmxDeCipherAlgorithm));
+					Assert.That (client.SslCipherStrength, Is.EqualTo (GmxDeCipherStrength));
+					Assert.That (client.SslHashAlgorithm, Is.EqualTo (GmxDeHashAlgorithm));
+					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					client.Disconnect (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -975,39 +975,39 @@ namespace UnitTests.Net.Pop3 {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
 					var uri = new Uri ($"pop://{host}/?starttls=always");
 					await client.ConnectAsync (uri, cancel.Token);
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (GmxDeCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (GmxDeCipherStrength, client.SslCipherStrength);
-					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-					Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+					Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+					Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+					Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+					Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+					Assert.That (client.SslCipherAlgorithm, Is.EqualTo (GmxDeCipherAlgorithm));
+					Assert.That (client.SslCipherStrength, Is.EqualTo (GmxDeCipherStrength));
+					Assert.That (client.SslHashAlgorithm, Is.EqualTo (GmxDeHashAlgorithm));
+					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					await client.DisconnectAsync (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -1024,39 +1024,39 @@ namespace UnitTests.Net.Pop3 {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
 					var socket = Connect (host, port);
 					client.Connect (socket, host, port, options, cancel.Token);
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (GmxDeCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (GmxDeCipherStrength, client.SslCipherStrength);
-					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-					Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+					Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+					Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+					Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+					Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+					Assert.That (client.SslCipherAlgorithm, Is.EqualTo (GmxDeCipherAlgorithm));
+					Assert.That (client.SslCipherStrength, Is.EqualTo (GmxDeCipherStrength));
+					Assert.That (client.SslHashAlgorithm, Is.EqualTo (GmxDeHashAlgorithm));
+					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					client.Disconnect (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -1073,39 +1073,39 @@ namespace UnitTests.Net.Pop3 {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
 					var socket = Connect (host, port);
 					await client.ConnectAsync (socket, host, port, options, cancel.Token);
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (GmxDeCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (GmxDeCipherStrength, client.SslCipherStrength);
-					Assert.AreEqual (GmxDeHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-					Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+					Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+					Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+					Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+					Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+					Assert.That (client.SslCipherAlgorithm, Is.EqualTo (GmxDeCipherAlgorithm));
+					Assert.That (client.SslCipherStrength, Is.EqualTo (GmxDeCipherStrength));
+					Assert.That (client.SslHashAlgorithm, Is.EqualTo (GmxDeHashAlgorithm));
+					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					await client.DisconnectAsync (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -1126,13 +1126,13 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31), "ExpirePolicy");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 
 				try {
 					client.Disconnect (true);
@@ -1140,7 +1140,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1160,13 +1160,13 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31), "ExpirePolicy");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -1174,7 +1174,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1245,13 +1245,13 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31), "ExpirePolicy");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				try {
@@ -1260,28 +1260,28 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				try {
 					var sizes = client.GetMessageSizes ();
-					Assert.AreEqual (7, sizes.Count, "Expected 7 message sizes");
+					Assert.That (sizes.Count, Is.EqualTo (7), "Expected 7 message sizes");
 					for (int i = 0; i < sizes.Count; i++)
-						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
+						Assert.That (sizes[i], Is.EqualTo ((i + 1) * 1024), $"Unexpected size for message #{i}");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
 					var size = client.GetMessageSize (0);
-					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
+					Assert.That (size, Is.EqualTo (1024), "Unexpected size for 1st message");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
@@ -1296,7 +1296,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var count = client.GetMessageCount ();
-					Assert.AreEqual (7, count, "Expected 7 messages again");
+					Assert.That (count, Is.EqualTo (7), "Expected 7 messages again");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageCount: {ex}");
 				}
@@ -1307,7 +1307,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1323,13 +1323,13 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31), "ExpirePolicy");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				try {
@@ -1338,28 +1338,28 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				try {
 					var sizes = await client.GetMessageSizesAsync ();
-					Assert.AreEqual (7, sizes.Count, "Expected 7 message sizes");
+					Assert.That (sizes.Count, Is.EqualTo (7), "Expected 7 message sizes");
 					for (int i = 0; i < sizes.Count; i++)
-						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
+						Assert.That (sizes[i], Is.EqualTo ((i + 1) * 1024), $"Unexpected size for message #{i}");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
 					var size = await client.GetMessageSizeAsync (0);
-					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
+					Assert.That (size, Is.EqualTo (1024), "Unexpected size for 1st message");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
@@ -1374,7 +1374,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var count = await client.GetMessageCountAsync ();
-					Assert.AreEqual (7, count, "Expected 7 messages again");
+					Assert.That (count, Is.EqualTo (7), "Expected 7 messages again");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageCount: {ex}");
 				}
@@ -1385,7 +1385,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1401,11 +1401,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 				try {
 					client.Authenticate ("username", "password");
@@ -1413,28 +1413,28 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				try {
 					var sizes = client.GetMessageSizes ();
-					Assert.AreEqual (7, sizes.Count, "Expected 7 message sizes");
+					Assert.That (sizes.Count, Is.EqualTo (7), "Expected 7 message sizes");
 					for (int i = 0; i < sizes.Count; i++)
-						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
+						Assert.That (sizes[i], Is.EqualTo ((i + 1) * 1024), $"Unexpected size for message #{i}");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
 					var size = client.GetMessageSize (0);
-					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
+					Assert.That (size, Is.EqualTo (1024), "Unexpected size for 1st message");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
@@ -1449,7 +1449,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var count = client.GetMessageCount ();
-					Assert.AreEqual (7, count, "Expected 7 messages again");
+					Assert.That (count, Is.EqualTo (7), "Expected 7 messages again");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageCount: {ex}");
 				}
@@ -1460,7 +1460,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1476,11 +1476,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -1488,28 +1488,28 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				try {
 					var sizes = await client.GetMessageSizesAsync ();
-					Assert.AreEqual (7, sizes.Count, "Expected 7 message sizes");
+					Assert.That (sizes.Count, Is.EqualTo (7), "Expected 7 message sizes");
 					for (int i = 0; i < sizes.Count; i++)
-						Assert.AreEqual ((i + 1) * 1024, sizes[i], "Unexpected size for message #{0}", i);
+						Assert.That (sizes[i], Is.EqualTo ((i + 1) * 1024), $"Unexpected size for message #{i}");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
 
 				try {
 					var size = await client.GetMessageSizeAsync (0);
-					Assert.AreEqual (1024, size, "Unexpected size for 1st message");
+					Assert.That (size, Is.EqualTo (1024), "Unexpected size for 1st message");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageSizes: {ex}");
 				}
@@ -1524,7 +1524,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var count = await client.GetMessageCountAsync ();
-					Assert.AreEqual (7, count, "Expected 7 messages again");
+					Assert.That (count, Is.EqualTo (7), "Expected 7 messages again");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageCount: {ex}");
 				}
@@ -1535,7 +1535,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1561,11 +1561,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (0, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
 				try {
 					client.Authenticate ("username", "password");
@@ -1573,12 +1573,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (Pop3Capabilities.User | Pop3Capabilities.UIDL, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (0, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User | Pop3Capabilities.UIDL));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				client.GetMessageUids ();
 
@@ -1588,7 +1588,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1614,11 +1614,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (0, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -1626,12 +1626,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (Pop3Capabilities.User | Pop3Capabilities.UIDL, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (0, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User | Pop3Capabilities.UIDL));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				await client.GetMessageUidsAsync ();
 
@@ -1641,7 +1641,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1666,11 +1666,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (0, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
 				try {
 					client.Authenticate ("username", "password");
@@ -1678,12 +1678,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (0, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				Assert.Throws<NotSupportedException> (() => client.GetMessageUids ());
 				Assert.Throws<NotSupportedException> (() => client.GetMessageUid (0));
@@ -1694,7 +1694,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1719,11 +1719,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (0, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -1731,12 +1731,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (Pop3Capabilities.User, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (0, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<NotSupportedException> (() => client.GetMessageUidsAsync ());
 				Assert.ThrowsAsync<NotSupportedException> (() => client.GetMessageUidAsync (0));
@@ -1747,7 +1747,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1769,12 +1769,12 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (LangCapa1, client.Capabilities);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 					try {
 						client.EnableUTF8 ();
@@ -1795,7 +1795,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -1818,12 +1818,12 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (LangCapa1, client.Capabilities);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 					try {
 						await client.EnableUTF8Async ();
@@ -1844,7 +1844,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -1869,12 +1869,12 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (LangCapa1, client.Capabilities);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 					try {
 						client.Authenticate ("username", "password");
@@ -1882,9 +1882,9 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (LangCapa1, client.Capabilities);
-					Assert.AreEqual (3, client.Count, "Expected 3 messages");
-					Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+					Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 					try {
 						client.EnableUTF8 ();
@@ -1901,7 +1901,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -1926,12 +1926,12 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (LangCapa1, client.Capabilities);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 					try {
 						await client.AuthenticateAsync ("username", "password");
@@ -1939,9 +1939,9 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (LangCapa1, client.Capabilities);
-					Assert.AreEqual (3, client.Count, "Expected 3 messages");
-					Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+					Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 					try {
 						await client.EnableUTF8Async ();
@@ -1958,7 +1958,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -1980,12 +1980,12 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (GMailCapa1, client.Capabilities);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 					try {
 						client.EnableUTF8 ();
@@ -2002,7 +2002,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -2024,12 +2024,12 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (GMailCapa1, client.Capabilities);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 					try {
 						await client.EnableUTF8Async ();
@@ -2046,7 +2046,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -2074,11 +2074,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2086,24 +2086,24 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
-
-				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageCount ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageCount ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageCount ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageCount ());
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					client.Disconnect (true);
@@ -2111,7 +2111,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2138,11 +2138,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2150,24 +2150,24 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
-
-				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageCountAsync ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageCountAsync ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageCountAsync ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageCountAsync ());
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2175,7 +2175,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2202,11 +2202,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2214,24 +2214,24 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
-
-				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSize (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSize (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSize (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSize (0));
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					client.Disconnect (true);
@@ -2239,7 +2239,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2266,11 +2266,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2278,24 +2278,24 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
-
-				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizeAsync (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizeAsync (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizeAsync (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizeAsync (0));
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2303,7 +2303,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2330,11 +2330,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2342,24 +2342,24 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
-
-				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSizes ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSizes ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSizes ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageSizes ());
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					client.Disconnect (true);
@@ -2367,7 +2367,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2394,11 +2394,11 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2406,24 +2406,24 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
-
-				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizesAsync ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizesAsync ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizesAsync ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageSizesAsync ());
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2431,7 +2431,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2457,12 +2457,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2470,17 +2470,17 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
 
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
-
-				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageUid (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageUid (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageUid (0));
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					client.Disconnect (true);
@@ -2488,7 +2488,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2514,12 +2514,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2527,17 +2527,17 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
 
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
-
-				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageUidAsync (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageUidAsync (0));
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageUidAsync (0));
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2545,7 +2545,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2571,12 +2571,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2584,17 +2584,17 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
 
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
-
-				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageUids ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageUids ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.Throws<Pop3ProtocolException> (() => client.GetMessageUids ());
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					client.Disconnect (true);
@@ -2602,7 +2602,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2628,12 +2628,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2641,17 +2641,17 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
 
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
-
-				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageUidsAsync ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageUidsAsync ());
-				Assert.IsTrue (client.IsConnected);
+				Assert.That (client.IsConnected, Is.True);
+
+				Assert.ThrowsAsync<Pop3ProtocolException> (async () => await client.GetMessageUidsAsync ());
+				Assert.That (client.IsConnected, Is.True);
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2659,7 +2659,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2684,14 +2684,14 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
@@ -2702,15 +2702,15 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				try {
 					client.Disconnect (true);
@@ -2718,7 +2718,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2743,14 +2743,14 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
@@ -2761,15 +2761,15 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2777,7 +2777,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2794,7 +2794,7 @@ namespace UnitTests.Net.Pop3 {
 						break;
 				}
 
-				Assert.NotNull (line, "Authentication command not found: {0}", commandPrefix);
+				Assert.That (line, Is.Not.Null, $"Authentication command not found: {commandPrefix}");
 
 				if (line.Length > commandPrefix.Length) {
 					secrets = line.Substring (commandPrefix.Length);
@@ -2806,7 +2806,7 @@ namespace UnitTests.Net.Pop3 {
 
 					var expected = string.Join (" ", expectedTokens);
 
-					Assert.AreEqual (expected, secrets, commandPrefix);
+					Assert.That (secrets, Is.EqualTo (expected), commandPrefix);
 				}
 
 				while ((line = reader.ReadLine ()) != null) {
@@ -2818,7 +2818,7 @@ namespace UnitTests.Net.Pop3 {
 
 					secrets = line.Substring (3);
 
-					Assert.AreEqual ("********", secrets, "SASL challenge");
+					Assert.That (secrets, Is.EqualTo ("********"), "SASL challenge");
 				}
 
 				Assert.Fail ("Did not find response.");
@@ -2846,12 +2846,12 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (LangCapa1, client.Capabilities);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 					try {
 						client.EnableUTF8 ();
@@ -2865,11 +2865,11 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (LangCapa2, client.Capabilities);
-					Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa2));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
 
-					Assert.AreEqual (3, client.Count, "Expected 3 messages");
-					Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+					Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+					Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 					try {
 						client.Disconnect (true);
@@ -2877,7 +2877,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: APOP ", "C: CAPA");
@@ -2905,12 +2905,12 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (LangCapa1, client.Capabilities);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 					try {
 						await client.EnableUTF8Async ();
@@ -2924,11 +2924,11 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (LangCapa2, client.Capabilities);
-					Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+					Assert.That (client.Capabilities, Is.EqualTo (LangCapa2));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
 
-					Assert.AreEqual (3, client.Count, "Expected 3 messages");
-					Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+					Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+					Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 					try {
 						await client.DisconnectAsync (true);
@@ -2936,7 +2936,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: APOP ", "C: CAPA");
@@ -2965,14 +2965,14 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (ExchangeCapa, client.Capabilities);
-					Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+					Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
 					client.AuthenticationMechanisms.Remove ("GSSAPI");
 					client.AuthenticationMechanisms.Remove ("NTLM");
@@ -2984,15 +2984,15 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (ExchangeCapa, client.Capabilities);
-					Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+					Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
-					Assert.AreEqual (7, client.Count, "Expected 7 messages");
-					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+					Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+					Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 					try {
 						client.Disconnect (true);
@@ -3000,7 +3000,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH LOGIN", "C: CAPA");
@@ -3029,14 +3029,14 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (ExchangeCapa, client.Capabilities);
-					Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+					Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
 					client.AuthenticationMechanisms.Remove ("GSSAPI");
 					client.AuthenticationMechanisms.Remove ("NTLM");
@@ -3048,15 +3048,15 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (ExchangeCapa, client.Capabilities);
-					Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+					Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
-					Assert.AreEqual (7, client.Count, "Expected 7 messages");
-					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+					Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+					Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 					try {
 						await client.DisconnectAsync (true);
@@ -3064,7 +3064,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH LOGIN", "C: CAPA");
@@ -3092,11 +3092,11 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (ComcastCapa1, client.Capabilities);
-					Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-					Assert.AreEqual (31, client.ExpirePolicy);
+					Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+					Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 					try {
 						client.Authenticate ("username", "password");
@@ -3104,15 +3104,15 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (ComcastCapa2, client.Capabilities);
-					Assert.AreEqual ("ZimbraInc", client.Implementation);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-					Assert.AreEqual (-1, client.ExpirePolicy);
+					Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+					Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+					Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-					Assert.AreEqual (7, client.Count, "Expected 7 messages");
-					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+					Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+					Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 					try {
 						client.Disconnect (true);
@@ -3120,7 +3120,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: USER ", "C: PASS");
@@ -3149,11 +3149,11 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (ComcastCapa1, client.Capabilities);
-					Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-					Assert.AreEqual (31, client.ExpirePolicy);
+					Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+					Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
 					try {
 						await client.AuthenticateAsync ("username", "password");
@@ -3161,15 +3161,15 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (ComcastCapa2, client.Capabilities);
-					Assert.AreEqual ("ZimbraInc", client.Implementation);
-					Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-					Assert.AreEqual (-1, client.ExpirePolicy);
+					Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+					Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), Is.True, "Expected SASL X-ZIMBRA auth mechanism");
+					Assert.That (client.ExpirePolicy, Is.EqualTo (-1));
 
-					Assert.AreEqual (7, client.Count, "Expected 7 messages");
-					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+					Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+					Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 					try {
 						await client.DisconnectAsync (true);
@@ -3177,7 +3177,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: USER ", "C: PASS");
@@ -3207,14 +3207,14 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (ExchangeCapa, client.Capabilities);
-					Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+					Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
 					try {
 						var credentials = new NetworkCredential ("username", "password");
@@ -3225,15 +3225,15 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (ExchangeCapa, client.Capabilities);
-					Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+					Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
-					Assert.AreEqual (7, client.Count, "Expected 7 messages");
-					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+					Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+					Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 					try {
 						client.Disconnect (true);
@@ -3241,7 +3241,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH LOGIN", "C: CAPA");
@@ -3270,14 +3270,14 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.AreEqual (ExchangeCapa, client.Capabilities);
-					Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+					Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
 					try {
 						var credentials = new NetworkCredential ("username", "password");
@@ -3288,15 +3288,15 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.AreEqual (ExchangeCapa, client.Capabilities);
-					Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+					Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
-					Assert.AreEqual (7, client.Count, "Expected 7 messages");
-					Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+					Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+					Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 					try {
 						await client.DisconnectAsync (true);
@@ -3304,7 +3304,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH LOGIN", "C: CAPA");
@@ -3334,14 +3334,14 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
 				// Note: remove these auth mechanisms to force LOGIN auth
 				client.AuthenticationMechanisms.Remove ("GSSAPI");
@@ -3354,19 +3354,19 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				try {
 					var uids = client.GetMessageUids ();
-					Assert.AreEqual (7, uids.Count, "Expected 7 uids");
+					Assert.That (uids.Count, Is.EqualTo (7), "Expected 7 uids");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageUids: {ex}");
 				}
@@ -3385,7 +3385,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3412,14 +3412,14 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
 				// Note: remove these auth mechanisms to force LOGIN auth
 				client.AuthenticationMechanisms.Remove ("GSSAPI");
@@ -3432,19 +3432,19 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms.Contains ("GSSAPI"), Is.True, "Expected SASL GSSAPI auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
-				Assert.AreEqual (1800662, client.Size, "Expected 1800662 octets");
+				Assert.That (client.Count, Is.EqualTo (7), "Expected 7 messages");
+				Assert.That (client.Size, Is.EqualTo (1800662), "Expected 1800662 octets");
 
 				try {
 					var uids = await client.GetMessageUidsAsync ();
-					Assert.AreEqual (7, uids.Count, "Expected 7 uids");
+					Assert.That (uids.Count, Is.EqualTo (7), "Expected 7 uids");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageUids: {ex}");
 				}
@@ -3463,7 +3463,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3517,12 +3517,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3530,36 +3530,36 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				if (disablePipelining)
 					client.Capabilities &= ~Pop3Capabilities.Pipelining;
 
 				var uids = client.GetMessageUids ();
-				Assert.AreEqual (3, uids.Count);
-				Assert.AreEqual ("101", uids[0]);
-				Assert.AreEqual ("102", uids[1]);
-				Assert.AreEqual ("103", uids[2]);
+				Assert.That (uids.Count, Is.EqualTo (3));
+				Assert.That (uids[0], Is.EqualTo ("101"));
+				Assert.That (uids[1], Is.EqualTo ("102"));
+				Assert.That (uids[2], Is.EqualTo ("103"));
 
 				for (int i = 0; i < 3; i++) {
 					var uid = client.GetMessageUid (i);
 
-					Assert.AreEqual (uids[i], uid);
+					Assert.That (uid, Is.EqualTo (uids[i]));
 				}
 
 				var sizes = client.GetMessageSizes ();
-				Assert.AreEqual (3, sizes.Count);
-				Assert.AreEqual (1024, sizes[0]);
-				Assert.AreEqual (1025, sizes[1]);
-				Assert.AreEqual (1026, sizes[2]);
+				Assert.That (sizes.Count, Is.EqualTo (3));
+				Assert.That (sizes[0], Is.EqualTo (1024));
+				Assert.That (sizes[1], Is.EqualTo (1025));
+				Assert.That (sizes[2], Is.EqualTo (1026));
 
 				for (int i = 0; i < 3; i++) {
 					var size = client.GetMessageSize (i);
 
-					Assert.AreEqual (sizes[i], size);
+					Assert.That (size, Is.EqualTo (sizes[i]));
 				}
 
 				try {
@@ -3573,7 +3573,7 @@ namespace UnitTests.Net.Pop3 {
 							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+								Assert.That (md5sum, Is.EqualTo ("5b1b8b2c9300c9cd01099f44e1155e2b"), "MD5 checksums do not match.");
 							}
 						}
 					}
@@ -3594,7 +3594,7 @@ namespace UnitTests.Net.Pop3 {
 							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+								Assert.That (md5sum, Is.EqualTo ("5b1b8b2c9300c9cd01099f44e1155e2b"), "MD5 checksums do not match.");
 							}
 						}
 
@@ -3617,7 +3617,7 @@ namespace UnitTests.Net.Pop3 {
 							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+								Assert.That (md5sum, Is.EqualTo ("5b1b8b2c9300c9cd01099f44e1155e2b"), "MD5 checksums do not match.");
 							}
 						}
 
@@ -3630,7 +3630,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var header = client.GetMessageHeaders (0);
 
-					Assert.AreEqual ("Test inline image", header[HeaderId.Subject]);
+					Assert.That (header[HeaderId.Subject], Is.EqualTo ("Test inline image"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
@@ -3638,9 +3638,9 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var headers = client.GetMessageHeaders (0, 3);
 
-					Assert.AreEqual (3, headers.Count);
+					Assert.That (headers.Count, Is.EqualTo (3));
 					for (int i = 0; i < headers.Count; i++)
-						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
+						Assert.That (headers[i][HeaderId.Subject], Is.EqualTo ("Test inline image"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
@@ -3648,9 +3648,9 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var headers = client.GetMessageHeaders (new [] { 0, 1, 2 });
 
-					Assert.AreEqual (3, headers.Count);
+					Assert.That (headers.Count, Is.EqualTo (3));
 					for (int i = 0; i < headers.Count; i++)
-						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
+						Assert.That (headers[i][HeaderId.Subject], Is.EqualTo ("Test inline image"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
@@ -3665,7 +3665,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var streams = client.GetStreams (0, 3);
 
-					Assert.AreEqual (3, streams.Count);
+					Assert.That (streams.Count, Is.EqualTo (3));
 					for (int i = 0; i < 3; i++) {
 						streams[i].Dispose ();
 					}
@@ -3676,7 +3676,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var streams = client.GetStreams (new int[] { 0, 1, 2 });
 
-					Assert.AreEqual (3, streams.Count);
+					Assert.That (streams.Count, Is.EqualTo (3));
 					for (int i = 0; i < 3; i++) {
 						streams[i].Dispose ();
 					}
@@ -3744,7 +3744,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3763,12 +3763,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3776,36 +3776,36 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				if (disablePipelining)
 					client.Capabilities &= ~Pop3Capabilities.Pipelining;
 
 				var uids = await client.GetMessageUidsAsync ();
-				Assert.AreEqual (3, uids.Count);
-				Assert.AreEqual ("101", uids[0]);
-				Assert.AreEqual ("102", uids[1]);
-				Assert.AreEqual ("103", uids[2]);
+				Assert.That (uids.Count, Is.EqualTo (3));
+				Assert.That (uids[0], Is.EqualTo ("101"));
+				Assert.That (uids[1], Is.EqualTo ("102"));
+				Assert.That (uids[2], Is.EqualTo ("103"));
 
 				for (int i = 0; i < 3; i++) {
 					var uid = await client.GetMessageUidAsync (i);
 
-					Assert.AreEqual (uids[i], uid);
+					Assert.That (uid, Is.EqualTo (uids[i]));
 				}
 
 				var sizes = await client.GetMessageSizesAsync ();
-				Assert.AreEqual (3, sizes.Count);
-				Assert.AreEqual (1024, sizes[0]);
-				Assert.AreEqual (1025, sizes[1]);
-				Assert.AreEqual (1026, sizes[2]);
+				Assert.That (sizes.Count, Is.EqualTo (3));
+				Assert.That (sizes[0], Is.EqualTo (1024));
+				Assert.That (sizes[1], Is.EqualTo (1025));
+				Assert.That (sizes[2], Is.EqualTo (1026));
 
 				for (int i = 0; i < 3; i++) {
 					var size = await client.GetMessageSizeAsync (i);
 
-					Assert.AreEqual (sizes[i], size);
+					Assert.That (size, Is.EqualTo (sizes[i]));
 				}
 
 				try {
@@ -3820,7 +3820,7 @@ namespace UnitTests.Net.Pop3 {
 						using (var md5 = MD5.Create ()) {
 							var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-							Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+							Assert.That (md5sum, Is.EqualTo ("5b1b8b2c9300c9cd01099f44e1155e2b"), "MD5 checksums do not match.");
 						}
 					}
 				} catch (Exception ex) {
@@ -3840,7 +3840,7 @@ namespace UnitTests.Net.Pop3 {
 							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+								Assert.That (md5sum, Is.EqualTo ("5b1b8b2c9300c9cd01099f44e1155e2b"), "MD5 checksums do not match.");
 							}
 						}
 
@@ -3863,7 +3863,7 @@ namespace UnitTests.Net.Pop3 {
 							using (var md5 = MD5.Create ()) {
 								var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+								Assert.That (md5sum, Is.EqualTo ("5b1b8b2c9300c9cd01099f44e1155e2b"), "MD5 checksums do not match.");
 							}
 						}
 
@@ -3876,7 +3876,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var header = await client.GetMessageHeadersAsync (0);
 
-					Assert.AreEqual ("Test inline image", header[HeaderId.Subject]);
+					Assert.That (header[HeaderId.Subject], Is.EqualTo ("Test inline image"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
@@ -3884,9 +3884,9 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var headers = await client.GetMessageHeadersAsync (0, 3);
 
-					Assert.AreEqual (3, headers.Count);
+					Assert.That (headers.Count, Is.EqualTo (3));
 					for (int i = 0; i < headers.Count; i++)
-						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
+						Assert.That (headers[i][HeaderId.Subject], Is.EqualTo ("Test inline image"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
@@ -3894,9 +3894,9 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var headers = await client.GetMessageHeadersAsync (new [] { 0, 1, 2 });
 
-					Assert.AreEqual (3, headers.Count);
+					Assert.That (headers.Count, Is.EqualTo (3));
 					for (int i = 0; i < headers.Count; i++)
-						Assert.AreEqual ("Test inline image", headers[i][HeaderId.Subject]);
+						Assert.That (headers[i][HeaderId.Subject], Is.EqualTo ("Test inline image"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in GetMessageHeaders: {ex}");
 				}
@@ -3911,7 +3911,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var streams = await client.GetStreamsAsync (0, 3);
 
-					Assert.AreEqual (3, streams.Count);
+					Assert.That (streams.Count, Is.EqualTo (3));
 					for (int i = 0; i < 3; i++) {
 						streams[i].Dispose ();
 					}
@@ -3922,7 +3922,7 @@ namespace UnitTests.Net.Pop3 {
 				try {
 					var streams = await client.GetStreamsAsync (new int[] { 0, 1, 2 });
 
-					Assert.AreEqual (3, streams.Count);
+					Assert.That (streams.Count, Is.EqualTo (3));
 					for (int i = 0; i < 3; i++) {
 						streams[i].Dispose ();
 					}
@@ -3990,7 +3990,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -4097,12 +4097,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -4110,20 +4110,20 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				int count = 0;
 				foreach (var message in client)
 					count++;
-				Assert.AreEqual (3, count);
+				Assert.That (count, Is.EqualTo (3));
 
 				count = 0;
 				foreach (var message in (IEnumerable) client)
 					count++;
-				Assert.AreEqual (3, count);
+				Assert.That (count, Is.EqualTo (3));
 
 				try {
 					client.Disconnect (true);
@@ -4131,7 +4131,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -4157,12 +4157,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (LangCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					client.EnableUTF8 ();
@@ -4176,26 +4176,26 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (LangCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.That (client.Capabilities, Is.EqualTo (LangCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
 
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				var languages = client.GetLanguages ();
-				Assert.AreEqual (6, languages.Count);
-				Assert.AreEqual ("en", languages[0].Language);
-				Assert.AreEqual ("English", languages[0].Description);
-				Assert.AreEqual ("en-boont", languages[1].Language);
-				Assert.AreEqual ("English Boontling dialect", languages[1].Description);
-				Assert.AreEqual ("de", languages[2].Language);
-				Assert.AreEqual ("Deutsch", languages[2].Description);
-				Assert.AreEqual ("it", languages[3].Language);
-				Assert.AreEqual ("Italiano", languages[3].Description);
-				Assert.AreEqual ("es", languages[4].Language);
-				Assert.AreEqual ("Espanol", languages[4].Description);
-				Assert.AreEqual ("sv", languages[5].Language);
-				Assert.AreEqual ("Svenska", languages[5].Description);
+				Assert.That (languages.Count, Is.EqualTo (6));
+				Assert.That (languages[0].Language, Is.EqualTo ("en"));
+				Assert.That (languages[0].Description, Is.EqualTo ("English"));
+				Assert.That (languages[1].Language, Is.EqualTo ("en-boont"));
+				Assert.That (languages[1].Description, Is.EqualTo ("English Boontling dialect"));
+				Assert.That (languages[2].Language, Is.EqualTo ("de"));
+				Assert.That (languages[2].Description, Is.EqualTo ("Deutsch"));
+				Assert.That (languages[3].Language, Is.EqualTo ("it"));
+				Assert.That (languages[3].Description, Is.EqualTo ("Italiano"));
+				Assert.That (languages[4].Language, Is.EqualTo ("es"));
+				Assert.That (languages[4].Description, Is.EqualTo ("Espanol"));
+				Assert.That (languages[5].Language, Is.EqualTo ("sv"));
+				Assert.That (languages[5].Description, Is.EqualTo ("Svenska"));
 
 				client.SetLanguage ("en");
 
@@ -4205,7 +4205,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -4231,12 +4231,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (LangCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					await client.EnableUTF8Async ();
@@ -4250,26 +4250,26 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (LangCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.That (client.Capabilities, Is.EqualTo (LangCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
 
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				var languages = await client.GetLanguagesAsync ();
-				Assert.AreEqual (6, languages.Count);
-				Assert.AreEqual ("en", languages[0].Language);
-				Assert.AreEqual ("English", languages[0].Description);
-				Assert.AreEqual ("en-boont", languages[1].Language);
-				Assert.AreEqual ("English Boontling dialect", languages[1].Description);
-				Assert.AreEqual ("de", languages[2].Language);
-				Assert.AreEqual ("Deutsch", languages[2].Description);
-				Assert.AreEqual ("it", languages[3].Language);
-				Assert.AreEqual ("Italiano", languages[3].Description);
-				Assert.AreEqual ("es", languages[4].Language);
-				Assert.AreEqual ("Espanol", languages[4].Description);
-				Assert.AreEqual ("sv", languages[5].Language);
-				Assert.AreEqual ("Svenska", languages[5].Description);
+				Assert.That (languages.Count, Is.EqualTo (6));
+				Assert.That (languages[0].Language, Is.EqualTo ("en"));
+				Assert.That (languages[0].Description, Is.EqualTo ("English"));
+				Assert.That (languages[1].Language, Is.EqualTo ("en-boont"));
+				Assert.That (languages[1].Description, Is.EqualTo ("English Boontling dialect"));
+				Assert.That (languages[2].Language, Is.EqualTo ("de"));
+				Assert.That (languages[2].Description, Is.EqualTo ("Deutsch"));
+				Assert.That (languages[3].Language, Is.EqualTo ("it"));
+				Assert.That (languages[3].Description, Is.EqualTo ("Italiano"));
+				Assert.That (languages[4].Language, Is.EqualTo ("es"));
+				Assert.That (languages[4].Description, Is.EqualTo ("Espanol"));
+				Assert.That (languages[5].Language, Is.EqualTo ("sv"));
+				Assert.That (languages[5].Description, Is.EqualTo ("Svenska"));
 
 				await client.SetLanguageAsync ("en");
 
@@ -4279,7 +4279,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -4303,12 +4303,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -4316,10 +4316,10 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				Assert.Throws<NotSupportedException> (() => client.GetLanguages ());
 				Assert.Throws<NotSupportedException> (() => client.SetLanguage ("en"));
@@ -4333,7 +4333,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -4359,12 +4359,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -4372,10 +4372,10 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				try {
 					client.GetMessage (0);
@@ -4401,7 +4401,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -4427,12 +4427,12 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -4440,10 +4440,10 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
-				Assert.AreEqual (221409, client.Size, "Expected 221409 octets");
+				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (0));
+				Assert.That (client.Count, Is.EqualTo (3), "Expected 3 messages");
+				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				try {
 					await client.GetMessageAsync (0);
@@ -4469,7 +4469,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 	}

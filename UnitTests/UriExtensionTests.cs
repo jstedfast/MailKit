@@ -36,7 +36,7 @@ namespace UnitTests {
 			var uri = new Uri ("imap://imap.gmail.com/");
 			var query = uri.ParsedQuery ();
 
-			Assert.AreEqual (0, query.Count, "Unexpected number of queries.");
+			Assert.That (query.Count, Is.EqualTo (0), "Unexpected number of queries.");
 		}
 
 		[Test]
@@ -45,8 +45,8 @@ namespace UnitTests {
 			var uri = new Uri ("imap://imap.gmail.com/?starttls=false");
 			var query = uri.ParsedQuery ();
 
-			Assert.AreEqual (1, query.Count, "Unexpected number of queries.");
-			Assert.AreEqual ("false", query["starttls"], "Unexpected value for 'starttls'.");
+			Assert.That (query.Count, Is.EqualTo (1), "Unexpected number of queries.");
+			Assert.That (query["starttls"], Is.EqualTo ("false"), "Unexpected value for 'starttls'.");
 		}
 
 		[Test]
@@ -55,9 +55,9 @@ namespace UnitTests {
 			var uri = new Uri ("imap://imap.gmail.com/?starttls=false&compress=false");
 			var query = uri.ParsedQuery ();
 
-			Assert.AreEqual (2, query.Count, "Unexpected number of queries.");
-			Assert.AreEqual ("false", query["starttls"], "Unexpected value for 'starttls'.");
-			Assert.AreEqual ("false", query["compress"], "Unexpected value for 'compress'.");
+			Assert.That (query.Count, Is.EqualTo (2), "Unexpected number of queries.");
+			Assert.That (query["starttls"], Is.EqualTo ("false"), "Unexpected value for 'starttls'.");
+			Assert.That (query["compress"], Is.EqualTo ("false"), "Unexpected value for 'compress'.");
 		}
 
 		[Test]
@@ -66,9 +66,9 @@ namespace UnitTests {
 			var uri = new Uri ("imap://imap.gmail.com/?starttls=false&compress");
 			var query = uri.ParsedQuery ();
 
-			Assert.AreEqual (2, query.Count, "Unexpected number of queries.");
-			Assert.AreEqual ("false", query["starttls"], "Unexpected value for 'starttls'.");
-			Assert.AreEqual (string.Empty, query["compress"], "Unexpected value for 'compress'.");
+			Assert.That (query.Count, Is.EqualTo (2), "Unexpected number of queries.");
+			Assert.That (query["starttls"], Is.EqualTo ("false"), "Unexpected value for 'starttls'.");
+			Assert.That (query["compress"], Is.EqualTo (string.Empty), "Unexpected value for 'compress'.");
 		}
 	}
 }

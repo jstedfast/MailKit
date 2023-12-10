@@ -47,11 +47,11 @@ namespace UnitTests.Security {
 			const string expected = "dXNlcj11c2VybmFtZQFhdXRoPUJlYXJlciBwYXNzd29yZAEB";
 			string challenge;
 
-			Assert.IsTrue (sasl.SupportsInitialResponse, "SupportsInitialResponse");
+			Assert.That (sasl.SupportsInitialResponse, Is.True, "SupportsInitialResponse");
 			challenge = sasl.Challenge (string.Empty);
-			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
-			Assert.AreEqual (expected, challenge, "Challenge");
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "Already authenticated.");
+			Assert.That (sasl.IsAuthenticated, Is.True, "IsAuthenticated");
+			Assert.That (challenge, Is.EqualTo (expected), "Challenge");
+			Assert.That (sasl.Challenge (string.Empty), Is.EqualTo (string.Empty), "Already authenticated.");
 		}
 
 		[Test]

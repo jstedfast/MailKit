@@ -64,28 +64,28 @@ namespace UnitTests.Security {
 
 			sasl.cnonce = entropy;
 
-			Assert.IsFalse (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
-			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+			Assert.That (sasl.SupportsChannelBinding, Is.False, $"{prefix}: SupportsChannelBinding");
+			Assert.That (sasl.SupportsInitialResponse, Is.True, $"{prefix}: SupportsInitialResponse");
 
 			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
-			Assert.AreEqual ("n,,n=user,r=" + entropy, challenge, "{0}: initial SCRAM-SHA-512 challenge response does not match the expected string.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+			Assert.That (challenge, Is.EqualTo ("n,,n=user,r=" + entropy), $"{prefix}: initial SCRAM-SHA-512 challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: should not be authenticated yet.");
 
 			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 
-			Assert.AreEqual (expected, challenge, "{0}: second SCRAM-SHA-512 challenge response does not match the expected string.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+			Assert.That (challenge, Is.EqualTo (expected), $"{prefix}: second SCRAM-SHA-512 challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: should not be authenticated yet.");
 
 			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
-			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-512 challenge should be an empty string.", prefix);
-			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-512 should be authenticated now.", prefix);
-			Assert.IsFalse (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
-			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+			Assert.That (challenge, Is.EqualTo (string.Empty), $"{prefix}: third SCRAM-SHA-512 challenge should be an empty string.");
+			Assert.That (sasl.IsAuthenticated, Is.True, $"{prefix}: SCRAM-SHA-512 should be authenticated now.");
+			Assert.That (sasl.NegotiatedChannelBinding, Is.False, $"{prefix}: NegotiatedChannelBinding");
+			Assert.That (sasl.NegotiatedSecurityLayer, Is.False, $"{prefix}: NegotiatedSecurityLayer");
 
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
+			Assert.That (sasl.Challenge (string.Empty), Is.EqualTo (string.Empty), $"{prefix}: challenge while authenticated.");
 		}
 
 		[Test]
@@ -109,7 +109,7 @@ namespace UnitTests.Security {
 			try {
 				sasl.Challenge (Convert.ToBase64String (token));
 			} catch (SaslException sex) {
-				Assert.AreEqual (code, sex.ErrorCode, "ErrorCode");
+				Assert.That (sex.ErrorCode, Is.EqualTo (code), "ErrorCode");
 				return;
 			} catch (Exception ex) {
 				Assert.Fail ($"SaslException expected, but got: {ex.GetType ().Name}");
@@ -134,8 +134,8 @@ namespace UnitTests.Security {
 
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
-			Assert.AreEqual ("n,,n=user,r=" + entropy, challenge, "initial SCRAM-SHA-512 challenge response does not match the expected string.");
-			Assert.IsFalse (sasl.IsAuthenticated, "should not be authenticated yet.");
+			Assert.That (challenge, Is.EqualTo ("n,,n=user,r=" + entropy), "initial SCRAM-SHA-512 challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, "should not be authenticated yet.");
 
 			AssertSaslException (sasl, challenge1.Replace (salt + ",", string.Empty), SaslErrorCode.IncompleteChallenge); // missing salt
 			AssertSaslException (sasl, challenge1.Replace (nonce + ",", string.Empty), SaslErrorCode.IncompleteChallenge); // missing nonce
@@ -146,8 +146,8 @@ namespace UnitTests.Security {
 			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 
-			Assert.AreEqual (expected, challenge, "second SCRAM-SHA-512 challenge response does not match the expected string.");
-			Assert.IsFalse (sasl.IsAuthenticated, "should not be authenticated yet.");
+			Assert.That (challenge, Is.EqualTo (expected), "second SCRAM-SHA-512 challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, "should not be authenticated yet.");
 
 			AssertSaslException (sasl, "x=abcdefg", SaslErrorCode.InvalidChallenge);
 			AssertSaslException (sasl, "v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl9", SaslErrorCode.IncorrectHash); // incorrect hash length
@@ -155,9 +155,9 @@ namespace UnitTests.Security {
 
 			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
-			Assert.AreEqual (string.Empty, challenge, "third SCRAM-SHA-512 challenge should be an empty string.");
-			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-512 should be authenticated now.");
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "challenge while authenticated.");
+			Assert.That (challenge, Is.EqualTo (string.Empty), "third SCRAM-SHA-512 challenge should be an empty string.");
+			Assert.That (sasl.IsAuthenticated, Is.True, "SCRAM-SHA-512 should be authenticated now.");
+			Assert.That (sasl.Challenge (string.Empty), Is.EqualTo (string.Empty), "challenge while authenticated.");
 		}
 
 		static void AssertScramSha512PlusTlsServerEndpoint (SaslMechanismScramSha512Plus sasl, string prefix)
@@ -170,28 +170,28 @@ namespace UnitTests.Security {
 
 			sasl.cnonce = entropy;
 
-			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
-			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+			Assert.That (sasl.SupportsChannelBinding, Is.True, $"{prefix}: SupportsChannelBinding");
+			Assert.That (sasl.SupportsInitialResponse, Is.True, $"{prefix}: SupportsInitialResponse");
 
 			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
-			Assert.AreEqual ("p=tls-server-end-point,,n=user,r=" + entropy, challenge, "{0}: initial SCRAM-SHA-512-PLUS challenge response does not match the expected string.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+			Assert.That (challenge, Is.EqualTo ("p=tls-server-end-point,,n=user,r=" + entropy), $"{prefix}: initial SCRAM-SHA-512-PLUS challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: should not be authenticated yet.");
 
 			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 
-			Assert.AreEqual (expected, challenge, "{0}: second SCRAM-SHA-512-PLUS challenge response does not match the expected string.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+			Assert.That (challenge, Is.EqualTo (expected), $"{prefix}: second SCRAM-SHA-512-PLUS challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: should not be authenticated yet.");
 
 			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
-			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-512-PLUS challenge should be an empty string.", prefix);
-			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-512-PLUS should be authenticated now.", prefix);
-			Assert.IsTrue (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
-			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+			Assert.That (challenge, Is.EqualTo (string.Empty), $"{prefix}: third SCRAM-SHA-512-PLUS challenge should be an empty string.");
+			Assert.That (sasl.IsAuthenticated, Is.True, $"{prefix}: SCRAM-SHA-512-PLUS should be authenticated now.");
+			Assert.That (sasl.NegotiatedChannelBinding, Is.True, $"{prefix}: NegotiatedChannelBinding");
+			Assert.That (sasl.NegotiatedSecurityLayer, Is.False, $"{prefix}: NegotiatedSecurityLayer");
 
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
+			Assert.That (sasl.Challenge (string.Empty), Is.EqualTo (string.Empty), $"{prefix}: challenge while authenticated.");
 		}
 
 		[Test]
@@ -220,28 +220,28 @@ namespace UnitTests.Security {
 
 			sasl.cnonce = entropy;
 
-			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
-			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+			Assert.That (sasl.SupportsChannelBinding, Is.True, $"{prefix}: SupportsChannelBinding");
+			Assert.That (sasl.SupportsInitialResponse, Is.True, $"{prefix}: SupportsInitialResponse");
 
 			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
 
-			Assert.AreEqual ("p=tls-unique,,n=user,r=" + entropy, challenge, "{0}: initial SCRAM-SHA-512-PLUS challenge response does not match the expected string.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+			Assert.That (challenge, Is.EqualTo ("p=tls-unique,,n=user,r=" + entropy), $"{prefix}: initial SCRAM-SHA-512-PLUS challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: should not be authenticated yet.");
 
 			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge1));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
 
-			Assert.AreEqual (expected, challenge, "{0}: second SCRAM-SHA-512-PLUS challenge response does not match the expected string.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated yet.", prefix);
+			Assert.That (challenge, Is.EqualTo (expected), $"{prefix}: second SCRAM-SHA-512-PLUS challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: should not be authenticated yet.");
 
 			token = Convert.ToBase64String (Encoding.UTF8.GetBytes (challenge2));
 			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
-			Assert.AreEqual (string.Empty, challenge, "{0}: third SCRAM-SHA-512-PLUS challenge should be an empty string.", prefix);
-			Assert.IsTrue (sasl.IsAuthenticated, "{0}: SCRAM-SHA-512-PLUS should be authenticated now.", prefix);
-			Assert.IsTrue (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
-			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+			Assert.That (challenge, Is.EqualTo (string.Empty), $"{prefix}: third SCRAM-SHA-512-PLUS challenge should be an empty string.");
+			Assert.That (sasl.IsAuthenticated, Is.True, $"{prefix}: SCRAM-SHA-512-PLUS should be authenticated now.");
+			Assert.That (sasl.NegotiatedChannelBinding, Is.True, $"{prefix}: NegotiatedChannelBinding");
+			Assert.That (sasl.NegotiatedSecurityLayer, Is.False, $"{prefix}: NegotiatedSecurityLayer");
 
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
+			Assert.That (sasl.Challenge (string.Empty), Is.EqualTo (string.Empty), $"{prefix}: challenge while authenticated.");
 		}
 
 		[Test]

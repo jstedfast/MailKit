@@ -63,16 +63,16 @@ namespace UnitTests {
 		[Test]
 		public void TestAccessRight ()
 		{
-			Assert.IsTrue (AccessRight.Administer == new AccessRight (AccessRight.Administer.Right), "==");
-			Assert.IsFalse (AccessRight.Administer == new AccessRight (AccessRight.OpenFolder.Right), "==");
+			Assert.That (AccessRight.Administer == new AccessRight (AccessRight.Administer.Right), Is.True, "==");
+			Assert.That (AccessRight.Administer == new AccessRight (AccessRight.OpenFolder.Right), Is.False, "==");
 
-			Assert.IsFalse (AccessRight.Administer != new AccessRight (AccessRight.Administer.Right), "!=");
-			Assert.IsTrue (AccessRight.Administer != new AccessRight (AccessRight.OpenFolder.Right), "!=");
+			Assert.That (AccessRight.Administer != new AccessRight (AccessRight.Administer.Right), Is.False, "!=");
+			Assert.That (AccessRight.Administer != new AccessRight (AccessRight.OpenFolder.Right), Is.True, "!=");
 
-			Assert.IsTrue (AccessRight.Administer.Equals ((object) new AccessRight (AccessRight.Administer.Right)), "Equals");
-			Assert.AreEqual (AccessRight.Administer.GetHashCode (), new AccessRight (AccessRight.Administer.Right).GetHashCode (), "GetHashCode");
+			Assert.That (AccessRight.Administer.Equals ((object) new AccessRight (AccessRight.Administer.Right)), Is.True, "Equals");
+			Assert.That (new AccessRight (AccessRight.Administer.Right).GetHashCode (), Is.EqualTo (AccessRight.Administer.GetHashCode ()), "GetHashCode");
 
-			Assert.AreEqual ("a", AccessRight.Administer.ToString (), "ToString");
+			Assert.That (AccessRight.Administer.ToString (), Is.EqualTo ("a"), "ToString");
 		}
 
 		[Test]
@@ -82,54 +82,54 @@ namespace UnitTests {
 			var rights = new AccessRights ();
 			int i;
 
-			Assert.IsFalse (rights.IsReadOnly, "IsReadOnly");
+			Assert.That (rights.IsReadOnly, Is.False, "IsReadOnly");
 
-			Assert.IsTrue (rights.Add (AccessRight.OpenFolder), "Add OpenFolder");
-			Assert.AreEqual (1, rights.Count, "Count after adding OpenFolder");
-			Assert.IsFalse (rights.Add (AccessRight.OpenFolder), "Add OpenFolder again");
-			Assert.AreEqual (1, rights.Count, "Count after adding OpenFolder again");
+			Assert.That (rights.Add (AccessRight.OpenFolder), Is.True, "Add OpenFolder");
+			Assert.That (rights.Count, Is.EqualTo (1), "Count after adding OpenFolder");
+			Assert.That (rights.Add (AccessRight.OpenFolder), Is.False, "Add OpenFolder again");
+			Assert.That (rights.Count, Is.EqualTo (1), "Count after adding OpenFolder again");
 
-			Assert.IsTrue (rights.Add (AccessRight.CreateFolder.Right), "Add CreateFolder");
-			Assert.AreEqual (2, rights.Count, "Count after adding CreateFolder");
-			Assert.IsFalse (rights.Add (AccessRight.CreateFolder), "Add CreateFolder again");
-			Assert.AreEqual (2, rights.Count, "Count after adding OpenFolder again");
+			Assert.That (rights.Add (AccessRight.CreateFolder.Right), Is.True, "Add CreateFolder");
+			Assert.That (rights.Count, Is.EqualTo (2), "Count after adding CreateFolder");
+			Assert.That (rights.Add (AccessRight.CreateFolder), Is.False, "Add CreateFolder again");
+			Assert.That (rights.Count, Is.EqualTo (2), "Count after adding OpenFolder again");
 
 			rights.AddRange (new [] { AccessRight.DeleteFolder, AccessRight.ExpungeFolder });
-			Assert.AreEqual (4, rights.Count, "Count after adding DeleteFolder and ExpungeFolder");
+			Assert.That (rights.Count, Is.EqualTo (4), "Count after adding DeleteFolder and ExpungeFolder");
 
-			Assert.IsTrue (rights.Contains (AccessRight.DeleteFolder), "Contains DeleteFolder");
-			Assert.IsTrue (rights.Contains (AccessRight.ExpungeFolder), "Contains ExpungeFolder");
-			Assert.IsFalse (rights.Contains (AccessRight.Administer), "Contains Administer");
+			Assert.That (rights.Contains (AccessRight.DeleteFolder), Is.True, "Contains DeleteFolder");
+			Assert.That (rights.Contains (AccessRight.ExpungeFolder), Is.True, "Contains ExpungeFolder");
+			Assert.That (rights.Contains (AccessRight.Administer), Is.False, "Contains Administer");
 
 			rights.AddRange ("it");
-			Assert.AreEqual (6, rights.Count, "Count after adding AppendMessages and SetMessageDeleted");
+			Assert.That (rights.Count, Is.EqualTo (6), "Count after adding AppendMessages and SetMessageDeleted");
 
-			Assert.IsTrue (rights.Contains (AccessRight.AppendMessages), "Contains AppendMessages");
-			Assert.IsTrue (rights.Contains (AccessRight.SetMessageDeleted), "Contains SetMessageDeleted");
-			Assert.IsFalse (rights.Contains (AccessRight.Administer), "Contains Administer");
+			Assert.That (rights.Contains (AccessRight.AppendMessages), Is.True, "Contains AppendMessages");
+			Assert.That (rights.Contains (AccessRight.SetMessageDeleted), Is.True, "Contains SetMessageDeleted");
+			Assert.That (rights.Contains (AccessRight.Administer), Is.False, "Contains Administer");
 
 			for (i = 0; i < 6; i++)
-				Assert.AreEqual (expected[i], rights[i], "rights[{0}]", i);
+				Assert.That (rights[i], Is.EqualTo (expected[i]), $"rights[{i}]");
 
 			((ICollection<AccessRight>) rights).Add (AccessRight.Administer);
-			Assert.IsTrue (rights.Remove (AccessRight.Administer), "Remove Administer");
-			Assert.IsFalse (rights.Remove (AccessRight.Administer), "Remove Administer again");
+			Assert.That (rights.Remove (AccessRight.Administer), Is.True, "Remove Administer");
+			Assert.That (rights.Remove (AccessRight.Administer), Is.False, "Remove Administer again");
 
 			i = 0;
 			foreach (var right in rights)
-				Assert.AreEqual (expected[i], right, "foreach rights[{0}]", i++);
+				Assert.That (right, Is.EqualTo (expected[i]), $"foreach rights[{i++}]");
 
 			i = 0;
 			foreach (AccessRight right in ((IEnumerable) rights))
-				Assert.AreEqual (expected[i], right, "generic foreach rights[{0}]", i++);
+				Assert.That (right, Is.EqualTo (expected[i]), $"generic foreach rights[{i++}]");
 
 			var array = new AccessRight[rights.Count];
 			rights.CopyTo (array, 0);
 
 			for (i = 0; i < 6; i++)
-				Assert.AreEqual (expected[i], array[i], "CopyTo[{0}]", i);
+				Assert.That (array[i], Is.EqualTo (expected[i]), $"CopyTo[{i}]");
 
-			Assert.AreEqual ("rkxeit", rights.ToString (), "ToString");
+			Assert.That (rights.ToString (), Is.EqualTo ("rkxeit"), "ToString");
 		}
 
 		[Test]
@@ -137,18 +137,18 @@ namespace UnitTests {
 		{
 			var control = new AccessControl ("empty");
 
-			Assert.AreEqual ("empty", control.Name, "Name");
-			Assert.AreEqual ("", control.Rights.ToString (), "Rights (empty)");
+			Assert.That (control.Name, Is.EqualTo ("empty"), "Name");
+			Assert.That (control.Rights.ToString (), Is.EqualTo (""), "Rights (empty)");
 
 			control = new AccessControl ("admin", "a");
 
-			Assert.AreEqual ("admin", control.Name, "Name");
-			Assert.AreEqual ("a", control.Rights.ToString (), "Rights (admin)");
+			Assert.That (control.Name, Is.EqualTo ("admin"), "Name");
+			Assert.That (control.Rights.ToString (), Is.EqualTo ("a"), "Rights (admin)");
 
 			control = new AccessControl ("it", new [] { AccessRight.AppendMessages, AccessRight.SetMessageDeleted });
 
-			Assert.AreEqual ("it", control.Name, "Name");
-			Assert.AreEqual ("it", control.Rights.ToString (), "Rights (it)");
+			Assert.That (control.Name, Is.EqualTo ("it"), "Name");
+			Assert.That (control.Rights.ToString (), Is.EqualTo ("it"), "Rights (it)");
 		}
 
 		[Test]
@@ -156,8 +156,8 @@ namespace UnitTests {
 		{
 			var list = new AccessControlList (new [] { new AccessControl ("admin", new [] { AccessRight.Administer }) });
 
-			Assert.AreEqual (1, list.Count, "Count");
-			Assert.AreEqual ("admin", list[0].Name, "list[0].Name");
+			Assert.That (list.Count, Is.EqualTo (1), "Count");
+			Assert.That (list[0].Name, Is.EqualTo ("admin"), "list[0].Name");
 		}
 	}
 }

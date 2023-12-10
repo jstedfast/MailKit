@@ -113,84 +113,84 @@ namespace UnitTests {
 			var messages = Create ();
 
 			messages.Sort (new[] { OrderBy.Arrival });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by arrival failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by arrival failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by arrival failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by arrival failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by arrival failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by arrival failed.");
 
 			messages.Sort (new [] { OrderBy.ReverseArrival });
-			Assert.AreEqual (2, messages[0].Index, "Sorting by reverse arrival failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by reverse arrival failed.");
-			Assert.AreEqual (0, messages[2].Index, "Sorting by reverse arrival failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (2), "Sorting by reverse arrival failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by reverse arrival failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (0), "Sorting by reverse arrival failed.");
 
 			messages.Sort (new [] { OrderBy.Subject });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by subject failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by subject failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by subject failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by subject failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by subject failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by subject failed.");
 
 			messages.Sort (new [] { OrderBy.ReverseSubject });
-			Assert.AreEqual (2, messages[0].Index, "Sorting by reverse subject failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by reverse subject failed.");
-			Assert.AreEqual (0, messages[2].Index, "Sorting by reverse subject failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (2), "Sorting by reverse subject failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by reverse subject failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (0), "Sorting by reverse subject failed.");
 
 			messages.Sort (new [] { OrderBy.Size, OrderBy.Arrival });
-			Assert.AreEqual (1, messages[0].Index, "Sorting by size failed.");
-			Assert.AreEqual (0, messages[1].Index, "Sorting by size failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by size failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (1), "Sorting by size failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (0), "Sorting by size failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by size failed.");
 
 			messages.Sort (new [] { OrderBy.Date });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by date failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by date failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by date failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by date failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by date failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by date failed.");
 
 			messages.Sort (new [] { OrderBy.Size, OrderBy.Subject });
-			Assert.AreEqual (1, messages[0].Index, "Sorting by size+subject failed.");
-			Assert.AreEqual (0, messages[1].Index, "Sorting by size+subject failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by size+subject failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (1), "Sorting by size+subject failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (0), "Sorting by size+subject failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by size+subject failed.");
 
 			messages.Sort (new [] { OrderBy.ReverseSize, OrderBy.ReverseSubject });
-			Assert.AreEqual (2, messages[0].Index, "Sorting by reversed size+subject failed.");
-			Assert.AreEqual (0, messages[1].Index, "Sorting by reversed size+subject failed.");
-			Assert.AreEqual (1, messages[2].Index, "Sorting by reversed size+subject failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (2), "Sorting by reversed size+subject failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (0), "Sorting by reversed size+subject failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (1), "Sorting by reversed size+subject failed.");
 
 			messages.Sort (new[] { OrderBy.DisplayFrom });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by display-from failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by display-from failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by display-from failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by display-from failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by display-from failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by display-from failed.");
 
 			messages.Sort (new[] { OrderBy.From });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by from failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by from failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by from failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by from failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by from failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by from failed.");
 
 			messages.Sort (new[] { OrderBy.DisplayTo });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by display-to failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by display-to failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by display-to failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by display-to failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by display-to failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by display-to failed.");
 
 			messages.Sort (new[] { OrderBy.To });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by to failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by to failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by to failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by to failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by to failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by to failed.");
 
 			messages.Sort (new[] { OrderBy.Cc });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by cc failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by cc failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by cc failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by cc failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by cc failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by cc failed.");
 
 			messages.Sort (new [] { new OrderBy (OrderByType.ModSeq, SortOrder.Ascending), OrderBy.Arrival });
-			Assert.AreEqual (1, messages[0].Index, "Sorting by modseq failed.");
-			Assert.AreEqual (0, messages[1].Index, "Sorting by modseq failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by modseq failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (1), "Sorting by modseq failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (0), "Sorting by modseq failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by modseq failed.");
 
 			messages.Sort (new[] { new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending) });
-			Assert.AreEqual (0, messages[0].Index, "Sorting by altsubject failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by altsubject failed.");
-			Assert.AreEqual (2, messages[2].Index, "Sorting by altsubject failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (0), "Sorting by altsubject failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by altsubject failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (2), "Sorting by altsubject failed.");
 
 			messages.Sort (new[] { new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Descending) });
-			Assert.AreEqual (2, messages[0].Index, "Sorting by reverse altsubject failed.");
-			Assert.AreEqual (1, messages[1].Index, "Sorting by reverse altsubject failed.");
-			Assert.AreEqual (0, messages[2].Index, "Sorting by reverse altsubject failed.");
+			Assert.That (messages[0].Index, Is.EqualTo (2), "Sorting by reverse altsubject failed.");
+			Assert.That (messages[1].Index, Is.EqualTo (1), "Sorting by reverse altsubject failed.");
+			Assert.That (messages[2].Index, Is.EqualTo (0), "Sorting by reverse altsubject failed.");
 		}
 
 		[Test]
@@ -201,84 +201,84 @@ namespace UnitTests {
 			IList<MessageSummary> sorted;
 
 			sorted = enumerable.Sort (new [] { OrderBy.Arrival });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by arrival failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by arrival failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by arrival failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by arrival failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by arrival failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by arrival failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.ReverseArrival });
-			Assert.AreEqual (2, sorted[0].Index, "Sorting by reverse arrival failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by reverse arrival failed.");
-			Assert.AreEqual (0, sorted[2].Index, "Sorting by reverse arrival failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (2), "Sorting by reverse arrival failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by reverse arrival failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (0), "Sorting by reverse arrival failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.Subject });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by subject failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by subject failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by subject failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by subject failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by subject failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by subject failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.ReverseSubject });
-			Assert.AreEqual (2, sorted[0].Index, "Sorting by reverse subject failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by reverse subject failed.");
-			Assert.AreEqual (0, sorted[2].Index, "Sorting by reverse subject failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (2), "Sorting by reverse subject failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by reverse subject failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (0), "Sorting by reverse subject failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.Size, OrderBy.Arrival });
-			Assert.AreEqual (1, sorted[0].Index, "Sorting by size failed.");
-			Assert.AreEqual (0, sorted[1].Index, "Sorting by size failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by size failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (1), "Sorting by size failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (0), "Sorting by size failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by size failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.Date });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by date failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by date failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by date failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by date failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by date failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by date failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.Size, OrderBy.Subject });
-			Assert.AreEqual (1, sorted[0].Index, "Sorting by size+subject failed.");
-			Assert.AreEqual (0, sorted[1].Index, "Sorting by size+subject failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by size+subject failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (1), "Sorting by size+subject failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (0), "Sorting by size+subject failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by size+subject failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.ReverseSize, OrderBy.ReverseSubject });
-			Assert.AreEqual (2, sorted[0].Index, "Sorting by reversed size+subject failed.");
-			Assert.AreEqual (0, sorted[1].Index, "Sorting by reversed size+subject failed.");
-			Assert.AreEqual (1, sorted[2].Index, "Sorting by reversed size+subject failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (2), "Sorting by reversed size+subject failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (0), "Sorting by reversed size+subject failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (1), "Sorting by reversed size+subject failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.DisplayFrom });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by display-from failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by display-from failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by display-from failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by display-from failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by display-from failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by display-from failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.From });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by from failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by from failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by from failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by from failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by from failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by from failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.DisplayTo });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by display-to failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by display-to failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by display-to failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by display-to failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by display-to failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by display-to failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.To });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by to failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by to failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by to failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by to failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by to failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by to failed.");
 
 			sorted = enumerable.Sort (new [] { OrderBy.Cc });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by cc failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by cc failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by cc failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by cc failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by cc failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by cc failed.");
 
 			sorted = enumerable.Sort (new [] { new OrderBy (OrderByType.ModSeq, SortOrder.Ascending), OrderBy.Arrival });
-			Assert.AreEqual (1, sorted[0].Index, "Sorting by modseq failed.");
-			Assert.AreEqual (0, sorted[1].Index, "Sorting by modseq failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by modseq failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (1), "Sorting by modseq failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (0), "Sorting by modseq failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by modseq failed.");
 
 			sorted = enumerable.Sort (new[] { new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending) });
-			Assert.AreEqual (0, sorted[0].Index, "Sorting by subject failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by subject failed.");
-			Assert.AreEqual (2, sorted[2].Index, "Sorting by subject failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (0), "Sorting by subject failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by subject failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (2), "Sorting by subject failed.");
 
 			sorted = enumerable.Sort (new[] { new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Descending) });
-			Assert.AreEqual (2, sorted[0].Index, "Sorting by reverse subject failed.");
-			Assert.AreEqual (1, sorted[1].Index, "Sorting by reverse subject failed.");
-			Assert.AreEqual (0, sorted[2].Index, "Sorting by reverse subject failed.");
+			Assert.That (sorted[0].Index, Is.EqualTo (2), "Sorting by reverse subject failed.");
+			Assert.That (sorted[1].Index, Is.EqualTo (1), "Sorting by reverse subject failed.");
+			Assert.That (sorted[2].Index, Is.EqualTo (0), "Sorting by reverse subject failed.");
 		}
 	}
 }

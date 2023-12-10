@@ -43,13 +43,13 @@ namespace UnitTests.Net.Smtp {
 				stream.Position = 0;
 
 				var ex = (SmtpCommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.ErrorCode, ex.ErrorCode, "Unexpected ErrorCode.");
-				Assert.AreEqual (expected.StatusCode, ex.StatusCode, "Unexpected StatusCode.");
+				Assert.That (ex.ErrorCode, Is.EqualTo (expected.ErrorCode), "Unexpected ErrorCode.");
+				Assert.That (ex.StatusCode, Is.EqualTo (expected.StatusCode), "Unexpected StatusCode.");
 
 				if (expected.Mailbox != null)
-					Assert.IsTrue (expected.Mailbox.Equals (ex.Mailbox), "Unexpected Mailbox.");
+					Assert.That (expected.Mailbox.Equals (ex.Mailbox), Is.True, "Unexpected Mailbox.");
 				else
-					Assert.IsNull (ex.Mailbox, "Expected Mailbox to be null.");
+					Assert.That (ex.Mailbox, Is.Null, "Expected Mailbox to be null.");
 			}
 		}
 

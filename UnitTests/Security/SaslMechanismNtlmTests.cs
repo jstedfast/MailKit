@@ -148,15 +148,15 @@ namespace UnitTests.Security {
 			var encoded = targetInfo.Encode (true);
 			var decoded = new NtlmTargetInfo (encoded, 0, encoded.Length, true);
 
-			Assert.AreEqual ("channel-binding", Encoding.ASCII.GetString (decoded.ChannelBinding), "ChannelBinding does not match.");
-			Assert.AreEqual (targetInfo.DnsDomainName, decoded.DnsDomainName, "DnsDomainName does not match.");
-			Assert.AreEqual (targetInfo.DnsServerName, decoded.DnsServerName, "DnsServerName does not match.");
-			Assert.AreEqual (targetInfo.DnsTreeName, decoded.DnsTreeName, "DnsTreeName does not match.");
-			Assert.AreEqual (targetInfo.DomainName, decoded.DomainName, "DomainName does not match.");
-			Assert.AreEqual (targetInfo.ServerName, decoded.ServerName, "ServerName does not match.");
-			Assert.AreEqual (targetInfo.TargetName, decoded.TargetName, "TargetName does not match.");
-			Assert.AreEqual (targetInfo.Timestamp, decoded.Timestamp, "Timestamp does not match.");
-			Assert.AreEqual (targetInfo.Flags, decoded.Flags, "Flags does not match.");
+			Assert.That (Encoding.ASCII.GetString (decoded.ChannelBinding), Is.EqualTo ("channel-binding"), "ChannelBinding does not match.");
+			Assert.That (decoded.DnsDomainName, Is.EqualTo (targetInfo.DnsDomainName), "DnsDomainName does not match.");
+			Assert.That (decoded.DnsServerName, Is.EqualTo (targetInfo.DnsServerName), "DnsServerName does not match.");
+			Assert.That (decoded.DnsTreeName, Is.EqualTo (targetInfo.DnsTreeName), "DnsTreeName does not match.");
+			Assert.That (decoded.DomainName, Is.EqualTo (targetInfo.DomainName), "DomainName does not match.");
+			Assert.That (decoded.ServerName, Is.EqualTo (targetInfo.ServerName), "ServerName does not match.");
+			Assert.That (decoded.TargetName, Is.EqualTo (targetInfo.TargetName), "TargetName does not match.");
+			Assert.That (decoded.Timestamp, Is.EqualTo (targetInfo.Timestamp), "Timestamp does not match.");
+			Assert.That (decoded.Flags, Is.EqualTo (targetInfo.Flags), "Flags does not match.");
 		}
 
 		static readonly byte [] NtlmType1EncodedMessage = {
@@ -185,7 +185,7 @@ namespace UnitTests.Security {
 			expected = HexEncode (NtlmType1EncodedMessage);
 			actual = HexEncode (encoded);
 
-			Assert.AreEqual (expected, actual, "The encoded NegotiateMessage did not match the expected result.");
+			Assert.That (actual, Is.EqualTo (expected), "The encoded NegotiateMessage did not match the expected result.");
 		}
 
 		[Test]
@@ -199,7 +199,7 @@ namespace UnitTests.Security {
 			expected = HexEncode (NtlmType1EncodedMessageWithVersion);
 			actual = HexEncode (encoded);
 
-			Assert.AreEqual (expected, actual, "The encoded NegotiateMessage did not match the expected result.");
+			Assert.That (actual, Is.EqualTo (expected), "The encoded NegotiateMessage did not match the expected result.");
 		}
 
 		[Test]
@@ -210,10 +210,10 @@ namespace UnitTests.Security {
 				NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.Negotiate128;
 			var negotiate = new NtlmNegotiateMessage (NtlmType1EncodedMessage, 0, NtlmType1EncodedMessage.Length);
 
-			Assert.AreEqual (flags, negotiate.Flags, "The expected flags do not match.");
-			Assert.AreEqual ("WORKSTATION", negotiate.Workstation, "The expected workstation name does not match.");
-			Assert.AreEqual ("DOMAIN", negotiate.Domain, "The expected domain does not match.");
-			Assert.AreEqual (null, negotiate.OSVersion, "The expected OS Version does not match.");
+			Assert.That (negotiate.Flags, Is.EqualTo (flags), "The expected flags do not match.");
+			Assert.That (negotiate.Workstation, Is.EqualTo ("WORKSTATION"), "The expected workstation name does not match.");
+			Assert.That (negotiate.Domain, Is.EqualTo ("DOMAIN"), "The expected domain does not match.");
+			Assert.That (negotiate.OSVersion, Is.EqualTo (null), "The expected OS Version does not match.");
 		}
 
 		[Test]
@@ -225,10 +225,10 @@ namespace UnitTests.Security {
 			var negotiate = new NtlmNegotiateMessage (NtlmType1EncodedMessageWithVersion, 0, NtlmType1EncodedMessageWithVersion.Length);
 			var osVersion = new Version (5, 0, 2195);
 
-			Assert.AreEqual (flags, negotiate.Flags, "The expected flags do not match.");
-			Assert.AreEqual (string.Empty, negotiate.Workstation, "The expected workstation name does not match.");
-			Assert.AreEqual (string.Empty, negotiate.Domain, "The expected domain does not match.");
-			Assert.AreEqual (osVersion, negotiate.OSVersion, "The expected OS Version does not match.");
+			Assert.That (negotiate.Flags, Is.EqualTo (flags), "The expected flags do not match.");
+			Assert.That (negotiate.Workstation, Is.EqualTo (string.Empty), "The expected workstation name does not match.");
+			Assert.That (negotiate.Domain, Is.EqualTo (string.Empty), "The expected domain does not match.");
+			Assert.That (negotiate.OSVersion, Is.EqualTo (osVersion), "The expected OS Version does not match.");
 		}
 
 		static readonly byte[] NtlmType2EncodedMessage = {
@@ -273,7 +273,7 @@ namespace UnitTests.Security {
 			expected = HexEncode (NtlmType2EncodedMessage);
 			actual = HexEncode (encoded);
 
-			Assert.AreEqual (expected, actual, "The encoded ChallengeMessage did not match the expected result.");
+			Assert.That (actual, Is.EqualTo (expected), "The encoded ChallengeMessage did not match the expected result.");
 		}
 
 		[Test]
@@ -283,22 +283,22 @@ namespace UnitTests.Security {
 			var flags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo;
 			var challenge = new NtlmChallengeMessage (NtlmType2EncodedMessage, 0, NtlmType2EncodedMessage.Length);
 
-			Assert.AreEqual (flags, challenge.Flags, "The expected flags do not match.");
-			Assert.AreEqual ("DOMAIN", challenge.TargetName, "The expected TargetName does not match.");
+			Assert.That (challenge.Flags, Is.EqualTo (flags), "The expected flags do not match.");
+			Assert.That (challenge.TargetName, Is.EqualTo ("DOMAIN"), "The expected TargetName does not match.");
 
 			var nonce = HexEncode (challenge.ServerChallenge);
-			Assert.AreEqual ("0123456789abcdef", nonce, "The expected nonce does not match.");
+			Assert.That (nonce, Is.EqualTo ("0123456789abcdef"), "The expected nonce does not match.");
 
 			var targetInfo = HexEncode (challenge.GetEncodedTargetInfo ());
-			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected TargetInfo does not match.");
+			Assert.That (targetInfo, Is.EqualTo (expectedTargetInfo), "The expected TargetInfo does not match.");
 
-			Assert.AreEqual ("DOMAIN", challenge.TargetInfo.DomainName, "The expected TargetInfo domain name does not match.");
-			Assert.AreEqual ("SERVER", challenge.TargetInfo.ServerName, "The expected TargetInfo server name does not match.");
-			Assert.AreEqual ("domain.com", challenge.TargetInfo.DnsDomainName, "The expected TargetInfo DNS domain name does not match.");
-			Assert.AreEqual ("server.domain.com", challenge.TargetInfo.DnsServerName, "The expected TargetInfo DNS server name does not match.");
+			Assert.That (challenge.TargetInfo.DomainName, Is.EqualTo ("DOMAIN"), "The expected TargetInfo domain name does not match.");
+			Assert.That (challenge.TargetInfo.ServerName, Is.EqualTo ("SERVER"), "The expected TargetInfo server name does not match.");
+			Assert.That (challenge.TargetInfo.DnsDomainName, Is.EqualTo ("domain.com"), "The expected TargetInfo DNS domain name does not match.");
+			Assert.That (challenge.TargetInfo.DnsServerName, Is.EqualTo ("server.domain.com"), "The expected TargetInfo DNS server name does not match.");
 
 			targetInfo = HexEncode (challenge.TargetInfo.Encode (true));
-			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected re-encoded TargetInfo does not match.");
+			Assert.That (targetInfo, Is.EqualTo (expectedTargetInfo), "The expected re-encoded TargetInfo does not match.");
 		}
 
 		static readonly byte[] NtlmType2EncodedMessageWithOSVersion = {
@@ -344,7 +344,7 @@ namespace UnitTests.Security {
 			expected = HexEncode (NtlmType2EncodedMessageWithOSVersion);
 			actual = HexEncode (encoded);
 
-			Assert.AreEqual (expected, actual, "The encoded ChallengeMessage did not match the expected result.");
+			Assert.That (actual, Is.EqualTo (expected), "The encoded ChallengeMessage did not match the expected result.");
 		}
 
 		[Test]
@@ -354,23 +354,23 @@ namespace UnitTests.Security {
 			var flags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.TargetTypeDomain | NtlmFlags.NegotiateTargetInfo | NtlmFlags.NegotiateVersion;
 			var challenge = new NtlmChallengeMessage (NtlmType2EncodedMessageWithOSVersion, 0, NtlmType2EncodedMessageWithOSVersion.Length);
 
-			Assert.AreEqual (flags, challenge.Flags, "The expected flags do not match.");
-			Assert.AreEqual ("DOMAIN", challenge.TargetName, "The expected TargetName does not match.");
+			Assert.That (challenge.Flags, Is.EqualTo (flags), "The expected flags do not match.");
+			Assert.That (challenge.TargetName, Is.EqualTo ("DOMAIN"), "The expected TargetName does not match.");
 
 			var nonce = HexEncode (challenge.ServerChallenge);
-			Assert.AreEqual ("0123456789abcdef", nonce, "The expected nonce does not match.");
+			Assert.That (nonce, Is.EqualTo ("0123456789abcdef"), "The expected nonce does not match.");
 
 			var targetInfo = HexEncode (challenge.GetEncodedTargetInfo ());
-			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected TargetInfo does not match.");
+			Assert.That (targetInfo, Is.EqualTo (expectedTargetInfo), "The expected TargetInfo does not match.");
 
-			Assert.AreEqual ("DOMAIN", challenge.TargetInfo.DomainName, "The expected TargetInfo domain name does not match.");
-			Assert.AreEqual ("SERVER", challenge.TargetInfo.ServerName, "The expected TargetInfo server name does not match.");
-			Assert.AreEqual ("domain.com", challenge.TargetInfo.DnsDomainName, "The expected TargetInfo DNS domain name does not match.");
-			Assert.AreEqual ("server.domain.com", challenge.TargetInfo.DnsServerName, "The expected TargetInfo DNS server name does not match.");
-			Assert.AreEqual (1234567890, challenge.TargetInfo.Timestamp, "The expected TargetInfo Timestamp does not match.");
+			Assert.That (challenge.TargetInfo.DomainName, Is.EqualTo ("DOMAIN"), "The expected TargetInfo domain name does not match.");
+			Assert.That (challenge.TargetInfo.ServerName, Is.EqualTo ("SERVER"), "The expected TargetInfo server name does not match.");
+			Assert.That (challenge.TargetInfo.DnsDomainName, Is.EqualTo ("domain.com"), "The expected TargetInfo DNS domain name does not match.");
+			Assert.That (challenge.TargetInfo.DnsServerName, Is.EqualTo ("server.domain.com"), "The expected TargetInfo DNS server name does not match.");
+			Assert.That (challenge.TargetInfo.Timestamp, Is.EqualTo (1234567890), "The expected TargetInfo Timestamp does not match.");
 
 			targetInfo = HexEncode (challenge.TargetInfo.Encode (true));
-			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected re-encoded TargetInfo does not match.");
+			Assert.That (targetInfo, Is.EqualTo (expectedTargetInfo), "The expected re-encoded TargetInfo does not match.");
 		}
 
 		[Test]
@@ -393,7 +393,7 @@ namespace UnitTests.Security {
 
 			//var expectedAuthenticate = DecodeAuthenticateMessage (expected);
 
-			Assert.AreEqual (expected, actual, "The encoded Type3Message did not match the expected result.");
+			Assert.That (actual, Is.EqualTo (expected), "The encoded Type3Message did not match the expected result.");
 		}
 
 		[Test]
@@ -403,33 +403,33 @@ namespace UnitTests.Security {
 			var flags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateUnicode;
 			var authenticate = DecodeAuthenticateMessage (challenge3);
 
-			Assert.AreEqual (flags, authenticate.Flags, "The expected flags do not match.");
-			Assert.AreEqual ("DOMAIN", authenticate.Domain, "The expected Domain does not match.");
-			Assert.AreEqual ("WORKSTATION", authenticate.Workstation, "The expected Workstation does not match.");
-			Assert.AreEqual ("user", authenticate.UserName, "The expected Username does not match.");
+			Assert.That (authenticate.Flags, Is.EqualTo (flags), "The expected flags do not match.");
+			Assert.That (authenticate.Domain, Is.EqualTo ("DOMAIN"), "The expected Domain does not match.");
+			Assert.That (authenticate.Workstation, Is.EqualTo ("WORKSTATION"), "The expected Workstation does not match.");
+			Assert.That (authenticate.UserName, Is.EqualTo ("user"), "The expected Username does not match.");
 
 			var nt = HexEncode (authenticate.NtChallengeResponse);
-			Assert.AreEqual ("dd5428b01e86f4dfcabeac394946dbd43ee88f794dd63255", nt, "The NT payload does not match.");
+			Assert.That (nt, Is.EqualTo ("dd5428b01e86f4dfcabeac394946dbd43ee88f794dd63255"), "The NT payload does not match.");
 
 			var lm = HexEncode (authenticate.LmChallengeResponse);
-			Assert.AreEqual ("98def7b87f88aa5dafe2df779688a172def11c7d5ccdef13", lm, "The LM payload does not match.");
+			Assert.That (lm, Is.EqualTo ("98def7b87f88aa5dafe2df779688a172def11c7d5ccdef13"), "The LM payload does not match.");
 		}
 
 		static void AssertNtlmAuthNoDomain (SaslMechanismNtlm sasl, string prefix)
 		{
 			string challenge;
 
-			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
-			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+			Assert.That (sasl.SupportsChannelBinding, Is.True, $"{prefix}: SupportsChannelBinding");
+			Assert.That (sasl.SupportsInitialResponse, Is.True, $"{prefix}: SupportsInitialResponse");
 
 			challenge = sasl.Challenge (string.Empty);
 
 			var type1 = DecodeNegotiateMessage (challenge);
 
-			Assert.AreEqual (NtlmNegotiateMessage.DefaultFlags, type1.Flags, "{0}: Expected initial NTLM client challenge flags do not match.", prefix);
-			Assert.AreEqual (string.Empty, type1.Domain, "{0}: Expected initial NTLM client challenge domain does not match.", prefix);
-			Assert.AreEqual (string.Empty, type1.Workstation, "{0}: Expected initial NTLM client challenge workstation does not match.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: NTLM should not be authenticated.", prefix);
+			Assert.That (type1.Flags, Is.EqualTo (NtlmNegotiateMessage.DefaultFlags), $"{prefix}: Expected initial NTLM client challenge flags do not match.");
+			Assert.That (type1.Domain, Is.EqualTo (string.Empty), $"{prefix}: Expected initial NTLM client challenge domain does not match.");
+			Assert.That (type1.Workstation, Is.EqualTo (string.Empty), $"{prefix}: Expected initial NTLM client challenge workstation does not match.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: NTLM should not be authenticated.");
 		}
 
 		[Test]
@@ -450,17 +450,17 @@ namespace UnitTests.Security {
 			var initialFlags = NtlmNegotiateMessage.DefaultFlags | NtlmFlags.NegotiateDomainSupplied;
 			string challenge;
 
-			Assert.IsTrue (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
-			Assert.IsTrue (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+			Assert.That (sasl.SupportsChannelBinding, Is.True, $"{prefix}: SupportsChannelBinding");
+			Assert.That (sasl.SupportsInitialResponse, Is.True, $"{prefix}: SupportsInitialResponse");
 
 			challenge = sasl.Challenge (string.Empty);
 
 			var negotiate = DecodeNegotiateMessage (challenge);
 
-			Assert.AreEqual (initialFlags, negotiate.Flags, "{0}: Expected initial NTLM client challenge flags do not match.", prefix);
-			Assert.AreEqual ("DOMAIN", negotiate.Domain, "{0}: Expected initial NTLM client challenge domain does not match.", prefix);
-			Assert.AreEqual (string.Empty, negotiate.Workstation, "{0}: Expected initial NTLM client challenge workstation does not match.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: NTLM should not be authenticated.", prefix);
+			Assert.That (negotiate.Flags, Is.EqualTo (initialFlags), $"{prefix}: Expected initial NTLM client challenge flags do not match.");
+			Assert.That (negotiate.Domain, Is.EqualTo ("DOMAIN"), $"{prefix}: Expected initial NTLM client challenge domain does not match.");
+			Assert.That (negotiate.Workstation, Is.EqualTo (string.Empty), $"{prefix}: Expected initial NTLM client challenge workstation does not match.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: NTLM should not be authenticated.");
 		}
 
 		[Test]
@@ -491,8 +491,8 @@ namespace UnitTests.Security {
 
 		static void AssertNtlmv2 (SaslMechanismNtlm sasl, string challenge1, string challenge2)
 		{
-			Assert.IsTrue (sasl.SupportsChannelBinding, "SupportsChannelBinding");
-			Assert.IsTrue (sasl.SupportsInitialResponse, "SupportsInitialResponse");
+			Assert.That (sasl.SupportsChannelBinding, Is.True, "SupportsChannelBinding");
+			Assert.That (sasl.SupportsInitialResponse, Is.True, "SupportsInitialResponse");
 
 			var response = sasl.Challenge (string.Empty);
 			var timestamp = DateTime.UtcNow.Ticks;
@@ -501,8 +501,8 @@ namespace UnitTests.Security {
 			sasl.Timestamp = timestamp;
 			sasl.Nonce = nonce;
 
-			Assert.AreEqual (challenge1, response, "Initial challenge");
-			Assert.IsFalse (sasl.IsAuthenticated, "IsAuthenticated");
+			Assert.That (response, Is.EqualTo (challenge1), "Initial challenge");
+			Assert.That (sasl.IsAuthenticated, Is.False, "IsAuthenticated");
 
 			response = sasl.Challenge (challenge2);
 
@@ -517,14 +517,14 @@ namespace UnitTests.Security {
 			var actual = Convert.FromBase64String (response);
 			var expected = authenticate.Encode ();
 
-			Assert.AreEqual (expected.Length, actual.Length, "Final challenge differs in length: {0} vs {1}", expected.Length, actual.Length);
+			Assert.That (actual.Length, Is.EqualTo (expected.Length), $"Final challenge differs in length: {expected.Length} vs {actual.Length}");
 
 			for (int i = 0; i < expected.Length; i++)
-				Assert.AreEqual (expected[i], actual[i], "Final challenge differs at index {0}", i);
+				Assert.That (actual[i], Is.EqualTo (expected[i]), $"Final challenge differs at index {i}");
 
-			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
-			Assert.IsFalse (sasl.NegotiatedChannelBinding, "NegotiatedChannelBinding");
-			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "NegotiatedSecurityLayer");
+			Assert.That (sasl.IsAuthenticated, Is.True, "IsAuthenticated");
+			Assert.That (sasl.NegotiatedChannelBinding, Is.False, "NegotiatedChannelBinding");
+			Assert.That (sasl.NegotiatedSecurityLayer, Is.False, "NegotiatedSecurityLayer");
 		}
 
 		[Test]
@@ -646,9 +646,9 @@ namespace UnitTests.Security {
 			var negotiate = new NtlmNegotiateMessage (flags, "", "", new Version (5, 1, 2600));
 
 			var challenge = new NtlmChallengeMessage (ExampleNtlmV2ChallengeMessage, 0, ExampleNtlmV2ChallengeMessage.Length);
-			Assert.AreEqual ("Server", challenge.TargetName, "TargetName");
-			Assert.AreEqual ("Server", challenge.TargetInfo.ServerName, "ServerName");
-			Assert.AreEqual ("Domain", challenge.TargetInfo.DomainName, "DomainName");
+			Assert.That (challenge.TargetName, Is.EqualTo ("Server"), "TargetName");
+			Assert.That (challenge.TargetInfo.ServerName, Is.EqualTo ("Server"), "ServerName");
+			Assert.That (challenge.TargetInfo.DomainName, Is.EqualTo ("Domain"), "DomainName");
 
 			// Note: Had to reverse engineer these values from the example. The nonce is the last 8 bytes of the lmChallengeResponse
 			// and the timestamp was bytes 8-16 of the 'temp' buffer.
@@ -668,11 +668,11 @@ namespace UnitTests.Security {
 
 			//var initializer = ToCSharpByteArrayInitializer ("ExampleNtlmV2AuthenticateMessage", actual);
 
-			Assert.AreEqual (ExampleNtlmV2AuthenticateMessage.Length, actual.Length, "Raw message lengths differ.");
+			Assert.That (actual.Length, Is.EqualTo (ExampleNtlmV2AuthenticateMessage.Length), "Raw message lengths differ.");
 
 			// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
 			for (int i = 0; i < ExampleNtlmV2AuthenticateMessage.Length - 16; i++)
-				Assert.AreEqual (ExampleNtlmV2AuthenticateMessage[i], actual[i], $"Messages differ at index [{i}]");
+				Assert.That (actual[i], Is.EqualTo (ExampleNtlmV2AuthenticateMessage[i]), $"Messages differ at index [{i}]");
 		}
 
 		static readonly byte[] ExampleNtlmV2AuthenticateMessageWithChannelBinding = {
@@ -720,9 +720,9 @@ namespace UnitTests.Security {
 			var challenge = new NtlmChallengeMessage (ExampleNtlmV2ChallengeMessage, 0, ExampleNtlmV2ChallengeMessage.Length);
 			response = sasl.Challenge (Convert.ToBase64String (challenge.Encode ()));
 
-			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
-			Assert.IsTrue (sasl.NegotiatedChannelBinding, "NegotiatedChannelBinding");
-			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "NegotiatedSecurityLayer");
+			Assert.That (sasl.IsAuthenticated, Is.True, "IsAuthenticated");
+			Assert.That (sasl.NegotiatedChannelBinding, Is.True, "NegotiatedChannelBinding");
+			Assert.That (sasl.NegotiatedSecurityLayer, Is.False, "NegotiatedSecurityLayer");
 
 			var expectedAuthenticate = new NtlmAuthenticateMessage (ExampleNtlmV2AuthenticateMessage, 0, ExampleNtlmV2AuthenticateMessage.Length);
 			var expectedTargetInfo = GetNtChallengeResponseTargetInfo (expectedAuthenticate.NtChallengeResponse);
@@ -735,11 +735,11 @@ namespace UnitTests.Security {
 
 			//var expected = DecodeAuthenticateMessage (Convert.ToBase64String (ExampleNtlmV2AuthenticateMessageWithChannelBinding));
 
-			Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length, actual.Length, "Raw message lengths differ.");
+			Assert.That (actual.Length, Is.EqualTo (ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length), "Raw message lengths differ.");
 
 			// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
 			for (int i = 0; i < ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length - 16; i++)
-				Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding[i], actual[i], $"Messages differ at index [{i}]");
+				Assert.That (actual[i], Is.EqualTo (ExampleNtlmV2AuthenticateMessageWithChannelBinding[i]), $"Messages differ at index [{i}]");
 		}
 
 		[Test]
@@ -774,9 +774,9 @@ namespace UnitTests.Security {
 			var challenge = new NtlmChallengeMessage (ExampleNtlmV2ChallengeMessage, 0, ExampleNtlmV2ChallengeMessage.Length);
 			response = sasl.Challenge (Convert.ToBase64String (challenge.Encode ()));
 
-			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
-			Assert.IsTrue (sasl.NegotiatedChannelBinding, "NegotiatedChannelBinding");
-			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "NegotiatedSecurityLayer");
+			Assert.That (sasl.IsAuthenticated, Is.True, "IsAuthenticated");
+			Assert.That (sasl.NegotiatedChannelBinding, Is.True, "NegotiatedChannelBinding");
+			Assert.That (sasl.NegotiatedSecurityLayer, Is.False, "NegotiatedSecurityLayer");
 
 			var expectedAuthenticate = new NtlmAuthenticateMessage (ExampleNtlmV2AuthenticateMessage, 0, ExampleNtlmV2AuthenticateMessage.Length);
 			var expectedTargetInfo = GetNtChallengeResponseTargetInfo (expectedAuthenticate.NtChallengeResponse);
@@ -787,11 +787,11 @@ namespace UnitTests.Security {
 
 			//var initializer = ToCSharpByteArrayInitializer ("ExampleNtlmV2AuthenticateMessage", actual);
 
-			Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length, actual.Length, "Raw message lengths differ.");
+			Assert.That (actual.Length, Is.EqualTo (ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length), "Raw message lengths differ.");
 
 			// Note: The EncryptedRandomSessionKey is random and is the last 16 bytes of the message.
 			for (int i = 0; i < ExampleNtlmV2AuthenticateMessageWithChannelBinding.Length - 16; i++)
-				Assert.AreEqual (ExampleNtlmV2AuthenticateMessageWithChannelBinding[i], actual[i], $"Messages differ at index [{i}]");
+				Assert.That (actual[i], Is.EqualTo (ExampleNtlmV2AuthenticateMessageWithChannelBinding[i]), $"Messages differ at index [{i}]");
 		}
 
 		[Test]
@@ -806,9 +806,9 @@ namespace UnitTests.Security {
 			var challenge = new NtlmChallengeMessage (ExampleNtlmV2ChallengeMessage, 0, ExampleNtlmV2ChallengeMessage.Length);
 			response = sasl.Challenge (Convert.ToBase64String (challenge.Encode ()));
 
-			Assert.IsTrue (sasl.IsAuthenticated, "IsAuthenticated");
-			Assert.IsFalse (sasl.NegotiatedChannelBinding, "NegotiatedChannelBinding");
-			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "NegotiatedSecurityLayer");
+			Assert.That (sasl.IsAuthenticated, Is.True, "IsAuthenticated");
+			Assert.That (sasl.NegotiatedChannelBinding, Is.False, "NegotiatedChannelBinding");
+			Assert.That (sasl.NegotiatedSecurityLayer, Is.False, "NegotiatedSecurityLayer");
 		}
 
 		[Test]
@@ -822,7 +822,7 @@ namespace UnitTests.Security {
 			var authenticate = DecodeAuthenticateMessage (challenge3);
 
 			// This is what System.Net.Mail sends as the initial challenge.
-			Assert.AreEqual (NtlmNegotiateMessage.DefaultFlags | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateVersion | NtlmFlags.Negotiate56, negotiate.Flags, "System.Net.Mail Initial Flags");
+			Assert.That (negotiate.Flags, Is.EqualTo (NtlmNegotiateMessage.DefaultFlags | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateVersion | NtlmFlags.Negotiate56), "System.Net.Mail Initial Flags");
 
 			var ntlm = new SaslMechanismNtlm ("username", "password") {
 				ServicePrincipalName = "SMTPSVC/192.168.1.1",
@@ -831,33 +831,33 @@ namespace UnitTests.Security {
 			};
 			var response = ntlm.Challenge (null);
 
-			Assert.AreEqual ("TlRMTVNTUAABAAAAB4IIogAAAAAoAAAAAAAAACgAAAAKAO5CAAAADw==", response, "MailKit Initial Challenge");
+			Assert.That (response, Is.EqualTo ("TlRMTVNTUAABAAAAB4IIogAAAAAoAAAAAAAAACgAAAAKAO5CAAAADw=="), "MailKit Initial Challenge");
 
 			response = ntlm.Challenge (challenge2);
 			var auth = DecodeAuthenticateMessage (response);
 
-			Assert.AreEqual (authenticate.Domain, auth.Domain, "Domain");
-			Assert.AreEqual (authenticate.UserName, auth.UserName, "UserName");
-			Assert.AreEqual (authenticate.Workstation, auth.Workstation, "Workstation");
-			Assert.AreEqual (authenticate.OSVersion, auth.OSVersion, "OSVersion");
+			Assert.That (auth.Domain, Is.EqualTo (authenticate.Domain), "Domain");
+			Assert.That (auth.UserName, Is.EqualTo (authenticate.UserName), "UserName");
+			Assert.That (auth.Workstation, Is.EqualTo (authenticate.Workstation), "Workstation");
+			Assert.That (auth.OSVersion, Is.EqualTo (authenticate.OSVersion), "OSVersion");
 
-			Assert.AreEqual (authenticate.LmChallengeResponse.Length, auth.LmChallengeResponse.Length, "LmChallengeResponseLength");
+			Assert.That (auth.LmChallengeResponse.Length, Is.EqualTo (authenticate.LmChallengeResponse.Length), "LmChallengeResponseLength");
 			for (int i = 0; i < auth.LmChallengeResponse.Length; i++)
-				Assert.AreEqual (0, auth.LmChallengeResponse[i], $"LmChallengeResponse[{i}]");
-			Assert.NotNull (auth.Mic, "Mic");
-			Assert.AreEqual (authenticate.Mic.Length, auth.Mic.Length, "Mic");
+				Assert.That (auth.LmChallengeResponse[i], Is.EqualTo (0), $"LmChallengeResponse[{i}]");
+			Assert.That (auth.Mic, Is.Not.Null, "Mic");
+			Assert.That (auth.Mic.Length, Is.EqualTo (authenticate.Mic.Length), "Mic");
 
 			var targetInfo = GetNtChallengeResponseTargetInfo (auth.NtChallengeResponse);
 			var expected = GetNtChallengeResponseTargetInfo (authenticate.NtChallengeResponse);
-			Assert.NotNull (targetInfo.ChannelBinding, "ChannelBinding");
-			Assert.AreEqual (expected.ChannelBinding.Length, targetInfo.ChannelBinding.Length, "ChannelBinding");
-			Assert.AreEqual (expected.ServerName, targetInfo.ServerName, "ServerName");
-			Assert.AreEqual (expected.DomainName, targetInfo.DomainName, "DomainName");
-			Assert.AreEqual (expected.DnsServerName, targetInfo.DnsServerName, "DnsServerName");
-			Assert.AreEqual (expected.DnsDomainName, targetInfo.DnsDomainName, "DnsDomainName");
-			Assert.AreEqual (expected.DnsTreeName, targetInfo.DnsTreeName, "DnsTreeName");
-			Assert.AreEqual (expected.Flags, targetInfo.Flags, "Flags");
-			Assert.AreEqual (expected.Timestamp, targetInfo.Timestamp, "Timestamp");
+			Assert.That (targetInfo.ChannelBinding, Is.Not.Null, "ChannelBinding");
+			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (expected.ChannelBinding.Length), "ChannelBinding");
+			Assert.That (targetInfo.ServerName, Is.EqualTo (expected.ServerName), "ServerName");
+			Assert.That (targetInfo.DomainName, Is.EqualTo (expected.DomainName), "DomainName");
+			Assert.That (targetInfo.DnsServerName, Is.EqualTo (expected.DnsServerName), "DnsServerName");
+			Assert.That (targetInfo.DnsDomainName, Is.EqualTo (expected.DnsDomainName), "DnsDomainName");
+			Assert.That (targetInfo.DnsTreeName, Is.EqualTo (expected.DnsTreeName), "DnsTreeName");
+			Assert.That (targetInfo.Flags, Is.EqualTo (expected.Flags), "Flags");
+			Assert.That (targetInfo.Timestamp, Is.EqualTo (expected.Timestamp), "Timestamp");
 
 			Console.WriteLine ();
 		}

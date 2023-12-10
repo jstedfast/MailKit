@@ -80,9 +80,9 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadWrite), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				var annotations = new List<Annotation> (new[] {
 					new Annotation (AnnotationEntry.AltSubject)
@@ -158,9 +158,9 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.None, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.None, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (0, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.None), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.None), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				var annotations = new List<Annotation> (new[] {
 					new Annotation (AnnotationEntry.AltSubject)
@@ -184,9 +184,9 @@ namespace UnitTests.Net.Imap {
 				client.Capabilities &= ~ImapCapabilities.CondStore;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadWrite), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				Assert.Throws<NotSupportedException> (() => inbox.Store (new int[] { 0 }, 1, annotations));
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.StoreAsync (new int[] { 0 }, 1, annotations));
@@ -233,9 +233,9 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadWrite), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				var annotations = new List<Annotation> (new[] {
 					new Annotation (AnnotationEntry.AltSubject)
@@ -249,10 +249,10 @@ namespace UnitTests.Net.Imap {
 				IList<int> unmodifiedIndexes;
 
 				unmodifiedIndexes = inbox.Store (indexes, modseq, annotations);
-				Assert.AreEqual (0, unmodifiedIndexes.Count);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
 
 				unmodifiedUids = inbox.Store (uids, modseq, annotations);
-				Assert.AreEqual (0, unmodifiedUids.Count);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
 
 				client.Disconnect (false);
 			}
@@ -355,8 +355,8 @@ namespace UnitTests.Net.Imap {
 					else
 						uid = client.Inbox.Append (messages[i], flags[i], null, new [] { annotations[i] });
 
-					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
-					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+					Assert.That (uid.HasValue, Is.True, "Expected a UIDAPPEND resp-code");
+					Assert.That (uid.Value.Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 					messages[i].Dispose ();
 				}
@@ -397,8 +397,8 @@ namespace UnitTests.Net.Imap {
 					else
 						uid = await client.Inbox.AppendAsync (messages[i], flags[i], null, new[] { annotations[i] });
 
-					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
-					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+					Assert.That (uid.HasValue, Is.True, "Expected a UIDAPPEND resp-code");
+					Assert.That (uid.Value.Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 					messages[i].Dispose ();
 				}
@@ -526,19 +526,19 @@ namespace UnitTests.Net.Imap {
 
 				// Use MULTIAPPEND to append some test messages
 				uids = client.Inbox.Append (requests);
-				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+				Assert.That (uids.Count, Is.EqualTo (8), "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 				// Disable the MULTIAPPEND extension and do it again
 				client.Capabilities &= ~ImapCapabilities.MultiAppend;
 				uids = client.Inbox.Append (requests);
 
-				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+				Assert.That (uids.Count, Is.EqualTo (8), "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 				client.Disconnect (true);
 
@@ -575,19 +575,19 @@ namespace UnitTests.Net.Imap {
 
 				// Use MULTIAPPEND to append some test messages
 				uids = await client.Inbox.AppendAsync (requests);
-				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+				Assert.That (uids.Count, Is.EqualTo (8), "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 				// Disable the MULTIAPPEND extension and do it again
 				client.Capabilities &= ~ImapCapabilities.MultiAppend;
 				uids = await client.Inbox.AppendAsync (requests);
 
-				Assert.AreEqual (8, uids.Count, "Unexpected number of messages appended");
+				Assert.That (uids.Count, Is.EqualTo (8), "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected UID");
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 				await client.DisconnectAsync (true);
 
@@ -678,8 +678,8 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < requests.Count; i++) {
 					var uid = client.Inbox.Replace (i, requests[i]);
 
-					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
-					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+					Assert.That (uid.HasValue, Is.True, "Expected a UIDAPPEND resp-code");
+					Assert.That (uid.Value.Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 					requests[i].Message.Dispose ();
 				}
@@ -713,8 +713,8 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < requests.Count; i++) {
 					var uid = await client.Inbox.ReplaceAsync (i, requests[i]);
 
-					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
-					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+					Assert.That (uid.HasValue, Is.True, "Expected a UIDAPPEND resp-code");
+					Assert.That (uid.Value.Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 					requests[i].Message.Dispose ();
 				}
@@ -748,8 +748,8 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < requests.Count; i++) {
 					var uid = client.Inbox.Replace (new UniqueId ((uint) i + 1), requests[i]);
 
-					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
-					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+					Assert.That (uid.HasValue, Is.True, "Expected a UIDAPPEND resp-code");
+					Assert.That (uid.Value.Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 					requests[i].Message.Dispose ();
 				}
@@ -783,8 +783,8 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < requests.Count; i++) {
 					var uid = await client.Inbox.ReplaceAsync (new UniqueId ((uint) i + 1), requests[i]);
 
-					Assert.IsTrue (uid.HasValue, "Expected a UIDAPPEND resp-code");
-					Assert.AreEqual (i + 1, uid.Value.Id, "Unexpected UID");
+					Assert.That (uid.HasValue, Is.True, "Expected a UIDAPPEND resp-code");
+					Assert.That (uid.Value.Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 					requests[i].Message.Dispose ();
 				}
@@ -833,9 +833,9 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.None, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.None, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (0, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.None), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.None), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				client.Disconnect (false);
 			}
@@ -869,9 +869,9 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.None, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.None, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (0, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.None), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.None), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				await client.DisconnectAsync (false);
 			}
@@ -920,14 +920,14 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadOnly, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Both, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (0, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadOnly), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Both), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				var query = SearchQuery.AnnotationsContain (AnnotationEntry.Comment, AnnotationAttribute.Value, "a comment");
 				var uids = inbox.Search (query);
 
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
@@ -966,14 +966,14 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadOnly, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Both, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (0, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadOnly), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Both), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				var query = SearchQuery.AnnotationsContain (AnnotationEntry.Comment, AnnotationAttribute.Value, "a comment");
 				var uids = await inbox.SearchAsync (query);
 
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
@@ -1026,19 +1026,19 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadOnly, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Both, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (0, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadOnly), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Both), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				var orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending);
 				var uids = inbox.Sort (SearchQuery.All, new OrderBy[] { orderBy });
 
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 
 				orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Descending);
 				uids = inbox.Sort (SearchQuery.All, new OrderBy[] { orderBy });
 
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
@@ -1077,19 +1077,19 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadOnly, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Both, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (0, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadOnly), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Both), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				var orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending);
 				var uids = await inbox.SortAsync (SearchQuery.All, new OrderBy[] { orderBy });
 
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 
 				orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Descending);
 				uids = await inbox.SortAsync (SearchQuery.All, new OrderBy[] { orderBy });
 
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
@@ -1148,9 +1148,9 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadWrite), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				var annotation = new Annotation (AnnotationEntry.AltSubject);
 				annotation.Properties.Add (AnnotationAttribute.SharedValue, "This is an alternate subject.");
@@ -1208,9 +1208,9 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
-				Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadWrite), "AnnotationAccess");
+				Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				var annotation = new Annotation (AnnotationEntry.AltSubject);
 				annotation.Properties.Add (AnnotationAttribute.SharedValue, "This is an alternate subject.");

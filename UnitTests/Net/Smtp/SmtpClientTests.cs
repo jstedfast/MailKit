@@ -233,21 +233,21 @@ namespace UnitTests.Net.Smtp {
 			SmtpClient.ComputeDefaultValues (host, ref port, ref options, out Uri uri, out bool starttls);
 
 			if (expected.PathAndQuery == "/?starttls=when-available") {
-				Assert.AreEqual (SecureSocketOptions.StartTlsWhenAvailable, options, "{0}", expected);
-				Assert.IsTrue (starttls, "{0}", expected);
+				Assert.That (options, Is.EqualTo (SecureSocketOptions.StartTlsWhenAvailable), $"{expected}");
+				Assert.That (starttls, Is.True, $"{expected}");
 			} else if (expected.PathAndQuery == "/?starttls=always") {
-				Assert.AreEqual (SecureSocketOptions.StartTls, options, "{0}", expected);
-				Assert.IsTrue (starttls, "{0}", expected);
+				Assert.That (options, Is.EqualTo (SecureSocketOptions.StartTls), $"{expected}");
+				Assert.That (starttls, Is.True, $"{expected}");
 			} else if (expected.Scheme == "smtps") {
-				Assert.AreEqual (SecureSocketOptions.SslOnConnect, options, "{0}", expected);
-				Assert.IsFalse (starttls, "{0}", expected);
+				Assert.That (options, Is.EqualTo (SecureSocketOptions.SslOnConnect), $"{expected}");
+				Assert.That (starttls, Is.False, $"{expected}");
 			} else {
-				Assert.AreEqual (SecureSocketOptions.None, options, "{0}", expected);
-				Assert.IsFalse (starttls, "{0}", expected);
+				Assert.That (options, Is.EqualTo (SecureSocketOptions.None), $"{expected}");
+				Assert.That (starttls, Is.False, $"{expected}");
 			}
 
-			Assert.AreEqual (expected.ToString (), uri.ToString ());
-			Assert.AreEqual (expected.Port, port, "{0}", expected);
+			Assert.That (uri.ToString (), Is.EqualTo (expected.ToString ()));
+			Assert.That (port, Is.EqualTo (expected.Port), $"{expected}");
 		}
 
 		[Test]
@@ -313,7 +313,7 @@ namespace UnitTests.Net.Smtp {
 					client.Connect ("untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -328,7 +328,7 @@ namespace UnitTests.Net.Smtp {
 					client.Connect (socket, "untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -357,7 +357,7 @@ namespace UnitTests.Net.Smtp {
 					await client.ConnectAsync ("untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -372,7 +372,7 @@ namespace UnitTests.Net.Smtp {
 					await client.ConnectAsync (socket, "untrusted-root.badssl.com", 443, SecureSocketOptions.SslOnConnect);
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
-					Assert.NotNull (ex.ServerCertificate, "ServerCertificate");
+					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
 					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
@@ -388,7 +388,7 @@ namespace UnitTests.Net.Smtp {
 		public void TestSyncRoot ()
 		{
 			using (var client = new SmtpClient ()) {
-				Assert.AreEqual (client, client.SyncRoot);
+				Assert.That (client.SyncRoot, Is.EqualTo (client));
 			}
 		}
 
@@ -683,9 +683,9 @@ namespace UnitTests.Net.Smtp {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					Assert.Fail ("Connect is expected to fail.");
 				} catch (SmtpCommandException ex) {
-					Assert.AreEqual (SmtpErrorCode.UnexpectedStatusCode, ex.ErrorCode, "ErrorCode");
-					Assert.AreEqual (SmtpStatusCode.ServiceClosingTransmissionChannel, ex.StatusCode, "StatusCode");
-					Assert.AreEqual ("ESMTP server not ready", ex.Message);
+					Assert.That (ex.ErrorCode, Is.EqualTo (SmtpErrorCode.UnexpectedStatusCode), "ErrorCode");
+					Assert.That (ex.StatusCode, Is.EqualTo (SmtpStatusCode.ServiceClosingTransmissionChannel), "StatusCode");
+					Assert.That (ex.Message, Is.EqualTo ("ESMTP server not ready"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception: {ex}");
 				}
@@ -704,9 +704,9 @@ namespace UnitTests.Net.Smtp {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					Assert.Fail ("Connect is expected to fail.");
 				} catch (SmtpCommandException ex) {
-					Assert.AreEqual (SmtpErrorCode.UnexpectedStatusCode, ex.ErrorCode, "ErrorCode");
-					Assert.AreEqual (SmtpStatusCode.ServiceClosingTransmissionChannel, ex.StatusCode, "StatusCode");
-					Assert.AreEqual ("ESMTP server not ready", ex.Message);
+					Assert.That (ex.ErrorCode, Is.EqualTo (SmtpErrorCode.UnexpectedStatusCode), "ErrorCode");
+					Assert.That (ex.StatusCode, Is.EqualTo (SmtpStatusCode.ServiceClosingTransmissionChannel), "StatusCode");
+					Assert.That (ex.Message, Is.EqualTo ("ESMTP server not ready"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception: {ex}");
 				}
@@ -742,39 +742,39 @@ namespace UnitTests.Net.Smtp {
 
 		static void AssertGMailIsConnected (IMailService client)
 		{
-			Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-			Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-			Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-			Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-			Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-			Assert.IsTrue (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, "Unexpected SslCipherAlgorithm: {0}", client.SslCipherAlgorithm);
-			Assert.IsTrue (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, "Unexpected SslCipherStrength: {0}", client.SslCipherStrength);
+			Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+			Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+			Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+			Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+			Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+			Assert.That (client.SslCipherAlgorithm == CipherAlgorithmType.Aes128 || client.SslCipherAlgorithm == CipherAlgorithmType.Aes256, Is.True, $"Unexpected SslCipherAlgorithm: {client.SslCipherAlgorithm}");
+			Assert.That (client.SslCipherStrength == 128 || client.SslCipherStrength == 256, Is.True, $"Unexpected SslCipherStrength: {client.SslCipherStrength}");
 #if !MONO
-			Assert.IsTrue (client.SslCipherSuite == TlsCipherSuite.TLS_AES_128_GCM_SHA256 || client.SslCipherSuite == TlsCipherSuite.TLS_AES_256_GCM_SHA384, "Unexpected SslCipherSuite: {0}", client.SslCipherSuite);
-			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
+			Assert.That (client.SslCipherSuite == TlsCipherSuite.TLS_AES_128_GCM_SHA256 || client.SslCipherSuite == TlsCipherSuite.TLS_AES_256_GCM_SHA384, Is.True, $"Unexpected SslCipherSuite: {client.SslCipherSuite}");
+			Assert.That (client.SslHashAlgorithm == HashAlgorithmType.Sha256 || client.SslHashAlgorithm == HashAlgorithmType.Sha384, Is.True, $"Unexpected SslHashAlgorithm: {client.SslHashAlgorithm}");
 #else
-			Assert.IsTrue (client.SslHashAlgorithm == HashAlgorithmType.None, "Unexpected SslHashAlgorithm: {0}", client.SslHashAlgorithm);
+			Assert.That (client.SslHashAlgorithm == HashAlgorithmType.None, Is.True, $"Unexpected SslHashAlgorithm: {client.SslHashAlgorithm}");
 #endif
-			Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-			Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-			Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-			Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
+			Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+			Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+			Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+			Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
 		}
 
 		static void AssertClientIsDisconnected (IMailService client)
 		{
-			Assert.IsFalse (client.IsConnected, "Expected the client to be disconnected");
-			Assert.IsFalse (client.IsSecure, "Expected IsSecure to be false after disconnecting");
-			Assert.IsFalse (client.IsEncrypted, "Expected IsEncrypted to be false after disconnecting");
-			Assert.IsFalse (client.IsSigned, "Expected IsSigned to be false after disconnecting");
-			Assert.AreEqual (SslProtocols.None, client.SslProtocol, "Expected SslProtocol to be None after disconnecting");
-			Assert.IsNull (client.SslCipherAlgorithm, "Expected SslCipherAlgorithm to be null after disconnecting");
-			Assert.IsNull (client.SslCipherStrength, "Expected SslCipherStrength to be null after disconnecting");
-			Assert.IsNull (client.SslCipherSuite, "Expected SslCipherSuite to be null after disconnecting");
-			Assert.IsNull (client.SslHashAlgorithm, "Expected SslHashAlgorithm to be null after disconnecting");
-			Assert.IsNull (client.SslHashStrength, "Expected SslHashStrength to be null after disconnecting");
-			Assert.IsNull (client.SslKeyExchangeAlgorithm, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
-			Assert.IsNull (client.SslKeyExchangeStrength, "Expected SslKeyExchangeStrength to be null after disconnecting");
+			Assert.That (client.IsConnected, Is.False, "Expected the client to be disconnected");
+			Assert.That (client.IsSecure, Is.False, "Expected IsSecure to be false after disconnecting");
+			Assert.That (client.IsEncrypted, Is.False, "Expected IsEncrypted to be false after disconnecting");
+			Assert.That (client.IsSigned, Is.False, "Expected IsSigned to be false after disconnecting");
+			Assert.That (client.SslProtocol, Is.EqualTo (SslProtocols.None), "Expected SslProtocol to be None after disconnecting");
+			Assert.That (client.SslCipherAlgorithm, Is.Null, "Expected SslCipherAlgorithm to be null after disconnecting");
+			Assert.That (client.SslCipherStrength, Is.Null, "Expected SslCipherStrength to be null after disconnecting");
+			Assert.That (client.SslCipherSuite, Is.Null, "Expected SslCipherSuite to be null after disconnecting");
+			Assert.That (client.SslHashAlgorithm, Is.Null, "Expected SslHashAlgorithm to be null after disconnecting");
+			Assert.That (client.SslHashStrength, Is.Null, "Expected SslHashStrength to be null after disconnecting");
+			Assert.That (client.SslKeyExchangeAlgorithm, Is.Null, "Expected SslKeyExchangeAlgorithm to be null after disconnecting");
+			Assert.That (client.SslKeyExchangeStrength, Is.Null, "Expected SslKeyExchangeStrength to be null after disconnecting");
 		}
 
 		[Test]
@@ -788,29 +788,29 @@ namespace UnitTests.Net.Smtp {
 				int connected = 0, disconnected = 0;
 
 				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 					connected++;
 				};
 
 				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+					Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 					disconnected++;
 				};
 
 				client.Connect (host, 0, options);
 				AssertGMailIsConnected (client);
-				Assert.AreEqual (1, connected, "ConnectedEvent");
+				Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
 
 				client.Disconnect (true);
 				AssertClientIsDisconnected (client);
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+				Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 			}
 		}
 
@@ -825,29 +825,29 @@ namespace UnitTests.Net.Smtp {
 				int connected = 0, disconnected = 0;
 
 				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 					connected++;
 				};
 
 				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+					Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 					disconnected++;
 				};
 
 				await client.ConnectAsync ("smtp.gmail.com", 0, SecureSocketOptions.SslOnConnect);
 				AssertGMailIsConnected (client);
-				Assert.AreEqual (1, connected, "ConnectedEvent");
+				Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (host, 0, options));
 
 				await client.DisconnectAsync (true);
 				AssertClientIsDisconnected (client);
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+				Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 			}
 		}
 
@@ -865,17 +865,17 @@ namespace UnitTests.Net.Smtp {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
@@ -894,13 +894,13 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail (ex.Message);
 					}
 					AssertGMailIsConnected (client);
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					Assert.Throws<InvalidOperationException> (() => client.Connect (host, 0, options));
 
 					client.Disconnect (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -919,17 +919,17 @@ namespace UnitTests.Net.Smtp {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
@@ -948,13 +948,13 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail (ex.Message);
 					}
 					AssertGMailIsConnected (client);
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync ("pop.gmail.com", 0, SecureSocketOptions.SslOnConnect));
 
 					await client.DisconnectAsync (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -970,17 +970,17 @@ namespace UnitTests.Net.Smtp {
 				int connected = 0, disconnected = 0;
 
 				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 					connected++;
 				};
 
 				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+					Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 					disconnected++;
 				};
 
@@ -992,13 +992,13 @@ namespace UnitTests.Net.Smtp {
 
 				client.Connect (socket, host, port, SecureSocketOptions.Auto);
 				AssertGMailIsConnected (client);
-				Assert.AreEqual (1, connected, "ConnectedEvent");
+				Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 				Assert.Throws<InvalidOperationException> (() => client.Connect (socket, host, port, SecureSocketOptions.Auto));
 
 				client.Disconnect (true);
 				AssertClientIsDisconnected (client);
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+				Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 			}
 		}
 
@@ -1013,17 +1013,17 @@ namespace UnitTests.Net.Smtp {
 				int connected = 0, disconnected = 0;
 
 				client.Connected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+					Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 					connected++;
 				};
 
 				client.Disconnected += (sender, e) => {
-					Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-					Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-					Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-					Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+					Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+					Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+					Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+					Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 					disconnected++;
 				};
 
@@ -1035,13 +1035,13 @@ namespace UnitTests.Net.Smtp {
 
 				await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto);
 				AssertGMailIsConnected (client);
-				Assert.AreEqual (1, connected, "ConnectedEvent");
+				Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 				Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (socket, host, port, SecureSocketOptions.Auto));
 
 				await client.DisconnectAsync (true);
 				AssertClientIsDisconnected (client);
-				Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+				Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 			}
 		}
 
@@ -1057,39 +1057,39 @@ namespace UnitTests.Net.Smtp {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
 					var uri = new Uri ($"smtp://{host}:{port}/?starttls=always");
 					client.Connect (uri, cancel.Token);
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
-					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-					Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+					Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+					Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+					Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+					Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+					Assert.That (client.SslCipherAlgorithm, Is.EqualTo (YahooCipherAlgorithm));
+					Assert.That (client.SslCipherStrength, Is.EqualTo (YahooCipherStrength));
+					Assert.That (client.SslHashAlgorithm, Is.EqualTo (YahooHashAlgorithm));
+					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					client.Disconnect (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -1106,39 +1106,39 @@ namespace UnitTests.Net.Smtp {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
 					var uri = new Uri ($"smtp://{host}:{port}/?starttls=always");
 					await client.ConnectAsync (uri, cancel.Token);
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
-					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-					Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+					Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+					Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+					Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+					Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+					Assert.That (client.SslCipherAlgorithm, Is.EqualTo (YahooCipherAlgorithm));
+					Assert.That (client.SslCipherStrength, Is.EqualTo (YahooCipherStrength));
+					Assert.That (client.SslHashAlgorithm, Is.EqualTo (YahooHashAlgorithm));
+					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					await client.DisconnectAsync (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -1155,39 +1155,39 @@ namespace UnitTests.Net.Smtp {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
 					var socket = Connect (host, port);
 					client.Connect (socket, host, port, options, cancel.Token);
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
-					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-					Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+					Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+					Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+					Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+					Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+					Assert.That (client.SslCipherAlgorithm, Is.EqualTo (YahooCipherAlgorithm));
+					Assert.That (client.SslCipherStrength, Is.EqualTo (YahooCipherStrength));
+					Assert.That (client.SslHashAlgorithm, Is.EqualTo (YahooHashAlgorithm));
+					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					client.Disconnect (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -1204,39 +1204,39 @@ namespace UnitTests.Net.Smtp {
 					int connected = 0, disconnected = 0;
 
 					client.Connected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "ConnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "ConnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "ConnectedEventArgs.Options");
+						Assert.That (e.Host, Is.EqualTo (host), "ConnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "ConnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "ConnectedEventArgs.Options");
 						connected++;
 					};
 
 					client.Disconnected += (sender, e) => {
-						Assert.AreEqual (host, e.Host, "DisconnectedEventArgs.Host");
-						Assert.AreEqual (port, e.Port, "DisconnectedEventArgs.Port");
-						Assert.AreEqual (options, e.Options, "DisconnectedEventArgs.Options");
-						Assert.IsTrue (e.IsRequested, "DisconnectedEventArgs.IsRequested");
+						Assert.That (e.Host, Is.EqualTo (host), "DisconnectedEventArgs.Host");
+						Assert.That (e.Port, Is.EqualTo (port), "DisconnectedEventArgs.Port");
+						Assert.That (e.Options, Is.EqualTo (options), "DisconnectedEventArgs.Options");
+						Assert.That (e.IsRequested, Is.True, "DisconnectedEventArgs.IsRequested");
 						disconnected++;
 					};
 
 					var socket = Connect (host, port);
 					await client.ConnectAsync (socket, host, port, options, cancel.Token);
-					Assert.IsTrue (client.IsConnected, "Expected the client to be connected");
-					Assert.IsTrue (client.IsSecure, "Expected a secure connection");
-					Assert.IsTrue (client.IsEncrypted, "Expected an encrypted connection");
-					Assert.IsTrue (client.IsSigned, "Expected a signed connection");
-					Assert.IsTrue (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, "Expected a TLS v1.2 or TLS v1.3 connection");
-					Assert.AreEqual (YahooCipherAlgorithm, client.SslCipherAlgorithm);
-					Assert.AreEqual (YahooCipherStrength, client.SslCipherStrength);
-					Assert.AreEqual (YahooHashAlgorithm, client.SslHashAlgorithm);
-					Assert.AreEqual (0, client.SslHashStrength, "Unexpected SslHashStrength: {0}", client.SslHashStrength);
-					Assert.IsTrue (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, "Unexpected SslKeyExchangeAlgorithm: {0}", client.SslKeyExchangeAlgorithm);
-					Assert.IsTrue (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, "Unexpected SslKeyExchangeStrength: {0}", client.SslKeyExchangeStrength);
-					Assert.IsFalse (client.IsAuthenticated, "Expected the client to not be authenticated");
-					Assert.AreEqual (1, connected, "ConnectedEvent");
+					Assert.That (client.IsConnected, Is.True, "Expected the client to be connected");
+					Assert.That (client.IsSecure, Is.True, "Expected a secure connection");
+					Assert.That (client.IsEncrypted, Is.True, "Expected an encrypted connection");
+					Assert.That (client.IsSigned, Is.True, "Expected a signed connection");
+					Assert.That (client.SslProtocol == SslProtocols.Tls12 || client.SslProtocol == SslProtocols.Tls13, Is.True, "Expected a TLS v1.2 or TLS v1.3 connection");
+					Assert.That (client.SslCipherAlgorithm, Is.EqualTo (YahooCipherAlgorithm));
+					Assert.That (client.SslCipherStrength, Is.EqualTo (YahooCipherStrength));
+					Assert.That (client.SslHashAlgorithm, Is.EqualTo (YahooHashAlgorithm));
+					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
+					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
+					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
+					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
 					await client.DisconnectAsync (true);
 					AssertClientIsDisconnected (client);
-					Assert.AreEqual (1, disconnected, "DisconnectedEvent");
+					Assert.That (disconnected, Is.EqualTo (1), "DisconnectedEvent");
 				}
 			}
 		}
@@ -1260,12 +1260,12 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 				try {
 					client.Authenticate (new SaslMechanismPlain ("username", "password"));
@@ -1279,7 +1279,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1302,12 +1302,12 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password"));
@@ -1321,7 +1321,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1353,18 +1353,18 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
 					Assert.Fail ("Authenticate should have failed");
 				} catch (AuthenticationException ex) {
-					Assert.AreEqual ("535: authentication failed", ex.Message);
+					Assert.That (ex.Message, Is.EqualTo ("535: authentication failed"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
@@ -1373,7 +1373,7 @@ namespace UnitTests.Net.Smtp {
 					client.Authenticate (new SaslMechanismPlain ("username", "password"));
 					Assert.Fail ("Authenticate should have failed");
 				} catch (AuthenticationException ex) {
-					Assert.AreEqual ("535: authentication failed", ex.Message);
+					Assert.That (ex.Message, Is.EqualTo ("535: authentication failed"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
@@ -1384,7 +1384,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1402,18 +1402,18 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
 					Assert.Fail ("Authenticate should have failed");
 				} catch (AuthenticationException ex) {
-					Assert.AreEqual ("535: authentication failed", ex.Message);
+					Assert.That (ex.Message, Is.EqualTo ("535: authentication failed"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
@@ -1422,7 +1422,7 @@ namespace UnitTests.Net.Smtp {
 					await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password"));
 					Assert.Fail ("Authenticate should have failed");
 				} catch (AuthenticationException ex) {
-					Assert.AreEqual ("535: authentication failed", ex.Message);
+					Assert.That (ex.Message, Is.EqualTo ("535: authentication failed"));
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
@@ -1433,7 +1433,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1449,13 +1449,13 @@ namespace UnitTests.Net.Smtp {
 						break;
 				}
 
-				Assert.NotNull (line, "Authentication command not found: {0}", commandPrefix);
+				Assert.That (line, Is.Not.Null, $"Authentication command not found: {commandPrefix}");
 
 				if (line.Length > commandPrefix.Length) {
 					// SASL IR; check next token is redacted.
 					secret = line.Substring (commandPrefix.Length);
 
-					Assert.AreEqual ("********", secret, "SASLIR token");
+					Assert.That (secret, Is.EqualTo ("********"), "SASLIR token");
 				}
 
 				while ((line = reader.ReadLine ()) != null) {
@@ -1467,7 +1467,7 @@ namespace UnitTests.Net.Smtp {
 
 					secret = line.Substring (3);
 
-					Assert.AreEqual ("********", secret, "SASL challenge");
+					Assert.That (secret, Is.EqualTo ("********"), "SASL challenge");
 				}
 
 				Assert.Fail ("Did not find response.");
@@ -1501,12 +1501,12 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 					client.AuthenticationMechanisms.Remove ("PLAIN");
 
@@ -1522,7 +1522,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH LOGIN", "C: QUIT");
@@ -1544,12 +1544,12 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 					client.AuthenticationMechanisms.Remove ("PLAIN");
 
@@ -1565,7 +1565,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH LOGIN", "C: QUIT");
@@ -1597,12 +1597,12 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 					try {
 						client.Authenticate (new SaslMechanismPlain ("username", "password"));
@@ -1616,7 +1616,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH PLAIN ", "C: QUIT");
@@ -1638,12 +1638,12 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 					try {
 						await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password"));
@@ -1657,7 +1657,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH PLAIN ", "C: QUIT");
@@ -1691,12 +1691,12 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 					try {
 						client.Authenticate (new SaslMechanismLogin ("username", "password"));
@@ -1710,7 +1710,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH LOGIN", "C: QUIT");
@@ -1732,12 +1732,12 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-					Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
 					try {
 						await client.AuthenticateAsync (new SaslMechanismLogin ("username", "password"));
@@ -1751,7 +1751,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 
 				AssertRedacted (stream, "C: AUTH LOGIN", "C: QUIT");
@@ -1777,21 +1777,21 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Disconnect (true);
@@ -1799,7 +1799,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1827,9 +1827,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
-				Assert.AreEqual (SmtpCapabilities.None, client.Capabilities, "Capabilities");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
+				Assert.That (client.Capabilities, Is.EqualTo (SmtpCapabilities.None), "Capabilities");
 
 				try {
 					client.Disconnect (true);
@@ -1837,7 +1837,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1855,9 +1855,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
-				Assert.AreEqual (SmtpCapabilities.None, client.Capabilities, "Capabilities");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
+				Assert.That (client.Capabilities, Is.EqualTo (SmtpCapabilities.None), "Capabilities");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -1865,7 +1865,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -1914,25 +1914,25 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				// disable PLAIN authentication
@@ -1952,9 +1952,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Verify: {ex}");
 				}
 
-				Assert.NotNull (vrfy, "VRFY result");
-				Assert.AreEqual ("Fred Smith", vrfy.Name, "VRFY name");
-				Assert.AreEqual ("Smith@USC-ISIF.ARPA", vrfy.Address, "VRFY address");
+				Assert.That (vrfy, Is.Not.Null, "VRFY result");
+				Assert.That (vrfy.Name, Is.EqualTo ("Fred Smith"), "VRFY name");
+				Assert.That (vrfy.Address, Is.EqualTo ("Smith@USC-ISIF.ARPA"), "VRFY address");
 
 				InternetAddressList expn = null;
 
@@ -1964,21 +1964,21 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Expand: {ex}");
 				}
 
-				Assert.NotNull (expn, "EXPN result");
-				Assert.AreEqual (6, expn.Count, "EXPN count");
-				Assert.AreEqual ("Jon Postel", expn[0].Name, "expn[0].Name");
-				Assert.AreEqual ("Postel@USC-ISIF.ARPA", ((MailboxAddress) expn[0]).Address, "expn[0].Address");
-				Assert.AreEqual ("Fred Fonebone", expn[1].Name, "expn[1].Name");
-				Assert.AreEqual ("Fonebone@USC-ISIQ.ARPA", ((MailboxAddress) expn[1]).Address, "expn[1].Address");
-				Assert.AreEqual ("Sam Q. Smith", expn[2].Name, "expn[2].Name");
-				Assert.AreEqual ("SQSmith@USC-ISIQ.ARPA", ((MailboxAddress) expn[2]).Address, "expn[2].Address");
-				Assert.AreEqual ("Quincy Smith", expn[3].Name, "expn[3].Name");
-				Assert.AreEqual ("USC-ISIF.ARPA", ((MailboxAddress) expn[3]).Route[0], "expn[3].Route");
-				Assert.AreEqual ("Q-Smith@ISI-VAXA.ARPA", ((MailboxAddress) expn[3]).Address, "expn[3].Address");
-				Assert.AreEqual ("", expn[4].Name, "expn[4].Name");
-				Assert.AreEqual ("joe@foo-unix.ARPA", ((MailboxAddress) expn[4]).Address, "expn[4].Address");
-				Assert.AreEqual ("", expn[5].Name, "expn[5].Name");
-				Assert.AreEqual ("xyz@bar-unix.ARPA", ((MailboxAddress) expn[5]).Address, "expn[5].Address");
+				Assert.That (expn, Is.Not.Null, "EXPN result");
+				Assert.That (expn.Count, Is.EqualTo (6), "EXPN count");
+				Assert.That (expn[0].Name, Is.EqualTo ("Jon Postel"), "expn[0].Name");
+				Assert.That (((MailboxAddress) expn[0]).Address, Is.EqualTo ("Postel@USC-ISIF.ARPA"), "expn[0].Address");
+				Assert.That (expn[1].Name, Is.EqualTo ("Fred Fonebone"), "expn[1].Name");
+				Assert.That (((MailboxAddress) expn[1]).Address, Is.EqualTo ("Fonebone@USC-ISIQ.ARPA"), "expn[1].Address");
+				Assert.That (expn[2].Name, Is.EqualTo ("Sam Q. Smith"), "expn[2].Name");
+				Assert.That (((MailboxAddress) expn[2]).Address, Is.EqualTo ("SQSmith@USC-ISIQ.ARPA"), "expn[2].Address");
+				Assert.That (expn[3].Name, Is.EqualTo ("Quincy Smith"), "expn[3].Name");
+				Assert.That (((MailboxAddress) expn[3]).Route[0], Is.EqualTo ("USC-ISIF.ARPA"), "expn[3].Route");
+				Assert.That (((MailboxAddress) expn[3]).Address, Is.EqualTo ("Q-Smith@ISI-VAXA.ARPA"), "expn[3].Address");
+				Assert.That (expn[4].Name, Is.EqualTo (""), "expn[4].Name");
+				Assert.That (((MailboxAddress) expn[4]).Address, Is.EqualTo ("joe@foo-unix.ARPA"), "expn[4].Address");
+				Assert.That (expn[5].Name, Is.EqualTo (""), "expn[5].Name");
+				Assert.That (((MailboxAddress) expn[5]).Address, Is.EqualTo ("xyz@bar-unix.ARPA"), "expn[5].Address");
 
 				try {
 					client.NoOp ();
@@ -1997,7 +1997,7 @@ namespace UnitTests.Net.Smtp {
 						return;
 					}
 
-					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
 						response = client.Send (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
@@ -2006,7 +2006,7 @@ namespace UnitTests.Net.Smtp {
 						return;
 					}
 
-					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
 						response = client.Send (options, message);
@@ -2015,7 +2015,7 @@ namespace UnitTests.Net.Smtp {
 						return;
 					}
 
-					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
 						response = client.Send (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
@@ -2024,7 +2024,7 @@ namespace UnitTests.Net.Smtp {
 						return;
 					}
 
-					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 				}
 
 				try {
@@ -2033,7 +2033,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2051,25 +2051,25 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				// disable PLAIN authentication
@@ -2089,9 +2089,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Verify: {ex}");
 				}
 
-				Assert.NotNull (vrfy, "VRFY result");
-				Assert.AreEqual ("Fred Smith", vrfy.Name, "VRFY name");
-				Assert.AreEqual ("Smith@USC-ISIF.ARPA", vrfy.Address, "VRFY address");
+				Assert.That (vrfy, Is.Not.Null, "VRFY result");
+				Assert.That (vrfy.Name, Is.EqualTo ("Fred Smith"), "VRFY name");
+				Assert.That (vrfy.Address, Is.EqualTo ("Smith@USC-ISIF.ARPA"), "VRFY address");
 
 				InternetAddressList expn = null;
 
@@ -2101,21 +2101,21 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Expand: {ex}");
 				}
 
-				Assert.NotNull (expn, "EXPN result");
-				Assert.AreEqual (6, expn.Count, "EXPN count");
-				Assert.AreEqual ("Jon Postel", expn[0].Name, "expn[0].Name");
-				Assert.AreEqual ("Postel@USC-ISIF.ARPA", ((MailboxAddress) expn[0]).Address, "expn[0].Address");
-				Assert.AreEqual ("Fred Fonebone", expn[1].Name, "expn[1].Name");
-				Assert.AreEqual ("Fonebone@USC-ISIQ.ARPA", ((MailboxAddress) expn[1]).Address, "expn[1].Address");
-				Assert.AreEqual ("Sam Q. Smith", expn[2].Name, "expn[2].Name");
-				Assert.AreEqual ("SQSmith@USC-ISIQ.ARPA", ((MailboxAddress) expn[2]).Address, "expn[2].Address");
-				Assert.AreEqual ("Quincy Smith", expn[3].Name, "expn[3].Name");
-				Assert.AreEqual ("USC-ISIF.ARPA", ((MailboxAddress) expn[3]).Route[0], "expn[3].Route");
-				Assert.AreEqual ("Q-Smith@ISI-VAXA.ARPA", ((MailboxAddress) expn[3]).Address, "expn[3].Address");
-				Assert.AreEqual ("", expn[4].Name, "expn[4].Name");
-				Assert.AreEqual ("joe@foo-unix.ARPA", ((MailboxAddress) expn[4]).Address, "expn[4].Address");
-				Assert.AreEqual ("", expn[5].Name, "expn[5].Name");
-				Assert.AreEqual ("xyz@bar-unix.ARPA", ((MailboxAddress) expn[5]).Address, "expn[5].Address");
+				Assert.That (expn, Is.Not.Null, "EXPN result");
+				Assert.That (expn.Count, Is.EqualTo (6), "EXPN count");
+				Assert.That (expn[0].Name, Is.EqualTo ("Jon Postel"), "expn[0].Name");
+				Assert.That (((MailboxAddress) expn[0]).Address, Is.EqualTo ("Postel@USC-ISIF.ARPA"), "expn[0].Address");
+				Assert.That (expn[1].Name, Is.EqualTo ("Fred Fonebone"), "expn[1].Name");
+				Assert.That (((MailboxAddress) expn[1]).Address, Is.EqualTo ("Fonebone@USC-ISIQ.ARPA"), "expn[1].Address");
+				Assert.That (expn[2].Name, Is.EqualTo ("Sam Q. Smith"), "expn[2].Name");
+				Assert.That (((MailboxAddress) expn[2]).Address, Is.EqualTo ("SQSmith@USC-ISIQ.ARPA"), "expn[2].Address");
+				Assert.That (expn[3].Name, Is.EqualTo ("Quincy Smith"), "expn[3].Name");
+				Assert.That (((MailboxAddress) expn[3]).Route[0], Is.EqualTo ("USC-ISIF.ARPA"), "expn[3].Route");
+				Assert.That (((MailboxAddress) expn[3]).Address, Is.EqualTo ("Q-Smith@ISI-VAXA.ARPA"), "expn[3].Address");
+				Assert.That (expn[4].Name, Is.EqualTo (""), "expn[4].Name");
+				Assert.That (((MailboxAddress) expn[4]).Address, Is.EqualTo ("joe@foo-unix.ARPA"), "expn[4].Address");
+				Assert.That (expn[5].Name, Is.EqualTo (""), "expn[5].Name");
+				Assert.That (((MailboxAddress) expn[5]).Address, Is.EqualTo ("xyz@bar-unix.ARPA"), "expn[5].Address");
 
 				try {
 					await client.NoOpAsync ();
@@ -2134,7 +2134,7 @@ namespace UnitTests.Net.Smtp {
 						return;
 					}
 
-					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
 						response = await client.SendAsync (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
@@ -2143,7 +2143,7 @@ namespace UnitTests.Net.Smtp {
 						return;
 					}
 
-					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
 						response = await client.SendAsync (options, message);
@@ -2152,7 +2152,7 @@ namespace UnitTests.Net.Smtp {
 						return;
 					}
 
-					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
 						response = await client.SendAsync (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
@@ -2161,7 +2161,7 @@ namespace UnitTests.Net.Smtp {
 						return;
 					}
 
-					Assert.AreEqual ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery", response);
+					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 				}
 
 				try {
@@ -2170,7 +2170,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2200,25 +2200,25 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				try {
@@ -2236,7 +2236,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2254,25 +2254,25 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				try {
@@ -2290,7 +2290,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2320,26 +2320,26 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), "Failed to detect the DIGEST-MD5 auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), Is.True, "Failed to detect the DIGEST-MD5 auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				try {
@@ -2356,7 +2356,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Unexpected exception in Authenticate: {ex}");
 				}
 
-				Assert.IsFalse (client.IsAuthenticated, "IsAuthenticated");
+				Assert.That (client.IsAuthenticated, Is.False, "IsAuthenticated");
 
 				try {
 					client.Disconnect (true);
@@ -2364,7 +2364,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2382,26 +2382,26 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), "Failed to detect the DIGEST-MD5 auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), Is.True, "Failed to detect the DIGEST-MD5 auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				try {
@@ -2418,7 +2418,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Unexpected exception in Authenticate: {ex}");
 				}
 
-				Assert.IsFalse (client.IsAuthenticated, "IsAuthenticated");
+				Assert.That (client.IsAuthenticated, Is.False, "IsAuthenticated");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2426,7 +2426,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2456,17 +2456,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2487,7 +2487,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2503,17 +2503,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2534,7 +2534,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2571,18 +2571,18 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.UTF8), "Failed to detect SMTPUTF8 extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.UTF8), Is.True, "Failed to detect SMTPUTF8 extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2613,7 +2613,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2629,18 +2629,18 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.UTF8), "Failed to detect SMTPUTF8 extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.UTF8), Is.True, "Failed to detect SMTPUTF8 extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2671,7 +2671,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2728,17 +2728,17 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-					Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+					Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 					try {
 						client.Authenticate ("username", "password");
@@ -2746,8 +2746,8 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), Is.True, "Failed to detect BINARYMIME extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), Is.True, "Failed to detect CHUNKING extension");
 
 					try {
 						if (showProgress) {
@@ -2755,7 +2755,7 @@ namespace UnitTests.Net.Smtp {
 
 							client.Send (message, progress: progress);
 
-							Assert.AreEqual (size, progress.BytesTransferred, "BytesTransferred");
+							Assert.That (progress.BytesTransferred, Is.EqualTo (size), "BytesTransferred");
 						} else {
 							client.Send (message);
 						}
@@ -2769,7 +2769,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -2814,17 +2814,17 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-					Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+					Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 					try {
 						await client.AuthenticateAsync ("username", "password");
@@ -2832,8 +2832,8 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), Is.True, "Failed to detect BINARYMIME extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), Is.True, "Failed to detect CHUNKING extension");
 
 					try {
 						if (showProgress) {
@@ -2841,7 +2841,7 @@ namespace UnitTests.Net.Smtp {
 
 							await client.SendAsync (message, progress: progress);
 
-							Assert.AreEqual (size, progress.BytesTransferred, "BytesTransferred");
+							Assert.That (progress.BytesTransferred, Is.EqualTo (size), "BytesTransferred");
 						} else {
 							await client.SendAsync (message);
 						}
@@ -2855,7 +2855,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -2886,18 +2886,18 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2912,7 +2912,7 @@ namespace UnitTests.Net.Smtp {
 
 							client.Send (message, progress: progress);
 
-							Assert.AreEqual (Measure (message), progress.BytesTransferred, "BytesTransferred");
+							Assert.That (progress.BytesTransferred, Is.EqualTo (Measure (message)), "BytesTransferred");
 						} else {
 							client.Send (message);
 						}
@@ -2927,7 +2927,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -2944,18 +2944,18 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2970,7 +2970,7 @@ namespace UnitTests.Net.Smtp {
 
 							await client.SendAsync (message, progress: progress);
 
-							Assert.AreEqual (Measure (message), progress.BytesTransferred, "BytesTransferred");
+							Assert.That (progress.BytesTransferred, Is.EqualTo (Measure (message)), "BytesTransferred");
 						} else {
 							await client.SendAsync (message);
 						}
@@ -2985,7 +2985,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3013,17 +3013,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3036,12 +3036,12 @@ namespace UnitTests.Net.Smtp {
 						client.Send (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
+					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.SenderNotAccepted), "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					client.Disconnect (true);
@@ -3049,7 +3049,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3065,17 +3065,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3088,12 +3088,12 @@ namespace UnitTests.Net.Smtp {
 						await client.SendAsync (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
+					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.SenderNotAccepted), "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -3101,7 +3101,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3130,17 +3130,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3153,12 +3153,12 @@ namespace UnitTests.Net.Smtp {
 						client.Send (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
+					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.RecipientNotAccepted), "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					client.Disconnect (true);
@@ -3166,7 +3166,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3182,17 +3182,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3205,12 +3205,12 @@ namespace UnitTests.Net.Smtp {
 						await client.SendAsync (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
+					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.RecipientNotAccepted), "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -3218,7 +3218,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3264,17 +3264,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3287,16 +3287,16 @@ namespace UnitTests.Net.Smtp {
 						client.Send (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
-					Assert.AreEqual (sex.StatusCode, SmtpStatusCode.TransactionFailed, "Unexpected SmtpStatusCode");
+					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.StatusCode, Is.EqualTo (SmtpStatusCode.TransactionFailed), "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.AreEqual (1, client.NotAccepted, "NotAccepted");
-				Assert.IsTrue (client.NoRecipientsAccepted, "NoRecipientsAccepted");
+				Assert.That (client.NotAccepted, Is.EqualTo (1), "NotAccepted");
+				Assert.That (client.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					client.Disconnect (true);
@@ -3304,7 +3304,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3320,17 +3320,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3343,16 +3343,16 @@ namespace UnitTests.Net.Smtp {
 						await client.SendAsync (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
-					Assert.AreEqual (sex.StatusCode, SmtpStatusCode.TransactionFailed, "Unexpected SmtpStatusCode");
+					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.StatusCode, Is.EqualTo (SmtpStatusCode.TransactionFailed), "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.AreEqual (1, client.NotAccepted, "NotAccepted");
-				Assert.IsTrue (client.NoRecipientsAccepted, "NoRecipientsAccepted");
+				Assert.That (client.NotAccepted, Is.EqualTo (1), "NotAccepted");
+				Assert.That (client.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -3360,7 +3360,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3388,17 +3388,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3411,16 +3411,16 @@ namespace UnitTests.Net.Smtp {
 						client.Send (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (SmtpErrorCode.MessageNotAccepted, sex.ErrorCode, "Unexpected SmtpErrorCode");
-					Assert.AreEqual (SmtpStatusCode.TransactionFailed, sex.StatusCode, "Unexpected SmtpStatusCode");
+					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.StatusCode, Is.EqualTo (SmtpStatusCode.TransactionFailed), "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.AreEqual (1, client.NotAccepted, "NotAccepted");
-				Assert.IsTrue (client.NoRecipientsAccepted, "NoRecipientsAccepted");
+				Assert.That (client.NotAccepted, Is.EqualTo (1), "NotAccepted");
+				Assert.That (client.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					client.Disconnect (true);
@@ -3428,7 +3428,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3444,17 +3444,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3467,16 +3467,16 @@ namespace UnitTests.Net.Smtp {
 						await client.SendAsync (message);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.MessageNotAccepted, "Unexpected SmtpErrorCode");
-					Assert.AreEqual (sex.StatusCode, SmtpStatusCode.TransactionFailed, "Unexpected SmtpStatusCode");
+					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.StatusCode, Is.EqualTo (SmtpStatusCode.TransactionFailed), "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.AreEqual (1, client.NotAccepted, "NotAccepted");
-				Assert.IsTrue (client.NoRecipientsAccepted, "NoRecipientsAccepted");
+				Assert.That (client.NotAccepted, Is.EqualTo (1), "NotAccepted");
+				Assert.That (client.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -3484,7 +3484,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3511,17 +3511,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					using (var message = CreateSimpleMessage ())
@@ -3533,7 +3533,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					client.Disconnect (true);
@@ -3541,7 +3541,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3557,17 +3557,17 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					using (var message = CreateSimpleMessage ())
@@ -3579,7 +3579,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -3587,7 +3587,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3601,7 +3601,7 @@ namespace UnitTests.Net.Smtp {
 			{
 				var id = base.GetEnvelopeId (message);
 
-				Assert.IsNull (id);
+				Assert.That (id, Is.Null);
 
 				return message.MessageId;
 			}
@@ -3614,7 +3614,7 @@ namespace UnitTests.Net.Smtp {
 			{
 				var notify = base.GetDeliveryStatusNotifications (message, mailbox);
 
-				Assert.IsFalse (notify.HasValue);
+				Assert.That (notify.HasValue, Is.False);
 
 				return DeliveryStatusNotifications;
 			}
@@ -3651,19 +3651,19 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-					Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+					Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 					try {
 						client.Authenticate ("username", "password");
@@ -3689,7 +3689,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -3709,19 +3709,19 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 					}
 
-					Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-					Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-					Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-					Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+					Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 					try {
 						await client.AuthenticateAsync ("username", "password");
@@ -3747,7 +3747,7 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 					}
 
-					Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+					Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 				}
 			}
 		}
@@ -3778,19 +3778,19 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3823,7 +3823,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3839,19 +3839,19 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), "Failed to detect DSN extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), "Failed to detect PIPELINING extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3884,7 +3884,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
 				}
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
 			}
 		}
 
@@ -3927,25 +3927,25 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				Assert.Throws<ArgumentNullException> (() => client.SendCommand (null));
@@ -3958,9 +3958,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Verify: {ex}");
 				}
 
-				Assert.NotNull (response, "VRFY result");
-				Assert.AreEqual (SmtpStatusCode.Ok, response.StatusCode, "VRFY response code");
-				Assert.AreEqual ("Fred Smith <Smith@USC-ISIF.ARPA>", response.Response, "VRFY response");
+				Assert.That (response, Is.Not.Null, "VRFY result");
+				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "VRFY response code");
+				Assert.That (response.Response, Is.EqualTo ("Fred Smith <Smith@USC-ISIF.ARPA>"), "VRFY response");
 
 				try {
 					response = client.SendCommand ("EXPN Example-People");
@@ -3968,9 +3968,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Expand: {ex}");
 				}
 
-				Assert.NotNull (response, "EXPN result");
-				Assert.AreEqual (SmtpStatusCode.Ok, response.StatusCode, "EXPN response code");
-				Assert.AreEqual ("Jon Postel <Postel@USC-ISIF.ARPA>\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\n<joe@foo-unix.ARPA>\n<xyz@bar-unix.ARPA>", response.Response, "EXPN response");
+				Assert.That (response, Is.Not.Null, "EXPN result");
+				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "EXPN response code");
+				Assert.That (response.Response, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\n<joe@foo-unix.ARPA>\n<xyz@bar-unix.ARPA>"), "EXPN response");
 			}
 		}
 
@@ -3990,25 +3990,25 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
-				Assert.AreEqual (120000, client.Timeout, "Timeout");
+				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
 
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.SendCommandAsync (null));
@@ -4021,9 +4021,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Verify: {ex}");
 				}
 
-				Assert.NotNull (response, "VRFY result");
-				Assert.AreEqual (SmtpStatusCode.Ok, response.StatusCode, "VRFY response code");
-				Assert.AreEqual ("Fred Smith <Smith@USC-ISIF.ARPA>", response.Response, "VRFY response");
+				Assert.That (response, Is.Not.Null, "VRFY result");
+				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "VRFY response code");
+				Assert.That (response.Response, Is.EqualTo ("Fred Smith <Smith@USC-ISIF.ARPA>"), "VRFY response");
 
 				try {
 					response = await client.SendCommandAsync ("EXPN Example-People");
@@ -4031,9 +4031,9 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Expand: {ex}");
 				}
 
-				Assert.NotNull (response, "EXPN result");
-				Assert.AreEqual (SmtpStatusCode.Ok, response.StatusCode, "EXPN response code");
-				Assert.AreEqual ("Jon Postel <Postel@USC-ISIF.ARPA>\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\n<joe@foo-unix.ARPA>\n<xyz@bar-unix.ARPA>", response.Response, "EXPN response");
+				Assert.That (response, Is.Not.Null, "EXPN result");
+				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "EXPN response code");
+				Assert.That (response.Response, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\n<joe@foo-unix.ARPA>\n<xyz@bar-unix.ARPA>"), "EXPN response");
 			}
 		}
 	}

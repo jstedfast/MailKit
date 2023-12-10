@@ -51,32 +51,32 @@ namespace UnitTests {
 			Assert.Throws<ArgumentOutOfRangeException> (() => ns = namespaces[-1]);
 			Assert.Throws<ArgumentOutOfRangeException> (() => namespaces[-1] = new FolderNamespace ('.', ""));
 
-			Assert.AreEqual (0, namespaces.Count);
+			Assert.That (namespaces.Count, Is.EqualTo (0));
 
 			ns = new FolderNamespace ('.', "");
 			namespaces.Add (ns);
-			Assert.AreEqual (1, namespaces.Count);
-			Assert.IsTrue (namespaces.Contains (ns));
+			Assert.That (namespaces.Count, Is.EqualTo (1));
+			Assert.That (namespaces.Contains (ns), Is.True);
 			Assert.Throws<ArgumentNullException> (() => namespaces[0] = null);
 
 			ns = new FolderNamespace ('\\', "");
 			namespaces[0] = ns;
-			Assert.AreEqual (1, namespaces.Count);
-			Assert.IsTrue (namespaces.Contains (ns));
+			Assert.That (namespaces.Count, Is.EqualTo (1));
+			Assert.That (namespaces.Contains (ns), Is.True);
 
-			Assert.IsTrue (namespaces.Remove (ns));
-			Assert.AreEqual (0, namespaces.Count);
-			Assert.IsFalse (namespaces.Contains (ns));
+			Assert.That (namespaces.Remove (ns), Is.True);
+			Assert.That (namespaces.Count, Is.EqualTo (0));
+			Assert.That (namespaces.Contains (ns), Is.False);
 
 			namespaces.Add (new FolderNamespace ('.', ""));
 			namespaces.Add (new FolderNamespace ('\\', ""));
 			foreach (var item in namespaces)
-				Assert.AreEqual (namespaces[i++], item);
+				Assert.That (item, Is.EqualTo (namespaces[i++]));
 			i = 0;
 			foreach (object item in (IEnumerable) namespaces)
-				Assert.AreEqual (namespaces[i++], item);
+				Assert.That (item, Is.EqualTo (namespaces[i++]));
 
-			Assert.AreEqual ("((\".\" \"\")(\"\\\\\" \"\"))", namespaces.ToString ());
+			Assert.That (namespaces.ToString (), Is.EqualTo ("((\".\" \"\")(\"\\\\\" \"\"))"));
 		}
 	}
 }

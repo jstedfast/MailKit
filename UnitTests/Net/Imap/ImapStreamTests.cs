@@ -38,10 +38,10 @@ namespace UnitTests.Net.Imap {
 		public void TestCanReadWriteSeek ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
-				Assert.IsTrue (stream.CanRead);
-				Assert.IsTrue (stream.CanWrite);
-				Assert.IsFalse (stream.CanSeek);
-				Assert.IsTrue (stream.CanTimeout);
+				Assert.That (stream.CanRead, Is.True);
+				Assert.That (stream.CanWrite, Is.True);
+				Assert.That (stream.CanSeek, Is.False);
+				Assert.That (stream.CanTimeout, Is.True);
 			}
 		}
 
@@ -50,10 +50,10 @@ namespace UnitTests.Net.Imap {
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				stream.ReadTimeout = 5;
-				Assert.AreEqual (5, stream.ReadTimeout, "ReadTimeout");
+				Assert.That (stream.ReadTimeout, Is.EqualTo (5), "ReadTimeout");
 
 				stream.WriteTimeout = 7;
-				Assert.AreEqual (7, stream.WriteTimeout, "WriteTimeout");
+				Assert.That (stream.WriteTimeout, Is.EqualTo (7), "WriteTimeout");
 			}
 		}
 
@@ -76,12 +76,12 @@ namespace UnitTests.Net.Imap {
 
 				stream.Mode = ImapStreamMode.Token;
 				n = stream.Read (buffer, 0, buffer.Length);
-				Assert.AreEqual (0, n, "ImapStreamMode.Token");
+				Assert.That (n, Is.EqualTo (0), "ImapStreamMode.Token");
 
 				stream.Mode = ImapStreamMode.Literal;
 				n = stream.Read (buffer, 0, buffer.Length);
-				Assert.AreEqual (data.Length, n, "ImapStreamMode.Literal");
-				Assert.AreEqual ("This is some random text...\r\n", Encoding.ASCII.GetString (buffer, 0, n), "Read");
+				Assert.That (n, Is.EqualTo (data.Length), "ImapStreamMode.Literal");
+				Assert.That (Encoding.ASCII.GetString (buffer, 0, n), Is.EqualTo ("This is some random text...\r\n"), "Read");
 			}
 		}
 
@@ -104,12 +104,12 @@ namespace UnitTests.Net.Imap {
 
 				stream.Mode = ImapStreamMode.Token;
 				n = await stream.ReadAsync (buffer, 0, buffer.Length);
-				Assert.AreEqual (0, n, "ImapStreamMode.Token");
+				Assert.That (n, Is.EqualTo (0), "ImapStreamMode.Token");
 
 				stream.Mode = ImapStreamMode.Literal;
 				n = await stream.ReadAsync (buffer, 0, buffer.Length);
-				Assert.AreEqual (data.Length, n, "Read");
-				Assert.AreEqual ("This is some random text...\r\n", Encoding.ASCII.GetString (buffer, 0, n), "Read");
+				Assert.That (n, Is.EqualTo (data.Length), "Read");
+				Assert.That (Encoding.ASCII.GetString (buffer, 0, n), Is.EqualTo ("This is some random text...\r\n"), "Read");
 			}
 		}
 
@@ -131,7 +131,7 @@ namespace UnitTests.Net.Imap {
 
 					var text = builder.ToString ();
 
-					Assert.AreEqual (line1, text, "Line1");
+					Assert.That (text, Is.EqualTo (line1), "Line1");
 				}
 
 				using (var builder = new ByteArrayBuilder (64)) {
@@ -140,7 +140,7 @@ namespace UnitTests.Net.Imap {
 
 					var text = builder.ToString ();
 
-					Assert.AreEqual (line2, text, "Line2");
+					Assert.That (text, Is.EqualTo (line2), "Line2");
 				}
 			}
 		}
@@ -163,7 +163,7 @@ namespace UnitTests.Net.Imap {
 
 					var text = builder.ToString ();
 
-					Assert.AreEqual (line1, text, "Line1");
+					Assert.That (text, Is.EqualTo (line1), "Line1");
 				}
 
 				using (var builder = new ByteArrayBuilder (64)) {
@@ -172,7 +172,7 @@ namespace UnitTests.Net.Imap {
 
 					var text = builder.ToString ();
 
-					Assert.AreEqual (line2, text, "Line2");
+					Assert.That (text, Is.EqualTo (line2), "Line2");
 				}
 			}
 		}
@@ -189,57 +189,57 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (() => stream.UngetToken (null));
 
 				var token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Asterisk, token.Type);
-				Assert.AreEqual ("'*'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Asterisk));
+				Assert.That (token.ToString (), Is.EqualTo ("'*'"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Atom, token.Type);
-				Assert.AreEqual ("atom", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Atom));
+				Assert.That (token.ToString (), Is.EqualTo ("atom"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.OpenParen, token.Type);
-				Assert.AreEqual ("'('", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.OpenParen));
+				Assert.That (token.ToString (), Is.EqualTo ("'('"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Flag, token.Type);
-				Assert.AreEqual ("\\flag", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Flag));
+				Assert.That (token.ToString (), Is.EqualTo ("\\flag"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.QString, token.Type);
-				Assert.AreEqual ("\"qstring\"", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.QString));
+				Assert.That (token.ToString (), Is.EqualTo ("\"qstring\""));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Nil, token.Type);
-				Assert.AreEqual ("NIL", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Nil));
+				Assert.That (token.ToString (), Is.EqualTo ("NIL"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Nil, token.Type);
-				Assert.AreEqual ("Nil", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Nil));
+				Assert.That (token.ToString (), Is.EqualTo ("Nil"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Nil, token.Type);
-				Assert.AreEqual ("nil", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Nil));
+				Assert.That (token.ToString (), Is.EqualTo ("nil"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.CloseParen, token.Type);
-				Assert.AreEqual ("')'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.CloseParen));
+				Assert.That (token.ToString (), Is.EqualTo ("')'"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.OpenBracket, token.Type);
-				Assert.AreEqual ("'['", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.OpenBracket));
+				Assert.That (token.ToString (), Is.EqualTo ("'['"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.CloseBracket, token.Type);
-				Assert.AreEqual ("']'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.CloseBracket));
+				Assert.That (token.ToString (), Is.EqualTo ("']'"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
-				Assert.AreEqual ("'\\n'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln));
+				Assert.That (token.ToString (), Is.EqualTo ("'\\n'"));
 
 				stream.UngetToken (token);
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
-				Assert.AreEqual ("'\\n'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln));
+				Assert.That (token.ToString (), Is.EqualTo ("'\\n'"));
 			}
 		}
 
@@ -255,57 +255,57 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentNullException> (() => stream.UngetToken (null));
 
 				var token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Asterisk, token.Type);
-				Assert.AreEqual ("'*'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Asterisk));
+				Assert.That (token.ToString (), Is.EqualTo ("'*'"));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Atom, token.Type);
-				Assert.AreEqual ("atom", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Atom));
+				Assert.That (token.ToString (), Is.EqualTo ("atom"));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.OpenParen, token.Type);
-				Assert.AreEqual ("'('", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.OpenParen));
+				Assert.That (token.ToString (), Is.EqualTo ("'('"));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Flag, token.Type);
-				Assert.AreEqual ("\\flag", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Flag));
+				Assert.That (token.ToString (), Is.EqualTo ("\\flag"));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.QString, token.Type);
-				Assert.AreEqual ("\"qstring\"", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.QString));
+				Assert.That (token.ToString (), Is.EqualTo ("\"qstring\""));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Nil, token.Type);
-				Assert.AreEqual ("NIL", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Nil));
+				Assert.That (token.ToString (), Is.EqualTo ("NIL"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Nil, token.Type);
-				Assert.AreEqual ("Nil", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Nil));
+				Assert.That (token.ToString (), Is.EqualTo ("Nil"));
 
 				token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Nil, token.Type);
-				Assert.AreEqual ("nil", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Nil));
+				Assert.That (token.ToString (), Is.EqualTo ("nil"));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.CloseParen, token.Type);
-				Assert.AreEqual ("')'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.CloseParen));
+				Assert.That (token.ToString (), Is.EqualTo ("')'"));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.OpenBracket, token.Type);
-				Assert.AreEqual ("'['", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.OpenBracket));
+				Assert.That (token.ToString (), Is.EqualTo ("'['"));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.CloseBracket, token.Type);
-				Assert.AreEqual ("']'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.CloseBracket));
+				Assert.That (token.ToString (), Is.EqualTo ("']'"));
 
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
-				Assert.AreEqual ("'\\n'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln));
+				Assert.That (token.ToString (), Is.EqualTo ("'\\n'"));
 
 				stream.UngetToken (token);
 				token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Eoln, token.Type);
-				Assert.AreEqual ("'\\n'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln));
+				Assert.That (token.ToString (), Is.EqualTo ("'\\n'"));
 			}
 		}
 
@@ -319,8 +319,8 @@ namespace UnitTests.Net.Imap {
 				stream.Stream.Position = 0;
 
 				var token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Plus, token.Type);
-				Assert.AreEqual ("'+'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Plus));
+				Assert.That (token.ToString (), Is.EqualTo ("'+'"));
 			}
 		}
 
@@ -334,8 +334,8 @@ namespace UnitTests.Net.Imap {
 				stream.Stream.Position = 0;
 
 				var token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Plus, token.Type);
-				Assert.AreEqual ("'+'", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Plus));
+				Assert.That (token.ToString (), Is.EqualTo ("'+'"));
 			}
 		}
 
@@ -349,8 +349,8 @@ namespace UnitTests.Net.Imap {
 				stream.Stream.Position = 0;
 
 				var token = stream.ReadToken (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Literal, token.Type);
-				Assert.AreEqual ("{4096}", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Literal));
+				Assert.That (token.ToString (), Is.EqualTo ("{4096}"));
 			}
 		}
 
@@ -364,8 +364,8 @@ namespace UnitTests.Net.Imap {
 				stream.Stream.Position = 0;
 
 				var token = await stream.ReadTokenAsync (CancellationToken.None);
-				Assert.AreEqual (ImapTokenType.Literal, token.Type);
-				Assert.AreEqual ("{4096}", token.ToString ());
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Literal));
+				Assert.That (token.ToString (), Is.EqualTo ("{4096}"));
 			}
 		}
 
@@ -375,8 +375,8 @@ namespace UnitTests.Net.Imap {
 			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				Assert.Throws<NotSupportedException> (() => stream.Seek (0, SeekOrigin.Begin));
 				Assert.Throws<NotSupportedException> (() => stream.Position = 500);
-				Assert.AreEqual (0, stream.Position);
-				Assert.AreEqual (0, stream.Length);
+				Assert.That (stream.Position, Is.EqualTo (0));
+				Assert.That (stream.Length, Is.EqualTo (0));
 			}
 		}
 
@@ -405,45 +405,45 @@ namespace UnitTests.Net.Imap {
 
 				// Test #1: write less than 4K to make sure that ImapStream buffers it
 				stream.Write (buf1k, 0, buf1k.Length);
-				Assert.AreEqual (0, memory.Length, "#1");
+				Assert.That (memory.Length, Is.EqualTo (0), "#1");
 
 				// Test #2: make sure that flushing the ImapStream flushes the entire buffer out to the network
 				stream.Flush ();
-				Assert.AreEqual (buf1k.Length, memory.Length, "#2");
+				Assert.That (memory.Length, Is.EqualTo (buf1k.Length), "#2");
 				mem = memory.GetBuffer ();
 				for (int i = 0; i < buf1k.Length; i++)
-					Assert.AreEqual (buf1k[i], mem[i], "#2 byte[{0}]", i);
+					Assert.That (mem[i], Is.EqualTo (buf1k[i]), $"#2 byte[{i}]");
 				memory.SetLength (0);
 
 				// Test #3: write exactly 4K to make sure it passes through w/o the need to flush
 				stream.Write (buf4k, 0, buf4k.Length);
-				Assert.AreEqual (buf4k.Length, memory.Length, "#3");
+				Assert.That (memory.Length, Is.EqualTo (buf4k.Length), "#3");
 				mem = memory.GetBuffer ();
 				for (int i = 0; i < buf4k.Length; i++)
-					Assert.AreEqual (buf4k[i], mem[i], "#3 byte[{0}]", i);
+					Assert.That (mem[i], Is.EqualTo (buf4k[i]), $"#3 byte[{i}]");
 				memory.SetLength (0);
 
 				// Test #4: write 1k and then write 4k, make sure that only 4k passes thru (last 1k gets buffered)
 				stream.Write (buf1k, 0, buf1k.Length);
 				stream.Write (buf4k, 0, buf4k.Length);
-				Assert.AreEqual (4096, memory.Length, "#4");
+				Assert.That (memory.Length, Is.EqualTo (4096), "#4");
 				stream.Flush ();
-				Assert.AreEqual (buf1k.Length + buf4k.Length, memory.Length, "#4");
+				Assert.That (memory.Length, Is.EqualTo (buf1k.Length + buf4k.Length), "#4");
 				Array.Copy (buf1k, 0, buffer, 0, buf1k.Length);
 				Array.Copy (buf4k, 0, buffer, buf1k.Length, buf4k.Length);
 				mem = memory.GetBuffer ();
 				for (int i = 0; i < buf1k.Length + buf4k.Length; i++)
-					Assert.AreEqual (buffer[i], mem[i], "#4 byte[{0}]", i);
+					Assert.That (mem[i], Is.EqualTo (buffer[i]), $"#4 byte[{i}]");
 				memory.SetLength (0);
 
 				// Test #5: write 9k and make sure only the first 8k goes thru (last 1k gets buffered)
 				stream.Write (buf9k, 0, buf9k.Length);
-				Assert.AreEqual (8192, memory.Length, "#5");
+				Assert.That (memory.Length, Is.EqualTo (8192), "#5");
 				stream.Flush ();
-				Assert.AreEqual (buf9k.Length, memory.Length, "#5");
+				Assert.That (memory.Length, Is.EqualTo (buf9k.Length), "#5");
 				mem = memory.GetBuffer ();
 				for (int i = 0; i < buf9k.Length; i++)
-					Assert.AreEqual (buf9k[i], mem[i], "#5 byte[{0}]", i);
+					Assert.That (mem[i], Is.EqualTo (buf9k[i]), $"#5 byte[{i}]");
 				memory.SetLength (0);
 			}
 		}
@@ -461,45 +461,45 @@ namespace UnitTests.Net.Imap {
 
 				// Test #1: write less than 4K to make sure that ImapStream buffers it
 				await stream.WriteAsync (buf1k, 0, buf1k.Length);
-				Assert.AreEqual (0, memory.Length, "#1");
+				Assert.That (memory.Length, Is.EqualTo (0), "#1");
 
 				// Test #2: make sure that flushing the ImapStream flushes the entire buffer out to the network
 				await stream.FlushAsync ();
-				Assert.AreEqual (buf1k.Length, memory.Length, "#2");
+				Assert.That (memory.Length, Is.EqualTo (buf1k.Length), "#2");
 				mem = memory.GetBuffer ();
 				for (int i = 0; i < buf1k.Length; i++)
-					Assert.AreEqual (buf1k[i], mem[i], "#2 byte[{0}]", i);
+					Assert.That (mem[i], Is.EqualTo (buf1k[i]), $"#2 byte[{i}]");
 				memory.SetLength (0);
 
 				// Test #3: write exactly 4K to make sure it passes through w/o the need to flush
 				await stream.WriteAsync (buf4k, 0, buf4k.Length);
-				Assert.AreEqual (buf4k.Length, memory.Length, "#3");
+				Assert.That (memory.Length, Is.EqualTo (buf4k.Length), "#3");
 				mem = memory.GetBuffer ();
 				for (int i = 0; i < buf4k.Length; i++)
-					Assert.AreEqual (buf4k[i], mem[i], "#3 byte[{0}]", i);
+					Assert.That (mem[i], Is.EqualTo (buf4k[i]), $"#3 byte[{i}]");
 				memory.SetLength (0);
 
 				// Test #4: write 1k and then write 4k, make sure that only 4k passes thru (last 1k gets buffered)
 				await stream.WriteAsync (buf1k, 0, buf1k.Length);
 				await stream.WriteAsync (buf4k, 0, buf4k.Length);
-				Assert.AreEqual (4096, memory.Length, "#4");
+				Assert.That (memory.Length, Is.EqualTo (4096), "#4");
 				await stream.FlushAsync ();
-				Assert.AreEqual (buf1k.Length + buf4k.Length, memory.Length, "#4");
+				Assert.That (memory.Length, Is.EqualTo (buf1k.Length + buf4k.Length), "#4");
 				Array.Copy (buf1k, 0, buffer, 0, buf1k.Length);
 				Array.Copy (buf4k, 0, buffer, buf1k.Length, buf4k.Length);
 				mem = memory.GetBuffer ();
 				for (int i = 0; i < buf1k.Length + buf4k.Length; i++)
-					Assert.AreEqual (buffer[i], mem[i], "#4 byte[{0}]", i);
+					Assert.That (mem[i], Is.EqualTo (buffer[i]), $"#4 byte[{i}]");
 				memory.SetLength (0);
 
 				// Test #5: write 9k and make sure only the first 8k goes thru (last 1k gets buffered)
 				await stream.WriteAsync (buf9k, 0, buf9k.Length);
-				Assert.AreEqual (8192, memory.Length, "#5");
+				Assert.That (memory.Length, Is.EqualTo (8192), "#5");
 				await stream.FlushAsync ();
-				Assert.AreEqual (buf9k.Length, memory.Length, "#5");
+				Assert.That (memory.Length, Is.EqualTo (buf9k.Length), "#5");
 				mem = memory.GetBuffer ();
 				for (int i = 0; i < buf9k.Length; i++)
-					Assert.AreEqual (buf9k[i], mem[i], "#5 byte[{0}]", i);
+					Assert.That (mem[i], Is.EqualTo (buf9k[i]), $"#5 byte[{i}]");
 				memory.SetLength (0);
 			}
 		}

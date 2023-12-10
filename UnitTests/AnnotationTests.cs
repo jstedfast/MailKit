@@ -42,8 +42,8 @@ namespace UnitTests {
 			var annotation = new Annotation (AnnotationEntry.AltSubject);
 			annotation.Properties.Add (AnnotationAttribute.SharedValue, "Shared altsubject");
 			annotation.Properties.Add (AnnotationAttribute.PrivateValue, "Private altsubject");
-			Assert.AreEqual (AnnotationEntry.AltSubject, annotation.Entry, "Entry");
-			Assert.AreEqual (2, annotation.Properties.Count, "Count");
+			Assert.That (annotation.Entry, Is.EqualTo (AnnotationEntry.AltSubject), "Entry");
+			Assert.That (annotation.Properties.Count, Is.EqualTo (2), "Count");
 		}
 	}
 }

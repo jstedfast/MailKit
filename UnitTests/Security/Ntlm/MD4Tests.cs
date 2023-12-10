@@ -67,25 +67,25 @@ namespace UnitTests.Security.Ntlm {
 				StringBuilder builder = new StringBuilder ();
 				byte[] hash, output = new byte[16];
 
-				Assert.AreEqual (16, md4.TransformBlock (text, 0, 16, output, 0), "TransformBlock");
+				Assert.That (md4.TransformBlock (text, 0, 16, output, 0), Is.EqualTo (16), "TransformBlock");
 				output = md4.TransformFinalBlock (text, 16, text.Length - 16);
-				Assert.NotNull (output, "TransformFinalBlock");
-				Assert.AreEqual (text.Length - 16, output.Length, "TransformFinalBlock");
+				Assert.That (output, Is.Not.Null, "TransformFinalBlock");
+				Assert.That (output.Length, Is.EqualTo (text.Length - 16), "TransformFinalBlock");
 				hash = md4.Hash;
-				Assert.NotNull (hash, "Hash");
+				Assert.That (hash, Is.Not.Null, "Hash");
 				for (int i = 0; i < hash.Length; i++)
 					builder.Append (hash[i].ToString ("x2"));
-				Assert.AreEqual (expected, builder.ToString (), "Hash");
+				Assert.That (builder.ToString (), Is.EqualTo (expected), "Hash");
 			}
 
 			using (var md4 = new MD4 ()) {
 				StringBuilder builder = new StringBuilder ();
 
 				var hash = md4.ComputeHash (text);
-				Assert.NotNull (hash, "ComputeHash");
+				Assert.That (hash, Is.Not.Null, "ComputeHash");
 				for (int i = 0; i < hash.Length; i++)
 					builder.Append (hash[i].ToString ("x2"));
-				Assert.AreEqual (expected, builder.ToString (), "ComputeHash");
+				Assert.That (builder.ToString (), Is.EqualTo (expected), "ComputeHash");
 			}
 
 			using (var md4 = new MD4 ()) {
@@ -94,10 +94,10 @@ namespace UnitTests.Security.Ntlm {
 
 				using (var stream = new MemoryStream (text, false))
 					hash = md4.ComputeHash (stream);
-				Assert.NotNull (hash, "ComputeHash");
+				Assert.That (hash, Is.Not.Null, "ComputeHash");
 				for (int i = 0; i < hash.Length; i++)
 					builder.Append (hash[i].ToString ("x2"));
-				Assert.AreEqual (expected, builder.ToString (), "ComputeHash");
+				Assert.That (builder.ToString (), Is.EqualTo (expected), "ComputeHash");
 			}
 		}
 	}

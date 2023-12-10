@@ -57,22 +57,22 @@ namespace UnitTests.Security {
 			const string expected2 = "cGFzc3dvcmQ=";
 			string challenge;
 
-			Assert.IsFalse (sasl.SupportsChannelBinding, "{0}: SupportsChannelBinding", prefix);
-			Assert.IsFalse (sasl.SupportsInitialResponse, "{0}: SupportsInitialResponse", prefix);
+			Assert.That (sasl.SupportsChannelBinding, Is.False, $"{prefix}: SupportsChannelBinding");
+			Assert.That (sasl.SupportsInitialResponse, Is.False, $"{prefix}: SupportsInitialResponse");
 
 			challenge = sasl.Challenge (string.Empty);
 
-			Assert.AreEqual (expected1, challenge, "{0}: initial challenge response does not match the expected string.", prefix);
-			Assert.IsFalse (sasl.IsAuthenticated, "{0}: should not be authenticated.", prefix);
+			Assert.That (challenge, Is.EqualTo (expected1), $"{prefix}: initial challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.False, $"{prefix}: should not be authenticated.");
 
 			challenge = sasl.Challenge (string.Empty);
 
-			Assert.AreEqual (expected2, challenge, "{0}: final challenge response does not match the expected string.", prefix);
-			Assert.IsTrue (sasl.IsAuthenticated, "{0}: should be authenticated.", prefix);
-			Assert.IsFalse (sasl.NegotiatedChannelBinding, "{0}: NegotiatedChannelBinding", prefix);
-			Assert.IsFalse (sasl.NegotiatedSecurityLayer, "{0}: NegotiatedSecurityLayer", prefix);
+			Assert.That (challenge, Is.EqualTo (expected2), $"{prefix}: final challenge response does not match the expected string.");
+			Assert.That (sasl.IsAuthenticated, Is.True, $"{prefix}: should be authenticated.");
+			Assert.That (sasl.NegotiatedChannelBinding, Is.False, $"{prefix}: NegotiatedChannelBinding");
+			Assert.That (sasl.NegotiatedSecurityLayer, Is.False, $"{prefix}: NegotiatedSecurityLayer");
 
-			Assert.AreEqual (string.Empty, sasl.Challenge (string.Empty), "{0}: challenge while authenticated.", prefix);
+			Assert.That (sasl.Challenge (string.Empty), Is.EqualTo (string.Empty), $"{prefix}: challenge while authenticated.");
 		}
 
 		[Test]

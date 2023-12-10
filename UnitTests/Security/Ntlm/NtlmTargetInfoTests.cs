@@ -71,26 +71,26 @@ namespace UnitTests.Security.Ntlm {
 			//var buffer1 = targetInfo.Encode (true);
 			//var csharp = ToCSharpByteArrayInitializer ("NtlmTargetInfoUnorderedUnicode", buffer1);
 
-			Assert.AreEqual ("ServerName", targetInfo.ServerName);
-			Assert.AreEqual ("DomainName", targetInfo.DomainName);
-			Assert.AreEqual ("DnsServerName", targetInfo.DnsServerName);
-			Assert.AreEqual ("DnsDomainName", targetInfo.DnsDomainName);
-			Assert.AreEqual ("DnsTreeName", targetInfo.DnsTreeName);
-			Assert.AreEqual (2, targetInfo.Flags, "Flags");
-			Assert.AreEqual (timestamp.ToFileTimeUtc (), targetInfo.Timestamp, "Timestamp");
-			//Assert.AreEqual ("SingleHost", targetInfo.SingleHost);
-			Assert.AreEqual (16, targetInfo.ChannelBinding.Length, "ChannelBinding");
+			Assert.That (targetInfo.ServerName, Is.EqualTo ("ServerName"));
+			Assert.That (targetInfo.DomainName, Is.EqualTo ("DomainName"));
+			Assert.That (targetInfo.DnsServerName, Is.EqualTo ("DnsServerName"));
+			Assert.That (targetInfo.DnsDomainName, Is.EqualTo ("DnsDomainName"));
+			Assert.That (targetInfo.DnsTreeName, Is.EqualTo ("DnsTreeName"));
+			Assert.That (targetInfo.Flags, Is.EqualTo (2), "Flags");
+			Assert.That (targetInfo.Timestamp, Is.EqualTo (timestamp.ToFileTimeUtc ()), "Timestamp");
+			//Assert.That (targetInfo.SingleHost, Is.EqualTo ("SingleHost"), "SingleHost");
+			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (16), "ChannelBinding");
 
 			for (int i = 0; i < channelBinding.Length; i++)
-				Assert.AreEqual (channelBinding[i], targetInfo.ChannelBinding[i], $"ChannelBinding[{i}]");
+				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (channelBinding[i]), $"ChannelBinding[{i}]");
 
 			// Verify that re-encoding the target info results in an exact replica of the input.
 			var encoded = targetInfo.Encode (unicode);
 
-			Assert.AreEqual (buffer.Length, encoded.Length, "Re-encoded lengths do not match");
+			Assert.That (encoded.Length, Is.EqualTo (buffer.Length), "Re-encoded lengths do not match");
 
 			for (int i = 0; i < buffer.Length; i++)
-				Assert.AreEqual (buffer[i], encoded[i], $"encoded[{i}]");
+				Assert.That (encoded[i], Is.EqualTo (buffer[i]), $"encoded[{i}]");
 		}
 
 		static readonly byte[] NtlmTargetInfoOrderedOem = {
@@ -195,11 +195,11 @@ namespace UnitTests.Security.Ntlm {
 		{
 			var singleHost = new NtlmSingleHostData (actual, 0, actual.Length);
 
-			Assert.AreEqual (expected.Size, singleHost.Size, $"{prefix}.Size");
+			Assert.That (singleHost.Size, Is.EqualTo (expected.Size), $"{prefix}.Size");
 			for (int i = 0; i < 8; i++)
-				Assert.AreEqual (expected.CustomData[i], singleHost.CustomData[i], $"{prefix}.CustomData[{i}]");
+				Assert.That (singleHost.CustomData[i], Is.EqualTo (expected.CustomData[i]), $"{prefix}.CustomData[{i}]");
 			for (int i = 0; i < 32; i++)
-				Assert.AreEqual (expected.MachineId[i], singleHost.MachineId[i], $"{prefix}.MachineId[{i}]");
+				Assert.That (singleHost.MachineId[i], Is.EqualTo (expected.MachineId[i]), $"{prefix}.MachineId[{i}]");
 		}
 
 		[Test]
@@ -217,40 +217,40 @@ namespace UnitTests.Security.Ntlm {
 				ChannelBinding = channelBinding
 			};
 
-			Assert.AreEqual ("ServerName", targetInfo.ServerName);
-			Assert.AreEqual ("DomainName", targetInfo.DomainName);
+			Assert.That (targetInfo.ServerName, Is.EqualTo ("ServerName"));
+			Assert.That (targetInfo.DomainName, Is.EqualTo ("DomainName"));
 			AssertSingleHost (singleHost, targetInfo.SingleHost, "SingleHost");
-			Assert.AreEqual (2, targetInfo.Flags, "Flags");
-			Assert.AreEqual (timestamp.ToFileTimeUtc (), targetInfo.Timestamp, "Timestamp");
-			Assert.AreEqual (16, targetInfo.ChannelBinding.Length, "ChannelBinding");
+			Assert.That (targetInfo.Flags, Is.EqualTo (2), "Flags");
+			Assert.That (targetInfo.Timestamp, Is.EqualTo (timestamp.ToFileTimeUtc ()), "Timestamp");
+			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (16), "ChannelBinding");
 
 			for (int i = 0; i < channelBinding.Length; i++)
-				Assert.AreEqual (channelBinding[i], targetInfo.ChannelBinding[i], $"ChannelBinding[{i}]");
+				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (channelBinding[i]), $"ChannelBinding[{i}]");
 
 			targetInfo.ServerName = null;
-			Assert.IsNull (targetInfo.ServerName, "SserverName remove attempt #1");
+			Assert.That (targetInfo.ServerName, Is.Null, "SserverName remove attempt #1");
 			targetInfo.ServerName = null;
-			Assert.IsNull (targetInfo.ServerName, "ServerNamet remove attempt #2");
+			Assert.That (targetInfo.ServerName, Is.Null, "ServerNamet remove attempt #2");
 
 			targetInfo.SingleHost = null;
-			Assert.IsNull (targetInfo.SingleHost, "SingleHost remove attempt #1");
+			Assert.That (targetInfo.SingleHost, Is.Null, "SingleHost remove attempt #1");
 			targetInfo.SingleHost = null;
-			Assert.IsNull (targetInfo.SingleHost, "SingleHost remove attempt #2");
+			Assert.That (targetInfo.SingleHost, Is.Null, "SingleHost remove attempt #2");
 
 			targetInfo.Flags = null;
-			Assert.IsNull (targetInfo.Flags, "Flags remove attempt #1");
+			Assert.That (targetInfo.Flags, Is.Null, "Flags remove attempt #1");
 			targetInfo.Flags = null;
-			Assert.IsNull (targetInfo.Flags, "Flags remove attempt #2");
+			Assert.That (targetInfo.Flags, Is.Null, "Flags remove attempt #2");
 
 			targetInfo.Timestamp = null;
-			Assert.IsNull (targetInfo.Timestamp, "Timestamp remove attempt #1");
+			Assert.That (targetInfo.Timestamp, Is.Null, "Timestamp remove attempt #1");
 			targetInfo.Timestamp = null;
-			Assert.IsNull (targetInfo.Timestamp, "Timestamp remove attempt #2");
+			Assert.That (targetInfo.Timestamp, Is.Null, "Timestamp remove attempt #2");
 
 			targetInfo.ChannelBinding = null;
-			Assert.IsNull (targetInfo.ChannelBinding, "ChannelBinding remove attempt #1");
+			Assert.That (targetInfo.ChannelBinding, Is.Null, "ChannelBinding remove attempt #1");
 			targetInfo.ChannelBinding = null;
-			Assert.IsNull (targetInfo.ChannelBinding, "ChannelBinding remove attempt #2");
+			Assert.That (targetInfo.ChannelBinding, Is.Null, "ChannelBinding remove attempt #2");
 		}
 
 		[Test]
@@ -269,33 +269,33 @@ namespace UnitTests.Security.Ntlm {
 				ChannelBinding = channelBinding
 			};
 
-			Assert.AreEqual ("ServerName", targetInfo.ServerName);
-			Assert.AreEqual ("DomainName", targetInfo.DomainName);
+			Assert.That (targetInfo.ServerName, Is.EqualTo ("ServerName"));
+			Assert.That (targetInfo.DomainName, Is.EqualTo ("DomainName"));
 			AssertSingleHost (singleHost, targetInfo.SingleHost, "SingleHost");
-			Assert.AreEqual (2, targetInfo.Flags, "Flags");
-			Assert.AreEqual (timestamp.ToFileTimeUtc (), targetInfo.Timestamp, "Timestamp");
-			Assert.AreEqual (16, targetInfo.ChannelBinding.Length, "ChannelBinding");
+			Assert.That (targetInfo.Flags, Is.EqualTo (2), "Flags");
+			Assert.That (targetInfo.Timestamp, Is.EqualTo (timestamp.ToFileTimeUtc ()), "Timestamp");
+			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (16), "ChannelBinding");
 
 			for (int i = 0; i < channelBinding.Length; i++)
-				Assert.AreEqual (channelBinding[i], targetInfo.ChannelBinding[i], $"ChannelBinding[{i}]");
+				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (channelBinding[i]), $"ChannelBinding[{i}]");
 
 			targetInfo.ServerName = "NewServerName";
-			Assert.AreEqual ("NewServerName", targetInfo.ServerName, "Updated ServerName");
+			Assert.That (targetInfo.ServerName, Is.EqualTo ("NewServerName"), "Updated ServerName");
 
 			targetInfo.SingleHost = updatedSingleHost.Encode ();
 			AssertSingleHost (updatedSingleHost, targetInfo.SingleHost, "Updated SingleHost");
 
 			targetInfo.Flags = 1;
-			Assert.AreEqual (1, targetInfo.Flags, "Updated Flags");
+			Assert.That (targetInfo.Flags, Is.EqualTo (1), "Updated Flags");
 
 			targetInfo.Timestamp = 123456789;
-			Assert.AreEqual (123456789, targetInfo.Timestamp, "Updated Timestamp");
+			Assert.That (targetInfo.Timestamp, Is.EqualTo (123456789), "Updated Timestamp");
 
 			targetInfo.ChannelBinding = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
-			Assert.AreEqual (20, targetInfo.ChannelBinding.Length, "Updated ChannelBinding");
+			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (20), "Updated ChannelBinding");
 
 			for (int i = 0; i < channelBinding.Length; i++)
-				Assert.AreEqual (i, targetInfo.ChannelBinding[i], $"Updated ChannelBinding[{i}]");
+				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (i), $"Updated ChannelBinding[{i}]");
 		}
 	}
 }

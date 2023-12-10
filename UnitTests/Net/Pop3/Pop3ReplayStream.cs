@@ -116,13 +116,13 @@ namespace UnitTests.Net.Pop3 {
 			CheckDisposed ();
 
 			if (asyncIO) {
-				Assert.IsTrue (isAsync, "Trying to Read in an async unit test.");
+				Assert.That (isAsync, Is.True, "Trying to Read in an async unit test.");
 			} else {
-				Assert.IsFalse (isAsync, "Trying to ReadAsync in a non-async unit test.");
+				Assert.That (isAsync, Is.False, "Trying to ReadAsync in a non-async unit test.");
 			}
 
-			Assert.AreEqual (Pop3ReplayState.SendResponse, state, "Trying to read when no command given.");
-			Assert.IsNotNull (stream, "Trying to read when no data available.");
+			Assert.That (state, Is.EqualTo (Pop3ReplayState.SendResponse), "Trying to read when no command given.");
+			Assert.That (stream, Is.Not.Null, "Trying to read when no data available.");
 
 			int nread = stream.Read (buffer, offset, 1);
 
@@ -168,16 +168,16 @@ namespace UnitTests.Net.Pop3 {
 			CheckDisposed ();
 
 			if (asyncIO) {
-				Assert.IsTrue (isAsync, "Trying to Write in an async unit test.");
+				Assert.That (isAsync, Is.True, "Trying to Write in an async unit test.");
 			} else {
-				Assert.IsFalse (isAsync, "Trying to WriteAsync in a non-async unit test.");
+				Assert.That (isAsync, Is.False, "Trying to WriteAsync in a non-async unit test.");
 			}
 
-			Assert.AreEqual (Pop3ReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
+			Assert.That (state, Is.EqualTo (Pop3ReplayState.WaitForCommand), "Trying to write when a command has already been given.");
 
 			var command = Encoding.UTF8.GetString (buffer, offset, count);
 
-			Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
+			Assert.That (command, Is.EqualTo (commands[index].Command), "Commands did not match.");
 
 			if (stream != null)
 				stream.Dispose ();
@@ -202,14 +202,14 @@ namespace UnitTests.Net.Pop3 {
 		{
 			CheckDisposed ();
 
-			Assert.IsFalse (asyncIO, "Trying to Flush in an async unit test.");
+			Assert.That (asyncIO, Is.False, "Trying to Flush in an async unit test.");
 		}
 
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
-			Assert.IsTrue (asyncIO, "Trying to FlushAsync in a non-async unit test.");
+			Assert.That (asyncIO, Is.True, "Trying to FlushAsync in a non-async unit test.");
 
 			return Task.FromResult (true);
 		}

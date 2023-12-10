@@ -61,14 +61,14 @@ namespace UnitTests {
 				ContentTransferEncoding = "base64"
 			};
 
-			Assert.IsTrue (basic.IsAttachment);
-			Assert.AreEqual ("wallpaper.jpg", basic.FileName);
-			Assert.AreEqual (expected, basic.ToString ());
-			Assert.IsTrue (BodyPart.TryParse (expected, out body));
+			Assert.That (basic.IsAttachment, Is.True);
+			Assert.That (basic.FileName, Is.EqualTo ("wallpaper.jpg"));
+			Assert.That (basic.ToString (), Is.EqualTo (expected));
+			Assert.That (BodyPart.TryParse (expected, out body), Is.True);
 			Assert.IsInstanceOf<BodyPartBasic> (body);
 
 			parsed = (BodyPartBasic) body;
-			Assert.AreEqual (expected, parsed.ToString ());
+			Assert.That (parsed.ToString (), Is.EqualTo (expected));
 		}
 
 		[Test]
@@ -77,27 +77,27 @@ namespace UnitTests {
 			var builder = new StringBuilder ();
 
 			BodyPart.Encode (builder, (BodyPart) null);
-			Assert.AreEqual ("NIL", builder.ToString (), "BodyPart");
+			Assert.That (builder.ToString (), Is.EqualTo ("NIL"), "BodyPart");
 
 			builder.Clear ();
 			BodyPart.Encode (builder, (BodyPartCollection) null);
-			Assert.AreEqual ("NIL", builder.ToString (), "BodyPartCollection");
+			Assert.That (builder.ToString (), Is.EqualTo ("NIL"), "BodyPartCollection");
 
 			builder.Clear ();
 			BodyPart.Encode (builder, (ContentDisposition) null);
-			Assert.AreEqual ("NIL", builder.ToString (), "ContentDisposition");
+			Assert.That (builder.ToString (), Is.EqualTo ("NIL"), "ContentDisposition");
 
 			//builder.Clear ();
 			//BodyPart.Encode (builder, (ContentType) null);
-			//Assert.AreEqual ("NIL", builder.ToString (), "ContentType");
+			//Assert.That (builder.ToString (), Is.EqualTo ("NIL"), "ContentType");
 
 			builder.Clear ();
 			BodyPart.Encode (builder, (Envelope) null);
-			Assert.AreEqual ("NIL", builder.ToString (), "Envelope");
+			Assert.That (builder.ToString (), Is.EqualTo ("NIL"), "Envelope");
 
 			builder.Clear ();
 			BodyPart.Encode (builder, (IList<Parameter>) null);
-			Assert.AreEqual ("NIL", builder.ToString (), "IEnumerable<Parameter>");
+			Assert.That (builder.ToString (), Is.EqualTo ("NIL"), "IEnumerable<Parameter>");
 		}
 
 		[Test]
@@ -114,22 +114,22 @@ namespace UnitTests {
 				Lines = 92,
 			};
 
-			Assert.IsTrue (text.IsPlain);
-			Assert.IsFalse (text.IsHtml);
-			Assert.IsFalse (text.IsAttachment);
-			Assert.AreEqual ("body.txt", text.FileName);
-			Assert.AreEqual (expected, text.ToString ());
-			Assert.IsTrue (BodyPart.TryParse (expected, out body));
+			Assert.That (text.IsPlain, Is.True);
+			Assert.That (text.IsHtml, Is.False);
+			Assert.That (text.IsAttachment, Is.False);
+			Assert.That (text.FileName, Is.EqualTo ("body.txt"));
+			Assert.That (text.ToString (), Is.EqualTo (expected));
+			Assert.That (BodyPart.TryParse (expected, out body), Is.True);
 			Assert.IsInstanceOf<BodyPartText> (body);
 
 			parsed = (BodyPartText) body;
-			Assert.IsTrue (parsed.ContentType.IsMimeType ("text", "plain"), "Content-Type did not match.");
-			Assert.AreEqual ("us-ascii", parsed.ContentType.Charset, "charset param did not match");
-			Assert.AreEqual ("body.txt", parsed.ContentType.Name, "name param did not match");
-			Assert.AreEqual ("7bit", parsed.ContentTransferEncoding, "Content-Transfer-Encoding did not match.");
-			Assert.AreEqual (3028, parsed.Octets, "Octet count did not match.");
-			Assert.AreEqual (92, parsed.Lines, "Line count did not match.");
-			Assert.AreEqual (expected, parsed.ToString ());
+			Assert.That (parsed.ContentType.IsMimeType ("text", "plain"), Is.True, "Content-Type did not match.");
+			Assert.That (parsed.ContentType.Charset, Is.EqualTo ("us-ascii"), "charset param did not match");
+			Assert.That (parsed.ContentType.Name, Is.EqualTo ("body.txt"), "name param did not match");
+			Assert.That (parsed.ContentTransferEncoding, Is.EqualTo ("7bit"), "Content-Transfer-Encoding did not match.");
+			Assert.That (parsed.Octets, Is.EqualTo (3028), "Octet count did not match.");
+			Assert.That (parsed.Lines, Is.EqualTo (92), "Line count did not match.");
+			Assert.That (parsed.ToString (), Is.EqualTo (expected));
 		}
 
 		[Test]
@@ -150,54 +150,54 @@ namespace UnitTests {
 			Assert.Throws<ArgumentOutOfRangeException> (() => list.CopyTo (parts, -1));
 			Assert.Throws<ArgumentOutOfRangeException> (() => { var x = list[0]; });
 
-			Assert.IsFalse (list.IsReadOnly);
-			Assert.AreEqual (0, list.Count);
+			Assert.That (list.IsReadOnly, Is.False);
+			Assert.That (list.Count, Is.EqualTo (0));
 
 			list.Add (text);
-			Assert.AreEqual (1, list.Count);
-			Assert.IsTrue (list.Contains (text));
-			Assert.IsFalse (list.Contains (image1));
-			Assert.AreEqual (0, list.IndexOf (new Uri ("body", UriKind.Relative)));
-			Assert.AreEqual (-1, list.IndexOf (new Uri ("http://localhost/image1.jpg")));
-			Assert.AreEqual (-1, list.IndexOf (new Uri ("cid:image2@localhost")));
-			Assert.AreEqual (text, list[0]);
+			Assert.That (list.Count, Is.EqualTo (1));
+			Assert.That (list.Contains (text), Is.True);
+			Assert.That (list.Contains (image1), Is.False);
+			Assert.That (list.IndexOf (new Uri ("body", UriKind.Relative)), Is.EqualTo (0));
+			Assert.That (list.IndexOf (new Uri ("http://localhost/image1.jpg")), Is.EqualTo (-1));
+			Assert.That (list.IndexOf (new Uri ("cid:image2@localhost")), Is.EqualTo (-1));
+			Assert.That (list[0], Is.EqualTo (text));
 
 			list.Add (image1);
-			Assert.AreEqual (2, list.Count);
-			Assert.IsTrue (list.Contains (text));
-			Assert.IsTrue (list.Contains (image1));
-			Assert.AreEqual (0, list.IndexOf (new Uri ("body", UriKind.Relative)));
-			Assert.AreEqual (1, list.IndexOf (new Uri ("http://localhost/image1.jpg")));
-			Assert.AreEqual (-1, list.IndexOf (new Uri ("cid:image2@localhost")));
-			Assert.AreEqual (text, list[0]);
-			Assert.AreEqual (image1, list[1]);
+			Assert.That (list.Count, Is.EqualTo (2));
+			Assert.That (list.Contains (text), Is.True);
+			Assert.That (list.Contains (image1), Is.True);
+			Assert.That (list.IndexOf (new Uri ("body", UriKind.Relative)), Is.EqualTo (0));
+			Assert.That (list.IndexOf (new Uri ("http://localhost/image1.jpg")), Is.EqualTo (1));
+			Assert.That (list.IndexOf (new Uri ("cid:image2@localhost")), Is.EqualTo (-1));
+			Assert.That (list[0], Is.EqualTo (text));
+			Assert.That (list[1], Is.EqualTo (image1));
 
-			Assert.IsTrue (list.Remove (text));
-			Assert.AreEqual (1, list.Count);
-			Assert.IsFalse (list.Contains (text));
-			Assert.IsTrue (list.Contains (image1));
-			Assert.AreEqual (-1, list.IndexOf (new Uri ("body", UriKind.Relative)));
-			Assert.AreEqual (0, list.IndexOf (new Uri ("http://localhost/image1.jpg")));
-			Assert.AreEqual (-1, list.IndexOf (new Uri ("cid:image2@localhost")));
-			Assert.AreEqual (image1, list[0]);
+			Assert.That (list.Remove (text), Is.True);
+			Assert.That (list.Count, Is.EqualTo (1));
+			Assert.That (list.Contains (text), Is.False);
+			Assert.That (list.Contains (image1), Is.True);
+			Assert.That (list.IndexOf (new Uri ("body", UriKind.Relative)), Is.EqualTo (-1));
+			Assert.That (list.IndexOf (new Uri ("http://localhost/image1.jpg")), Is.EqualTo (0));
+			Assert.That (list.IndexOf (new Uri ("cid:image2@localhost")), Is.EqualTo (-1));
+			Assert.That (list[0], Is.EqualTo (image1));
 
 			list.Clear ();
-			Assert.AreEqual (0, list.Count);
+			Assert.That (list.Count, Is.EqualTo (0));
 
 			list.Add (text);
 			list.Add (image1);
 			list.Add (image2);
 			list.CopyTo (parts, 0);
-			Assert.AreEqual (0, list.IndexOf (new Uri ("body", UriKind.Relative)));
-			Assert.AreEqual (1, list.IndexOf (new Uri ("http://localhost/image1.jpg")));
-			Assert.AreEqual (2, list.IndexOf (new Uri ("cid:image2@localhost")));
+			Assert.That (list.IndexOf (new Uri ("body", UriKind.Relative)), Is.EqualTo (0));
+			Assert.That (list.IndexOf (new Uri ("http://localhost/image1.jpg")), Is.EqualTo (1));
+			Assert.That (list.IndexOf (new Uri ("cid:image2@localhost")), Is.EqualTo (2));
 
 			foreach (var part in list)
-				Assert.AreEqual (parts[i++], part);
+				Assert.That (part, Is.EqualTo (parts[i++]));
 
 			i = 0;
 			foreach (var part in (IEnumerable) list)
-				Assert.AreEqual (parts[i++], part);
+				Assert.That (part, Is.EqualTo (parts[i++]));
 		}
 
 		[Test]
@@ -207,14 +207,14 @@ namespace UnitTests {
 			BodyPartMultipart multipart;
 			BodyPart body;
 
-			Assert.IsTrue (BodyPart.TryParse (text, out body), "Failed to parse body.");
+			Assert.That (BodyPart.TryParse (text, out body), Is.True, "Failed to parse body.");
 
 			Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
 			multipart = (BodyPartMultipart) body;
 
-			Assert.IsTrue (body.ContentType.IsMimeType ("multipart", "mixed"), "Content-Type did not match.");
-			Assert.AreEqual ("----=_NextPart_000_0077_01CBB179.57530990", body.ContentType.Parameters["boundary"], "boundary param did not match");
-			Assert.AreEqual (3, multipart.BodyParts.Count, "BodyParts count does not match.");
+			Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
+			Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("----=_NextPart_000_0077_01CBB179.57530990"), "boundary param did not match");
+			Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
 			Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
 			Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[1], "The type of the second child does not match.");
 			Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "The type of the third child does not match.");
@@ -234,19 +234,19 @@ namespace UnitTests {
 
 			var serialized = original.ToString ();
 
-			Assert.IsTrue (BodyPart.TryParse (serialized, out var body), "Failed to parse.");
+			Assert.That (BodyPart.TryParse (serialized, out var body), Is.True, "Failed to parse.");
 			Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
 
 			var multipart = (BodyPartMultipart) body;
-			Assert.IsTrue (multipart.ContentType.IsMimeType ("multipart", "mixed"), "Content-Type did not match.");
-			Assert.AreEqual (original.ContentType.Boundary, multipart.ContentType.Boundary, "boundary param did not match");
-			Assert.AreEqual (1, multipart.BodyParts.Count, "BodyParts count does not match.");
+			Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
+			Assert.That (multipart.ContentType.Boundary, Is.EqualTo (original.ContentType.Boundary), "boundary param did not match");
+			Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "BodyParts count does not match.");
 			Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
 
 			var alternative = (BodyPartMultipart) multipart.BodyParts[0];
-			Assert.IsTrue (alternative.ContentType.IsMimeType ("multipart", "alternative"), "Inner Content-Type did not match.");
-			Assert.AreEqual (original.BodyParts[0].ContentType.Boundary, alternative.ContentType.Boundary, "Inner boundary param did not match");
-			Assert.AreEqual (0, alternative.BodyParts.Count, "Inner BodyParts count does not match.");
+			Assert.That (alternative.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "Inner Content-Type did not match.");
+			Assert.That (alternative.ContentType.Boundary, Is.EqualTo (original.BodyParts[0].ContentType.Boundary), "Inner boundary param did not match");
+			Assert.That (alternative.BodyParts.Count, Is.EqualTo (0), "Inner BodyParts count does not match.");
 		}
 
 		static ContentType CreateContentType (string type, string subtype, string partSpecifier)
@@ -285,7 +285,7 @@ namespace UnitTests {
 		{
 			var expected = part.ContentType.Parameters["part-specifier"];
 
-			Assert.AreEqual (expected, part.PartSpecifier, "The part-specifier does not match for {0}", part.ContentType.MimeType);
+			Assert.That (part.PartSpecifier, Is.EqualTo (expected), $"The part-specifier does not match for {part.ContentType.MimeType}");
 
 			if (part is BodyPartMessage message) {
 				VerifyPartSpecifier (message.Body);
@@ -372,7 +372,7 @@ namespace UnitTests {
 
 			visitor.Visit (body);
 
-			Assert.AreEqual (expected, visitor.ToString ());
+			Assert.That (visitor.ToString (), Is.EqualTo (expected));
 			Assert.Throws<ArgumentNullException> (() => new BodyPartText ().Accept (null));
 			Assert.Throws<ArgumentNullException> (() => new BodyPartBasic ().Accept (null));
 			Assert.Throws<ArgumentNullException> (() => new BodyPartMessage ().Accept (null));
@@ -381,7 +381,7 @@ namespace UnitTests {
 			var encoded = body.ToString ();
 
 			Assert.Throws<ArgumentNullException> (() => BodyPart.TryParse (null, out body));
-			Assert.IsTrue (BodyPart.TryParse (encoded, out body));
+			Assert.That (BodyPart.TryParse (encoded, out body), Is.True);
 
 			VerifyPartSpecifier (body);
 		}

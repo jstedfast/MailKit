@@ -49,10 +49,10 @@ namespace UnitTests.Net {
 		public void TestCanReadWriteSeekTimeout ()
 		{
 			using (var stream = new NetworkStream (socket, false)) {
-				Assert.IsTrue (stream.CanRead, "CanRead");
-				Assert.IsTrue (stream.CanWrite, "CanWrite");
-				Assert.IsFalse (stream.CanSeek, "CanSeek");
-				Assert.IsTrue (stream.CanTimeout, "CanTimeout");
+				Assert.That (stream.CanRead, Is.True, "CanRead");
+				Assert.That (stream.CanWrite, Is.True, "CanWrite");
+				Assert.That (stream.CanSeek, Is.False, "CanSeek");
+				Assert.That (stream.CanTimeout, Is.True, "CanTimeout");
 			}
 		}
 
@@ -72,21 +72,21 @@ namespace UnitTests.Net {
 		public void TestTimeouts ()
 		{
 			using (var stream = new NetworkStream (socket, false)) {
-				Assert.AreEqual (Timeout.Infinite, stream.ReadTimeout, "ReadTimeout #1");
+				Assert.That (stream.ReadTimeout, Is.EqualTo (Timeout.Infinite), "ReadTimeout #1");
 				Assert.Throws<ArgumentOutOfRangeException> (() => stream.ReadTimeout = 0);
 				Assert.Throws<ArgumentOutOfRangeException> (() => stream.ReadTimeout = -2);
 				stream.ReadTimeout = 500;
-				Assert.AreEqual (500, stream.ReadTimeout, "ReadTimeout #2");
+				Assert.That (stream.ReadTimeout, Is.EqualTo (500), "ReadTimeout #2");
 				stream.ReadTimeout = Timeout.Infinite;
-				Assert.AreEqual (Timeout.Infinite, stream.ReadTimeout, "ReadTimeout #3");
+				Assert.That (stream.ReadTimeout, Is.EqualTo (Timeout.Infinite), "ReadTimeout #3");
 
-				Assert.AreEqual (Timeout.Infinite, stream.WriteTimeout, "WriteTimeout #1");
+				Assert.That (stream.WriteTimeout, Is.EqualTo (Timeout.Infinite), "WriteTimeout #1");
 				Assert.Throws<ArgumentOutOfRangeException> (() => stream.WriteTimeout = 0);
 				Assert.Throws<ArgumentOutOfRangeException> (() => stream.WriteTimeout = -2);
 				stream.WriteTimeout = 500;
-				Assert.AreEqual (500, stream.WriteTimeout, "WriteTimeout #2");
+				Assert.That (stream.WriteTimeout, Is.EqualTo (500), "WriteTimeout #2");
 				stream.WriteTimeout = Timeout.Infinite;
-				Assert.AreEqual (Timeout.Infinite, stream.WriteTimeout, "WriteTimeout #3");
+				Assert.That (stream.WriteTimeout, Is.EqualTo (Timeout.Infinite), "WriteTimeout #3");
 			}
 		}
 	}

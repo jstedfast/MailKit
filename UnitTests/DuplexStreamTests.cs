@@ -63,10 +63,10 @@ namespace UnitTests {
 		public void TestCanReadWriteSeek ()
 		{
 			using (var stream = new DuplexStream (new DummyNetworkStream (), new DummyNetworkStream ())) {
-				Assert.IsTrue (stream.CanRead);
-				Assert.IsTrue (stream.CanWrite);
-				Assert.IsFalse (stream.CanSeek);
-				Assert.IsTrue (stream.CanTimeout);
+				Assert.That (stream.CanRead, Is.True);
+				Assert.That (stream.CanWrite, Is.True);
+				Assert.That (stream.CanSeek, Is.False);
+				Assert.That (stream.CanTimeout, Is.True);
 			}
 		}
 
@@ -75,10 +75,10 @@ namespace UnitTests {
 		{
 			using (var stream = new DuplexStream (new DummyNetworkStream (), new DummyNetworkStream ())) {
 				stream.ReadTimeout = 5;
-				Assert.AreEqual (5, stream.ReadTimeout, "ReadTimeout");
+				Assert.That (stream.ReadTimeout, Is.EqualTo (5), "ReadTimeout");
 
 				stream.WriteTimeout = 7;
-				Assert.AreEqual (7, stream.WriteTimeout, "WriteTimeout");
+				Assert.That (stream.WriteTimeout, Is.EqualTo (7), "WriteTimeout");
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace UnitTests {
 				stream.InputStream.Position = 0;
 
 				n = stream.Read (buffer, 0, buffer.Length);
-				Assert.AreEqual (buffer.Length, n);
+				Assert.That (n, Is.EqualTo (buffer.Length));
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace UnitTests {
 				stream.InputStream.Position = 0;
 
 				n = await stream.ReadAsync (buffer, 0, buffer.Length);
-				Assert.AreEqual (buffer.Length, n);
+				Assert.That (n, Is.EqualTo (buffer.Length));
 			}
 		}
 
@@ -139,7 +139,7 @@ namespace UnitTests {
 
 				stream.Write (buffer, 0, buffer.Length);
 				stream.Flush ();
-				Assert.AreEqual (buffer.Length, stream.OutputStream.Position);
+				Assert.That (stream.OutputStream.Position, Is.EqualTo (buffer.Length));
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace UnitTests {
 
 				await stream.WriteAsync (buffer, 0, buffer.Length);
 				await stream.FlushAsync ();
-				Assert.AreEqual (buffer.Length, stream.OutputStream.Position);
+				Assert.That (stream.OutputStream.Position, Is.EqualTo (buffer.Length));
 			}
 		}
 	}

@@ -51,10 +51,10 @@ namespace UnitTests.Net.Proxy {
 			Assert.Throws<ArgumentOutOfRangeException> (() => new Socks4Client (socks.ProxyHost, -1));
 			Assert.Throws<ArgumentNullException> (() => new Socks4Client (socks.ProxyHost, 1080, null));
 
-			Assert.AreEqual (5, socks.SocksVersion);
-			Assert.AreEqual (1080, socks.ProxyPort);
-			Assert.AreEqual ("socks5.proxy.com", socks.ProxyHost);
-			Assert.AreEqual (credentials, socks.ProxyCredentials);
+			Assert.That (socks.SocksVersion, Is.EqualTo (5));
+			Assert.That (socks.ProxyPort, Is.EqualTo (1080));
+			Assert.That (socks.ProxyHost, Is.EqualTo ("socks5.proxy.com"));
+			Assert.That (socks.ProxyCredentials, Is.EqualTo (credentials));
 
 			Assert.Throws<ArgumentNullException> (() => socks.Connect (null, 80));
 			Assert.Throws<ArgumentNullException> (() => socks.Connect (null, 80, ConnectTimeout));
@@ -107,9 +107,9 @@ namespace UnitTests.Net.Proxy {
 			const string ipv4 = "74.125.197.99";
 			IPAddress ip;
 
-			Assert.AreEqual (Socks5Client.Socks5AddressType.Domain, Socks5Client.GetAddressType (host, out ip));
-			Assert.AreEqual (Socks5Client.Socks5AddressType.IPv4, Socks5Client.GetAddressType (ipv4, out ip));
-			Assert.AreEqual (Socks5Client.Socks5AddressType.IPv6, Socks5Client.GetAddressType (ipv6, out ip));
+			Assert.That (Socks5Client.GetAddressType (host, out ip), Is.EqualTo (Socks5Client.Socks5AddressType.Domain));
+			Assert.That (Socks5Client.GetAddressType (ipv4, out ip), Is.EqualTo (Socks5Client.Socks5AddressType.IPv4));
+			Assert.That (Socks5Client.GetAddressType (ipv6, out ip), Is.EqualTo (Socks5Client.Socks5AddressType.IPv6));
 		}
 
 		[Test]
@@ -119,7 +119,7 @@ namespace UnitTests.Net.Proxy {
 				var reason = Socks5Client.GetFailureReason (i);
 
 				if (i > 8)
-					Assert.IsTrue (reason.StartsWith ("Unknown error", StringComparison.Ordinal));
+					Assert.That (reason.StartsWith ("Unknown error", StringComparison.Ordinal), Is.True);
 			}
 		}
 
@@ -333,7 +333,7 @@ namespace UnitTests.Net.Proxy {
 				try {
 					stream = socks.Connect (host, 80, ConnectTimeout);
 				} catch (ProxyProtocolException ex) {
-					Assert.IsTrue (ex.Message.StartsWith ($"Failed to connect to {host}:80: ", StringComparison.Ordinal), ex.Message);
+					Assert.That (ex.Message.StartsWith ($"Failed to connect to {host}:80: ", StringComparison.Ordinal), Is.True, ex.Message);
 					Assert.Inconclusive (ex.Message);
 				} catch (TimeoutException) {
 					Assert.Inconclusive ("Timed out.");
@@ -361,7 +361,7 @@ namespace UnitTests.Net.Proxy {
 				try {
 					stream = await socks.ConnectAsync (host, 80, ConnectTimeout);
 				} catch (ProxyProtocolException ex) {
-					Assert.IsTrue (ex.Message.StartsWith ($"Failed to connect to {host}:80: ", StringComparison.Ordinal), ex.Message);
+					Assert.That (ex.Message.StartsWith ($"Failed to connect to {host}:80: ", StringComparison.Ordinal), Is.True, ex.Message);
 					Assert.Inconclusive (ex.Message);
 				} catch (TimeoutException) {
 					Assert.Inconclusive ("Timed out.");

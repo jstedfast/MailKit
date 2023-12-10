@@ -185,15 +185,15 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Filters), "ImapCapabilities.Filters");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Filters), Is.True, "ImapCapabilities.Filters");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
 				var uids = inbox.Search (SearchQuery.Filter ("MyFilter"));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				Assert.Throws<ImapCommandException> (() => inbox.Search (SearchQuery.Filter ("MyUndefinedFilter")));
 
@@ -228,15 +228,15 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Filters), "ImapCapabilities.Filters");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Filters), Is.True, "ImapCapabilities.Filters");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
 				var uids = await inbox.SearchAsync (SearchQuery.Filter ("MyFilter"));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				Assert.ThrowsAsync<ImapCommandException> (() => inbox.SearchAsync (SearchQuery.Filter ("MyUndefinedFilter")));
 
@@ -284,15 +284,15 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.FuzzySearch), "ImapCapabilities.FuzzySearch");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.FuzzySearch), Is.True, "ImapCapabilities.FuzzySearch");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
 				var uids = inbox.Search (SearchQuery.Fuzzy (SearchQuery.BodyContains ("fuzzy-match")));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				// Now disable the FUZZY extension and try again...
 				client.Capabilities &= ~ImapCapabilities.FuzzySearch;
@@ -325,15 +325,15 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.FuzzySearch), "ImapCapabilities.FuzzySearch");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.FuzzySearch), Is.True, "ImapCapabilities.FuzzySearch");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
 				var uids = await inbox.SearchAsync (SearchQuery.Fuzzy (SearchQuery.BodyContains ("fuzzy-match")));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				// Now disable the FUZZY extension and try again...
 				client.Capabilities &= ~ImapCapabilities.FuzzySearch;
@@ -382,30 +382,30 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), "ImapCapabilities.SaveDate");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), Is.True, "ImapCapabilities.SaveDate");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
 				var uids = inbox.Search (SearchQuery.SaveDateSupported);
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				uids = inbox.Search (SearchQuery.SavedBefore (new DateTime (2016, 10, 12)));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				uids = inbox.Search (SearchQuery.SavedOn (new DateTime (2016, 10, 12)));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				uids = inbox.Search (SearchQuery.SavedSince (new DateTime (2016, 10, 12)));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				// Now disable the SAVEDATE extension and try again...
 				client.Capabilities &= ~ImapCapabilities.SaveDate;
@@ -441,30 +441,30 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), "ImapCapabilities.SaveDate");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), Is.True, "ImapCapabilities.SaveDate");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
 				var uids = await inbox.SearchAsync (SearchQuery.SaveDateSupported);
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				uids = await inbox.SearchAsync (SearchQuery.SavedBefore (new DateTime (2016, 10, 12)));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				uids = await inbox.SearchAsync (SearchQuery.SavedOn (new DateTime (2016, 10, 12)));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				uids = await inbox.SearchAsync (SearchQuery.SavedSince (new DateTime (2016, 10, 12)));
-				Assert.AreEqual (14, uids.Count, "Unexpected number of UIDs");
+				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id, "Unexpected value for uids[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				// Now disable the SAVEDATE extension and try again...
 				client.Capabilities &= ~ImapCapabilities.SaveDate;
@@ -519,14 +519,14 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadWrite);
 
 				var matches = inbox.Search ("SUBJECT {13+}\r\nComunicação");
-				Assert.IsTrue (matches.Max.HasValue, "MAX should always be set");
-				Assert.AreEqual (14, matches.Max.Value.Id, "Unexpected MAX value");
-				Assert.IsTrue (matches.Min.HasValue, "MIN should always be set");
-				Assert.AreEqual (1, matches.Min.Value.Id, "Unexpected MIN value");
-				Assert.AreEqual (14, matches.Count, "COUNT should always be set");
-				Assert.AreEqual (14, matches.UniqueIds.Count);
+				Assert.That (matches.Max.HasValue, Is.True, "MAX should always be set");
+				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Unexpected MAX value");
+				Assert.That (matches.Min.HasValue, Is.True, "MIN should always be set");
+				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Unexpected MIN value");
+				Assert.That (matches.Count, Is.EqualTo (14), "COUNT should always be set");
+				Assert.That (matches.UniqueIds.Count, Is.EqualTo (14));
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
-					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
 
 				client.Disconnect (false);
 			}
@@ -561,14 +561,14 @@ namespace UnitTests.Net.Imap {
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
 				var matches = await inbox.SearchAsync ("SUBJECT {13+}\r\nComunicação");
-				Assert.IsTrue (matches.Max.HasValue, "MAX should always be set");
-				Assert.AreEqual (14, matches.Max.Value.Id, "Unexpected MAX value");
-				Assert.IsTrue (matches.Min.HasValue, "MIN should always be set");
-				Assert.AreEqual (1, matches.Min.Value.Id, "Unexpected MIN value");
-				Assert.AreEqual (14, matches.Count, "COUNT should always be set");
-				Assert.AreEqual (14, matches.UniqueIds.Count);
+				Assert.That (matches.Max.HasValue, Is.True, "MAX should always be set");
+				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Unexpected MAX value");
+				Assert.That (matches.Min.HasValue, Is.True, "MIN should always be set");
+				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Unexpected MIN value");
+				Assert.That (matches.Count, Is.EqualTo (14), "COUNT should always be set");
+				Assert.That (matches.UniqueIds.Count, Is.EqualTo (14));
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
-					Assert.AreEqual (i + 1, matches.UniqueIds[i].Id);
+					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
 
 				await client.DisconnectAsync (false);
 			}
@@ -616,9 +616,9 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadOnly);
 
 				var uids = inbox.Search (SearchQuery.SubjectContains ("Yahoo Mail"));
-				Assert.AreEqual (14, uids.Count);
+				Assert.That (uids.Count, Is.EqualTo (14));
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1));
 
 				client.Disconnect (false);
 			}
@@ -653,9 +653,9 @@ namespace UnitTests.Net.Imap {
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
 
 				var uids = await inbox.SearchAsync (SearchQuery.SubjectContains ("Yahoo Mail"));
-				Assert.AreEqual (14, uids.Count);
+				Assert.That (uids.Count, Is.EqualTo (14));
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1));
 
 				await client.DisconnectAsync (false);
 			}
@@ -706,9 +706,9 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadWrite);
 
 				var uids = inbox.Search (SearchQuery.SubjectContains ("привет"));
-				Assert.AreEqual (14, uids.Count);
+				Assert.That (uids.Count, Is.EqualTo (14));
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1));
 
 				client.Disconnect (false);
 			}
@@ -743,9 +743,9 @@ namespace UnitTests.Net.Imap {
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
 				var uids = await inbox.SearchAsync (SearchQuery.SubjectContains ("привет"));
-				Assert.AreEqual (14, uids.Count);
+				Assert.That (uids.Count, Is.EqualTo (14));
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (i + 1, uids[i].Id);
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1));
 
 				await client.DisconnectAsync (false);
 			}
@@ -798,13 +798,13 @@ namespace UnitTests.Net.Imap {
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var matches = inbox.Search (searchOptions, SearchQuery.SubjectContains ("привет"));
 				var expectedMatchedUids = new uint[] { 2, 3, 4, 5, 6, 9, 10, 11, 12, 13 };
-				Assert.AreEqual (10, matches.Count, "Unexpected COUNT");
-				Assert.AreEqual (13, matches.Max.Value.Id, "Unexpected MAX");
-				Assert.AreEqual (2, matches.Min.Value.Id, "Unexpected MIN");
-				Assert.AreEqual (10, matches.UniqueIds.Count, "Unexpected number of UIDs");
+				Assert.That (matches.Count, Is.EqualTo (10), "Unexpected COUNT");
+				Assert.That (matches.Max.Value.Id, Is.EqualTo (13), "Unexpected MAX");
+				Assert.That (matches.Min.Value.Id, Is.EqualTo (2), "Unexpected MIN");
+				Assert.That (matches.UniqueIds.Count, Is.EqualTo (10), "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
-					Assert.AreEqual (expectedMatchedUids[i], matches.UniqueIds[i].Id);
-				Assert.AreEqual (matches.Count, matches.Relevancy.Count, "Unexpected number of relevancy scores");
+					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (expectedMatchedUids[i]));
+				Assert.That (matches.Relevancy.Count, Is.EqualTo (matches.Count), "Unexpected number of relevancy scores");
 
 				client.Disconnect (false);
 			}
@@ -841,13 +841,13 @@ namespace UnitTests.Net.Imap {
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var matches = await inbox.SearchAsync (searchOptions, SearchQuery.SubjectContains ("привет"));
 				var expectedMatchedUids = new uint[] { 2, 3, 4, 5, 6, 9, 10, 11, 12, 13 };
-				Assert.AreEqual (10, matches.Count, "Unexpected COUNT");
-				Assert.AreEqual (13, matches.Max.Value.Id, "Unexpected MAX");
-				Assert.AreEqual (2, matches.Min.Value.Id, "Unexpected MIN");
-				Assert.AreEqual (10, matches.UniqueIds.Count, "Unexpected number of UIDs");
+				Assert.That (matches.Count, Is.EqualTo (10), "Unexpected COUNT");
+				Assert.That (matches.Max.Value.Id, Is.EqualTo (13), "Unexpected MAX");
+				Assert.That (matches.Min.Value.Id, Is.EqualTo (2), "Unexpected MIN");
+				Assert.That (matches.UniqueIds.Count, Is.EqualTo (10), "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
-					Assert.AreEqual (expectedMatchedUids[i], matches.UniqueIds[i].Id);
-				Assert.AreEqual (matches.Count, matches.Relevancy.Count, "Unexpected number of relevancy scores");
+					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (expectedMatchedUids[i]));
+				Assert.That (matches.Relevancy.Count, Is.EqualTo (matches.Count), "Unexpected number of relevancy scores");
 
 				await client.DisconnectAsync (false);
 			}
@@ -900,7 +900,7 @@ namespace UnitTests.Net.Imap {
 				var uids = inbox.Sort (SearchQuery.SubjectContains ("привет"), new OrderBy[] { OrderBy.Subject });
 				var expected = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (expected[i], uids[i].Id, "Unexpected value for UniqueId[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (expected[i]), $"Unexpected value for UniqueId[{i}]");
 
 				client.Disconnect (false);
 			}
@@ -937,7 +937,7 @@ namespace UnitTests.Net.Imap {
 				var uids = await inbox.SortAsync (SearchQuery.SubjectContains ("привет"), new OrderBy[] { OrderBy.Subject });
 				var expected = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
 				for (int i = 0; i < uids.Count; i++)
-					Assert.AreEqual (expected[i], uids[i].Id, "Unexpected value for UniqueId[{0}]", i);
+					Assert.That (uids[i].Id, Is.EqualTo (expected[i]), $"Unexpected value for UniqueId[{i}]");
 
 				await client.DisconnectAsync (false);
 			}
@@ -989,14 +989,14 @@ namespace UnitTests.Net.Imap {
 
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var sorted = inbox.Sort (searchOptions, SearchQuery.SubjectContains ("привет"), new OrderBy[] { OrderBy.Arrival });
-				Assert.AreEqual (14, sorted.UniqueIds.Count, "Unexpected number of UIDs");
-				Assert.AreEqual (sorted.Count, sorted.Relevancy.Count, "Unexpected number of relevancy scores");
+				Assert.That (sorted.UniqueIds.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (sorted.Relevancy.Count, Is.EqualTo (sorted.Count), "Unexpected number of relevancy scores");
 				for (int i = 0; i < sorted.UniqueIds.Count; i++)
-					Assert.AreEqual (i + 1, sorted.UniqueIds[i].Id, "Unexpected value for UniqueId[{0}]", i);
-				Assert.IsFalse (sorted.ModSeq.HasValue, "Expected the ModSeq property to be null");
-				Assert.AreEqual (1, sorted.Min.Value.Id, "Unexpected Min");
-				Assert.AreEqual (14, sorted.Max.Value.Id, "Unexpected Max");
-				Assert.AreEqual (14, sorted.Count, "Unexpected Count");
+					Assert.That (sorted.UniqueIds[i].Id, Is.EqualTo (i + 1), $"Unexpected value for UniqueId[{i}]");
+				Assert.That (sorted.ModSeq.HasValue, Is.False, "Expected the ModSeq property to be null");
+				Assert.That (sorted.Min.Value.Id, Is.EqualTo (1), "Unexpected Min");
+				Assert.That (sorted.Max.Value.Id, Is.EqualTo (14), "Unexpected Max");
+				Assert.That (sorted.Count, Is.EqualTo (14), "Unexpected Count");
 
 				client.Disconnect (false);
 			}
@@ -1032,14 +1032,14 @@ namespace UnitTests.Net.Imap {
 
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var sorted = await inbox.SortAsync (searchOptions, SearchQuery.SubjectContains ("привет"), new OrderBy[] { OrderBy.Arrival });
-				Assert.AreEqual (14, sorted.UniqueIds.Count, "Unexpected number of UIDs");
-				Assert.AreEqual (sorted.Count, sorted.Relevancy.Count, "Unexpected number of relevancy scores");
+				Assert.That (sorted.UniqueIds.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (sorted.Relevancy.Count, Is.EqualTo (sorted.Count), "Unexpected number of relevancy scores");
 				for (int i = 0; i < sorted.UniqueIds.Count; i++)
-					Assert.AreEqual (i + 1, sorted.UniqueIds[i].Id, "Unexpected value for UniqueId[{0}]", i);
-				Assert.IsFalse (sorted.ModSeq.HasValue, "Expected the ModSeq property to be null");
-				Assert.AreEqual (1, sorted.Min.Value.Id, "Unexpected Min");
-				Assert.AreEqual (14, sorted.Max.Value.Id, "Unexpected Max");
-				Assert.AreEqual (14, sorted.Count, "Unexpected Count");
+					Assert.That (sorted.UniqueIds[i].Id, Is.EqualTo (i + 1), $"Unexpected value for UniqueId[{i}]");
+				Assert.That (sorted.ModSeq.HasValue, Is.False, "Expected the ModSeq property to be null");
+				Assert.That (sorted.Min.Value.Id, Is.EqualTo (1), "Unexpected Min");
+				Assert.That (sorted.Max.Value.Id, Is.EqualTo (14), "Unexpected Max");
+				Assert.That (sorted.Count, Is.EqualTo (14), "Unexpected Count");
 
 				await client.DisconnectAsync (false);
 			}
@@ -1091,11 +1091,11 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.IsTrue (inbox.Supports (FolderFeature.Threading), "Supports threading");
-				Assert.IsTrue (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Supports threading by References");
+				Assert.That (inbox.Supports (FolderFeature.Threading), Is.True, "Supports threading");
+				Assert.That (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Supports threading by References");
 
 				var threaded = inbox.Thread (ThreadingAlgorithm.References, SearchQuery.SubjectContains ("привет"));
-				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");
+				Assert.That (threaded.Count, Is.EqualTo (2), "Unexpected number of root nodes in threaded results");
 
 				client.Disconnect (false);
 			}
@@ -1129,11 +1129,11 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
-				Assert.IsTrue (inbox.Supports (FolderFeature.Threading), "Supports threading");
-				Assert.IsTrue (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Supports threading by References");
+				Assert.That (inbox.Supports (FolderFeature.Threading), Is.True, "Supports threading");
+				Assert.That (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Supports threading by References");
 
 				var threaded = await inbox.ThreadAsync (ThreadingAlgorithm.References, SearchQuery.SubjectContains ("привет"));
-				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");
+				Assert.That (threaded.Count, Is.EqualTo (2), "Unexpected number of root nodes in threaded results");
 
 				await client.DisconnectAsync (false);
 			}
@@ -1183,11 +1183,11 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.IsTrue (inbox.Supports (FolderFeature.Threading), "Supports threading");
-				Assert.IsTrue (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Supports threading by References");
+				Assert.That (inbox.Supports (FolderFeature.Threading), Is.True, "Supports threading");
+				Assert.That (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Supports threading by References");
 
 				var threaded = inbox.Thread (UniqueIdRange.All, ThreadingAlgorithm.References, SearchQuery.SubjectContains ("привет"));
-				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");
+				Assert.That (threaded.Count, Is.EqualTo (2), "Unexpected number of root nodes in threaded results");
 
 				client.Disconnect (false);
 			}
@@ -1221,11 +1221,11 @@ namespace UnitTests.Net.Imap {
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
-				Assert.IsTrue (inbox.Supports (FolderFeature.Threading), "Supports threading");
-				Assert.IsTrue (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), "Supports threading by References");
+				Assert.That (inbox.Supports (FolderFeature.Threading), Is.True, "Supports threading");
+				Assert.That (inbox.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Supports threading by References");
 
 				var threaded = await inbox.ThreadAsync (UniqueIdRange.All, ThreadingAlgorithm.References, SearchQuery.SubjectContains ("привет"));
-				Assert.AreEqual (2, threaded.Count, "Unexpected number of root nodes in threaded results");
+				Assert.That (threaded.Count, Is.EqualTo (2), "Unexpected number of root nodes in threaded results");
 
 				await client.DisconnectAsync (false);
 			}

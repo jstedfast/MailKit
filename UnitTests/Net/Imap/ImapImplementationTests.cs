@@ -36,37 +36,37 @@ namespace UnitTests.Net.Imap {
 			var impl = new ImapImplementation ();
 
 			impl.Address = "50 Church St.";
-			Assert.AreEqual ("50 Church St.", impl.Address, "Address");
+			Assert.That (impl.Address, Is.EqualTo ("50 Church St."), "Address");
 
 			impl.Arguments = "-p -q";
-			Assert.AreEqual ("-p -q", impl.Arguments, "Arguments");
+			Assert.That (impl.Arguments, Is.EqualTo ("-p -q"), "Arguments");
 
 			impl.Command = "mono ./imap.exe";
-			Assert.AreEqual ("mono ./imap.exe", impl.Command, "Command");
+			Assert.That (impl.Command, Is.EqualTo ("mono ./imap.exe"), "Command");
 
 			impl.Environment = "MONO_GC=sgen";
-			Assert.AreEqual ("MONO_GC=sgen", impl.Environment, "Environment");
+			Assert.That (impl.Environment, Is.EqualTo ("MONO_GC=sgen"), "Environment");
 
 			impl.Name = "MailKit";
-			Assert.AreEqual ("MailKit", impl.Name, "Name");
+			Assert.That (impl.Name, Is.EqualTo ("MailKit"), "Name");
 
 			impl.OS = "Windows";
-			Assert.AreEqual ("Windows", impl.OS, "OS");
+			Assert.That (impl.OS, Is.EqualTo ("Windows"), "OS");
 
 			impl.OSVersion = "6.1";
-			Assert.AreEqual ("6.1", impl.OSVersion, "OSVersion");
+			Assert.That (impl.OSVersion, Is.EqualTo ("6.1"), "OSVersion");
 
 			impl.ReleaseDate = "${Date}";
-			Assert.AreEqual ("${Date}", impl.ReleaseDate, "ReleaseDate");
+			Assert.That (impl.ReleaseDate, Is.EqualTo ("${Date}"), "ReleaseDate");
 
 			impl.SupportUrl = "https://github.com/jstedfast/MailKit";
-			Assert.AreEqual ("https://github.com/jstedfast/MailKit", impl.SupportUrl, "SupportUrl");
+			Assert.That (impl.SupportUrl, Is.EqualTo ("https://github.com/jstedfast/MailKit"), "SupportUrl");
 
 			impl.Vendor = "Microsoft";
-			Assert.AreEqual ("Microsoft", impl.Vendor, "Vendor");
+			Assert.That (impl.Vendor, Is.EqualTo ("Microsoft"), "Vendor");
 
 			impl.Version = "2.0.7";
-			Assert.AreEqual ("2.0.7", impl.Version, "Version");
+			Assert.That (impl.Version, Is.EqualTo ("2.0.7"), "Version");
 		}
 	}
 }

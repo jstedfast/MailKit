@@ -71,8 +71,8 @@ namespace UnitTests.Net.Imap {
 			} else {
 				eventGroup.Format (engine, command, args, ref notifySelectedNewExpunge);
 
-				Assert.AreEqual (expected, command.ToString ());
-				Assert.AreEqual (expectedNotify, notifySelectedNewExpunge, "notifySelectedNewExpunge");
+				Assert.That (command.ToString (), Is.EqualTo (expected));
+				Assert.That (notifySelectedNewExpunge, Is.EqualTo (expectedNotify), "notifySelectedNewExpunge");
 			}
 		}
 

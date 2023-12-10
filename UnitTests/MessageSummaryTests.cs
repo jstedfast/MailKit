@@ -43,29 +43,29 @@ namespace UnitTests {
 		{
 			var summary = new MessageSummary (17);
 
-			Assert.AreEqual (0, summary.Attachments.Count (), "Attachments");
-			Assert.IsNull (summary.Body, "Body");
-			Assert.AreEqual (0, summary.BodyParts.Count (), "BodyParts");
-			Assert.AreEqual (DateTimeOffset.MinValue, summary.Date, "Date");
-			Assert.IsNull (summary.Envelope, "Envelope");
-			Assert.IsNull (summary.Flags, "Flags");
-			Assert.IsNull (summary.GMailLabels, "GMailLabels");
-			Assert.IsNull (summary.GMailMessageId, "GMailMessageId");
-			Assert.IsNull (summary.GMailThreadId, "GMailThreadId");
-			Assert.IsNull (summary.Headers, "Headers");
-			Assert.IsNull (summary.HtmlBody, "HtmlBody");
-			Assert.AreEqual (17, summary.Index, "Index");
-			Assert.IsNull (summary.InternalDate, "InternalDate");
-			Assert.IsFalse (summary.IsReply, "IsReply");
-			Assert.IsNull (summary.ModSeq, "ModSeq");
-			Assert.AreEqual (string.Empty, summary.NormalizedSubject, "NormalizedSubject");
-			Assert.IsNull (summary.PreviewText, "PreviewText");
-			Assert.IsNull (summary.References, "References");
-			Assert.IsNull (summary.Size, "Size");
-			Assert.IsNull (summary.TextBody, "TextBody");
-			Assert.AreEqual (UniqueId.Invalid, summary.UniqueId, "UniqueId");
-			Assert.IsNotNull (summary.Keywords, "Keywords");
-			Assert.AreEqual (0, summary.Keywords.Count, "Keywords");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (0), "Attachments");
+			Assert.That (summary.Body, Is.Null, "Body");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (0), "BodyParts");
+			Assert.That (summary.Date, Is.EqualTo (DateTimeOffset.MinValue), "Date");
+			Assert.That (summary.Envelope, Is.Null, "Envelope");
+			Assert.That (summary.Flags, Is.Null, "Flags");
+			Assert.That (summary.GMailLabels, Is.Null, "GMailLabels");
+			Assert.That (summary.GMailMessageId, Is.Null, "GMailMessageId");
+			Assert.That (summary.GMailThreadId, Is.Null, "GMailThreadId");
+			Assert.That (summary.Headers, Is.Null, "Headers");
+			Assert.That (summary.HtmlBody, Is.Null, "HtmlBody");
+			Assert.That (summary.Index, Is.EqualTo (17), "Index");
+			Assert.That (summary.InternalDate, Is.Null, "InternalDate");
+			Assert.That (summary.IsReply, Is.False, "IsReply");
+			Assert.That (summary.ModSeq, Is.Null, "ModSeq");
+			Assert.That (summary.NormalizedSubject, Is.EqualTo (string.Empty), "NormalizedSubject");
+			Assert.That (summary.PreviewText, Is.Null, "PreviewText");
+			Assert.That (summary.References, Is.Null, "References");
+			Assert.That (summary.Size, Is.Null, "Size");
+			Assert.That (summary.TextBody, Is.Null, "TextBody");
+			Assert.That (summary.UniqueId, Is.EqualTo (UniqueId.Invalid), "UniqueId");
+			Assert.That (summary.Keywords, Is.Not.Null, "Keywords");
+			Assert.That (summary.Keywords.Count, Is.EqualTo (0), "Keywords");
 		}
 
 		[Test]
@@ -79,9 +79,9 @@ namespace UnitTests {
 				GMailThreadId = thrid
 			};
 
-			Assert.AreEqual (0, summary.GMailLabels.Count, "GMailLabels");
-			Assert.AreEqual (msgid, summary.GMailMessageId, "GMailMessageId");
-			Assert.AreEqual (thrid, summary.GMailThreadId, "GMailThreadId");
+			Assert.That (summary.GMailLabels.Count, Is.EqualTo (0), "GMailLabels");
+			Assert.That (summary.GMailMessageId, Is.EqualTo (msgid), "GMailMessageId");
+			Assert.That (summary.GMailThreadId, Is.EqualTo (thrid), "GMailThreadId");
 		}
 
 		static ContentType CreateContentType (string type, string subtype, string partSpecifier)
@@ -131,14 +131,14 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.IsNull (html, "HtmlBody");
+			Assert.That (html, Is.Null, "HtmlBody");
 
-			Assert.AreEqual (0, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (1, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (0), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (1), "BodyParts");
 		}
 
 		[Test]
@@ -149,14 +149,14 @@ namespace UnitTests {
 			};
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("1"), "HtmlBody");
 
 			var plain = summary.TextBody;
-			Assert.IsNull (plain, "TextBody");
+			Assert.That (plain, Is.Null, "TextBody");
 
-			Assert.AreEqual (0, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (1, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (0), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (1), "BodyParts");
 		}
 
 		[Test]
@@ -167,13 +167,13 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.IsNull (plain, "TextBody");
+			Assert.That (plain, Is.Null, "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.IsNull (html, "HtmlBody");
+			Assert.That (html, Is.Null, "HtmlBody");
 
-			Assert.AreEqual (0, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (1, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (0), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (1), "BodyParts");
 		}
 
 		[Test]
@@ -187,15 +187,15 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("2", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("2"), "HtmlBody");
 
-			Assert.AreEqual (0, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (2, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (0), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (2), "BodyParts");
 		}
 
 		[Test]
@@ -209,13 +209,13 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.IsNull (plain, "TextBody");
+			Assert.That (plain, Is.Null, "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.IsNull (html, "HtmlBody");
+			Assert.That (html, Is.Null, "HtmlBody");
 
-			Assert.AreEqual (0, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (2, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (0), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (2), "BodyParts");
 		}
 
 		[Test]
@@ -229,14 +229,14 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.IsNull (html, "HtmlBody");
+			Assert.That (html, Is.Null, "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (2, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (2), "BodyParts");
 		}
 
 		[Test]
@@ -250,14 +250,14 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.IsNull (plain, "TextBody");
+			Assert.That (plain, Is.Null, "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("1"), "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (2, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (2), "BodyParts");
 		}
 
 		[Test]
@@ -271,14 +271,14 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.IsNull (html, "HtmlBody");
+			Assert.That (html, Is.Null, "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (2, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (2), "BodyParts");
 		}
 
 		[Test]
@@ -292,14 +292,14 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.IsNull (plain, "TextBody");
+			Assert.That (plain, Is.Null, "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1", html.ContentType.Parameters ["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters ["part-specifier"], Is.EqualTo ("1"), "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (2, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (2), "BodyParts");
 		}
 
 		[Test]
@@ -319,15 +319,15 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1.1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1.2.1", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.2.1"), "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (4, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (4), "BodyParts");
 		}
 
 		[Test]
@@ -355,15 +355,15 @@ namespace UnitTests {
 			html.ContentLocation = new Uri ("cid:" + cid);
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1.1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.1"), "TextBody");
 
 			html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1.2.2", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.2.2"), "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (4, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (4), "BodyParts");
 		}
 
 		[Test]
@@ -390,15 +390,15 @@ namespace UnitTests {
 			alternative.ContentLocation = new Uri ("cid:" + cid);
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1.2.1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.2.1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1.2.2", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.2.2"), "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (4, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (4), "BodyParts");
 		}
 
 		[Test]
@@ -418,15 +418,15 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1.1.1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.1.1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1.1.2", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.1.2"), "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (4, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (4), "BodyParts");
 		}
 
 		[Test]
@@ -445,15 +445,15 @@ namespace UnitTests {
 			};
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1.1.1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.1.1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1.1.2", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.1.2"), "HtmlBody");
 
-			Assert.AreEqual (1, summary.Attachments.Count (), "Attachments");
-			Assert.AreEqual (3, summary.BodyParts.Count (), "BodyParts");
+			Assert.That (summary.Attachments.Count (), Is.EqualTo (1), "Attachments");
+			Assert.That (summary.BodyParts.Count (), Is.EqualTo (3), "BodyParts");
 		}
 
 		[Test]
@@ -481,24 +481,24 @@ namespace UnitTests {
 			int i;
 
 			var plain = summary.TextBody;
-			Assert.NotNull (plain, "TextBody");
-			Assert.AreEqual ("1.1", plain.ContentType.Parameters["part-specifier"], "TextBody");
+			Assert.That (plain, Is.Not.Null, "TextBody");
+			Assert.That (plain.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.1"), "TextBody");
 
 			var html = summary.HtmlBody;
-			Assert.NotNull (html, "HtmlBody");
-			Assert.AreEqual ("1.2.1", html.ContentType.Parameters["part-specifier"], "HtmlBody");
+			Assert.That (html, Is.Not.Null, "HtmlBody");
+			Assert.That (html.ContentType.Parameters["part-specifier"], Is.EqualTo ("1.2.1"), "HtmlBody");
 
 			var bodyParts = new string [] { "1.1", "1.2.1", "1.2.2", "2", "3", "4" };
 			i = 0;
 
 			foreach (var part in summary.BodyParts)
-				Assert.AreEqual (bodyParts[i++], part.ContentType.Parameters["part-specifier"], "BodyParts");
+				Assert.That (part.ContentType.Parameters["part-specifier"], Is.EqualTo (bodyParts[i++]), "BodyParts");
 
 			var attachments = new string[] { "2", "3", "4" };
 			i = 0;
 
 			foreach (var attachment in summary.Attachments)
-				Assert.AreEqual (attachments[i++], attachment.ContentType.Parameters["part-specifier"], "Attachments");
+				Assert.That (attachment.ContentType.Parameters["part-specifier"], Is.EqualTo (attachments[i++]), "Attachments");
 		}
 	}
 }

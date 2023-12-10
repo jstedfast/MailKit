@@ -74,7 +74,7 @@ namespace UnitTests.Net.Imap {
 
 				token = ImapToken.Create (ImapTokenType.Atom, builder);
 				value = ImapEngine.ParseNumber (token, false, "Unexpected number: {0}", token);
-				Assert.AreEqual (0, value, "number");
+				Assert.That (value, Is.EqualTo (0), "number");
 
 				Assert.Throws<ImapProtocolException> (() => ImapEngine.ParseNumber (token, true, "Unexpected number: {0}", token), "nz-number");
 
@@ -85,7 +85,7 @@ namespace UnitTests.Net.Imap {
 
 				token = ImapToken.Create (ImapTokenType.Atom, builder);
 				value = ImapEngine.ParseNumber (token, false, "Unexpected number: {0}", token);
-				Assert.AreEqual (uint.MaxValue, value, "max number");
+				Assert.That (value, Is.EqualTo (uint.MaxValue), "max number");
 			}
 		}
 
@@ -100,7 +100,7 @@ namespace UnitTests.Net.Imap {
 
 				token = ImapToken.Create (ImapTokenType.Atom, builder);
 				value = ImapEngine.ParseNumber64 (token, false, "Unexpected number: {0}", token);
-				Assert.AreEqual (0, value, "number64");
+				Assert.That (value, Is.EqualTo (0), "number64");
 
 				Assert.Throws<ImapProtocolException> (() => ImapEngine.ParseNumber64 (token, true, "Unexpected number: {0}", token), "nz-number64");
 
@@ -111,7 +111,7 @@ namespace UnitTests.Net.Imap {
 
 				token = ImapToken.Create (ImapTokenType.Atom, builder);
 				value = ImapEngine.ParseNumber64 (token, false, "Unexpected number: {0}", token);
-				Assert.AreEqual (ulong.MaxValue, value, "max number64");
+				Assert.That (value, Is.EqualTo (ulong.MaxValue), "max number64");
 			}
 		}
 
@@ -135,9 +135,9 @@ namespace UnitTests.Net.Imap {
 
 				token = ImapToken.Create (ImapTokenType.Atom, builder);
 				uids = ImapEngine.ParseUidSet (token, 0, out min, out max, "Unexpected uid-set: {0}", token);
-				Assert.AreEqual ("1:500", uids.ToString (), "uid-set");
-				Assert.AreEqual ("1", min.ToString (), "min");
-				Assert.AreEqual ("500", max.ToString (), "max");
+				Assert.That (uids.ToString (), Is.EqualTo ("1:500"), "uid-set");
+				Assert.That (min.ToString (), Is.EqualTo ("1"), "min");
+				Assert.That (max.ToString (), Is.EqualTo ("500"), "max");
 			}
 		}
 
@@ -156,7 +156,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var result = ImapEngine.GetResponseCodeType (atom);
-				Assert.AreEqual (type, result);
+				Assert.That (result, Is.EqualTo (type));
 			}
 		}
 
@@ -179,13 +179,13 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (ImapResponseCodeType.BadCharset, respCode.Type);
-						Assert.AreEqual ("This is some free-form text", respCode.Message);
+						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.BadCharset));
+						Assert.That (respCode.Message, Is.EqualTo ("This is some free-form text"));
 
-						Assert.AreEqual (3, engine.SupportedCharsets.Count);
-						Assert.IsTrue (engine.SupportedCharsets.Contains ("US-ASCII"), "US-ASCII");
-						Assert.IsTrue (engine.SupportedCharsets.Contains ("iso-8859-1"), "iso-8859-1");
-						Assert.IsTrue (engine.SupportedCharsets.Contains ("UTF-8"), "UTF-8");
+						Assert.That (engine.SupportedCharsets.Count, Is.EqualTo (3));
+						Assert.That (engine.SupportedCharsets.Contains ("US-ASCII"), Is.True, "US-ASCII");
+						Assert.That (engine.SupportedCharsets.Contains ("iso-8859-1"), Is.True, "iso-8859-1");
+						Assert.That (engine.SupportedCharsets.Contains ("UTF-8"), Is.True, "UTF-8");
 					}
 				}
 			}
@@ -210,11 +210,11 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (ImapResponseCodeType.BadUrl, respCode.Type);
-						Assert.AreEqual ("CATENATE append has failed, one message expunged", respCode.Message);
+						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.BadUrl));
+						Assert.That (respCode.Message, Is.EqualTo ("CATENATE append has failed, one message expunged"));
 
 						var badurl = (BadUrlResponseCode) respCode;
-						Assert.AreEqual ("/INBOX;UIDVALIDITY=785799047/;UID=113330;section=1.5.9", badurl.BadUrl);
+						Assert.That (badurl.BadUrl, Is.EqualTo ("/INBOX;UIDVALIDITY=785799047/;UID=113330;section=1.5.9"));
 					}
 				}
 			}
@@ -239,11 +239,11 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (ImapResponseCodeType.MaxConvertMessages, respCode.Type);
-						Assert.AreEqual ("This is some free-form text", respCode.Message);
+						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.MaxConvertMessages));
+						Assert.That (respCode.Message, Is.EqualTo ("This is some free-form text"));
 
 						var maxconvert = (MaxConvertResponseCode) respCode;
-						Assert.AreEqual (1, maxconvert.MaxConvert);
+						Assert.That (maxconvert.MaxConvert, Is.EqualTo (1));
 					}
 				}
 			}
@@ -268,11 +268,11 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (ImapResponseCodeType.MaxConvertParts, respCode.Type);
-						Assert.AreEqual ("This is some free-form text", respCode.Message);
+						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.MaxConvertParts));
+						Assert.That (respCode.Message, Is.EqualTo ("This is some free-form text"));
 
 						var maxconvert = (MaxConvertResponseCode) respCode;
-						Assert.AreEqual (1, maxconvert.MaxConvert);
+						Assert.That (maxconvert.MaxConvert, Is.EqualTo (1));
 					}
 				}
 			}
@@ -297,11 +297,11 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (ImapResponseCodeType.NoUpdate, respCode.Type);
-						Assert.AreEqual ("Too many contexts", respCode.Message);
+						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.NoUpdate));
+						Assert.That (respCode.Message, Is.EqualTo ("Too many contexts"));
 
 						var noupdate = (NoUpdateResponseCode) respCode;
-						Assert.AreEqual ("B02", noupdate.Tag);
+						Assert.That (noupdate.Tag, Is.EqualTo ("B02"));
 					}
 				}
 			}
@@ -326,12 +326,12 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (ImapResponseCodeType.NewName, respCode.Type);
-						Assert.AreEqual ("This is some free-form text", respCode.Message);
+						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.NewName));
+						Assert.That (respCode.Message, Is.EqualTo ("This is some free-form text"));
 
 						var newname = (NewNameResponseCode) respCode;
-						Assert.AreEqual ("OldName", newname.OldName);
-						Assert.AreEqual ("NewName", newname.NewName);
+						Assert.That (newname.OldName, Is.EqualTo ("OldName"));
+						Assert.That (newname.NewName, Is.EqualTo ("NewName"));
 					}
 				}
 			}
@@ -356,11 +356,11 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (ImapResponseCodeType.UndefinedFilter, respCode.Type);
-						Assert.AreEqual ("This is some free-form text", respCode.Message);
+						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.UndefinedFilter));
+						Assert.That (respCode.Message, Is.EqualTo ("This is some free-form text"));
 
 						var undefined = (UndefinedFilterResponseCode) respCode;
-						Assert.AreEqual ("filter-name", undefined.Name);
+						Assert.That (undefined.Name, Is.EqualTo ("filter-name"));
 					}
 				}
 			}
@@ -378,7 +378,7 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (expected, engine.QuirksMode);
+						Assert.That (engine.QuirksMode, Is.EqualTo (expected));
 					}
 				}
 			}
@@ -396,7 +396,7 @@ namespace UnitTests.Net.Imap {
 							return;
 						}
 
-						Assert.AreEqual (expected, engine.QuirksMode);
+						Assert.That (engine.QuirksMode, Is.EqualTo (expected));
 					}
 				}
 			}

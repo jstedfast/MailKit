@@ -69,7 +69,7 @@ namespace UnitTests.Net.Imap {
 				const string expected = "This is some dummy text just to make sure this is working correctly.";
 				var text = reader.ReadToEnd ();
 
-				Assert.AreEqual (expected, text);
+				Assert.That (text, Is.EqualTo (expected));
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace UnitTests.Net.Imap {
 				const string expected = "This is some dummy text just to make sure this is working correctly.";
 				var text = await reader.ReadToEndAsync ();
 
-				Assert.AreEqual (expected, text);
+				Assert.That (text, Is.EqualTo (expected));
 			}
 		}
 
@@ -522,28 +522,28 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var inbox = client.Inbox;
 
 				inbox.Open (FolderAccess.ReadOnly);
 
 				var messages = inbox.Fetch (UniqueIdRange.All, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "UID FETCH");
+				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "FETCH");
+				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "FETCH");
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = inbox.Fetch (0, -1, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "FETCH min:max");
+				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				client.Disconnect (false);
 			}
@@ -575,28 +575,28 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var inbox = client.Inbox;
 
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
 
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "UID FETCH");
+				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "FETCH");
+				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "FETCH");
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.AreEqual (PreviewTextValues.Length, messages.Count, "FETCH min:max");
+				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				await client.DisconnectAsync (false);
 			}
@@ -629,7 +629,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				// Note: Do not try XOAUTH2
@@ -638,7 +638,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					client.Authenticate ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				// disable LIST-EXTENDED
@@ -646,9 +646,9 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var inbox = client.Inbox;
 
@@ -660,15 +660,15 @@ namespace UnitTests.Net.Imap {
 
 				var messages = inbox.Fetch (UniqueIdRange.All, request);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, request);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = inbox.Fetch (0, -1, request);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				client.Disconnect (false);
 			}
@@ -683,7 +683,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
 				// Note: Do not try XOAUTH2
@@ -692,7 +692,7 @@ namespace UnitTests.Net.Imap {
 				try {
 					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
 				// disable LIST-EXTENDED
@@ -700,9 +700,9 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var inbox = client.Inbox;
 
@@ -714,15 +714,15 @@ namespace UnitTests.Net.Imap {
 
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, request);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, request);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = await inbox.FetchAsync (0, -1, request);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (PreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				await client.DisconnectAsync (false);
 			}
@@ -790,9 +790,9 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var inbox = client.Inbox;
 
@@ -800,15 +800,15 @@ namespace UnitTests.Net.Imap {
 
 				var messages = inbox.Fetch (UniqueIdRange.All, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (SimulatedPreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
 				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (SimulatedPreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
 				messages = inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (SimulatedPreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
 				client.Disconnect (false);
 			}
@@ -840,9 +840,9 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var inbox = client.Inbox;
 
@@ -850,15 +850,15 @@ namespace UnitTests.Net.Imap {
 
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (SimulatedPreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
 				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (SimulatedPreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
 				messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (SimulatedPreviewTextValues[i], messages[i].PreviewText);
+					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
 				await client.DisconnectAsync (false);
 			}
@@ -905,9 +905,9 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var inbox = client.Inbox;
 
@@ -916,13 +916,13 @@ namespace UnitTests.Net.Imap {
 				var range = new UniqueIdRange (0, 1, 6);
 				var messages = inbox.Fetch (range, MessageSummaryItems.UniqueId | MessageSummaryItems.InternalDate | MessageSummaryItems.Envelope);
 
-				Assert.AreEqual (4, messages.Count, "Count");
+				Assert.That (messages.Count, Is.EqualTo (4), "Count");
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (i, messages[i].Index, "Index #{0}", i);
-				Assert.AreEqual ((uint) 1, messages[0].UniqueId.Id, "UniqueId #0");
-				Assert.AreEqual ((uint) 3, messages[1].UniqueId.Id, "UniqueId #1");
-				Assert.AreEqual ((uint) 4, messages[2].UniqueId.Id, "UniqueId #2");
-				Assert.AreEqual ((uint) 5, messages[3].UniqueId.Id, "UniqueId #3");
+					Assert.That (messages[i].Index, Is.EqualTo (i), $"Index #{i}");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo ((uint) 1), "UniqueId #0");
+				Assert.That (messages[1].UniqueId.Id, Is.EqualTo ((uint) 3), "UniqueId #1");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo ((uint) 4), "UniqueId #2");
+				Assert.That (messages[3].UniqueId.Id, Is.EqualTo ((uint) 5), "UniqueId #3");
 
 				client.Disconnect (false);
 			}
@@ -954,9 +954,9 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var inbox = client.Inbox;
 
@@ -965,13 +965,13 @@ namespace UnitTests.Net.Imap {
 				var range = new UniqueIdRange (0, 1, 6);
 				var messages = await inbox.FetchAsync (range, MessageSummaryItems.UniqueId | MessageSummaryItems.InternalDate | MessageSummaryItems.Envelope);
 
-				Assert.AreEqual (4, messages.Count, "Count");
+				Assert.That (messages.Count, Is.EqualTo (4), "Count");
 				for (int i = 0; i < messages.Count; i++)
-					Assert.AreEqual (i, messages[i].Index, "Index #{0}", i);
-				Assert.AreEqual ((uint) 1, messages[0].UniqueId.Id, "UniqueId #0");
-				Assert.AreEqual ((uint) 3, messages[1].UniqueId.Id, "UniqueId #1");
-				Assert.AreEqual ((uint) 4, messages[2].UniqueId.Id, "UniqueId #2");
-				Assert.AreEqual ((uint) 5, messages[3].UniqueId.Id, "UniqueId #3");
+					Assert.That (messages[i].Index, Is.EqualTo (i), $"Index #{i}");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo ((uint) 1), "UniqueId #0");
+				Assert.That (messages[1].UniqueId.Id, Is.EqualTo ((uint) 3), "UniqueId #1");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo ((uint) 4), "UniqueId #2");
+				Assert.That (messages[3].UniqueId.Id, Is.EqualTo ((uint) 5), "UniqueId #3");
 
 				await client.DisconnectAsync (false);
 			}
@@ -1014,8 +1014,8 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var inbox = client.Inbox;
-				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
-				Assert.AreEqual (FolderAttributes.Inbox | FolderAttributes.HasNoChildren | FolderAttributes.Subscribed, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
+				Assert.That (inbox, Is.Not.Null, "Expected non-null Inbox folder.");
+				Assert.That (inbox.Attributes, Is.EqualTo (FolderAttributes.Inbox | FolderAttributes.HasNoChildren | FolderAttributes.Subscribed), "Expected Inbox attributes to be \\HasNoChildren.");
 
 				foreach (var special in Enum.GetValues (typeof (SpecialFolder)).OfType<SpecialFolder> ()) {
 					var folder = client.GetFolder (special);
@@ -1023,10 +1023,10 @@ namespace UnitTests.Net.Imap {
 					if (special != SpecialFolder.Archive) {
 						var expected = GetSpecialFolderAttribute (special) | FolderAttributes.HasNoChildren;
 
-						Assert.IsNotNull (folder, "Expected non-null {0} folder.", special);
-						Assert.AreEqual (expected, folder.Attributes, "Expected {0} attributes to be \\HasNoChildren.", special);
+						Assert.That (folder, Is.Not.Null, $"Expected non-null {special} folder.");
+						Assert.That (folder.Attributes, Is.EqualTo (expected), $"Expected {special} attributes to be \\HasNoChildren.");
 					} else {
-						Assert.IsNull (folder, "Expected null {0} folder.", special);
+						Assert.That (folder, Is.Null, $"Expected null {special} folder.");
 					}
 				}
 
@@ -1035,9 +1035,9 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				client.Inbox.Open (FolderAccess.ReadOnly);
 
@@ -1051,7 +1051,7 @@ namespace UnitTests.Net.Imap {
 						using (var md5 = MD5.Create ()) {
 							var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-							Assert.AreEqual ("167a46aa81e881da2ea8a840727384d3", md5sum, "MD5 checksums do not match.");
+							Assert.That (md5sum, Is.EqualTo ("167a46aa81e881da2ea8a840727384d3"), "MD5 checksums do not match.");
 						}
 					}
 				}
@@ -1082,8 +1082,8 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var inbox = client.Inbox;
-				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
-				Assert.AreEqual (FolderAttributes.Inbox | FolderAttributes.HasNoChildren | FolderAttributes.Subscribed, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
+				Assert.That (inbox, Is.Not.Null, "Expected non-null Inbox folder.");
+				Assert.That (inbox.Attributes, Is.EqualTo (FolderAttributes.Inbox | FolderAttributes.HasNoChildren | FolderAttributes.Subscribed), "Expected Inbox attributes to be \\HasNoChildren.");
 
 				foreach (var special in Enum.GetValues (typeof (SpecialFolder)).OfType<SpecialFolder> ()) {
 					var folder = client.GetFolder (special);
@@ -1091,10 +1091,10 @@ namespace UnitTests.Net.Imap {
 					if (special != SpecialFolder.Archive) {
 						var expected = GetSpecialFolderAttribute (special) | FolderAttributes.HasNoChildren;
 
-						Assert.IsNotNull (folder, "Expected non-null {0} folder.", special);
-						Assert.AreEqual (expected, folder.Attributes, "Expected {0} attributes to be \\HasNoChildren.", special);
+						Assert.That (folder, Is.Not.Null, $"Expected non-null {special} folder.");
+						Assert.That (folder.Attributes, Is.EqualTo (expected), $"Expected {special} attributes to be \\HasNoChildren.");
 					} else {
-						Assert.IsNull (folder, "Expected null {0} folder.", special);
+						Assert.That (folder, Is.Null, $"Expected null {special} folder.");
 					}
 				}
 
@@ -1103,9 +1103,9 @@ namespace UnitTests.Net.Imap {
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
-				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
-				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
-				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				await client.Inbox.OpenAsync (FolderAccess.ReadOnly);
 
@@ -1119,7 +1119,7 @@ namespace UnitTests.Net.Imap {
 						using (var md5 = MD5.Create ()) {
 							var md5sum = HexEncode (md5.ComputeHash (jpeg));
 
-							Assert.AreEqual ("167a46aa81e881da2ea8a840727384d3", md5sum, "MD5 checksums do not match.");
+							Assert.That (md5sum, Is.EqualTo ("167a46aa81e881da2ea8a840727384d3"), "MD5 checksums do not match.");
 						}
 					}
 				}
@@ -1161,25 +1161,25 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), "OBJECTID");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), Is.True, "OBJECTID");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadOnly);
 
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.EmailId | MessageSummaryItems.ThreadId);
-				Assert.AreEqual (4, messages.Count, "Count");
-				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M6d99ac3275bb4e", messages[0].EmailId, "EmailId");
-				Assert.AreEqual ("T64b478a75b7ea9", messages[0].ThreadId, "ThreadId");
-				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M288836c4c7a762", messages[1].EmailId, "EmailId");
-				Assert.AreEqual ("T64b478a75b7ea9", messages[1].ThreadId, "ThreadId");
-				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M5fdc09b49ea703", messages[2].EmailId, "EmailId");
-				Assert.AreEqual ("T11863d02dd95b5", messages[2].ThreadId, "ThreadId");
-				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M4fdc09b49ea629", messages[3].EmailId, "EmailId");
-				Assert.AreEqual (null, messages[3].ThreadId, "ThreadId");
+				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
+				Assert.That (messages[0].EmailId, Is.EqualTo ("M6d99ac3275bb4e"), "EmailId");
+				Assert.That (messages[0].ThreadId, Is.EqualTo ("T64b478a75b7ea9"), "ThreadId");
+				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
+				Assert.That (messages[1].EmailId, Is.EqualTo ("M288836c4c7a762"), "EmailId");
+				Assert.That (messages[1].ThreadId, Is.EqualTo ("T64b478a75b7ea9"), "ThreadId");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (3), "UniqueId");
+				Assert.That (messages[2].EmailId, Is.EqualTo ("M5fdc09b49ea703"), "EmailId");
+				Assert.That (messages[2].ThreadId, Is.EqualTo ("T11863d02dd95b5"), "ThreadId");
+				Assert.That (messages[3].UniqueId.Id, Is.EqualTo (4), "UniqueId");
+				Assert.That (messages[3].EmailId, Is.EqualTo ("M4fdc09b49ea629"), "EmailId");
+				Assert.That (messages[3].ThreadId, Is.EqualTo (null), "ThreadId");
 
 				client.Disconnect (true);
 			}
@@ -1203,25 +1203,25 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), "OBJECTID");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), Is.True, "OBJECTID");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
 
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.EmailId | MessageSummaryItems.ThreadId);
-				Assert.AreEqual (4, messages.Count, "Count");
-				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M6d99ac3275bb4e", messages[0].EmailId, "EmailId");
-				Assert.AreEqual ("T64b478a75b7ea9", messages[0].ThreadId, "ThreadId");
-				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M288836c4c7a762", messages[1].EmailId, "EmailId");
-				Assert.AreEqual ("T64b478a75b7ea9", messages[1].ThreadId, "ThreadId");
-				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M5fdc09b49ea703", messages[2].EmailId, "EmailId");
-				Assert.AreEqual ("T11863d02dd95b5", messages[2].ThreadId, "ThreadId");
-				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
-				Assert.AreEqual ("M4fdc09b49ea629", messages[3].EmailId, "EmailId");
-				Assert.AreEqual (null, messages[3].ThreadId, "ThreadId");
+				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
+				Assert.That (messages[0].EmailId, Is.EqualTo ("M6d99ac3275bb4e"), "EmailId");
+				Assert.That (messages[0].ThreadId, Is.EqualTo ("T64b478a75b7ea9"), "ThreadId");
+				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
+				Assert.That (messages[1].EmailId, Is.EqualTo ("M288836c4c7a762"), "EmailId");
+				Assert.That (messages[1].ThreadId, Is.EqualTo ("T64b478a75b7ea9"), "ThreadId");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (3), "UniqueId");
+				Assert.That (messages[2].EmailId, Is.EqualTo ("M5fdc09b49ea703"), "EmailId");
+				Assert.That (messages[2].ThreadId, Is.EqualTo ("T11863d02dd95b5"), "ThreadId");
+				Assert.That (messages[3].UniqueId.Id, Is.EqualTo (4), "UniqueId");
+				Assert.That (messages[3].EmailId, Is.EqualTo ("M4fdc09b49ea629"), "EmailId");
+				Assert.That (messages[3].ThreadId, Is.EqualTo (null), "ThreadId");
 
 				await client.DisconnectAsync (true);
 			}
@@ -1260,7 +1260,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), "SAVEDATE");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), Is.True, "SAVEDATE");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadOnly);
@@ -1268,15 +1268,15 @@ namespace UnitTests.Net.Imap {
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.SaveDate);
 				var dto = new DateTimeOffset (2023, 9, 12, 13, 39, 01, new TimeSpan (-4, 0, 0));
 
-				Assert.AreEqual (4, messages.Count, "Count");
-				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
-				Assert.AreEqual (dto, messages[0].SaveDate, "SaveDate");
-				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
-				Assert.AreEqual (dto, messages[1].SaveDate, "SaveDate");
-				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
-				Assert.AreEqual (dto, messages[2].SaveDate, "SaveDate");
-				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
-				Assert.AreEqual (null, messages[3].SaveDate, "SaveDate");
+				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
+				Assert.That (messages[0].SaveDate, Is.EqualTo (dto), "SaveDate");
+				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
+				Assert.That (messages[1].SaveDate, Is.EqualTo (dto), "SaveDate");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (3), "UniqueId");
+				Assert.That (messages[2].SaveDate, Is.EqualTo (dto), "SaveDate");
+				Assert.That (messages[3].UniqueId.Id, Is.EqualTo (4), "UniqueId");
+				Assert.That (messages[3].SaveDate, Is.EqualTo (null), "SaveDate");
 
 				client.Disconnect (true);
 			}
@@ -1300,7 +1300,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), "SAVEDATE");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), Is.True, "SAVEDATE");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
@@ -1308,15 +1308,15 @@ namespace UnitTests.Net.Imap {
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.SaveDate);
 				var dto = new DateTimeOffset (2023, 9, 12, 13, 39, 01, new TimeSpan (-4, 0, 0));
 
-				Assert.AreEqual (4, messages.Count, "Count");
-				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
-				Assert.AreEqual (dto, messages[0].SaveDate, "SaveDate");
-				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
-				Assert.AreEqual (dto, messages[1].SaveDate, "SaveDate");
-				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
-				Assert.AreEqual (dto, messages[2].SaveDate, "SaveDate");
-				Assert.AreEqual (4, messages[3].UniqueId.Id, "UniqueId");
-				Assert.AreEqual (null, messages[3].SaveDate, "SaveDate");
+				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
+				Assert.That (messages[0].SaveDate, Is.EqualTo (dto), "SaveDate");
+				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
+				Assert.That (messages[1].SaveDate, Is.EqualTo (dto), "SaveDate");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (3), "UniqueId");
+				Assert.That (messages[2].SaveDate, Is.EqualTo (dto), "SaveDate");
+				Assert.That (messages[3].UniqueId.Id, Is.EqualTo (4), "UniqueId");
+				Assert.That (messages[3].SaveDate, Is.EqualTo (null), "SaveDate");
 
 				await client.DisconnectAsync (true);
 			}
@@ -1357,49 +1357,49 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Annotate), "ANNOTATE-EXPERIMENT-1");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadOnly, inbox.AnnotationAccess, "AnnotationAccess");
-				//Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				//Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadOnly), "AnnotationAccess");
+				//Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				//Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Annotations);
-				Assert.AreEqual (3, messages.Count, "Count");
+				Assert.That (messages.Count, Is.EqualTo (3), "Count");
 
 				IReadOnlyList<Annotation> annotations;
 
-				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
 				annotations = messages[0].Annotations;
-				Assert.AreEqual (1, annotations.Count, "Count");
-				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "Entry");
-				Assert.AreEqual (2, annotations[0].Properties.Count, "Properties.Count");
-				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "value.priv");
-				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "value.shared");
+				Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "Entry");
+				Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "Properties.Count");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "value.priv");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "value.shared");
 
-				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
+				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
 				annotations = messages[1].Annotations;
-				Assert.AreEqual (2, annotations.Count, "Count");
-				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
-				Assert.AreEqual (2, annotations[0].Properties.Count, "annotations[0].Properties.Count");
-				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
-				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
-				Assert.AreEqual (AnnotationEntry.AltSubject, annotations[1].Entry, "annotations[1].Entry");
-				Assert.AreEqual (2, annotations[1].Properties.Count, "annotations[1].Properties.Count");
-				Assert.AreEqual ("My subject", annotations[1].Properties[AnnotationAttribute.PrivateValue], "annotations[1] value.priv");
-				Assert.AreEqual (null, annotations[1].Properties[AnnotationAttribute.SharedValue], "annotations[1] value.shared");
+				Assert.That (annotations.Count, Is.EqualTo (2), "Count");
+				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
+				Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "annotations[0].Properties.Count");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
+				Assert.That (annotations[1].Entry, Is.EqualTo (AnnotationEntry.AltSubject), "annotations[1].Entry");
+				Assert.That (annotations[1].Properties.Count, Is.EqualTo (2), "annotations[1].Properties.Count");
+				Assert.That (annotations[1].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My subject"), "annotations[1] value.priv");
+				Assert.That (annotations[1].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[1] value.shared");
 
-				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (3), "UniqueId");
 				annotations = messages[2].Annotations;
-				Assert.AreEqual (1, annotations.Count, "Count");
-				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
-				Assert.AreEqual (4, annotations[0].Properties.Count, "annotations[0].Properties.Count");
-				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
-				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
-				Assert.AreEqual ("10", annotations[0].Properties[AnnotationAttribute.PrivateSize], "annotations[0] size.priv");
-				Assert.AreEqual ("0", annotations[0].Properties[AnnotationAttribute.SharedSize], "annotations[0] size.shared");
+				Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
+				Assert.That (annotations[0].Properties.Count, Is.EqualTo (4), "annotations[0].Properties.Count");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateSize], Is.EqualTo ("10"), "annotations[0] size.priv");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedSize], Is.EqualTo ("0"), "annotations[0] size.shared");
 
 				var annotationsChanged = new List<AnnotationsChangedEventArgs> ();
 
@@ -1409,7 +1409,7 @@ namespace UnitTests.Net.Imap {
 
 				client.NoOp ();
 
-				Assert.AreEqual (3, annotationsChanged.Count, "# AnnotationsChanged events");
+				Assert.That (annotationsChanged.Count, Is.EqualTo (3), "# AnnotationsChanged events");
 
 				client.Disconnect (false);
 			}
@@ -1436,49 +1436,49 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Annotate), "ANNOTATE-EXPERIMENT-1");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadOnly, inbox.AnnotationAccess, "AnnotationAccess");
-				//Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				//Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadOnly), "AnnotationAccess");
+				//Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				//Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Annotations);
-				Assert.AreEqual (3, messages.Count, "Count");
+				Assert.That (messages.Count, Is.EqualTo (3), "Count");
 
 				IReadOnlyList<Annotation> annotations;
 
-				Assert.AreEqual (1, messages[0].UniqueId.Id, "UniqueId");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
 				annotations = messages[0].Annotations;
-				Assert.AreEqual (1, annotations.Count, "Count");
-				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "Entry");
-				Assert.AreEqual (2, annotations[0].Properties.Count, "Properties.Count");
-				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "value.priv");
-				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "value.shared");
+				Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "Entry");
+				Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "Properties.Count");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "value.priv");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "value.shared");
 
-				Assert.AreEqual (2, messages[1].UniqueId.Id, "UniqueId");
+				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
 				annotations = messages[1].Annotations;
-				Assert.AreEqual (2, annotations.Count, "Count");
-				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
-				Assert.AreEqual (2, annotations[0].Properties.Count, "annotations[0].Properties.Count");
-				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
-				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
-				Assert.AreEqual (AnnotationEntry.AltSubject, annotations[1].Entry, "annotations[1].Entry");
-				Assert.AreEqual (2, annotations[1].Properties.Count, "annotations[1].Properties.Count");
-				Assert.AreEqual ("My subject", annotations[1].Properties[AnnotationAttribute.PrivateValue], "annotations[1] value.priv");
-				Assert.AreEqual (null, annotations[1].Properties[AnnotationAttribute.SharedValue], "annotations[1] value.shared");
+				Assert.That (annotations.Count, Is.EqualTo (2), "Count");
+				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
+				Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "annotations[0].Properties.Count");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
+				Assert.That (annotations[1].Entry, Is.EqualTo (AnnotationEntry.AltSubject), "annotations[1].Entry");
+				Assert.That (annotations[1].Properties.Count, Is.EqualTo (2), "annotations[1].Properties.Count");
+				Assert.That (annotations[1].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My subject"), "annotations[1] value.priv");
+				Assert.That (annotations[1].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[1] value.shared");
 
-				Assert.AreEqual (3, messages[2].UniqueId.Id, "UniqueId");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (3), "UniqueId");
 				annotations = messages[2].Annotations;
-				Assert.AreEqual (1, annotations.Count, "Count");
-				Assert.AreEqual (AnnotationEntry.Comment, annotations[0].Entry, "annotations[0].Entry");
-				Assert.AreEqual (4, annotations[0].Properties.Count, "annotations[0].Properties.Count");
-				Assert.AreEqual ("My comment", annotations[0].Properties[AnnotationAttribute.PrivateValue], "annotations[0] value.priv");
-				Assert.AreEqual (null, annotations[0].Properties[AnnotationAttribute.SharedValue], "annotations[0] value.shared");
-				Assert.AreEqual ("10", annotations[0].Properties[AnnotationAttribute.PrivateSize], "annotations[0] size.priv");
-				Assert.AreEqual ("0", annotations[0].Properties[AnnotationAttribute.SharedSize], "annotations[0] size.shared");
+				Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
+				Assert.That (annotations[0].Properties.Count, Is.EqualTo (4), "annotations[0].Properties.Count");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateSize], Is.EqualTo ("10"), "annotations[0] size.priv");
+				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedSize], Is.EqualTo ("0"), "annotations[0] size.shared");
 
 				var annotationsChanged = new List<AnnotationsChangedEventArgs> ();
 
@@ -1488,7 +1488,7 @@ namespace UnitTests.Net.Imap {
 
 				await client.NoOpAsync ();
 
-				Assert.AreEqual (3, annotationsChanged.Count, "# AnnotationsChanged events");
+				Assert.That (annotationsChanged.Count, Is.EqualTo (3), "# AnnotationsChanged events");
 
 				client.Disconnect (false);
 			}
@@ -1529,26 +1529,26 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (1, client.PersonalNamespaces.Count, "Personal Count");
-				Assert.AreEqual ("", client.PersonalNamespaces[0].Path, "Personal Path");
-				Assert.AreEqual ('\\', client.PersonalNamespaces[0].DirectorySeparator, "Personal DirectorySeparator");
+				Assert.That (client.PersonalNamespaces.Count, Is.EqualTo (1), "Personal Count");
+				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (""), "Personal Path");
+				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Personal DirectorySeparator");
 
-				Assert.AreEqual (1, client.OtherNamespaces.Count, "Other Count");
-				Assert.AreEqual ("Other", client.OtherNamespaces[0].Path, "Other Path");
-				Assert.AreEqual ('\\', client.OtherNamespaces[0].DirectorySeparator, "Other DirectorySeparator");
+				Assert.That (client.OtherNamespaces.Count, Is.EqualTo (1), "Other Count");
+				Assert.That (client.OtherNamespaces[0].Path, Is.EqualTo ("Other"), "Other Path");
+				Assert.That (client.OtherNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Other DirectorySeparator");
 
-				Assert.AreEqual (1, client.SharedNamespaces.Count, "Shared Count");
-				Assert.AreEqual ("Shared", client.SharedNamespaces[0].Path, "Shared Path");
-				Assert.AreEqual ('\\', client.SharedNamespaces[0].DirectorySeparator, "Shared DirectorySeparator");
+				Assert.That (client.SharedNamespaces.Count, Is.EqualTo (1), "Shared Count");
+				Assert.That (client.SharedNamespaces[0].Path, Is.EqualTo ("Shared"), "Shared Path");
+				Assert.That (client.SharedNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Shared DirectorySeparator");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure);
-				Assert.AreEqual (29, messages.Count, "Count");
+				Assert.That (messages.Count, Is.EqualTo (29), "Count");
 
 				for (int i = 0; i < 29; i++) {
-					Assert.AreEqual (i, messages[i].Index, "MessageSummaryItems are out of order!");
+					Assert.That (messages[i].Index, Is.EqualTo (i), "MessageSummaryItems are out of order!");
 				}
 
 				client.Disconnect (false);
@@ -1576,26 +1576,26 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.AreEqual (1, client.PersonalNamespaces.Count, "Personal Count");
-				Assert.AreEqual ("", client.PersonalNamespaces[0].Path, "Personal Path");
-				Assert.AreEqual ('\\', client.PersonalNamespaces[0].DirectorySeparator, "Personal DirectorySeparator");
+				Assert.That (client.PersonalNamespaces.Count, Is.EqualTo (1), "Personal Count");
+				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (""), "Personal Path");
+				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Personal DirectorySeparator");
 
-				Assert.AreEqual (1, client.OtherNamespaces.Count, "Other Count");
-				Assert.AreEqual ("Other", client.OtherNamespaces[0].Path, "Other Path");
-				Assert.AreEqual ('\\', client.OtherNamespaces[0].DirectorySeparator, "Other DirectorySeparator");
+				Assert.That (client.OtherNamespaces.Count, Is.EqualTo (1), "Other Count");
+				Assert.That (client.OtherNamespaces[0].Path, Is.EqualTo ("Other"), "Other Path");
+				Assert.That (client.OtherNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Other DirectorySeparator");
 
-				Assert.AreEqual (1, client.SharedNamespaces.Count, "Shared Count");
-				Assert.AreEqual ("Shared", client.SharedNamespaces[0].Path, "Shared Path");
-				Assert.AreEqual ('\\', client.SharedNamespaces[0].DirectorySeparator, "Shared DirectorySeparator");
+				Assert.That (client.SharedNamespaces.Count, Is.EqualTo (1), "Shared Count");
+				Assert.That (client.SharedNamespaces[0].Path, Is.EqualTo ("Shared"), "Shared Path");
+				Assert.That (client.SharedNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Shared DirectorySeparator");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure);
-				Assert.AreEqual (29, messages.Count, "Count");
+				Assert.That (messages.Count, Is.EqualTo (29), "Count");
 
 				for (int i = 0; i < 29; i++) {
-					Assert.AreEqual (i, messages[i].Index, "MessageSummaryItems are out of order!");
+					Assert.That (messages[i].Index, Is.EqualTo (i), "MessageSummaryItems are out of order!");
 				}
 
 				client.Disconnect (false);
@@ -1636,14 +1636,14 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Annotate), "ANNOTATE-EXPERIMENT-1");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
-				//Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				//Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadWrite), "AnnotationAccess");
+				//Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				//Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				// Keep track of various folder events
 				var annotationsChanged = new List<AnnotationsChangedEventArgs> ();
@@ -1667,18 +1667,18 @@ namespace UnitTests.Net.Imap {
 					modSeqChanged.Add (e);
 				};
 
-				Assert.AreEqual (2, inbox.HighestModSeq, "HIGHESTMODSEQ #1");
+				Assert.That (inbox.HighestModSeq, Is.EqualTo (2), "HIGHESTMODSEQ #1");
 
 				var headers = inbox.GetHeaders (new UniqueId (1));
 				var message = inbox.GetMessage (new UniqueId (1));
 				var stream = inbox.GetStream (new UniqueId (1));
 
-				Assert.AreEqual (29233, inbox.HighestModSeq, "HIGHESTMODSEQ #2");
+				Assert.That (inbox.HighestModSeq, Is.EqualTo (29233), "HIGHESTMODSEQ #2");
 
-				Assert.AreEqual (3, annotationsChanged.Count, "AnnotationsChanged");
-				Assert.AreEqual (3, flagsChanged.Count, "FlagsChanged");
-				Assert.AreEqual (3, labelsChanged.Count, "LabelsChanged");
-				Assert.AreEqual (3, modSeqChanged.Count, "ModSeqChanged");
+				Assert.That (annotationsChanged.Count, Is.EqualTo (3), "AnnotationsChanged");
+				Assert.That (flagsChanged.Count, Is.EqualTo (3), "FlagsChanged");
+				Assert.That (labelsChanged.Count, Is.EqualTo (3), "LabelsChanged");
+				Assert.That (modSeqChanged.Count, Is.EqualTo (3), "ModSeqChanged");
 
 				client.Disconnect (false);
 			}
@@ -1702,14 +1702,14 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsTrue (client.Capabilities.HasFlag (ImapCapabilities.Annotate), "ANNOTATE-EXPERIMENT-1");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
-				Assert.AreEqual (AnnotationAccess.ReadWrite, inbox.AnnotationAccess, "AnnotationAccess");
-				//Assert.AreEqual (AnnotationScope.Shared, inbox.AnnotationScopes, "AnnotationScopes");
-				//Assert.AreEqual (20480, inbox.MaxAnnotationSize, "MaxAnnotationSize");
+				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadWrite), "AnnotationAccess");
+				//Assert.That (inbox.AnnotationScopes, Is.EqualTo (AnnotationScope.Shared), "AnnotationScopes");
+				//Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				// Keep track of various folder events
 				var annotationsChanged = new List<AnnotationsChangedEventArgs> ();
@@ -1733,18 +1733,18 @@ namespace UnitTests.Net.Imap {
 					modSeqChanged.Add (e);
 				};
 
-				Assert.AreEqual (2, inbox.HighestModSeq, "HIGHESTMODSEQ #1");
+				Assert.That (inbox.HighestModSeq, Is.EqualTo (2), "HIGHESTMODSEQ #1");
 
 				var headers = await inbox.GetHeadersAsync (new UniqueId (1));
 				var message = await inbox.GetMessageAsync (new UniqueId (1));
 				var stream = await inbox.GetStreamAsync (new UniqueId (1));
 
-				Assert.AreEqual (29233, inbox.HighestModSeq, "HIGHESTMODSEQ #2");
+				Assert.That (inbox.HighestModSeq, Is.EqualTo (29233), "HIGHESTMODSEQ #2");
 
-				Assert.AreEqual (3, annotationsChanged.Count, "AnnotationsChanged");
-				Assert.AreEqual (3, flagsChanged.Count, "FlagsChanged");
-				Assert.AreEqual (3, labelsChanged.Count, "LabelsChanged");
-				Assert.AreEqual (3, modSeqChanged.Count, "ModSeqChanged");
+				Assert.That (annotationsChanged.Count, Is.EqualTo (3), "AnnotationsChanged");
+				Assert.That (flagsChanged.Count, Is.EqualTo (3), "FlagsChanged");
+				Assert.That (labelsChanged.Count, Is.EqualTo (3), "LabelsChanged");
+				Assert.That (modSeqChanged.Count, Is.EqualTo (3), "ModSeqChanged");
 
 				client.Disconnect (false);
 			}
@@ -1759,7 +1759,7 @@ namespace UnitTests.Net.Imap {
 				var request = new FetchRequest (items);
 				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
 
-				Assert.AreEqual (expected, command);
+				Assert.That (command, Is.EqualTo (expected));
 			}
 		}
 
@@ -1776,7 +1776,7 @@ namespace UnitTests.Net.Imap {
 				string command;
 
 				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
-				Assert.AreEqual ("BODY.PEEK[HEADER]", command);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER]"));
 
 				request = new FetchRequest () {
 					Headers = new HeaderSet (new[] { "FROM", "SUBJECT", "DATE" }) {
@@ -1785,7 +1785,7 @@ namespace UnitTests.Net.Imap {
 				};
 
 				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
-				Assert.AreEqual ("BODY.PEEK[HEADER.FIELDS.NOT (FROM SUBJECT DATE)]", command);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS.NOT (FROM SUBJECT DATE)]"));
 			}
 		}
 
@@ -1798,21 +1798,21 @@ namespace UnitTests.Net.Imap {
 				string command;
 
 				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
-				Assert.AreEqual ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]", command);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]"));
 
 				request = new FetchRequest () {
 					Headers = new HeaderSet (new[] { "REFERENCES" })
 				};
 
 				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
-				Assert.AreEqual ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]", command);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]"));
 
 				request = new FetchRequest (MessageSummaryItems.References) {
 					Headers = new HeaderSet (new[] { "REFERENCES" })
 				};
 
 				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
-				Assert.AreEqual ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]", command);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]"));
 			}
 		}
 
@@ -1823,7 +1823,7 @@ namespace UnitTests.Net.Imap {
 				var request = new FetchRequest (MessageSummaryItems.Headers);
 
 				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
-				Assert.AreEqual ("BODY.PEEK[HEADER]", command);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER]"));
 			}
 		}
 	}

@@ -50,10 +50,10 @@ namespace UnitTests {
 		public void TestCanReadWriteSeek ()
 		{
 			using (var stream = new ProgressStream (Stream.Null, Update)) {
-				Assert.AreEqual (Stream.Null.CanRead, stream.CanRead);
-				Assert.AreEqual (Stream.Null.CanWrite, stream.CanWrite);
-				Assert.IsFalse (stream.CanSeek);
-				Assert.AreEqual (Stream.Null.CanTimeout, stream.CanTimeout);
+				Assert.That (stream.CanRead, Is.EqualTo (Stream.Null.CanRead));
+				Assert.That (stream.CanWrite, Is.EqualTo (Stream.Null.CanWrite));
+				Assert.That (stream.CanSeek, Is.False);
+				Assert.That (stream.CanTimeout, Is.EqualTo (Stream.Null.CanTimeout));
 			}
 		}
 
@@ -62,10 +62,10 @@ namespace UnitTests {
 		{
 			using (var stream = new ProgressStream (new DummyNetworkStream (), Update)) {
 				stream.ReadTimeout = 5;
-				Assert.AreEqual (5, stream.ReadTimeout, "ReadTimeout");
+				Assert.That (stream.ReadTimeout, Is.EqualTo (5), "ReadTimeout");
 
 				stream.WriteTimeout = 7;
-				Assert.AreEqual (7, stream.WriteTimeout, "WriteTimeout");
+				Assert.That (stream.WriteTimeout, Is.EqualTo (7), "WriteTimeout");
 			}
 		}
 
@@ -81,8 +81,8 @@ namespace UnitTests {
 
 				progress = 0;
 				int n = stream.Read (buffer, 0, buffer.Length);
-				Assert.AreEqual (expected, n, "nread");
-				Assert.AreEqual (expected, progress, "progress");
+				Assert.That (n, Is.EqualTo (expected), "nread");
+				Assert.That (progress, Is.EqualTo (expected), "progress");
 			}
 
 			using (var stream = new ProgressStream (new DummyNetworkStream (), Update)) {
@@ -94,8 +94,8 @@ namespace UnitTests {
 
 				progress = 0;
 				int n = stream.Read (buffer, 0, buffer.Length, CancellationToken.None);
-				Assert.AreEqual (expected, n, "nread");
-				Assert.AreEqual (expected, progress, "progress");
+				Assert.That (n, Is.EqualTo (expected), "nread");
+				Assert.That (progress, Is.EqualTo (expected), "progress");
 			}
 		}
 
@@ -111,8 +111,8 @@ namespace UnitTests {
 
 				progress = 0;
 				int n = await stream.ReadAsync (buffer, 0, buffer.Length);
-				Assert.AreEqual (expected, n, "nread");
-				Assert.AreEqual (expected, progress, "progress");
+				Assert.That (n, Is.EqualTo (expected), "nread");
+				Assert.That (progress, Is.EqualTo (expected), "progress");
 			}
 		}
 
@@ -122,8 +122,8 @@ namespace UnitTests {
 			using (var stream = new ProgressStream (new DummyNetworkStream (), Update)) {
 				Assert.Throws<NotSupportedException> (() => stream.Seek (0, SeekOrigin.Begin));
 				Assert.Throws<NotSupportedException> (() => stream.Position = 500);
-				Assert.AreEqual (0, stream.Position);
-				Assert.AreEqual (0, stream.Length);
+				Assert.That (stream.Position, Is.EqualTo (0));
+				Assert.That (stream.Length, Is.EqualTo (0));
 			}
 		}
 
@@ -145,7 +145,7 @@ namespace UnitTests {
 				progress = 0;
 				stream.Write (buffer, 0, expected);
 				stream.Flush ();
-				Assert.AreEqual (expected, progress, "progress");
+				Assert.That (progress, Is.EqualTo (expected), "progress");
 			}
 
 			using (var stream = new ProgressStream (new DummyNetworkStream (), Update)) {
@@ -155,7 +155,7 @@ namespace UnitTests {
 				progress = 0;
 				stream.Write (buffer, 0, expected, CancellationToken.None);
 				stream.Flush (CancellationToken.None);
-				Assert.AreEqual (expected, progress, "progress");
+				Assert.That (progress, Is.EqualTo (expected), "progress");
 			}
 		}
 
@@ -169,7 +169,7 @@ namespace UnitTests {
 				progress = 0;
 				await stream.WriteAsync (buffer, 0, expected);
 				await stream.FlushAsync ();
-				Assert.AreEqual (expected, progress, "progress");
+				Assert.That (progress, Is.EqualTo (expected), "progress");
 			}
 		}
 	}

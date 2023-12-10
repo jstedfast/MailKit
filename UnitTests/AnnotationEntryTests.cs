@@ -66,60 +66,60 @@ namespace UnitTests {
 			AnnotationEntry entry;
 
 			entry = new AnnotationEntry ("/comment");
-			Assert.AreEqual ("/comment", entry.Entry, "Entry");
-			Assert.IsNull (entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Both, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/comment"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.Null, "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Both), "Scope");
 
 			entry = new AnnotationEntry ("/comment", AnnotationScope.Private);
-			Assert.AreEqual ("/comment.priv", entry.Entry, "Entry");
-			Assert.IsNull (entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Private, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/comment.priv"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.Null, "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Private), "Scope");
 
 			entry = new AnnotationEntry ("/comment", AnnotationScope.Shared);
-			Assert.AreEqual ("/comment.shared", entry.Entry, "Entry");
-			Assert.IsNull (entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Shared, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/comment.shared"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.Null, "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Shared), "Scope");
 
 
 			entry = new AnnotationEntry ("1.2.3.4", "/comment");
-			Assert.AreEqual ("/1.2.3.4/comment", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Both, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Both), "Scope");
 
 			entry = new AnnotationEntry ("1.2.3.4", "/comment", AnnotationScope.Private);
-			Assert.AreEqual ("/1.2.3.4/comment.priv", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Private, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment.priv"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Private), "Scope");
 
 			entry = new AnnotationEntry ("1.2.3.4", "/comment", AnnotationScope.Shared);
-			Assert.AreEqual ("/1.2.3.4/comment.shared", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Shared, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment.shared"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Shared), "Scope");
 
 
 			entry = new AnnotationEntry (body, "/comment");
-			Assert.AreEqual ("/1.2.3.4/comment", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Both, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Both), "Scope");
 
 			entry = new AnnotationEntry (body, "/comment", AnnotationScope.Private);
-			Assert.AreEqual ("/1.2.3.4/comment.priv", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Private, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment.priv"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Private), "Scope");
 
 			entry = new AnnotationEntry (body, "/comment", AnnotationScope.Shared);
-			Assert.AreEqual ("/1.2.3.4/comment.shared", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Shared, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment.shared"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Shared), "Scope");
 		}
 
 		[Test]
@@ -127,15 +127,15 @@ namespace UnitTests {
 		{
 			var comment = new AnnotationEntry ("/comment");
 
-			Assert.AreEqual (AnnotationEntry.Comment, comment, "AreEqual");
-			Assert.IsTrue (AnnotationEntry.Comment.Equals (comment), ".Equals");
-			Assert.IsTrue (comment == AnnotationEntry.Comment, "/comment == /comment");
-			Assert.IsTrue (AnnotationEntry.PrivateComment != AnnotationEntry.SharedComment, "/comment.priv != /comment.shared");
+			Assert.That (comment, Is.EqualTo (AnnotationEntry.Comment), "AreEqual");
+			Assert.That (AnnotationEntry.Comment.Equals (comment), Is.True, ".Equals");
+			Assert.That (comment == AnnotationEntry.Comment, Is.True, "/comment == /comment");
+			Assert.That (AnnotationEntry.PrivateComment != AnnotationEntry.SharedComment, Is.True, "/comment.priv != /comment.shared");
 
-			Assert.IsFalse (AnnotationEntry.Comment.Equals ((object) null), "/comment.Equals ((object) null)");
-			Assert.IsFalse (AnnotationEntry.Comment.Equals ((AnnotationEntry) null), "/comment.Equals ((AnnotationEntry) null)");
-			Assert.IsFalse (AnnotationEntry.Comment == null, "/comment == null");
-			Assert.IsTrue (AnnotationEntry.Comment != null, "/comment != null");
+			Assert.That (AnnotationEntry.Comment.Equals ((object) null), Is.False, "/comment.Equals ((object) null)");
+			Assert.That (AnnotationEntry.Comment.Equals ((AnnotationEntry) null), Is.False, "/comment.Equals ((AnnotationEntry) null)");
+			Assert.That (AnnotationEntry.Comment == null, Is.False, "/comment == null");
+			Assert.That (AnnotationEntry.Comment != null, Is.True, "/comment != null");
 		}
 
 		[Test]
@@ -168,10 +168,10 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual ("/comment", entry.Entry, "Entry");
-			Assert.IsNull (entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Both, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/comment"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.Null, "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Both), "Scope");
 
 			try {
 				entry = AnnotationEntry.Parse ("/comment.priv");
@@ -179,10 +179,10 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual ("/comment.priv", entry.Entry, "Entry");
-			Assert.IsNull (entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Private, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/comment.priv"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.Null, "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Private), "Scope");
 
 			try {
 				entry = AnnotationEntry.Parse ("/comment.shared");
@@ -191,10 +191,10 @@ namespace UnitTests {
 				return;
 			}
 			entry = new AnnotationEntry ("/comment", AnnotationScope.Shared);
-			Assert.AreEqual ("/comment.shared", entry.Entry, "Entry");
-			Assert.IsNull (entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Shared, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/comment.shared"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.Null, "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Shared), "Scope");
 
 			try {
 				entry = AnnotationEntry.Parse ("/1.2.3.4/comment");
@@ -202,10 +202,10 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual ("/1.2.3.4/comment", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Both, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Both), "Scope");
 
 			try {
 				entry = AnnotationEntry.Parse ("/1.2.3.4/comment.priv");
@@ -213,10 +213,10 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual ("/1.2.3.4/comment.priv", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Private, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment.priv"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Private), "Scope");
 
 			try {
 				entry = AnnotationEntry.Parse ("/1.2.3.4/comment.shared");
@@ -224,10 +224,10 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual ("/1.2.3.4/comment.shared", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Shared, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment.shared"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Shared), "Scope");
 		}
 
 		[Test]
@@ -241,7 +241,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.Comment, entry, "/comment");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.Comment), "/comment");
 
 			try {
 				entry = AnnotationEntry.Create ("/comment.priv");
@@ -249,7 +249,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.PrivateComment, entry, "/comment.priv");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.PrivateComment), "/comment.priv");
 
 			try {
 				entry = AnnotationEntry.Create ("/comment.shared");
@@ -257,7 +257,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.SharedComment, entry, "/comment.shared");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.SharedComment), "/comment.shared");
 
 			try {
 				entry = AnnotationEntry.Create ("/flags");
@@ -265,7 +265,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.Flags, entry, "/flags");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.Flags), "/flags");
 
 			try {
 				entry = AnnotationEntry.Create ("/flags.priv");
@@ -273,7 +273,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.PrivateFlags, entry, "/flags.priv");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.PrivateFlags), "/flags.priv");
 
 			try {
 				entry = AnnotationEntry.Create ("/flags.shared");
@@ -281,7 +281,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.SharedFlags, entry, "/flags.shared");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.SharedFlags), "/flags.shared");
 
 			try {
 				entry = AnnotationEntry.Create ("/altsubject");
@@ -289,7 +289,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.AltSubject, entry, "/altsubject");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.AltSubject), "/altsubject");
 
 			try {
 				entry = AnnotationEntry.Create ("/altsubject.priv");
@@ -297,7 +297,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.PrivateAltSubject, entry, "/altsubject.priv");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.PrivateAltSubject), "/altsubject.priv");
 
 			try {
 				entry = AnnotationEntry.Create ("/altsubject.shared");
@@ -305,7 +305,7 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual (AnnotationEntry.SharedAltSubject, entry, "/altsubject.shared");
+			Assert.That (entry, Is.EqualTo (AnnotationEntry.SharedAltSubject), "/altsubject.shared");
 
 			try {
 				entry = AnnotationEntry.Create ("/1.2.3.4/comment");
@@ -313,10 +313,10 @@ namespace UnitTests {
 				Assert.Fail ($"Did not expect: {ex}");
 				return;
 			}
-			Assert.AreEqual ("/1.2.3.4/comment", entry.Entry, "Entry");
-			Assert.AreEqual ("1.2.3.4", entry.PartSpecifier, "PartSpecifier");
-			Assert.AreEqual ("/comment", entry.Path, "Path");
-			Assert.AreEqual (AnnotationScope.Both, entry.Scope, "Scope");
+			Assert.That (entry.Entry, Is.EqualTo ("/1.2.3.4/comment"), "Entry");
+			Assert.That (entry.PartSpecifier, Is.EqualTo ("1.2.3.4"), "PartSpecifier");
+			Assert.That (entry.Path, Is.EqualTo ("/comment"), "Path");
+			Assert.That (entry.Scope, Is.EqualTo (AnnotationScope.Both), "Scope");
 		}
 	}
 }

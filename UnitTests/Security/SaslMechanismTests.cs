@@ -58,17 +58,17 @@ namespace UnitTests.Security {
 			var credentials = new NetworkCredential ("username", "password");
 
 			foreach (var mechanism in supported) {
-				Assert.IsTrue (SaslMechanism.IsSupported (mechanism), mechanism);
+				Assert.That (SaslMechanism.IsSupported (mechanism), Is.True, mechanism);
 
 				var sasl = SaslMechanism.Create (mechanism, credentials);
-				Assert.IsNotNull (sasl, mechanism);
-				Assert.AreEqual (mechanism, sasl.MechanismName, "MechanismName");
+				Assert.That (sasl, Is.Not.Null, mechanism);
+				Assert.That (sasl.MechanismName, Is.EqualTo (mechanism), "MechanismName");
 
 				sasl.Reset ();
 			}
 
 			foreach (var mechanism in unsupported)
-				Assert.IsFalse (SaslMechanism.IsSupported (mechanism), mechanism);
+				Assert.That (SaslMechanism.IsSupported (mechanism), Is.False, mechanism);
 		}
 
 		[Test]
@@ -78,15 +78,15 @@ namespace UnitTests.Security {
 			// #  Input            Output     Comments
 			// -  -----            ------     --------
 			// 1  I<U+00AD>X       IX         SOFT HYPHEN mapped to nothing
-			Assert.AreEqual ("IX", SaslMechanism.SaslPrep ("I\u00ADX"), "1");
+			Assert.That (SaslMechanism.SaslPrep ("I\u00ADX"), Is.EqualTo ("IX"), "1");
 			// 2  user             user       no transformation
-			Assert.AreEqual ("user", SaslMechanism.SaslPrep ("user"), "2");
+			Assert.That (SaslMechanism.SaslPrep ("user"), Is.EqualTo ("user"), "2");
 			// 3  USER             USER       case preserved, will not match #2
-			Assert.AreEqual ("USER", SaslMechanism.SaslPrep ("USER"), "3");
+			Assert.That (SaslMechanism.SaslPrep ("USER"), Is.EqualTo ("USER"), "3");
 			// 4  <U+00AA>         a          output is NFKC, input in ISO 8859-1
-			Assert.AreEqual ("a", SaslMechanism.SaslPrep ("\u00AA"), "4");
+			Assert.That (SaslMechanism.SaslPrep ("\u00AA"), Is.EqualTo ("a"), "4");
 			// 5  <U+2168>         IX         output is NFKC, will match #1
-			Assert.AreEqual ("IX", SaslMechanism.SaslPrep ("\u2168"), "5");
+			Assert.That (SaslMechanism.SaslPrep ("\u2168"), Is.EqualTo ("IX"), "5");
 			// 6  <U+0007>                    Error - prohibited character
 			try {
 				SaslMechanism.SaslPrep ("\u0007");
@@ -109,8 +109,8 @@ namespace UnitTests.Security {
 				}
 			}
 
-			Assert.AreEqual (string.Empty, SaslMechanism.SaslPrep (string.Empty));
-			Assert.AreEqual ("a b", SaslMechanism.SaslPrep ("a\u00A0b"));
+			Assert.That (SaslMechanism.SaslPrep (string.Empty), Is.EqualTo (string.Empty));
+			Assert.That (SaslMechanism.SaslPrep ("a\u00A0b"), Is.EqualTo ("a b"));
 		}
 	}
 }

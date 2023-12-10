@@ -47,19 +47,19 @@ namespace UnitTests {
 			AnnotationAttribute attr;
 
 			attr = new AnnotationAttribute ("value");
-			Assert.AreEqual ("value", attr.Name, "Name");
-			Assert.AreEqual ("value", attr.Specifier, "Specifier");
-			Assert.AreEqual (AnnotationScope.Both, attr.Scope, "Scope");
+			Assert.That (attr.Name, Is.EqualTo ("value"), "Name");
+			Assert.That (attr.Specifier, Is.EqualTo ("value"), "Specifier");
+			Assert.That (attr.Scope, Is.EqualTo (AnnotationScope.Both), "Scope");
 
 			attr = new AnnotationAttribute ("value.priv");
-			Assert.AreEqual ("value", attr.Name, "Name");
-			Assert.AreEqual ("value.priv", attr.Specifier, "Specifier");
-			Assert.AreEqual (AnnotationScope.Private, attr.Scope, "Scope");
+			Assert.That (attr.Name, Is.EqualTo ("value"), "Name");
+			Assert.That (attr.Specifier, Is.EqualTo ("value.priv"), "Specifier");
+			Assert.That (attr.Scope, Is.EqualTo (AnnotationScope.Private), "Scope");
 
 			attr = new AnnotationAttribute ("value.shared");
-			Assert.AreEqual ("value", attr.Name, "Name");
-			Assert.AreEqual ("value.shared", attr.Specifier, "Specifier");
-			Assert.AreEqual (AnnotationScope.Shared, attr.Scope, "Scope");
+			Assert.That (attr.Name, Is.EqualTo ("value"), "Name");
+			Assert.That (attr.Specifier, Is.EqualTo ("value.shared"), "Specifier");
+			Assert.That (attr.Scope, Is.EqualTo (AnnotationScope.Shared), "Scope");
 		}
 
 		[Test]
@@ -67,15 +67,15 @@ namespace UnitTests {
 		{
 			var value = new AnnotationAttribute ("value");
 
-			Assert.AreEqual (AnnotationAttribute.Value, value, "AreEqual");
-			Assert.IsTrue (AnnotationAttribute.Value.Equals (value), ".Equals");
-			Assert.IsTrue (value == AnnotationAttribute.Value, "value == value");
-			Assert.IsTrue (AnnotationAttribute.PrivateValue != AnnotationAttribute.SharedValue, "value.priv != value.shared");
+			Assert.That (value, Is.EqualTo (AnnotationAttribute.Value), "AreEqual");
+			Assert.That (AnnotationAttribute.Value.Equals (value), Is.True, ".Equals");
+			Assert.That (value == AnnotationAttribute.Value, Is.True, "value == value");
+			Assert.That (AnnotationAttribute.PrivateValue != AnnotationAttribute.SharedValue, Is.True, "value.priv != value.shared");
 
-			Assert.IsFalse (AnnotationAttribute.Value.Equals ((object) null), "value.Equals ((object) null)");
-			Assert.IsFalse (AnnotationAttribute.Value.Equals ((AnnotationAttribute) null), "value.Equals ((AnnotationAttribute) null)");
-			Assert.IsFalse (AnnotationAttribute.Value == null, "value == null");
-			Assert.IsTrue (AnnotationAttribute.Value != null, "/comment != null");
+			Assert.That (AnnotationAttribute.Value.Equals ((object) null), Is.False, "value.Equals ((object) null)");
+			Assert.That (AnnotationAttribute.Value.Equals ((AnnotationAttribute) null), Is.False, "value.Equals ((AnnotationAttribute) null)");
+			Assert.That (AnnotationAttribute.Value == null, Is.False, "value == null");
+			Assert.That (AnnotationAttribute.Value != null, Is.True, "/comment != null");
 		}
 	}
 }

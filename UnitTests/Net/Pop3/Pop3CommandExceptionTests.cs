@@ -46,8 +46,8 @@ namespace UnitTests.Net.Pop3 {
 				stream.Position = 0;
 
 				var ex = (Pop3CommandException)formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.StatusText, ex.StatusText, "Unexpected StatusText.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.StatusText, Is.EqualTo (expected.StatusText), "Unexpected StatusText.");
 			}
 
 			expected = new Pop3CommandException ("This is the error message.");
@@ -57,8 +57,8 @@ namespace UnitTests.Net.Pop3 {
 				stream.Position = 0;
 
 				var ex = (Pop3CommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.StatusText, ex.StatusText, "Unexpected StatusText.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.StatusText, Is.EqualTo (expected.StatusText), "Unexpected StatusText.");
 			}
 
 			expected = new Pop3CommandException ("This is the error message.", new IOException ("There was an IO error."));
@@ -68,8 +68,8 @@ namespace UnitTests.Net.Pop3 {
 				stream.Position = 0;
 
 				var ex = (Pop3CommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.StatusText, ex.StatusText, "Unexpected StatusText.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.StatusText, Is.EqualTo (expected.StatusText), "Unexpected StatusText.");
 			}
 
 			expected = new Pop3CommandException ("This is the error message.", "This is the status text");
@@ -79,8 +79,8 @@ namespace UnitTests.Net.Pop3 {
 				stream.Position = 0;
 
 				var ex = (Pop3CommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.StatusText, ex.StatusText, "Unexpected StatusText.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.StatusText, Is.EqualTo (expected.StatusText), "Unexpected StatusText.");
 			}
 
 			expected = new Pop3CommandException ("This is the error message.", "This is the status text", new IOException ("There was an IO error."));
@@ -90,8 +90,8 @@ namespace UnitTests.Net.Pop3 {
 				stream.Position = 0;
 
 				var ex = (Pop3CommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
-				Assert.AreEqual (expected.StatusText, ex.StatusText, "Unexpected StatusText.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				Assert.That (ex.StatusText, Is.EqualTo (expected.StatusText), "Unexpected StatusText.");
 			}
 		}
 	}

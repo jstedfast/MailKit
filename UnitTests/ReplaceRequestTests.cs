@@ -60,57 +60,57 @@ namespace UnitTests {
 			ReplaceRequest request;
 
 			request = new ReplaceRequest (message);
-			Assert.AreEqual (message, request.Message, "Message #1");
-			Assert.AreEqual (MessageFlags.None, request.Flags, "Flags #1");
-			Assert.IsNull (request.Keywords, "Keywords #1");
-			Assert.IsNull (request.InternalDate, "InternalDate #1");
-			Assert.IsNull (request.Annotations, "Annotations #1");
+			Assert.That (request.Message, Is.EqualTo (message), "Message #1");
+			Assert.That (request.Flags, Is.EqualTo (MessageFlags.None), "Flags #1");
+			Assert.That (request.Keywords, Is.Null, "Keywords #1");
+			Assert.That (request.InternalDate, Is.Null, "InternalDate #1");
+			Assert.That (request.Annotations, Is.Null, "Annotations #1");
 
 			request = new ReplaceRequest (message, flags);
-			Assert.AreEqual (message, request.Message, "Message #2");
-			Assert.AreEqual (flags, request.Flags, "Flags #2");
-			Assert.IsNull (request.Keywords, "Keywords #2");
-			Assert.IsNull (request.InternalDate, "InternalDate #2");
-			Assert.IsNull (request.Annotations, "Annotations #2");
+			Assert.That (request.Message, Is.EqualTo (message), "Message #2");
+			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #2");
+			Assert.That (request.Keywords, Is.Null, "Keywords #2");
+			Assert.That (request.InternalDate, Is.Null, "InternalDate #2");
+			Assert.That (request.Annotations, Is.Null, "Annotations #2");
 
 			request = new ReplaceRequest (message, flags, keywords);
-			Assert.AreEqual (message, request.Message, "Message #3");
-			Assert.AreEqual (flags, request.Flags, "Flags #3");
+			Assert.That (request.Message, Is.EqualTo (message), "Message #3");
+			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #3");
 			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #3");
-			Assert.AreEqual (keywords.Length, request.Keywords.Count, "Keywords #3");
-			Assert.IsNull (request.InternalDate, "InternalDate #3");
-			Assert.IsNull (request.Annotations, "Annotations #3");
+			Assert.That (request.Keywords.Count, Is.EqualTo (keywords.Length), "Keywords #3");
+			Assert.That (request.InternalDate, Is.Null, "InternalDate #3");
+			Assert.That (request.Annotations, Is.Null, "Annotations #3");
 
 			request = new ReplaceRequest (message, flags, keywordSet);
-			Assert.AreEqual (message, request.Message, "Message #4");
-			Assert.AreEqual (flags, request.Flags, "Flags #4");
+			Assert.That (request.Message, Is.EqualTo (message), "Message #4");
+			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #4");
 			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #4");
-			Assert.AreEqual (keywordSet, request.Keywords, "Keywords #4");
-			Assert.IsNull (request.InternalDate, "InternalDate #4");
-			Assert.IsNull (request.Annotations, "Annotations #4");
+			Assert.That (request.Keywords, Is.EqualTo (keywordSet), "Keywords #4");
+			Assert.That (request.InternalDate, Is.Null, "InternalDate #4");
+			Assert.That (request.Annotations, Is.Null, "Annotations #4");
 
 			request = new ReplaceRequest (message, flags, internalDate);
-			Assert.AreEqual (message, request.Message, "Message #5");
-			Assert.AreEqual (flags, request.Flags, "Flags #5");
-			Assert.IsNull (request.Keywords, "Keywords #5");
-			Assert.AreEqual (internalDate, request.InternalDate.Value, "InternalDate #5");
-			Assert.IsNull (request.Annotations, "Annotations #5");
+			Assert.That (request.Message, Is.EqualTo (message), "Message #5");
+			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #5");
+			Assert.That (request.Keywords, Is.Null, "Keywords #5");
+			Assert.That (request.InternalDate.Value, Is.EqualTo (internalDate), "InternalDate #5");
+			Assert.That (request.Annotations, Is.Null, "Annotations #5");
 
 			request = new ReplaceRequest (message, flags, keywords, internalDate);
-			Assert.AreEqual (message, request.Message, "Message #6");
-			Assert.AreEqual (flags, request.Flags, "Flags #6");
+			Assert.That (request.Message, Is.EqualTo (message), "Message #6");
+			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #6");
 			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #6");
-			Assert.AreEqual (keywords.Length, request.Keywords.Count, "Keywords #6");
-			Assert.AreEqual (internalDate, request.InternalDate.Value, "InternalDate #6");
-			Assert.IsNull (request.Annotations, "Annotations #6");
+			Assert.That (request.Keywords.Count, Is.EqualTo (keywords.Length), "Keywords #6");
+			Assert.That (request.InternalDate.Value, Is.EqualTo (internalDate), "InternalDate #6");
+			Assert.That (request.Annotations, Is.Null, "Annotations #6");
 
 			request = new ReplaceRequest (message, flags, keywordSet, internalDate);
-			Assert.AreEqual (message, request.Message, "Message #7");
-			Assert.AreEqual (flags, request.Flags, "Flags #7");
+			Assert.That (request.Message, Is.EqualTo (message), "Message #7");
+			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #7");
 			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #7");
-			Assert.AreEqual (keywordSet, request.Keywords, "Keywords #7");
-			Assert.AreEqual (internalDate, request.InternalDate.Value, "InternalDate #7");
-			Assert.IsNull (request.Annotations, "Annotations #7");
+			Assert.That (request.Keywords, Is.EqualTo (keywordSet), "Keywords #7");
+			Assert.That (request.InternalDate.Value, Is.EqualTo (internalDate), "InternalDate #7");
+			Assert.That (request.Annotations, Is.Null, "Annotations #7");
 		}
 	}
 }

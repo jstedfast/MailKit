@@ -42,7 +42,7 @@ namespace UnitTests.Net.Smtp {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "# of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
 		}
 
 		[Test]
@@ -55,7 +55,7 @@ namespace UnitTests.Net.Smtp {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "# of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
 		}
 
 		[Test]
@@ -66,7 +66,7 @@ namespace UnitTests.Net.Smtp {
 			var buffer = Encoding.ASCII.GetBytes (command);
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "# of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
 		}
 
 		[Test]
@@ -79,9 +79,9 @@ namespace UnitTests.Net.Smtp {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (1, secrets.Count, "# of secrets");
-			Assert.AreEqual (11, secrets[0].StartIndex, "StartIndex");
-			Assert.AreEqual (24, secrets[0].Length, "Length");
+			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (11), "StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (24), "Length");
 		}
 
 		[Test]
@@ -99,11 +99,11 @@ namespace UnitTests.Net.Smtp {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if (index >= secretIndex && command[index] != '\r' && command[index] != '\n') {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}
@@ -120,19 +120,19 @@ namespace UnitTests.Net.Smtp {
 
 			buffer = Encoding.ASCII.GetBytes ("AUTH LOGIN\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "initial # of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "initial # of secrets");
 
 			buffer = Encoding.ASCII.GetBytes ("dXNlcm5hbWU=\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (1, secrets.Count, "# of secrets");
-			Assert.AreEqual (0, secrets[0].StartIndex, "StartIndex");
-			Assert.AreEqual (12, secrets[0].Length, "Length");
+			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (0), "StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (12), "Length");
 
 			buffer = Encoding.ASCII.GetBytes ("cGFzc3dvcmQ=\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (1, secrets.Count, "# of secrets");
-			Assert.AreEqual (0, secrets[0].StartIndex, "StartIndex");
-			Assert.AreEqual (12, secrets[0].Length, "Length");
+			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (0), "StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (12), "Length");
 		}
 
 		[Test]
@@ -150,11 +150,11 @@ namespace UnitTests.Net.Smtp {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if (index >= secretIndex && command[index] != '\r' && command[index] != '\n') {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}

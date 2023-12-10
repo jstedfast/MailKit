@@ -57,15 +57,15 @@ namespace UnitTests {
 		[Test]
 		public void TestDefaultSettings ()
 		{
-			Assert.AreEqual ("C: ", ProtocolLogger.DefaultClientPrefix, "DefaultClientPrefix");
-			Assert.AreEqual ("S: ", ProtocolLogger.DefaultServerPrefix, "DefaultServerPrefix");
+			Assert.That (ProtocolLogger.DefaultClientPrefix, Is.EqualTo ("C: "), "DefaultClientPrefix");
+			Assert.That (ProtocolLogger.DefaultServerPrefix, Is.EqualTo ("S: "), "DefaultServerPrefix");
 
 			using (var logger = new ProtocolLogger (new MemoryStream ())) {
-				Assert.AreEqual ("C: ", logger.ClientPrefix, "ClientPrefix");
-				Assert.AreEqual ("S: ", logger.ServerPrefix, "ServerPrefix");
-				Assert.AreEqual ("yyyy-MM-ddTHH:mm:ssZ", logger.TimestampFormat, "TimestampFormat");
-				Assert.IsFalse (logger.LogTimestamps, "LogTimestamps");
-				Assert.IsTrue (logger.RedactSecrets, "RedactSecrets");
+				Assert.That (logger.ClientPrefix, Is.EqualTo ("C: "), "ClientPrefix");
+				Assert.That (logger.ServerPrefix, Is.EqualTo ("S: "), "ServerPrefix");
+				Assert.That (logger.TimestampFormat, Is.EqualTo ("yyyy-MM-ddTHH:mm:ssZ"), "TimestampFormat");
+				Assert.That (logger.LogTimestamps, Is.False, "LogTimestamps");
+				Assert.That (logger.RedactSecrets, Is.True, "RedactSecrets");
 			}
 		}
 
@@ -77,11 +77,11 @@ namespace UnitTests {
 				ProtocolLogger.DefaultServerPrefix = "S> ";
 
 				using (var logger = new ProtocolLogger (new MemoryStream ()) { RedactSecrets = false }) {
-					Assert.AreEqual ("C> ", logger.ClientPrefix, "ClientPrefix");
-					Assert.AreEqual ("S> ", logger.ServerPrefix, "ServerPrefix");
-					Assert.AreEqual ("yyyy-MM-ddTHH:mm:ssZ", logger.TimestampFormat, "TimestampFormat");
-					Assert.IsFalse (logger.LogTimestamps, "LogTimestamps");
-					Assert.IsFalse (logger.RedactSecrets, "RedactSecrets");
+					Assert.That (logger.ClientPrefix, Is.EqualTo ("C> "), "ClientPrefix");
+					Assert.That (logger.ServerPrefix, Is.EqualTo ("S> "), "ServerPrefix");
+					Assert.That (logger.TimestampFormat, Is.EqualTo ("yyyy-MM-ddTHH:mm:ssZ"), "TimestampFormat");
+					Assert.That (logger.LogTimestamps, Is.False, "LogTimestamps");
+					Assert.That (logger.RedactSecrets, Is.False, "RedactSecrets");
 				}
 			} finally {
 				ProtocolLogger.DefaultClientPrefix = "C: ";
@@ -118,10 +118,10 @@ namespace UnitTests {
 					string line;
 
 					line = reader.ReadLine ();
-					Assert.AreEqual ("Connected to pop://pop.skyfall.net:110/", line);
+					Assert.That (line, Is.EqualTo ("Connected to pop://pop.skyfall.net:110/"));
 
 					line = reader.ReadLine ();
-					Assert.AreEqual ("C: RETR 1", line);
+					Assert.That (line, Is.EqualTo ("C: RETR 1"));
 
 					using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources.comcast.retr1.txt")) {
 						using (var r = new StreamReader (response)) {
@@ -130,7 +130,7 @@ namespace UnitTests {
 							while ((expected = r.ReadLine ()) != null) {
 								line = reader.ReadLine ();
 
-								Assert.AreEqual ("S: " + expected, line);
+								Assert.That (line, Is.EqualTo ("S: " + expected));
 							}
 						}
 					}
@@ -160,7 +160,7 @@ namespace UnitTests {
 
 				var result = Encoding.ASCII.GetString (buffer, 0, length);
 
-				Assert.AreEqual ("C: PARTIAL LINE\r\nConnected to proto://server.com/\r\nS: PARTIAL LINE\r\nConnected to proto://server.com/\r\n", result);
+				Assert.That (result, Is.EqualTo ("C: PARTIAL LINE\r\nConnected to proto://server.com/\r\nS: PARTIAL LINE\r\nConnected to proto://server.com/\r\n"));
 			}
 		}
 
@@ -193,10 +193,10 @@ namespace UnitTests {
 					string line;
 
 					line = reader.ReadLine ();
-					Assert.AreEqual ("Connected to pop://pop.skyfall.net:110/", line);
+					Assert.That (line, Is.EqualTo ("Connected to pop://pop.skyfall.net:110/"));
 
 					line = reader.ReadLine ();
-					Assert.AreEqual ("C> RETR 1", line);
+					Assert.That (line, Is.EqualTo ("C> RETR 1"));
 
 					using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources.comcast.retr1.txt")) {
 						using (var r = new StreamReader (response)) {
@@ -205,7 +205,7 @@ namespace UnitTests {
 							while ((expected = r.ReadLine ()) != null) {
 								line = reader.ReadLine ();
 
-								Assert.AreEqual ("S> " + expected, line);
+								Assert.That (line, Is.EqualTo ("S> " + expected));
 							}
 						}
 					}
@@ -266,12 +266,12 @@ namespace UnitTests {
 
 					line = reader.ReadLine ();
 
-					Assert.IsTrue (TryExtractTimestamp (ref line, format, out timestamp), "Connect timestamp");
-					Assert.AreEqual ("Connected to pop://pop.skyfall.net:110/", line);
+					Assert.That (TryExtractTimestamp (ref line, format, out timestamp), Is.True, "Connect timestamp");
+					Assert.That (line, Is.EqualTo ("Connected to pop://pop.skyfall.net:110/"));
 
 					line = reader.ReadLine ();
-					Assert.IsTrue (TryExtractTimestamp (ref line, format, out timestamp), "C: RETR 1 timestamp");
-					Assert.AreEqual ("C: RETR 1", line);
+					Assert.That (TryExtractTimestamp (ref line, format, out timestamp), Is.True, "C: RETR 1 timestamp");
+					Assert.That (line, Is.EqualTo ("C: RETR 1"));
 
 					using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources.comcast.retr1.txt")) {
 						using (var r = new StreamReader (response)) {
@@ -280,8 +280,8 @@ namespace UnitTests {
 							while ((expected = r.ReadLine ()) != null) {
 								line = reader.ReadLine ();
 
-								Assert.IsTrue (TryExtractTimestamp (ref line, format, out timestamp), "S: timestamp");
-								Assert.AreEqual ("S: " + expected, line);
+								Assert.That (TryExtractTimestamp (ref line, format, out timestamp), Is.True, "S: timestamp");
+								Assert.That (line, Is.EqualTo ("S: " + expected));
 							}
 						}
 					}

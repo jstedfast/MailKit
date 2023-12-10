@@ -45,7 +45,7 @@ namespace UnitTests.Net.Proxy {
 				stream.Position = 0;
 
 				var ex = (ProxyProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 
 			expected = new ProxyProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
@@ -56,7 +56,7 @@ namespace UnitTests.Net.Proxy {
 				stream.Position = 0;
 
 				var ex = (ProxyProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 
 			expected = new ProxyProtocolException ();
@@ -67,7 +67,7 @@ namespace UnitTests.Net.Proxy {
 				stream.Position = 0;
 
 				var ex = (ProxyProtocolException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Message, ex.Message, "Unexpected Message.");
+				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
 			}
 		}
 	}

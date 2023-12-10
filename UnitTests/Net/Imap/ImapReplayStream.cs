@@ -384,9 +384,9 @@ namespace UnitTests.Net.Imap {
 			CheckDisposed ();
 
 			if (asyncIO) {
-				Assert.IsTrue (isAsync, "Trying to Read in an async unit test.");
+				Assert.That (isAsync, Is.True, "Trying to Read in an async unit test.");
 			} else {
-				Assert.IsFalse (isAsync, "Trying to ReadAsync in a non-async unit test.");
+				Assert.That (isAsync, Is.False, "Trying to ReadAsync in a non-async unit test.");
 			}
 
 			if (state != ImapReplayState.SendResponse) {
@@ -395,9 +395,9 @@ namespace UnitTests.Net.Imap {
 
 				var command = GetSentCommand ();
 
-				Assert.AreEqual (ImapReplayState.SendResponse, state, "Trying to read before command received. Sent so far: {0}", command);
+				Assert.That (state, Is.EqualTo (ImapReplayState.SendResponse), $"Trying to read before command received. Sent so far: {command}");
 			}
-			Assert.IsNotNull (stream, "Trying to read when no data available.");
+			Assert.That (stream, Is.Not.Null, "Trying to read when no data available.");
 
 			int nread = stream.Read (buffer, offset, count);
 
@@ -463,24 +463,24 @@ namespace UnitTests.Net.Imap {
 
 			if (asyncIO) {
 				if (count != 6 || Encoding.ASCII.GetString (buffer, offset, count) != "DONE\r\n")
-					Assert.IsTrue (isAsync, "Trying to Write in an async unit test.");
+					Assert.That (isAsync, Is.True, "Trying to Write in an async unit test.");
 				else
 					done = true;
 			} else {
 				if (count != 6 || Encoding.ASCII.GetString (buffer, offset, count) != "DONE\r\n")
-					Assert.IsFalse (isAsync, "Trying to WriteAsync in a non-async unit test.");
+					Assert.That (isAsync, Is.False, "Trying to WriteAsync in a non-async unit test.");
 				else
 					done = true;
 			}
 
-			Assert.AreEqual (ImapReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
+			Assert.That (state, Is.EqualTo (ImapReplayState.WaitForCommand), "Trying to write when a command has already been given.");
 
 			sent.Write (buffer, offset, count);
 
 			if (sent.Length >= commands[index].CommandBuffer.Length) {
 				var command = GetSentCommand ();
 
-				Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
+				Assert.That (command, Is.EqualTo (commands[index].Command), "Commands did not match.");
 
 				if (stream != null)
 					stream.Dispose ();
@@ -507,7 +507,7 @@ namespace UnitTests.Net.Imap {
 		{
 			CheckDisposed ();
 
-			Assert.IsFalse (asyncIO && !done, "Trying to Flush in an async unit test.");
+			Assert.That (asyncIO && !done, Is.False, "Trying to Flush in an async unit test.");
 			done = false;
 		}
 
@@ -515,7 +515,7 @@ namespace UnitTests.Net.Imap {
 		{
 			CheckDisposed ();
 
-			Assert.IsTrue (asyncIO || done, "Trying to FlushAsync in a non-async unit test.");
+			Assert.That (asyncIO || done, Is.True, "Trying to FlushAsync in a non-async unit test.");
 			done = false;
 
 			return Task.FromResult (true);

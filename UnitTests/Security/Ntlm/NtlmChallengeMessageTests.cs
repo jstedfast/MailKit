@@ -54,9 +54,9 @@ namespace UnitTests.Security.Ntlm {
 		{
 			var type2 = new NtlmChallengeMessage (NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign) { ServerChallenge = JavaExampleNonce };
 
-			Assert.AreEqual (2, type2.Type, "Type");
-			Assert.AreEqual ((NtlmFlags) 0x8201, type2.Flags, "Flags");
-			Assert.AreEqual ("TlRMTVNTUAACAAAAAAAAAAAAAAABggAAU3J2Tm9uY2UAAAAAAAAAAAAAAAAAAAAA", Convert.ToBase64String (type2.Encode ()), "Encode");
+			Assert.That (type2.Type, Is.EqualTo (2), "Type");
+			Assert.That (type2.Flags, Is.EqualTo ((NtlmFlags) 0x8201), "Flags");
+			Assert.That (Convert.ToBase64String (type2.Encode ()), Is.EqualTo ("TlRMTVNTUAACAAAAAAAAAAAAAAABggAAU3J2Tm9uY2UAAAAAAAAAAAAAAAAAAAAA"), "Encode");
 		}
 
 		[Test]
@@ -66,9 +66,9 @@ namespace UnitTests.Security.Ntlm {
 			byte[] rawData = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x82, 0x00, 0x00, 0x53, 0x72, 0x76, 0x4e, 0x6f, 0x6e, 0x63, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 			var type2 = new NtlmChallengeMessage (rawData, 0, rawData.Length);
 
-			Assert.AreEqual (2, type2.Type, "Type");
-			Assert.AreEqual ((NtlmFlags) 0x8201, type2.Flags, "Flags");
-			Assert.AreEqual (BitConverter.ToString (JavaExampleNonce), BitConverter.ToString (type2.ServerChallenge), "ServerChallenge");
+			Assert.That (type2.Type, Is.EqualTo (2), "Type");
+			Assert.That (type2.Flags, Is.EqualTo ((NtlmFlags) 0x8201), "Flags");
+			Assert.That (BitConverter.ToString (type2.ServerChallenge), Is.EqualTo (BitConverter.ToString (JavaExampleNonce)), "ServerChallenge");
 		}
 
 		[Test]
@@ -86,15 +86,15 @@ namespace UnitTests.Security.Ntlm {
 				TargetName = "DOMAIN"
 			};
 
-			Assert.AreEqual (2, type2.Type, "Type");
-			Assert.AreEqual ((NtlmFlags) 0x00810201, type2.Flags, "Flags");
-			Assert.AreEqual ("DOMAIN", type2.TargetName, "TargetName");
-			Assert.AreEqual ("SERVER", type2.TargetInfo.ServerName, "ServerName");
-			Assert.AreEqual ("DOMAIN", type2.TargetInfo.DomainName, "DomainName");
-			Assert.AreEqual ("server.domain.com", type2.TargetInfo.DnsServerName, "DnsServerName");
-			Assert.AreEqual ("domain.com", type2.TargetInfo.DnsDomainName, "DnsDomainName");
-			Assert.AreEqual ("01-23-45-67-89-AB-CD-EF", BitConverter.ToString (type2.ServerChallenge), "ServerChallenge");
-			Assert.AreEqual ("TlRMTVNTUAACAAAADAAMADgAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgBEAAAAAAAAAAAAAABEAE8ATQBBAEkATgACAAwARABPAE0AQQBJAE4AAQAMAFMARQBSAFYARQBSAAQAFABkAG8AbQBhAGkAbgAuAGMAbwBtAAMAIgBzAGUAcgB2AGUAcgAuAGQAbwBtAGEAaQBuAC4AYwBvAG0AAAAAAA==", Convert.ToBase64String (type2.Encode ()), "Encode");
+			Assert.That (type2.Type, Is.EqualTo (2), "Type");
+			Assert.That (type2.Flags, Is.EqualTo ((NtlmFlags) 0x00810201), "Flags");
+			Assert.That (type2.TargetName, Is.EqualTo ("DOMAIN"), "TargetName");
+			Assert.That (type2.TargetInfo.ServerName, Is.EqualTo ("SERVER"), "ServerName");
+			Assert.That (type2.TargetInfo.DomainName, Is.EqualTo ("DOMAIN"), "DomainName");
+			Assert.That (type2.TargetInfo.DnsServerName, Is.EqualTo ("server.domain.com"), "DnsServerName");
+			Assert.That (type2.TargetInfo.DnsDomainName, Is.EqualTo ("domain.com"), "DnsDomainName");
+			Assert.That (BitConverter.ToString (type2.ServerChallenge), Is.EqualTo ("01-23-45-67-89-AB-CD-EF"), "ServerChallenge");
+			Assert.That (Convert.ToBase64String (type2.Encode ()), Is.EqualTo ("TlRMTVNTUAACAAAADAAMADgAAAABAoEAASNFZ4mrze8AAAAAAAAAAGIAYgBEAAAAAAAAAAAAAABEAE8ATQBBAEkATgACAAwARABPAE0AQQBJAE4AAQAMAFMARQBSAFYARQBSAAQAFABkAG8AbQBhAGkAbgAuAGMAbwBtAAMAIgBzAGUAcgB2AGUAcgAuAGQAbwBtAGEAaQBuAC4AYwBvAG0AAAAAAA=="), "Encode");
 		}
 
 		[Test]
@@ -104,14 +104,14 @@ namespace UnitTests.Security.Ntlm {
 			byte[] rawData = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x0c, 0x00, 0x30, 0x00, 0x00, 0x00, 0x01, 0x02, 0x81, 0x00, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x62, 0x00, 0x62, 0x00, 0x3c, 0x00, 0x00, 0x00, 0x44, 0x00, 0x4f, 0x00, 0x4d, 0x00, 0x41, 0x00, 0x49, 0x00, 0x4e, 0x00, 0x02, 0x00, 0x0c, 0x00, 0x44, 0x00, 0x4f, 0x00, 0x4d, 0x00, 0x41, 0x00, 0x49, 0x00, 0x4e, 0x00, 0x01, 0x00, 0x0c, 0x00, 0x53, 0x00, 0x45, 0x00, 0x52, 0x00, 0x56, 0x00, 0x45, 0x00, 0x52, 0x00, 0x04, 0x00, 0x14, 0x00, 0x64, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x2e, 0x00, 0x63, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x03, 0x00, 0x22, 0x00, 0x73, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00, 0x65, 0x00, 0x72, 0x00, 0x2e, 0x00, 0x64, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x2e, 0x00, 0x63, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x00, 0x00, 0x00, 0x00 };
 			var type2 = new NtlmChallengeMessage (rawData, 0, rawData.Length);
 
-			Assert.AreEqual (2, type2.Type, "Type");
-			Assert.AreEqual ((NtlmFlags) 0x00810201, type2.Flags, "Flags");
-			Assert.AreEqual ("DOMAIN", type2.TargetName, "TargetName");
-			Assert.AreEqual ("SERVER", type2.TargetInfo.ServerName, "ServerName");
-			Assert.AreEqual ("DOMAIN", type2.TargetInfo.DomainName, "DomainName");
-			Assert.AreEqual ("server.domain.com", type2.TargetInfo.DnsServerName, "DnsServerName");
-			Assert.AreEqual ("domain.com", type2.TargetInfo.DnsDomainName, "DnsDomainName");
-			Assert.AreEqual ("01-23-45-67-89-AB-CD-EF", BitConverter.ToString (type2.ServerChallenge), "ServerChallenge");
+			Assert.That (type2.Type, Is.EqualTo (2), "Type");
+			Assert.That (type2.Flags, Is.EqualTo ((NtlmFlags) 0x00810201), "Flags");
+			Assert.That (type2.TargetName, Is.EqualTo ("DOMAIN"), "TargetName");
+			Assert.That (type2.TargetInfo.ServerName, Is.EqualTo ("SERVER"), "ServerName");
+			Assert.That (type2.TargetInfo.DomainName, Is.EqualTo ("DOMAIN"), "DomainName");
+			Assert.That (type2.TargetInfo.DnsServerName, Is.EqualTo ("server.domain.com"), "DnsServerName");
+			Assert.That (type2.TargetInfo.DnsDomainName, Is.EqualTo ("domain.com"), "DnsDomainName");
+			Assert.That (BitConverter.ToString (type2.ServerChallenge), Is.EqualTo ("01-23-45-67-89-AB-CD-EF"), "ServerChallenge");
 		}
 	}
 }

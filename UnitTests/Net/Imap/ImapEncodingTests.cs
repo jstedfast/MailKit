@@ -36,10 +36,10 @@ namespace UnitTests.Net.Imap {
 			const string text = "Jack & Jill";
 
 			var encoded = ImapEncoding.Encode (text);
-			Assert.AreEqual ("Jack &- Jill", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+			Assert.That (encoded, Is.EqualTo ("Jack &- Jill"), $"UTF-7 encoded text does not match the expected value: {encoded}");
 
 			var decoded = ImapEncoding.Decode (encoded);
-			Assert.AreEqual (text, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+			Assert.That (decoded, Is.EqualTo (text), $"UTF-7 decoded text does not match the original text: {decoded}");
 		}
 
 		[Test]
@@ -48,10 +48,10 @@ namespace UnitTests.Net.Imap {
 			const string arabic = "هل تتكلم اللغة الإنجليزية /العربية؟";
 
 			var encoded = ImapEncoding.Encode (arabic);
-			Assert.AreEqual ("&BkcGRA- &BioGKgZDBkQGRQ- &BicGRAZEBjoGKQ- &BicGRAYlBkYGLAZEBkoGMgZKBik- /&BicGRAY5BjEGKAZKBikGHw-", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+			Assert.That (encoded, Is.EqualTo ("&BkcGRA- &BioGKgZDBkQGRQ- &BicGRAZEBjoGKQ- &BicGRAYlBkYGLAZEBkoGMgZKBik- /&BicGRAY5BjEGKAZKBikGHw-"), $"UTF-7 encoded text does not match the expected value: {encoded}");
 
 			var decoded = ImapEncoding.Decode (encoded);
-			Assert.AreEqual (arabic, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+			Assert.That (decoded, Is.EqualTo (arabic), $"UTF-7 decoded text does not match the original text: {decoded}");
 		}
 
 		[Test]
@@ -60,10 +60,10 @@ namespace UnitTests.Net.Imap {
 			const string japanese = "狂ったこの世で狂うなら気は確かだ。";
 
 			var encoded = ImapEncoding.Encode (japanese);
-			Assert.AreEqual ("&csIwYzBfMFMwbk4WMGdywjBGMGowiWwXMG94ujBLMGAwAg-", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+			Assert.That (encoded, Is.EqualTo ("&csIwYzBfMFMwbk4WMGdywjBGMGowiWwXMG94ujBLMGAwAg-"), $"UTF-7 encoded text does not match the expected value: {encoded}");
 
 			var decoded = ImapEncoding.Decode (encoded);
-			Assert.AreEqual (japanese, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+			Assert.That (decoded, Is.EqualTo (japanese), $"UTF-7 decoded text does not match the original text: {decoded}");
 		}
 
 		[Test]
@@ -74,10 +74,10 @@ namespace UnitTests.Net.Imap {
 			var text = "Les Mise" + char.ConvertFromUtf32 (0x301) + "rables";
 
 			var encoded = ImapEncoding.Encode (text);
-			Assert.AreEqual ("Les Mise&AwE-rables", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+			Assert.That (encoded, Is.EqualTo ("Les Mise&AwE-rables"), $"UTF-7 encoded text does not match the expected value: {encoded}");
 
 			var decoded = ImapEncoding.Decode (encoded);
-			Assert.AreEqual (text, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+			Assert.That (decoded, Is.EqualTo (text), $"UTF-7 decoded text does not match the original text: {decoded}");
 		}
 
 		[Test]
@@ -86,10 +86,10 @@ namespace UnitTests.Net.Imap {
 			const string chinese = "‎中國哲學書電子化計劃";
 
 			var encoded = ImapEncoding.Encode (chinese);
-			Assert.AreEqual ("&IA5OLVcLVPJbeGb4lvtbUFMWighSgw-", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+			Assert.That (encoded, Is.EqualTo ("&IA5OLVcLVPJbeGb4lvtbUFMWighSgw-"), $"UTF-7 encoded text does not match the expected value: {encoded}");
 
 			var decoded = ImapEncoding.Decode (encoded);
-			Assert.AreEqual (chinese, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+			Assert.That (decoded, Is.EqualTo (chinese), $"UTF-7 decoded text does not match the original text: {decoded}");
 		}
 
 		[Test]
@@ -98,10 +98,10 @@ namespace UnitTests.Net.Imap {
 			const string mixed = "~peter/mail/台北/日本語";
 
 			var encoded = ImapEncoding.Encode (mixed);
-			Assert.AreEqual ("~peter/mail/&U,BTFw-/&ZeVnLIqe-", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+			Assert.That (encoded, Is.EqualTo ("~peter/mail/&U,BTFw-/&ZeVnLIqe-"), $"UTF-7 encoded text does not match the expected value: {encoded}");
 
 			var decoded = ImapEncoding.Decode (encoded);
-			Assert.AreEqual (mixed, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+			Assert.That (decoded, Is.EqualTo (mixed), $"UTF-7 decoded text does not match the original text: {decoded}");
 		}
 
 		[Test]
@@ -110,7 +110,7 @@ namespace UnitTests.Net.Imap {
 			const string encoded = "&Jjo!";
 
 			var decoded = ImapEncoding.Decode (encoded);
-			Assert.AreEqual (encoded, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+			Assert.That (decoded, Is.EqualTo (encoded), $"UTF-7 decoded text does not match the original text: {decoded}");
 		}
 
 		[Test]
@@ -119,7 +119,7 @@ namespace UnitTests.Net.Imap {
 			const string encoded = "&台北日本語";
 
 			var decoded = ImapEncoding.Decode (encoded);
-			Assert.AreEqual (encoded, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+			Assert.That (decoded, Is.EqualTo (encoded), $"UTF-7 decoded text does not match the original text: {decoded}");
 		}
 
 		[Test]
@@ -129,10 +129,10 @@ namespace UnitTests.Net.Imap {
 
 			// Note: we may want to modify ImapEncoding.Decode() to fail and return the input text in this case
 			var decoded = ImapEncoding.Decode (example);
-			Assert.AreEqual ("台北日本語", decoded, "UTF-7 decoded text does not match the expected value.");
+			Assert.That (decoded, Is.EqualTo ("台北日本語"), "UTF-7 decoded text does not match the expected value.");
 
 			var encoded = ImapEncoding.Encode (decoded);
-			Assert.AreEqual ("&U,BTF2XlZyyKng-", encoded, "UTF-7 encoded text does not match the expected value.");
+			Assert.That (encoded, Is.EqualTo ("&U,BTF2XlZyyKng-"), "UTF-7 encoded text does not match the expected value.");
 		}
 
 		[Test]
@@ -141,10 +141,10 @@ namespace UnitTests.Net.Imap {
 			const string example = "&2DzcHA-";
 
 			var decoded = ImapEncoding.Decode (example);
-			Assert.AreEqual ("\ud83c\udc1c", decoded, "UTF-7 decoded text does not match the expected value.");
+			Assert.That (decoded, Is.EqualTo ("\ud83c\udc1c"), "UTF-7 decoded text does not match the expected value.");
 
 			var encoded = ImapEncoding.Encode (decoded);
-			Assert.AreEqual ("&2DzcHA-", encoded, "UTF-7 encoded text does not match the expected value.");
+			Assert.That (encoded, Is.EqualTo ("&2DzcHA-"), "UTF-7 encoded text does not match the expected value.");
 		}
 	}
 }

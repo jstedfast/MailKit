@@ -42,7 +42,7 @@ namespace UnitTests.Net.Imap {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "# of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
 		}
 
 		[Test]
@@ -55,7 +55,7 @@ namespace UnitTests.Net.Imap {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "# of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
 		}
 
 		[Test]
@@ -66,7 +66,7 @@ namespace UnitTests.Net.Imap {
 			var buffer = Encoding.ASCII.GetBytes (command);
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "# of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
 		}
 
 		[Test]
@@ -81,11 +81,11 @@ namespace UnitTests.Net.Imap {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (2, secrets.Count, "# of secrets");
-			Assert.AreEqual (userIndex, secrets[0].StartIndex, "UserName StartIndex");
-			Assert.AreEqual (8, secrets[0].Length, "UserName Length");
-			Assert.AreEqual (passwdIndex, secrets[1].StartIndex, "Password StartIndex");
-			Assert.AreEqual (8, secrets[1].Length, "Password Length");
+			Assert.That (secrets.Count, Is.EqualTo (2), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (userIndex), "UserName StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (8), "UserName Length");
+			Assert.That (secrets[1].StartIndex, Is.EqualTo (passwdIndex), "Password StartIndex");
+			Assert.That (secrets[1].Length, Is.EqualTo (8), "Password Length");
 		}
 
 		[Test]
@@ -104,11 +104,11 @@ namespace UnitTests.Net.Imap {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if ((index >= userIndex && index < userIndex + 8) || (index >= passwdIndex && index < passwdIndex + 8)) {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}
@@ -126,11 +126,11 @@ namespace UnitTests.Net.Imap {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (2, secrets.Count, "# of secrets");
-			Assert.AreEqual (userIndex, secrets[0].StartIndex, "UserName StartIndex");
-			Assert.AreEqual (8, secrets[0].Length, "UserName Length");
-			Assert.AreEqual (passwdIndex, secrets[1].StartIndex, "Password StartIndex");
-			Assert.AreEqual (8, secrets[1].Length, "Password Length");
+			Assert.That (secrets.Count, Is.EqualTo (2), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (userIndex), "UserName StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (8), "UserName Length");
+			Assert.That (secrets[1].StartIndex, Is.EqualTo (passwdIndex), "Password StartIndex");
+			Assert.That (secrets[1].Length, Is.EqualTo (8), "Password Length");
 		}
 
 		[Test]
@@ -149,11 +149,11 @@ namespace UnitTests.Net.Imap {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if ((index >= userIndex && index < userIndex + 8) || (index >= passwdIndex && index < passwdIndex + 8)) {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}
@@ -171,11 +171,11 @@ namespace UnitTests.Net.Imap {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (2, secrets.Count, "# of secrets");
-			Assert.AreEqual (userIndex, secrets[0].StartIndex, "UserName StartIndex");
-			Assert.AreEqual (16, secrets[0].Length, "UserName Length");
-			Assert.AreEqual (passwdIndex, secrets[1].StartIndex, "Password StartIndex");
-			Assert.AreEqual (10, secrets[1].Length, "Password Length");
+			Assert.That (secrets.Count, Is.EqualTo (2), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (userIndex), "UserName StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (16), "UserName Length");
+			Assert.That (secrets[1].StartIndex, Is.EqualTo (passwdIndex), "Password StartIndex");
+			Assert.That (secrets[1].Length, Is.EqualTo (10), "Password Length");
 		}
 
 		[Test]
@@ -194,11 +194,11 @@ namespace UnitTests.Net.Imap {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if ((index >= userIndex && index < userIndex + 16) || (index >= passwdIndex && index < passwdIndex + 10)) {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}
@@ -215,19 +215,19 @@ namespace UnitTests.Net.Imap {
 
 			buffer = Encoding.ASCII.GetBytes ("A00000000 LOGIN {8}\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "LOGIN # of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "LOGIN # of secrets");
 
 			buffer = Encoding.ASCII.GetBytes ("username {8}\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (1, secrets.Count, "username # of secrets");
-			Assert.AreEqual (0, secrets[0].StartIndex, "UserName StartIndex");
-			Assert.AreEqual (8, secrets[0].Length, "UserName Length");
+			Assert.That (secrets.Count, Is.EqualTo (1), "username # of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (0), "UserName StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (8), "UserName Length");
 
 			buffer = Encoding.ASCII.GetBytes ("password\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (1, secrets.Count, "password # of secrets");
-			Assert.AreEqual (0, secrets[0].StartIndex, "Password StartIndex");
-			Assert.AreEqual (8, secrets[0].Length, "Password Length");
+			Assert.That (secrets.Count, Is.EqualTo (1), "password # of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (0), "Password StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (8), "Password Length");
 		}
 
 		[Test]
@@ -246,11 +246,11 @@ namespace UnitTests.Net.Imap {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if ((index >= userIndex && index < userIndex + 8) || (index >= passwdIndex && index < passwdIndex + 8)) {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}
@@ -268,11 +268,11 @@ namespace UnitTests.Net.Imap {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (2, secrets.Count, "# of secrets");
-			Assert.AreEqual (userIndex, secrets[0].StartIndex, "UserName StartIndex");
-			Assert.AreEqual (8, secrets[0].Length, "UserName Length");
-			Assert.AreEqual (passwdIndex, secrets[1].StartIndex, "Password StartIndex");
-			Assert.AreEqual (8, secrets[1].Length, "Password Length");
+			Assert.That (secrets.Count, Is.EqualTo (2), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (userIndex), "UserName StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (8), "UserName Length");
+			Assert.That (secrets[1].StartIndex, Is.EqualTo (passwdIndex), "Password StartIndex");
+			Assert.That (secrets[1].Length, Is.EqualTo (8), "Password Length");
 		}
 
 		[Test]
@@ -291,11 +291,11 @@ namespace UnitTests.Net.Imap {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if ((index >= userIndex && index < userIndex + 8) || (index >= passwdIndex && index < passwdIndex + 8)) {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}
@@ -312,9 +312,9 @@ namespace UnitTests.Net.Imap {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (1, secrets.Count, "# of secrets");
-			Assert.AreEqual (secretIndex, secrets[0].StartIndex, "StartIndex");
-			Assert.AreEqual (24, secrets[0].Length, "Length");
+			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (secretIndex), "StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (24), "Length");
 		}
 
 		[Test]
@@ -332,11 +332,11 @@ namespace UnitTests.Net.Imap {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if (index >= secretIndex && command[index] != '\r' && command[index] != '\n') {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}
@@ -353,19 +353,19 @@ namespace UnitTests.Net.Imap {
 
 			buffer = Encoding.ASCII.GetBytes ("A00000000 AUTHENTICATE LOGIN\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (0, secrets.Count, "initial # of secrets");
+			Assert.That (secrets.Count, Is.EqualTo (0), "initial # of secrets");
 
 			buffer = Encoding.ASCII.GetBytes ("dXNlcm5hbWU=\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (1, secrets.Count, "# of secrets");
-			Assert.AreEqual (0, secrets[0].StartIndex, "StartIndex");
-			Assert.AreEqual (12, secrets[0].Length, "Length");
+			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (0), "StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (12), "Length");
 
 			buffer = Encoding.ASCII.GetBytes ("cGFzc3dvcmQ=\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.AreEqual (1, secrets.Count, "# of secrets");
-			Assert.AreEqual (0, secrets[0].StartIndex, "StartIndex");
-			Assert.AreEqual (12, secrets[0].Length, "Length");
+			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets[0].StartIndex, Is.EqualTo (0), "StartIndex");
+			Assert.That (secrets[0].Length, Is.EqualTo (12), "Length");
 		}
 
 		[Test]
@@ -383,11 +383,11 @@ namespace UnitTests.Net.Imap {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if (index >= secretIndex && command[index] != '\r' && command[index] != '\n') {
-					Assert.AreEqual (1, secrets.Count, "# of secrets @ index {0}", index);
-					Assert.AreEqual (index, secrets[0].StartIndex, "StartIndex");
-					Assert.AreEqual (1, secrets[0].Length, "Length");
+					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
+					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.AreEqual (0, secrets.Count, "# of secrets @ index {0}", index);
+					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
 				}
 				index++;
 			}

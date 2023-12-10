@@ -47,8 +47,8 @@ namespace UnitTests.Net.Imap {
 				stream.Position = 0;
 
 				var ex = (ImapCommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Response, ex.Response, "Unexpected Response.");
-				Assert.AreEqual (expected.ResponseText, ex.ResponseText, "Unexpected ResponseText.");
+				Assert.That (ex.Response, Is.EqualTo (expected.Response), "Unexpected Response.");
+				Assert.That (ex.ResponseText, Is.EqualTo (expected.ResponseText), "Unexpected ResponseText.");
 			}
 
 			expected = new ImapCommandException (ImapCommandResponse.Ok, "This is the response text.", "This is the error message.");
@@ -58,8 +58,8 @@ namespace UnitTests.Net.Imap {
 				stream.Position = 0;
 
 				var ex = (ImapCommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Response, ex.Response, "Unexpected Response.");
-				Assert.AreEqual (expected.ResponseText, ex.ResponseText, "Unexpected ResponseText.");
+				Assert.That (ex.Response, Is.EqualTo (expected.Response), "Unexpected Response.");
+				Assert.That (ex.ResponseText, Is.EqualTo (expected.ResponseText), "Unexpected ResponseText.");
 			}
 
 			expected = new ImapCommandException (ImapCommandResponse.Ok, "This is the response text.", "This is the error message.", new IOException ("This is the IO error."));
@@ -69,8 +69,8 @@ namespace UnitTests.Net.Imap {
 				stream.Position = 0;
 
 				var ex = (ImapCommandException) formatter.Deserialize (stream);
-				Assert.AreEqual (expected.Response, ex.Response, "Unexpected Response.");
-				Assert.AreEqual (expected.ResponseText, ex.ResponseText, "Unexpected ResponseText.");
+				Assert.That (ex.Response, Is.EqualTo (expected.Response), "Unexpected Response.");
+				Assert.That (ex.ResponseText, Is.EqualTo (expected.ResponseText), "Unexpected ResponseText.");
 			}
 		}
 	}
