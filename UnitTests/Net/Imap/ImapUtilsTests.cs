@@ -32,9 +32,14 @@ using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {
 	[TestFixture]
-	public class ImapUtilsTests
+	public class ImapUtilsTests : IDisposable
 	{
 		readonly ImapEngine engine = new ImapEngine (null);
+
+		public void Dispose ()
+		{
+			engine.Dispose ();
+		}
 
 		[Test]
 		public void TestResponseCodeCreation ()

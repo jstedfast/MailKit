@@ -32,7 +32,7 @@ using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {
 	[TestFixture]
-	public  class ImapCommandTests
+	public  class ImapCommandTests : IDisposable
 	{
 		readonly ImapEngine Engine;
 		readonly ImapFolder Inbox;
@@ -45,6 +45,11 @@ namespace UnitTests.Net.Imap {
 
 			var args = new ImapFolderConstructorArgs (Engine, "INBOX", FolderAttributes.None, '.');
 			Inbox = new ImapFolder (args);
+		}
+
+		public void Dispose ()
+		{
+			Engine.Dispose ();
 		}
 
 		static ImapFolder CreateImapFolderDelegate (ImapFolderConstructorArgs args)
