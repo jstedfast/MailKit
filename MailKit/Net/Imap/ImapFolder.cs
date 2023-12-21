@@ -331,49 +331,7 @@ namespace MailKit.Net.Imap {
 			return ic.Folder.OnUntaggedFetchResponse (engine, index, doAsync, ic.CancellationToken);
 		}
 
-		async Task<FolderAccess> OpenAsync (ImapCommand ic, FolderAccess access, bool doAsync, CancellationToken cancellationToken)
-		{
-			Reset ();
-
-			if (access == FolderAccess.ReadWrite) {
-				// Note: if the server does not respond with a PERMANENTFLAGS response,
-				// then we need to assume all flags are permanent.
-				PermanentFlags = SettableFlags | MessageFlags.UserDefined;
-			} else {
-				PermanentFlags = MessageFlags.None;
-			}
-
-			try {
-				Engine.QueueCommand (ic);
-
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-				ProcessResponseCodes (ic, this);
-
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
-			} catch {
-				PermanentFlags = MessageFlags.None;
-				throw;
-			}
-
-			if (Engine.Selected != null && Engine.Selected != this) {
-				var folder = Engine.Selected;
-
-				folder.Reset ();
-
-				folder.OnClosed ();
-			}
-
-			Engine.State = ImapEngineState.Selected;
-			Engine.Selected = this;
-
-			OnOpened ();
-
-			return Access;
-		}
-
-		Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueOpen (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken)
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException (nameof (access));
@@ -407,7 +365,83 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
 			ic.RegisterUntaggedHandler ("FETCH", UntaggedQResyncFetchHandler);
 
-			return OpenAsync (ic, access, doAsync, cancellationToken);
+			Engine.QueueCommand (ic);
+
+			return ic;
+		}
+
+		void ProcessOpenResponse (ImapCommand ic, FolderAccess access)
+		{
+			ProcessResponseCodes (ic, this);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
+		}
+
+		FolderAccess Open ()
+		{
+			if (Engine.Selected != null && Engine.Selected != this) {
+				var folder = Engine.Selected;
+
+				folder.Reset ();
+
+				folder.OnClosed ();
+			}
+
+			Engine.State = ImapEngineState.Selected;
+			Engine.Selected = this;
+
+			OnOpened ();
+
+			return Access;
+		}
+
+		FolderAccess Open (ImapCommand ic, FolderAccess access)
+		{
+			Reset ();
+
+			if (access == FolderAccess.ReadWrite) {
+				// Note: if the server does not respond with a PERMANENTFLAGS response,
+				// then we need to assume all flags are permanent.
+				PermanentFlags = SettableFlags | MessageFlags.UserDefined;
+			} else {
+				PermanentFlags = MessageFlags.None;
+			}
+
+			try {
+				Engine.Run (ic);
+
+				ProcessOpenResponse (ic, access);
+			} catch {
+				PermanentFlags = MessageFlags.None;
+				throw;
+			}
+
+			return Open ();
+		}
+
+		async Task<FolderAccess> OpenAsync (ImapCommand ic, FolderAccess access)
+		{
+			Reset ();
+
+			if (access == FolderAccess.ReadWrite) {
+				// Note: if the server does not respond with a PERMANENTFLAGS response,
+				// then we need to assume all flags are permanent.
+				PermanentFlags = SettableFlags | MessageFlags.UserDefined;
+			} else {
+				PermanentFlags = MessageFlags.None;
+			}
+
+			try {
+				await Engine.RunAsync (ic).ConfigureAwait (false);
+
+				ProcessOpenResponse (ic, access);
+			} catch {
+				PermanentFlags = MessageFlags.None;
+				throw;
+			}
+
+			return Open ();
 		}
 
 		/// <summary>
@@ -462,7 +496,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
-			return OpenAsync (access, uidValidity, highestModSeq, uids, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueOpen (access, uidValidity, highestModSeq, uids, cancellationToken);
+
+			return Open (ic, access);
 		}
 
 		/// <summary>
@@ -517,10 +553,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
-			return OpenAsync (access, uidValidity, highestModSeq, uids, true, cancellationToken);
+			var ic = QueueOpen (access, uidValidity, highestModSeq, uids, cancellationToken);
+
+			return OpenAsync (ic, access);
 		}
 
-		Task<FolderAccess> OpenAsync (FolderAccess access, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueOpen (FolderAccess access, CancellationToken cancellationToken)
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException (nameof (access));
@@ -540,7 +578,9 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("{0} %F{1}\r\n", SelectOrExamine (access), @params);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
 
-			return OpenAsync (ic, access, doAsync, cancellationToken);
+			Engine.QueueCommand (ic);
+
+			return ic;
 		}
 
 		/// <summary>
@@ -581,7 +621,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default)
 		{
-			return OpenAsync (access, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueOpen (access, cancellationToken);
+
+			return Open (ic, access);
 		}
 
 		/// <summary>
@@ -622,10 +664,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default)
 		{
-			return OpenAsync (access, true, cancellationToken);
+			var ic = QueueOpen (access, cancellationToken);
+
+			return OpenAsync (ic, access);
 		}
 
-		async Task CloseAsync (bool expunge, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueClose (bool expunge, CancellationToken cancellationToken)
 		{
 			CheckState (true, expunge);
 
@@ -639,15 +683,19 @@ namespace MailKit.Net.Imap {
 				ic = null;
 			}
 
-			if (ic != null) {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
-				ProcessResponseCodes (ic, null);
+		void ProcessCloseResponse (ImapCommand ic, bool expunge)
+		{
+			ProcessResponseCodes (ic, null);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create (expunge ? "CLOSE" : "UNSELECT", ic);
-			}
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create (expunge ? "CLOSE" : "UNSELECT", ic);
+		}
 
+		void Close ()
+		{
 			Reset ();
 
 			if (Engine.Selected == this) {
@@ -691,7 +739,15 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Close (bool expunge = false, CancellationToken cancellationToken = default)
 		{
-			CloseAsync (expunge, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueClose (expunge, cancellationToken);
+
+			if (ic != null) {
+				Engine.Run (ic);
+
+				ProcessCloseResponse (ic, expunge);
+			}
+
+			Close ();
 		}
 
 		/// <summary>
@@ -727,9 +783,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default)
+		public override async Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default)
 		{
-			return CloseAsync (expunge, true, cancellationToken);
+			var ic = QueueClose (expunge, cancellationToken);
+
+			if (ic != null) {
+				await Engine.RunAsync (ic).ConfigureAwait (false);
+
+				ProcessCloseResponse (ic, expunge);
+			}
+
+			Close ();
 		}
 
 		async Task<IMailFolder> GetCreatedFolderAsync (string encodedName, string id, bool specialUse, bool doAsync, CancellationToken cancellationToken)
