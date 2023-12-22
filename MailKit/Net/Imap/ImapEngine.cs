@@ -3571,7 +3571,7 @@ namespace MailKit.Net.Imap {
 			if (status) {
 				for (int i = 0; i < list.Count; i++) {
 					if (list[i].Exists)
-						list[i].StatusAsync (items, false, false, cancellationToken).GetAwaiter ().GetResult ();
+						list[i].Status (items, false, cancellationToken);
 				}
 			}
 
@@ -3604,7 +3604,7 @@ namespace MailKit.Net.Imap {
 			if (status) {
 				for (int i = 0; i < list.Count; i++) {
 					if (list[i].Exists)
-						await list[i].StatusAsync (items, true, false, cancellationToken).ConfigureAwait (false);
+						await list[i].StatusAsync (items, false, cancellationToken).ConfigureAwait (false);
 				}
 			}
 
