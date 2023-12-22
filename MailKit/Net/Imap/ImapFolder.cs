@@ -796,18 +796,21 @@ namespace MailKit.Net.Imap {
 			Close ();
 		}
 
-		async Task<IMailFolder> GetCreatedFolderAsync (string encodedName, string id, bool specialUse, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetCreatedFolder (string encodedName, CancellationToken cancellationToken)
 		{
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			var list = new List<ImapFolder> ();
-			ImapFolder folder;
-
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
-			ic.UserData = list;
+			ic.UserData = new List<ImapFolder> ();
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
+
+		IMailFolder ProcessGetCreatedFolderResponse (ImapCommand ic, string encodedName, string id, bool specialUse)
+		{
+			var list = (List<ImapFolder>) ic.UserData;
+			ImapFolder folder;
 
 			ProcessResponseCodes (ic, null);
 
@@ -820,12 +823,14 @@ namespace MailKit.Net.Imap {
 
 				if (specialUse)
 					Engine.AssignSpecialFolder (folder);
+
+				Engine.OnFolderCreated (folder);
 			}
 
 			return folder;
 		}
 
-		async Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueCreate (string name, bool isMessageFolder, CancellationToken cancellationToken, out string encodedName)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -839,29 +844,51 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("Cannot create child folders.");
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
-			var encodedName = Engine.EncodeMailboxName (fullName);
+			encodedName = Engine.EncodeMailboxName (fullName);
 			var createName = encodedName;
 
 			if (!isMessageFolder && Engine.QuirksMode != ImapQuirksMode.GMail)
 				createName += DirectorySeparator;
 
-			var ic = Engine.QueueCommand (cancellationToken, null, "CREATE %S\r\n", createName);
+			return Engine.QueueCommand (cancellationToken, null, "CREATE %S\r\n", createName);
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		MailboxIdResponseCode ProcessCreateResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok && ic.GetResponseCode (ImapResponseCodeType.AlreadyExists) == null)
 				throw ImapCommandException.Create ("CREATE", ic);
 
-			var code = (MailboxIdResponseCode) ic.GetResponseCode (ImapResponseCodeType.MailboxId);
-			var id = code?.MailboxId;
+			return (MailboxIdResponseCode) ic.GetResponseCode (ImapResponseCodeType.MailboxId);
+		}
 
-			var created = await GetCreatedFolderAsync (encodedName, id, false, doAsync, cancellationToken).ConfigureAwait (false);
+		IMailFolder Create (ImapCommand ic, string encodedName, bool specialUse, CancellationToken cancellationToken)
+		{
+			Engine.Run (ic);
 
-			Engine.OnFolderCreated (created);
+			var mailboxIdResponseCode = ProcessCreateResponse (ic);
+			var id = mailboxIdResponseCode?.MailboxId;
 
-			return created;
+			ic = QueueGetCreatedFolder (encodedName, cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessGetCreatedFolderResponse (ic, encodedName, id, specialUse);
+		}
+
+		async Task<IMailFolder> CreateAsync (ImapCommand ic, string encodedName, bool specialUse, CancellationToken cancellationToken)
+		{
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			var mailboxIdResponseCode = ProcessCreateResponse (ic);
+			var id = mailboxIdResponseCode?.MailboxId;
+
+			ic = QueueGetCreatedFolder (encodedName, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetCreatedFolderResponse (ic, encodedName, id, specialUse);
 		}
 
 		/// <summary>
@@ -906,7 +933,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
 		{
-			return CreateAsync (name, isMessageFolder, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueCreate (name, isMessageFolder, cancellationToken, out var encodedName);
+
+			return Create (ic, encodedName, false, cancellationToken);
 		}
 
 		/// <summary>
@@ -951,10 +980,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
 		{
-			return CreateAsync (name, isMessageFolder, true, cancellationToken);
+			var ic = QueueCreate (name, isMessageFolder, cancellationToken, out var encodedName);
+
+			return CreateAsync (ic, encodedName, false, cancellationToken);
 		}
 
-		async Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueCreate (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken, out string encodedName)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -1001,7 +1032,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
-			var encodedName = Engine.EncodeMailboxName (fullName);
+			encodedName = Engine.EncodeMailboxName (fullName);
 			string command;
 
 			if (uses.Length > 0)
@@ -1009,23 +1040,7 @@ namespace MailKit.Net.Imap {
 			else
 				command = "CREATE %S\r\n";
 
-			var ic = Engine.QueueCommand (cancellationToken, null, command, encodedName);
-
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("CREATE", ic);
-
-			var code = (MailboxIdResponseCode) ic.GetResponseCode (ImapResponseCodeType.MailboxId);
-			var id = code?.MailboxId;
-
-			var created = await GetCreatedFolderAsync (encodedName, id, true, doAsync, cancellationToken).ConfigureAwait (false);
-
-			Engine.OnFolderCreated (created);
-
-			return created;
+			return Engine.QueueCommand (cancellationToken, null, command, encodedName);
 		}
 
 		/// <summary>
@@ -1075,7 +1090,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
 		{
-			return CreateAsync (name, specialUses, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueCreate (name, specialUses, cancellationToken, out var encodedName);
+
+			return Create (ic, encodedName, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -1125,10 +1142,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
 		{
-			return CreateAsync (name, specialUses, true, cancellationToken);
+			var ic = QueueCreate (name, specialUses, cancellationToken, out var encodedName);
+
+			return CreateAsync (ic, encodedName, true, cancellationToken);
 		}
 
-		async Task RenameAsync (IMailFolder parent, string name, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueRename (IMailFolder parent, string name, CancellationToken cancellationToken, out string encodedName)
 		{
 			if (parent == null)
 				throw new ArgumentNullException (nameof (parent));
@@ -1157,11 +1176,14 @@ namespace MailKit.Net.Imap {
 			else
 				newFullName = name;
 
-			var encodedName = Engine.EncodeMailboxName (newFullName);
-			var ic = Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
-			var oldFullName = FullName;
+			encodedName = Engine.EncodeMailboxName (newFullName);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
+		}
+
+		void ProcessRenameResponse (ImapCommand ic, IMailFolder parent, string name, string encodedName)
+		{
+			var oldFullName = FullName;
 
 			ProcessResponseCodes (ic, this);
 
@@ -1236,7 +1258,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default)
 		{
-			RenameAsync (parent, name, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueRename (parent, name, cancellationToken, out var encodedName);
+
+			Engine.Run (ic);
+
+			ProcessRenameResponse (ic, parent, name, encodedName);
 		}
 
 		/// <summary>
@@ -1286,9 +1312,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default)
+		public override async Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default)
 		{
-			return RenameAsync (parent, name, true, cancellationToken);
+			var ic = QueueRename (parent, name, cancellationToken, out var encodedName);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessRenameResponse (ic, parent, name, encodedName);
 		}
 
 		async Task DeleteAsync (bool doAsync, CancellationToken cancellationToken)
