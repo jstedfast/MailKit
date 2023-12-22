@@ -1321,17 +1321,18 @@ namespace MailKit.Net.Imap {
 			ProcessRenameResponse (ic, parent, name, encodedName);
 		}
 
-		async Task DeleteAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueDelete (CancellationToken cancellationToken)
 		{
 			if (IsNamespace || (Attributes & FolderAttributes.Inbox) != 0)
 				throw new InvalidOperationException ("Cannot delete this folder.");
 
 			CheckState (false, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, null, "DELETE %F\r\n", this);
+			return Engine.QueueCommand (cancellationToken, null, "DELETE %F\r\n", this);
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessDeleteResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, this);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -1383,7 +1384,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Delete (CancellationToken cancellationToken = default)
 		{
-			DeleteAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueDelete (cancellationToken);
+
+			Engine.Run (ic);
+
+			ProcessDeleteResponse (ic);
 		}
 
 		/// <summary>
@@ -1419,19 +1424,24 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task DeleteAsync (CancellationToken cancellationToken = default)
+		public override async Task DeleteAsync (CancellationToken cancellationToken = default)
 		{
-			return DeleteAsync (true, cancellationToken);
+			var ic = QueueDelete (cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessDeleteResponse (ic);
 		}
 
-		async Task SubscribeAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueSubscribe (CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
+			return Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessSubscribeResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -1474,7 +1484,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Subscribe (CancellationToken cancellationToken = default)
 		{
-			SubscribeAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueSubscribe (cancellationToken);
+
+			Engine.Run (ic);
+
+			ProcessSubscribeResponse (ic);
 		}
 
 		/// <summary>
@@ -1506,19 +1520,24 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task SubscribeAsync (CancellationToken cancellationToken = default)
+		public override async Task SubscribeAsync (CancellationToken cancellationToken = default)
 		{
-			return SubscribeAsync (true, cancellationToken);
+			var ic = QueueSubscribe (cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessSubscribeResponse (ic);
 		}
 
-		async Task UnsubscribeAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueUnsubscribe (CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
+			return Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessUnsubscribeResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -1561,7 +1580,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Unsubscribe (CancellationToken cancellationToken = default)
 		{
-			UnsubscribeAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueUnsubscribe (cancellationToken);
+
+			Engine.Run (ic);
+
+			ProcessUnsubscribeResponse (ic);
 		}
 
 		/// <summary>
@@ -1593,9 +1616,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task UnsubscribeAsync (CancellationToken cancellationToken = default)
+		public override async Task UnsubscribeAsync (CancellationToken cancellationToken = default)
 		{
-			return UnsubscribeAsync (true, cancellationToken);
+			var ic = QueueUnsubscribe (cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessUnsubscribeResponse (ic);
 		}
 
 		async Task<IList<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly, bool doAsync, CancellationToken cancellationToken)
