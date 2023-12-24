@@ -5,6 +5,7 @@
 ### General
 
 * [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#completely-free)
+* [Why do I get `NotSupportedException: No data is available for encoding ######. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method.`?](#register-provider)
 * [Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?](#ssl-handshake-exception)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#protocol-log)
 * [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#gmail-hidden-messages)
@@ -50,6 +51,19 @@
 
 Yes. MimeKit and MailKit are both completely free and open source. They are both covered under the
 [MIT](https://opensource.org/licenses/MIT) license.
+
+### <a name="register-provider">Q: Why do I get `NotSupportedException: No data is available for encoding ######. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method.`?</a>
+
+In .NET Core, Microsoft decided to split out the non-Unicode text encodings into a separate NuGet package called
+[System.Text.Encoding.CodePages](https://www.nuget.org/packages/System.Text.Encoding.CodePages).
+
+MimeKit already pulls in a reference to this NuGet package, so you shsouldn't need to add a reference to it in
+your project. That said, you will still need to register the encoding provider. It is recommended that you add
+the following line of code to your program initialization (e.g. the beginning of your program's Main() method):
+
+```csharp
+System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Instance);
+```
 
 ### <a id="ssl-handshake-exception">Q: Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?</a>
 
