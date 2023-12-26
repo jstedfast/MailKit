@@ -122,7 +122,11 @@ namespace UnitTests.Net.Imap {
 		{
 			using (var reader = new StreamReader (stream)) {
 				const string expected = "This is some dummy text just to make sure this is working correctly.";
+#if NET8_0_OR_GREATER
 				var text = await reader.ReadToEndAsync (cancellationToken);
+#else
+				var text = await reader.ReadToEndAsync ();
+#endif
 
 				Assert.That (text, Is.EqualTo (expected));
 			}
