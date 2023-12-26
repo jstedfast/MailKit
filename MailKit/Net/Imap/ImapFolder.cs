@@ -3168,7 +3168,7 @@ namespace MailKit.Net.Imap {
 			ProcessRemoveAccessResponse (ic);
 		}
 
-		async Task<string> GetMetadataAsync (MetadataTag tag, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetMetadata (MetadataTag tag, CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
@@ -3182,13 +3182,17 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
+
+		string ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
+		{
+			var metadata = (MetadataCollection) ic.UserData;
 
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETMETADATA", ic);
-
 			string value = null;
 
 			for (int i = 0; i < metadata.Count; i++) {
@@ -3239,7 +3243,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
-			return GetMetadataAsync (tag, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueGetMetadata (tag, cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessGetMetadataResponse (ic, tag);
 		}
 
 		/// <summary>
@@ -3275,12 +3283,16 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
+		public override async Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
-			return GetMetadataAsync (tag, true, cancellationToken);
+			var ic = QueueGetMetadata (tag, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetMetadataResponse (ic, tag);
 		}
 
-		async Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -3330,7 +3342,7 @@ namespace MailKit.Net.Imap {
 			command.Append ("\r\n");
 
 			if (args.Count == 1)
-				return new MetadataCollection ();
+				return null;
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args.ToArray ());
 			ic.RegisterUntaggedHandler ("METADATA", ImapUtils.UntaggedMetadataHandler);
@@ -3339,8 +3351,11 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		MetadataCollection ProcessGetMetadataResponse (ImapCommand ic, MetadataOptions options)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -3394,7 +3409,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
-			return GetMetadataAsync (options, tags, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueGetMetadata (options, tags, cancellationToken);
+
+			if (ic == null)
+				return new MetadataCollection ();
+
+			Engine.Run (ic);
+
+			return ProcessGetMetadataResponse (ic, options);
 		}
 
 		/// <summary>
@@ -3436,12 +3458,19 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
+		public override async Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
-			return GetMetadataAsync (options, tags, true, cancellationToken);
+			var ic = QueueGetMetadata (options, tags, cancellationToken);
+
+			if (ic == null)
+				return new MetadataCollection ();
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetMetadataResponse (ic, options);
 		}
 
-		async Task SetMetadataAsync (MetadataCollection metadata, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueSetMetadata (MetadataCollection metadata, CancellationToken cancellationToken)
 		{
 			if (metadata == null)
 				throw new ArgumentNullException (nameof (metadata));
@@ -3452,7 +3481,7 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			if (metadata.Count == 0)
-				return;
+				return null;
 
 			var command = new StringBuilder ("SETMETADATA %F (");
 			var args = new List<object> {
@@ -3478,8 +3507,11 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		void ProcessSetMetadataResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -3523,7 +3555,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
-			SetMetadataAsync (metadata, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueSetMetadata (metadata, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			Engine.Run (ic);
+
+			ProcessSetMetadataResponse (ic);
 		}
 
 		/// <summary>
@@ -3562,9 +3601,16 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default)
+		public override async Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
-			return SetMetadataAsync (metadata, true, cancellationToken);
+			var ic = QueueSetMetadata (metadata, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessSetMetadataResponse (ic);
 		}
 
 		class Quota
