@@ -3812,7 +3812,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		async Task<FolderQuota> GetQuotaAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetQuota (CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
@@ -3828,7 +3828,12 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
+
+		bool TryProcessGetQuotaResponse (ImapCommand ic, out string encodedName, out Quota quota)
+		{
+			var ctx = (QuotaContext) ic.UserData;
 
 			ProcessResponseCodes (ic, null);
 
@@ -3836,23 +3841,16 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("GETQUOTAROOT", ic);
 
 			for (int i = 0; i < ctx.QuotaRoots.Count; i++) {
-				var encodedName = ctx.QuotaRoots[i];
-				ImapFolder quotaRoot;
+				encodedName = ctx.QuotaRoots[i];
 
-				if (!ctx.Quotas.TryGetValue (encodedName, out var quota))
-					continue;
-
-				quotaRoot = await Engine.GetQuotaRootFolderAsync (encodedName, doAsync, cancellationToken).ConfigureAwait (false);
-
-				return new FolderQuota (quotaRoot) {
-					CurrentMessageCount = quota.CurrentMessageCount,
-					CurrentStorageSize = quota.CurrentStorageSize,
-					MessageLimit = quota.MessageLimit,
-					StorageLimit = quota.StorageLimit
-				};
+				if (ctx.Quotas.TryGetValue (encodedName, out quota))
+					return true;
 			}
 
-			return new FolderQuota (null);
+			encodedName = null;
+			quota = null;
+
+			return false;
 		}
 
 		/// <summary>
@@ -3891,7 +3889,21 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override FolderQuota GetQuota (CancellationToken cancellationToken = default)
 		{
-			return GetQuotaAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueGetQuota (cancellationToken);
+
+			Engine.Run (ic);
+
+			if (!TryProcessGetQuotaResponse (ic, out var encodedName, out var quota))
+				return new FolderQuota (null);
+
+			var quotaRoot = Engine.GetQuotaRootFolder (encodedName, cancellationToken);
+
+			return new FolderQuota (quotaRoot) {
+				CurrentMessageCount = quota.CurrentMessageCount,
+				CurrentStorageSize = quota.CurrentStorageSize,
+				MessageLimit = quota.MessageLimit,
+				StorageLimit = quota.StorageLimit
+			};
 		}
 
 		/// <summary>
@@ -3928,12 +3940,26 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default)
+		public override async Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default)
 		{
-			return GetQuotaAsync (true, cancellationToken);
+			var ic = QueueGetQuota (cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			if (!TryProcessGetQuotaResponse (ic, out var encodedName, out var quota))
+				return new FolderQuota (null);
+
+			var quotaRoot = await Engine.GetQuotaRootFolderAsync (encodedName, cancellationToken).ConfigureAwait (false);
+
+			return new FolderQuota (quotaRoot) {
+				CurrentMessageCount = quota.CurrentMessageCount,
+				CurrentStorageSize = quota.CurrentStorageSize,
+				MessageLimit = quota.MessageLimit,
+				StorageLimit = quota.StorageLimit
+			};
 		}
 
-		async Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueSetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
@@ -3962,7 +3988,12 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
+
+		FolderQuota ProcessSetQuotaResponse (ImapCommand ic)
+		{
+			var ctx = (QuotaContext) ic.UserData;
 
 			ProcessResponseCodes (ic, null);
 
@@ -4019,7 +4050,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
 		{
-			return SetQuotaAsync (messageLimit, storageLimit, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueSetQuota (messageLimit, storageLimit, cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessSetQuotaResponse (ic);
 		}
 
 		/// <summary>
@@ -4058,9 +4093,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
+		public override async Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
 		{
-			return SetQuotaAsync (messageLimit, storageLimit, true, cancellationToken);
+			var ic = QueueSetQuota (messageLimit, storageLimit, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessSetQuotaResponse (ic);
 		}
 
 		async Task ExpungeAsync (bool doAsync, CancellationToken cancellationToken)

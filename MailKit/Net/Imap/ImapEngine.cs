@@ -3296,37 +3296,11 @@ namespace MailKit.Net.Imap {
 			AssignSpecialFolders (list);
 		}
 
-		/// <summary>
-		/// Gets the folder representing the specified quota root.
-		/// </summary>
-		/// <returns>The folder.</returns>
-		/// <param name="quotaRoot">The name of the quota root.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public async Task<ImapFolder> GetQuotaRootFolderAsync (string quotaRoot, bool doAsync, CancellationToken cancellationToken)
+		ImapFolder ProcessGetQuotaRootResponse (ImapCommand ic, string quotaRoot, out List<ImapFolder> list)
 		{
-			if (TryGetCachedFolder (quotaRoot, out var folder))
-				return folder;
+			ImapFolder folder;
 
-			var command = new StringBuilder ("LIST \"\" %S");
-			var list = new List<ImapFolder> ();
-			var returnsSubscribed = false;
-
-			if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
-				command.Append (" RETURN (SUBSCRIBED CHILDREN)");
-				returnsSubscribed = true;
-			}
-
-			command.Append ("\r\n");
-
-			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), quotaRoot);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
-			ic.ListReturnsSubscribed = returnsSubscribed;
-			ic.UserData = list;
-
-			QueueCommand (ic);
-
-			await RunAsync (ic, doAsync).ConfigureAwait (false);
+			list = (List<ImapFolder>) ic.UserData;
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
@@ -3334,10 +3308,51 @@ namespace MailKit.Net.Imap {
 			if ((folder = GetFolder (list, quotaRoot)) == null) {
 				folder = CreateImapFolder (quotaRoot, FolderAttributes.NonExistent, '.');
 				CacheFolder (folder);
-				return folder;
 			}
 
-			await LookupParentFoldersAsync (list, doAsync, cancellationToken).ConfigureAwait (false);
+			return folder;
+		}
+
+		/// <summary>
+		/// Gets the folder representing the specified quota root.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="quotaRoot">The name of the quota root.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public ImapFolder GetQuotaRootFolder (string quotaRoot, CancellationToken cancellationToken)
+		{
+			if (TryGetCachedFolder (quotaRoot, out var folder))
+				return folder;
+
+			var ic = QueueGetFolderCommand (quotaRoot, cancellationToken);
+
+			Run (ic);
+
+			folder = ProcessGetQuotaRootResponse (ic, quotaRoot, out var list);
+
+			LookupParentFolders (list, cancellationToken);
+
+			return folder;
+		}
+
+		/// <summary>
+		/// Gets the folder representing the specified quota root.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="quotaRoot">The name of the quota root.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public async Task<ImapFolder> GetQuotaRootFolderAsync (string quotaRoot, CancellationToken cancellationToken)
+		{
+			if (TryGetCachedFolder (quotaRoot, out var folder))
+				return folder;
+
+			var ic = QueueGetFolderCommand (quotaRoot, cancellationToken);
+
+			await RunAsync (ic).ConfigureAwait (false);
+
+			folder = ProcessGetQuotaRootResponse (ic, quotaRoot, out var list);
+
+			await LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
 
 			return folder;
 		}
