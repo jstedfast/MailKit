@@ -4102,14 +4102,15 @@ namespace MailKit.Net.Imap {
 			return ProcessSetQuotaResponse (ic);
 		}
 
-		async Task ExpungeAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueExpunge (CancellationToken cancellationToken)
 		{
 			CheckState (true, true);
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "EXPUNGE\r\n");
+			return Engine.QueueCommand (cancellationToken, this, "EXPUNGE\r\n");
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessExpungeResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -4157,7 +4158,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Expunge (CancellationToken cancellationToken = default)
 		{
-			ExpungeAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueExpunge (cancellationToken);
+
+			Engine.Run (ic);
+
+			ProcessExpungeResponse (ic);
 		}
 
 		/// <summary>
@@ -4200,55 +4205,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task ExpungeAsync (CancellationToken cancellationToken = default)
+		public override async Task ExpungeAsync (CancellationToken cancellationToken = default)
 		{
-			return ExpungeAsync (true, cancellationToken);
-		}
+			var ic = QueueExpunge (cancellationToken);
 
-		async Task ExpungeAsync (IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
+			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			CheckState (true, true);
-
-			if (uids.Count == 0)
-				return;
-
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				// get the list of messages marked for deletion that should not be expunged
-				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
-				SearchResults unmark;
-
-				if (doAsync)
-					unmark = await SearchAsync (SearchOptions.None, query, cancellationToken).ConfigureAwait (false);
-				else
-					unmark = Search (SearchOptions.None, query, cancellationToken);
-
-				if (unmark.Count > 0) {
-					// clear the \Deleted flag on all messages except the ones that are to be expunged
-					await StoreAsync (unmark.UniqueIds, RemoveDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
-				}
-
-				// expunge the folder
-				await ExpungeAsync (doAsync, cancellationToken).ConfigureAwait (false);
-
-				if (unmark.Count > 0) {
-					// restore the \Deleted flags
-					await StoreAsync (unmark.UniqueIds, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
-				}
-
-				return;
-			}
-
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID EXPUNGE %s\r\n", uids)) {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-				ProcessResponseCodes (ic, null);
-
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("EXPUNGE", ic);
-			}
+			ProcessExpungeResponse (ic);
 		}
 
 		/// <summary>
@@ -4308,7 +4271,40 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
-			ExpungeAsync (uids, false, cancellationToken).GetAwaiter ().GetResult ();
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
+
+			CheckState (true, true);
+
+			if (uids.Count == 0)
+				return;
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				// get the list of messages marked for deletion that should not be expunged
+				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
+				var unmark = Search (SearchOptions.None, query, cancellationToken);
+
+				if (unmark.Count > 0) {
+					// clear the \Deleted flag on all messages except the ones that are to be expunged
+					Store (unmark.UniqueIds, RemoveDeletedFlag, cancellationToken);
+				}
+
+				// expunge the folder
+				Expunge (cancellationToken);
+
+				if (unmark.Count > 0) {
+					// restore the \Deleted flags
+					Store (unmark.UniqueIds, AddDeletedFlag, cancellationToken);
+				}
+
+				return;
+			}
+
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID EXPUNGE %s\r\n", uids)) {
+				Engine.Run (ic);
+
+				ProcessExpungeResponse (ic);
+			}
 		}
 
 		/// <summary>
@@ -4367,13 +4363,77 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default)
+		public override async Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
-			return ExpungeAsync (uids, true, cancellationToken);
+			if (uids == null)
+				throw new ArgumentNullException (nameof (uids));
+
+			CheckState (true, true);
+
+			if (uids.Count == 0)
+				return;
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				// get the list of messages marked for deletion that should not be expunged
+				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
+				var unmark = await SearchAsync (SearchOptions.None, query, cancellationToken).ConfigureAwait (false);
+
+				if (unmark.Count > 0) {
+					// clear the \Deleted flag on all messages except the ones that are to be expunged
+					await StoreAsync (unmark.UniqueIds, RemoveDeletedFlag, cancellationToken).ConfigureAwait (false);
+				}
+
+				// expunge the folder
+				await ExpungeAsync (cancellationToken).ConfigureAwait (false);
+
+				if (unmark.Count > 0) {
+					// restore the \Deleted flags
+					await StoreAsync (unmark.UniqueIds, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
+				}
+
+				return;
+			}
+
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID EXPUNGE %s\r\n", uids)) {
+				await Engine.RunAsync (ic).ConfigureAwait (false);
+
+				ProcessExpungeResponse (ic);
+			}
+		}
+
+		FormatOptions CreateAppendOptions (FormatOptions options)
+		{
+			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
+
+			var format = options.Clone ();
+			format.NewLineFormat = NewLineFormat.Dos;
+			format.EnsureNewLine = true;
+
+			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
+				format.International = true;
+
+			if (format.International && !Engine.UTF8Enabled)
+				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
+
+			return format;
 		}
 
 		ImapCommand QueueAppend (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken)
 		{
+			if (options == null)
+				throw new ArgumentNullException (nameof (options));
+
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
+			CheckState (false, false);
+
+			var format = CreateAppendOptions (options);
+
+			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+				throw new NotSupportedException ("The IMAP server does not support annotations.");
+
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ("APPEND %F ");
 			var list = new List<object> {
@@ -4409,7 +4469,7 @@ namespace MailKit.Net.Imap {
 			var command = builder.ToString ();
 			var args = list.ToArray ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args) {
+			var ic = new ImapCommand (Engine, cancellationToken, null, format, command, args) {
 				Progress = request.TransferProgress
 			};
 
@@ -4418,36 +4478,8 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		async Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, bool doAsync, CancellationToken cancellationToken)
+		UniqueId? ProcessAppendResponse (ImapCommand ic)
 		{
-			if (options == null)
-				throw new ArgumentNullException (nameof (options));
-
-			if (request == null)
-				throw new ArgumentNullException (nameof (request));
-
-			CheckState (false, false);
-
-			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
-
-			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
-				throw new NotSupportedException ("The IMAP server does not support annotations.");
-
-			var format = options.Clone ();
-			format.NewLineFormat = NewLineFormat.Dos;
-			format.EnsureNewLine = true;
-
-			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
-				format.International = true;
-
-			if (format.International && !Engine.UTF8Enabled)
-				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
-
-			var ic = QueueAppend (format, request, cancellationToken);
-
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
 			ProcessResponseCodes (ic, this);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -4510,7 +4542,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
 		{
-			return AppendAsync (options, request, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueAppend (options, request, cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessAppendResponse (ic);
 		}
 
 		/// <summary>
@@ -4560,13 +4596,37 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
+		public override async Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
 		{
-			return AppendAsync (options, request, true, cancellationToken);
+			var ic = QueueAppend (options, request, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessAppendResponse (ic);
+		}
+
+		void ValidateArguments (FormatOptions options, IList<IAppendRequest> requests)
+		{
+			if (options == null)
+				throw new ArgumentNullException (nameof (options));
+
+			if (requests == null)
+				throw new ArgumentNullException (nameof (requests));
+
+			for (int i = 0; i < requests.Count; i++) {
+				if (requests[i] == null)
+					throw new ArgumentException ("One or more of the requests is null.");
+
+				if (requests[i].Annotations != null && requests[i].Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+					throw new NotSupportedException ("One ore more requests included annotations but the IMAP server does not support annotations.");
+			}
+
+			CheckState (false, false);
 		}
 
 		ImapCommand QueueMultiAppend (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken)
 		{
+			var format = CreateAppendOptions (options);
 			var builder = new StringBuilder ("APPEND %F");
 			var list = new List<object> {
 				this
@@ -4609,7 +4669,7 @@ namespace MailKit.Net.Imap {
 			var command = builder.ToString ();
 			var args = list.ToArray ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args) {
+			var ic = new ImapCommand (Engine, cancellationToken, null, format, command, args) {
 				Progress = requests[0].TransferProgress
 			};
 
@@ -4618,73 +4678,19 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		async Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, bool doAsync, CancellationToken cancellationToken)
+		IList<UniqueId> ProcessMultiAppendResponse (ImapCommand ic)
 		{
-			if (options == null)
-				throw new ArgumentNullException (nameof (options));
+			ProcessResponseCodes (ic, this);
 
-			if (requests == null)
-				throw new ArgumentNullException (nameof (requests));
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("APPEND", ic);
 
-			for (int i = 0; i < requests.Count; i++) {
-				if (requests[i] == null)
-					throw new ArgumentException ("One or more of the requests is null.");
+			var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
-				if (requests[i].Annotations != null && requests[i].Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
-					throw new NotSupportedException ("One ore more requests included annotations but the IMAP server does not support annotations.");
-			}
+			if (append != null)
+				return append.UidSet;
 
-			CheckState (false, false);
-
-			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
-
-			var format = options.Clone ();
-			format.NewLineFormat = NewLineFormat.Dos;
-			format.EnsureNewLine = true;
-
-			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
-				format.International = true;
-
-			if (format.International && !Engine.UTF8Enabled)
-				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
-
-			if (requests.Count == 0)
-				return Array.Empty<UniqueId> ();
-
-			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppend (format, requests, cancellationToken);
-
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-				ProcessResponseCodes (ic, this);
-
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("APPEND", ic);
-
-				var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
-
-				if (append != null)
-					return append.UidSet;
-
-				return Array.Empty<UniqueId> ();
-			}
-
-			// FIXME: use an aggregate progress reporter
-			var uids = new List<UniqueId> ();
-
-			for (int i = 0; i < requests.Count; i++) {
-				var uid = await AppendAsync (format, requests[i], doAsync, cancellationToken).ConfigureAwait (false);
-				if (uids != null && uid.HasValue)
-					uids.Add (uid.Value);
-				else
-					uids = null;
-			}
-
-			if (uids == null)
-				return Array.Empty<UniqueId> ();
-
-			return uids;
+			return Array.Empty<UniqueId> ();
 		}
 
 		/// <summary>
@@ -4739,7 +4745,34 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<UniqueId> Append (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default)
 		{
-			return AppendAsync (options, requests, false, cancellationToken).GetAwaiter ().GetResult ();
+			ValidateArguments (options, requests);
+
+			if (requests.Count == 0)
+				return Array.Empty<UniqueId> ();
+
+			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
+				var ic = QueueMultiAppend (options, requests, cancellationToken);
+
+				Engine.Run (ic);
+
+				return ProcessMultiAppendResponse (ic);
+			}
+
+			// FIXME: use an aggregate progress reporter
+			var uids = new List<UniqueId> ();
+
+			for (int i = 0; i < requests.Count; i++) {
+				var uid = Append (options, requests[i], cancellationToken);
+				if (uids != null && uid.HasValue)
+					uids.Add (uid.Value);
+				else
+					uids = null;
+			}
+
+			if (uids == null)
+				return Array.Empty<UniqueId> ();
+
+			return uids;
 		}
 
 		/// <summary>
@@ -4792,13 +4825,61 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default)
+		public override async Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken = default)
 		{
-			return AppendAsync (options, requests, true, cancellationToken);
+			ValidateArguments (options, requests);
+
+			if (requests.Count == 0)
+				return Array.Empty<UniqueId> ();
+
+			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
+				var ic = QueueMultiAppend (options, requests, cancellationToken);
+
+				await Engine.RunAsync (ic).ConfigureAwait (false);
+
+				return ProcessMultiAppendResponse (ic);
+			}
+
+			// FIXME: use an aggregate progress reporter
+			var uids = new List<UniqueId> ();
+
+			for (int i = 0; i < requests.Count; i++) {
+				var uid = await AppendAsync (options, requests[i], cancellationToken).ConfigureAwait (false);
+				if (uids != null && uid.HasValue)
+					uids.Add (uid.Value);
+				else
+					uids = null;
+			}
+
+			if (uids == null)
+				return Array.Empty<UniqueId> ();
+
+			return uids;
+		}
+
+		void ValidateArguments (FormatOptions options, UniqueId uid, IReplaceRequest request)
+		{
+			if (options == null)
+				throw new ArgumentNullException (nameof (options));
+
+			if (!uid.IsValid)
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
+
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
+			if (request.Destination != null && !(request.Destination is ImapFolder target && target.Engine == Engine))
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (request));
+
+			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+				throw new NotSupportedException ("The IMAP server does not support annotations.");
+
+			CheckState (true, true);
 		}
 
 		ImapCommand QueueReplace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken)
 		{
+			var format = CreateAppendOptions (options);
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ($"UID REPLACE {uid} %F ");
 			var list = new List<object> {
@@ -4834,7 +4915,7 @@ namespace MailKit.Net.Imap {
 			var command = builder.ToString ();
 			var args = list.ToArray ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args) {
+			var ic = new ImapCommand (Engine, cancellationToken, null, format, command, args) {
 				Progress = request.TransferProgress
 			};
 
@@ -4843,51 +4924,8 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		async Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, bool doAsync, CancellationToken cancellationToken)
+		UniqueId? ProcessReplaceResponse (ImapCommand ic)
 		{
-			if (options == null)
-				throw new ArgumentNullException (nameof (options));
-
-			if (!uid.IsValid)
-				throw new ArgumentException ("The uid is invalid.", nameof (uid));
-
-			if (request == null)
-				throw new ArgumentNullException (nameof (request));
-
-			if (request.Destination != null && !(request.Destination is ImapFolder target && target.Engine == Engine))
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (request));
-
-			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
-				throw new NotSupportedException ("The IMAP server does not support annotations.");
-
-			CheckState (true, true);
-
-			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
-				var destination = request.Destination as ImapFolder ?? this;
-				var appended = await destination.AppendAsync (options, request, doAsync, cancellationToken).ConfigureAwait (false);
-				await StoreAsync (new[] { uid }, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
-				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
-					await ExpungeAsync (new[] { uid }, doAsync, cancellationToken).ConfigureAwait (false);
-				return appended;
-			}
-
-			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
-
-			var format = options.Clone ();
-			format.NewLineFormat = NewLineFormat.Dos;
-			format.EnsureNewLine = true;
-
-			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
-				format.International = true;
-
-			if (format.International && !Engine.UTF8Enabled)
-				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
-
-			var ic = QueueReplace (format, uid, request, cancellationToken);
-
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
 			ProcessResponseCodes (ic, this);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -4957,7 +4995,22 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueId? Replace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
-			return ReplaceAsync (options, uid, request, false, cancellationToken).GetAwaiter ().GetResult ();
+			ValidateArguments (options, uid, request);
+
+			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+				var destination = request.Destination as ImapFolder ?? this;
+				var appended = destination.Append (options, request, cancellationToken);
+				Store (new[] { uid }, AddDeletedFlag, cancellationToken);
+				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+					Expunge (new[] { uid }, cancellationToken);
+				return appended;
+			}
+
+			var ic = QueueReplace (options, uid, request, cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessReplaceResponse (ic);
 		}
 
 		/// <summary>
@@ -5014,13 +5067,29 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default)
+		public override async Task<UniqueId?> ReplaceAsync (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
-			return ReplaceAsync (options, uid, request, true, cancellationToken);
+			ValidateArguments (options, uid, request);
+
+			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+				var destination = request.Destination as ImapFolder ?? this;
+				var appended = await destination.AppendAsync (options, request, cancellationToken).ConfigureAwait (false);
+				await StoreAsync (new[] { uid }, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
+				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+					await ExpungeAsync (new[] { uid }, cancellationToken).ConfigureAwait (false);
+				return appended;
+			}
+
+			var ic = QueueReplace (options, uid, request, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessReplaceResponse (ic);
 		}
 
 		ImapCommand QueueReplace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken)
 		{
+			var format = CreateAppendOptions (options);
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			var builder = new StringBuilder ($"REPLACE %d %F ");
 			var list = new List<object> {
@@ -5057,7 +5126,7 @@ namespace MailKit.Net.Imap {
 			var command = builder.ToString ();
 			var args = list.ToArray ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, command, args) {
+			var ic = new ImapCommand (Engine, cancellationToken, null, format, command, args) {
 				Progress = request.TransferProgress
 			};
 
@@ -5066,7 +5135,7 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		async Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, bool doAsync, CancellationToken cancellationToken)
+		void ValidateArguments (FormatOptions options, int index, IReplaceRequest request)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -5084,42 +5153,6 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support annotations.");
 
 			CheckState (true, true);
-
-			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
-				var destination = request.Destination as ImapFolder ?? this;
-				var uid = await destination.AppendAsync (options, request, doAsync, cancellationToken).ConfigureAwait (false);
-				await StoreAsync (new[] { index }, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
-				return uid;
-			}
-
-			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
-
-			var format = options.Clone ();
-			format.NewLineFormat = NewLineFormat.Dos;
-			format.EnsureNewLine = true;
-
-			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
-				format.International = true;
-
-			if (format.International && !Engine.UTF8Enabled)
-				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
-
-			var ic = QueueReplace (format, index, request, cancellationToken);
-
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic, this);
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("REPLACE", ic);
-
-			var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
-
-			if (append != null)
-				return append.UidSet[0];
-
-			return null;
 		}
 
 		/// <summary>
@@ -5179,7 +5212,20 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueId? Replace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
-			return ReplaceAsync (options, index, request, false, cancellationToken).GetAwaiter ().GetResult ();
+			ValidateArguments (options, index, request);
+
+			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+				var destination = request.Destination as ImapFolder ?? this;
+				var uid = destination.Append (options, request, cancellationToken);
+				Store (new[] { index }, AddDeletedFlag, cancellationToken);
+				return uid;
+			}
+
+			var ic = QueueReplace (options, index, request, cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessReplaceResponse (ic);
 		}
 
 		/// <summary>
@@ -5237,26 +5283,43 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default)
+		public override async Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default)
 		{
-			return ReplaceAsync (options, index, request, true, cancellationToken);
+			ValidateArguments (options, index, request);
+
+			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+				var destination = request.Destination as ImapFolder ?? this;
+				var uid = await destination.AppendAsync (options, request, cancellationToken).ConfigureAwait (false);
+				await StoreAsync (new[] { index }, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
+				return uid;
+			}
+
+			var ic = QueueReplace (options, index, request, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessReplaceResponse (ic);
 		}
 
-		async Task<IList<int>> GetIndexesAsync (IList<UniqueId> uids, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetIndexes (IList<UniqueId> uids, CancellationToken cancellationToken)
 		{
 			var command = string.Format ("SEARCH UID {0}\r\n", UniqueIdSet.ToString (uids));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SearchResults (SortOrder.Ascending);
 
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 
 			ic.RegisterUntaggedHandler ("SEARCH", UntaggedSearchHandler);
-			ic.UserData = results;
+			ic.UserData = new SearchResults (SortOrder.Ascending);
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
+
+		IList<int> ProcessGetIndexesResponse (ImapCommand ic)
+		{
+			var results = (SearchResults) ic.UserData;
 
 			ProcessResponseCodes (ic, null);
 
@@ -5270,52 +5333,50 @@ namespace MailKit.Net.Imap {
 			return indexes;
 		}
 
-		async Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, bool doAsync, CancellationToken cancellationToken)
+		IList<int> GetIndexes (IList<UniqueId> uids, CancellationToken cancellationToken)
+		{
+			var ic = QueueGetIndexes (uids, cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessGetIndexesResponse (ic);
+		}
+
+		async Task<IList<int>> GetIndexesAsync (IList<UniqueId> uids, CancellationToken cancellationToken)
+		{
+			var ic = QueueGetIndexes (uids, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetIndexesResponse (ic);
+		}
+
+		void ValidateArguments (IList<UniqueId> uids, IMailFolder destination)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
 			CheckValidDestination (destination);
+		}
 
-			CheckState (true, false);
+		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet src, ref UniqueIdSet dest)
+		{
+			ProcessResponseCodes (ic, destination);
 
-			if (uids.Count == 0)
-				return UniqueIdMap.Empty;
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("COPY", ic);
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				var indexes = await GetIndexesAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
-				await CopyToAsync (indexes, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				return UniqueIdMap.Empty;
-			}
+			var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
-
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-				ProcessResponseCodes (ic, destination);
-
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("COPY", ic);
-
-				var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
-
-				if (copy != null) {
-					if (dest == null) {
-						dest = copy.DestUidSet;
-						src = copy.SrcUidSet;
-					} else {
-						dest.AddRange (copy.DestUidSet);
-						src.AddRange (copy.SrcUidSet);
-					}
+			if (copy != null) {
+				if (dest == null) {
+					dest = copy.DestUidSet;
+					src = copy.SrcUidSet;
+				} else {
+					dest.AddRange (copy.DestUidSet);
+					src.AddRange (copy.SrcUidSet);
 				}
 			}
-
-			if (dest == null)
-				return UniqueIdMap.Empty;
-
-			return new UniqueIdMap (src, dest);
 		}
 
 		/// <summary>
@@ -5370,7 +5431,32 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			return CopyToAsync (uids, destination, false, cancellationToken).GetAwaiter ().GetResult ();
+			ValidateArguments (uids, destination);
+
+			CheckState (true, false);
+
+			if (uids.Count == 0)
+				return UniqueIdMap.Empty;
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				var indexes = GetIndexes (uids, cancellationToken);
+				CopyTo (indexes, destination, cancellationToken);
+				return UniqueIdMap.Empty;
+			}
+
+			UniqueIdSet dest = null;
+			UniqueIdSet src = null;
+
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
+				Engine.Run (ic);
+
+				ProcessCopyToResponse (ic, destination, ref src, ref dest);
+			}
+
+			if (dest == null)
+				return UniqueIdMap.Empty;
+
+			return new UniqueIdMap (src, dest);
 		}
 
 		/// <summary>
@@ -5423,64 +5509,55 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override async Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			return CopyToAsync (uids, destination, true, cancellationToken);
-		}
+			ValidateArguments (uids, destination);
 
-		async Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, bool doAsync, CancellationToken cancellationToken)
-		{
-			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
-				var copied = await CopyToAsync (uids, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				await StoreAsync (uids, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
-				await ExpungeAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
-				return copied;
-			}
-
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				var indexes = await GetIndexesAsync (uids, doAsync, cancellationToken).ConfigureAwait (false);
-				await MoveToAsync (indexes, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				return UniqueIdMap.Empty;
-			}
-
-			if (uids == null)
-				throw new ArgumentNullException (nameof (uids));
-
-			CheckValidDestination (destination);
-
-			CheckState (true, true);
+			CheckState (true, false);
 
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				var indexes = await GetIndexesAsync (uids, cancellationToken).ConfigureAwait (false);
+				await CopyToAsync (indexes, destination, cancellationToken).ConfigureAwait (false);
+				return UniqueIdMap.Empty;
+			}
+
 			UniqueIdSet dest = null;
 			UniqueIdSet src = null;
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
+				await Engine.RunAsync (ic).ConfigureAwait (false);
 
-				ProcessResponseCodes (ic, destination);
-
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("MOVE", ic);
-
-				var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
-
-				if (copy != null) {
-					if (dest == null) {
-						dest = copy.DestUidSet;
-						src = copy.SrcUidSet;
-					} else {
-						dest.AddRange (copy.DestUidSet);
-						src.AddRange (copy.SrcUidSet);
-					}
-				}
+				ProcessCopyToResponse (ic, destination, ref src, ref dest);
 			}
 
 			if (dest == null)
 				return UniqueIdMap.Empty;
 
 			return new UniqueIdMap (src, dest);
+		}
+
+		// FIXME: This is identical to the ProcessCopyToResponse() implementation *except* for the ImapCommandException.Create() call...
+		void ProcessMoveToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet src, ref UniqueIdSet dest)
+		{
+			ProcessResponseCodes (ic, destination);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("MOVE", ic);
+
+			var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
+
+			if (copy != null) {
+				if (dest == null) {
+					dest = copy.DestUidSet;
+					src = copy.SrcUidSet;
+				} else {
+					dest.AddRange (copy.DestUidSet);
+					src.AddRange (copy.SrcUidSet);
+				}
+			}
 		}
 
 		/// <summary>
@@ -5543,7 +5620,39 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			return MoveToAsync (uids, destination, false, cancellationToken).GetAwaiter ().GetResult ();
+			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+				var copied = CopyTo (uids, destination, cancellationToken);
+				Store (uids, AddDeletedFlag, cancellationToken);
+				Expunge (uids, cancellationToken);
+				return copied;
+			}
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				var indexes = GetIndexes (uids, cancellationToken);
+				MoveTo (indexes, destination, cancellationToken);
+				return UniqueIdMap.Empty;
+			}
+
+			ValidateArguments (uids, destination);
+
+			CheckState (true, true);
+
+			if (uids.Count == 0)
+				return UniqueIdMap.Empty;
+
+			UniqueIdSet dest = null;
+			UniqueIdSet src = null;
+
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
+				Engine.Run (ic);
+
+				ProcessMoveToResponse (ic, destination, ref src, ref dest);
+			}
+
+			if (dest == null)
+				return UniqueIdMap.Empty;
+
+			return new UniqueIdMap (src, dest);
 		}
 
 		/// <summary>
@@ -5604,32 +5713,70 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override async Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			return MoveToAsync (uids, destination, true, cancellationToken);
+			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+				var copied = await CopyToAsync (uids, destination, cancellationToken).ConfigureAwait (false);
+				await StoreAsync (uids, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
+				await ExpungeAsync (uids, cancellationToken).ConfigureAwait (false);
+				return copied;
+			}
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				var indexes = await GetIndexesAsync (uids, cancellationToken).ConfigureAwait (false);
+				await MoveToAsync (indexes, destination, cancellationToken).ConfigureAwait (false);
+				return UniqueIdMap.Empty;
+			}
+
+			ValidateArguments (uids, destination);
+
+			CheckState (true, true);
+
+			if (uids.Count == 0)
+				return UniqueIdMap.Empty;
+
+			UniqueIdSet dest = null;
+			UniqueIdSet src = null;
+
+			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
+				await Engine.RunAsync (ic).ConfigureAwait (false);
+
+				ProcessMoveToResponse (ic, destination, ref src, ref dest);
+			}
+
+			if (dest == null)
+				return UniqueIdMap.Empty;
+
+			return new UniqueIdMap (src, dest);
 		}
 
-		async Task CopyToAsync (IList<int> indexes, IMailFolder destination, bool doAsync, CancellationToken cancellationToken)
+		void ValidateArguments (IList<int> indexes, IMailFolder destination)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
 			CheckValidDestination (destination);
+		}
+
+		ImapCommand QueueCopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		{
+			ValidateArguments (indexes, destination);
 
 			CheckState (true, false);
 			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
-				return;
+				return null;
 
 			var command = new StringBuilder ("COPY ");
 			ImapUtils.FormatIndexSet (Engine, command, indexes);
 			command.Append (" %F\r\n");
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), destination);
+			return Engine.QueueCommand (cancellationToken, this, command.ToString (), destination);
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination)
+		{
 			ProcessResponseCodes (ic, destination);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -5687,7 +5834,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			CopyToAsync (indexes, destination, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueCopyTo (indexes, destination, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			Engine.Run (ic);
+
+			ProcessCopyToResponse (ic, destination);
 		}
 
 		/// <summary>
@@ -5740,38 +5894,37 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override async Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			return CopyToAsync (indexes, destination, true, cancellationToken);
+			var ic = QueueCopyTo (indexes, destination, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessCopyToResponse (ic, destination);
 		}
 
-		async Task MoveToAsync (IList<int> indexes, IMailFolder destination, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueMoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
-			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
-				await CopyToAsync (indexes, destination, doAsync, cancellationToken).ConfigureAwait (false);
-				await StoreAsync (indexes, AddDeletedFlag, doAsync, cancellationToken).ConfigureAwait (false);
-				return;
-			}
-
-			if (indexes == null)
-				throw new ArgumentNullException (nameof (indexes));
-
-			CheckValidDestination (destination);
+			ValidateArguments (indexes, destination);
 
 			CheckState (true, true);
 			CheckAllowIndexes ();
 
 			if (indexes.Count == 0)
-				return;
+				return null;
 
 			var command = new StringBuilder ("MOVE ");
 			ImapUtils.FormatIndexSet (Engine, command, indexes);
 			command.Append (" %F\r\n");
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), destination);
+			return Engine.QueueCommand (cancellationToken, this, command.ToString (), destination);
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessMoveToResponse (ImapCommand ic, IMailFolder destination)
+		{
 			ProcessResponseCodes (ic, destination);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -5830,7 +5983,20 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			MoveToAsync (indexes, destination, false, cancellationToken).GetAwaiter ().GetResult ();
+			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+				CopyTo (indexes, destination, cancellationToken);
+				Store (indexes, AddDeletedFlag, cancellationToken);
+				return;
+			}
+
+			var ic = QueueMoveTo (indexes, destination, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			Engine.Run (ic);
+
+			ProcessMoveToResponse (ic, destination);
 		}
 
 		/// <summary>
@@ -5884,9 +6050,22 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override async Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			return MoveToAsync (indexes, destination, true, cancellationToken);
+			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+				await CopyToAsync (indexes, destination, cancellationToken).ConfigureAwait (false);
+				await StoreAsync (indexes, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
+				return;
+			}
+
+			var ic = QueueMoveTo (indexes, destination, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessMoveToResponse (ic, destination);
 		}
 
 		#region IEnumerable<MimeMessage> implementation
