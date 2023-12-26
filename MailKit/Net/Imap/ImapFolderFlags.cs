@@ -120,8 +120,7 @@ namespace MailKit.Net.Imap
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("STORE", ic);
+				ic.ThrowIfNotOk ("STORE");
 
 				ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
 			}
@@ -293,8 +292,7 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("STORE", ic);
+			ic.ThrowIfNotOk ("STORE");
 
 			return GetUnmodified (ic, request.UnchangedSince);
 		}
@@ -497,8 +495,7 @@ namespace MailKit.Net.Imap
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					throw ImapCommandException.Create ("STORE", ic);
+				ic.ThrowIfNotOk ("STORE");
 
 				ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
 			}
@@ -670,8 +667,7 @@ namespace MailKit.Net.Imap
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("STORE", ic);
+			ic.ThrowIfNotOk ("STORE");
 
 			return GetUnmodified (ic, request.UnchangedSince);
 		}

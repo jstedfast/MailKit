@@ -857,8 +857,7 @@ namespace MailKit.Net.Imap
 		{
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("SEARCH", ic);
+			ic.ThrowIfNotOk ("SEARCH");
 
 			return (SearchResults) ic.UserData;
 		}
@@ -1193,8 +1192,7 @@ namespace MailKit.Net.Imap
 		{
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("SORT", ic);
+			ic.ThrowIfNotOk ("SORT");
 
 			return (SearchResults) ic.UserData;
 		}

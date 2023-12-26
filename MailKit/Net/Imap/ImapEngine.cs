@@ -3302,8 +3302,7 @@ namespace MailKit.Net.Imap {
 
 			list = (List<ImapFolder>) ic.UserData;
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("LIST", ic);
+			ic.ThrowIfNotOk ("LIST");
 
 			if ((folder = GetFolder (list, quotaRoot)) == null) {
 				folder = CreateImapFolder (quotaRoot, FolderAttributes.NonExistent, '.');
@@ -3386,8 +3385,7 @@ namespace MailKit.Net.Imap {
 
 			list = (List<ImapFolder>) ic.UserData;
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("LIST", ic);
+			ic.ThrowIfNotOk ("LIST");
 
 			if ((folder = GetFolder (list, encodedName)) == null)
 				throw new FolderNotFoundException (path);
@@ -3578,8 +3576,7 @@ namespace MailKit.Net.Imap {
 
 			Run (ic);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create (ic.Lsub ? "LSUB" : "LIST", ic);
+			ic.ThrowIfNotOk (ic.Lsub ? "LSUB" : "LIST");
 
 			LookupParentFolders (list, cancellationToken);
 
@@ -3611,8 +3608,7 @@ namespace MailKit.Net.Imap {
 
 			await RunAsync (ic).ConfigureAwait (false);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create (ic.Lsub ? "LSUB" : "LIST", ic);
+			ic.ThrowIfNotOk (ic.Lsub ? "LSUB" : "LIST");
 
 			await LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
 

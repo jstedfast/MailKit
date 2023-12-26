@@ -384,8 +384,7 @@ namespace MailKit.Net.Imap {
 
 		static void ProcessEnableResponse (ImapCommand ic)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("ENABLE", ic);
+			ic.ThrowIfNotOk ("ENABLE");
 		}
 
 		/// <summary>
@@ -547,8 +546,7 @@ namespace MailKit.Net.Imap {
 
 		static ImapImplementation ProcessIdentifyResponse (ImapCommand ic)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("ID", ic);
+			ic.ThrowIfNotOk ("ID");
 
 			return (ImapImplementation) ic.UserData;
 		}
@@ -1807,8 +1805,7 @@ namespace MailKit.Net.Imap {
 
 		static void ProcessNoOpResponse (ImapCommand ic)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("NOOP", ic);
+			ic.ThrowIfNotOk ("NOOP");
 		}
 
 		/// <summary>
@@ -1890,8 +1887,7 @@ namespace MailKit.Net.Imap {
 
 		static void ProcessIdleResponse (ImapCommand ic)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("IDLE", ic);
+			ic.ThrowIfNotOk ("IDLE");
 		}
 
 		/// <summary>
@@ -2004,8 +2000,7 @@ namespace MailKit.Net.Imap {
 
 		void ProcessNotifyResponse (ImapCommand ic, bool notifySelectedNewExpunge)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("NOTIFY", ic);
+			ic.ThrowIfNotOk ("NOTIFY");
 
 			engine.NotifySelectedNewExpunge = notifySelectedNewExpunge;
 		}
@@ -2085,8 +2080,7 @@ namespace MailKit.Net.Imap {
 
 		void ProcessDisableNotifyResponse (ImapCommand ic)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("NOTIFY", ic);
+			ic.ThrowIfNotOk ("NOTIFY");
 
 			engine.NotifySelectedNewExpunge = false;
 		}
@@ -2430,8 +2424,7 @@ namespace MailKit.Net.Imap {
 
 		string ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("GETMETADATA", ic);
+			ic.ThrowIfNotOk ("GETMETADATA");
 
 			var metadata = (MetadataCollection) ic.UserData;
 			string value = null;
@@ -2557,8 +2550,7 @@ namespace MailKit.Net.Imap {
 
 		MetadataCollection ProcessGetMetadataResponse (ImapCommand ic, MetadataOptions options)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("GETMETADATA", ic);
+			ic.ThrowIfNotOk ("GETMETADATA");
 
 			if (ic.RespCodes.Count > 0 && ic.RespCodes[ic.RespCodes.Count - 1].Type == ImapResponseCodeType.Metadata) {
 				var metadata = (MetadataResponseCode) ic.RespCodes[ic.RespCodes.Count - 1];
@@ -2663,8 +2655,7 @@ namespace MailKit.Net.Imap {
 
 		static void ProcessSetMetadataResponse (ImapCommand ic)
 		{
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create ("SETMETADATA", ic);
+			ic.ThrowIfNotOk ("SETMETADATA");
 		}
 
 		/// <summary>

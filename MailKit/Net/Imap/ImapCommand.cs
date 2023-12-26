@@ -1132,5 +1132,17 @@ namespace MailKit.Net.Imap {
 
 			return null;
 		}
+
+		/// <summary>
+		/// Throw an <see cref="ImapCommandException"/> if the response was not OK.
+		/// </summary>
+		/// <remarks>
+		/// Throws an <see cref="ImapCommandException"/> if the response was not OK.
+		/// </remarks>
+		public void ThrowIfNotOk (string command)
+		{
+			if (Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create (command, this);
+		}
 	}
 }
