@@ -2313,7 +2313,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		async Task<AccessControlList> GetAccessControlListAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetAccessControlList (CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
@@ -2326,8 +2326,11 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		AccessControlList ProcessGetAccessControlListResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -2370,7 +2373,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override AccessControlList GetAccessControlList (CancellationToken cancellationToken = default)
 		{
-			return GetAccessControlListAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueGetAccessControlList (cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessGetAccessControlListResponse (ic);
 		}
 
 		/// <summary>
@@ -2405,9 +2412,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default)
+		public override async Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default)
 		{
-			return GetAccessControlListAsync (true, cancellationToken);
+			var ic = QueueGetAccessControlList (cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetAccessControlListResponse (ic);
 		}
 
 		static void ParseListRights (ImapEngine engine, ImapCommand ic)
@@ -2462,7 +2473,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		async Task<AccessRights> GetAccessRightsAsync (string name, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetAccessRights (string name, CancellationToken cancellationToken)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2478,8 +2489,11 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		AccessRights ProcessGetAccessRightsResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -2526,7 +2540,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default)
 		{
-			return GetAccessRightsAsync (name, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueGetAccessRights (name, cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessGetAccessRightsResponse (ic);
 		}
 
 		/// <summary>
@@ -2565,9 +2583,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default)
+		public override async Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default)
 		{
-			return GetAccessRightsAsync (name, true, cancellationToken);
+			var ic = QueueGetAccessRights (name, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetAccessRightsResponse (ic);
 		}
 
 		static void ParseMyRights (ImapEngine engine, ImapCommand ic)
@@ -2604,7 +2626,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		async Task<AccessRights> GetMyAccessRightsAsync (bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueGetMyAccessRigts (CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
@@ -2617,8 +2639,11 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return ic;
+		}
 
+		AccessRights ProcessGetMyAccessRightsResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -2661,7 +2686,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override AccessRights GetMyAccessRights (CancellationToken cancellationToken = default)
 		{
-			return GetMyAccessRightsAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueGetMyAccessRigts (cancellationToken);
+
+			Engine.Run (ic);
+
+			return ProcessGetMyAccessRightsResponse (ic);
 		}
 
 		/// <summary>
@@ -2696,22 +2725,36 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default)
+		public override async Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default)
 		{
-			return GetMyAccessRightsAsync (true, cancellationToken);
+			var ic = QueueGetMyAccessRigts (cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			return ProcessGetMyAccessRightsResponse (ic);
 		}
 
-		async Task ModifyAccessRightsAsync (string name, AccessRights rights, string action, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueModifyAccessRights (string name, string action, AccessRights rights, CancellationToken cancellationToken)
 		{
+			if (name == null)
+				throw new ArgumentNullException (nameof (name));
+
+			if (rights == null)
+				throw new ArgumentNullException (nameof (rights));
+
+			if (action.Length != 0 && rights.Count == 0)
+				throw new ArgumentException ("No rights were specified.", nameof (rights));
+
 			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
 
 			CheckState (false, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, null, "SETACL %F %S %S\r\n", this, name, action + rights);
+			return Engine.QueueCommand (cancellationToken, null, "SETACL %F %S %S\r\n", this, name, action + rights);
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessModifyAccessRightsResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -2761,16 +2804,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
+			var ic = QueueModifyAccessRights (name, "+", rights, cancellationToken);
 
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
+			Engine.Run (ic);
 
-			if (rights.Count == 0)
-				throw new ArgumentException ("No rights were specified.", nameof (rights));
-
-			ModifyAccessRightsAsync (name, rights, "+", false, cancellationToken).GetAwaiter ().GetResult ();
+			ProcessModifyAccessRightsResponse (ic);
 		}
 
 		/// <summary>
@@ -2815,18 +2853,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
+		public override async Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
+			var ic = QueueModifyAccessRights (name, "+", rights, cancellationToken);
 
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
+			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			if (rights.Count == 0)
-				throw new ArgumentException ("No rights were specified.", nameof (rights));
-
-			return ModifyAccessRightsAsync (name, rights, "+", true, cancellationToken);
+			ProcessModifyAccessRightsResponse (ic);
 		}
 
 		/// <summary>
@@ -2872,16 +2905,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
+			var ic = QueueModifyAccessRights (name, "-", rights, cancellationToken);
 
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
+			Engine.Run (ic);
 
-			if (rights.Count == 0)
-				throw new ArgumentException ("No rights were specified.", nameof (rights));
-
-			ModifyAccessRightsAsync (name, rights, "-", false, cancellationToken).GetAwaiter ().GetResult ();
+			ProcessModifyAccessRightsResponse (ic);
 		}
 
 		/// <summary>
@@ -2926,18 +2954,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
+		public override async Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
+			var ic = QueueModifyAccessRights (name, "-", rights, cancellationToken);
 
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
+			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			if (rights.Count == 0)
-				throw new ArgumentException ("No rights were specified.", nameof (rights));
-
-			return ModifyAccessRightsAsync (name, rights, "-", true, cancellationToken);
+			ProcessModifyAccessRightsResponse (ic);
 		}
 
 		/// <summary>
@@ -2980,13 +3003,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
+			var ic = QueueModifyAccessRights (name, string.Empty, rights, cancellationToken);
 
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
+			Engine.Run (ic);
 
-			ModifyAccessRightsAsync (name, rights, string.Empty, false, cancellationToken).GetAwaiter ().GetResult ();
+			ProcessModifyAccessRightsResponse (ic);
 		}
 
 		/// <summary>
@@ -3028,18 +3049,16 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
+		public override async Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			if (name == null)
-				throw new ArgumentNullException (nameof (name));
+			var ic = QueueModifyAccessRights (name, string.Empty, rights, cancellationToken);
 
-			if (rights == null)
-				throw new ArgumentNullException (nameof (rights));
+			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			return ModifyAccessRightsAsync (name, rights, string.Empty, true, cancellationToken);
+			ProcessModifyAccessRightsResponse (ic);
 		}
 
-		async Task RemoveAccessAsync (string name, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueRemoveAccess (string name, CancellationToken cancellationToken)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -3049,10 +3068,11 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, null, "DELETEACL %F %S\r\n", this, name);
+			return Engine.QueueCommand (cancellationToken, null, "DELETEACL %F %S\r\n", this, name);
+		}
 
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
+		void ProcessRemoveAccessResponse (ImapCommand ic)
+		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
@@ -3096,7 +3116,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void RemoveAccess (string name, CancellationToken cancellationToken = default)
 		{
-			RemoveAccessAsync (name, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueRemoveAccess (name, cancellationToken);
+
+			Engine.Run (ic);
+
+			ProcessRemoveAccessResponse (ic);
 		}
 
 		/// <summary>
@@ -3135,9 +3159,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The command failed.
 		/// </exception>
-		public override Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default)
+		public override async Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default)
 		{
-			return RemoveAccessAsync (name, true, cancellationToken);
+			var ic = QueueRemoveAccess (name, cancellationToken);
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessRemoveAccessResponse (ic);
 		}
 
 		async Task<string> GetMetadataAsync (MetadataTag tag, bool doAsync, CancellationToken cancellationToken)
