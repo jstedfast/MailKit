@@ -331,7 +331,7 @@ namespace MailKit.Net.Imap {
 			return ic.Folder.OnUntaggedFetchResponse (engine, index, doAsync, ic.CancellationToken);
 		}
 
-		ImapCommand QueueOpen (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken)
+		ImapCommand QueueOpenCommand (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken)
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException (nameof (access));
@@ -495,7 +495,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueOpen (access, uidValidity, highestModSeq, uids, cancellationToken);
+			var ic = QueueOpenCommand (access, uidValidity, highestModSeq, uids, cancellationToken);
 
 			return Open (ic, access);
 		}
@@ -552,12 +552,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueOpen (access, uidValidity, highestModSeq, uids, cancellationToken);
+			var ic = QueueOpenCommand (access, uidValidity, highestModSeq, uids, cancellationToken);
 
 			return OpenAsync (ic, access);
 		}
 
-		ImapCommand QueueOpen (FolderAccess access, CancellationToken cancellationToken)
+		ImapCommand QueueOpenCommand (FolderAccess access, CancellationToken cancellationToken)
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException (nameof (access));
@@ -620,7 +620,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueOpen (access, cancellationToken);
+			var ic = QueueOpenCommand (access, cancellationToken);
 
 			return Open (ic, access);
 		}
@@ -663,12 +663,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueOpen (access, cancellationToken);
+			var ic = QueueOpenCommand (access, cancellationToken);
 
 			return OpenAsync (ic, access);
 		}
 
-		ImapCommand QueueClose (bool expunge, CancellationToken cancellationToken)
+		ImapCommand QueueCloseCommand (bool expunge, CancellationToken cancellationToken)
 		{
 			CheckState (true, expunge);
 
@@ -737,7 +737,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Close (bool expunge = false, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueClose (expunge, cancellationToken);
+			var ic = QueueCloseCommand (expunge, cancellationToken);
 
 			if (ic != null) {
 				Engine.Run (ic);
@@ -783,7 +783,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueClose (expunge, cancellationToken);
+			var ic = QueueCloseCommand (expunge, cancellationToken);
 
 			if (ic != null) {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -794,7 +794,7 @@ namespace MailKit.Net.Imap {
 			Close ();
 		}
 
-		ImapCommand QueueGetCreatedFolder (string encodedName, CancellationToken cancellationToken)
+		ImapCommand QueueGetCreatedFolderCommand (string encodedName, CancellationToken cancellationToken)
 		{
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
@@ -827,7 +827,7 @@ namespace MailKit.Net.Imap {
 			return folder;
 		}
 
-		ImapCommand QueueCreate (string name, bool isMessageFolder, CancellationToken cancellationToken, out string encodedName)
+		ImapCommand QueueCreateCommand (string name, bool isMessageFolder, CancellationToken cancellationToken, out string encodedName)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -867,7 +867,7 @@ namespace MailKit.Net.Imap {
 			var mailboxIdResponseCode = ProcessCreateResponse (ic);
 			var id = mailboxIdResponseCode?.MailboxId;
 
-			ic = QueueGetCreatedFolder (encodedName, cancellationToken);
+			ic = QueueGetCreatedFolderCommand (encodedName, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -881,7 +881,7 @@ namespace MailKit.Net.Imap {
 			var mailboxIdResponseCode = ProcessCreateResponse (ic);
 			var id = mailboxIdResponseCode?.MailboxId;
 
-			ic = QueueGetCreatedFolder (encodedName, cancellationToken);
+			ic = QueueGetCreatedFolderCommand (encodedName, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -930,7 +930,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCreate (name, isMessageFolder, cancellationToken, out var encodedName);
+			var ic = QueueCreateCommand (name, isMessageFolder, cancellationToken, out var encodedName);
 
 			return Create (ic, encodedName, false, cancellationToken);
 		}
@@ -977,12 +977,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCreate (name, isMessageFolder, cancellationToken, out var encodedName);
+			var ic = QueueCreateCommand (name, isMessageFolder, cancellationToken, out var encodedName);
 
 			return CreateAsync (ic, encodedName, false, cancellationToken);
 		}
 
-		ImapCommand QueueCreate (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken, out string encodedName)
+		ImapCommand QueueCreateCommand (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken, out string encodedName)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -1087,7 +1087,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCreate (name, specialUses, cancellationToken, out var encodedName);
+			var ic = QueueCreateCommand (name, specialUses, cancellationToken, out var encodedName);
 
 			return Create (ic, encodedName, true, cancellationToken);
 		}
@@ -1139,12 +1139,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCreate (name, specialUses, cancellationToken, out var encodedName);
+			var ic = QueueCreateCommand (name, specialUses, cancellationToken, out var encodedName);
 
 			return CreateAsync (ic, encodedName, true, cancellationToken);
 		}
 
-		ImapCommand QueueRename (IMailFolder parent, string name, CancellationToken cancellationToken, out string encodedName)
+		ImapCommand QueueRenameCommand (IMailFolder parent, string name, CancellationToken cancellationToken, out string encodedName)
 		{
 			if (parent == null)
 				throw new ArgumentNullException (nameof (parent));
@@ -1254,7 +1254,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueRename (parent, name, cancellationToken, out var encodedName);
+			var ic = QueueRenameCommand (parent, name, cancellationToken, out var encodedName);
 
 			Engine.Run (ic);
 
@@ -1310,14 +1310,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueRename (parent, name, cancellationToken, out var encodedName);
+			var ic = QueueRenameCommand (parent, name, cancellationToken, out var encodedName);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessRenameResponse (ic, parent, name, encodedName);
 		}
 
-		ImapCommand QueueDelete (CancellationToken cancellationToken)
+		ImapCommand QueueDeleteCommand (CancellationToken cancellationToken)
 		{
 			if (IsNamespace || (Attributes & FolderAttributes.Inbox) != 0)
 				throw new InvalidOperationException ("Cannot delete this folder.");
@@ -1379,7 +1379,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Delete (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueDelete (cancellationToken);
+			var ic = QueueDeleteCommand (cancellationToken);
 
 			Engine.Run (ic);
 
@@ -1421,14 +1421,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task DeleteAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueDelete (cancellationToken);
+			var ic = QueueDeleteCommand (cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessDeleteResponse (ic);
 		}
 
-		ImapCommand QueueSubscribe (CancellationToken cancellationToken)
+		ImapCommand QueueSubscribeCommand (CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
@@ -1478,7 +1478,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Subscribe (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSubscribe (cancellationToken);
+			var ic = QueueSubscribeCommand (cancellationToken);
 
 			Engine.Run (ic);
 
@@ -1516,14 +1516,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task SubscribeAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSubscribe (cancellationToken);
+			var ic = QueueSubscribeCommand (cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessSubscribeResponse (ic);
 		}
 
-		ImapCommand QueueUnsubscribe (CancellationToken cancellationToken)
+		ImapCommand QueueUnsubscribeCommand (CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
@@ -1573,7 +1573,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Unsubscribe (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueUnsubscribe (cancellationToken);
+			var ic = QueueUnsubscribeCommand (cancellationToken);
 
 			Engine.Run (ic);
 
@@ -1611,14 +1611,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task UnsubscribeAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueUnsubscribe (cancellationToken);
+			var ic = QueueUnsubscribeCommand (cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessUnsubscribeResponse (ic);
 		}
 
-		ImapCommand QueueGetSubfolders (StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, out List<ImapFolder> list, out bool status)
+		ImapCommand QueueGetSubfoldersCommand (StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, out List<ImapFolder> list, out bool status)
 		{
 			CheckState (false, false);
 
@@ -1762,7 +1762,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMailFolder> GetSubfolders (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetSubfolders (items, subscribedOnly, cancellationToken, out var list, out var status);
+			var ic = QueueGetSubfoldersCommand (items, subscribedOnly, cancellationToken, out var list, out var status);
 
 			Engine.Run (ic);
 
@@ -1816,7 +1816,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<IList<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetSubfolders (items, subscribedOnly, cancellationToken, out var list, out var status);
+			var ic = QueueGetSubfoldersCommand (items, subscribedOnly, cancellationToken, out var list, out var status);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -1837,7 +1837,7 @@ namespace MailKit.Net.Imap {
 			return children;
 		}
 
-		ImapCommand QueueGetSubfolder (string name, CancellationToken cancellationToken, out List<ImapFolder> list, out string fullName, out string encodedName, out ImapFolder folder)
+		ImapCommand QueueGetSubfolderCommand (string name, CancellationToken cancellationToken, out List<ImapFolder> list, out string fullName, out string encodedName, out ImapFolder folder)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -1923,7 +1923,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetSubfolder (name, cancellationToken, out var list, out var fullName, out var encodedName, out var folder);
+			var ic = QueueGetSubfolderCommand (name, cancellationToken, out var list, out var fullName, out var encodedName, out var folder);
 
 			if (ic == null)
 				return folder;
@@ -1985,7 +1985,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetSubfolder (name, cancellationToken, out var list, out var fullName, out var encodedName, out var folder);
+			var ic = QueueGetSubfolderCommand (name, cancellationToken, out var list, out var fullName, out var encodedName, out var folder);
 
 			if (ic == null)
 				return folder;
@@ -2006,7 +2006,7 @@ namespace MailKit.Net.Imap {
 			return folder;
 		}
 
-		ImapCommand QueueCheck (CancellationToken cancellationToken)
+		ImapCommand QueueCheckCommand (CancellationToken cancellationToken)
 		{
 			CheckState (true, false);
 
@@ -2056,7 +2056,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Check (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCheck (cancellationToken);
+			var ic = QueueCheckCommand (cancellationToken);
 
 			Engine.Run (ic);
 
@@ -2100,14 +2100,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task CheckAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCheck (cancellationToken);
+			var ic = QueueCheckCommand (cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessCheckResponse (ic);
 		}
 
-		ImapCommand QueueStatus (StatusItems items, CancellationToken cancellationToken)
+		ImapCommand QueueStatusCommand (StatusItems items, CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Status) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the STATUS command.");
@@ -2131,7 +2131,7 @@ namespace MailKit.Net.Imap {
 
 		internal void Status (StatusItems items, bool throwNotFound, CancellationToken cancellationToken)
 		{
-			var ic = QueueStatus (items, cancellationToken);
+			var ic = QueueStatusCommand (items, cancellationToken);
 
 			if (ic == null)
 				return;
@@ -2143,7 +2143,7 @@ namespace MailKit.Net.Imap {
 
 		internal async Task StatusAsync (StatusItems items, bool throwNotFound, CancellationToken cancellationToken)
 		{
-			var ic = QueueStatus (items, cancellationToken);
+			var ic = QueueStatusCommand (items, cancellationToken);
 
 			if (ic == null)
 				return;
@@ -2302,7 +2302,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		ImapCommand QueueGetAccessControlList (CancellationToken cancellationToken)
+		ImapCommand QueueGetAccessControlListCommand (CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
@@ -2361,7 +2361,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override AccessControlList GetAccessControlList (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetAccessControlList (cancellationToken);
+			var ic = QueueGetAccessControlListCommand (cancellationToken);
 
 			Engine.Run (ic);
 
@@ -2402,7 +2402,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetAccessControlList (cancellationToken);
+			var ic = QueueGetAccessControlListCommand (cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -2461,7 +2461,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		ImapCommand QueueGetAccessRights (string name, CancellationToken cancellationToken)
+		ImapCommand QueueGetAccessRightsCommand (string name, CancellationToken cancellationToken)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2527,7 +2527,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetAccessRights (name, cancellationToken);
+			var ic = QueueGetAccessRightsCommand (name, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -2572,7 +2572,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetAccessRights (name, cancellationToken);
+			var ic = QueueGetAccessRightsCommand (name, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -2613,7 +2613,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		ImapCommand QueueGetMyAccessRigts (CancellationToken cancellationToken)
+		ImapCommand QueueGetMyAccessRightsCommand (CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
@@ -2672,7 +2672,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override AccessRights GetMyAccessRights (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetMyAccessRigts (cancellationToken);
+			var ic = QueueGetMyAccessRightsCommand (cancellationToken);
 
 			Engine.Run (ic);
 
@@ -2713,14 +2713,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetMyAccessRigts (cancellationToken);
+			var ic = QueueGetMyAccessRightsCommand (cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			return ProcessGetMyAccessRightsResponse (ic);
 		}
 
-		ImapCommand QueueModifyAccessRights (string name, string action, AccessRights rights, CancellationToken cancellationToken)
+		ImapCommand QueueModifyAccessRightsCommand (string name, string action, AccessRights rights, CancellationToken cancellationToken)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -2789,7 +2789,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueModifyAccessRights (name, "+", rights, cancellationToken);
+			var ic = QueueModifyAccessRightsCommand (name, "+", rights, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -2840,7 +2840,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueModifyAccessRights (name, "+", rights, cancellationToken);
+			var ic = QueueModifyAccessRightsCommand (name, "+", rights, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -2890,7 +2890,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueModifyAccessRights (name, "-", rights, cancellationToken);
+			var ic = QueueModifyAccessRightsCommand (name, "-", rights, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -2941,7 +2941,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueModifyAccessRights (name, "-", rights, cancellationToken);
+			var ic = QueueModifyAccessRightsCommand (name, "-", rights, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -2988,7 +2988,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueModifyAccessRights (name, string.Empty, rights, cancellationToken);
+			var ic = QueueModifyAccessRightsCommand (name, string.Empty, rights, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -3036,14 +3036,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueModifyAccessRights (name, string.Empty, rights, cancellationToken);
+			var ic = QueueModifyAccessRightsCommand (name, string.Empty, rights, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessModifyAccessRightsResponse (ic);
 		}
 
-		ImapCommand QueueRemoveAccess (string name, CancellationToken cancellationToken)
+		ImapCommand QueueRemoveAccessCommand (string name, CancellationToken cancellationToken)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -3100,7 +3100,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void RemoveAccess (string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueRemoveAccess (name, cancellationToken);
+			var ic = QueueRemoveAccessCommand (name, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -3145,14 +3145,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueRemoveAccess (name, cancellationToken);
+			var ic = QueueRemoveAccessCommand (name, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessRemoveAccessResponse (ic);
 		}
 
-		ImapCommand QueueGetMetadata (MetadataTag tag, CancellationToken cancellationToken)
+		ImapCommand QueueGetMetadataCommand (MetadataTag tag, CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
@@ -3227,7 +3227,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetMetadata (tag, cancellationToken);
+			var ic = QueueGetMetadataCommand (tag, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -3269,14 +3269,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetMetadata (tag, cancellationToken);
+			var ic = QueueGetMetadataCommand (tag, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			return ProcessGetMetadataResponse (ic, tag);
 		}
 
-		ImapCommand QueueGetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken)
+		ImapCommand QueueGetMetadataCommand (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -3392,7 +3392,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override MetadataCollection GetMetadata (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetMetadata (options, tags, cancellationToken);
+			var ic = QueueGetMetadataCommand (options, tags, cancellationToken);
 
 			if (ic == null)
 				return new MetadataCollection ();
@@ -3443,7 +3443,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<MetadataCollection> GetMetadataAsync (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetMetadata (options, tags, cancellationToken);
+			var ic = QueueGetMetadataCommand (options, tags, cancellationToken);
 
 			if (ic == null)
 				return new MetadataCollection ();
@@ -3453,7 +3453,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetMetadataResponse (ic, options);
 		}
 
-		ImapCommand QueueSetMetadata (MetadataCollection metadata, CancellationToken cancellationToken)
+		ImapCommand QueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken)
 		{
 			if (metadata == null)
 				throw new ArgumentNullException (nameof (metadata));
@@ -3537,7 +3537,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSetMetadata (metadata, cancellationToken);
+			var ic = QueueSetMetadataCommand (metadata, cancellationToken);
 
 			if (ic == null)
 				return;
@@ -3585,7 +3585,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task SetMetadataAsync (MetadataCollection metadata, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSetMetadata (metadata, cancellationToken);
+			var ic = QueueSetMetadataCommand (metadata, cancellationToken);
 
 			if (ic == null)
 				return;
@@ -3794,7 +3794,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		ImapCommand QueueGetQuota (CancellationToken cancellationToken)
+		ImapCommand QueueGetQuotaCommand (CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
@@ -3870,7 +3870,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override FolderQuota GetQuota (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetQuota (cancellationToken);
+			var ic = QueueGetQuotaCommand (cancellationToken);
 
 			Engine.Run (ic);
 
@@ -3923,7 +3923,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetQuota (cancellationToken);
+			var ic = QueueGetQuotaCommand (cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -3940,7 +3940,7 @@ namespace MailKit.Net.Imap {
 			};
 		}
 
-		ImapCommand QueueSetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken)
+		ImapCommand QueueSetQuotaCommand (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken)
 		{
 			CheckState (false, false);
 
@@ -4030,7 +4030,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSetQuota (messageLimit, storageLimit, cancellationToken);
+			var ic = QueueSetQuotaCommand (messageLimit, storageLimit, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -4075,14 +4075,14 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSetQuota (messageLimit, storageLimit, cancellationToken);
+			var ic = QueueSetQuotaCommand (messageLimit, storageLimit, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			return ProcessSetQuotaResponse (ic);
 		}
 
-		ImapCommand QueueExpunge (CancellationToken cancellationToken)
+		ImapCommand QueueExpungeCommand (CancellationToken cancellationToken)
 		{
 			CheckState (true, true);
 
@@ -4137,7 +4137,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Expunge (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueExpunge (cancellationToken);
+			var ic = QueueExpungeCommand (cancellationToken);
 
 			Engine.Run (ic);
 
@@ -4186,7 +4186,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task ExpungeAsync (CancellationToken cancellationToken = default)
 		{
-			var ic = QueueExpunge (cancellationToken);
+			var ic = QueueExpungeCommand (cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -4398,7 +4398,7 @@ namespace MailKit.Net.Imap {
 			return format;
 		}
 
-		ImapCommand QueueAppend (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken)
+		ImapCommand QueueAppendCommand (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -4520,7 +4520,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueAppend (options, request, cancellationToken);
+			var ic = QueueAppendCommand (options, request, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -4576,7 +4576,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueAppend (options, request, cancellationToken);
+			var ic = QueueAppendCommand (options, request, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -4602,7 +4602,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 		}
 
-		ImapCommand QueueMultiAppend (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken)
+		ImapCommand QueueMultiAppendCommand (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken)
 		{
 			var format = CreateAppendOptions (options);
 			var builder = new StringBuilder ("APPEND %F");
@@ -4728,7 +4728,7 @@ namespace MailKit.Net.Imap {
 				return Array.Empty<UniqueId> ();
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppend (options, requests, cancellationToken);
+				var ic = QueueMultiAppendCommand (options, requests, cancellationToken);
 
 				Engine.Run (ic);
 
@@ -4810,7 +4810,7 @@ namespace MailKit.Net.Imap {
 				return Array.Empty<UniqueId> ();
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppend (options, requests, cancellationToken);
+				var ic = QueueMultiAppendCommand (options, requests, cancellationToken);
 
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -4854,7 +4854,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true, true);
 		}
 
-		ImapCommand QueueReplace (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken)
+		ImapCommand QueueReplaceCommand (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken)
 		{
 			var format = CreateAppendOptions (options);
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
@@ -4982,7 +4982,7 @@ namespace MailKit.Net.Imap {
 				return appended;
 			}
 
-			var ic = QueueReplace (options, uid, request, cancellationToken);
+			var ic = QueueReplaceCommand (options, uid, request, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -5056,14 +5056,14 @@ namespace MailKit.Net.Imap {
 				return appended;
 			}
 
-			var ic = QueueReplace (options, uid, request, cancellationToken);
+			var ic = QueueReplaceCommand (options, uid, request, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			return ProcessReplaceResponse (ic);
 		}
 
-		ImapCommand QueueReplace (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken)
+		ImapCommand QueueReplaceCommand (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken)
 		{
 			var format = CreateAppendOptions (options);
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
@@ -5197,7 +5197,7 @@ namespace MailKit.Net.Imap {
 				return uid;
 			}
 
-			var ic = QueueReplace (options, index, request, cancellationToken);
+			var ic = QueueReplaceCommand (options, index, request, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -5270,14 +5270,14 @@ namespace MailKit.Net.Imap {
 				return uid;
 			}
 
-			var ic = QueueReplace (options, index, request, cancellationToken);
+			var ic = QueueReplaceCommand (options, index, request, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			return ProcessReplaceResponse (ic);
 		}
 
-		ImapCommand QueueGetIndexes (IList<UniqueId> uids, CancellationToken cancellationToken)
+		ImapCommand QueueGetIndexesCommand (IList<UniqueId> uids, CancellationToken cancellationToken)
 		{
 			var command = string.Format ("SEARCH UID {0}\r\n", UniqueIdSet.ToString (uids));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -5310,7 +5310,7 @@ namespace MailKit.Net.Imap {
 
 		IList<int> GetIndexes (IList<UniqueId> uids, CancellationToken cancellationToken)
 		{
-			var ic = QueueGetIndexes (uids, cancellationToken);
+			var ic = QueueGetIndexesCommand (uids, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -5319,7 +5319,7 @@ namespace MailKit.Net.Imap {
 
 		async Task<IList<int>> GetIndexesAsync (IList<UniqueId> uids, CancellationToken cancellationToken)
 		{
-			var ic = QueueGetIndexes (uids, cancellationToken);
+			var ic = QueueGetIndexesCommand (uids, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -5731,7 +5731,7 @@ namespace MailKit.Net.Imap {
 			CheckValidDestination (destination);
 		}
 
-		ImapCommand QueueCopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		ImapCommand QueueCopyToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
 			ValidateArguments (indexes, destination);
 
@@ -5806,7 +5806,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCopyTo (indexes, destination, cancellationToken);
+			var ic = QueueCopyToCommand (indexes, destination, cancellationToken);
 
 			if (ic == null)
 				return;
@@ -5868,7 +5868,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCopyTo (indexes, destination, cancellationToken);
+			var ic = QueueCopyToCommand (indexes, destination, cancellationToken);
 
 			if (ic == null)
 				return;
@@ -5878,7 +5878,7 @@ namespace MailKit.Net.Imap {
 			ProcessCopyToResponse (ic, destination);
 		}
 
-		ImapCommand QueueMoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		ImapCommand QueueMoveToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
 			ValidateArguments (indexes, destination);
 
@@ -5960,7 +5960,7 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			var ic = QueueMoveTo (indexes, destination, cancellationToken);
+			var ic = QueueMoveToCommand (indexes, destination, cancellationToken);
 
 			if (ic == null)
 				return;
@@ -6029,7 +6029,7 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			var ic = QueueMoveTo (indexes, destination, cancellationToken);
+			var ic = QueueMoveToCommand (indexes, destination, cancellationToken);
 
 			if (ic == null)
 				return;

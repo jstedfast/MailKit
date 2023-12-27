@@ -825,7 +825,7 @@ namespace MailKit.Net.Imap
 			return Task.CompletedTask;
 		}
 
-		ImapCommand QueueSearch (string query, CancellationToken cancellationToken)
+		ImapCommand QueueSearchCommand (string query, CancellationToken cancellationToken)
 		{
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
@@ -906,7 +906,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public virtual SearchResults Search (string query, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSearch (query, cancellationToken);
+			var ic = QueueSearchCommand (query, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -957,14 +957,14 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public virtual async Task<SearchResults> SearchAsync (string query, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSearch (query, cancellationToken);
+			var ic = QueueSearchCommand (query, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			return ProcessSearchResponse (ic);
 		}
 
-		ImapCommand QueueSearch (SearchOptions options, SearchQuery query, CancellationToken cancellationToken, out string charset)
+		ImapCommand QueueSearchCommand (SearchOptions options, SearchQuery query, CancellationToken cancellationToken, out string charset)
 		{
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
@@ -1043,7 +1043,7 @@ namespace MailKit.Net.Imap
 
 		SearchResults Search (SearchOptions options, SearchQuery query, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSearch (options, query, cancellationToken, out string charset);
+			var ic = QueueSearchCommand (options, query, cancellationToken, out string charset);
 
 			Engine.Run (ic);
 
@@ -1103,7 +1103,7 @@ namespace MailKit.Net.Imap
 
 		async Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSearch (options, query, cancellationToken, out string charset);
+			var ic = QueueSearchCommand (options, query, cancellationToken, out string charset);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -1161,7 +1161,7 @@ namespace MailKit.Net.Imap
 			return SearchAsync (options, query, true, cancellationToken);
 		}
 
-		ImapCommand QueueSort (string query, CancellationToken cancellationToken)
+		ImapCommand QueueSortCommand (string query, CancellationToken cancellationToken)
 		{
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
@@ -1244,7 +1244,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public virtual SearchResults Sort (string query, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSort (query, cancellationToken);
+			var ic = QueueSortCommand (query, cancellationToken);
 
 			Engine.Run (ic);
 
@@ -1298,14 +1298,14 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public virtual async Task<SearchResults> SortAsync (string query, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueSort (query, cancellationToken);
+			var ic = QueueSortCommand (query, cancellationToken);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			return ProcessSortResponse (ic);
 		}
 
-		ImapCommand QueueSort (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken, out string charset)
+		ImapCommand QueueSortCommand (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken, out string charset)
 		{
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
@@ -1366,7 +1366,7 @@ namespace MailKit.Net.Imap
 
 		IList<UniqueId> Sort (SearchQuery query, IList<OrderBy> orderBy, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSort (query, orderBy, cancellationToken, out string charset);
+			var ic = QueueSortCommand (query, orderBy, cancellationToken, out string charset);
 
 			Engine.Run (ic);
 
@@ -1431,7 +1431,7 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<UniqueId>> SortAsync (SearchQuery query, IList<OrderBy> orderBy, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSort (query, orderBy, cancellationToken, out string charset);
+			var ic = QueueSortCommand (query, orderBy, cancellationToken, out string charset);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -1494,7 +1494,7 @@ namespace MailKit.Net.Imap
 			return SortAsync (query, orderBy, true, cancellationToken);
 		}
 
-		ImapCommand QueueSort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken, out string charset)
+		ImapCommand QueueSortCommand (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken, out string charset)
 		{
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
@@ -1574,7 +1574,7 @@ namespace MailKit.Net.Imap
 
 		SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSort (options, query, orderBy, cancellationToken, out string charset);
+			var ic = QueueSortCommand (options, query, orderBy, cancellationToken, out string charset);
 
 			Engine.Run (ic);
 
@@ -1639,7 +1639,7 @@ namespace MailKit.Net.Imap
 
 		async Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSort (options, query, orderBy, cancellationToken, out string charset);
+			var ic = QueueSortCommand (options, query, orderBy, cancellationToken, out string charset);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -1702,7 +1702,7 @@ namespace MailKit.Net.Imap
 			return SortAsync (options, query, orderBy, true, cancellationToken);
 		}
 
-		ImapCommand QueueThread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken, out string charset)
+		ImapCommand QueueThreadCommand (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken, out string charset)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
@@ -1751,7 +1751,7 @@ namespace MailKit.Net.Imap
 
 		IList<MessageThread> Thread (ThreadingAlgorithm algorithm, SearchQuery query, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueThread (algorithm, query, cancellationToken, out string charset);
+			var ic = QueueThreadCommand (algorithm, query, cancellationToken, out string charset);
 
 			Engine.Run (ic);
 
@@ -1814,7 +1814,7 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueThread (algorithm, query, cancellationToken, out string charset);
+			var ic = QueueThreadCommand (algorithm, query, cancellationToken, out string charset);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -1875,7 +1875,7 @@ namespace MailKit.Net.Imap
 			return ThreadAsync (algorithm, query, true, cancellationToken);
 		}
 
-		ImapCommand QueueThread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken, out string charset)
+		ImapCommand QueueThreadCommand (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken, out string charset)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
@@ -1915,7 +1915,7 @@ namespace MailKit.Net.Imap
 
 		IList<MessageThread> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueThread (uids, algorithm, query, cancellationToken, out string charset);
+			var ic = QueueThreadCommand (uids, algorithm, query, cancellationToken, out string charset);
 
 			if (ic == null)
 				return Array.Empty<MessageThread> ();
@@ -1989,7 +1989,7 @@ namespace MailKit.Net.Imap
 
 		async Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueThread (uids, algorithm, query, cancellationToken, out string charset);
+			var ic = QueueThreadCommand (uids, algorithm, query, cancellationToken, out string charset);
 
 			if (ic == null)
 				return Array.Empty<MessageThread> ();

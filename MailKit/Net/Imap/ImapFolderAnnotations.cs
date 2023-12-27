@@ -35,7 +35,7 @@ namespace MailKit.Net.Imap
 {
 	public partial class ImapFolder
 	{
-		async Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, ulong? modseq, IList<Annotation> annotations, bool doAsync, CancellationToken cancellationToken)
+		IEnumerable<ImapCommand> QueueStoreCommands (IList<UniqueId> uids, ulong? modseq, IList<Annotation> annotations, CancellationToken cancellationToken)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
@@ -52,11 +52,10 @@ namespace MailKit.Net.Imap
 				throw new NotSupportedException ("The ImapFolder does not support annotations.");
 
 			if (uids.Count == 0 || annotations.Count == 0)
-				return Array.Empty<UniqueId> ();
+				return Array.Empty<ImapCommand> ();
 
 			var builder = new StringBuilder ("UID STORE %s ");
 			var values = new List<object> ();
-			UniqueIdSet unmodified = null;
 
 			if (modseq.HasValue) {
 				builder.Append ("(UNCHANGEDSINCE ");
@@ -70,24 +69,18 @@ namespace MailKit.Net.Imap
 			var command = builder.ToString ();
 			var args = values.ToArray ();
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, command, uids, args)) {
-				await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
+			return Engine.QueueCommands (cancellationToken, this, command, uids, args);
+		}
 
-				ProcessResponseCodes (ic, null);
+		void ProcessStoreAnnotationsResponse (ImapCommand ic)
+		{
+			ProcessResponseCodes (ic, null);
 
-				if (ic.Response != ImapCommandResponse.Ok) {
-					// TODO: Do something with the AnnotateResponseCode if it exists??
+			if (ic.Response != ImapCommandResponse.Ok) {
+				// TODO: Do something with the AnnotateResponseCode if it exists??
 
-					throw ImapCommandException.Create ("STORE", ic);
-				}
-
-				ProcessUnmodified (ic, ref unmodified, modseq);
+				throw ImapCommandException.Create ("STORE", ic);
 			}
-
-			if (unmodified == null)
-				return Array.Empty<UniqueId> ();
-
-			return unmodified;
 		}
 
 		/// <summary>
@@ -139,7 +132,11 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override void Store (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			StoreAsync (uids, null, annotations, false, cancellationToken).GetAwaiter ().GetResult ();
+			foreach (var ic in QueueStoreCommands (uids, null, annotations, cancellationToken)) {
+				Engine.Run (ic);
+
+				ProcessStoreAnnotationsResponse (ic);
+			}
 		}
 
 		/// <summary>
@@ -190,9 +187,13 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task StoreAsync (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default)
+		public override async Task StoreAsync (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			return StoreAsync (uids, null, annotations, true, cancellationToken);
+			foreach (var ic in QueueStoreCommands (uids, null, annotations, cancellationToken)) {
+				await Engine.RunAsync (ic).ConfigureAwait (false);
+
+				ProcessStoreAnnotationsResponse (ic);
+			}
 		}
 
 		/// <summary>
@@ -248,7 +249,20 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<UniqueId> Store (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			return StoreAsync (uids, modseq, annotations, false, cancellationToken).GetAwaiter ().GetResult ();
+			UniqueIdSet unmodified = null;
+
+			foreach (var ic in QueueStoreCommands (uids, modseq, annotations, cancellationToken)) {
+				Engine.Run (ic);
+
+				ProcessStoreAnnotationsResponse (ic);
+
+				ProcessUnmodified (ic, ref unmodified, modseq);
+			}
+
+			if (unmodified == null)
+				return Array.Empty<UniqueId> ();
+
+			return unmodified;
 		}
 
 		/// <summary>
@@ -302,12 +316,25 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
+		public override async Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			return StoreAsync (uids, modseq, annotations, true, cancellationToken);
+			UniqueIdSet unmodified = null;
+
+			foreach (var ic in QueueStoreCommands (uids, modseq, annotations, cancellationToken)) {
+				await Engine.RunAsync (ic).ConfigureAwait (false);
+
+				ProcessStoreAnnotationsResponse (ic);
+
+				ProcessUnmodified (ic, ref unmodified, modseq);
+			}
+
+			if (unmodified == null)
+				return Array.Empty<UniqueId> ();
+
+			return unmodified;
 		}
 
-		async Task<IList<int>> StoreAsync (IList<int> indexes, ulong? modseq, IList<Annotation> annotations, bool doAsync, CancellationToken cancellationToken)
+		ImapCommand QueueStoreCommand (IList<int> indexes, ulong? modseq, IList<Annotation> annotations, CancellationToken cancellationToken)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -324,7 +351,7 @@ namespace MailKit.Net.Imap
 				throw new NotSupportedException ("The ImapFolder does not support annotations.");
 
 			if (indexes.Count == 0 || annotations.Count == 0)
-				return Array.Empty<int> ();
+				return null;
 
 			var command = new StringBuilder ("STORE ");
 			var args = new List<object> ();
@@ -341,19 +368,7 @@ namespace MailKit.Net.Imap
 			ImapUtils.FormatAnnotations (command, annotations, args, true);
 			command.Append ("\r\n");
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
-
-			await Engine.RunAsync (ic, doAsync).ConfigureAwait (false);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Response != ImapCommandResponse.Ok) {
-				// TODO: Do something with the AnnotateResponseCode if it exists??
-
-				throw ImapCommandException.Create ("STORE", ic);
-			}
-
-			return GetUnmodified (ic, modseq);
+			return Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
 		}
 
 		/// <summary>
@@ -405,7 +420,14 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override void Store (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			StoreAsync (indexes, null, annotations, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueStoreCommand (indexes, null, annotations, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			Engine.Run (ic);
+
+			ProcessStoreAnnotationsResponse (ic);
 		}
 
 		/// <summary>
@@ -456,9 +478,16 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task StoreAsync (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default)
+		public override async Task StoreAsync (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			return StoreAsync (indexes, null, annotations, true, cancellationToken);
+			var ic = QueueStoreCommand (indexes, null, annotations, cancellationToken);
+
+			if (ic == null)
+				return;
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessStoreAnnotationsResponse (ic);
 		}
 
 		/// <summary>
@@ -514,7 +543,16 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<int> Store (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			return StoreAsync (indexes, modseq, annotations, false, cancellationToken).GetAwaiter ().GetResult ();
+			var ic = QueueStoreCommand (indexes, modseq, annotations, cancellationToken);
+
+			if (ic == null)
+				return Array.Empty<int> ();
+
+			Engine.Run (ic);
+
+			ProcessStoreAnnotationsResponse (ic);
+
+			return GetUnmodified (ic, modseq);
 		}
 
 		/// <summary>
@@ -568,9 +606,18 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IList<int>> StoreAsync (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
+		public override async Task<IList<int>> StoreAsync (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			return StoreAsync (indexes, modseq, annotations, true, cancellationToken);
+			var ic = QueueStoreCommand (indexes, modseq, annotations, cancellationToken);
+
+			if (ic == null)
+				return Array.Empty<int> ();
+
+			await Engine.RunAsync (ic).ConfigureAwait (false);
+
+			ProcessStoreAnnotationsResponse (ic);
+
+			return GetUnmodified (ic, modseq);
 		}
 	}
 }
