@@ -1093,7 +1093,7 @@ namespace MailKit.Net.Imap
 
 			await engine.RunAsync (ic).ConfigureAwait (false);
 
-			ProcessDisableNotifyResponse (ic);
+			ProcessNotifyResponse (ic, false);
 		}
 
 		/// <summary>

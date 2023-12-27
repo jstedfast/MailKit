@@ -2078,13 +2078,6 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		void ProcessDisableNotifyResponse (ImapCommand ic)
-		{
-			ic.ThrowIfNotOk ("NOTIFY");
-
-			engine.NotifySelectedNewExpunge = false;
-		}
-
 		/// <summary>
 		/// Disable any previously requested notification events from the IMAP server.
 		/// </summary>
@@ -2124,7 +2117,7 @@ namespace MailKit.Net.Imap {
 
 			engine.Run (ic);
 
-			ProcessDisableNotifyResponse (ic);
+			ProcessNotifyResponse (ic, false);
 		}
 
 		#endregion

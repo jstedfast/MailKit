@@ -5295,12 +5295,7 @@ namespace MailKit.Net.Imap {
 
 		IList<int> ProcessGetIndexesResponse (ImapCommand ic)
 		{
-			var results = (SearchResults) ic.UserData;
-
-			ProcessResponseCodes (ic, null);
-
-			ic.ThrowIfNotOk ("SEARCH");
-
+			var results = ProcessSearchResponse (ic);
 			var indexes = new int[results.UniqueIds.Count];
 			for (int i = 0; i < indexes.Length; i++)
 				indexes[i] = (int) results.UniqueIds[i].Id - 1;
@@ -5334,12 +5329,8 @@ namespace MailKit.Net.Imap {
 			CheckValidDestination (destination);
 		}
 
-		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet src, ref UniqueIdSet dest)
+		void GetCopiedUids (ImapCommand ic, ref UniqueIdSet src, ref UniqueIdSet dest)
 		{
-			ProcessResponseCodes (ic, destination);
-
-			ic.ThrowIfNotOk ("COPY");
-
 			var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
 			if (copy != null) {
@@ -5351,6 +5342,13 @@ namespace MailKit.Net.Imap {
 					src.AddRange (copy.SrcUidSet);
 				}
 			}
+		}
+
+		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet src, ref UniqueIdSet dest)
+		{
+			ProcessCopyToResponse (ic, destination);
+
+			GetCopiedUids (ic, ref src, ref dest);
 		}
 
 		/// <summary>
@@ -5513,24 +5511,11 @@ namespace MailKit.Net.Imap {
 			return new UniqueIdMap (src, dest);
 		}
 
-		// FIXME: This is identical to the ProcessCopyToResponse() implementation *except* for the ImapCommandException.Create() call...
 		void ProcessMoveToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet src, ref UniqueIdSet dest)
 		{
-			ProcessResponseCodes (ic, destination);
+			ProcessMoveToResponse (ic, destination);
 
-			ic.ThrowIfNotOk ("MOVE");
-
-			var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
-
-			if (copy != null) {
-				if (dest == null) {
-					dest = copy.DestUidSet;
-					src = copy.SrcUidSet;
-				} else {
-					dest.AddRange (copy.DestUidSet);
-					src.AddRange (copy.SrcUidSet);
-				}
-			}
+			GetCopiedUids (ic, ref src, ref dest);
 		}
 
 		/// <summary>
