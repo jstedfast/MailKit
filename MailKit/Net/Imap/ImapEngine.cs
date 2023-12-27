@@ -1215,7 +1215,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal Task<string> ReadLiteralAsync (bool doAsync, CancellationToken cancellationToken)
+		Task<string> ReadLiteralAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			if (doAsync)
 				return ReadLiteralAsync (cancellationToken);
@@ -2716,24 +2716,6 @@ namespace MailKit.Net.Imap {
 			return ic.Response;
 		}
 
-		/// <summary>
-		/// Wait for the specified command to finish.
-		/// </summary>
-		/// <param name="ic">The IMAP command.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="ic"/> is <c>null</c>.
-		/// </exception>
-		public Task<ImapCommandResponse> RunAsync (ImapCommand ic, bool doAsync)
-		{
-			if (doAsync)
-				return RunAsync (ic);
-
-			var response = Run (ic);
-
-			return Task.FromResult (response);
-		}
-
 		public IEnumerable<ImapCommand> CreateCommands (CancellationToken cancellationToken, ImapFolder folder, string format, IList<UniqueId> uids, params object[] args)
 		{
 			var vargs = new List<object> ();
@@ -2992,22 +2974,6 @@ namespace MailKit.Net.Imap {
 
 				ProcessLookupParentFolderResponse (ic, list, folder, encodedParentName);
 			}
-		}
-
-		/// <summary>
-		/// Looks up and sets the <see cref="MailFolder.ParentFolder"/> property of each of the folders.
-		/// </summary>
-		/// <param name="folders">The IMAP folders.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		internal Task LookupParentFoldersAsync (IEnumerable<ImapFolder> folders, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return LookupParentFoldersAsync (folders, cancellationToken);
-
-			LookupParentFolders (folders, cancellationToken);
-
-			return Task.CompletedTask;
 		}
 
 		void ProcessNamespaceResponse (ImapCommand ic)

@@ -27,9 +27,8 @@
 using System;
 using System.Text;
 
-namespace MailKit
-{
-	internal class TextEncodings
+namespace MailKit {
+	internal static class TextEncodings
 	{
 		public static readonly Encoding Latin1;
 		public static readonly Encoding UTF8;
