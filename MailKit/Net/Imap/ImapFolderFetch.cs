@@ -284,7 +284,7 @@ namespace MailKit.Net.Imap
 					message.Fields |= MessageSummaryItems.Size;
 				} else if (atom.Equals ("BODYSTRUCTURE", StringComparison.OrdinalIgnoreCase)) {
 					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODYSTRUCTURE", "{0}");
-					message.Body = ImapUtils.ParseBodyAsync (engine, format, string.Empty, false, cancellationToken).GetAwaiter ().GetResult ();
+					message.Body = ImapUtils.ParseBody (engine, format, string.Empty, cancellationToken);
 					message.Fields |= MessageSummaryItems.BodyStructure;
 				} else if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
 					token = engine.PeekToken (cancellationToken);
@@ -366,14 +366,14 @@ namespace MailKit.Net.Imap
 						if (referencesField)
 							message.Fields |= MessageSummaryItems.References;
 					} else {
-						message.Body = ImapUtils.ParseBodyAsync (engine, format, string.Empty, false, cancellationToken).GetAwaiter ().GetResult ();
+						message.Body = ImapUtils.ParseBody (engine, format, string.Empty, cancellationToken);
 						message.Fields |= MessageSummaryItems.Body;
 					}
 				} else if (atom.Equals ("ENVELOPE", StringComparison.OrdinalIgnoreCase)) {
-					message.Envelope = ImapUtils.ParseEnvelopeAsync (engine, false, cancellationToken).GetAwaiter ().GetResult ();
+					message.Envelope = ImapUtils.ParseEnvelope (engine, cancellationToken);
 					message.Fields |= MessageSummaryItems.Envelope;
 				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
-					message.Flags = ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) message.Keywords, false, cancellationToken).GetAwaiter ().GetResult ();
+					message.Flags = ImapUtils.ParseFlagsList (engine, atom, (HashSet<string>) message.Keywords, cancellationToken);
 					message.Fields |= MessageSummaryItems.Flags;
 				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
 					token = engine.ReadToken (cancellationToken);
@@ -520,7 +520,7 @@ namespace MailKit.Net.Imap
 					message.Fields |= MessageSummaryItems.Size;
 				} else if (atom.Equals ("BODYSTRUCTURE", StringComparison.OrdinalIgnoreCase)) {
 					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODYSTRUCTURE", "{0}");
-					message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, true, cancellationToken).ConfigureAwait (false);
+					message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.BodyStructure;
 				} else if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -602,14 +602,14 @@ namespace MailKit.Net.Imap
 						if (referencesField)
 							message.Fields |= MessageSummaryItems.References;
 					} else {
-						message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, true, cancellationToken).ConfigureAwait (false);
+						message.Body = await ImapUtils.ParseBodyAsync (engine, format, string.Empty, cancellationToken).ConfigureAwait (false);
 						message.Fields |= MessageSummaryItems.Body;
 					}
 				} else if (atom.Equals ("ENVELOPE", StringComparison.OrdinalIgnoreCase)) {
-					message.Envelope = await ImapUtils.ParseEnvelopeAsync (engine, true, cancellationToken).ConfigureAwait (false);
+					message.Envelope = await ImapUtils.ParseEnvelopeAsync (engine, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Envelope;
 				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
-					message.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) message.Keywords, true, cancellationToken).ConfigureAwait (false);
+					message.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) message.Keywords, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Flags;
 				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);

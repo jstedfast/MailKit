@@ -2338,7 +2338,7 @@ namespace MailKit.Net.Imap {
 				} while (true);
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
-				var flags = ImapUtils.ParseFlagsListAsync (this, atom, keywords, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+				var flags = ImapUtils.ParseFlagsList (this, atom, keywords, cancellationToken);
 				folder.UpdateAcceptedFlags (flags, keywords);
 				token = ReadToken (cancellationToken);
 
@@ -2491,7 +2491,7 @@ namespace MailKit.Net.Imap {
 				} while (true);
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
-				var flags = await ImapUtils.ParseFlagsListAsync (this, atom, keywords, doAsync: true, cancellationToken).ConfigureAwait (false);
+				var flags = await ImapUtils.ParseFlagsListAsync (this, atom, keywords, cancellationToken).ConfigureAwait (false);
 				folder.UpdateAcceptedFlags (flags, keywords);
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
