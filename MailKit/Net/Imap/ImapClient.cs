@@ -267,10 +267,8 @@ namespace MailKit.Net.Imap {
 
 			if (ServerCertificateValidationCallback != null) {
 				valid = ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
 				valid = ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
-#endif
 			} else {
 				valid = DefaultServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 			}
