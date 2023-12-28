@@ -604,15 +604,6 @@ namespace MailKit {
 			return new NetworkStream (socket, true);
 		}
 
-		internal Task<Stream> ConnectNetwork (string host, int port, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ConnectNetworkAsync (host, port, cancellationToken);
-
-			var stream = ConnectNetwork (host, port, cancellationToken);
-			return Task.FromResult (stream);
-		}
-
 		/// <summary>
 		/// Establish a connection to the specified mail server.
 		/// </summary>

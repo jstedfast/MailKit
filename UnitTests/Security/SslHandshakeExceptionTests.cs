@@ -240,30 +240,21 @@ namespace UnitTests.Security {
 				return valid;
 			}
 
-			async Task ConnectAsync (string host, int port, SecureSocketOptions options, bool doAsync, CancellationToken cancellationToken)
+			public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 			{
-				using (var stream = await ConnectNetwork (host, port, doAsync, cancellationToken).ConfigureAwait (false)) {
+				using (var stream = ConnectNetwork (host, port, cancellationToken)) {
 					hostName = host;
 
 					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
 					try {
-						if (doAsync) {
-							await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-						} else {
-							ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
-						}
+						ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, CheckCertificateRevocation);
 					} catch (Exception ex) {
 						ssl.Dispose ();
 
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "HTTP", host, port, 443, 80);
 					}
 				}
-			}
-
-			public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
-			{
-				ConnectAsync (host, port, options, false, cancellationToken).GetAwaiter ().GetResult ();
 			}
 
 			public override void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
@@ -276,9 +267,21 @@ namespace UnitTests.Security {
 				throw new NotImplementedException ();
 			}
 
-			public override Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+			public override async Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 			{
-				return ConnectAsync (host, port, options, false, cancellationToken);
+				using (var stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false)) {
+					hostName = host;
+
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+
+					try {
+						await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
+					} catch (Exception ex) {
+						ssl.Dispose ();
+
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "HTTP", host, port, 443, 80);
+					}
+				}
 			}
 
 			public override Task ConnectAsync (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
