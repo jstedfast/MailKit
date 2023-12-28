@@ -899,16 +899,6 @@ namespace MailKit.Net.Imap {
 			return Task.FromResult (ReadLine (cancellationToken));
 		}
 
-		internal ValueTask<ImapToken> ReadTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return Stream.ReadTokenAsync (specials, cancellationToken);
-
-			var token = Stream.ReadToken (specials, cancellationToken);
-
-			return new ValueTask<ImapToken> (token);
-		}
-
 		internal ValueTask<ImapToken> ReadTokenAsync (bool doAsync, CancellationToken cancellationToken)
 		{
 			if (doAsync)
@@ -1193,16 +1183,6 @@ namespace MailKit.Net.Imap {
 			} finally {
 				ArrayPool<byte>.Shared.Return (buf);
 			}
-		}
-
-		Task<string> ReadLiteralAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ReadLiteralAsync (cancellationToken);
-
-			var value = ReadLiteral (cancellationToken);
-
-			return Task.FromResult (value);
 		}
 
 		void SkipLine (CancellationToken cancellationToken)
@@ -2111,16 +2091,79 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
-		async ValueTask UpdateStatusAsync (bool doAsync, CancellationToken cancellationToken)
+		bool UpdateSimpleStatusValue (ImapFolder folder, string atom, ImapToken token)
 		{
-			var token = await ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
 			uint count, uid;
 			ulong modseq;
+
+			if (atom.Equals ("HIGHESTMODSEQ", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				modseq = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.UpdateHighestModSeq (modseq);
+			} else if (atom.Equals ("MESSAGES", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.OnExists ((int) count);
+			} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.OnRecent ((int) count);
+			} else if (atom.Equals ("UIDNEXT", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.UpdateUidNext (uid > 0 ? new UniqueId (uid) : UniqueId.Invalid);
+			} else if (atom.Equals ("UIDVALIDITY", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.UpdateUidValidity (uid);
+			} else if (atom.Equals ("UNSEEN", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.UpdateUnread ((int) count);
+			} else if (atom.Equals ("APPENDLIMIT", StringComparison.OrdinalIgnoreCase)) {
+				if (token.Type == ImapTokenType.Atom) {
+					var limit = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+					folder?.UpdateAppendLimit (limit);
+				} else {
+					AssertToken (token, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+					folder?.UpdateAppendLimit (null);
+				}
+			} else if (atom.Equals ("SIZE", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				var size = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.UpdateSize (size);
+			} else {
+				// This is probably the MAILBOXID value which is multiple tokens and can't be handled here.
+				return false;
+			}
+
+			return true;
+		}
+
+		void UpdateStatus (CancellationToken cancellationToken)
+		{
+			var token = ReadToken (ImapStream.AtomSpecials, cancellationToken);
 			string name;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
-				name = await ReadLiteralAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				name = ReadLiteral (cancellationToken);
 				break;
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
@@ -2138,12 +2181,12 @@ namespace MailKit.Net.Imap {
 			// and hasn't yet requested the folder. That's ok.
 			TryGetCachedFolder (name, out var folder);
 
-			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			token = ReadToken (cancellationToken);
 
 			AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 			do {
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
@@ -2152,76 +2195,91 @@ namespace MailKit.Net.Imap {
 
 				var atom = (string) token.Value;
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
-				if (atom.Equals ("HIGHESTMODSEQ", StringComparison.OrdinalIgnoreCase)) {
-					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+				if (UpdateSimpleStatusValue (folder, atom, token))
+					continue;
 
-					modseq = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
-
-					folder?.UpdateHighestModSeq (modseq);
-				} else if (atom.Equals ("MESSAGES", StringComparison.OrdinalIgnoreCase)) {
-					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-
-					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
-
-					folder?.OnExists ((int) count);
-				} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
-					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-
-					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
-
-					folder?.OnRecent ((int) count);
-				} else if (atom.Equals ("UIDNEXT", StringComparison.OrdinalIgnoreCase)) {
-					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-
-					uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
-
-					folder?.UpdateUidNext (uid > 0 ? new UniqueId (uid) : UniqueId.Invalid);
-				} else if (atom.Equals ("UIDVALIDITY", StringComparison.OrdinalIgnoreCase)) {
-					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-
-					uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
-
-					folder?.UpdateUidValidity (uid);
-				} else if (atom.Equals ("UNSEEN", StringComparison.OrdinalIgnoreCase)) {
-					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-
-					count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
-
-					folder?.UpdateUnread ((int) count);
-				} else if (atom.Equals ("APPENDLIMIT", StringComparison.OrdinalIgnoreCase)) {
-					if (token.Type == ImapTokenType.Atom) {
-						var limit = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
-
-						folder?.UpdateAppendLimit (limit);
-					} else {
-						AssertToken (token, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-
-						folder?.UpdateAppendLimit (null);
-					}
-				} else if (atom.Equals ("SIZE", StringComparison.OrdinalIgnoreCase)) {
-					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
-
-					var size = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
-
-					folder?.UpdateSize (size);
-				} else if (atom.Equals ("MAILBOXID", StringComparison.OrdinalIgnoreCase)) {
+				if (atom.Equals ("MAILBOXID", StringComparison.OrdinalIgnoreCase)) {
 					AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 					AssertToken (token, ImapTokenType.Atom, GenericItemSyntaxErrorFormat, atom, token);
 
 					folder?.UpdateId ((string) token.Value);
 
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 					AssertToken (token, ImapTokenType.CloseParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 				}
 			} while (true);
 
-			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			token = ReadToken (cancellationToken);
+
+			AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+		}
+
+		async ValueTask UpdateStatusAsync (CancellationToken cancellationToken)
+		{
+			var token = await ReadTokenAsync (ImapStream.AtomSpecials, cancellationToken).ConfigureAwait (false);
+			string name;
+
+			switch (token.Type) {
+			case ImapTokenType.Literal:
+				name = await ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				name = (string) token.Value;
+				break;
+			case ImapTokenType.Nil:
+				// Note: according to rfc3501, section 4.5, NIL is acceptable as a mailbox name.
+				name = (string) token.Value;
+				break;
+			default:
+				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+			}
+
+			// Note: if the folder is null, then it probably means the user is using NOTIFY
+			// and hasn't yet requested the folder. That's ok.
+			TryGetCachedFolder (name, out var folder);
+
+			token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+			do {
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				var atom = (string) token.Value;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (UpdateSimpleStatusValue (folder, atom, token))
+					continue;
+
+				if (atom.Equals ("MAILBOXID", StringComparison.OrdinalIgnoreCase)) {
+					AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					AssertToken (token, ImapTokenType.Atom, GenericItemSyntaxErrorFormat, atom, token);
+
+					folder?.UpdateId ((string) token.Value);
+
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					AssertToken (token, ImapTokenType.CloseParen, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+				}
+			} while (true);
+
+			token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 			AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 		}
@@ -2326,7 +2384,7 @@ namespace MailKit.Net.Imap {
 			} else if (atom.Equals ("NAMESPACE", StringComparison.OrdinalIgnoreCase)) {
 				UpdateNamespacesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
 			} else if (atom.Equals ("STATUS", StringComparison.OrdinalIgnoreCase)) {
-				UpdateStatusAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+				UpdateStatus (cancellationToken);
 			} else if (IsOkNoOrBad (atom, out var result)) {
 				token = ReadToken (cancellationToken);
 
@@ -2479,7 +2537,7 @@ namespace MailKit.Net.Imap {
 			} else if (atom.Equals ("NAMESPACE", StringComparison.OrdinalIgnoreCase)) {
 				await UpdateNamespacesAsync (doAsync: true, cancellationToken).ConfigureAwait (false);
 			} else if (atom.Equals ("STATUS", StringComparison.OrdinalIgnoreCase)) {
-				await UpdateStatusAsync (doAsync: true, cancellationToken).ConfigureAwait (false);
+				await UpdateStatusAsync (cancellationToken).ConfigureAwait (false);
 			} else if (IsOkNoOrBad (atom, out var result)) {
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
