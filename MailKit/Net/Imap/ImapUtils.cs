@@ -2719,56 +2719,113 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The list of annotations.</returns>
 		/// <param name="engine">The IMAP engine.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async ValueTask<ReadOnlyCollection<Annotation>> ParseAnnotationsAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		public static ReadOnlyCollection<Annotation> ParseAnnotations (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ANNOTATION", "{0}");
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (cancellationToken);
 			var annotations = new List<Annotation> ();
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, "ANNOTATION", token);
 
 			do {
-				token = await engine.PeekTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (ImapStream.AtomSpecials, cancellationToken);
 
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
-				var path = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
+				var path = ReadStringToken (engine, format, cancellationToken);
 				var entry = AnnotationEntry.Parse (path);
 				var annotation = new Annotation (entry);
 
 				annotations.Add (annotation);
 
-				token = await engine.PeekTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = engine.PeekToken (cancellationToken);
 
 				// Note: Unsolicited FETCH responses that include ANNOTATION data do not include attribute values.
 				if (token.Type == ImapTokenType.OpenParen) {
 					// consume the '('
-					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					engine.ReadToken (cancellationToken);
 
 					// read the attribute/value pairs
 					do {
-						token = await engine.PeekTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
+						token = engine.PeekToken (ImapStream.AtomSpecials, cancellationToken);
 
 						if (token.Type == ImapTokenType.CloseParen)
 							break;
 
-						var name = await ReadStringTokenAsync (engine, format, doAsync, cancellationToken).ConfigureAwait (false);
-						var value = await ReadNStringTokenAsync (engine, format, false, doAsync, cancellationToken).ConfigureAwait (false);
+						var name = ReadStringToken (engine, format, cancellationToken);
+						var value = ReadNStringToken (engine, format, false, cancellationToken);
 						var attribute = new AnnotationAttribute (name);
 
 						annotation.Properties[attribute] = value;
 					} while (true);
 
 					// consume the ')'
-					await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					engine.ReadToken (cancellationToken);
 				}
 			} while (true);
 
 			// consume the ')'
-			await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			engine.ReadToken (cancellationToken);
+
+			return new ReadOnlyCollection<Annotation> (annotations);
+		}
+
+		/// <summary>
+		/// Parses the ANNOTATION list.
+		/// </summary>
+		/// <returns>The list of annotations.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static async Task<ReadOnlyCollection<Annotation>> ParseAnnotationsAsync (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ANNOTATION", "{0}");
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			var annotations = new List<Annotation> ();
+
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, "ANNOTATION", token);
+
+			do {
+				token = await engine.PeekTokenAsync (ImapStream.AtomSpecials, cancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				var path = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
+				var entry = AnnotationEntry.Parse (path);
+				var annotation = new Annotation (entry);
+
+				annotations.Add (annotation);
+
+				token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				// Note: Unsolicited FETCH responses that include ANNOTATION data do not include attribute values.
+				if (token.Type == ImapTokenType.OpenParen) {
+					// consume the '('
+					await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					// read the attribute/value pairs
+					do {
+						token = await engine.PeekTokenAsync (ImapStream.AtomSpecials, cancellationToken).ConfigureAwait (false);
+
+						if (token.Type == ImapTokenType.CloseParen)
+							break;
+
+						var name = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
+						var value = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
+						var attribute = new AnnotationAttribute (name);
+
+						annotation.Properties[attribute] = value;
+					} while (true);
+
+					// consume the ')'
+					await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				}
+			} while (true);
+
+			// consume the ')'
+			await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 			return new ReadOnlyCollection<Annotation> (annotations);
 		}
@@ -2778,16 +2835,15 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The message labels.</returns>
 		/// <param name="engine">The IMAP engine.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async ValueTask<ReadOnlyCollection<string>> ParseLabelsListAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		public static ReadOnlyCollection<string> ParseLabelsList (ImapEngine engine, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (cancellationToken);
 			var labels = new List<string> ();
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);
 
-			token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
+			token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 
 			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString || token.Type == ImapTokenType.Nil) {
 				// Apparently it's possible to set a NIL label in GMail...
@@ -2801,7 +2857,42 @@ namespace MailKit.Net.Imap {
 					labels.Add ((string) token.Value);
 				}
 
-				token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, doAsync, cancellationToken).ConfigureAwait (false);
+				token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
+			}
+
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);
+
+			return new ReadOnlyCollection<string> (labels);
+		}
+
+		/// <summary>
+		/// Parses the X-GM-LABELS list.
+		/// </summary>
+		/// <returns>The message labels.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static async Task<ReadOnlyCollection<string>> ParseLabelsListAsync (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			var labels = new List<string> ();
+
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);
+
+			token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, cancellationToken).ConfigureAwait (false);
+
+			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString || token.Type == ImapTokenType.Nil) {
+				// Apparently it's possible to set a NIL label in GMail...
+				//
+				// See https://github.com/jstedfast/MailKit/issues/244 for an example.
+				if (token.Type != ImapTokenType.Nil) {
+					var label = engine.DecodeMailboxName ((string) token.Value);
+
+					labels.Add (label);
+				} else {
+					labels.Add ((string) token.Value);
+				}
+
+				token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, cancellationToken).ConfigureAwait (false);
 			}
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, "X-GM-LABELS", token);

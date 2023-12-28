@@ -198,7 +198,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							labels = ImapUtils.ParseLabelsListAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							labels = ImapUtils.ParseLabelsList (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ($"Parsing X-GM-LABELS failed: {ex}");
 							return;
@@ -224,7 +224,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							labels = await ImapUtils.ParseLabelsListAsync (engine, true, CancellationToken.None);
+							labels = await ImapUtils.ParseLabelsListAsync (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ($"Parsing X-GM-LABELS failed: {ex}");
 							return;
@@ -3897,7 +3897,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							annotations = ImapUtils.ParseAnnotations (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
@@ -3929,7 +3929,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							annotations = await ImapUtils.ParseAnnotationsAsync (engine, true, CancellationToken.None);
+							annotations = await ImapUtils.ParseAnnotationsAsync (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
@@ -3961,7 +3961,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							annotations = ImapUtils.ParseAnnotations (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
@@ -3997,7 +3997,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							annotations = await ImapUtils.ParseAnnotationsAsync (engine, true, CancellationToken.None);
+							annotations = await ImapUtils.ParseAnnotationsAsync (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
@@ -4033,7 +4033,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							annotations = ImapUtils.ParseAnnotationsAsync (engine, false, CancellationToken.None).GetAwaiter ().GetResult ();
+							annotations = ImapUtils.ParseAnnotations (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;
@@ -4067,7 +4067,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							annotations = await ImapUtils.ParseAnnotationsAsync (engine, true, CancellationToken.None);
+							annotations = await ImapUtils.ParseAnnotationsAsync (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ($"Parsing ANNOTATION response failed: {ex}");
 							return;

@@ -448,10 +448,10 @@ namespace MailKit.Net.Imap
 					message.Fields |= MessageSummaryItems.GMailThreadId;
 					message.GMailThreadId = value64;
 				} else if (atom.Equals ("X-GM-LABELS", StringComparison.OrdinalIgnoreCase)) {
-					message.GMailLabels = ImapUtils.ParseLabelsListAsync (engine, false, cancellationToken).GetAwaiter ().GetResult ();
+					message.GMailLabels = ImapUtils.ParseLabelsList (engine, cancellationToken);
 					message.Fields |= MessageSummaryItems.GMailLabels;
 				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
-					message.Annotations = ImapUtils.ParseAnnotationsAsync (engine, false, cancellationToken).GetAwaiter ().GetResult ();
+					message.Annotations = ImapUtils.ParseAnnotations (engine, cancellationToken);
 					message.Fields |= MessageSummaryItems.Annotations;
 				} else if (atom.Equals ("PREVIEW", StringComparison.OrdinalIgnoreCase)) {
 					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "PREVIEW", "{0}");
@@ -684,10 +684,10 @@ namespace MailKit.Net.Imap
 					message.Fields |= MessageSummaryItems.GMailThreadId;
 					message.GMailThreadId = value64;
 				} else if (atom.Equals ("X-GM-LABELS", StringComparison.OrdinalIgnoreCase)) {
-					message.GMailLabels = await ImapUtils.ParseLabelsListAsync (engine, true, cancellationToken).ConfigureAwait (false);
+					message.GMailLabels = await ImapUtils.ParseLabelsListAsync (engine, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.GMailLabels;
 				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
-					message.Annotations = await ImapUtils.ParseAnnotationsAsync (engine, true, cancellationToken).ConfigureAwait (false);
+					message.Annotations = await ImapUtils.ParseAnnotationsAsync (engine, cancellationToken).ConfigureAwait (false);
 					message.Fields |= MessageSummaryItems.Annotations;
 				} else if (atom.Equals ("PREVIEW", StringComparison.OrdinalIgnoreCase)) {
 					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "PREVIEW", "{0}");
@@ -884,10 +884,10 @@ namespace MailKit.Net.Imap
 				this.ctx = ctx;
 			}
 
-			public override Task AddAsync (Section section, bool doAsync, CancellationToken cancellationToken)
+			public override void Add (Section section, CancellationToken cancellationToken)
 			{
 				if (!ctx.TryGetValue (section.Index, out var message))
-					return Task.CompletedTask;
+					return;
 
 				var body = message.TextBody;
 				TextPreviewer previewer;
@@ -900,7 +900,7 @@ namespace MailKit.Net.Imap
 				}
 
 				if (body == null)
-					return Task.CompletedTask;
+					return;
 
 				var charset = body.ContentType.Charset ?? "utf-8";
 				ContentEncoding encoding;
@@ -926,12 +926,12 @@ namespace MailKit.Net.Imap
 					folder.OnMessageSummaryFetched (message);
 				}
 
-				return Task.CompletedTask;
+				return;
 			}
 
-			public override Task SetUniqueIdAsync (int index, UniqueId uid, bool doAsync, CancellationToken cancellationToken)
+			public override void SetUniqueId (int index, UniqueId uid, CancellationToken cancellationToken)
 			{
-				return Task.CompletedTask;
+				// no-op
 			}
 		}
 
@@ -964,7 +964,7 @@ namespace MailKit.Net.Imap
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchPreviewTextContext (this, sctx);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -1808,7 +1808,14 @@ namespace MailKit.Net.Imap
 				this.progress = progress;
 			}
 
-			public abstract Task AddAsync (Section section, bool doAsync, CancellationToken cancellationToken);
+			public abstract void Add (Section section, CancellationToken cancellationToken);
+
+			public virtual Task AddAsync (Section section, CancellationToken cancellationToken)
+			{
+				Add (section, cancellationToken);
+
+				return Task.CompletedTask;
+			}
 
 			public virtual bool Contains (int index, string specifier, out Section section)
 			{
@@ -1816,7 +1823,14 @@ namespace MailKit.Net.Imap
 				return false;
 			}
 
-			public abstract Task SetUniqueIdAsync (int index, UniqueId uid, bool doAsync, CancellationToken cancellationToken);
+			public abstract void SetUniqueId (int index, UniqueId uid, CancellationToken cancellationToken);
+
+			public virtual Task SetUniqueIdAsync (int index, UniqueId uid, CancellationToken cancellationToken)
+			{
+				SetUniqueId (index, uid, cancellationToken);
+
+				return Task.CompletedTask;
+			}
 
 			public void Report (long nread, long total)
 			{
@@ -1845,10 +1859,9 @@ namespace MailKit.Net.Imap
 			{
 			}
 
-			public override Task AddAsync (Section section, bool doAsync, CancellationToken cancellationToken)
+			public override void Add (Section section, CancellationToken cancellationToken)
 			{
 				Sections.Add (section);
-				return Task.CompletedTask;
 			}
 
 			public bool TryGetSection (UniqueId uid, string specifier, out Section section, bool remove = false)
@@ -1895,20 +1908,18 @@ namespace MailKit.Net.Imap
 				return false;
 			}
 
-			public override Task SetUniqueIdAsync (int index, UniqueId uid, bool doAsync, CancellationToken cancellationToken)
+			public override void SetUniqueId (int index, UniqueId uid, CancellationToken cancellationToken)
 			{
 				for (int i = 0; i < Sections.Count; i++) {
 					if (Sections[i].Index == index)
 						Sections[i].UniqueId = uid;
 				}
-
-				return Task.CompletedTask;
 			}
 		}
 
-		async Task FetchStreamAsync (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		void FetchStream (ImapEngine engine, ImapCommand ic, int index)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+			var token = engine.ReadToken (ic.CancellationToken);
 			var annotations = new AnnotationsChangedEventArgs (index);
 			var labels = new MessageLabelsChangedEventArgs (index);
 			var flags = new MessageFlagsChangedEventArgs (index);
@@ -1929,7 +1940,7 @@ namespace MailKit.Net.Imap
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			do {
-				token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+				token = engine.ReadToken (ic.CancellationToken);
 
 				if (token.Type == ImapTokenType.Eoln) {
 					// Note: Most likely the message body was calculated to be 1 or 2 bytes too
@@ -1937,7 +1948,7 @@ namespace MailKit.Net.Imap
 					// reached. Ignore it and continue as normal.
 					//
 					// See https://github.com/jstedfast/MailKit/issues/954 for details.
-					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (ic.CancellationToken);
 				}
 
 				if (token.Type == ImapTokenType.CloseParen)
@@ -1951,14 +1962,14 @@ namespace MailKit.Net.Imap
 				uint value;
 
 				if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
-					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (ic.CancellationToken);
 
 					ImapEngine.AssertToken (token, ImapTokenType.OpenBracket, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					sectionBuilder.Clear ();
 
 					do {
-						token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+						token = engine.ReadToken (ic.CancellationToken);
 
 						if (token.Type == ImapTokenType.CloseBracket)
 							break;
@@ -1967,7 +1978,7 @@ namespace MailKit.Net.Imap
 							sectionBuilder.Append (" (");
 
 							do {
-								token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+								token = engine.ReadToken (ic.CancellationToken);
 
 								if (token.Type == ImapTokenType.CloseParen)
 									break;
@@ -1975,7 +1986,7 @@ namespace MailKit.Net.Imap
 								// the header field names will generally be atoms or qstrings but may also be literals
 								engine.Stream.UngetToken (token);
 
-								var field = await ImapUtils.ReadStringTokenAsync (engine, ImapEngine.FetchBodySyntaxErrorFormat, doAsync, ic.CancellationToken).ConfigureAwait (false);
+								var field = ImapUtils.ReadStringToken (engine, ImapEngine.FetchBodySyntaxErrorFormat, ic.CancellationToken);
 
 								sectionBuilder.Append (field);
 								sectionBuilder.Append (' ');
@@ -1994,7 +2005,7 @@ namespace MailKit.Net.Imap
 
 					ImapEngine.AssertToken (token, ImapTokenType.CloseBracket, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type == ImapTokenType.Atom) {
 						// this might be a region ("<###>")
@@ -2005,7 +2016,7 @@ namespace MailKit.Net.Imap
 
 							int.TryParse (region, NumberStyles.None, CultureInfo.InvariantCulture, out offset);
 
-							token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+							token = engine.ReadToken (ic.CancellationToken);
 						}
 					}
 
@@ -2022,10 +2033,7 @@ namespace MailKit.Net.Imap
 
 						try {
 							do {
-								if (doAsync)
-									n = await engine.Stream.ReadAsync (buf, 0, BufferSize, ic.CancellationToken).ConfigureAwait (false);
-								else
-									n = engine.Stream.Read (buf, 0, BufferSize, ic.CancellationToken);
+								n = engine.Stream.Read (buf, 0, BufferSize, ic.CancellationToken);
 
 								if (n > 0) {
 									stream.Write (buf, 0, n);
@@ -2079,29 +2087,29 @@ namespace MailKit.Net.Imap
 						section.Stream.Dispose ();
 
 					section = new Section (stream, index, uid, name, offset, length);
-					await ctx.AddAsync (section, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					ctx.Add (section, ic.CancellationToken);
 				} else if (atom.Equals ("UID", StringComparison.OrdinalIgnoreCase)) {
-					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (ic.CancellationToken);
 
 					value = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					uid = new UniqueId (UidValidity, value);
 
-					await ctx.SetUniqueIdAsync (index, uid.Value, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					ctx.SetUniqueId (index, uid.Value, ic.CancellationToken);
 
 					annotations.UniqueId = uid.Value;
 					modSeq.UniqueId = uid.Value;
 					labels.UniqueId = uid.Value;
 					flags.UniqueId = uid.Value;
 				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
-					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (ic.CancellationToken);
 
 					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (ic.CancellationToken);
 
 					modseq = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (ic.CancellationToken);
 
 					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
@@ -2116,24 +2124,24 @@ namespace MailKit.Net.Imap
 				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
-					flags.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) flags.Keywords, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					flags.Flags = ImapUtils.ParseFlagsList (engine, atom, (HashSet<string>) flags.Keywords, ic.CancellationToken);
 					flagsChanged = true;
 				} else if (atom.Equals ("X-GM-LABELS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message labels.
-					labels.Labels = await ImapUtils.ParseLabelsListAsync (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					labels.Labels = ImapUtils.ParseLabelsList (engine, ic.CancellationToken);
 					labelsChanged = true;
 				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message annotations.
-					annotations.Annotations = await ImapUtils.ParseAnnotationsAsync (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
+					annotations.Annotations = ImapUtils.ParseAnnotations (engine, ic.CancellationToken);
 					annotationsChanged = true;
 				} else {
 					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
-					token = await engine.ReadTokenAsync (doAsync, ic.CancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type == ImapTokenType.OpenParen)
-						await SkipParenthesizedListAsync (engine, doAsync, ic.CancellationToken).ConfigureAwait (false);
+						SkipParenthesizedList (engine, ic.CancellationToken);
 				}
 			} while (true);
 
@@ -2150,6 +2158,259 @@ namespace MailKit.Net.Imap
 
 			if (modSeqChanged)
 				OnModSeqChanged (modSeq);
+		}
+
+		async Task FetchStreamAsync (ImapEngine engine, ImapCommand ic, int index)
+		{
+			var token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+			var annotations = new AnnotationsChangedEventArgs (index);
+			var labels = new MessageLabelsChangedEventArgs (index);
+			var flags = new MessageFlagsChangedEventArgs (index);
+			var modSeq = new ModSeqChangedEventArgs (index);
+			var ctx = (FetchStreamContextBase) ic.UserData;
+			var sectionBuilder = new StringBuilder ();
+			bool annotationsChanged = false;
+			bool modSeqChanged = false;
+			bool labelsChanged = false;
+			bool flagsChanged = false;
+			long nread = 0, size = 0;
+			UniqueId? uid = null;
+			Stream stream;
+			string name;
+			byte[] buf;
+			int n;
+
+			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+
+			do {
+				token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+				if (token.Type == ImapTokenType.Eoln) {
+					// Note: Most likely the message body was calculated to be 1 or 2 bytes too
+					// short (e.g. did not include the trailing <CRLF>) and that is the EOLN we just
+					// reached. Ignore it and continue as normal.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/954 for details.
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+				}
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+
+				var atom = (string) token.Value;
+				int offset = 0, length;
+				ulong modseq;
+				uint value;
+
+				if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					ImapEngine.AssertToken (token, ImapTokenType.OpenBracket, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					sectionBuilder.Clear ();
+
+					do {
+						token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+						if (token.Type == ImapTokenType.CloseBracket)
+							break;
+
+						if (token.Type == ImapTokenType.OpenParen) {
+							sectionBuilder.Append (" (");
+
+							do {
+								token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+								if (token.Type == ImapTokenType.CloseParen)
+									break;
+
+								// the header field names will generally be atoms or qstrings but may also be literals
+								engine.Stream.UngetToken (token);
+
+								var field = await ImapUtils.ReadStringTokenAsync (engine, ImapEngine.FetchBodySyntaxErrorFormat, ic.CancellationToken).ConfigureAwait (false);
+
+								sectionBuilder.Append (field);
+								sectionBuilder.Append (' ');
+							} while (true);
+
+							if (sectionBuilder[sectionBuilder.Length - 1] == ' ')
+								sectionBuilder.Length--;
+
+							sectionBuilder.Append (')');
+						} else {
+							ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+							sectionBuilder.Append ((string) token.Value);
+						}
+					} while (true);
+
+					ImapEngine.AssertToken (token, ImapTokenType.CloseBracket, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.Atom) {
+						// this might be a region ("<###>")
+						var expr = (string) token.Value;
+
+						if (expr.Length > 2 && expr[0] == '<' && expr[expr.Length - 1] == '>') {
+							var region = expr.Substring (1, expr.Length - 2);
+
+							int.TryParse (region, NumberStyles.None, CultureInfo.InvariantCulture, out offset);
+
+							token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+						}
+					}
+
+					name = sectionBuilder.ToString ();
+
+					switch (token.Type) {
+					case ImapTokenType.Literal:
+						length = (int) token.Value;
+						size += length;
+
+						stream = CreateStream (uid, name, offset, length);
+
+						buf = ArrayPool<byte>.Shared.Rent (BufferSize);
+
+						try {
+							do {
+								n = await engine.Stream.ReadAsync (buf, 0, BufferSize, ic.CancellationToken).ConfigureAwait (false);
+
+								if (n > 0) {
+									stream.Write (buf, 0, n);
+									nread += n;
+
+									ctx.Report (nread, size);
+								} else {
+									break;
+								}
+							} while (true);
+
+							stream.Position = 0;
+						} catch {
+							stream.Dispose ();
+							throw;
+						} finally {
+							ArrayPool<byte>.Shared.Return (buf);
+						}
+						break;
+					case ImapTokenType.QString:
+					case ImapTokenType.Atom:
+						buf = Encoding.UTF8.GetBytes ((string) token.Value);
+						length = buf.Length;
+						nread += length;
+						size += length;
+
+						stream = CreateStream (uid, name, offset, length);
+
+						try {
+							stream.Write (buf, 0, length);
+							ctx.Report (nread, size);
+							stream.Position = 0;
+						} catch {
+							stream.Dispose ();
+							throw;
+						}
+						break;
+					case ImapTokenType.Nil:
+						stream = CreateStream (uid, name, offset, 0);
+						length = 0;
+						break;
+					default:
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					}
+
+					if (uid.HasValue)
+						stream = CommitStream (stream, uid.Value, name, offset, length);
+
+					// prevent leaks in the (invalid) case where a section may be returned twice
+					if (ctx.Contains (index, name, out var section))
+						section.Stream.Dispose ();
+
+					section = new Section (stream, index, uid, name, offset, length);
+					await ctx.AddAsync (section, ic.CancellationToken).ConfigureAwait (false);
+				} else if (atom.Equals ("UID", StringComparison.OrdinalIgnoreCase)) {
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					value = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					uid = new UniqueId (UidValidity, value);
+
+					await ctx.SetUniqueIdAsync (index, uid.Value, ic.CancellationToken).ConfigureAwait (false);
+
+					annotations.UniqueId = uid.Value;
+					modSeq.UniqueId = uid.Value;
+					labels.UniqueId = uid.Value;
+					flags.UniqueId = uid.Value;
+				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					modseq = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					if (modseq > HighestModSeq)
+						UpdateHighestModSeq (modseq);
+
+					annotations.ModSeq = modseq;
+					modSeq.ModSeq = modseq;
+					labels.ModSeq = modseq;
+					flags.ModSeq = modseq;
+					modSeqChanged = true;
+				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
+					// even though we didn't request this piece of information, the IMAP server
+					// may send it if another client has recently modified the message flags.
+					flags.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) flags.Keywords, ic.CancellationToken).ConfigureAwait (false);
+					flagsChanged = true;
+				} else if (atom.Equals ("X-GM-LABELS", StringComparison.OrdinalIgnoreCase)) {
+					// even though we didn't request this piece of information, the IMAP server
+					// may send it if another client has recently modified the message labels.
+					labels.Labels = await ImapUtils.ParseLabelsListAsync (engine, ic.CancellationToken).ConfigureAwait (false);
+					labelsChanged = true;
+				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
+					// even though we didn't request this piece of information, the IMAP server
+					// may send it if another client has recently modified the message annotations.
+					annotations.Annotations = await ImapUtils.ParseAnnotationsAsync (engine, ic.CancellationToken).ConfigureAwait (false);
+					annotationsChanged = true;
+				} else {
+					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					if (token.Type == ImapTokenType.OpenParen)
+						await SkipParenthesizedListAsync (engine, ic.CancellationToken).ConfigureAwait (false);
+				}
+			} while (true);
+
+			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
+
+			if (flagsChanged)
+				OnMessageFlagsChanged (flags);
+
+			if (labelsChanged)
+				OnMessageLabelsChanged (labels);
+
+			if (annotationsChanged)
+				OnAnnotationsChanged (annotations);
+
+			if (modSeqChanged)
+				OnModSeqChanged (modSeq);
+		}
+
+		Task FetchStreamHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
+		{
+			if (doAsync)
+				return FetchStreamAsync (engine, ic, index);
+
+			FetchStream (engine, ic, index);
+
+			return Task.CompletedTask;
 		}
 
 		static string GetBodyPartQuery (string partSpec, bool headersOnly, out string[] tags)
@@ -2191,7 +2452,7 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[HEADER])\r\n", uid.Id);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -2331,7 +2592,7 @@ namespace MailKit.Net.Imap
 
 			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid, GetBodyPartQuery (partSpecifier, true, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -2585,7 +2846,7 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[HEADER])\r\n", index + 1);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -2725,7 +2986,7 @@ namespace MailKit.Net.Imap
 
 			var command = string.Format ("FETCH {0} ({1})\r\n", index + 1, GetBodyPartQuery (partSpecifier, true, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -2979,7 +3240,7 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[])\r\n", uid.Id);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -3115,7 +3376,7 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[])\r\n", index + 1);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -3255,7 +3516,7 @@ namespace MailKit.Net.Imap
 
 			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid, GetBodyPartQuery (partSpecifier, false, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -3564,7 +3825,7 @@ namespace MailKit.Net.Imap
 			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("FETCH {0} ({1})\r\n", seqid, GetBodyPartQuery (partSpecifier, false, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -3857,7 +4118,7 @@ namespace MailKit.Net.Imap
 			}
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -4032,7 +4293,7 @@ namespace MailKit.Net.Imap
 			}
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[]<%d.%d>)\r\n", index + 1, offset, count);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -4198,7 +4459,7 @@ namespace MailKit.Net.Imap
 
 			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}])\r\n", uid, section);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -4368,7 +4629,7 @@ namespace MailKit.Net.Imap
 			var range = string.Format (CultureInfo.InvariantCulture, "{0}.{1}", offset, count);
 			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}>)\r\n", uid, section, range);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -4541,7 +4802,7 @@ namespace MailKit.Net.Imap
 			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
 			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}])\r\n", seqid, section);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -4707,7 +4968,7 @@ namespace MailKit.Net.Imap
 			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}>)\r\n", seqid, section, range);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
@@ -4876,30 +5137,53 @@ namespace MailKit.Net.Imap
 				this.callback = callback;
 			}
 
-			Task InvokeCallbackAsync (ImapFolder folder, int index, UniqueId uid, Stream stream, bool doAsync, CancellationToken cancellationToken)
+			void InvokeCallback (ImapFolder folder, int index, UniqueId uid, Stream stream, CancellationToken cancellationToken)
 			{
-				if (doAsync)
-					return ((ImapFetchStreamAsyncCallback) callback) (folder, index, uid, stream, cancellationToken);
-
 				((ImapFetchStreamCallback) callback) (folder, index, uid, stream);
-				return Task.CompletedTask;
 			}
 
-			public override async Task AddAsync (Section section, bool doAsync, CancellationToken cancellationToken)
+			Task InvokeCallbackAsync (ImapFolder folder, int index, UniqueId uid, Stream stream, CancellationToken cancellationToken)
+			{
+				return ((ImapFetchStreamAsyncCallback) callback) (folder, index, uid, stream, cancellationToken);
+			}
+
+			public override void Add (Section section, CancellationToken cancellationToken)
 			{
 				if (section.UniqueId.HasValue) {
-					await InvokeCallbackAsync (folder, section.Index, section.UniqueId.Value, section.Stream, doAsync, cancellationToken).ConfigureAwait (false);
+					InvokeCallback (folder, section.Index, section.UniqueId.Value, section.Stream, cancellationToken);
 					section.Stream.Dispose ();
 				} else {
 					Sections.Add (section);
 				}
 			}
 
-			public override async Task SetUniqueIdAsync (int index, UniqueId uid, bool doAsync, CancellationToken cancellationToken)
+			public override async Task AddAsync (Section section, CancellationToken cancellationToken)
+			{
+				if (section.UniqueId.HasValue) {
+					await InvokeCallbackAsync (folder, section.Index, section.UniqueId.Value, section.Stream, cancellationToken).ConfigureAwait (false);
+					section.Stream.Dispose ();
+				} else {
+					Sections.Add (section);
+				}
+			}
+
+			public override void SetUniqueId (int index, UniqueId uid, CancellationToken cancellationToken)
 			{
 				for (int i = 0; i < Sections.Count; i++) {
 					if (Sections[i].Index == index) {
-						await InvokeCallbackAsync (folder, index, uid, Sections[i].Stream, doAsync, cancellationToken).ConfigureAwait (false);
+						InvokeCallback (folder, index, uid, Sections[i].Stream, cancellationToken);
+						Sections[i].Stream.Dispose ();
+						Sections.RemoveAt (i);
+						break;
+					}
+				}
+			}
+
+			public override async Task SetUniqueIdAsync (int index, UniqueId uid, CancellationToken cancellationToken)
+			{
+				for (int i = 0; i < Sections.Count; i++) {
+					if (Sections[i].Index == index) {
+						await InvokeCallbackAsync (folder, index, uid, Sections[i].Stream, cancellationToken).ConfigureAwait (false);
 						Sections[i].Stream.Dispose ();
 						Sections.RemoveAt (i);
 						break;
@@ -4922,7 +5206,7 @@ namespace MailKit.Net.Imap
 		IEnumerable<ImapCommand> QueueGetStreamsCommands (FetchStreamCallbackContext ctx, IList<UniqueId> uids, object callback, CancellationToken cancellationToken)
 		{
 			foreach (var ic in Engine.CreateCommands (cancellationToken, this, "UID FETCH %s (BODY.PEEK[])\r\n", uids)) {
-				ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+				ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 				ic.UserData = ctx;
 
 				Engine.QueueCommand (ic);
@@ -5067,7 +5351,7 @@ namespace MailKit.Net.Imap
 			command.Append (" (UID BODY.PEEK[])\r\n");
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command.ToString ());
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -5211,7 +5495,7 @@ namespace MailKit.Net.Imap
 		{
 			var command = string.Format ("FETCH {0} (UID BODY.PEEK[])\r\n", GetFetchRange (min, max));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			ic.RegisterUntaggedHandler ("FETCH", FetchStreamAsync);
+			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);

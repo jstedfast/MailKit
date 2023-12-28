@@ -919,26 +919,6 @@ namespace MailKit.Net.Imap {
 			return new ValueTask<ImapToken> (token);
 		}
 
-		internal ValueTask<ImapToken> PeekTokenAsync (string specials, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return PeekTokenAsync (specials, cancellationToken);
-
-			var token = PeekToken (specials, cancellationToken);
-
-			return new ValueTask<ImapToken> (token);
-		}
-
-		internal ValueTask<ImapToken> PeekTokenAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return PeekTokenAsync (cancellationToken);
-
-			var token = PeekToken (cancellationToken);
-
-			return new ValueTask<ImapToken> (token);
-		}
-
 		/// <summary>
 		/// Reads the next token.
 		/// </summary>
