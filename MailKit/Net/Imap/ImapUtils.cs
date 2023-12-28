@@ -951,16 +951,6 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal static ValueTask<string> ReadStringTokenAsync (ImapEngine engine, string format, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ReadStringTokenAsync (engine, format, cancellationToken);
-
-			var value = ReadStringToken (engine, format, cancellationToken);
-
-			return new ValueTask<string> (value);
-		}
-
 		internal static string ReadNStringToken (ImapEngine engine, string format, bool rfc2047, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
@@ -1009,16 +999,6 @@ namespace MailKit.Net.Imap {
 				return Rfc2047.DecodeText (TextEncodings.UTF8.GetBytes (value));
 
 			return value;
-		}
-
-		static ValueTask<string> ReadNStringTokenAsync (ImapEngine engine, string format, bool rfc2047, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ReadNStringTokenAsync (engine, format, rfc2047, cancellationToken);
-
-			var value = ReadNStringToken (engine, format, rfc2047, cancellationToken);
-
-			return new ValueTask<string> (value);
 		}
 
 		static uint ParseNumberToken (ImapToken token, string format)

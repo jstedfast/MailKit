@@ -199,16 +199,6 @@ namespace MailKit.Net.Imap
 			} while (depth > 0);
 		}
 
-		static Task SkipParenthesizedListAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return SkipParenthesizedListAsync (engine, cancellationToken);
-
-			SkipParenthesizedList (engine, cancellationToken);
-
-			return Task.CompletedTask;
-		}
-
 		static DateTimeOffset? ReadDateTimeOffsetToken (ImapEngine engine, string atom, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
