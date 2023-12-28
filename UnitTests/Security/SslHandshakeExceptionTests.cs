@@ -226,10 +226,8 @@ namespace UnitTests.Security {
 
 				if (ServerCertificateValidationCallback != null) {
 					valid = ServerCertificateValidationCallback (hostName, certificate, chain, sslPolicyErrors);
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
 					valid = ServicePointManager.ServerCertificateValidationCallback (hostName, certificate, chain, sslPolicyErrors);
-#endif
 				} else {
 					valid = DefaultServerCertificateValidationCallback (hostName, certificate, chain, sslPolicyErrors);
 				}

@@ -34,10 +34,6 @@ using System.Security.Cryptography;
 
 using MimeKit.Utils;
 
-#if NETSTANDARD1_3 || NETSTANDARD1_6
-using MD5 = MimeKit.Cryptography.MD5;
-#endif
-
 namespace MailKit.Security {
 	/// <summary>
 	/// The DIGEST-MD5 SASL mechanism.

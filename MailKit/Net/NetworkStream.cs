@@ -147,9 +147,7 @@ namespace MailKit.Net
 		void Disconnect ()
 		{
 			try {
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 				Socket.Disconnect (false);
-#endif
 				Socket.Dispose ();
 			} catch {
 				return;

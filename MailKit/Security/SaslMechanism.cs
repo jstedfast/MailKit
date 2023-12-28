@@ -35,10 +35,6 @@ using System.Security.Authentication.ExtendedProtection;
 
 using MailKit.Net;
 
-#if NETSTANDARD1_3 || NETSTANDARD1_6
-using MD5 = MimeKit.Cryptography.MD5;
-#endif
-
 namespace MailKit.Security {
 	/// <summary>
 	/// A SASL authentication mechanism.
@@ -699,11 +695,7 @@ namespace MailKit.Security {
 				}
 			}
 
-#if !NETSTANDARD1_3 && !NETSTANDARD1_6
 			return builder.ToString ().Normalize (NormalizationForm.FormKC);
-#else
-			return builder.ToString ();
-#endif
 		}
 
 		internal static string GenerateEntropy (int n)
