@@ -1,0 +1,2 @@
+* 3 FETCH (UID 1 BODY[1.TEXT]<0> "This is the message body as a quoted-string.")
+A######## OK Success

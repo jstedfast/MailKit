@@ -864,6 +864,218 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateFetchQuotedStringCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"),
+				new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"),
+				new ImapReplayCommand ("A00000007 FETCH 1:* (UID BODYSTRUCTURE)\r\n", "gmail.fetch-quoted-string-bodystructure.txt"),
+				new ImapReplayCommand ("A00000008 UID FETCH 1 (BODY.PEEK[1.TEXT]<0.512>)\r\n", "gmail.fetch-quoted-string.txt"),
+			};
+		}
+
+		[Test]
+		public void TestFetchQuotedString ()
+		{
+			var commands = CreateFetchQuotedStringCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = personal.GetSubfolders ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadOnly);
+
+				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
+				using (var stream = inbox.GetStream (messages[0].UniqueId, messages[0].TextBody.PartSpecifier + ".TEXT", 0, 512)) {
+					var text = Encoding.UTF8.GetString (((MemoryStream) stream).ToArray ());
+
+					Assert.That (text, Is.EqualTo ("This is the message body as a quoted-string."), "The message body does not match.");
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchQuotedStringAsync ()
+		{
+			var commands = CreateFetchQuotedStringCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = await personal.GetSubfoldersAsync ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
+				using (var stream = await inbox.GetStreamAsync (messages[0].UniqueId, messages[0].TextBody.PartSpecifier + ".TEXT", 0, 512)) {
+					var text = Encoding.UTF8.GetString (((MemoryStream) stream).ToArray ());
+
+					Assert.That (text, Is.EqualTo ("This is the message body as a quoted-string."), "The message body does not match.");
+				}
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateFetchNilCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"),
+				new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"),
+				new ImapReplayCommand ("A00000007 FETCH 1:* (UID BODYSTRUCTURE)\r\n", "gmail.fetch-nil-bodystructure.txt"),
+				new ImapReplayCommand ("A00000008 UID FETCH 1 (BODY.PEEK[1.TEXT]<0.512>)\r\n", "gmail.fetch-nil.txt"),
+			};
+		}
+
+		[Test]
+		public void TestFetchNil ()
+		{
+			var commands = CreateFetchNilCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = personal.GetSubfolders ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadOnly);
+
+				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
+				using (var stream = inbox.GetStream (messages[0].UniqueId, messages[0].TextBody.PartSpecifier + ".TEXT", 0, 512)) {
+					var text = Encoding.UTF8.GetString (((MemoryStream) stream).ToArray ());
+
+					Assert.That (text, Is.EqualTo (string.Empty), "The message body does not match.");
+				}
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchNilAsync ()
+		{
+			var commands = CreateFetchNilCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = await personal.GetSubfoldersAsync ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure);
+				using (var stream = await inbox.GetStreamAsync (messages[0].UniqueId, messages[0].TextBody.PartSpecifier + ".TEXT", 0, 512)) {
+					var text = Encoding.UTF8.GetString (((MemoryStream) stream).ToArray ());
+
+					Assert.That (text, Is.EqualTo (string.Empty), "The message body does not match.");
+				}
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateExpungeDuringFetchCommands ()
 		{
 			return new List<ImapReplayCommand> {

@@ -1,0 +1,2 @@
+* 3 FETCH (UID 1 BODY[1.TEXT]<0> NIL)
+A######## OK Success
