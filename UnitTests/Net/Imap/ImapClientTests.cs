@@ -5496,22 +5496,28 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000082 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.set-labels.txt"));
 			commands.Add (new ImapReplayCommand ("A00000083 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -X-GM-LABELS.SILENT (\\Important \"Custom Label\" NIL)\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000084 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.add-labels.txt"));
-			commands.Add (new ImapReplayCommand ("A00000085 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.set-labels.txt"));
-			commands.Add (new ImapReplayCommand ("A00000086 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) -X-GM-LABELS.SILENT (\\Important \"Custom Label\" NIL)\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000087 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) +X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.add-labels.txt"));
-			commands.Add (new ImapReplayCommand ("A00000088 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 FLAGS (\\Answered \\Seen)\r\n", "gmail.set-flags.txt"));
-			commands.Add (new ImapReplayCommand ("A00000089 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -FLAGS.SILENT (\\Answered)\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000090 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", "gmail.add-flags.txt"));
-			commands.Add (new ImapReplayCommand ("A00000091 CHECK\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000092 UNSELECT\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000093 SUBSCRIBE UnitTests\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000094 LSUB \"\" \"%\"\r\n", "gmail.lsub-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000095 UNSUBSCRIBE UnitTests\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000096 CREATE UnitTests/Dummy\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000097 LIST \"\" UnitTests/Dummy\r\n", "gmail.list-unittests-dummy.txt"));
-			commands.Add (new ImapReplayCommand ("A00000098 RENAME UnitTests RenamedUnitTests\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000099 DELETE RenamedUnitTests\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000100 LOGOUT\r\n", "gmail.logout.txt"));
+			commands.Add (new ImapReplayCommand ("A00000085 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.set-labels.txt"));
+			commands.Add (new ImapReplayCommand ("A00000086 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) -X-GM-LABELS.SILENT (\\Important \"Custom Label\" NIL)\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000087 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) +X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.add-labels.txt"));
+			commands.Add (new ImapReplayCommand ("A00000088 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.set-labels.txt"));
+			commands.Add (new ImapReplayCommand ("A00000089 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -X-GM-LABELS.SILENT (\\Important \"Custom Label\" NIL)\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000090 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.add-labels.txt"));
+			commands.Add (new ImapReplayCommand ("A00000091 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.set-labels.txt"));
+			commands.Add (new ImapReplayCommand ("A00000092 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) -X-GM-LABELS.SILENT (\\Important \"Custom Label\" NIL)\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000093 STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UNCHANGEDSINCE 5) +X-GM-LABELS (\\Important \"Custom Label\" NIL)\r\n", "gmail.add-labels.txt"));
+			commands.Add (new ImapReplayCommand ("A00000094 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 FLAGS (\\Answered \\Seen)\r\n", "gmail.set-flags.txt"));
+			commands.Add (new ImapReplayCommand ("A00000095 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -FLAGS.SILENT (\\Answered)\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000096 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", "gmail.add-flags.txt"));
+			commands.Add (new ImapReplayCommand ("A00000097 CHECK\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000098 UNSELECT\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000099 SUBSCRIBE UnitTests\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000100 LSUB \"\" \"%\"\r\n", "gmail.lsub-personal.txt"));
+			commands.Add (new ImapReplayCommand ("A00000101 UNSUBSCRIBE UnitTests\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000102 CREATE UnitTests/Dummy\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000103 LIST \"\" UnitTests/Dummy\r\n", "gmail.list-unittests-dummy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000104 RENAME UnitTests RenamedUnitTests\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000105 DELETE RenamedUnitTests\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000106 LOGOUT\r\n", "gmail.logout.txt"));
 
 			return commands;
 		}
@@ -5630,6 +5636,14 @@ namespace UnitTests.Net.Imap {
 				created.SetLabels (matches, labels, false);
 				created.RemoveLabels (matches, labels, true);
 				created.AddLabels (matches, labels, false);
+
+				created.SetLabels (matches, 5, labels, false);
+				created.RemoveLabels (matches, 5, labels, true);
+				created.AddLabels (matches, 5, labels, false);
+
+				created.SetLabels (indexes, labels, false);
+				created.RemoveLabels (indexes, labels, true);
+				created.AddLabels (indexes, labels, false);
 
 				created.SetLabels (indexes, 5, labels, false);
 				created.RemoveLabels (indexes, 5, labels, true);
@@ -5793,6 +5807,14 @@ namespace UnitTests.Net.Imap {
 				await created.SetLabelsAsync (matches, labels, false);
 				await created.RemoveLabelsAsync (matches, labels, true);
 				await created.AddLabelsAsync (matches, labels, false);
+
+				await created.SetLabelsAsync (matches, 5, labels, false);
+				await created.RemoveLabelsAsync (matches, 5, labels, true);
+				await created.AddLabelsAsync (matches, 5, labels, false);
+
+				await created.SetLabelsAsync (indexes, labels, false);
+				await created.RemoveLabelsAsync (indexes, labels, true);
+				await created.AddLabelsAsync (indexes, labels, false);
 
 				await created.SetLabelsAsync (indexes, 5, labels, false);
 				await created.RemoveLabelsAsync (indexes, 5, labels, true);

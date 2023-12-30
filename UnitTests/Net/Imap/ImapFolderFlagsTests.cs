@@ -430,10 +430,9 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		[Test]
-		public void TestChangingFlagsOnEmptyListOfMessages ()
+		static IList<ImapReplayCommand> CreateChangingFlagsOnEmptyListOfMessagesCommands ()
 		{
-			var commands = new List<ImapReplayCommand> {
+			return new List<ImapReplayCommand> {
 				new ImapReplayCommand ("", "dovecot.greeting.txt"),
 				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
 				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
@@ -441,6 +440,12 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
 				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt")
 			};
+		}
+
+		[Test]
+		public void TestChangingFlagsOnEmptyListOfMessages ()
+		{
+			var commands = CreateChangingFlagsOnEmptyListOfMessagesCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
@@ -516,6 +521,88 @@ namespace UnitTests.Net.Imap {
 				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
 
 				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestChangingFlagsOnEmptyListOfMessagesAsync ()
+		{
+			var commands = CreateChangingFlagsOnEmptyListOfMessagesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				ulong modseq = 409601020304;
+				var uids = Array.Empty<UniqueId> ();
+				var indexes = Array.Empty<int> ();
+				IList<UniqueId> unmodifiedUids;
+				IList<int> unmodifiedIndexes;
+
+				// AddFlags
+				unmodifiedIndexes = await inbox.AddFlagsAsync (indexes, modseq, MessageFlags.Seen, true);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+
+				unmodifiedUids = await inbox.AddFlagsAsync (uids, modseq, MessageFlags.Seen, true);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+
+				// RemoveFlags
+				unmodifiedIndexes = await inbox.RemoveFlagsAsync (indexes, modseq, MessageFlags.Seen, true);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+
+				unmodifiedUids = await inbox.RemoveFlagsAsync (uids, modseq, MessageFlags.Seen, true);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+
+				// SetFlags
+				unmodifiedIndexes = await inbox.SetFlagsAsync (indexes, modseq, MessageFlags.Seen, true);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+
+				unmodifiedUids = await inbox.SetFlagsAsync (uids, modseq, MessageFlags.Seen, true);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+
+				var labels = new string[] { "Label1", "Label2" };
+
+				// AddLabels
+				unmodifiedIndexes = await inbox.AddLabelsAsync (indexes, modseq, labels, true);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+
+				unmodifiedUids = await inbox.AddLabelsAsync (uids, modseq, labels, true);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+
+				// RemoveLabels
+				unmodifiedIndexes = await inbox.RemoveLabelsAsync (indexes, modseq, labels, true);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+
+				unmodifiedUids = await inbox.RemoveLabelsAsync (uids, modseq, labels, true);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+
+				// SetLabels
+				unmodifiedIndexes = await inbox.SetLabelsAsync (indexes, modseq, labels, true);
+				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+
+				unmodifiedUids = await inbox.SetLabelsAsync (uids, modseq, labels, true);
+				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+
+				await client.DisconnectAsync (false);
 			}
 		}
 	}

@@ -59,6 +59,8 @@ namespace UnitTests.Net.Imap {
 			Assert.Throws<ArgumentNullException> (() => ImapUtils.FormatIndexSet (engine, null));
 			Assert.Throws<ArgumentException> (() => ImapUtils.FormatIndexSet (engine, new int[0]));
 
+			Assert.Throws<ArgumentNullException> (() => ImapUtils.FormatIndexSet (engine, null, new int[1]));
+
 			actual = ImapUtils.FormatIndexSet (engine, indexes);
 			Assert.That (actual, Is.EqualTo (expect), "Formatting a simple range of indexes failed.");
 		}
