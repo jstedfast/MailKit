@@ -5649,9 +5649,37 @@ namespace UnitTests.Net.Imap {
 				created.RemoveLabels (indexes, 5, labels, true);
 				created.AddLabels (indexes, 5, labels, false);
 
+				// Verify that Adding and/or removing an empty set of labels is a no-op
+				labels = Array.Empty<string> ();
+
+				created.RemoveLabels (matches, labels, true);
+				created.AddLabels (matches, labels, false);
+
+				created.RemoveLabels (matches, 5, labels, true);
+				created.AddLabels (matches, 5, labels, false);
+
+				created.RemoveLabels (indexes, labels, true);
+				created.AddLabels (indexes, labels, false);
+
+				created.RemoveLabels (indexes, 5, labels, true);
+				created.AddLabels (indexes, 5, labels, false);
+
 				created.SetFlags (matches, MessageFlags.Seen | MessageFlags.Answered, false);
 				created.RemoveFlags (matches, MessageFlags.Answered, true);
 				created.AddFlags (matches, MessageFlags.Deleted, true);
+
+				// Verify that Adding and/or removing an empty set of flags is a no-op
+				created.RemoveFlags (matches, MessageFlags.None, true);
+				created.AddFlags (matches, MessageFlags.None, true);
+
+				created.RemoveFlags (matches, 5, MessageFlags.None, true);
+				created.AddFlags (matches, 5, MessageFlags.None, true);
+
+				created.RemoveFlags (indexes, MessageFlags.None, true);
+				created.AddFlags (indexes, MessageFlags.None, true);
+
+				created.RemoveFlags (indexes, 5, MessageFlags.None, true);
+				created.AddFlags (indexes, 5, MessageFlags.None, true);
 
 				created.Check ();
 
@@ -5820,9 +5848,37 @@ namespace UnitTests.Net.Imap {
 				await created.RemoveLabelsAsync (indexes, 5, labels, true);
 				await created.AddLabelsAsync (indexes, 5, labels, false);
 
+				// Verify that Adding and/or removing an empty set of labels is a no-op
+				labels = Array.Empty<string> ();
+
+				await created.RemoveLabelsAsync (matches, labels, true);
+				await created.AddLabelsAsync (matches, labels, false);
+
+				await created.RemoveLabelsAsync (matches, 5, labels, true);
+				await created.AddLabelsAsync (matches, 5, labels, false);
+
+				await created.RemoveLabelsAsync (indexes, labels, true);
+				await created.AddLabelsAsync (indexes, labels, false);
+
+				await created.RemoveLabelsAsync (indexes, 5, labels, true);
+				await created.AddLabelsAsync (indexes, 5, labels, false);
+
 				await created.SetFlagsAsync (matches, MessageFlags.Seen | MessageFlags.Answered, false);
 				await created.RemoveFlagsAsync (matches, MessageFlags.Answered, true);
 				await created.AddFlagsAsync (matches, MessageFlags.Deleted, true);
+
+				// Verify that Adding and/or removing an empty set of flags is a no-op
+				await created.RemoveFlagsAsync (matches, MessageFlags.None, true);
+				await created.AddFlagsAsync (matches, MessageFlags.None, true);
+
+				await created.RemoveFlagsAsync (matches, 5, MessageFlags.None, true);
+				await created.AddFlagsAsync (matches, 5, MessageFlags.None, true);
+
+				await created.RemoveFlagsAsync (indexes, MessageFlags.None, true);
+				await created.AddFlagsAsync (indexes, MessageFlags.None, true);
+
+				await created.RemoveFlagsAsync (indexes, 5, MessageFlags.None, true);
+				await created.AddFlagsAsync (indexes, 5, MessageFlags.None, true);
 
 				await created.CheckAsync ();
 

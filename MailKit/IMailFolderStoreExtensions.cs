@@ -36,9 +36,6 @@ namespace MailKit {
 
 		static StoreFlagsRequest GetStoreFlagsRequest (StoreAction action, bool silent, MessageFlags flags, HashSet<string> keywords = null, ulong? modseq = null)
 		{
-			if (action != StoreAction.Set && flags == MessageFlags.None && (keywords == null || keywords.Count == 0))
-				throw new ArgumentException ("No flags were specified.", nameof (flags));
-
 			if (keywords != null) {
 				return new StoreFlagsRequest (action, flags, keywords) {
 					UnchangedSince = modseq,
@@ -64,9 +61,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -110,9 +105,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -159,9 +152,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -209,9 +200,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -260,9 +249,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -312,9 +299,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -364,9 +349,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -417,9 +400,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -465,9 +446,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -514,9 +493,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para><see cref="IMailFolder.MessageFlagsChanged"/>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -563,9 +540,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -613,9 +588,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -664,9 +637,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -716,9 +687,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -768,9 +737,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -821,9 +788,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1244,9 +1209,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1297,9 +1260,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1351,9 +1312,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1405,9 +1364,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1458,9 +1415,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1511,9 +1466,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1565,9 +1518,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1619,9 +1570,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1873,9 +1822,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1919,9 +1866,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1965,9 +1910,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2012,9 +1955,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2060,9 +2001,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2109,9 +2048,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2158,9 +2095,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2208,9 +2143,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2253,9 +2186,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2299,9 +2230,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2345,9 +2274,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2392,9 +2319,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2440,9 +2365,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2489,9 +2412,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2538,9 +2459,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2588,9 +2507,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2633,7 +2550,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2677,7 +2594,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2721,7 +2638,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2766,7 +2683,7 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3002,9 +2919,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3055,9 +2970,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3109,9 +3022,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3163,9 +3074,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3216,9 +3125,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3269,9 +3176,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3323,9 +3228,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3377,9 +3280,7 @@ namespace MailKit {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3628,9 +3529,6 @@ namespace MailKit {
 			if (labels == null)
 				throw new ArgumentNullException (nameof (labels));
 
-			if (action != StoreAction.Set && labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", nameof (labels));
-
 			return new StoreLabelsRequest (action, labels) {
 				UnchangedSince = modseq,
 				Silent = silent
@@ -3652,9 +3550,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3701,9 +3597,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3751,9 +3645,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3802,9 +3694,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3850,9 +3740,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3899,9 +3787,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3949,9 +3835,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4000,9 +3884,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4243,8 +4125,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4297,9 +4177,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4352,9 +4230,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4407,9 +4283,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4564,9 +4438,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4613,9 +4485,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4663,9 +4533,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4714,9 +4582,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4762,9 +4628,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4811,9 +4675,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4861,9 +4723,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4912,9 +4772,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4960,7 +4818,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -5007,7 +4865,7 @@ namespace MailKit {
 		/// <paramref name="labels"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="index"/> is invalid.</para>
+		/// <paramref name="index"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -5154,9 +5012,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -5209,9 +5065,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -5264,9 +5118,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -5319,9 +5171,7 @@ namespace MailKit {
 		/// <para><paramref name="labels"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
