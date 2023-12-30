@@ -492,6 +492,86 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static IList<ImapReplayCommand> CreateLiteralFolderNamesCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "common.basic-greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "common.capability.txt"),
+				new ImapReplayCommand ("A00000001 LOGIN username password\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "common.capability.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"\"\r\n", "common.list-namespace.txt"),
+				new ImapReplayCommand ("A00000004 LIST \"\" \"INBOX\"\r\n", "common.list-inbox.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "common.list-literal-subfolders.txt"),
+				new ImapReplayCommand ("A00000006 STATUS \"Literal Folder Name\" (MESSAGES)\r\n", "common.status-literal-folder.txt"),
+			};
+		}
+
+		[Test]
+		public void TestLiteralFolderNames ()
+		{
+			var commands = CreateLiteralFolderNamesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var subfolders = personal.GetSubfolders (false);
+
+				Assert.That (subfolders.Count, Is.EqualTo (2), "Count");
+				Assert.That (subfolders[0].Name, Is.EqualTo ("INBOX"));
+				Assert.That (subfolders[1].Name, Is.EqualTo ("Literal Folder Name"));
+
+				subfolders[1].Status (StatusItems.Count);
+
+				Assert.That (subfolders[1].Count, Is.EqualTo (60), "Count");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestLiteralFolderNamesAsync ()
+		{
+			var commands = CreateLiteralFolderNamesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var subfolders = await personal.GetSubfoldersAsync (false);
+
+				Assert.That (subfolders.Count, Is.EqualTo (2), "Count");
+				Assert.That (subfolders[0].Name, Is.EqualTo ("INBOX"));
+				Assert.That (subfolders[1].Name, Is.EqualTo ("Literal Folder Name"));
+
+				await subfolders[1].StatusAsync (StatusItems.Count);
+
+				Assert.That (subfolders[1].Count, Is.EqualTo (60), "Count");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static IList<ImapReplayCommand> CreateAppendLimitCommands ()
 		{
 			return new List<ImapReplayCommand> {

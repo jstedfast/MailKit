@@ -1,0 +1,3 @@
+* STATUS {19}
+Literal Folder Name (MESSAGES 60)
+A######## OK STATUS Completed

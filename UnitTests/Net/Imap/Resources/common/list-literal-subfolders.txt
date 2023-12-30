@@ -1,0 +1,4 @@
+* LIST () "/" INBOX
+* LIST (\HasNoChildren) "/" {19}
+Literal Folder Name
+A######## OK LIST Completed
