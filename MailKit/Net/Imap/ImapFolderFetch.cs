@@ -317,11 +317,12 @@ namespace MailKit.Net.Imap
 
 								atom = (string) token.Value;
 
-								headerFields = atom.Equals ("HEADER.FIELDS", StringComparison.OrdinalIgnoreCase);
-
-								if (!headerFields && atom.Equals ("HEADER", StringComparison.OrdinalIgnoreCase)) {
+								if (atom.Equals ("HEADER", StringComparison.OrdinalIgnoreCase)) {
 									// if we're fetching *all* headers, then it will include the References header (if it exists)
 									referencesField = true;
+									headerFields = false;
+								} else {
+									headerFields = atom.Equals ("HEADER.FIELDS", StringComparison.OrdinalIgnoreCase);
 								}
 							}
 						} while (true);
@@ -553,11 +554,12 @@ namespace MailKit.Net.Imap
 
 								atom = (string) token.Value;
 
-								headerFields = atom.Equals ("HEADER.FIELDS", StringComparison.OrdinalIgnoreCase);
-
-								if (!headerFields && atom.Equals ("HEADER", StringComparison.OrdinalIgnoreCase)) {
+								if (atom.Equals ("HEADER", StringComparison.OrdinalIgnoreCase)) {
 									// if we're fetching *all* headers, then it will include the References header (if it exists)
 									referencesField = true;
+									headerFields = false;
+								} else {
+									headerFields = atom.Equals ("HEADER.FIELDS", StringComparison.OrdinalIgnoreCase);
 								}
 							}
 						} while (true);
