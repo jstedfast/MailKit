@@ -1501,7 +1501,7 @@ namespace MailKit.Net.Imap {
 			return Task.CompletedTask;
 		}
 
-		async ValueTask UpdateNamespacesAsync (bool doAsync, CancellationToken cancellationToken)
+		void UpdateNamespaces (CancellationToken cancellationToken)
 		{
 			var namespaces = new List<FolderNamespaceCollection> {
 				PersonalNamespaces, OtherNamespaces, SharedNamespaces
@@ -1515,23 +1515,23 @@ namespace MailKit.Net.Imap {
 			SharedNamespaces.Clear ();
 			OtherNamespaces.Clear ();
 
-			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			token = ReadToken (cancellationToken);
 
 			do {
 				if (token.Type == ImapTokenType.OpenParen) {
 					// parse the list of namespace pairs...
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 					while (token.Type == ImapTokenType.OpenParen) {
 						// parse the namespace pair - first token is the path
-						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+						token = ReadToken (cancellationToken);
 
 						AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 						path = (string) token.Value;
 
 						// second token is the directory separator
-						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+						token = ReadToken (cancellationToken);
 
 						AssertToken (token, ImapTokenType.QString, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
@@ -1556,7 +1556,7 @@ namespace MailKit.Net.Imap {
 						folder.UpdateIsNamespace (true);
 
 						do {
-							token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+							token = ReadToken (cancellationToken);
 
 							if (token.Type == ImapTokenType.CloseParen)
 								break;
@@ -1565,12 +1565,12 @@ namespace MailKit.Net.Imap {
 
 							AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
-							token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+							token = ReadToken (cancellationToken);
 
 							AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 							do {
-								token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+								token = ReadToken (cancellationToken);
 
 								if (token.Type == ImapTokenType.CloseParen)
 									break;
@@ -1580,7 +1580,7 @@ namespace MailKit.Net.Imap {
 						} while (true);
 
 						// read the next token - it should either be '(' or ')'
-						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+						token = ReadToken (cancellationToken);
 					}
 
 					AssertToken (token, ImapTokenType.CloseParen, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
@@ -1588,12 +1588,107 @@ namespace MailKit.Net.Imap {
 					AssertToken (token, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 				}
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				n++;
 			} while (n < 3);
 
 			while (token.Type != ImapTokenType.Eoln)
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
+		}
+
+		async ValueTask UpdateNamespacesAsync (CancellationToken cancellationToken)
+		{
+			var namespaces = new List<FolderNamespaceCollection> {
+				PersonalNamespaces, OtherNamespaces, SharedNamespaces
+			};
+			ImapToken token;
+			string path;
+			char delim;
+			int n = 0;
+
+			PersonalNamespaces.Clear ();
+			SharedNamespaces.Clear ();
+			OtherNamespaces.Clear ();
+
+			token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			do {
+				if (token.Type == ImapTokenType.OpenParen) {
+					// parse the list of namespace pairs...
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					while (token.Type == ImapTokenType.OpenParen) {
+						// parse the namespace pair - first token is the path
+						token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+						AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+
+						path = (string) token.Value;
+
+						// second token is the directory separator
+						token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+						AssertToken (token, ImapTokenType.QString, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+
+						var qstring = token.Type == ImapTokenType.Nil ? string.Empty : (string) token.Value;
+
+						if (qstring.Length > 0) {
+							delim = qstring[0];
+
+							// canonicalize the namespace path
+							path = path.TrimEnd (delim);
+						} else {
+							delim = '\0';
+						}
+
+						namespaces[n].Add (new FolderNamespace (delim, DecodeMailboxName (path)));
+
+						if (!TryGetCachedFolder (path, out var folder)) {
+							folder = CreateImapFolder (path, FolderAttributes.None, delim);
+							CacheFolder (folder);
+						}
+
+						folder.UpdateIsNamespace (true);
+
+						do {
+							token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+							if (token.Type == ImapTokenType.CloseParen)
+								break;
+
+							// NAMESPACE extension
+
+							AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+
+							token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+							AssertToken (token, ImapTokenType.OpenParen, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+
+							do {
+								token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+								if (token.Type == ImapTokenType.CloseParen)
+									break;
+
+								AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+							} while (true);
+						} while (true);
+
+						// read the next token - it should either be '(' or ')'
+						token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+					}
+
+					AssertToken (token, ImapTokenType.CloseParen, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+				} else {
+					AssertToken (token, ImapTokenType.Nil, GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
+				}
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				n++;
+			} while (n < 3);
+
+			while (token.Type != ImapTokenType.Eoln)
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 		}
 
 		void ProcessResponseCodes (ImapCommand ic)
@@ -2382,7 +2477,7 @@ namespace MailKit.Net.Imap {
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 			} else if (atom.Equals ("NAMESPACE", StringComparison.OrdinalIgnoreCase)) {
-				UpdateNamespacesAsync (false, cancellationToken).GetAwaiter ().GetResult ();
+				UpdateNamespaces (cancellationToken);
 			} else if (atom.Equals ("STATUS", StringComparison.OrdinalIgnoreCase)) {
 				UpdateStatus (cancellationToken);
 			} else if (IsOkNoOrBad (atom, out var result)) {
@@ -2535,7 +2630,7 @@ namespace MailKit.Net.Imap {
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 			} else if (atom.Equals ("NAMESPACE", StringComparison.OrdinalIgnoreCase)) {
-				await UpdateNamespacesAsync (doAsync: true, cancellationToken).ConfigureAwait (false);
+				await UpdateNamespacesAsync (cancellationToken).ConfigureAwait (false);
 			} else if (atom.Equals ("STATUS", StringComparison.OrdinalIgnoreCase)) {
 				await UpdateStatusAsync (cancellationToken).ConfigureAwait (false);
 			} else if (IsOkNoOrBad (atom, out var result)) {
