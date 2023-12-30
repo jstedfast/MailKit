@@ -2450,7 +2450,7 @@ namespace MailKit.Net.Imap {
 				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
 					current.Status = ImapCommandStatus.Complete;
 			} else if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase)) {
-				UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+				UpdateCapabilities (ImapTokenType.Eoln, cancellationToken);
 
 				// read the eoln token
 				ReadToken (cancellationToken);
@@ -2516,7 +2516,7 @@ namespace MailKit.Net.Imap {
 							//if (number == 0)
 							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
-							folder.OnUntaggedFetchResponse (this, (int) number - 1, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+							folder.OnUntaggedFetchResponse (this, (int) number - 1, cancellationToken);
 						} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnRecent ((int) number);
 						} else {
@@ -2545,7 +2545,7 @@ namespace MailKit.Net.Imap {
 					token = ReadToken (cancellationToken);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
 				} else if (atom.Equals ("VANISHED", StringComparison.OrdinalIgnoreCase) && folder != null) {
-					folder.OnVanishedAsync (this, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+					folder.OnVanished (this, cancellationToken);
 					SkipLine (cancellationToken);
 				} else {
 					// don't know how to handle this... eat it?
@@ -2603,7 +2603,7 @@ namespace MailKit.Net.Imap {
 				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
 					current.Status = ImapCommandStatus.Complete;
 			} else if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase)) {
-				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, doAsync: true, cancellationToken).ConfigureAwait (false);
+				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, cancellationToken).ConfigureAwait (false);
 
 				// read the eoln token
 				await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -2669,7 +2669,7 @@ namespace MailKit.Net.Imap {
 							//if (number == 0)
 							//	throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
-							await folder.OnUntaggedFetchResponse (this, (int) number - 1, doAsync: true, cancellationToken).ConfigureAwait (false);
+							await folder.OnUntaggedFetchResponseAsync (this, (int) number - 1, cancellationToken).ConfigureAwait (false);
 						} else if (atom.Equals ("RECENT", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnRecent ((int) number);
 						} else {
@@ -2698,7 +2698,7 @@ namespace MailKit.Net.Imap {
 					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 					AssertToken (token, ImapTokenType.Eoln, "Syntax error in untagged LIST response. {0}", token);
 				} else if (atom.Equals ("VANISHED", StringComparison.OrdinalIgnoreCase) && folder != null) {
-					await folder.OnVanishedAsync (this, doAsync: true, cancellationToken).ConfigureAwait (false);
+					await folder.OnVanishedAsync (this, cancellationToken).ConfigureAwait (false);
 					await SkipLineAsync (cancellationToken).ConfigureAwait (false);
 				} else {
 					// don't know how to handle this... eat it?

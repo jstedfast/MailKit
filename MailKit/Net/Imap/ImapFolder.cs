@@ -328,7 +328,12 @@ namespace MailKit.Net.Imap {
 
 		static Task UntaggedQResyncFetchHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
-			return ic.Folder.OnUntaggedFetchResponse (engine, index, doAsync, ic.CancellationToken);
+			if (doAsync)
+				return ic.Folder.OnUntaggedFetchResponseAsync (engine, index, ic.CancellationToken);
+
+			ic.Folder.OnUntaggedFetchResponse (engine, index, ic.CancellationToken);
+
+			return Task.CompletedTask;
 		}
 
 		ImapCommand QueueOpenCommand (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken)
@@ -6133,16 +6138,18 @@ namespace MailKit.Net.Imap {
 				OnMessageSummaryFetched (message);
 		}
 
-		internal Task OnUntaggedFetchResponse (ImapEngine engine, int index, bool doAsync, CancellationToken cancellationToken)
+		internal void OnUntaggedFetchResponse (ImapEngine engine, int index, CancellationToken cancellationToken)
 		{
 			var message = new MessageSummary (this, index);
 
-			if (doAsync)
-				return ParseSummaryItemsAsync (engine, message, OnFetchAsyncCompleted, cancellationToken);
-
 			ParseSummaryItems (engine, message, OnFetchAsyncCompleted, cancellationToken);
+		}
 
-			return Task.CompletedTask;
+		internal Task OnUntaggedFetchResponseAsync (ImapEngine engine, int index, CancellationToken cancellationToken)
+		{
+			var message = new MessageSummary (this, index);
+
+			return ParseSummaryItemsAsync (engine, message, OnFetchAsyncCompleted, cancellationToken);
 		}
 
 		internal void OnRecent (int count)
@@ -6155,15 +6162,27 @@ namespace MailKit.Net.Imap {
 			OnRecentChanged ();
 		}
 
-		internal async Task OnVanishedAsync (ImapEngine engine, bool doAsync, CancellationToken cancellationToken)
+		void OnVanished (bool earlier, ImapToken token)
 		{
-			var token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-			UniqueIdSet vanished;
+			var vanished = ImapEngine.ParseUidSet (token, UidValidity, out _, out _, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
+
+			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));
+
+			if (!earlier) {
+				Count -= vanished.Count;
+
+				OnCountChanged ();
+			}
+		}
+
+		internal void OnVanished (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
 			bool earlier = false;
 
 			if (token.Type == ImapTokenType.OpenParen) {
 				do {
-					token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = engine.ReadToken (cancellationToken);
 
 					if (token.Type == ImapTokenType.CloseParen)
 						break;
@@ -6176,18 +6195,36 @@ namespace MailKit.Net.Imap {
 						earlier = true;
 				} while (true);
 
-				token = await engine.ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = engine.ReadToken (cancellationToken);
 			}
 
-			vanished = ImapEngine.ParseUidSet (token, UidValidity, out _, out _, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
+			OnVanished (earlier, token);
+		}
 
-			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));
+		internal async Task OnVanishedAsync (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			bool earlier = false;
 
-			if (!earlier) {
-				Count -= vanished.Count;
+			if (token.Type == ImapTokenType.OpenParen) {
+				do {
+					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-				OnCountChanged ();
+					if (token.Type == ImapTokenType.CloseParen)
+						break;
+
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
+
+					var atom = (string) token.Value;
+
+					if (atom.Equals ("EARLIER", StringComparison.OrdinalIgnoreCase))
+						earlier = true;
+				} while (true);
+
+				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 			}
+
+			OnVanished (earlier, token);
 		}
 
 		internal void UpdateAttributes (FolderAttributes attrs)
