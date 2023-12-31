@@ -673,7 +673,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type == ImapTokenType.CloseParen)
 						break;
 
-					// a LIST extension
+					// A LIST extension (rfc5258).
 
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
 
@@ -691,8 +691,10 @@ namespace MailKit.Net.Imap {
 
 						engine.Stream.UngetToken (token);
 
+						var value = ReadNStringToken (engine, format, false, cancellationToken);
+
 						if (!renamed && atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
-							var oldEncodedName = ReadFolderName (engine, delim, format, cancellationToken);
+							var oldEncodedName = value.TrimEnd (delim);
 
 							if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
 								var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
@@ -704,8 +706,6 @@ namespace MailKit.Net.Imap {
 							}
 
 							renamed = true;
-						} else {
-							ReadNStringToken (engine, format, false, cancellationToken);
 						}
 					} while (true);
 				} while (true);
@@ -782,7 +782,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type == ImapTokenType.CloseParen)
 						break;
 
-					// a LIST extension
+					// A LIST extension (rfc5258).
 
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
 
@@ -800,10 +800,12 @@ namespace MailKit.Net.Imap {
 
 						engine.Stream.UngetToken (token);
 
-						if (!renamed && atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
-							var oldEncodedName = await ReadFolderNameAsync (engine, delim, format, cancellationToken).ConfigureAwait (false);
+						var value = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 
-							if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
+						if (atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
+							var oldEncodedName = value.TrimEnd (delim);
+
+							if (!renamed && engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
 								var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
 
 								engine.FolderCache.Remove (oldEncodedName);
@@ -813,8 +815,6 @@ namespace MailKit.Net.Imap {
 							}
 
 							renamed = true;
-						} else {
-							await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 						}
 					} while (true);
 				} while (true);
