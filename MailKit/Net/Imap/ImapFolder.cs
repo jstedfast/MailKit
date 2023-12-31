@@ -1627,6 +1627,13 @@ namespace MailKit.Net.Imap {
 		{
 			CheckState (false, false);
 
+			// Any folder with a nil directory separator cannot have children.
+			if (DirectorySeparator == '\0') {
+				status = false;
+				list = null;
+				return null;
+			}
+
 			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
 			// in order to reduce the list of folders returned by our LIST command.
 			var pattern = new StringBuilder (EncodedName.Length + 2);
@@ -1769,6 +1776,9 @@ namespace MailKit.Net.Imap {
 		{
 			var ic = QueueGetSubfoldersCommand (items, subscribedOnly, cancellationToken, out var list, out var status);
 
+			if (ic == null)
+				return Array.Empty<IMailFolder> ();
+
 			Engine.Run (ic);
 
 			var children = ProcessGetSubfoldersResponse (ic, list, out var unparented);
@@ -1823,6 +1833,9 @@ namespace MailKit.Net.Imap {
 		{
 			var ic = QueueGetSubfoldersCommand (items, subscribedOnly, cancellationToken, out var list, out var status);
 
+			if (ic == null)
+				return Array.Empty<IMailFolder> ();
+
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			var children = ProcessGetSubfoldersResponse (ic, list, out var unparented);
@@ -1851,6 +1864,15 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The name of the subfolder is invalid.", nameof (name));
 
 			CheckState (false, false);
+
+			// Any folder with a nil directory separator cannot have children.
+			if (DirectorySeparator == '\0') {
+				encodedName = null;
+				fullName = null;
+				folder = null;
+				list = null;
+				return null;
+			}
 
 			fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
 			encodedName = Engine.EncodeMailboxName (fullName);
@@ -1931,7 +1953,7 @@ namespace MailKit.Net.Imap {
 			var ic = QueueGetSubfolderCommand (name, cancellationToken, out var list, out var fullName, out var encodedName, out var folder);
 
 			if (ic == null)
-				return folder;
+				return folder ?? throw new FolderNotFoundException (name);
 
 			Engine.Run (ic);
 
@@ -1993,7 +2015,7 @@ namespace MailKit.Net.Imap {
 			var ic = QueueGetSubfolderCommand (name, cancellationToken, out var list, out var fullName, out var encodedName, out var folder);
 
 			if (ic == null)
-				return folder;
+				return folder ?? throw new FolderNotFoundException (name);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 

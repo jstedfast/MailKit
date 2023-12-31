@@ -1,0 +1,4 @@
+* LIST () "/" INBOX
+* LIST (\HasNoChildren) NIL "Folder1"
+* LIST (\HasNoChildren) "" "Folder2"
+A######## OK LIST Completed

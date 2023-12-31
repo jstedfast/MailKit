@@ -646,7 +646,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type == ImapTokenType.QString) {
 				var qstring = (string) token.Value;
 
-				delim = qstring[0];
+				delim = qstring.Length > 0 ? qstring[0] : '\0';
 			} else if (token.Type == ImapTokenType.Nil) {
 				delim = '\0';
 			} else {
@@ -755,7 +755,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type == ImapTokenType.QString) {
 				var qstring = (string) token.Value;
 
-				delim = qstring[0];
+				delim = qstring.Length > 0 ? qstring[0] : '\0';
 			} else if (token.Type == ImapTokenType.Nil) {
 				delim = '\0';
 			} else {
