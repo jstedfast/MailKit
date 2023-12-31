@@ -935,7 +935,7 @@ namespace MailKit.Net.Imap {
 
 					token = Engine.ReadToken (CancellationToken);
 					if (token.Type == ImapTokenType.OpenBracket) {
-						var code = Engine.ParseResponseCodeAsync (true, false, CancellationToken).GetAwaiter ().GetResult ();
+						var code = Engine.ParseResponseCode (true, CancellationToken);
 						RespCodes.Add (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
 						// consume the rest of the line...
@@ -951,7 +951,7 @@ namespace MailKit.Net.Imap {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
 					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
-					var code = Engine.ParseResponseCodeAsync (false, false, CancellationToken).GetAwaiter ().GetResult ();
+					var code = Engine.ParseResponseCode (false, CancellationToken);
 					RespCodes.Add (code);
 				} else {
 					// no clue what we got...
@@ -1076,7 +1076,7 @@ namespace MailKit.Net.Imap {
 
 					token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
 					if (token.Type == ImapTokenType.OpenBracket) {
-						var code = await Engine.ParseResponseCodeAsync (true, true, CancellationToken).ConfigureAwait (false);
+						var code = await Engine.ParseResponseCodeAsync (true, CancellationToken).ConfigureAwait (false);
 						RespCodes.Add (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
 						// consume the rest of the line...
@@ -1092,7 +1092,7 @@ namespace MailKit.Net.Imap {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
 					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
-					var code = await Engine.ParseResponseCodeAsync (false, true, CancellationToken).ConfigureAwait (false);
+					var code = await Engine.ParseResponseCodeAsync (false, CancellationToken).ConfigureAwait (false);
 					RespCodes.Add (code);
 				} else {
 					// no clue what we got...

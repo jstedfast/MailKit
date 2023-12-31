@@ -2676,25 +2676,6 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Parses the flags list.
-		/// </summary>
-		/// <returns>The message flags.</returns>
-		/// <param name="engine">The IMAP engine.</param>
-		/// <param name="name">The name of the flags being parsed.</param>
-		/// <param name="keywords">A hash set of user-defined message flags that will be populated if non-null.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public static Task<MessageFlags> ParseFlagsListAsync (ImapEngine engine, string name, HashSet<string> keywords, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ParseFlagsListAsync (engine, name, keywords, cancellationToken);
-
-			var flags = ParseFlagsList (engine, name, keywords, cancellationToken);
-
-			return Task.FromResult (flags);
-		}
-
-		/// <summary>
 		/// Parses the ANNOTATION list.
 		/// </summary>
 		/// <returns>The list of annotations.</returns>

@@ -709,7 +709,7 @@ namespace MailKit.Net.Imap {
 				token = ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = ParseResponseCodeAsync (false, false, cancellationToken).GetAwaiter ().GetResult ();
+					var code = ParseResponseCode (false, cancellationToken);
 					if (code.Type == ImapResponseCodeType.Alert) {
 						OnAlert (code.Message);
 
@@ -770,7 +770,7 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (false, true, cancellationToken).ConfigureAwait (false);
+					var code = await ParseResponseCodeAsync (false, cancellationToken).ConfigureAwait (false);
 					if (code.Type == ImapResponseCodeType.Alert) {
 						OnAlert (code.Message);
 
@@ -889,24 +889,6 @@ namespace MailKit.Net.Imap {
 
 				return builder.ToString ();
 			}
-		}
-
-		internal Task<string> ReadLineAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return ReadLineAsync (cancellationToken);
-
-			return Task.FromResult (ReadLine (cancellationToken));
-		}
-
-		internal ValueTask<ImapToken> ReadTokenAsync (bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return Stream.ReadTokenAsync (ImapStream.DefaultSpecials, cancellationToken);
-
-			var token = Stream.ReadToken (ImapStream.DefaultSpecials, cancellationToken);
-
-			return new ValueTask<ImapToken> (token);
 		}
 
 		/// <summary>
@@ -1491,16 +1473,6 @@ namespace MailKit.Net.Imap {
 			StandardizeCapabilities ();
 		}
 
-		Task UpdateCapabilitiesAsync (ImapTokenType sentinel, bool doAsync, CancellationToken cancellationToken)
-		{
-			if (doAsync)
-				return UpdateCapabilitiesAsync (sentinel, cancellationToken);
-
-			UpdateCapabilities (sentinel, cancellationToken);
-
-			return Task.CompletedTask;
-		}
-
 		void UpdateNamespaces (CancellationToken cancellationToken)
 		{
 			var namespaces = new List<FolderNamespaceCollection> {
@@ -1864,28 +1836,27 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The response code.</returns>
 		/// <param name="isTagged">Whether or not the resp-code is tagged vs untagged.</param>
-		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public async ValueTask<ImapResponseCode> ParseResponseCodeAsync (bool isTagged, bool doAsync, CancellationToken cancellationToken)
+		public ImapResponseCode ParseResponseCode (bool isTagged, CancellationToken cancellationToken)
 		{
 			uint validity = Selected != null ? Selected.UidValidity : 0;
 			ImapResponseCode code;
 			string atom, value;
 			ImapToken token;
 
-//			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
-//
-//			if (token.Type != ImapTokenType.LeftBracket) {
-//				Debug.WriteLine ("Expected a '[' followed by a RESP-CODE, but got: {0}", token);
-//				throw UnexpectedToken (token, false);
-//			}
+			//			token = ReadToken (cancellationToken);
+			//
+			//			if (token.Type != ImapTokenType.LeftBracket) {
+			//				Debug.WriteLine ("Expected a '[' followed by a RESP-CODE, but got: {0}", token);
+			//				throw UnexpectedToken (token, false);
+			//			}
 
-			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			token = ReadToken (cancellationToken);
 
 			AssertToken (token, ImapTokenType.Atom, "Syntax error in response code. {0}", token);
 
 			atom = (string) token.Value;
-			token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+			token = ReadToken (cancellationToken);
 
 			code = ImapResponseCode.Create (GetResponseCodeType (atom));
 			code.IsTagged = isTagged;
@@ -1893,30 +1864,30 @@ namespace MailKit.Net.Imap {
 			switch (code.Type) {
 			case ImapResponseCodeType.BadCharset:
 				if (token.Type == ImapTokenType.OpenParen) {
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 					SupportedCharsets.Clear ();
 					while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
 						SupportedCharsets.Add ((string) token.Value);
-						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+						token = ReadToken (cancellationToken);
 					}
 
 					AssertToken (token, ImapTokenType.CloseParen, GenericResponseCodeSyntaxErrorFormat, "BADCHARSET", token);
 
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 				}
 				break;
 			case ImapResponseCodeType.Capability:
 				Stream.UngetToken (token);
-				await UpdateCapabilitiesAsync (ImapTokenType.CloseBracket, doAsync, cancellationToken).ConfigureAwait (false);
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				UpdateCapabilities (ImapTokenType.CloseBracket, cancellationToken);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.PermanentFlags:
 				var perm = (PermanentFlagsResponseCode) code;
 
 				Stream.UngetToken (token);
-				perm.Flags = await ImapUtils.ParseFlagsListAsync (this, "PERMANENTFLAGS", perm.Keywords, doAsync, cancellationToken).ConfigureAwait (false);
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				perm.Flags = ImapUtils.ParseFlagsList (this, "PERMANENTFLAGS", perm.Keywords, cancellationToken);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.UidNext:
 				var next = (UidNextResponseCode) code;
@@ -1929,7 +1900,7 @@ namespace MailKit.Net.Imap {
 				// See https://github.com/jstedfast/MailKit/issues/1010 for an example.
 				var uid = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UIDNEXT", token);
 				next.Uid = uid > 0 ? new UniqueId (uid) : UniqueId.Invalid;
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.UidValidity:
 				var uidvalidity = (UidValidityResponseCode) code;
@@ -1941,7 +1912,7 @@ namespace MailKit.Net.Imap {
 				//
 				// See https://github.com/jstedfast/MailKit/issues/150 for an example.
 				uidvalidity.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Unseen:
 				var unseen = (UnseenResponseCode) code;
@@ -1954,7 +1925,7 @@ namespace MailKit.Net.Imap {
 
 				unseen.Index = n > 0 ? (int) (n - 1) : 0;
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.NewName:
 				var rename = (NewNameResponseCode) code;
@@ -1969,32 +1940,32 @@ namespace MailKit.Net.Imap {
 				rename.OldName = (string) token.Value;
 
 				// the next token should be another atom or qstring token representing the new name of the folder
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
 
 				rename.NewName = (string) token.Value;
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.AppendUid:
 				var append = (AppendUidResponseCode) code;
 
 				append.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
 				append.UidSet = ParseUidSet (token, append.UidValidity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.CopyUid:
 				var copy = (CopyUidResponseCode) code;
 
 				copy.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				// Note: Outlook.com will apparently sometimes issue a [COPYUID nz_number SPACE SPACE] resp-code
 				// in response to a UID COPY or UID MOVE command. Likely this happens only when the source message
@@ -2007,7 +1978,7 @@ namespace MailKit.Net.Imap {
 					Stream.UngetToken (token);
 				}
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				if (token.Type != ImapTokenType.CloseBracket) {
 					copy.DestUidSet = ParseUidSet (token, copy.UidValidity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
@@ -2016,7 +1987,7 @@ namespace MailKit.Net.Imap {
 					Stream.UngetToken (token);
 				}
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.BadUrl:
 				var badurl = (BadUrlResponseCode) code;
@@ -2025,21 +1996,21 @@ namespace MailKit.Net.Imap {
 
 				badurl.BadUrl = (string) token.Value;
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.HighestModSeq:
 				var highest = (HighestModSeqResponseCode) code;
 
 				highest.HighestModSeq = ParseNumber64 (token, false, GenericResponseCodeSyntaxErrorFormat, "HIGHESTMODSEQ", token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Modified:
 				var modified = (ModifiedResponseCode) code;
 
 				modified.UidSet = ParseUidSet (token, validity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "MODIFIED", token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.MaxConvertMessages:
 			case ImapResponseCodeType.MaxConvertParts:
@@ -2047,7 +2018,7 @@ namespace MailKit.Net.Imap {
 
 				maxConvert.MaxConvert = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, atom, token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.NoUpdate:
 				var noUpdate = (NoUpdateResponseCode) code;
@@ -2056,7 +2027,7 @@ namespace MailKit.Net.Imap {
 
 				noUpdate.Tag = (string) token.Value;
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Annotate:
 				var annotate = (AnnotateResponseCode) code;
@@ -2069,7 +2040,7 @@ namespace MailKit.Net.Imap {
 				else if (value.Equals ("TOOMANY", StringComparison.OrdinalIgnoreCase))
 					annotate.SubType = AnnotateResponseCodeSubType.TooMany;
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Annotations:
 				var annotations = (AnnotationsResponseCode) code;
@@ -2086,7 +2057,7 @@ namespace MailKit.Net.Imap {
 					annotations.MaxSize = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
 				}
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				if (annotations.Access != AnnotationAccess.None) {
 					annotations.Scopes = AnnotationScope.Both;
@@ -2097,7 +2068,7 @@ namespace MailKit.Net.Imap {
 						if (((string) token.Value).Equals ("NOPRIVATE", StringComparison.OrdinalIgnoreCase))
 							annotations.Scopes = AnnotationScope.Shared;
 
-						token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+						token = ReadToken (cancellationToken);
 					}
 				}
 
@@ -2112,13 +2083,13 @@ namespace MailKit.Net.Imap {
 					metadata.SubType = MetadataResponseCodeSubType.LongEntries;
 					metadata.IsError = false;
 
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 					metadata.Value = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "METADATA LONGENTRIES", token);
 				} else if (value.Equals ("MAXSIZE", StringComparison.OrdinalIgnoreCase)) {
 					metadata.SubType = MetadataResponseCodeSubType.MaxSize;
 
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 					metadata.Value = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "METADATA MAXSIZE", token);
 				} else if (value.Equals ("TOOMANY", StringComparison.OrdinalIgnoreCase)) {
@@ -2127,7 +2098,7 @@ namespace MailKit.Net.Imap {
 					metadata.SubType = MetadataResponseCodeSubType.NoPrivate;
 				}
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.UndefinedFilter:
 				var undefined = (UndefinedFilterResponseCode) code;
@@ -2136,24 +2107,24 @@ namespace MailKit.Net.Imap {
 
 				undefined.Name = (string) token.Value;
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.MailboxId:
 				var mailboxid = (MailboxIdResponseCode) code;
 
 				AssertToken (token, ImapTokenType.OpenParen, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
 
 				mailboxid.MailboxId = (string) token.Value;
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 
 				AssertToken (token, ImapTokenType.CloseParen, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.WebAlert:
 				var webalert = (WebAlertResponseCode) code;
@@ -2162,7 +2133,7 @@ namespace MailKit.Net.Imap {
 
 				Uri.TryCreate ((string) token.Value, UriKind.Absolute, out webalert.WebUri);
 
-				token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+				token = ReadToken (cancellationToken);
 				break;
 			default:
 				// Note: This code-path handles: [ALERT], [CLOSED], [READ-ONLY], [READ-WRITE], etc.
@@ -2174,14 +2145,340 @@ namespace MailKit.Net.Imap {
 
 				// skip over tokens until we get to a ']'
 				while (token.Type != ImapTokenType.CloseBracket && token.Type != ImapTokenType.Eoln)
-					token = await ReadTokenAsync (doAsync, cancellationToken).ConfigureAwait (false);
+					token = ReadToken (cancellationToken);
 
 				break;
 			}
 
 			AssertToken (token, ImapTokenType.CloseBracket, "Syntax error in response code. {0}", token);
 
-			code.Message = (await ReadLineAsync (doAsync, cancellationToken).ConfigureAwait (false)).Trim ();
+			code.Message = ReadLine (cancellationToken).Trim ();
+
+			return code;
+		}
+
+		/// <summary>
+		/// Parses the response code.
+		/// </summary>
+		/// <returns>The response code.</returns>
+		/// <param name="isTagged">Whether or not the resp-code is tagged vs untagged.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public async ValueTask<ImapResponseCode> ParseResponseCodeAsync (bool isTagged, CancellationToken cancellationToken)
+		{
+			uint validity = Selected != null ? Selected.UidValidity : 0;
+			ImapResponseCode code;
+			string atom, value;
+			ImapToken token;
+
+			//			token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			//
+			//			if (token.Type != ImapTokenType.LeftBracket) {
+			//				Debug.WriteLine ("Expected a '[' followed by a RESP-CODE, but got: {0}", token);
+			//				throw UnexpectedToken (token, false);
+			//			}
+
+			token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			AssertToken (token, ImapTokenType.Atom, "Syntax error in response code. {0}", token);
+
+			atom = (string) token.Value;
+			token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			code = ImapResponseCode.Create (GetResponseCodeType (atom));
+			code.IsTagged = isTagged;
+
+			switch (code.Type) {
+			case ImapResponseCodeType.BadCharset:
+				if (token.Type == ImapTokenType.OpenParen) {
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					SupportedCharsets.Clear ();
+					while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
+						SupportedCharsets.Add ((string) token.Value);
+						token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+					}
+
+					AssertToken (token, ImapTokenType.CloseParen, GenericResponseCodeSyntaxErrorFormat, "BADCHARSET", token);
+
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				}
+				break;
+			case ImapResponseCodeType.Capability:
+				Stream.UngetToken (token);
+				await UpdateCapabilitiesAsync (ImapTokenType.CloseBracket, cancellationToken).ConfigureAwait (false);
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.PermanentFlags:
+				var perm = (PermanentFlagsResponseCode) code;
+
+				Stream.UngetToken (token);
+				perm.Flags = await ImapUtils.ParseFlagsListAsync (this, "PERMANENTFLAGS", perm.Keywords, cancellationToken).ConfigureAwait (false);
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.UidNext:
+				var next = (UidNextResponseCode) code;
+
+				// Note: we allow '0' here because some servers have been known to send "* OK [UIDNEXT 0]".
+				// The *probable* explanation here is that the folder has never been opened and/or no messages
+				// have ever been delivered (yet) to that mailbox and so the UIDNEXT has not (yet) been
+				// initialized.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/1010 for an example.
+				var uid = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UIDNEXT", token);
+				next.Uid = uid > 0 ? new UniqueId (uid) : UniqueId.Invalid;
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.UidValidity:
+				var uidvalidity = (UidValidityResponseCode) code;
+
+				// Note: we allow '0' here because some servers have been known to send "* OK [UIDVALIDITY 0]".
+				// The *probable* explanation here is that the folder has never been opened and/or no messages
+				// have ever been delivered (yet) to that mailbox and so the UIDVALIDITY has not (yet) been
+				// initialized.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/150 for an example.
+				uidvalidity.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.Unseen:
+				var unseen = (UnseenResponseCode) code;
+
+				// Note: we allow '0' here because some servers have been known to send "* OK [UNSEEN 0]" when the
+				// mailbox contains no messages.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/34 for details.
+				var n = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UNSEEN", token);
+
+				unseen.Index = n > 0 ? (int) (n - 1) : 0;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.NewName:
+				var rename = (NewNameResponseCode) code;
+
+				// Note: this RESP-CODE existed in rfc2060 but has been removed in rfc3501:
+				//
+				// 85) Remove NEWNAME.  It can't work because mailbox names can be
+				// literals and can include "]".  Functionality can be addressed via
+				// referrals.
+				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
+
+				rename.OldName = (string) token.Value;
+
+				// the next token should be another atom or qstring token representing the new name of the folder
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
+
+				rename.NewName = (string) token.Value;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.AppendUid:
+				var append = (AppendUidResponseCode) code;
+
+				append.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
+				append.UidSet = ParseUidSet (token, append.UidValidity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.CopyUid:
+				var copy = (CopyUidResponseCode) code;
+
+				copy.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				// Note: Outlook.com will apparently sometimes issue a [COPYUID nz_number SPACE SPACE] resp-code
+				// in response to a UID COPY or UID MOVE command. Likely this happens only when the source message
+				// didn't exist or something? See https://github.com/jstedfast/MailKit/issues/555 for details.
+
+				if (token.Type != ImapTokenType.CloseBracket) {
+					copy.SrcUidSet = ParseUidSet (token, validity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+				} else {
+					copy.SrcUidSet = new UniqueIdSet ();
+					Stream.UngetToken (token);
+				}
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (token.Type != ImapTokenType.CloseBracket) {
+					copy.DestUidSet = ParseUidSet (token, copy.UidValidity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+				} else {
+					copy.DestUidSet = new UniqueIdSet ();
+					Stream.UngetToken (token);
+				}
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.BadUrl:
+				var badurl = (BadUrlResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "BADURL", token);
+
+				badurl.BadUrl = (string) token.Value;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.HighestModSeq:
+				var highest = (HighestModSeqResponseCode) code;
+
+				highest.HighestModSeq = ParseNumber64 (token, false, GenericResponseCodeSyntaxErrorFormat, "HIGHESTMODSEQ", token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.Modified:
+				var modified = (ModifiedResponseCode) code;
+
+				modified.UidSet = ParseUidSet (token, validity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "MODIFIED", token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.MaxConvertMessages:
+			case ImapResponseCodeType.MaxConvertParts:
+				var maxConvert = (MaxConvertResponseCode) code;
+
+				maxConvert.MaxConvert = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, atom, token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.NoUpdate:
+				var noUpdate = (NoUpdateResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, GenericResponseCodeSyntaxErrorFormat, "NOUPDATE", token);
+
+				noUpdate.Tag = (string) token.Value;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.Annotate:
+				var annotate = (AnnotateResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATE", token);
+
+				value = (string) token.Value;
+				if (value.Equals ("TOOBIG", StringComparison.OrdinalIgnoreCase))
+					annotate.SubType = AnnotateResponseCodeSubType.TooBig;
+				else if (value.Equals ("TOOMANY", StringComparison.OrdinalIgnoreCase))
+					annotate.SubType = AnnotateResponseCodeSubType.TooMany;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.Annotations:
+				var annotations = (AnnotationsResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
+
+				value = (string) token.Value;
+				if (value.Equals ("NONE", StringComparison.OrdinalIgnoreCase)) {
+					// nothing
+				} else if (value.Equals ("READ-ONLY", StringComparison.OrdinalIgnoreCase)) {
+					annotations.Access = AnnotationAccess.ReadOnly;
+				} else {
+					annotations.Access = AnnotationAccess.ReadWrite;
+					annotations.MaxSize = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
+				}
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				if (annotations.Access != AnnotationAccess.None) {
+					annotations.Scopes = AnnotationScope.Both;
+
+					if (token.Type != ImapTokenType.CloseBracket) {
+						AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "ANNOTATIONS", token);
+
+						if (((string) token.Value).Equals ("NOPRIVATE", StringComparison.OrdinalIgnoreCase))
+							annotations.Scopes = AnnotationScope.Shared;
+
+						token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+					}
+				}
+
+				break;
+			case ImapResponseCodeType.Metadata:
+				var metadata = (MetadataResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "METADATA", token);
+
+				value = (string) token.Value;
+				if (value.Equals ("LONGENTRIES", StringComparison.OrdinalIgnoreCase)) {
+					metadata.SubType = MetadataResponseCodeSubType.LongEntries;
+					metadata.IsError = false;
+
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					metadata.Value = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "METADATA LONGENTRIES", token);
+				} else if (value.Equals ("MAXSIZE", StringComparison.OrdinalIgnoreCase)) {
+					metadata.SubType = MetadataResponseCodeSubType.MaxSize;
+
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+					metadata.Value = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "METADATA MAXSIZE", token);
+				} else if (value.Equals ("TOOMANY", StringComparison.OrdinalIgnoreCase)) {
+					metadata.SubType = MetadataResponseCodeSubType.TooMany;
+				} else if (value.Equals ("NOPRIVATE", StringComparison.OrdinalIgnoreCase)) {
+					metadata.SubType = MetadataResponseCodeSubType.NoPrivate;
+				}
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.UndefinedFilter:
+				var undefined = (UndefinedFilterResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "UNDEFINED-FILTER", token);
+
+				undefined.Name = (string) token.Value;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.MailboxId:
+				var mailboxid = (MailboxIdResponseCode) code;
+
+				AssertToken (token, ImapTokenType.OpenParen, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+
+				mailboxid.MailboxId = (string) token.Value;
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				AssertToken (token, ImapTokenType.CloseParen, GenericResponseCodeSyntaxErrorFormat, "MAILBOXID", token);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			case ImapResponseCodeType.WebAlert:
+				var webalert = (WebAlertResponseCode) code;
+
+				AssertToken (token, ImapTokenType.Atom, GenericResponseCodeSyntaxErrorFormat, "WEBALERT", token);
+
+				Uri.TryCreate ((string) token.Value, UriKind.Absolute, out webalert.WebUri);
+
+				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				break;
+			default:
+				// Note: This code-path handles: [ALERT], [CLOSED], [READ-ONLY], [READ-WRITE], etc.
+
+				//if (code.Type == ImapResponseCodeType.Unknown)
+				//	Debug.WriteLine (string.Format ("Unknown RESP-CODE encountered: {0}", atom));
+
+				// extensions are of the form: "[" atom [SPACE 1*<any TEXT_CHAR except "]">] "]"
+
+				// skip over tokens until we get to a ']'
+				while (token.Type != ImapTokenType.CloseBracket && token.Type != ImapTokenType.Eoln)
+					token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+				break;
+			}
+
+			AssertToken (token, ImapTokenType.CloseBracket, "Syntax error in response code. {0}", token);
+
+			code.Message = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).Trim ();
 
 			return code;
 		}
@@ -2432,7 +2729,7 @@ namespace MailKit.Net.Imap {
 				token = ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = ParseResponseCodeAsync (false, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+					var code = ParseResponseCode (false, cancellationToken);
 					current.RespCodes.Add (code);
 				} else {
 					var text = ReadLine (cancellationToken).TrimEnd ();
@@ -2484,7 +2781,7 @@ namespace MailKit.Net.Imap {
 				token = ReadToken (cancellationToken);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = ParseResponseCodeAsync (false, doAsync: false, cancellationToken).GetAwaiter ().GetResult ();
+					var code = ParseResponseCode (false, cancellationToken);
 					current.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
 					var text = ReadLine (cancellationToken).TrimEnd ();
@@ -2585,7 +2882,7 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (false, doAsync: true, cancellationToken).ConfigureAwait (false);
+					var code = await ParseResponseCodeAsync (false, cancellationToken).ConfigureAwait (false);
 					current.RespCodes.Add (code);
 				} else {
 					var text = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
@@ -2637,7 +2934,7 @@ namespace MailKit.Net.Imap {
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 				if (token.Type == ImapTokenType.OpenBracket) {
-					var code = await ParseResponseCodeAsync (false, doAsync: true, cancellationToken).ConfigureAwait (false);
+					var code = await ParseResponseCodeAsync (false, cancellationToken).ConfigureAwait (false);
 					current.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
 					var text = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
