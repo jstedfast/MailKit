@@ -2038,5 +2038,48 @@ namespace UnitTests.Net.Imap {
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER]"));
 			}
 		}
+
+		[Test]
+		public void TestFormatFetchSummaryItemsHeaderFieldsAndReferences ()
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest (MessageSummaryItems.References) {
+					Headers = new HeaderSet (new[] { HeaderId.InReplyTo })
+				};
+
+				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS (IN-REPLY-TO REFERENCES)]"));
+			}
+		}
+
+		[Test]
+		public void TestFormatFetchSummaryItemsExcludeHeaderFieldsReferencesAndReferences ()
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest (MessageSummaryItems.References) {
+					Headers = new HeaderSet (new[] { HeaderId.References }) {
+						Exclude = true
+					}
+				};
+
+				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER]"));
+			}
+		}
+
+		[Test]
+		public void TestFormatFetchSummaryItemsExcludeHeaderFieldsInReplyToReferencesAndReferences ()
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest (MessageSummaryItems.References) {
+					Headers = new HeaderSet (new[] { HeaderId.InReplyTo, HeaderId.References }) {
+						Exclude = true
+					}
+				};
+
+				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS.NOT (IN-REPLY-TO)]"));
+			}
+		}
 	}
 }

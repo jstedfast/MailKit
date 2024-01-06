@@ -722,6 +722,11 @@ namespace MailKit.Net.Imap
 			return Task.CompletedTask;
 		}
 
+		static bool IsEmptyExclude (HeaderSet headers, MessageSummaryItems items)
+		{
+			return headers.Exclude && (headers.Count == 0 || headers.Count == 1 && (items & MessageSummaryItems.References) != 0);
+		}
+
 		internal static string FormatSummaryItems (ImapEngine engine, IFetchRequest request, out bool previewText, bool isNotify = false)
 		{
 			var items = request.Items;
@@ -816,12 +821,15 @@ namespace MailKit.Net.Imap
 			}
 
 			if (request.Headers != null) {
-				if (request.Headers.Count == 0 && request.Headers.Exclude) {
+				if (IsEmptyExclude (request.Headers, request.Items)) {
 					tokens.Add ("BODY.PEEK[HEADER]");
 				} else if (request.Headers.Exclude) {
 					var headerFields = new StringBuilder ("BODY.PEEK[HEADER.FIELDS.NOT (");
 
 					foreach (var header in request.Headers) {
+						if ((request.Items & MessageSummaryItems.References) != 0 && header.Equals ("REFERENCES", StringComparison.Ordinal))
+							continue;
+
 						headerFields.Append (header);
 						headerFields.Append (' ');
 					}
