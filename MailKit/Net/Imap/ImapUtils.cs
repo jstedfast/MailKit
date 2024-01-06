@@ -608,6 +608,22 @@ namespace MailKit.Net.Imap {
 			list?.Add (folder);
 		}
 
+		static void ProcessListExtensionProperty (ImapEngine engine, ref ImapFolder folder, string encodedName, char delim, FolderAttributes attrs, string property, string value)
+		{
+			if (property.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
+				var oldEncodedName = value.TrimEnd (delim);
+
+				if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
+					var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
+
+					engine.FolderCache.Remove (oldEncodedName);
+					engine.FolderCache[encodedName] = oldFolder;
+					oldFolder.OnRenamed (args);
+					folder = oldFolder;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Parses an untagged LIST or LSUB response.
 		/// </summary>
@@ -662,8 +678,6 @@ namespace MailKit.Net.Imap {
 			token = engine.PeekToken (cancellationToken);
 
 			if (token.Type == ImapTokenType.OpenParen) {
-				var renamed = false;
-
 				// read the '(' token
 				engine.ReadToken (cancellationToken);
 
@@ -677,7 +691,7 @@ namespace MailKit.Net.Imap {
 
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
 
-					var atom = (string) token.Value;
+					var property = (string) token.Value;
 
 					token = engine.ReadToken (cancellationToken);
 
@@ -693,20 +707,7 @@ namespace MailKit.Net.Imap {
 
 						var value = ReadNStringToken (engine, format, false, cancellationToken);
 
-						if (!renamed && atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
-							var oldEncodedName = value.TrimEnd (delim);
-
-							if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
-								var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
-
-								engine.FolderCache.Remove (oldEncodedName);
-								engine.FolderCache[encodedName] = oldFolder;
-								oldFolder.OnRenamed (args);
-								folder = oldFolder;
-							}
-
-							renamed = true;
-						}
+						ProcessListExtensionProperty (engine, ref folder, encodedName, delim, attrs, property, value);
 					} while (true);
 				} while (true);
 			} else {
@@ -771,8 +772,6 @@ namespace MailKit.Net.Imap {
 			token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 
 			if (token.Type == ImapTokenType.OpenParen) {
-				var renamed = false;
-
 				// read the '(' token
 				await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -786,7 +785,7 @@ namespace MailKit.Net.Imap {
 
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, format, token);
 
-					var atom = (string) token.Value;
+					var property = (string) token.Value;
 
 					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -802,20 +801,7 @@ namespace MailKit.Net.Imap {
 
 						var value = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 
-						if (atom.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
-							var oldEncodedName = value.TrimEnd (delim);
-
-							if (!renamed && engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
-								var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
-
-								engine.FolderCache.Remove (oldEncodedName);
-								engine.FolderCache[encodedName] = oldFolder;
-								oldFolder.OnRenamed (args);
-								folder = oldFolder;
-							}
-
-							renamed = true;
-						}
+						ProcessListExtensionProperty (engine, ref folder, encodedName, delim, attrs, property, value);
 					} while (true);
 				} while (true);
 			} else {
@@ -2164,6 +2150,50 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		static bool TryAddEnvelopeAddressToken (ImapToken token, ref int index, string[] values, bool[] qstrings)
+		{
+			// This is a work-around for mail servers which output too many tokens for an ENVELOPE address. In at least 1 case, this happened
+			// because the server sent a literal token as the name component and miscalculated the literal length as 38 when it was actually 69
+			// (likely using Unicode characters instead of UTF-8 bytes).
+			//
+			// The work-around is to keep merging tokens at the beginning of the list until we end up with only 4 tokens.
+			//
+			// See https://github.com/jstedfast/MailKit/issues/1369 for details.
+			if (index >= 4) {
+				if (qstrings[0])
+					values[0] = MimeUtils.Quote (values[0]);
+				if (qstrings[1])
+					values[1] = MimeUtils.Quote (values[1]);
+				values[0] = values[0] + ' ' + values[1];
+				qstrings[0] = false;
+				qstrings[1] = qstrings[2];
+				values[1] = values[2];
+				qstrings[2] = qstrings[3];
+				values[2] = values[3];
+				index = 3;
+			}
+
+			switch (token.Type) {
+			case ImapTokenType.QString:
+				values[index] = (string) token.Value;
+				qstrings[index] = true;
+				break;
+			case ImapTokenType.Atom:
+				values[index] = (string) token.Value;
+				qstrings[index] = false;
+				break;
+			case ImapTokenType.Nil:
+				values[index] = null;
+				qstrings[index] = false;
+				break;
+			default:
+				qstrings[index] = false;
+				return false;
+			}
+
+			return true;
+		}
+
 		static EnvelopeAddress ParseEnvelopeAddress (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var values = new string[4];
@@ -2177,43 +2207,12 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
-				// This is a work-around for mail servers which output too many tokens for an ENVELOPE address. In at least 1 case, this happened
-				// because the server sent a literal token as the name component and miscalculated the literal length as 38 when it was actually 69
-				// (likely using Unicode characters instead of UTF-8 bytes).
-				//
-				// The work-around is to keep merging tokens at the beginning of the list until we end up with only 4 tokens.
-				//
-				// See https://github.com/jstedfast/MailKit/issues/1369 for details.
-				if (index >= 4) {
-					if (qstrings[0])
-						values[0] = MimeUtils.Quote (values[0]);
-					if (qstrings[1])
-						values[1] = MimeUtils.Quote (values[1]);
-					values[0] = values[0] + ' ' + values[1];
-					qstrings[0] = false;
-					qstrings[1] = qstrings[2];
-					values[1] = values[2];
-					qstrings[2] = qstrings[3];
-					values[2] = values[3];
-					index = 3;
-				}
-
-				switch (token.Type) {
-				case ImapTokenType.Literal:
-					values[index] = engine.ReadLiteral (cancellationToken);
-					break;
-				case ImapTokenType.QString:
-					values[index] = (string) token.Value;
-					qstrings[index] = true;
-					break;
-				case ImapTokenType.Atom:
-					values[index] = (string) token.Value;
-					break;
-				case ImapTokenType.Nil:
-					values[index] = null;
-					break;
-				default:
-					throw ImapEngine.UnexpectedToken (format, token);
+				if (!TryAddEnvelopeAddressToken (token, ref index, values, qstrings)) {
+					if (token.Type == ImapTokenType.Literal) {
+						values[index] = engine.ReadLiteral (cancellationToken);
+					} else {
+						throw ImapEngine.UnexpectedToken (format, token);
+					}
 				}
 
 				index++;
@@ -2237,43 +2236,12 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
-				// This is a work-around for mail servers which output too many tokens for an ENVELOPE address. In at least 1 case, this happened
-				// because the server sent a literal token as the name component and miscalculated the literal length as 38 when it was actually 69
-				// (likely using Unicode characters instead of UTF-8 bytes).
-				//
-				// The work-around is to keep merging tokens at the beginning of the list until we end up with only 4 tokens.
-				//
-				// See https://github.com/jstedfast/MailKit/issues/1369 for details.
-				if (index >= 4) {
-					if (qstrings[0])
-						values[0] = MimeUtils.Quote (values[0]);
-					if (qstrings[1])
-						values[1] = MimeUtils.Quote (values[1]);
-					values[0] = values[0] + ' ' + values[1];
-					qstrings[0] = false;
-					qstrings[1] = qstrings[2];
-					values[1] = values[2];
-					qstrings[2] = qstrings[3];
-					values[2] = values[3];
-					index = 3;
-				}
-
-				switch (token.Type) {
-				case ImapTokenType.Literal:
-					values[index] = await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
-					break;
-				case ImapTokenType.QString:
-					values[index] = (string) token.Value;
-					qstrings[index] = true;
-					break;
-				case ImapTokenType.Atom:
-					values[index] = (string) token.Value;
-					break;
-				case ImapTokenType.Nil:
-					values[index] = null;
-					break;
-				default:
-					throw ImapEngine.UnexpectedToken (format, token);
+				if (!TryAddEnvelopeAddressToken (token, ref index, values, qstrings)) {
+					if (token.Type == ImapTokenType.Literal) {
+						values[index] = await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
+					} else {
+						throw ImapEngine.UnexpectedToken (format, token);
+					}
 				}
 
 				index++;
@@ -2282,6 +2250,32 @@ namespace MailKit.Net.Imap {
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
 
 			return new EnvelopeAddress (values);
+		}
+
+		static void AddEnvelopeAddress (ImapEngine engine, List<InternetAddressList> stack, ref int sp, EnvelopeAddress address)
+		{
+			if (address.IsGroupStart && engine.QuirksMode != ImapQuirksMode.GMail) {
+				var group = address.ToGroupAddress (engine);
+				stack[sp].Add (group);
+				stack.Add (group.Members);
+				sp++;
+			} else if (address.IsGroupEnd) {
+				if (sp > 0) {
+					stack.RemoveAt (sp);
+					sp--;
+				}
+			} else {
+				try {
+					// Note: We need to do a try/catch around ToMailboxAddress() because some addresses
+					// returned by the IMAP server might be completely horked. For an example, see the
+					// second error report in https://github.com/jstedfast/MailKit/issues/494 where one
+					// of the addresses in the ENVELOPE has the name and address tokens flipped.
+					var mailbox = address.ToMailboxAddress (engine);
+					stack[sp].Add (mailbox);
+				} catch {
+					return;
+				}
+			}
 		}
 
 		static void ParseEnvelopeAddressList (InternetAddressList list, ImapEngine engine, string format, CancellationToken cancellationToken)
@@ -2313,28 +2307,7 @@ namespace MailKit.Net.Imap {
 
 				var address = ParseEnvelopeAddress (engine, format, cancellationToken);
 
-				if (address.IsGroupStart && engine.QuirksMode != ImapQuirksMode.GMail) {
-					var group = address.ToGroupAddress (engine);
-					stack[sp].Add (group);
-					stack.Add (group.Members);
-					sp++;
-				} else if (address.IsGroupEnd) {
-					if (sp > 0) {
-						stack.RemoveAt (sp);
-						sp--;
-					}
-				} else {
-					try {
-						// Note: We need to do a try/catch around ToMailboxAddress() because some addresses
-						// returned by the IMAP server might be completely horked. For an example, see the
-						// second error report in https://github.com/jstedfast/MailKit/issues/494 where one
-						// of the addresses in the ENVELOPE has the name and address tokens flipped.
-						var mailbox = address.ToMailboxAddress (engine);
-						stack[sp].Add (mailbox);
-					} catch {
-						continue;
-					}
-				}
+				AddEnvelopeAddress (engine, stack, ref sp, address);
 			} while (true);
 		}
 
@@ -2367,28 +2340,7 @@ namespace MailKit.Net.Imap {
 
 				var address = await ParseEnvelopeAddressAsync (engine, format, cancellationToken).ConfigureAwait (false);
 
-				if (address.IsGroupStart && engine.QuirksMode != ImapQuirksMode.GMail) {
-					var group = address.ToGroupAddress (engine);
-					stack[sp].Add (group);
-					stack.Add (group.Members);
-					sp++;
-				} else if (address.IsGroupEnd) {
-					if (sp > 0) {
-						stack.RemoveAt (sp);
-						sp--;
-					}
-				} else {
-					try {
-						// Note: We need to do a try/catch around ToMailboxAddress() because some addresses
-						// returned by the IMAP server might be completely horked. For an example, see the
-						// second error report in https://github.com/jstedfast/MailKit/issues/494 where one
-						// of the addresses in the ENVELOPE has the name and address tokens flipped.
-						var mailbox = address.ToMailboxAddress (engine);
-						stack[sp].Add (mailbox);
-					} catch {
-						continue;
-					}
-				}
+				AddEnvelopeAddress (engine, stack, ref sp, address);
 			} while (true);
 		}
 
