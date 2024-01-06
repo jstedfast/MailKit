@@ -2150,7 +2150,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static bool TryAddEnvelopeAddressToken (ImapToken token, ref int index, string[] values, bool[] qstrings)
+		static bool TryAddEnvelopeAddressToken (ImapToken token, ref int index, string[] values, bool[] qstrings, string format)
 		{
 			// This is a work-around for mail servers which output too many tokens for an ENVELOPE address. In at least 1 case, this happened
 			// because the server sent a literal token as the name component and miscalculated the literal length as 38 when it was actually 69
@@ -2174,6 +2174,10 @@ namespace MailKit.Net.Imap {
 			}
 
 			switch (token.Type) {
+			case ImapTokenType.Literal:
+				// Return control to our caller so that it can read the literal token.
+				qstrings[index] = false;
+				return false;
 			case ImapTokenType.QString:
 				values[index] = (string) token.Value;
 				qstrings[index] = true;
@@ -2187,8 +2191,7 @@ namespace MailKit.Net.Imap {
 				qstrings[index] = false;
 				break;
 			default:
-				qstrings[index] = false;
-				return false;
+				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
 			return true;
@@ -2207,13 +2210,8 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
-				if (!TryAddEnvelopeAddressToken (token, ref index, values, qstrings)) {
-					if (token.Type == ImapTokenType.Literal) {
-						values[index] = engine.ReadLiteral (cancellationToken);
-					} else {
-						throw ImapEngine.UnexpectedToken (format, token);
-					}
-				}
+				if (!TryAddEnvelopeAddressToken (token, ref index, values, qstrings, format))
+					values[index] = engine.ReadLiteral (cancellationToken);
 
 				index++;
 			} while (true);
@@ -2236,13 +2234,8 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.CloseParen)
 					break;
 
-				if (!TryAddEnvelopeAddressToken (token, ref index, values, qstrings)) {
-					if (token.Type == ImapTokenType.Literal) {
-						values[index] = await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
-					} else {
-						throw ImapEngine.UnexpectedToken (format, token);
-					}
-				}
+				if (!TryAddEnvelopeAddressToken (token, ref index, values, qstrings, format))
+					values[index] = await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
 
 				index++;
 			} while (true);
