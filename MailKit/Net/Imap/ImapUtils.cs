@@ -624,6 +624,19 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		static char ParseFolderSeparator (ImapToken token, string format)
+		{
+			if (token.Type == ImapTokenType.QString) {
+				var qstring = (string) token.Value;
+
+				return qstring.Length > 0 ? qstring[0] : '\0';
+			} else if (token.Type == ImapTokenType.Nil) {
+				return '\0';
+			} else {
+				throw ImapEngine.UnexpectedToken (format, token);
+			}
+		}
+
 		/// <summary>
 		/// Parses an untagged LIST or LSUB response.
 		/// </summary>
@@ -659,15 +672,7 @@ namespace MailKit.Net.Imap {
 			// parse the path delimeter
 			token = engine.ReadToken (cancellationToken);
 
-			if (token.Type == ImapTokenType.QString) {
-				var qstring = (string) token.Value;
-
-				delim = qstring.Length > 0 ? qstring[0] : '\0';
-			} else if (token.Type == ImapTokenType.Nil) {
-				delim = '\0';
-			} else {
-				throw ImapEngine.UnexpectedToken (format, token);
-			}
+			delim = ParseFolderSeparator (token, format);
 
 			encodedName = ReadFolderName (engine, delim, format, cancellationToken);
 
@@ -753,15 +758,7 @@ namespace MailKit.Net.Imap {
 			// parse the path delimeter
 			token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-			if (token.Type == ImapTokenType.QString) {
-				var qstring = (string) token.Value;
-
-				delim = qstring.Length > 0 ? qstring[0] : '\0';
-			} else if (token.Type == ImapTokenType.Nil) {
-				delim = '\0';
-			} else {
-				throw ImapEngine.UnexpectedToken (format, token);
-			}
+			delim = ParseFolderSeparator (token, format);
 
 			encodedName = await ReadFolderNameAsync (engine, delim, format, cancellationToken).ConfigureAwait (false);
 
