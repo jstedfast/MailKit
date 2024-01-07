@@ -470,6 +470,137 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateFetchAllHeadersCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"),
+				new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"),
+				new ImapReplayCommand ("A00000007 UID FETCH 1:* (UID FLAGS BODY.PEEK[HEADER])\r\n", "gmail.fetch-all-headers.txt"),
+				new ImapReplayCommand ("A00000008 FETCH 1:6 (UID FLAGS BODY.PEEK[HEADER])\r\n", "gmail.fetch-all-headers.txt"),
+				new ImapReplayCommand ("A00000009 FETCH 1:* (UID FLAGS BODY.PEEK[HEADER])\r\n", "gmail.fetch-all-headers.txt")
+			};
+		}
+
+		[Test]
+		public void TestFetchAllHeaders ()
+		{
+			var commands = CreateFetchAllHeadersCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = personal.GetSubfolders ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadOnly);
+
+				var request = new FetchRequest (MessageSummaryItems.Flags | MessageSummaryItems.UniqueId) {
+					Headers = HeaderSet.All
+				};
+
+				var messages = inbox.Fetch (UniqueIdRange.All, request);
+				Assert.That (messages.Count, Is.EqualTo (6), "UID FETCH");
+				for (int i = 0; i < messages.Count; i++)
+					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "UID FETCH fields");
+
+				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, request);
+				Assert.That (messages.Count, Is.EqualTo (6), "FETCH");
+				for (int i = 0; i < messages.Count; i++)
+					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH fields");
+
+				messages = inbox.Fetch (0, -1, request);
+				Assert.That (messages.Count, Is.EqualTo (6), "FETCH min:max");
+				for (int i = 0; i < messages.Count; i++)
+					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH min:max fields");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchAllHeadersAsync ()
+		{
+			var commands = CreateFetchAllHeadersCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = await personal.GetSubfoldersAsync ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				var request = new FetchRequest (MessageSummaryItems.Flags | MessageSummaryItems.UniqueId) {
+					Headers = HeaderSet.All
+				};
+
+				var messages = await inbox.FetchAsync (UniqueIdRange.All, request);
+				Assert.That (messages.Count, Is.EqualTo (6), "UID FETCH");
+				for (int i = 0; i < messages.Count; i++)
+					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "UID FETCH fields");
+
+				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, request);
+				Assert.That (messages.Count, Is.EqualTo (6), "FETCH");
+				for (int i = 0; i < messages.Count; i++)
+					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH fields");
+
+				messages = await inbox.FetchAsync (0, -1, request);
+				Assert.That (messages.Count, Is.EqualTo (6), "FETCH min:max");
+				for (int i = 0; i < messages.Count; i++)
+					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH min:max fields");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static readonly string[] PreviewTextValues = {
 			"Planet Fitness https://view.email.planetfitness.com/?qs=9a098a031cabde68c0a4260051cd6fe473a2e997a53678ff26b4b199a711a9d2ad0536530d6f837c246b09f644d42016ecfb298f930b7af058e9e454b34f3d818ceb3052ae317b1ac4594aab28a2d788 View web ver",
 			"Don't miss our celebrity guest Monday evening",

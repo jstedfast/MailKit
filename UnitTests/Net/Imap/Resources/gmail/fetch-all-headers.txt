@@ -1,0 +1,55 @@
+* 1 FETCH (UID 1 FLAGS (\Seen) BODY[HEADER] {275}
+Date: Thu, 03 Mar 2016 12:25:01 -0500
+Subject: text/plain message
+From: "Example From" <from@example.com>
+Reply-To: "Example Reply-To" <reply-to@example.com>
+To: "Example To" <to@example.com>
+Message-Id: <2T1YDYWYKXT4.7B2PY7UJXN1U3@Jeffrey-Stedfasts-2013-iMac.local>
+
+)
+* 2 FETCH (UID 2 FLAGS (\Seen) BODY[HEADER] {275}
+Date: Thu, 03 Mar 2016 12:25:01 -0500
+Subject: text/plain message
+From: "Example From" <from@example.com>
+Reply-To: "Example Reply-To" <reply-to@example.com>
+To: "Example To" <to@example.com>
+Message-Id: <2T1YDYWYKXT4.7B2PY7UJXN1U3@Jeffrey-Stedfasts-2013-iMac.local>
+
+)
+* 3 FETCH (UID 3 FLAGS (\Seen) BODY[HEADER] {275}
+Date: Thu, 03 Mar 2016 12:25:01 -0500
+Subject: text/plain message
+From: "Example From" <from@example.com>
+Reply-To: "Example Reply-To" <reply-to@example.com>
+To: "Example To" <to@example.com>
+Message-Id: <2T1YDYWYKXT4.7B2PY7UJXN1U3@Jeffrey-Stedfasts-2013-iMac.local>
+
+)
+* 4 FETCH (UID 4 FLAGS (\Seen) BODY[HEADER] {275}
+Date: Thu, 03 Mar 2016 12:25:01 -0500
+Subject: text/plain message
+From: "Example From" <from@example.com>
+Reply-To: "Example Reply-To" <reply-to@example.com>
+To: "Example To" <to@example.com>
+Message-Id: <2T1YDYWYKXT4.7B2PY7UJXN1U3@Jeffrey-Stedfasts-2013-iMac.local>
+
+)
+* 5 FETCH (UID 5 FLAGS (\Seen) BODY[HEADER] {275}
+Date: Thu, 03 Mar 2016 12:25:01 -0500
+Subject: text/plain message
+From: "Example From" <from@example.com>
+Reply-To: "Example Reply-To" <reply-to@example.com>
+To: "Example To" <to@example.com>
+Message-Id: <2T1YDYWYKXT4.7B2PY7UJXN1U3@Jeffrey-Stedfasts-2013-iMac.local>
+
+)
+* 6 FETCH (UID 6 FLAGS (\Seen) BODY[HEADER] {275}
+Date: Thu, 03 Mar 2016 12:25:01 -0500
+Subject: text/plain message
+From: "Example From" <from@example.com>
+Reply-To: "Example Reply-To" <reply-to@example.com>
+To: "Example To" <to@example.com>
+Message-Id: <2T1YDYWYKXT4.7B2PY7UJXN1U3@Jeffrey-Stedfasts-2013-iMac.local>
+
+)
+A######## OK Success
