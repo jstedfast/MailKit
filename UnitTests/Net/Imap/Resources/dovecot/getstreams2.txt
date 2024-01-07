@@ -1,7 +1,7 @@
-* 1 FETCH (UID 1 BODY[] {68}
-This is some dummy text just to make sure this is working correctly.)
-* 2 FETCH (UID 2 BODY[] {68}
-This is some dummy text just to make sure this is working correctly.)
-* 3 FETCH (UID 3 BODY[] {68}
-This is some dummy text just to make sure this is working correctly.)
+* 1 FETCH (BODY[] {68}
+This is some dummy text just to make sure this is working correctly. UID 1)
+* 2 FETCH (BODY[] {68}
+This is some dummy text just to make sure this is working correctly. UID 2)
+* 3 FETCH (BODY[] {68}
+This is some dummy text just to make sure this is working correctly. UID 3)
 A######## OK Fetch completed (0.002 + 0.000 secs).

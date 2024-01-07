@@ -1,5 +1,0 @@
-* 1 FETCH (UID 1 BODY[]<128> {64}
-nit Tests <unit-tests@mimekit.net>
-MIME-Version: 1.0
-Content-T)
-A######## OK Fetch completed (0.002 + 0.000 secs).

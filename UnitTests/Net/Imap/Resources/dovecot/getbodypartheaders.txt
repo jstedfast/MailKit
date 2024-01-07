@@ -1,5 +1,5 @@
-* 2 FETCH (UID 2 BODY[1.MIME] {43}
+* 2 FETCH (BODY[1.MIME] {43}
 Content-Type: text/plain; charset=utf-8
 
- )
+ UID 2)
 A######## OK Fetch completed (0.002 + 0.000 secs).

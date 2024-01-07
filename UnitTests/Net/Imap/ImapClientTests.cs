@@ -4116,8 +4116,8 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000050 FETCH 2 (BODY.PEEK[1.MIME])\r\n", "dovecot.getbodypartheaders.txt"));
 			commands.Add (new ImapReplayCommand ("A00000051 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream.txt"));
 			commands.Add (new ImapReplayCommand ("A00000052 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000053 FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream3.txt"));
-			commands.Add (new ImapReplayCommand ("A00000054 FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream4.txt"));
+			commands.Add (new ImapReplayCommand ("A00000053 FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream.txt"));
+			commands.Add (new ImapReplayCommand ("A00000054 FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream2.txt"));
 			commands.Add (new ImapReplayCommand ("A00000055 UID FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section.txt"));
 			commands.Add (new ImapReplayCommand ("A00000056 FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section2.txt"));
 			commands.Add (new ImapReplayCommand ("A00000057 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
@@ -4130,8 +4130,8 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000064 UID SEARCH ALL\r\n", "dovecot.search-raw.txt"));
 			commands.Add (new ImapReplayCommand ("A00000065 UID SORT (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-raw.txt"));
 			commands.Add (new ImapReplayCommand ("A00000066 UID FETCH 1:* (BODY.PEEK[])\r\n", "dovecot.getstreams1.txt"));
-			commands.Add (new ImapReplayCommand ("A00000067 FETCH 1:3 (UID BODY.PEEK[])\r\n", "dovecot.getstreams2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000068 FETCH 1:* (UID BODY.PEEK[])\r\n", "dovecot.getstreams3.txt"));
+			commands.Add (new ImapReplayCommand ("A00000067 FETCH 1:3 (UID BODY.PEEK[])\r\n", "dovecot.getstreams1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000068 FETCH 1:* (UID BODY.PEEK[])\r\n", "dovecot.getstreams2.txt"));
 			commands.Add (new ImapReplayCommand ("A00000069 EXPUNGE\r\n", "dovecot.expunge.txt"));
 			commands.Add (new ImapReplayCommand ("A00000070 CLOSE\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000071 NOOP\r\n", "dovecot.noop+alert.txt"));
