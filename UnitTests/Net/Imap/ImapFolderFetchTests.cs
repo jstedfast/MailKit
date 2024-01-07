@@ -997,7 +997,8 @@ namespace UnitTests.Net.Imap {
 			"Planet Fitness https://view.email.planetfitness.com/?qs=9a098a031cabde68c0a4260051cd6fe473a2e997a53678ff26b4b199a711a9d2ad0536530d6f837c246b09f644d42016ecfb298f930b7af058e9e454b34f3d818ceb3052ae317b1ac4594aab28a2d788 View web ver…",
 			"Planet Fitness https://view.email.planetfitness.com/?qs=9a098a031cabde68c0a4260051cd6fe473a2e997a53678ff26b4b199a711a9d2ad0536530d6f837c246b09f644d42016ecfb298f930b7af058e9e454b34f3d818ceb3052ae317b1ac4594aab28a2d788 View web ver…",
 			"Don’t miss our celebrity guest Monday evening",
-			"Planet Fitness https://view.email.planetfitness.com/?qs=9a098a031cabde68c0a4260051cd6fe473a2e997a53678ff26b4b199a711a9d2ad0536530d6f837c246b09f644d42016ecfb298f930b7af058e9e454b34f3d818ceb3052ae317b1ac4594aab28a2d788 View web ver…"
+			"Planet Fitness https://view.email.planetfitness.com/?qs=9a098a031cabde68c0a4260051cd6fe473a2e997a53678ff26b4b199a711a9d2ad0536530d6f837c246b09f644d42016ecfb298f930b7af058e9e454b34f3d818ceb3052ae317b1ac4594aab28a2d788 View web ver…",
+			string.Empty
 		};
 
 		static List<ImapReplayCommand> CreateFetchSimulatedPreviewTextCommands ()
@@ -1015,7 +1016,7 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000008 UID FETCH 1,4 (BODY.PEEK[TEXT]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-only.txt"),
 				new ImapReplayCommand ("A00000009 UID FETCH 3,6 (BODY.PEEK[1]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-alternative.txt"),
 				new ImapReplayCommand ("A00000010 UID FETCH 2,5 (BODY.PEEK[TEXT]<0.16384>)\r\n", "gmail.fetch-previewtext-peek-html-only.txt"),
-				new ImapReplayCommand ("A00000011 FETCH 1:6 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext-bodystructure.txt"),
+				new ImapReplayCommand ("A00000011 FETCH 1:7 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODYSTRUCTURE)\r\n", "gmail.fetch-previewtext-bodystructure.txt"),
 				new ImapReplayCommand ("A00000012 UID FETCH 1,4 (BODY.PEEK[TEXT]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-only.txt"),
 				new ImapReplayCommand ("A00000013 UID FETCH 3,6 (BODY.PEEK[1]<0.512>)\r\n", "gmail.fetch-previewtext-peek-text-alternative.txt"),
 				new ImapReplayCommand ("A00000014 UID FETCH 2,5 (BODY.PEEK[TEXT]<0.16384>)\r\n", "gmail.fetch-previewtext-peek-html-only.txt"),
@@ -1064,7 +1065,7 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
-				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
+				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5, 6 }, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
@@ -1114,7 +1115,7 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
-				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
+				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5, 6 }, MessageSummaryItems.Full | MessageSummaryItems.PreviewText);
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (SimulatedPreviewTextValues[i]));
 
