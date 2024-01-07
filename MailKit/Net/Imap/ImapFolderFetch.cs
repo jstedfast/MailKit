@@ -2047,7 +2047,7 @@ namespace MailKit.Net.Imap
 
 							stream.Position = 0;
 						} catch {
-							stream.Dispose ();
+							stream?.Dispose ();
 							throw;
 						} finally {
 							ArrayPool<byte>.Shared.Return (buf);
@@ -2067,7 +2067,7 @@ namespace MailKit.Net.Imap
 							ctx.Report (nread, size);
 							stream.Position = 0;
 						} catch {
-							stream.Dispose ();
+							stream?.Dispose ();
 							throw;
 						}
 						break;
@@ -2290,7 +2290,7 @@ namespace MailKit.Net.Imap
 
 							stream.Position = 0;
 						} catch {
-							stream.Dispose ();
+							stream?.Dispose ();
 							throw;
 						} finally {
 							ArrayPool<byte>.Shared.Return (buf);
@@ -2310,7 +2310,7 @@ namespace MailKit.Net.Imap
 							ctx.Report (nread, size);
 							stream.Position = 0;
 						} catch {
-							stream.Dispose ();
+							stream?.Dispose ();
 							throw;
 						}
 						break;
