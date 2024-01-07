@@ -470,6 +470,138 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateEmptyFetchRequestCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"),
+				new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"),
+			};
+		}
+
+		[Test]
+		public void TestEmptyFetchRequest ()
+		{
+			var commands = CreateEmptyFetchRequestCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = personal.GetSubfolders ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadOnly);
+
+				// First, test a non-empty requests with empty message sets
+				var request = new FetchRequest (MessageSummaryItems.Flags);
+
+				var messages = inbox.Fetch (Array.Empty<UniqueId> (), request);
+				Assert.That (messages.Count, Is.EqualTo (0), "UID FETCH (0 uids)");
+
+				messages = inbox.Fetch (Array.Empty<int> (), request);
+				Assert.That (messages.Count, Is.EqualTo (0), "FETCH (0 indexes)");
+
+				// Now make the FetchRequest empty
+				request = new FetchRequest (MessageSummaryItems.None);
+
+				messages = inbox.Fetch (UniqueIdRange.All, request);
+				Assert.That (messages.Count, Is.EqualTo (0), "UID FETCH (None)");
+
+				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, request);
+				Assert.That (messages.Count, Is.EqualTo (0), "FETCH (None)");
+
+				messages = inbox.Fetch (0, -1, request);
+				Assert.That (messages.Count, Is.EqualTo (0), "FETCH min:max (None)");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestEmptyFetchRequestAsync ()
+		{
+			var commands = CreateEmptyFetchRequestCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = await personal.GetSubfoldersAsync ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				// First, test a non-empty requests with empty message sets
+				var request = new FetchRequest (MessageSummaryItems.Flags);
+
+				var messages = await inbox.FetchAsync (Array.Empty<UniqueId> (), request);
+				Assert.That (messages.Count, Is.EqualTo (0), "UID FETCH (0 uids)");
+
+				messages = await inbox.FetchAsync (Array.Empty<int> (), request);
+				Assert.That (messages.Count, Is.EqualTo (0), "FETCH (0 indexes)");
+
+				// Now make the FetchRequest empty
+				request = new FetchRequest (MessageSummaryItems.None);
+
+				messages = await inbox.FetchAsync (UniqueIdRange.All, request);
+				Assert.That (messages.Count, Is.EqualTo (0), "UID FETCH (None)");
+
+				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, request);
+				Assert.That (messages.Count, Is.EqualTo (0), "FETCH (None)");
+
+				messages = await inbox.FetchAsync (0, -1, request);
+				Assert.That (messages.Count, Is.EqualTo (0), "FETCH min:max (None)");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateFetchAllHeadersCommands ()
 		{
 			return new List<ImapReplayCommand> {
