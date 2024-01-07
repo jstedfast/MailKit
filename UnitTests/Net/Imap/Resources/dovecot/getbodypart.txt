@@ -1,4 +1,4 @@
-* 1 FETCH (UID 1 BODY[HEADER] {226}
+* 1 FETCH (UID 1 BODY[] {253}
 From: Unit Tests <unit-tests@mimekit.net>
 Date: Sun, 02 Oct 2016 17:56:45 -0400
 Subject: A
@@ -7,7 +7,6 @@ To: Unit Tests <unit-tests@mimekit.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 
- BODY[TEXT] {27}
 This is the message body.
 )
 A######## OK Fetch completed (0.002 + 0.000 secs).

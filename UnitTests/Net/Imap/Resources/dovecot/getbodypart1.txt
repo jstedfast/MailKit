@@ -1,0 +1,7 @@
+* 2 FETCH (UID 2 BODY[1.MIME] {43}
+Content-Type: text/plain; charset=utf-8
+
+ BODY[1] {27}
+This is the message body.
+)
+A######## OK Fetch completed (0.002 + 0.000 secs).

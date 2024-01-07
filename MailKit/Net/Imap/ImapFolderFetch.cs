@@ -2426,18 +2426,16 @@ namespace MailKit.Net.Imap
 					query = "BODY.PEEK[HEADER]";
 					tags[0] = "HEADER";
 				}
-			} else {
-				tags = new string[2];
-
-				if (partSpec.Length > 0) {
-					tags[0] = partSpec + ".MIME";
-					tags[1] = partSpec;
-				} else {
-					tags[0] = "HEADER";
-					tags[1] = "TEXT";
-				}
+			} else if (partSpec.Length > 0) {
+				tags = new string[] {
+					partSpec + ".MIME",
+					partSpec
+				};
 
 				query = string.Format ("BODY.PEEK[{0}] BODY.PEEK[{1}]", tags[0], tags[1]);
+			} else {
+				tags = new string[] { string.Empty };
+				query = "BODY.PEEK[]";
 			}
 
 			return query;
