@@ -4109,31 +4109,33 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000043 UID FETCH 2 (BODY.PEEK[1.MIME] BODY.PEEK[1])\r\n", "dovecot.getbodypart1.txt"));
 			commands.Add (new ImapReplayCommand ("A00000044 FETCH 2 (BODY.PEEK[1.MIME] BODY.PEEK[1])\r\n", "dovecot.getbodypart1.txt"));
 			commands.Add (new ImapReplayCommand ("A00000045 UID FETCH 1 (BODY.PEEK[HEADER])\r\n", "dovecot.getmessageheaders.txt"));
-			commands.Add (new ImapReplayCommand ("A00000046 FETCH 1 (BODY.PEEK[HEADER])\r\n", "dovecot.getmessageheaders2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000047 UID FETCH 1 (BODY.PEEK[HEADER])\r\n", "dovecot.getbodypartheaders.txt"));
-			commands.Add (new ImapReplayCommand ("A00000048 FETCH 1 (BODY.PEEK[HEADER])\r\n", "dovecot.getbodypartheaders2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000049 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream.txt"));
-			commands.Add (new ImapReplayCommand ("A00000050 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000051 FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream3.txt"));
-			commands.Add (new ImapReplayCommand ("A00000052 FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream4.txt"));
-			commands.Add (new ImapReplayCommand ("A00000053 UID FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section.txt"));
-			commands.Add (new ImapReplayCommand ("A00000054 FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000055 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
-			commands.Add (new ImapReplayCommand ("A00000056 STORE 1:7 (UNCHANGEDSINCE 5) FLAGS.SILENT (\\Deleted \\Seen $MailKit)\r\n", "dovecot.setflags-unchangedsince.txt"));
-			commands.Add (new ImapReplayCommand ("A00000057 UID SEARCH RETURN (ALL) UID 1:14 OR NEW OR OLD OR ANSWERED OR DELETED OR DRAFT OR FLAGGED OR RECENT OR UNANSWERED OR UNDELETED OR UNDRAFT OR UNFLAGGED OR UNSEEN OR KEYWORD $MailKit UNKEYWORD $MailKit\r\n", "dovecot.search-uids.txt"));
-			commands.Add (new ImapReplayCommand ("A00000058 UID SEARCH RETURN (ALL RELEVANCY COUNT MIN MAX) UID 1:14 LARGER 256 SMALLER 512\r\n", "dovecot.search-uids-options.txt"));
-			commands.Add (new ImapReplayCommand ("A00000059 UID SORT RETURN (ALL) (REVERSE DATE SUBJECT DISPLAYFROM SIZE) US-ASCII OR OR (SENTBEFORE 12-Oct-2016 SENTSINCE 10-Oct-2016) NOT SENTON 11-Oct-2016 OR (BEFORE 12-Oct-2016 SINCE 10-Oct-2016) NOT ON 11-Oct-2016\r\n", "dovecot.sort-by-date.txt"));
-			commands.Add (new ImapReplayCommand ("A00000060 UID SORT RETURN (ALL) (FROM TO CC) US-ASCII UID 1:14 OR BCC xyz OR CC xyz OR FROM xyz OR TO xyz OR SUBJECT xyz OR HEADER Message-Id mimekit.net OR BODY \"This is the message body.\" TEXT message\r\n", "dovecot.sort-by-strings.txt"));
-			commands.Add (new ImapReplayCommand ("A00000061 UID SORT RETURN (ALL RELEVANCY COUNT MIN MAX) (DISPLAYTO) US-ASCII UID 1:14 OLDER 1 YOUNGER 3600\r\n", "dovecot.sort-uids-options.txt"));
-			commands.Add (new ImapReplayCommand ("A00000062 UID SEARCH ALL\r\n", "dovecot.search-raw.txt"));
-			commands.Add (new ImapReplayCommand ("A00000063 UID SORT (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-raw.txt"));
-			commands.Add (new ImapReplayCommand ("A00000064 UID FETCH 1:* (BODY.PEEK[])\r\n", "dovecot.getstreams1.txt"));
-			commands.Add (new ImapReplayCommand ("A00000065 FETCH 1:3 (UID BODY.PEEK[])\r\n", "dovecot.getstreams2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000066 FETCH 1:* (UID BODY.PEEK[])\r\n", "dovecot.getstreams3.txt"));
-			commands.Add (new ImapReplayCommand ("A00000067 EXPUNGE\r\n", "dovecot.expunge.txt"));
-			commands.Add (new ImapReplayCommand ("A00000068 CLOSE\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000069 NOOP\r\n", "dovecot.noop+alert.txt"));
-			commands.Add (new ImapReplayCommand ("A00000070 LOGOUT\r\n", "gmail.logout.txt"));
+			commands.Add (new ImapReplayCommand ("A00000046 FETCH 1 (BODY.PEEK[HEADER])\r\n", "dovecot.getmessageheaders.txt"));
+			commands.Add (new ImapReplayCommand ("A00000047 UID FETCH 1 (BODY.PEEK[HEADER])\r\n", "dovecot.getmessageheaders.txt"));
+			commands.Add (new ImapReplayCommand ("A00000048 FETCH 1 (BODY.PEEK[HEADER])\r\n", "dovecot.getmessageheaders.txt"));
+			commands.Add (new ImapReplayCommand ("A00000049 UID FETCH 2 (BODY.PEEK[1.MIME])\r\n", "dovecot.getbodypartheaders.txt"));
+			commands.Add (new ImapReplayCommand ("A00000050 FETCH 2 (BODY.PEEK[1.MIME])\r\n", "dovecot.getbodypartheaders.txt"));
+			commands.Add (new ImapReplayCommand ("A00000051 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream.txt"));
+			commands.Add (new ImapReplayCommand ("A00000052 UID FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000053 FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream3.txt"));
+			commands.Add (new ImapReplayCommand ("A00000054 FETCH 1 (BODY.PEEK[]<128.64>)\r\n", "dovecot.getstream4.txt"));
+			commands.Add (new ImapReplayCommand ("A00000055 UID FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section.txt"));
+			commands.Add (new ImapReplayCommand ("A00000056 FETCH 1 (BODY.PEEK[HEADER.FIELDS (MIME-VERSION CONTENT-TYPE)])\r\n", "dovecot.getstream-section2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000057 UID STORE 1:14 (UNCHANGEDSINCE 3) +FLAGS.SILENT (\\Deleted $MailKit)\r\n", "dovecot.store-deleted-custom.txt"));
+			commands.Add (new ImapReplayCommand ("A00000058 STORE 1:7 (UNCHANGEDSINCE 5) FLAGS.SILENT (\\Deleted \\Seen $MailKit)\r\n", "dovecot.setflags-unchangedsince.txt"));
+			commands.Add (new ImapReplayCommand ("A00000059 UID SEARCH RETURN (ALL) UID 1:14 OR NEW OR OLD OR ANSWERED OR DELETED OR DRAFT OR FLAGGED OR RECENT OR UNANSWERED OR UNDELETED OR UNDRAFT OR UNFLAGGED OR UNSEEN OR KEYWORD $MailKit UNKEYWORD $MailKit\r\n", "dovecot.search-uids.txt"));
+			commands.Add (new ImapReplayCommand ("A00000060 UID SEARCH RETURN (ALL RELEVANCY COUNT MIN MAX) UID 1:14 LARGER 256 SMALLER 512\r\n", "dovecot.search-uids-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000061 UID SORT RETURN (ALL) (REVERSE DATE SUBJECT DISPLAYFROM SIZE) US-ASCII OR OR (SENTBEFORE 12-Oct-2016 SENTSINCE 10-Oct-2016) NOT SENTON 11-Oct-2016 OR (BEFORE 12-Oct-2016 SINCE 10-Oct-2016) NOT ON 11-Oct-2016\r\n", "dovecot.sort-by-date.txt"));
+			commands.Add (new ImapReplayCommand ("A00000062 UID SORT RETURN (ALL) (FROM TO CC) US-ASCII UID 1:14 OR BCC xyz OR CC xyz OR FROM xyz OR TO xyz OR SUBJECT xyz OR HEADER Message-Id mimekit.net OR BODY \"This is the message body.\" TEXT message\r\n", "dovecot.sort-by-strings.txt"));
+			commands.Add (new ImapReplayCommand ("A00000063 UID SORT RETURN (ALL RELEVANCY COUNT MIN MAX) (DISPLAYTO) US-ASCII UID 1:14 OLDER 1 YOUNGER 3600\r\n", "dovecot.sort-uids-options.txt"));
+			commands.Add (new ImapReplayCommand ("A00000064 UID SEARCH ALL\r\n", "dovecot.search-raw.txt"));
+			commands.Add (new ImapReplayCommand ("A00000065 UID SORT (REVERSE ARRIVAL) US-ASCII ALL\r\n", "dovecot.sort-raw.txt"));
+			commands.Add (new ImapReplayCommand ("A00000066 UID FETCH 1:* (BODY.PEEK[])\r\n", "dovecot.getstreams1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000067 FETCH 1:3 (UID BODY.PEEK[])\r\n", "dovecot.getstreams2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000068 FETCH 1:* (UID BODY.PEEK[])\r\n", "dovecot.getstreams3.txt"));
+			commands.Add (new ImapReplayCommand ("A00000069 EXPUNGE\r\n", "dovecot.expunge.txt"));
+			commands.Add (new ImapReplayCommand ("A00000070 CLOSE\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000071 NOOP\r\n", "dovecot.noop+alert.txt"));
+			commands.Add (new ImapReplayCommand ("A00000072 LOGOUT\r\n", "gmail.logout.txt"));
 
 			return commands;
 		}
@@ -4617,6 +4619,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (headers[HeaderId.MessageId], Is.EqualTo ("<a@mimekit.net>"), "GetHeaders(UniqueId) failed to match Message-Id header");
 				Assert.That (headers[HeaderId.To], Is.EqualTo ("Unit Tests <unit-tests@mimekit.net>"), "GetHeaders(UniqueId) failed to match To header");
 				Assert.That (headers[HeaderId.MimeVersion], Is.EqualTo ("1.0"), "GetHeaders(UniqueId) failed to match MIME-Version header");
+				Assert.That (headers[HeaderId.ContentType], Is.EqualTo ("text/plain; charset=utf-8"), "GetHeaders(UniqueId) failed to match Content-Type header");
+
+				headers = destination.GetHeaders (fetched[1].UniqueId, fetched[1].TextBody);
+				Assert.That (headers[HeaderId.ContentType], Is.EqualTo ("text/plain; charset=utf-8"), "GetHeaders(UniqueId) failed to match Content-Type header");
+
+				headers = destination.GetHeaders (fetched[1].Index, fetched[1].TextBody);
 				Assert.That (headers[HeaderId.ContentType], Is.EqualTo ("text/plain; charset=utf-8"), "GetHeaders(UniqueId) failed to match Content-Type header");
 
 				using (var stream = destination.GetStream (fetched[0].UniqueId, 128, 64)) {
@@ -5255,6 +5263,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (headers[HeaderId.MessageId], Is.EqualTo ("<a@mimekit.net>"), "GetHeaders(UniqueId) failed to match Message-Id header");
 				Assert.That (headers[HeaderId.To], Is.EqualTo ("Unit Tests <unit-tests@mimekit.net>"), "GetHeaders(UniqueId) failed to match To header");
 				Assert.That (headers[HeaderId.MimeVersion], Is.EqualTo ("1.0"), "GetHeaders(UniqueId) failed to match MIME-Version header");
+				Assert.That (headers[HeaderId.ContentType], Is.EqualTo ("text/plain; charset=utf-8"), "GetHeaders(UniqueId) failed to match Content-Type header");
+
+				headers = await destination.GetHeadersAsync (fetched[1].UniqueId, fetched[1].TextBody);
+				Assert.That (headers[HeaderId.ContentType], Is.EqualTo ("text/plain; charset=utf-8"), "GetHeaders(UniqueId) failed to match Content-Type header");
+
+				headers = await destination.GetHeadersAsync (fetched[1].Index, fetched[1].TextBody);
 				Assert.That (headers[HeaderId.ContentType], Is.EqualTo ("text/plain; charset=utf-8"), "GetHeaders(UniqueId) failed to match Content-Type header");
 
 				using (var stream = await destination.GetStreamAsync (fetched[0].UniqueId, 128, 64)) {
