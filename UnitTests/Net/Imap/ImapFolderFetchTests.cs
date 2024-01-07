@@ -2364,7 +2364,7 @@ namespace UnitTests.Net.Imap {
 		{
 			using (var engine = new ImapEngine (null)) {
 				var request = new FetchRequest (items);
-				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				var command = ImapFolder.FormatSummaryItems (engine, request, out _);
 
 				Assert.That (command, Is.EqualTo (expected));
 			}
@@ -2379,10 +2379,9 @@ namespace UnitTests.Net.Imap {
 						Exclude = true
 					}
 				};
-				bool previewText;
 				string command;
 
-				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER]"));
 
 				request = new FetchRequest () {
@@ -2391,7 +2390,7 @@ namespace UnitTests.Net.Imap {
 					}
 				};
 
-				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS.NOT (FROM SUBJECT DATE)]"));
 			}
 		}
@@ -2401,24 +2400,23 @@ namespace UnitTests.Net.Imap {
 		{
 			using (var engine = new ImapEngine (null)) {
 				var request = new FetchRequest (MessageSummaryItems.References);
-				bool previewText;
 				string command;
 
-				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]"));
 
 				request = new FetchRequest () {
 					Headers = new HeaderSet (new[] { "REFERENCES" })
 				};
 
-				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]"));
 
 				request = new FetchRequest (MessageSummaryItems.References) {
 					Headers = new HeaderSet (new[] { "REFERENCES" })
 				};
 
-				command = ImapFolder.FormatSummaryItems (engine, request, out previewText);
+				command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]"));
 			}
 		}
@@ -2429,7 +2427,7 @@ namespace UnitTests.Net.Imap {
 			using (var engine = new ImapEngine (null)) {
 				var request = new FetchRequest (MessageSummaryItems.Headers);
 
-				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				var command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER]"));
 			}
 		}
@@ -2442,7 +2440,7 @@ namespace UnitTests.Net.Imap {
 					Headers = new HeaderSet (new[] { HeaderId.InReplyTo })
 				};
 
-				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				var command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS (IN-REPLY-TO REFERENCES)]"));
 			}
 		}
@@ -2457,8 +2455,23 @@ namespace UnitTests.Net.Imap {
 					}
 				};
 
-				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				var command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER]"));
+			}
+		}
+
+		[Test]
+		public void TestFormatFetchSummaryItemsExcludeHeaderFieldsInReplyToAndReferences ()
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest (MessageSummaryItems.References) {
+					Headers = new HeaderSet (new[] { HeaderId.InReplyTo }) {
+						Exclude = true
+					}
+				};
+
+				var command = ImapFolder.FormatSummaryItems (engine, request, out _);
+				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS.NOT (IN-REPLY-TO)]"));
 			}
 		}
 
@@ -2472,7 +2485,7 @@ namespace UnitTests.Net.Imap {
 					}
 				};
 
-				var command = ImapFolder.FormatSummaryItems (engine, request, out var previewText);
+				var command = ImapFolder.FormatSummaryItems (engine, request, out _);
 				Assert.That (command, Is.EqualTo ("BODY.PEEK[HEADER.FIELDS.NOT (IN-REPLY-TO)]"));
 			}
 		}

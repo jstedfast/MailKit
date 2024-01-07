@@ -722,9 +722,10 @@ namespace MailKit.Net.Imap
 			return Task.CompletedTask;
 		}
 
-		static bool IsEmptyExclude (HeaderSet headers, MessageSummaryItems items)
+		static bool IsEmptyExclude (HeaderSet headers, bool requestReferences)
 		{
-			return headers.Exclude && (headers.Count == 0 || headers.Count == 1 && (items & MessageSummaryItems.References) != 0);
+			// return whether or not we've got an empty set of excluded headers or if the user has requested the References header *and* asked us to exclude only the References header.
+			return headers.Exclude && (headers.Count == 0 || (headers.Count == 1 && requestReferences && headers.Contains ("REFERENCES")));
 		}
 
 		internal static string FormatSummaryItems (ImapEngine engine, IFetchRequest request, out bool previewText, bool isNotify = false)
@@ -821,13 +822,15 @@ namespace MailKit.Net.Imap
 			}
 
 			if (request.Headers != null) {
-				if (IsEmptyExclude (request.Headers, request.Items)) {
+				bool requestReferences = (items & MessageSummaryItems.References) != 0;
+
+				if (IsEmptyExclude (request.Headers, requestReferences)) {
 					tokens.Add ("BODY.PEEK[HEADER]");
 				} else if (request.Headers.Exclude) {
 					var headerFields = new StringBuilder ("BODY.PEEK[HEADER.FIELDS.NOT (");
 
 					foreach (var header in request.Headers) {
-						if ((request.Items & MessageSummaryItems.References) != 0 && header.Equals ("REFERENCES", StringComparison.Ordinal))
+						if (requestReferences && header.Equals ("REFERENCES", StringComparison.Ordinal))
 							continue;
 
 						headerFields.Append (header);
@@ -840,17 +843,13 @@ namespace MailKit.Net.Imap
 					tokens.Add (headerFields.ToString ());
 				} else {
 					var headerFields = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
-					var references = false;
 
 					foreach (var header in request.Headers) {
-						if (header.Equals ("REFERENCES", StringComparison.Ordinal))
-							references = true;
-
 						headerFields.Append (header);
 						headerFields.Append (' ');
 					}
 
-					if ((items & MessageSummaryItems.References) != 0 && !references)
+					if (requestReferences && !request.Headers.Contains ("REFERENCES"))
 						headerFields.Append ("REFERENCES ");
 
 					headerFields[headerFields.Length - 1] = ')';
