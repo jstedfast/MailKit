@@ -144,14 +144,6 @@ using (var client = new ImapClient ()) {
 }
 ```
 
-Note: Once you've acquired an auth token using the interactive method above, you can avoid prompting the user
-if you cache the `authToken.Account` information and then silently reacquire auth tokens in the future using
-the following code:
-
-```csharp
-var authToken = await publicClientApplication.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
-```
-
 
 ## Additional Resources
 
