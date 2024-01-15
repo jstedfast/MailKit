@@ -300,6 +300,21 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
+		public async Task TestQueueReallyLongCommandAsync ()
+		{
+			using var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+			var command = "AUTH GSSAPI YIIkMgYGK" + new string ('X', 4096) + "\r\n";
+
+			await stream.QueueCommandAsync (command, default);
+			stream.Flush ();
+
+			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+
+			Assert.That (actual, Is.EqualTo (command));
+		}
+
+		[Test]
 		public void TestQueueReallyLongCommandAfterShortCommand ()
 		{
 			using var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ());
@@ -315,6 +330,96 @@ namespace UnitTests.Net.Smtp {
 			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 
 			Assert.That (actual, Is.EqualTo (shortCommand + longCommand));
+		}
+
+		[Test]
+		public async Task TestQueueReallyLongCommandAfterShortCommandAsync ()
+		{
+			using var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+
+			var shortCommand = "EHLO [192.168.1.1]\r\n";
+			var longCommand = "AUTH GSSAPI YIIkMgYGK" + new string ('X', 4096) + "\r\n";
+
+			await stream.QueueCommandAsync (shortCommand, default);
+			await stream.QueueCommandAsync (longCommand, default);
+			stream.Flush ();
+
+			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+
+			Assert.That (actual, Is.EqualTo (shortCommand + longCommand));
+		}
+
+		[Test]
+		public void TestQueueOverflowRemainingOutputBufferCommand ()
+		{
+			using var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+
+			var shortCommand = "EHLO [192.168.1.1]\r\n";
+			var longCommand = "AUTH GSSAPI YIIkMgYGK" + new string ('X', 4096 - shortCommand.Length - 22) + "\r\n";
+
+			stream.QueueCommand (shortCommand, default);
+			stream.QueueCommand (longCommand, default);
+			stream.Flush ();
+
+			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+
+			Assert.That (actual, Is.EqualTo (shortCommand + longCommand));
+		}
+
+		[Test]
+		public async Task TestQueueOverflowRemainingOutputBufferCommandAsync ()
+		{
+			using var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+
+			var shortCommand = "EHLO [192.168.1.1]\r\n";
+			var longCommand = "AUTH GSSAPI YIIkMgYGK" + new string ('X', 4096 - shortCommand.Length - 22) + "\r\n";
+
+			await stream.QueueCommandAsync (shortCommand, default);
+			await stream.QueueCommandAsync (longCommand, default);
+			stream.Flush ();
+
+			var actual = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+
+			Assert.That (actual, Is.EqualTo (shortCommand + longCommand));
+		}
+
+		[Test]
+		public void TestDisconnectOnWriteException ()
+		{
+			using var stream = new SmtpStream (new DummyNetworkStream (throwOnWrite: true), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+
+			var command = new string ('a', 4094) + "\r\n";
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			try {
+				stream.Write (buffer, 0, buffer.Length, CancellationToken.None);
+				Assert.Fail ("Expected IOException to be thrown.");
+			} catch (IOException) {
+			}
+
+			Assert.That (stream.IsConnected, Is.False);
+		}
+
+		[Test]
+		public async Task TestDisconnectOnWriteExceptionAsync ()
+		{
+			using var stream = new SmtpStream (new DummyNetworkStream (throwOnWrite: true), new NullProtocolLogger ());
+			var memory = (MemoryStream) stream.Stream;
+
+			var command = new string ('a', 4094) + "\r\n";
+			var buffer = Encoding.ASCII.GetBytes (command);
+
+			try {
+				await stream.WriteAsync (buffer, 0, buffer.Length, CancellationToken.None);
+				Assert.Fail ("Expected IOException to be thrown.");
+			} catch (IOException) {
+			}
+
+			Assert.That (stream.IsConnected, Is.False);
 		}
 	}
 }
