@@ -234,6 +234,9 @@ namespace MailKit.Net.Smtp
 					response = await Stream.SendCommandAsync ("\r\n", cancellationToken).ConfigureAwait (false);
 					saslException = ex;
 				}
+			} catch {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
 			} finally {
 				detector.IsAuthenticating = false;
 			}
@@ -367,6 +370,9 @@ namespace MailKit.Net.Smtp
 						response = await Stream.SendCommandAsync ("\r\n", cancellationToken).ConfigureAwait (false);
 						saslException = ex;
 					}
+				} catch {
+					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+					throw;
 				} finally {
 					detector.IsAuthenticating = false;
 				}

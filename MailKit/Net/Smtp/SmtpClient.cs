@@ -990,6 +990,9 @@ namespace MailKit.Net.Smtp {
 					response = Stream.SendCommand ("\r\n", cancellationToken);
 					saslException = ex;
 				}
+			} catch {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
 			} finally {
 				detector.IsAuthenticating = false;
 			}
@@ -1142,6 +1145,9 @@ namespace MailKit.Net.Smtp {
 						response = Stream.SendCommand ("\r\n", cancellationToken);
 						saslException = ex;
 					}
+				} catch {
+					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+					throw;
 				} finally {
 					detector.IsAuthenticating = false;
 				}
