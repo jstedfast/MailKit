@@ -990,7 +990,7 @@ namespace MailKit.Net.Smtp {
 					response = Stream.SendCommand ("\r\n", cancellationToken);
 					saslException = ex;
 				}
-			} catch {
+			} catch (Exception ex) when (ex is not AuthenticationException) {
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 				throw;
 			} finally {

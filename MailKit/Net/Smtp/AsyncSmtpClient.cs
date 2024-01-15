@@ -234,7 +234,7 @@ namespace MailKit.Net.Smtp
 					response = await Stream.SendCommandAsync ("\r\n", cancellationToken).ConfigureAwait (false);
 					saslException = ex;
 				}
-			} catch {
+			} catch (Exception ex) when (ex is not AuthenticationException) {
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 				throw;
 			} finally {
