@@ -149,13 +149,10 @@ namespace MailKit.Net.Smtp
 		{
 			var response = await SendEhloAsync (connecting, "EHLO", cancellationToken).ConfigureAwait (false);
 
-			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
-			if (!connecting && response.StatusCode == SmtpStatusCode.BadCommandSequence)
-				return;
-
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				// Try sending HELO instead...
 				response = await SendEhloAsync (connecting, "HELO", cancellationToken).ConfigureAwait (false);
+
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {

@@ -886,13 +886,10 @@ namespace MailKit.Net.Smtp {
 		{
 			var response = SendEhlo (connecting, "EHLO", cancellationToken);
 
-			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
-			if (!connecting && response.StatusCode == SmtpStatusCode.BadCommandSequence)
-				return;
-
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				// Try sending HELO instead...
 				response = SendEhlo (connecting, "HELO", cancellationToken);
+
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
