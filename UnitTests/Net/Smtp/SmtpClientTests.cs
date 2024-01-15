@@ -228,6 +228,28 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		[Test]
+		public void TestGetSafeHostName ()
+		{
+			string safe;
+
+			safe = SmtpClient.GetSafeHostName (null);
+			Assert.That (safe, Is.Null);
+
+			safe = SmtpClient.GetSafeHostName ("domain.com");
+			Assert.That (safe, Is.EqualTo ("domain.com"));
+
+			safe = SmtpClient.GetSafeHostName ("underscore_domain.com");
+			Assert.That (safe, Is.EqualTo ("underscore-domain.com"));
+
+			safe = SmtpClient.GetSafeHostName ("名がドメイン.com");
+			Assert.That (safe, Is.EqualTo ("xn--v8jxj3d1dzdz08w.com"));
+
+			var toolong = new string ('a', 256) + '.' + new string ('b', 256) + '.' + "com";
+			safe = SmtpClient.GetSafeHostName (toolong);
+			Assert.That (safe, Is.EqualTo (toolong));
+		}
+
 		static void AssertDefaultValues (string host, int port, SecureSocketOptions options, Uri expected)
 		{
 			SmtpClient.ComputeDefaultValues (host, ref port, ref options, out Uri uri, out bool starttls);

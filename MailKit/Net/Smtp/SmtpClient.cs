@@ -92,32 +92,36 @@ namespace MailKit.Net.Smtp {
 		bool secure;
 		Uri uri;
 
+		internal static string GetSafeHostName (string hostName)
+		{
+			var idn = new IdnMapping ();
+
+			if (!string.IsNullOrEmpty (hostName)) {
+				hostName = hostName.Replace ('_', '-');
+
+				try {
+					return idn.GetAscii (hostName);
+				} catch (ArgumentException) {
+					// This can happen if the hostName contains illegal unicode characters.
+					var ascii = new StringBuilder ();
+					for (int i = 0; i < hostName.Length; i++) {
+						if (hostName[i] <= 0x7F)
+							ascii.Append (hostName[i]);
+					}
+
+					return ascii.Length > 0 ? ascii.ToString () : null;
+				}
+			} else {
+				return null;
+			}
+		}
+
 		static SmtpClient ()
 		{
 			string hostName;
 
 			try {
-				hostName = IPGlobalProperties.GetIPGlobalProperties ().HostName;
-				var idn = new IdnMapping ();
-
-				if (!string.IsNullOrEmpty (hostName)) {
-					hostName = hostName.Replace ('_', '-');
-
-					try {
-						hostName = idn.GetAscii (hostName);
-					} catch (ArgumentException) {
-						// This can happen if the hostName contains illegal unicode characters.
-						var ascii = new StringBuilder ();
-						for (int i = 0; i < hostName.Length; i++) {
-							if (hostName[i] <= 0x7F)
-								ascii.Append (hostName[i]);
-						}
-
-						hostName = ascii.Length > 0 ? ascii.ToString () : null;
-					}
-				} else {
-					hostName = null;
-				}
+				hostName = GetSafeHostName (IPGlobalProperties.GetIPGlobalProperties ().HostName);
 			} catch {
 				hostName = null;
 			}
