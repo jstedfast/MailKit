@@ -655,6 +655,16 @@ namespace MailKit.Net.Smtp {
 			return ParseCommandQueueResponses (message, sender, recipients, responses, rex);
 		}
 
+		SmtpResponse SendCommandInternal (string command, CancellationToken cancellationToken)
+		{
+			try {
+				return Stream.SendCommand (command, cancellationToken);
+			} catch {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
+			}
+		}
+
 		/// <summary>
 		/// Send a custom command to the SMTP server.
 		/// </summary>
@@ -696,12 +706,7 @@ namespace MailKit.Net.Smtp {
 			if (!command.EndsWith ("\r\n", StringComparison.Ordinal))
 				command += "\r\n";
 
-			try {
-				return Stream.SendCommand (command, cancellationToken);
-			} catch {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-				throw;
-			}
+			return SendCommandInternal (command, cancellationToken);
 		}
 
 		static bool ReadNextLine (string text, ref int index, out int lineStartIndex, out int lineEndIndex)
@@ -871,13 +876,10 @@ namespace MailKit.Net.Smtp {
 		{
 			var command = CreateEhloCommand (helo);
 
-			try {
+			if (connecting)
 				return Stream.SendCommand (command, cancellationToken);
-			} catch {
-				if (!connecting)
-					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-				throw;
-			}
+
+			return SendCommandInternal (command, cancellationToken);
 		}
 
 		void Ehlo (bool connecting, CancellationToken cancellationToken)
@@ -981,7 +983,7 @@ namespace MailKit.Net.Smtp {
 			detector.IsAuthenticating = true;
 
 			try {
-				response = Stream.SendCommand (command, cancellationToken);
+				response = SendCommandInternal (command, cancellationToken);
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
 					throw new AuthenticationException (response.Response);
@@ -989,18 +991,15 @@ namespace MailKit.Net.Smtp {
 				try {
 					while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
 						challenge = mechanism.Challenge (response.Response, cancellationToken);
-						response = Stream.SendCommand (challenge + "\r\n", cancellationToken);
+						response = SendCommandInternal (challenge + "\r\n", cancellationToken);
 					}
 
 					saslException = null;
 				} catch (SaslException ex) {
 					// reset the authentication state
-					response = Stream.SendCommand ("\r\n", cancellationToken);
+					response = SendCommandInternal ("\r\n", cancellationToken);
 					saslException = ex;
 				}
-			} catch (Exception ex) when (ex is not AuthenticationException) {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-				throw;
 			} finally {
 				detector.IsAuthenticating = false;
 			}
@@ -1133,7 +1132,7 @@ namespace MailKit.Net.Smtp {
 				saslException = null;
 
 				try {
-					response = Stream.SendCommand (command, cancellationToken);
+					response = SendCommandInternal (command, cancellationToken);
 
 					if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
 						continue;
@@ -1144,18 +1143,15 @@ namespace MailKit.Net.Smtp {
 								break;
 
 							challenge = sasl.Challenge (response.Response, cancellationToken);
-							response = Stream.SendCommand (challenge + "\r\n", cancellationToken);
+							response = SendCommandInternal (challenge + "\r\n", cancellationToken);
 						}
 
 						saslException = null;
 					} catch (SaslException ex) {
 						// reset the authentication state
-						response = Stream.SendCommand ("\r\n", cancellationToken);
+						response = SendCommandInternal ("\r\n", cancellationToken);
 						saslException = ex;
 					}
-				} catch {
-					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-					throw;
 				} finally {
 					detector.IsAuthenticating = false;
 				}
@@ -1667,14 +1663,7 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
-			SmtpResponse response;
-
-			try {
-				response = Stream.SendCommand ("NOOP\r\n", cancellationToken);
-			} catch {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-				throw;
-			}
+			var response = SendCommandInternal ("NOOP\r\n", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -2214,15 +2203,10 @@ namespace MailKit.Net.Smtp {
 
 		void Reset (CancellationToken cancellationToken)
 		{
-			try {
-				var response = Stream.SendCommand ("RSET\r\n", cancellationToken);
-				if (response.StatusCode != SmtpStatusCode.Ok)
-					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-			} catch (SmtpCommandException) {
-				// do not disconnect
-			} catch {
+			var response = SendCommandInternal ("RSET\r\n", cancellationToken);
+
+			if (response.StatusCode != SmtpStatusCode.Ok)
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-			}
 		}
 
 		/// <summary>
@@ -2328,7 +2312,6 @@ namespace MailKit.Net.Smtp {
 			var format = Prepare (options, message, sender, recipients, out var extensions);
 			var pipeline = (capabilities & SmtpCapabilities.Pipelining) != 0;
 			var bdat = UseBdatCommand (extensions);
-			SmtpResponse dataResponse = null;
 			long size;
 
 			if (bdat || (Capabilities & SmtpCapabilities.Size) != 0 || progress != null) {
@@ -2368,7 +2351,7 @@ namespace MailKit.Net.Smtp {
 				if (bdat)
 					return Bdat (format, message, size, cancellationToken, progress);
 
-				dataResponse = Stream.SendCommand ("DATA\r\n", cancellationToken);
+				var dataResponse = Stream.SendCommand ("DATA\r\n", cancellationToken);
 
 				ParseDataResponse (dataResponse);
 				dataResponse = null;
@@ -2627,7 +2610,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public InternetAddressList Expand (string alias, CancellationToken cancellationToken = default)
 		{
-			var response = Stream.SendCommand (CreateExpandCommand (alias), cancellationToken);
+			var response = SendCommandInternal (CreateExpandCommand (alias), cancellationToken);
 
 			return ParseExpandResponse (response);
 		}
@@ -2701,7 +2684,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public MailboxAddress Verify (string address, CancellationToken cancellationToken = default)
 		{
-			var response = Stream.SendCommand (CreateVerifyCommand (address), cancellationToken);
+			var response = SendCommandInternal (CreateVerifyCommand (address), cancellationToken);
 
 			return ParseVerifyResponse (response);
 		}

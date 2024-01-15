@@ -81,6 +81,16 @@ namespace MailKit.Net.Smtp
 			return ParseCommandQueueResponses (message, sender, recipients, responses, rex);
 		}
 
+		async Task<SmtpResponse> SendCommandInternalAsync (string command, CancellationToken cancellationToken)
+		{
+			try {
+				return await Stream.SendCommandAsync (command, cancellationToken).ConfigureAwait (false);
+			} catch {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
+			}
+		}
+
 		/// <summary>
 		/// Asynchronously send a custom command to the SMTP server.
 		/// </summary>
@@ -109,7 +119,7 @@ namespace MailKit.Net.Smtp
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		protected async Task<SmtpResponse> SendCommandAsync (string command, CancellationToken cancellationToken = default)
+		protected Task<SmtpResponse> SendCommandAsync (string command, CancellationToken cancellationToken = default)
 		{
 			if (command == null)
 				throw new ArgumentNullException (nameof (command));
@@ -122,25 +132,17 @@ namespace MailKit.Net.Smtp
 			if (!command.EndsWith ("\r\n", StringComparison.Ordinal))
 				command += "\r\n";
 
-			try {
-				return await Stream.SendCommandAsync (command, cancellationToken).ConfigureAwait (false);
-			} catch {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-				throw;
-			}
+			return SendCommandInternalAsync (command, cancellationToken);
 		}
 
-		async Task<SmtpResponse> SendEhloAsync (bool connecting, string helo, CancellationToken cancellationToken)
+		Task<SmtpResponse> SendEhloAsync (bool connecting, string helo, CancellationToken cancellationToken)
 		{
 			var command = CreateEhloCommand (helo);
 
-			try {
-				return await Stream.SendCommandAsync (command, cancellationToken).ConfigureAwait (false);
-			} catch {
-				if (!connecting)
-					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-				throw;
-			}
+			if (connecting)
+				return Stream.SendCommandAsync (command, cancellationToken);
+
+			return SendCommandInternalAsync (command, cancellationToken);
 		}
 
 		async Task EhloAsync (bool connecting, CancellationToken cancellationToken)
@@ -225,7 +227,7 @@ namespace MailKit.Net.Smtp
 			detector.IsAuthenticating = true;
 
 			try {
-				response = await Stream.SendCommandAsync (command, cancellationToken).ConfigureAwait (false);
+				response = await SendCommandInternalAsync (command, cancellationToken).ConfigureAwait (false);
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
 					throw new AuthenticationException (response.Response);
@@ -233,18 +235,15 @@ namespace MailKit.Net.Smtp
 				try {
 					while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
 						challenge = await mechanism.ChallengeAsync (response.Response, cancellationToken).ConfigureAwait (false);
-						response = await Stream.SendCommandAsync (challenge + "\r\n", cancellationToken).ConfigureAwait (false);
+						response = await SendCommandInternalAsync (challenge + "\r\n", cancellationToken).ConfigureAwait (false);
 					}
 
 					saslException = null;
 				} catch (SaslException ex) {
 					// reset the authentication state
-					response = await Stream.SendCommandAsync ("\r\n", cancellationToken).ConfigureAwait (false);
+					response = await SendCommandInternalAsync ("\r\n", cancellationToken).ConfigureAwait (false);
 					saslException = ex;
 				}
-			} catch (Exception ex) when (ex is not AuthenticationException) {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-				throw;
 			} finally {
 				detector.IsAuthenticating = false;
 			}
@@ -358,7 +357,7 @@ namespace MailKit.Net.Smtp
 				saslException = null;
 
 				try {
-					response = await Stream.SendCommandAsync (command, cancellationToken).ConfigureAwait (false);
+					response = await SendCommandInternalAsync (command, cancellationToken).ConfigureAwait (false);
 
 					if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
 						continue;
@@ -369,18 +368,15 @@ namespace MailKit.Net.Smtp
 								break;
 
 							challenge = await sasl.ChallengeAsync (response.Response, cancellationToken).ConfigureAwait (false);
-							response = await Stream.SendCommandAsync (challenge + "\r\n", cancellationToken).ConfigureAwait (false);
+							response = await SendCommandInternalAsync (challenge + "\r\n", cancellationToken).ConfigureAwait (false);
 						}
 
 						saslException = null;
 					} catch (SaslException ex) {
 						// reset the authentication state
-						response = await Stream.SendCommandAsync ("\r\n", cancellationToken).ConfigureAwait (false);
+						response = await SendCommandInternalAsync ("\r\n", cancellationToken).ConfigureAwait (false);
 						saslException = ex;
 					}
-				} catch {
-					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-					throw;
 				} finally {
 					detector.IsAuthenticating = false;
 				}
@@ -818,14 +814,7 @@ namespace MailKit.Net.Smtp
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
-			SmtpResponse response;
-
-			try {
-				response = await Stream.SendCommandAsync ("NOOP\r\n", cancellationToken).ConfigureAwait (false);
-			} catch {
-				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-				throw;
-			}
+			var response = await SendCommandInternalAsync ("NOOP\r\n", cancellationToken).ConfigureAwait (false);
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -940,15 +929,10 @@ namespace MailKit.Net.Smtp
 
 		async Task ResetAsync (CancellationToken cancellationToken)
 		{
-			try {
-				var response = await Stream.SendCommandAsync ("RSET\r\n", cancellationToken).ConfigureAwait (false);
-				if (response.StatusCode != SmtpStatusCode.Ok)
-					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-			} catch (SmtpCommandException) {
-				// do not disconnect
-			} catch {
+			var response = await SendCommandInternalAsync ("RSET\r\n", cancellationToken).ConfigureAwait (false);
+
+			if (response.StatusCode != SmtpStatusCode.Ok)
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
-			}
 		}
 
 		async Task<string> SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
@@ -956,7 +940,6 @@ namespace MailKit.Net.Smtp
 			var format = Prepare (options, message, sender, recipients, out var extensions);
 			var pipeline = (capabilities & SmtpCapabilities.Pipelining) != 0;
 			var bdat = UseBdatCommand (extensions);
-			SmtpResponse dataResponse = null;
 			long size;
 
 			if (bdat || (Capabilities & SmtpCapabilities.Size) != 0 || progress != null) {
@@ -996,7 +979,7 @@ namespace MailKit.Net.Smtp
 				if (bdat)
 					return await BdatAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
 
-				dataResponse = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
+				var dataResponse = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
 
 				ParseDataResponse (dataResponse);
 				dataResponse = null;
@@ -1175,7 +1158,7 @@ namespace MailKit.Net.Smtp
 		/// </exception>
 		public async Task<InternetAddressList> ExpandAsync (string alias, CancellationToken cancellationToken = default)
 		{
-			var response = await Stream.SendCommandAsync (CreateExpandCommand (alias), cancellationToken).ConfigureAwait (false);
+			var response = await SendCommandInternalAsync (CreateExpandCommand (alias), cancellationToken).ConfigureAwait (false);
 
 			return ParseExpandResponse (response);
 		}
@@ -1222,7 +1205,7 @@ namespace MailKit.Net.Smtp
 		/// </exception>
 		public async Task<MailboxAddress> VerifyAsync (string address, CancellationToken cancellationToken = default)
 		{
-			var response = await Stream.SendCommandAsync (CreateVerifyCommand (address), cancellationToken).ConfigureAwait (false);
+			var response = await SendCommandInternalAsync (CreateVerifyCommand (address), cancellationToken).ConfigureAwait (false);
 
 			return ParseVerifyResponse (response);
 		}
