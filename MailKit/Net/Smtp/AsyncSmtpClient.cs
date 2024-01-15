@@ -106,13 +106,10 @@ namespace MailKit.Net.Smtp
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// The SMTP command failed.
-		/// </exception>
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		protected Task<SmtpResponse> SendCommandAsync (string command, CancellationToken cancellationToken = default)
+		protected async Task<SmtpResponse> SendCommandAsync (string command, CancellationToken cancellationToken = default)
 		{
 			if (command == null)
 				throw new ArgumentNullException (nameof (command));
@@ -125,27 +122,38 @@ namespace MailKit.Net.Smtp
 			if (!command.EndsWith ("\r\n", StringComparison.Ordinal))
 				command += "\r\n";
 
-			return Stream.SendCommandAsync (command, cancellationToken);
+			try {
+				return await Stream.SendCommandAsync (command, cancellationToken).ConfigureAwait (false);
+			} catch {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
+			}
 		}
 
-		Task<SmtpResponse> SendEhloAsync (string helo, CancellationToken cancellationToken)
+		async Task<SmtpResponse> SendEhloAsync (bool connecting, string helo, CancellationToken cancellationToken)
 		{
 			var command = CreateEhloCommand (helo);
 
-			return Stream.SendCommandAsync (command, cancellationToken);
+			try {
+				return await Stream.SendCommandAsync (command, cancellationToken).ConfigureAwait (false);
+			} catch {
+				if (!connecting)
+					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
+			}
 		}
 
-		async Task EhloAsync (CancellationToken cancellationToken)
+		async Task EhloAsync (bool connecting, CancellationToken cancellationToken)
 		{
-			var response = await SendEhloAsync ("EHLO", cancellationToken).ConfigureAwait (false);
+			var response = await SendEhloAsync (connecting, "EHLO", cancellationToken).ConfigureAwait (false);
 
 			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
-			if (authenticated && response.StatusCode == SmtpStatusCode.BadCommandSequence)
+			if (!connecting && response.StatusCode == SmtpStatusCode.BadCommandSequence)
 				return;
 
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				// Try sending HELO instead...
-				response = await SendEhloAsync ("HELO", cancellationToken).ConfigureAwait (false);
+				response = await SendEhloAsync (connecting, "HELO", cancellationToken).ConfigureAwait (false);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
@@ -243,7 +251,7 @@ namespace MailKit.Net.Smtp
 
 			if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
 				if (mechanism.NegotiatedSecurityLayer)
-					await EhloAsync (cancellationToken).ConfigureAwait (false);
+					await EhloAsync (false, cancellationToken).ConfigureAwait (false);
 				authenticated = true;
 				OnAuthenticated (response.Response);
 				return;
@@ -379,7 +387,7 @@ namespace MailKit.Net.Smtp
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
 					if (sasl.NegotiatedSecurityLayer)
-						await EhloAsync (cancellationToken).ConfigureAwait (false);
+						await EhloAsync (false, cancellationToken).ConfigureAwait (false);
 					authenticated = true;
 					OnAuthenticated (response.Response);
 					return;
@@ -431,7 +439,7 @@ namespace MailKit.Net.Smtp
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 				// Send EHLO and get a list of supported extensions
-				await EhloAsync (cancellationToken).ConfigureAwait (false);
+				await EhloAsync (true, cancellationToken).ConfigureAwait (false);
 
 				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
@@ -453,7 +461,7 @@ namespace MailKit.Net.Smtp
 					secure = true;
 
 					// Send EHLO again and get the new list of supported extensions
-					await EhloAsync (cancellationToken).ConfigureAwait (false);
+					await EhloAsync (true, cancellationToken).ConfigureAwait (false);
 				}
 
 				connected = true;

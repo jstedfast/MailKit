@@ -680,9 +680,6 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// The SMTP command failed.
-		/// </exception>
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
@@ -699,7 +696,12 @@ namespace MailKit.Net.Smtp {
 			if (!command.EndsWith ("\r\n", StringComparison.Ordinal))
 				command += "\r\n";
 
-			return Stream.SendCommand (command, cancellationToken);
+			try {
+				return Stream.SendCommand (command, cancellationToken);
+			} catch {
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
+			}
 		}
 
 		static bool ReadNextLine (string text, ref int index, out int lineStartIndex, out int lineEndIndex)
@@ -865,24 +867,30 @@ namespace MailKit.Net.Smtp {
 			return string.Format ("{0} {1}\r\n", helo, domain);
 		}
 
-		SmtpResponse SendEhlo (string helo, CancellationToken cancellationToken)
+		SmtpResponse SendEhlo (bool connecting, string helo, CancellationToken cancellationToken)
 		{
 			var command = CreateEhloCommand (helo);
 
-			return Stream.SendCommand (command, cancellationToken);
+			try {
+				return Stream.SendCommand (command, cancellationToken);
+			} catch {
+				if (!connecting)
+					Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				throw;
+			}
 		}
 
-		void Ehlo (CancellationToken cancellationToken)
+		void Ehlo (bool connecting, CancellationToken cancellationToken)
 		{
-			var response = SendEhlo ("EHLO", cancellationToken);
+			var response = SendEhlo (connecting, "EHLO", cancellationToken);
 
 			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
-			if (authenticated && response.StatusCode == SmtpStatusCode.BadCommandSequence)
+			if (!connecting && response.StatusCode == SmtpStatusCode.BadCommandSequence)
 				return;
 
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				// Try sending HELO instead...
-				response = SendEhlo ("HELO", cancellationToken);
+				response = SendEhlo (connecting, "HELO", cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
@@ -999,7 +1007,7 @@ namespace MailKit.Net.Smtp {
 
 			if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
 				if (mechanism.NegotiatedSecurityLayer)
-					Ehlo (cancellationToken);
+					Ehlo (false, cancellationToken);
 				authenticated = true;
 				OnAuthenticated (response.Response);
 				return;
@@ -1154,7 +1162,7 @@ namespace MailKit.Net.Smtp {
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
 					if (sasl.NegotiatedSecurityLayer)
-						Ehlo (cancellationToken);
+						Ehlo (false, cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);
 					return;
@@ -1249,7 +1257,7 @@ namespace MailKit.Net.Smtp {
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 				// Send EHLO and get a list of supported extensions
-				Ehlo (cancellationToken);
+				Ehlo (true, cancellationToken);
 
 				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
@@ -1271,7 +1279,7 @@ namespace MailKit.Net.Smtp {
 					secure = true;
 
 					// Send EHLO again and get the new list of supported extensions
-					Ehlo (cancellationToken);
+					Ehlo (true, cancellationToken);
 				}
 
 				connected = true;
