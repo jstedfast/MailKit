@@ -447,6 +447,28 @@ namespace MailKit.Net.Smtp {
 #endif
 		}
 
+		static bool TryParseStatusCode (byte[] text, int startIndex, out int code)
+		{
+			int endIndex = startIndex + 3;
+
+			code = 0;
+
+			for (int index = startIndex; index < endIndex; index++) {
+				if (text[index] < (byte) '0' || text[index] > (byte) '9')
+					return false;
+
+				int digit = text[index] - (byte) '0';
+				code = (code * 10) + digit;
+			}
+
+			return true;
+		}
+
+		static bool IsLegalAfterStatusCode (byte c)
+		{
+			return c == (byte) '-' || c == (byte) ' ' || c == (byte) '\r' || c == (byte) '\n';
+		}
+
 		bool ReadResponse (ByteArrayBuilder builder, ref bool newLine, ref bool more, ref int code)
 		{
 			do {
@@ -454,14 +476,13 @@ namespace MailKit.Net.Smtp {
 
 				if (newLine) {
 					if (inputIndex + 3 < inputEnd) {
-						if (!ByteArrayBuilder.TryParse (input, ref inputIndex, inputEnd, out int value))
+						if (!TryParseStatusCode (input, inputIndex, out int value))
 							throw new SmtpProtocolException ("Unable to parse status code returned by the server.");
 
-						if (inputIndex == inputEnd) {
-							// Need input.
-							inputIndex = startIndex;
-							return true;
-						}
+						inputIndex += 3;
+
+						if (value < 100 || !IsLegalAfterStatusCode (input[inputIndex]))
+							throw new SmtpProtocolException ("Invalid status code returned by the server.");
 
 						if (code == 0) {
 							code = value;

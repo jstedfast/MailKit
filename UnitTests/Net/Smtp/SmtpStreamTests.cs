@@ -68,17 +68,78 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		[Test]
-		public void TestReadResponseInvalidResponseCode ()
+		[TestCase ("XXX")]
+		[TestCase ("0")]
+		[TestCase ("01")]
+		[TestCase ("012")]
+		[TestCase ("1234")]
+		public void TestReadResponseInvalidStatusCode (string statusCode)
 		{
 			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
-				var buffer = Encoding.ASCII.GetBytes ("XXX This is an invalid response.\r\n");
+				var buffer = Encoding.ASCII.GetBytes ($"{statusCode} This is an invalid response.\r\n");
 				var dummy = (MemoryStream) stream.Stream;
 
 				dummy.Write (buffer, 0, buffer.Length);
 				dummy.Position = 0;
 
 				Assert.Throws<SmtpProtocolException> (() => stream.ReadResponse (CancellationToken.None));
+			}
+		}
+
+		static string GenerateCrossBoundaryResponse (int statusCodeUnderflow)
+		{
+			const string lastLine = "250 ...And this is the final line of the response.\r\n";
+			var builder = new StringBuilder ();
+			int lineNumber = 1;
+			string line;
+
+			do {
+				line = $"250-This is line #{lineNumber++} of a really long SMTP response.\r\n";
+
+				if (builder.Length + line.Length + 6 + statusCodeUnderflow > 4096)
+					break;
+
+				builder.Append (line);
+			} while (true);
+
+			line = "250-" + new string ('a', 4096 - builder.Length - 6 - statusCodeUnderflow) + "\r\n";
+			builder.Append (line);
+			builder.Append (lastLine);
+
+			// At this point, the last line's status code (and the following <SPACE>) is just barely
+			// contained within the first 4096 byte read.
+
+			var input = builder.ToString ();
+
+			var expected = lastLine.Substring (statusCodeUnderflow);
+			var buffer2 = input.Substring (4096);
+
+			Assert.That (buffer2, Is.EqualTo (expected));
+
+			return input;
+		}
+
+		[TestCase (0)]
+		[TestCase (1)]
+		[TestCase (2)]
+		[TestCase (3)]
+		[TestCase (4)]
+		public void TestReadResponseStatusCodeUnderflow (int underflow)
+		{
+			var input = GenerateCrossBoundaryResponse (underflow);
+			var expected = input.Replace ("250-", "").Replace ("250 ", "").Replace ("\r\n", "\n").TrimEnd ();
+
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var buffer = Encoding.ASCII.GetBytes (input);
+				var dummy = (MemoryStream) stream.Stream;
+
+				dummy.Write (buffer, 0, buffer.Length);
+				dummy.Position = 0;
+
+				var response = stream.ReadResponse (CancellationToken.None);
+
+				Assert.That ((int) response.StatusCode, Is.EqualTo (250));
+				Assert.That (response.Response, Is.EqualTo (expected));
 			}
 		}
 
