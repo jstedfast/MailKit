@@ -101,7 +101,7 @@ namespace MailKit.Net.Smtp {
 
 				try {
 					return idn.GetAscii (hostName);
-				} catch (ArgumentException) {
+				} catch {
 					// This can happen if the hostName contains illegal unicode characters.
 					var ascii = new StringBuilder ();
 					for (int i = 0; i < hostName.Length; i++) {
@@ -118,13 +118,7 @@ namespace MailKit.Net.Smtp {
 
 		static SmtpClient ()
 		{
-			string hostName;
-
-			try {
-				hostName = GetSafeHostName (IPGlobalProperties.GetIPGlobalProperties ().HostName);
-			} catch {
-				hostName = null;
-			}
+			var hostName = GetSafeHostName (IPGlobalProperties.GetIPGlobalProperties ().HostName);
 
 			DefaultLocalDomain = hostName ?? "localhost";
 		}
