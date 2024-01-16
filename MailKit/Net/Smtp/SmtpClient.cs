@@ -1905,6 +1905,14 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
+			if ((Capabilities & SmtpCapabilities.RequireTLS) != 0) {
+				// Check to see if the message has a TLS-Required header. If it does, then the only defined value it can have is "No".
+				var index = message.Headers.IndexOf (HeaderId.TLSRequired);
+
+				if (index == -1)
+					builder.Append (" REQUIRETLS");
+			}
+
 			builder.Append ("\r\n");
 
 			return builder.ToString ();

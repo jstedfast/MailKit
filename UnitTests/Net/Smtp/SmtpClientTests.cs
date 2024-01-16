@@ -4750,6 +4750,138 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateRequireTlsCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+requiretls.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME REQUIRETLS\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
+		[Test]
+		public void TestRequireTls ()
+		{
+			var commands = CreateRequireTlsCommands ();
+
+			using (var client = new SmtpClient ()) {
+				try {
+					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.RequireTLS), Is.True, "Failed to detect REQUIRETLS extension");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				try {
+					using (var message = CreateEightBitMessage ())
+						client.Send (message);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
+				}
+
+				try {
+					using (var message = CreateEightBitMessage ()) {
+						message.Headers.Add (HeaderId.TLSRequired, "No");
+						client.Send (message);
+					}
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
+				}
+
+				try {
+					client.Disconnect (true);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public async Task TestRequireTlsAsync ()
+		{
+			var commands = CreateRequireTlsCommands ();
+
+			using (var client = new SmtpClient ()) {
+				try {
+					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.RequireTLS), Is.True, "Failed to detect REQUIRETLS extension");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				try {
+					using (var message = CreateEightBitMessage ())
+						await client.SendAsync (message);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
+				}
+
+				try {
+					using (var message = CreateEightBitMessage ()) {
+						message.Headers.Add (HeaderId.TLSRequired, "No");
+						await client.SendAsync (message);
+					}
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Send: {ex}");
+				}
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Disconnect: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
+			}
+		}
+
 		class CustomSmtpClient : SmtpClient
 		{
 			public SmtpResponse SendCommand (string command)
