@@ -43,6 +43,9 @@ namespace MailKit.Net.Proxy
 	/// <remarks>
 	/// A SOCKS4 proxy client.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
+	/// </example>
 	public class Socks4Client : SocksClient
 	{
 		static readonly byte[] InvalidIPAddress = { 0, 0, 0, 1 };

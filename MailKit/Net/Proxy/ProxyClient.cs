@@ -40,6 +40,9 @@ namespace MailKit.Net.Proxy
 	/// A proxy client can be used to connect to a service through a firewall that
 	/// would otherwise be blocked.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
+	/// </example>
 	public abstract class ProxyClient : IProxyClient
 	{
 		/// <summary>

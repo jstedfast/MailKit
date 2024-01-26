@@ -34,6 +34,9 @@ namespace MailKit.Net.Proxy
 	/// <remarks>
 	/// A SOCKS4a proxy client.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
+	/// </example>
 	public class Socks4aClient : Socks4Client
 	{
 		/// <summary>

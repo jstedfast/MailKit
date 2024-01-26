@@ -45,6 +45,9 @@ namespace MailKit.Net.Proxy
 	/// <remarks>
 	/// A SOCKS5 proxy client.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
+	/// </example>
 	public class Socks5Client : SocksClient
 	{
 		/// <summary>
@@ -53,6 +56,9 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.Socks5Client"/> class.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
+		/// </example>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -76,6 +82,9 @@ namespace MailKit.Net.Proxy
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.Socks5Client"/> class.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
+		/// </example>
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="credentials">The credentials to use to authenticate with the proxy server.</param>

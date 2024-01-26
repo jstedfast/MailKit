@@ -244,6 +244,9 @@ namespace MailKit {
 		/// Gets or sets the proxy client to use when connecting to a remote host via any of the
 		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> methods.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
+		/// </example>
 		/// <value>The proxy client.</value>
 		public IProxyClient ProxyClient {
 			get; set;
