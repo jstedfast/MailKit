@@ -1,0 +1,7 @@
+* XLIST (\HasNoChildren \Inbox) "/" "Posteingang"
+* XLIST (\Noinferiors \Drafts) "/" "Entw&APw-rfe"
+* XLIST (\Noinferiors \Templates) "/" "Vorlagen"
+* XLIST (\Noinferiors \Sent) "/" "Gesendet"
+* XLIST (\Noinferiors \Spam) "/" "Spam"
+* XLIST (\HasNoChildren \Trash) "/" "Papierkorb"
+A######## OK Success

@@ -373,17 +373,24 @@ namespace MailKit.Net.Imap
 
 					token = engine.ReadToken (cancellationToken);
 
-					value64 = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					// Note: Some IMAP servers (such as Zoho Mail) will return a MODSEQ of -1 in some cases (not sure why).
+					//
+					// If we get an invalid value, just ignore it.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/1686 for details.
+					if (ImapEngine.TryParseNumber64 (token, out value64)) {
+						message.Fields |= MessageSummaryItems.ModSeq;
+						message.ModSeq = value64;
+
+						if (value64 > HighestModSeq)
+							UpdateHighestModSeq (value64);
+					}
 
 					token = engine.ReadToken (cancellationToken);
 
 					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
-					message.Fields |= MessageSummaryItems.ModSeq;
-					message.ModSeq = value64;
-
-					if (value64 > HighestModSeq)
-						UpdateHighestModSeq (value64);
 				} else if (atom.Equals ("UID", StringComparison.OrdinalIgnoreCase)) {
 					token = engine.ReadToken (cancellationToken);
 
@@ -610,17 +617,24 @@ namespace MailKit.Net.Imap
 
 					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-					value64 = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					// Note: Some IMAP servers (such as Zoho Mail) will return a MODSEQ of -1 in some cases (not sure why).
+					//
+					// If we get an invalid value, just ignore it.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/1686 for details.
+					if (ImapEngine.TryParseNumber64 (token, out value64)) {
+						message.Fields |= MessageSummaryItems.ModSeq;
+						message.ModSeq = value64;
+
+						if (value64 > HighestModSeq)
+							UpdateHighestModSeq (value64);
+					}
 
 					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
-					message.Fields |= MessageSummaryItems.ModSeq;
-					message.ModSeq = value64;
-
-					if (value64 > HighestModSeq)
-						UpdateHighestModSeq (value64);
 				} else if (atom.Equals ("UID", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -2106,20 +2120,27 @@ namespace MailKit.Net.Imap
 
 					token = engine.ReadToken (ic.CancellationToken);
 
-					modseq = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					// Note: Some IMAP servers (such as Zoho Mail) will return a MODSEQ of -1 in some cases (not sure why).
+					//
+					// If we get an invalid value, just ignore it.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/1686 for details.
+					if (ImapEngine.TryParseNumber64 (token, out modseq)) {
+						if (modseq > HighestModSeq)
+							UpdateHighestModSeq (modseq);
+
+						annotations.ModSeq = modseq;
+						modSeq.ModSeq = modseq;
+						labels.ModSeq = modseq;
+						flags.ModSeq = modseq;
+						modSeqChanged = true;
+					}
 
 					token = engine.ReadToken (ic.CancellationToken);
 
 					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
-					if (modseq > HighestModSeq)
-						UpdateHighestModSeq (modseq);
-
-					annotations.ModSeq = modseq;
-					modSeq.ModSeq = modseq;
-					labels.ModSeq = modseq;
-					flags.ModSeq = modseq;
-					modSeqChanged = true;
 				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
@@ -2349,20 +2370,27 @@ namespace MailKit.Net.Imap
 
 					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 
-					modseq = ImapEngine.ParseNumber64 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					// Note: Some IMAP servers (such as Zoho Mail) will return a MODSEQ of -1 in some cases (not sure why).
+					//
+					// If we get an invalid value, just ignore it.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/1686 for details.
+					if (ImapEngine.TryParseNumber64 (token, out modseq)) {
+						if (modseq > HighestModSeq)
+							UpdateHighestModSeq (modseq);
+
+						annotations.ModSeq = modseq;
+						modSeq.ModSeq = modseq;
+						labels.ModSeq = modseq;
+						flags.ModSeq = modseq;
+						modSeqChanged = true;
+					}
 
 					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 
 					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
-					if (modseq > HighestModSeq)
-						UpdateHighestModSeq (modseq);
-
-					annotations.ModSeq = modseq;
-					modSeq.ModSeq = modseq;
-					labels.ModSeq = modseq;
-					flags.ModSeq = modseq;
-					modSeqChanged = true;
 				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.

@@ -1,0 +1,8 @@
+* 5348 EXISTS
+* 5333 RECENT
+* OK [UIDVALIDITY 2] UIDs valid 
+* OK [UIDNEXT 6212] Predicted next UID 
+* OK [HIGHESTMODSEQ 1706092971947030001]
+* FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+* OK [PERMANENTFLAGS ()] No permanent flags permitted
+A######## OK [READ-ONLY] EXAMINE completed

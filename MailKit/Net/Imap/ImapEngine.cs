@@ -585,6 +585,11 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
+		internal static bool TryParseNumber64 (ImapToken token, out ulong value)
+		{
+			return ulong.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out value);
+		}
+
 		internal static UniqueIdSet ParseUidSet (ImapToken token, uint validity, out UniqueId? minValue, out UniqueId? maxValue, string format, params object[] args)
 		{
 			AssertToken (token, ImapTokenType.Atom, format, args);

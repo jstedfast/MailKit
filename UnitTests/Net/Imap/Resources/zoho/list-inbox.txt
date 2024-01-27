@@ -1,0 +1,2 @@
+* LIST (\HasNoChildren \Subscribed) "/" "INBOX"
+A######## OK Success

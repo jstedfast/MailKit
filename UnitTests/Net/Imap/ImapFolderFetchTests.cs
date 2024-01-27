@@ -2357,6 +2357,122 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static IList<ImapReplayCommand> CreateFetchNegativeModSeqResponseValuesCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "zoho.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "zoho.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "zoho.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "zoho.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "zoho.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "zoho.xlist.txt"),
+				new ImapReplayCommand ("A00000005 EXAMINE Gesendet (CONDSTORE)\r\n", "zoho.examine-gesendet.txt"),
+				new ImapReplayCommand ("A00000006 FETCH 1:74 (UID FLAGS MODSEQ)\r\n", "zoho.fetch-negative-modseq-values.txt")
+			};
+		}
+
+		[Test]
+		public void TestFetchNegativeModSeqResponseValues ()
+		{
+			var commands = CreateFetchNegativeModSeqResponseValuesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var gesendet = client.GetFolder (SpecialFolder.Sent);
+				gesendet.Open (FolderAccess.ReadOnly);
+
+				var messages = gesendet.Fetch (0, 73, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+				Assert.That (messages.Count, Is.EqualTo (74), "Count");
+
+				for (int i = 0; i < 15; i++) {
+					Assert.That (messages[i].ModSeq, Is.EqualTo ((ulong) 0), $"MODSEQ {i}");
+					Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen), $"FLAGS {i}");
+				}
+
+				for (int i = 15; i < 39; i++) {
+					Assert.That (messages[i].ModSeq, Is.EqualTo ((ulong) 0), $"MODSEQ {i}");
+					Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen | MessageFlags.Recent), $"FLAGS {i}");
+
+					if (i == 35) {
+						Assert.That (messages[i].Keywords.Count, Is.EqualTo (1), $"KEYWORDS {i}");
+						Assert.That (messages[i].Keywords.Contains ("$FORWARDED"), Is.True, $"KEYWORDS {i}");
+					}
+				}
+
+				for (int i = 39; i < 70; i++) {
+					if (i == 53) {
+						Assert.That (messages[i].ModSeq, Is.EqualTo (1538484935027010002), $"MODSEQ {i}");
+						Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen | MessageFlags.Recent | MessageFlags.Answered), $"FLAGS {i}");
+					} else {
+						Assert.That (messages[i].ModSeq, Is.Null, $"MODSEQ {i}");
+						Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen | MessageFlags.Recent), $"FLAGS {i}");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestFetchNegativeModSeqResponseValuesAsync ()
+		{
+			var commands = CreateFetchNegativeModSeqResponseValuesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var gesendet = client.GetFolder (SpecialFolder.Sent);
+				await gesendet.OpenAsync (FolderAccess.ReadOnly);
+
+				var messages = await gesendet.FetchAsync (0, 73, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+				Assert.That (messages.Count, Is.EqualTo (74), "Count");
+
+				for (int i = 0; i < 15; i++) {
+					Assert.That (messages[i].ModSeq, Is.EqualTo ((ulong) 0), $"MODSEQ {i}");
+					Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen), $"FLAGS {i}");
+				}
+
+				for (int i = 15; i < 39; i++) {
+					Assert.That (messages[i].ModSeq, Is.EqualTo ((ulong) 0), $"MODSEQ {i}");
+					Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen | MessageFlags.Recent), $"FLAGS {i}");
+
+					if (i == 35) {
+						Assert.That (messages[i].Keywords.Count, Is.EqualTo (1), $"KEYWORDS {i}");
+						Assert.That (messages[i].Keywords.Contains ("$FORWARDED"), Is.True, $"KEYWORDS {i}");
+					}
+				}
+
+				for (int i = 39; i < 70; i++) {
+					if (i == 53) {
+						Assert.That (messages[i].ModSeq, Is.EqualTo (1538484935027010002), $"MODSEQ {i}");
+						Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen | MessageFlags.Recent | MessageFlags.Answered), $"FLAGS {i}");
+					} else {
+						Assert.That (messages[i].ModSeq, Is.Null, $"MODSEQ {i}");
+						Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen | MessageFlags.Recent), $"FLAGS {i}");
+					}
+				}
+			}
+		}
+
 		[TestCase ("ALL", MessageSummaryItems.All)]
 		[TestCase ("FAST", MessageSummaryItems.Fast)]
 		[TestCase ("FULL", MessageSummaryItems.Full)]
