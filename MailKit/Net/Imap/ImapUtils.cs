@@ -1940,7 +1940,7 @@ namespace MailKit.Net.Imap {
 					token = engine.PeekToken (cancellationToken);
 				}
 
-				if (token.Type != ImapTokenType.CloseParen) {
+				if (token.Type != ImapTokenType.CloseParen && token.Type != ImapTokenType.OpenParen) {
 					body.ContentLocation = ParseContentLocation (engine, format, cancellationToken);
 					token = engine.PeekToken (cancellationToken);
 				}
@@ -2049,7 +2049,7 @@ namespace MailKit.Net.Imap {
 					token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 				}
 
-				if (token.Type != ImapTokenType.CloseParen) {
+				if (token.Type != ImapTokenType.CloseParen && token.Type != ImapTokenType.OpenParen) {
 					body.ContentLocation = await ParseContentLocationAsync (engine, format, cancellationToken).ConfigureAwait (false);
 					token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 				}

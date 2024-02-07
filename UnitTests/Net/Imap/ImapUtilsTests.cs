@@ -3605,6 +3605,132 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static void AssertParseBadlyFormedBodyStructureWithEmptyParensInsteadOfContentLocation (BodyPart body)
+		{
+			Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+			var multipart = (BodyPartMultipart) body;
+
+			Assert.That (multipart.ContentType.IsMimeType ("multipart", "related"), Is.True, "Content-Type did not match.");
+			Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("_004_7D3F5AE184118942976793FC500B8F4A402D17DB3PRD0702MB097eu_"), "boundary param did not match");
+			Assert.That (multipart.ContentDisposition, Is.Null, "Content-Disposition should be null");
+			Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "Content-Language should not be null");
+			Assert.That (multipart.ContentLanguage[0], Is.EqualTo ("de-DE"), "Content-Language did not match");
+			Assert.That (multipart.ContentLocation, Is.Null, "Content-Location should be null");
+			Assert.That (multipart.BodyParts.Count, Is.EqualTo (4), "multipart children did not match");
+
+			Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "First multipart/related subpart types did not match.");
+			var text = (BodyPartText) multipart.BodyParts[0];
+			Assert.That (text.ContentType.IsMimeType ("text", "html"), Is.True, "Content-Type did not match.");
+			Assert.That (text.ContentType.Charset, Is.EqualTo ("utf-8"), "Charset param did not match");
+			Assert.That (text.ContentDescription, Is.Null, "Content-Description should be null");
+			Assert.That (text.ContentDisposition, Is.Null, "Content-Disposition should be null");
+			Assert.That (text.ContentId, Is.Null, "Content-Id should be null");
+			Assert.That (text.ContentLanguage, Is.Null, "Content-Language should be null");
+			Assert.That (text.ContentLocation, Is.Null, "Content-Location should be null");
+			Assert.That (text.ContentMd5, Is.Null, "Content-Md5 should be null");
+			Assert.That (text.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encodings did not match");
+			Assert.That (text.Octets, Is.EqualTo (38706), "Octets did not match");
+			Assert.That (text.Lines, Is.EqualTo (497), "Lines did not match");
+
+			Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "Second multipart/related subpart types did not match.");
+			var image1 = (BodyPartBasic) multipart.BodyParts[1];
+			Assert.That (image1.ContentType.IsMimeType ("image", "jpeg"), Is.True, "Content-Type did not match.");
+			Assert.That (image1.ContentType.Name, Is.EqualTo ("image003.jpg"), "Name parameter did not match");
+			Assert.That (image1.ContentDescription, Is.EqualTo ("image003.jpg"), "Content-Description should be null");
+			Assert.That (image1.ContentDisposition.Disposition, Is.EqualTo ("inline"), "Content-Disposition did not match");
+			Assert.That (image1.ContentDisposition.Parameters.ToString (), Is.EqualTo ("; filename=\"image003.jpg\"; size=\"2782\"; creation-date=\"Thu, 22 Mar 2012 13:56:38 GMT\"; modification-date=\"Thu, 22 Mar 2012 13:56:38 GMT\""), "Content-Disposition parameters did not match");
+			Assert.That (image1.ContentId, Is.EqualTo ("<image003.jpg@01CD0772.E9574810>"), "Content-Id did not match");
+			Assert.That (image1.ContentLanguage, Is.Null, "Content-Language should be null");
+			Assert.That (image1.ContentLocation, Is.Null, "Content-Location should be null");
+			Assert.That (image1.ContentMd5, Is.Null, "Content-Md5 should be null");
+			Assert.That (image1.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encodings did not match");
+			Assert.That (image1.Octets, Is.EqualTo (3446), "Octets did not match");
+
+			Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[2], "Third multipart/related subpart types did not match.");
+			var image2 = (BodyPartBasic) multipart.BodyParts[2];
+			Assert.That (image2.ContentType.IsMimeType ("image", "jpeg"), Is.True, "Content-Type did not match.");
+			Assert.That (image2.ContentType.Name, Is.EqualTo ("image004.jpg"), "Name parameter did not match");
+			Assert.That (image2.ContentDescription, Is.EqualTo ("image004.jpg"), "Content-Description should be null");
+			Assert.That (image2.ContentDisposition.Disposition, Is.EqualTo ("inline"), "Content-Disposition did not match");
+			Assert.That (image2.ContentDisposition.Parameters.ToString (), Is.EqualTo ("; filename=\"image004.jpg\"; size=\"2782\"; creation-date=\"Thu, 22 Mar 2012 13:56:39 GMT\"; modification-date=\"Thu, 22 Mar 2012 13:56:39 GMT\""), "Content-Disposition parameters did not match");
+			Assert.That (image2.ContentId, Is.EqualTo ("<image004.jpg@01CD0772.E9574810>"), "Content-Id did not match");
+			Assert.That (image2.ContentLanguage, Is.Null, "Content-Language should be null");
+			Assert.That (image2.ContentLocation, Is.Null, "Content-Location should be null");
+			Assert.That (image2.ContentMd5, Is.Null, "Content-Md5 should be null");
+			Assert.That (image2.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encodings did not match");
+			Assert.That (image2.Octets, Is.EqualTo (3446), "Octets did not match");
+
+			Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[3], "Fourth multipart/related subpart types did not match.");
+			var image3 = (BodyPartBasic) multipart.BodyParts[3];
+			Assert.That (image3.ContentType.IsMimeType ("image", "jpeg"), Is.True, "Content-Type did not match.");
+			Assert.That (image3.ContentType.Name, Is.EqualTo ("image005.jpg"), "Name parameter did not match");
+			Assert.That (image3.ContentDescription, Is.EqualTo ("image005.jpg"), "Content-Description should be null");
+			Assert.That (image3.ContentDisposition.Disposition, Is.EqualTo ("inline"), "Content-Disposition did not match");
+			Assert.That (image3.ContentDisposition.Parameters.ToString (), Is.EqualTo ("; filename=\"image005.jpg\"; size=\"2625\"; creation-date=\"Thu, 22 Mar 2012 13:56:39 GMT\"; modification-date=\"Thu, 22 Mar 2012 13:56:39 GMT\""), "Content-Disposition parameters did not match");
+			Assert.That (image3.ContentId, Is.EqualTo ("<image005.jpg@01CD0772.E9574810>"), "Content-Id did not match");
+			Assert.That (image3.ContentLanguage, Is.Null, "Content-Language should be null");
+			Assert.That (image3.ContentLocation, Is.Null, "Content-Location should be null");
+			Assert.That (image3.ContentMd5, Is.Null, "Content-Md5 should be null");
+			Assert.That (image3.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encodings did not match");
+			Assert.That (image3.Octets, Is.EqualTo (3232), "Octets did not match");
+		}
+
+		[Test]
+		public void TestParseBadlyFormedBodyStructureWithEmptyParensInsteadOfContentLocation ()
+		{
+			const string text = "((\"text\" \"html\" (\"charset\" \"utf-8\") NIL NIL \"base64\" 38706 497 NIL NIL NIL ()) (\"image\" \"jpeg\" (\"name\" \"image003.jpg\") \"<image003.jpg@01CD0772.E9574810>\" \"image003.jpg\" \"base64\" 3446 NIL (\"inline\" (\"filename\" \"image003.jpg\" \"size\" \"2782\" \"creation-date\" \"Thu, 22 Mar 2012 13:56:38 GMT\" \"modification-date\" \"Thu, 22 Mar 2012 13:56:38 GMT\")) NIL ()) (\"image\" \"jpeg\" (\"name\" \"image004.jpg\") \"<image004.jpg@01CD0772.E9574810>\" \"image004.jpg\" \"base64\" 3446 NIL (\"inline\" (\"filename\" \"image004.jpg\" \"size\" \"2782\" \"creation-date\" \"Thu, 22 Mar 2012 13:56:39 GMT\" \"modification-date\" \"Thu, 22 Mar 2012 13:56:39 GMT\")) NIL ()) (\"image\" \"jpeg\" (\"name\" \"image005.jpg\") \"<image005.jpg@01CD0772.E9574810>\" \"image005.jpg\" \"base64\" 3232 NIL (\"inline\" (\"filename\" \"image005.jpg\" \"size\" \"2625\" \"creation-date\" \"Thu, 22 Mar 2012 13:56:39 GMT\" \"modification-date\" \"Thu, 22 Mar 2012 13:56:39 GMT\")) NIL ()) \"related\" (\"boundary\" \"_004_7D3F5AE184118942976793FC500B8F4A402D17DB3PRD0702MB097eu_\" \"type\" \"text/html\") NIL (\"de-DE\") NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = ImapUtils.ParseBody (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
+
+						AssertParseBadlyFormedBodyStructureWithEmptyParensInsteadOfContentLocation (body);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParseBadlyFormedBodyStructureWithEmptyParensInsteadOfContentLocationAsync ()
+		{
+			const string text = "((\"text\" \"html\" (\"charset\" \"utf-8\") NIL NIL \"base64\" 38706 497 NIL NIL NIL ()) (\"image\" \"jpeg\" (\"name\" \"image003.jpg\") \"<image003.jpg@01CD0772.E9574810>\" \"image003.jpg\" \"base64\" 3446 NIL (\"inline\" (\"filename\" \"image003.jpg\" \"size\" \"2782\" \"creation-date\" \"Thu, 22 Mar 2012 13:56:38 GMT\" \"modification-date\" \"Thu, 22 Mar 2012 13:56:38 GMT\")) NIL ()) (\"image\" \"jpeg\" (\"name\" \"image004.jpg\") \"<image004.jpg@01CD0772.E9574810>\" \"image004.jpg\" \"base64\" 3446 NIL (\"inline\" (\"filename\" \"image004.jpg\" \"size\" \"2782\" \"creation-date\" \"Thu, 22 Mar 2012 13:56:39 GMT\" \"modification-date\" \"Thu, 22 Mar 2012 13:56:39 GMT\")) NIL ()) (\"image\" \"jpeg\" (\"name\" \"image005.jpg\") \"<image005.jpg@01CD0772.E9574810>\" \"image005.jpg\" \"base64\" 3232 NIL (\"inline\" (\"filename\" \"image005.jpg\" \"size\" \"2625\" \"creation-date\" \"Thu, 22 Mar 2012 13:56:39 GMT\" \"modification-date\" \"Thu, 22 Mar 2012 13:56:39 GMT\")) NIL ()) \"related\" (\"boundary\" \"_004_7D3F5AE184118942976793FC500B8F4A402D17DB3PRD0702MB097eu_\" \"type\" \"text/html\") NIL (\"de-DE\") NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						BodyPart body;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							body = await ImapUtils.ParseBodyAsync (engine, "Syntax error in BODYSTRUCTURE: {0}", string.Empty, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ($"Parsing BODYSTRUCTURE failed: {ex}");
+							return;
+						}
+
+						var token = await engine.ReadTokenAsync (CancellationToken.None);
+						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
+
+						AssertParseBadlyFormedBodyStructureWithEmptyParensInsteadOfContentLocation (body);
+					}
+				}
+			}
+		}
+
 		[Test]
 		public void TestParseExampleThreads ()
 		{
