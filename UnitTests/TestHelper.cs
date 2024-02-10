@@ -60,11 +60,19 @@ namespace UnitTests {
 		}
 
 #if NET5_0_OR_GREATER
+		static void OnUnobservedTaskException (object sender, UnobservedTaskExceptionEventArgs e)
+		{
+			Console.WriteLine ("Unobserved Task Exception:");
+			Console.WriteLine (e.Exception);
+		}
+
 		[OneTimeSetUp]
 		public static void Init ()
 		{
 			lock (CodePagesEncodingProvider.Instance)
 				Encoding.RegisterProvider (CodePagesEncodingProvider.Instance);
+
+			TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
 		}
 #endif
 	}
