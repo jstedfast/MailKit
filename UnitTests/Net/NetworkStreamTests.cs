@@ -43,6 +43,7 @@ namespace UnitTests.Net {
 		public void Dispose ()
 		{
 			socket.Dispose ();
+			GC.SuppressFinalize (this);
 		}
 
 		[Test]

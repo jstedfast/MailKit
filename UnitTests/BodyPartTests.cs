@@ -156,7 +156,7 @@ namespace UnitTests {
 			list.Add (text);
 			Assert.That (list, Has.Count.EqualTo (1));
 			Assert.That (list, Does.Contain (text));
-			Assert.That (list.Contains (image1), Is.False);
+			Assert.That (list, Does.Not.Contain (image1));
 			Assert.That (list.IndexOf (new Uri ("body", UriKind.Relative)), Is.EqualTo (0));
 			Assert.That (list.IndexOf (new Uri ("http://localhost/image1.jpg")), Is.EqualTo (-1));
 			Assert.That (list.IndexOf (new Uri ("cid:image2@localhost")), Is.EqualTo (-1));
@@ -174,7 +174,7 @@ namespace UnitTests {
 
 			Assert.That (list.Remove (text), Is.True);
 			Assert.That (list, Has.Count.EqualTo (1));
-			Assert.That (list.Contains (text), Is.False);
+			Assert.That (list, Does.Not.Contain (text));
 			Assert.That (list, Does.Contain (image1));
 			Assert.That (list.IndexOf (new Uri ("body", UriKind.Relative)), Is.EqualTo (-1));
 			Assert.That (list.IndexOf (new Uri ("http://localhost/image1.jpg")), Is.EqualTo (0));

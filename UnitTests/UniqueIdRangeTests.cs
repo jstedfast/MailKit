@@ -64,7 +64,7 @@ namespace UnitTests {
 			Assert.That (uids.ToString (), Is.EqualTo (example), "ToString");
 			Assert.That (uids, Has.Count.EqualTo (20));
 
-			Assert.False (uids.Contains (new UniqueId (500)));
+			Assert.That (uids, Does.Not.Contain (new UniqueId (500)));
 			Assert.That (uids.IndexOf (new UniqueId (500)), Is.EqualTo (-1));
 
 			for (int i = 0; i < uids.Count; i++) {
@@ -107,7 +107,7 @@ namespace UnitTests {
 			Assert.That (uids.ToString (), Is.EqualTo (example), "ToString");
 			Assert.That (uids, Has.Count.EqualTo (20));
 
-			Assert.False (uids.Contains (new UniqueId (500)));
+			Assert.That (uids, Does.Not.Contain (new UniqueId (500)));
 			Assert.That (uids.IndexOf (new UniqueId (500)), Is.EqualTo (-1));
 
 			for (int i = 0; i < uids.Count; i++) {
@@ -149,14 +149,12 @@ namespace UnitTests {
 		[Test]
 		public void TestParser ()
 		{
-			UniqueIdRange range;
+			Assert.That (UniqueIdRange.TryParse ("xyz", out _), Is.False);
+			Assert.That (UniqueIdRange.TryParse ("1:xyz", out _), Is.False);
+			Assert.That (UniqueIdRange.TryParse ("1:*1", out _), Is.False);
+			Assert.That (UniqueIdRange.TryParse ("1:1x", out _), Is.False);
 
-			Assert.That (UniqueIdRange.TryParse ("xyz", out range), Is.False);
-			Assert.That (UniqueIdRange.TryParse ("1:xyz", out range), Is.False);
-			Assert.That (UniqueIdRange.TryParse ("1:*1", out range), Is.False);
-			Assert.That (UniqueIdRange.TryParse ("1:1x", out range), Is.False);
-
-			Assert.That (UniqueIdRange.TryParse ("1:*", out range), Is.True);
+			Assert.That (UniqueIdRange.TryParse ("1:*", out var range), Is.True);
 			Assert.That (range.Min, Is.EqualTo (UniqueId.MinValue));
 			Assert.That (range.Max, Is.EqualTo (UniqueId.MaxValue));
 		}

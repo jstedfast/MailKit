@@ -213,7 +213,7 @@ namespace UnitTests {
 			}
 		}
 
-		bool TryExtractTimestamp (ref string text, string format, out DateTime timestamp)
+		static bool TryExtractTimestamp (ref string text, string format, out DateTime timestamp)
 		{
 			int index = text.IndexOf (' ');
 

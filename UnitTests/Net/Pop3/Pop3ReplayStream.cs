@@ -51,11 +51,11 @@ namespace UnitTests.Net.Pop3 {
 	{
 		readonly IList<Pop3ReplayCommand> commands;
 		readonly bool testUnixFormat;
+		readonly bool asyncIO;
 		Pop3ReplayState state;
 		int timeout = 100000;
 		Stream stream;
 		bool disposed;
-		bool asyncIO;
 		bool isAsync;
 		int index;
 

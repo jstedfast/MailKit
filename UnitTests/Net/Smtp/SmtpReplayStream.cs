@@ -73,11 +73,11 @@ namespace UnitTests.Net.Smtp {
 		readonly MemoryStream sent = new MemoryStream ();
 		readonly IList<SmtpReplayCommand> commands;
 		readonly SmtpResponseMode mode;
+		readonly bool asyncIO;
 		int timeout = 100000;
 		SmtpReplayState state;
 		Stream stream;
 		bool disposed;
-		bool asyncIO;
 		bool isAsync;
 		int index;
 

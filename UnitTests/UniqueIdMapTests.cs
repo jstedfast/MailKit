@@ -53,10 +53,8 @@ namespace UnitTests {
 			Assert.That (map.ContainsKey (new UniqueId (1436832101, u)), Is.False, $"ContainsKey {u}");
 
 			foreach (var key in map.Keys) {
-				UniqueId value;
-
 				Assert.That (key, Is.EqualTo (map.Source[i]), $"Source[{i}] vs Key[{i}]");
-				Assert.That (map.TryGetValue (key, out value), Is.True, $"TryGetValue ({key})");
+				Assert.That (map.TryGetValue (key, out var value), Is.True, $"TryGetValue ({key})");
 				Assert.That (value, Is.EqualTo (map.Destination[i]), $"Destination[{i}] vs value");
 				i++;
 			}

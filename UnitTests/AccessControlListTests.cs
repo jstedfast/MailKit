@@ -99,14 +99,14 @@ namespace UnitTests {
 
 			Assert.That (rights, Does.Contain (AccessRight.DeleteFolder), "Contains DeleteFolder");
 			Assert.That (rights, Does.Contain (AccessRight.ExpungeFolder), "Contains ExpungeFolder");
-			Assert.That (rights.Contains (AccessRight.Administer), Is.False, "Contains Administer");
+			Assert.That (rights, Does.Not.Contain (AccessRight.Administer), "Contains Administer");
 
 			rights.AddRange ("it");
 			Assert.That (rights, Has.Count.EqualTo (6), "Count after adding AppendMessages and SetMessageDeleted");
 
 			Assert.That (rights, Does.Contain (AccessRight.AppendMessages), "Contains AppendMessages");
 			Assert.That (rights, Does.Contain (AccessRight.SetMessageDeleted), "Contains SetMessageDeleted");
-			Assert.That (rights.Contains (AccessRight.Administer), Is.False, "Contains Administer");
+			Assert.That (rights, Does.Not.Contain (AccessRight.Administer), "Contains Administer");
 
 			for (i = 0; i < 6; i++)
 				Assert.That (rights[i], Is.EqualTo (expected[i]), $"rights[{i}]");

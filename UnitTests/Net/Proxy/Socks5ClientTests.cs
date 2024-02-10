@@ -105,11 +105,10 @@ namespace UnitTests.Net.Proxy {
 			const string host = "www.google.com";
 			const string ipv6 = "2607:f8b0:400e:c03::69";
 			const string ipv4 = "74.125.197.99";
-			IPAddress ip;
 
-			Assert.That (Socks5Client.GetAddressType (host, out ip), Is.EqualTo (Socks5Client.Socks5AddressType.Domain));
-			Assert.That (Socks5Client.GetAddressType (ipv4, out ip), Is.EqualTo (Socks5Client.Socks5AddressType.IPv4));
-			Assert.That (Socks5Client.GetAddressType (ipv6, out ip), Is.EqualTo (Socks5Client.Socks5AddressType.IPv6));
+			Assert.That (Socks5Client.GetAddressType (host, out _), Is.EqualTo (Socks5Client.Socks5AddressType.Domain));
+			Assert.That (Socks5Client.GetAddressType (ipv4, out _), Is.EqualTo (Socks5Client.Socks5AddressType.IPv4));
+			Assert.That (Socks5Client.GetAddressType (ipv6, out _), Is.EqualTo (Socks5Client.Socks5AddressType.IPv6));
 		}
 
 		[Test]

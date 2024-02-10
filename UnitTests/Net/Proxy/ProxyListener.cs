@@ -167,7 +167,7 @@ namespace UnitTests.Net.Proxy {
 		{
 			while (!cancellationToken.IsCancellationRequested) {
 				try {
-					using (var socket = await listener.AcceptSocketAsync ().ConfigureAwait (false))
+					using (var socket = await listener.AcceptSocketAsync (cancellationToken).ConfigureAwait (false))
 						await AcceptProxyConnection (socket, cancellationToken).ConfigureAwait (false);
 				} catch (ObjectDisposedException) {
 				}

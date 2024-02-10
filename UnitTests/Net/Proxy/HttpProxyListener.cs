@@ -37,8 +37,8 @@ using SslStream = System.Net.Security.SslStream;
 namespace UnitTests.Net.Proxy {
 	class HttpProxyListener : ProxyListener
 	{
-		X509Certificate2 certificate;
-		bool https;
+		readonly X509Certificate2 certificate;
+		readonly bool https;
 
 		public HttpProxyListener ()
 		{

@@ -318,11 +318,11 @@ namespace UnitTests.Net.Imap {
 		readonly MemoryStream sent = new MemoryStream ();
 		readonly IList<ImapReplayCommand> commands;
 		readonly bool testUnixFormat;
+		readonly bool asyncIO;
 		ImapReplayState state;
 		int timeout = 100000;
 		Stream stream;
 		bool disposed;
-		bool asyncIO;
 		bool isAsync;
 		bool done;
 		int index;

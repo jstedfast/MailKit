@@ -92,8 +92,8 @@ namespace UnitTests {
 
 			// make sure that parsing bad input fails
 			Assert.That (UniqueId.TryParse ("text", ref index, out _), Is.False, "text");
-			Assert.That (UniqueId.TryParse ("text", 20160117, out uid), Is.False, "text");
-			Assert.That (UniqueId.TryParse ("text", out uid), Is.False, "text");
+			Assert.That (UniqueId.TryParse ("text", 20160117, out _), Is.False, "text");
+			Assert.That (UniqueId.TryParse ("text", out _), Is.False, "text");
 
 			// make sure that parsing uint.MaxValue works
 			index = 0;

@@ -3467,7 +3467,7 @@ namespace UnitTests.Net.Pop3 {
 			}
 		}
 
-		List<Pop3ReplayCommand> CreateGMailCommands ()
+		static List<Pop3ReplayCommand> CreateGMailCommands ()
 		{
 			var commands = new List<Pop3ReplayCommand> {
 				new Pop3ReplayCommand ("", "gmail.greeting.txt"),
@@ -3508,7 +3508,7 @@ namespace UnitTests.Net.Pop3 {
 			return commands;
 		}
 
-		void TestGMailPop3Client (List<Pop3ReplayCommand> commands, bool disablePipelining)
+		static void TestGMailPop3Client (List<Pop3ReplayCommand> commands, bool disablePipelining)
 		{
 			using (var client = new Pop3Client ()) {
 				try {
@@ -3754,7 +3754,7 @@ namespace UnitTests.Net.Pop3 {
 			TestGMailPop3Client (CreateGMailCommands (), false);
 		}
 
-		async Task TestGMailPop3ClientAsync (List<Pop3ReplayCommand> commands, bool disablePipelining)
+		static async Task TestGMailPop3ClientAsync (List<Pop3ReplayCommand> commands, bool disablePipelining)
 		{
 			using (var client = new Pop3Client ()) {
 				try {
@@ -4000,7 +4000,7 @@ namespace UnitTests.Net.Pop3 {
 			return TestGMailPop3ClientAsync (CreateGMailCommands (), false);
 		}
 
-		List<Pop3ReplayCommand> CreateGMailCommandsNoPipelining ()
+		static List<Pop3ReplayCommand> CreateGMailCommandsNoPipelining ()
 		{
 			var commands = new List<Pop3ReplayCommand> {
 				new Pop3ReplayCommand ("", "gmail.greeting.txt"),

@@ -47,7 +47,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (ex.StatusCode, Is.EqualTo (expected.StatusCode), "Unexpected StatusCode.");
 
 				if (expected.Mailbox != null)
-					Assert.That (expected.Mailbox.Equals (ex.Mailbox), Is.True, "Unexpected Mailbox.");
+					Assert.That (ex.Mailbox, Is.EqualTo (expected.Mailbox), "Unexpected Mailbox.");
 				else
 					Assert.That (ex.Mailbox, Is.Null, "Expected Mailbox to be null.");
 			}

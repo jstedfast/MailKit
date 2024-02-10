@@ -72,7 +72,7 @@ namespace UnitTests {
 			Assert.That (actual, Is.EqualTo ("1:9"), "Incorrect initial value.");
 			Assert.That (list, Has.Count.EqualTo (9), "Incorrect initial count.");
 			Assert.That (list.IndexOf (new UniqueId (500)), Is.EqualTo (-1));
-			Assert.That (list.Contains (new UniqueId (500)), Is.False);
+			Assert.That (list, Does.Not.Contain (new UniqueId (500)));
 			Assert.That (list.Remove (new UniqueId (500)), Is.False);
 
 			// Test Remove()
@@ -432,15 +432,15 @@ namespace UnitTests {
 		{
 			var uids = new UniqueIdSet (SortOrder.Ascending);
 
-			Assert.That (uids.Contains (new UniqueId (5)), Is.False, "5");
+			Assert.That (uids, Does.Not.Contain (new UniqueId (5)), "5");
 
 			uids.Add (new UniqueId (2));
 			uids.Add (new UniqueId (3));
 
-			Assert.That (uids.Contains (new UniqueId (1)), Is.False, "1");
+			Assert.That (uids, Does.Not.Contain (new UniqueId (1)), "1");
 			Assert.That (uids, Does.Contain (new UniqueId (2)), "2");
 			Assert.That (uids, Does.Contain (new UniqueId (3)), "3");
-			Assert.That (uids.Contains (new UniqueId (4)), Is.False, "4");
+			Assert.That (uids, Does.Not.Contain (new UniqueId (4)), "4");
 		}
 
 		[Test]
@@ -448,24 +448,23 @@ namespace UnitTests {
 		{
 			var uids = new UniqueIdSet (SortOrder.Descending);
 
-			Assert.That (uids.Contains (new UniqueId (5)), Is.False, "5");
+			Assert.That (uids, Does.Not.Contain (new UniqueId (5)), "5");
 
 			uids.Add (new UniqueId (2));
 			uids.Add (new UniqueId (3));
 
-			Assert.That (uids.Contains (new UniqueId (1)), Is.False, "1");
+			Assert.That (uids, Does.Not.Contain (new UniqueId (1)), "1");
 			Assert.That (uids, Does.Contain (new UniqueId (2)), "2");
 			Assert.That (uids, Does.Contain (new UniqueId (3)), "3");
-			Assert.That (uids.Contains (new UniqueId (4)), Is.False, "4");
+			Assert.That (uids, Does.Not.Contain (new UniqueId (4)), "4");
 		}
 
 		[Test]
 		public void TestParsingSimple ()
 		{
 			const string example = "1:3,5:6,9:12,15,19:20";
-			UniqueIdSet uids;
 
-			Assert.That (UniqueIdSet.TryParse (example, out uids), Is.True, "Failed to parse uids.");
+			Assert.That (UniqueIdSet.TryParse (example, out var uids), Is.True, "Failed to parse uids.");
 			Assert.That (uids.SortOrder, Is.EqualTo (SortOrder.Ascending));
 			Assert.That (uids.ToString (), Is.EqualTo (example));
 		}
@@ -475,9 +474,8 @@ namespace UnitTests {
 		{
 			var ids = new uint[] { 20, 19, 15, 12, 11, 10, 9, 6, 5, 3, 2, 1 };
 			const string example = "20:19,15,12:9,6:5,3:1";
-			UniqueIdSet uids;
 
-			Assert.That (UniqueIdSet.TryParse (example, out uids), Is.True, "Failed to parse uids.");
+			Assert.That (UniqueIdSet.TryParse (example, out var uids), Is.True, "Failed to parse uids.");
 			Assert.That (uids.SortOrder, Is.EqualTo (SortOrder.Descending));
 			Assert.That (uids.ToString (), Is.EqualTo (example));
 			Assert.That (uids, Has.Count.EqualTo (ids.Length));
@@ -489,11 +487,9 @@ namespace UnitTests {
 		[Test]
 		public void TestParsingInvalidInputs ()
 		{
-			UniqueIdSet uids;
-
-			Assert.That (UniqueIdSet.TryParse ("xyz", out uids), Is.False);
-			Assert.That (UniqueIdSet.TryParse ("1:x", out uids), Is.False);
-			Assert.That (UniqueIdSet.TryParse ("1:1x", out uids), Is.False);
+			Assert.That (UniqueIdSet.TryParse ("xyz", out _), Is.False);
+			Assert.That (UniqueIdSet.TryParse ("1:x", out _), Is.False);
+			Assert.That (UniqueIdSet.TryParse ("1:1x", out _), Is.False);
 		}
 
 		[Test]
