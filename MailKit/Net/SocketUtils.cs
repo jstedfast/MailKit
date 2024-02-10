@@ -35,6 +35,55 @@ namespace MailKit.Net
 {
 	static class SocketUtils
 	{
+		class SocketConnectState
+		{
+			readonly TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool> ();
+			readonly Socket socket;
+
+			public SocketConnectState (Socket socket)
+			{
+				this.socket = socket;
+			}
+
+			public Task Task { get { return tcs.Task; } }
+
+			public void OnCanceled ()
+			{
+				tcs.TrySetCanceled ();
+			}
+
+			public void OnEndConnect (IAsyncResult ar)
+			{
+				try {
+					socket.EndConnect (ar);
+				} catch (Exception ex) {
+					// The connection failed. Try setting an exception in case the connection hasn't also been canceled.
+					tcs.TrySetException (ex);
+					socket.Dispose ();
+					return;
+				}
+
+				// The connection was successful.
+				if (tcs.TrySetResult (true))
+					return;
+
+				// Note: If we get this far, then it means that the connection has been canceled.
+				try {
+					socket.Disconnect (false);
+					socket.Dispose ();
+				} catch {
+					return;
+				}
+			}
+		}
+
+		static void OnEndConnect (IAsyncResult ar)
+		{
+			var state = (SocketConnectState) ar.AsyncState;
+
+			state.OnEndConnect (ar);
+		}
+
 		public static Socket Connect (string host, int port, IPEndPoint localEndPoint, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
@@ -49,14 +98,22 @@ namespace MailKit.Net
 				try {
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
+				} catch {
+					socket.Dispose ();
 
+					if (i + 1 == ipAddresses.Length)
+						throw;
+
+					continue;
+				}
+
+				try {
 					if (cancellationToken.CanBeCanceled) {
-						var tcs = new TaskCompletionSource<bool> ();
+						var state = new SocketConnectState (socket);
 
-						using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-							var ar = socket.BeginConnect (ipAddresses[i], port, e => tcs.TrySetResult (true), null);
-							tcs.Task.GetAwaiter ().GetResult ();
-							socket.EndConnect (ar);
+						using (var registration = cancellationToken.Register (state.OnCanceled, false)) {
+							var ar = socket.BeginConnect (ipAddresses[i], port, OnEndConnect, state);
+							state.Task.GetAwaiter ().GetResult ();
 						}
 					} else {
 						socket.Connect (ipAddresses[i], port);
@@ -64,11 +121,8 @@ namespace MailKit.Net
 
 					return socket;
 				} catch (OperationCanceledException) {
-					socket.Dispose ();
 					throw;
 				} catch {
-					socket.Dispose ();
-
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}
@@ -95,22 +149,27 @@ namespace MailKit.Net
 				try {
 					if (localEndPoint != null)
 						socket.Bind (localEndPoint);
+				} catch {
+					socket.Dispose ();
 
-					var tcs = new TaskCompletionSource<bool> ();
+					if (i + 1 == ipAddresses.Length)
+						throw;
 
-					using (var registration = cancellationToken.Register (() => tcs.TrySetCanceled (), false)) {
-						var ar = socket.BeginConnect (ipAddresses[i], port, e => tcs.TrySetResult (true), null);
-						await tcs.Task.ConfigureAwait (false);
-						socket.EndConnect (ar);
+					continue;
+				}
+
+				try {
+					var state = new SocketConnectState (socket);
+
+					using (var registration = cancellationToken.Register (state.OnCanceled, false)) {
+						var ar = socket.BeginConnect (ipAddresses[i], port, OnEndConnect, state);
+						await state.Task.ConfigureAwait (false);
 					}
 
 					return socket;
 				} catch (OperationCanceledException) {
-					socket.Dispose ();
 					throw;
 				} catch {
-					socket.Dispose ();
-
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}
