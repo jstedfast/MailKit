@@ -88,7 +88,7 @@ namespace UnitTests {
 			Assert.That (headers, Has.Count.EqualTo (6), "Count #4");
 
 			Assert.That (headers.Contains (HeaderId.To), Is.True, "Contains #1");
-			Assert.That (headers, Does.Contain ("reply-to"), "Contains #2");
+			Assert.That (headers.Contains ("reply-to"), Is.True, "Contains #2");
 
 			var results = new string[headers.Count];
 			headers.CopyTo (results, 0);

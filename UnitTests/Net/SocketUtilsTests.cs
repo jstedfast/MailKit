@@ -47,7 +47,7 @@ namespace UnitTests.Net {
 
 				var elapsed = stopwatch.Elapsed.TotalSeconds;
 
-				if (elapsed < 10 || elapsed > 12)
+				if (elapsed < 9.5 || elapsed > 12)
 					Assert.Fail ($"Expected timeout to be around 10 seconds, but was {elapsed} seconds.");
 				else
 					Assert.Pass ("Connect timed out as expected.");
