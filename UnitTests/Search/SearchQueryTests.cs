@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@ namespace UnitTests.Search {
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.NotKeyword (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeyword (string.Empty));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.NotKeywords (null));
-			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeywords (new string[0]));
+			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeywords (Array.Empty<string> ()));
 			Assert.Throws<ArgumentException> (() => SearchQuery.NotFlags (MessageFlags.None));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.Filter (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.Filter (string.Empty));
@@ -60,18 +60,18 @@ namespace UnitTests.Search {
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasKeyword (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeyword (string.Empty));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasKeywords (null));
-			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeywords (new string[0]));
+			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeywords (Array.Empty<string> ()));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HasFlags (MessageFlags.None));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasKeyword (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeyword (string.Empty));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasKeywords (null));
-			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeywords (new string[0]));
+			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeywords (Array.Empty<string> ()));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HasKeywords (new string[] { "keyword", null }));
 			Assert.Throws<ArgumentException> (() => SearchQuery.NotFlags (MessageFlags.None));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.NotKeyword (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeyword (string.Empty));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.NotKeywords (null));
-			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeywords (new string[0]));
+			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeywords (Array.Empty<string> ()));
 			Assert.Throws<ArgumentException> (() => SearchQuery.NotKeywords (new string [] { "keyword", null }));
 			Assert.Throws<ArgumentNullException> (() => SearchQuery.HasGMailLabel (null));
 			Assert.Throws<ArgumentException> (() => SearchQuery.HasGMailLabel (string.Empty));
@@ -130,12 +130,12 @@ namespace UnitTests.Search {
 		{
 			var query = new UidSearchQuery (new UniqueId (5));
 
-			Assert.That (query.Uids.Count, Is.EqualTo (1));
+			Assert.That (query.Uids, Has.Count.EqualTo (1));
 			Assert.That (query.Uids[0].Id, Is.EqualTo ((uint) 5));
 
 			query = SearchQuery.Uids (new UniqueId[] { new UniqueId (5) });
 
-			Assert.That (query.Uids.Count, Is.EqualTo (1));
+			Assert.That (query.Uids, Has.Count.EqualTo (1));
 			Assert.That (query.Uids [0].Id, Is.EqualTo ((uint)5));
 		}
 
@@ -154,32 +154,32 @@ namespace UnitTests.Search {
 			TextSearchQuery text;
 
 			var query = SearchQuery.HasKeywords (new [] { "custom1" });
-			Assert.IsInstanceOf<TextSearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<TextSearchQuery> ());
 			text = (TextSearchQuery)query;
 			Assert.That (text.Term, Is.EqualTo (SearchTerm.Keyword));
 			Assert.That (text.Text, Is.EqualTo ("custom1"));
 
 			query = SearchQuery.HasKeywords (new [] { "custom1", "custom2" });
-			Assert.IsInstanceOf<BinarySearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<BinarySearchQuery> ());
 			binary = (BinarySearchQuery)query;
 			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
-			Assert.IsInstanceOf<TextSearchQuery> (binary.Left);
-			Assert.IsInstanceOf<TextSearchQuery> (binary.Right);
+			Assert.That (binary.Left, Is.InstanceOf<TextSearchQuery> ());
+			Assert.That (binary.Right, Is.InstanceOf<TextSearchQuery> ());
 			Assert.That (((TextSearchQuery)binary.Left).Text, Is.EqualTo ("custom1"));
 			Assert.That (((TextSearchQuery)binary.Right).Text, Is.EqualTo ("custom2"));
 
 			query = SearchQuery.NotKeywords (new [] { "custom1" });
-			Assert.IsInstanceOf<TextSearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<TextSearchQuery> ());
 			text = (TextSearchQuery) query;
 			Assert.That (text.Term, Is.EqualTo (SearchTerm.NotKeyword));
 			Assert.That (text.Text, Is.EqualTo ("custom1"));
 
 			query = SearchQuery.NotKeywords (new [] { "custom1", "custom2" });
-			Assert.IsInstanceOf<BinarySearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<BinarySearchQuery> ());
 			binary = (BinarySearchQuery) query;
 			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
-			Assert.IsInstanceOf<TextSearchQuery> (binary.Left);
-			Assert.IsInstanceOf<TextSearchQuery> (binary.Right);
+			Assert.That (binary.Left, Is.InstanceOf<TextSearchQuery> ());
+			Assert.That (binary.Right, Is.InstanceOf<TextSearchQuery> ());
 			Assert.That (((TextSearchQuery) binary.Left).Text, Is.EqualTo ("custom1"));
 			Assert.That (((TextSearchQuery) binary.Right).Text, Is.EqualTo ("custom2"));
 		}
@@ -190,42 +190,42 @@ namespace UnitTests.Search {
 			BinarySearchQuery binary;
 
 			var query = SearchQuery.HasFlags (MessageFlags.Answered | MessageFlags.Seen);
-			Assert.IsInstanceOf<BinarySearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<BinarySearchQuery> ());
 			binary = (BinarySearchQuery) query;
 			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
 			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.Seen.Term));
 			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.Answered.Term));
 
 			query = SearchQuery.HasFlags (MessageFlags.Flagged | MessageFlags.Deleted);
-			Assert.IsInstanceOf<BinarySearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<BinarySearchQuery> ());
 			binary = (BinarySearchQuery) query;
 			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
 			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.Flagged.Term));
 			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.Deleted.Term));
 
 			query = SearchQuery.HasFlags (MessageFlags.Draft | MessageFlags.Recent);
-			Assert.IsInstanceOf<BinarySearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<BinarySearchQuery> ());
 			binary = (BinarySearchQuery) query;
 			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
 			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.Draft.Term));
 			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.Recent.Term));
 
 			query = SearchQuery.NotFlags (MessageFlags.Answered | MessageFlags.Seen);
-			Assert.IsInstanceOf<BinarySearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<BinarySearchQuery> ());
 			binary = (BinarySearchQuery) query;
 			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
 			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.NotSeen.Term));
 			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.NotAnswered.Term));
 
 			query = SearchQuery.NotFlags (MessageFlags.Flagged | MessageFlags.Deleted);
-			Assert.IsInstanceOf<BinarySearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<BinarySearchQuery> ());
 			binary = (BinarySearchQuery) query;
 			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
 			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.NotFlagged.Term));
 			Assert.That (binary.Right.Term, Is.EqualTo (SearchQuery.NotDeleted.Term));
 
 			query = SearchQuery.NotFlags (MessageFlags.Draft | MessageFlags.Recent);
-			Assert.IsInstanceOf<BinarySearchQuery> (query);
+			Assert.That (query, Is.InstanceOf<BinarySearchQuery> ());
 			binary = (BinarySearchQuery) query;
 			Assert.That (binary.Term, Is.EqualTo (SearchTerm.And));
 			Assert.That (binary.Left.Term, Is.EqualTo (SearchQuery.NotDraft.Term));

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,13 +57,13 @@ namespace UnitTests {
 		[Test]
 		public void TestComparisons ()
 		{
-			Assert.That (new UniqueId (5) <= new UniqueId (5), Is.True, "5 <= 5");
-			Assert.That (new UniqueId (1) <= new UniqueId (5), Is.True, "1 <= 5");
-			Assert.That (new UniqueId (1) < new UniqueId (5), Is.True, "1 < 5");
+			Assert.That (new UniqueId (5), Is.LessThanOrEqualTo (new UniqueId (5)), "5 <= 5");
+			Assert.That (new UniqueId (1), Is.LessThanOrEqualTo (new UniqueId (5)), "1 <= 5");
+			Assert.That (new UniqueId (1), Is.LessThan (new UniqueId (5)), "1 < 5");
 
-			Assert.That (new UniqueId (5) >= new UniqueId (5), Is.True, "5 >= 5");
-			Assert.That (new UniqueId (5) >= new UniqueId (1), Is.True, "5 >= 1");
-			Assert.That (new UniqueId (5) > new UniqueId (1), Is.True, "5 > 1");
+			Assert.That (new UniqueId (5), Is.GreaterThanOrEqualTo (new UniqueId (5)), "5 >= 5");
+			Assert.That (new UniqueId (5), Is.GreaterThanOrEqualTo (new UniqueId (1)), "5 >= 1");
+			Assert.That (new UniqueId (5), Is.GreaterThan (new UniqueId (1)), "5 > 1");
 
 			Assert.That (new UniqueId (1).CompareTo (new UniqueId (5)), Is.EqualTo (-1), "1.CompareTo (5)");
 			Assert.That (new UniqueId (5).CompareTo (new UniqueId (1)), Is.EqualTo (1), "5.CompareTo (1)");
@@ -89,16 +89,15 @@ namespace UnitTests {
 		{
 			UniqueId uid;
 			int index = 0;
-			uint u;
 
 			// make sure that parsing bad input fails
-			Assert.That (UniqueId.TryParse ("text", ref index, out u), Is.False, "text");
+			Assert.That (UniqueId.TryParse ("text", ref index, out _), Is.False, "text");
 			Assert.That (UniqueId.TryParse ("text", 20160117, out uid), Is.False, "text");
 			Assert.That (UniqueId.TryParse ("text", out uid), Is.False, "text");
 
 			// make sure that parsing uint.MaxValue works
 			index = 0;
-			Assert.That (UniqueId.TryParse ("4294967295", ref index, out u), Is.True, "4294967295");
+			Assert.That (UniqueId.TryParse ("4294967295", ref index, out _), Is.True, "4294967295");
 			Assert.That (UniqueId.TryParse ("4294967295", 20160117, out uid), Is.True, "4294967295");
 			Assert.That (uid.Validity, Is.EqualTo (20160117));
 			Assert.That (uid, Is.EqualTo (UniqueId.MaxValue));
@@ -115,10 +114,10 @@ namespace UnitTests {
 
 			// make sure parsing a value larger than uint.MaxValue fails
 			index = 0;
-			Assert.That (UniqueId.TryParse ("4294967296", ref index, out u), Is.False, "4294967296");
+			Assert.That (UniqueId.TryParse ("4294967296", ref index, out _), Is.False, "4294967296");
 
 			index = 0;
-			Assert.That (UniqueId.TryParse ("4294967305", ref index, out u), Is.False, "4294967305");
+			Assert.That (UniqueId.TryParse ("4294967305", ref index, out _), Is.False, "4294967305");
 		}
 	}
 }

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -182,10 +182,10 @@ namespace UnitTests.Net.Imap {
 						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.BadCharset));
 						Assert.That (respCode.Message, Is.EqualTo ("This is some free-form text"));
 
-						Assert.That (engine.SupportedCharsets.Count, Is.EqualTo (3));
-						Assert.That (engine.SupportedCharsets.Contains ("US-ASCII"), Is.True, "US-ASCII");
-						Assert.That (engine.SupportedCharsets.Contains ("iso-8859-1"), Is.True, "iso-8859-1");
-						Assert.That (engine.SupportedCharsets.Contains ("UTF-8"), Is.True, "UTF-8");
+						Assert.That (engine.SupportedCharsets, Has.Count.EqualTo (3));
+						Assert.That (engine.SupportedCharsets, Does.Contain ("US-ASCII"), "US-ASCII");
+						Assert.That (engine.SupportedCharsets, Does.Contain ("iso-8859-1"), "iso-8859-1");
+						Assert.That (engine.SupportedCharsets, Does.Contain ("UTF-8"), "UTF-8");
 					}
 				}
 			}
@@ -213,10 +213,10 @@ namespace UnitTests.Net.Imap {
 						Assert.That (respCode.Type, Is.EqualTo (ImapResponseCodeType.BadCharset));
 						Assert.That (respCode.Message, Is.EqualTo ("This is some free-form text"));
 
-						Assert.That (engine.SupportedCharsets.Count, Is.EqualTo (3));
-						Assert.That (engine.SupportedCharsets.Contains ("US-ASCII"), Is.True, "US-ASCII");
-						Assert.That (engine.SupportedCharsets.Contains ("iso-8859-1"), Is.True, "iso-8859-1");
-						Assert.That (engine.SupportedCharsets.Contains ("UTF-8"), Is.True, "UTF-8");
+						Assert.That (engine.SupportedCharsets, Has.Count.EqualTo (3));
+						Assert.That (engine.SupportedCharsets, Does.Contain ("US-ASCII"), "US-ASCII");
+						Assert.That (engine.SupportedCharsets, Does.Contain ("iso-8859-1"), "iso-8859-1");
+						Assert.That (engine.SupportedCharsets, Does.Contain ("UTF-8"), "UTF-8");
 					}
 				}
 			}

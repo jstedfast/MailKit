@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -85,27 +85,27 @@ namespace UnitTests {
 			Assert.That (rights.IsReadOnly, Is.False, "IsReadOnly");
 
 			Assert.That (rights.Add (AccessRight.OpenFolder), Is.True, "Add OpenFolder");
-			Assert.That (rights.Count, Is.EqualTo (1), "Count after adding OpenFolder");
+			Assert.That (rights, Has.Count.EqualTo (1), "Count after adding OpenFolder");
 			Assert.That (rights.Add (AccessRight.OpenFolder), Is.False, "Add OpenFolder again");
-			Assert.That (rights.Count, Is.EqualTo (1), "Count after adding OpenFolder again");
+			Assert.That (rights, Has.Count.EqualTo (1), "Count after adding OpenFolder again");
 
 			Assert.That (rights.Add (AccessRight.CreateFolder.Right), Is.True, "Add CreateFolder");
-			Assert.That (rights.Count, Is.EqualTo (2), "Count after adding CreateFolder");
+			Assert.That (rights, Has.Count.EqualTo (2), "Count after adding CreateFolder");
 			Assert.That (rights.Add (AccessRight.CreateFolder), Is.False, "Add CreateFolder again");
-			Assert.That (rights.Count, Is.EqualTo (2), "Count after adding OpenFolder again");
+			Assert.That (rights, Has.Count.EqualTo (2), "Count after adding OpenFolder again");
 
 			rights.AddRange (new [] { AccessRight.DeleteFolder, AccessRight.ExpungeFolder });
-			Assert.That (rights.Count, Is.EqualTo (4), "Count after adding DeleteFolder and ExpungeFolder");
+			Assert.That (rights, Has.Count.EqualTo (4), "Count after adding DeleteFolder and ExpungeFolder");
 
-			Assert.That (rights.Contains (AccessRight.DeleteFolder), Is.True, "Contains DeleteFolder");
-			Assert.That (rights.Contains (AccessRight.ExpungeFolder), Is.True, "Contains ExpungeFolder");
+			Assert.That (rights, Does.Contain (AccessRight.DeleteFolder), "Contains DeleteFolder");
+			Assert.That (rights, Does.Contain (AccessRight.ExpungeFolder), "Contains ExpungeFolder");
 			Assert.That (rights.Contains (AccessRight.Administer), Is.False, "Contains Administer");
 
 			rights.AddRange ("it");
-			Assert.That (rights.Count, Is.EqualTo (6), "Count after adding AppendMessages and SetMessageDeleted");
+			Assert.That (rights, Has.Count.EqualTo (6), "Count after adding AppendMessages and SetMessageDeleted");
 
-			Assert.That (rights.Contains (AccessRight.AppendMessages), Is.True, "Contains AppendMessages");
-			Assert.That (rights.Contains (AccessRight.SetMessageDeleted), Is.True, "Contains SetMessageDeleted");
+			Assert.That (rights, Does.Contain (AccessRight.AppendMessages), "Contains AppendMessages");
+			Assert.That (rights, Does.Contain (AccessRight.SetMessageDeleted), "Contains SetMessageDeleted");
 			Assert.That (rights.Contains (AccessRight.Administer), Is.False, "Contains Administer");
 
 			for (i = 0; i < 6; i++)
@@ -156,7 +156,7 @@ namespace UnitTests {
 		{
 			var list = new AccessControlList (new [] { new AccessControl ("admin", new [] { AccessRight.Administer }) });
 
-			Assert.That (list.Count, Is.EqualTo (1), "Count");
+			Assert.That (list, Has.Count.EqualTo (1), "Count");
 			Assert.That (list[0].Name, Is.EqualTo ("admin"), "list[0].Name");
 		}
 	}

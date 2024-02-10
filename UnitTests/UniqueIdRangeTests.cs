@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@ namespace UnitTests {
 			Assert.That (uids.Min.Id, Is.EqualTo (1), "Min");
 			Assert.That (uids.Max.Id, Is.EqualTo (20), "Max");
 			Assert.That (uids.ToString (), Is.EqualTo (example), "ToString");
-			Assert.That (uids.Count, Is.EqualTo (20));
+			Assert.That (uids, Has.Count.EqualTo (20));
 
 			Assert.False (uids.Contains (new UniqueId (500)));
 			Assert.That (uids.IndexOf (new UniqueId (500)), Is.EqualTo (-1));
@@ -105,7 +105,7 @@ namespace UnitTests {
 			Assert.That (uids.Min.Id, Is.EqualTo (1), "Min");
 			Assert.That (uids.Max.Id, Is.EqualTo (20), "Max");
 			Assert.That (uids.ToString (), Is.EqualTo (example), "ToString");
-			Assert.That (uids.Count, Is.EqualTo (20));
+			Assert.That (uids, Has.Count.EqualTo (20));
 
 			Assert.False (uids.Contains (new UniqueId (500)));
 			Assert.That (uids.IndexOf (new UniqueId (500)), Is.EqualTo (-1));

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,7 @@ namespace UnitTests {
 		{
 			var annotations = new List<Annotation> ();
 			var args = new AnnotationsChangedEventArgs (0, annotations);
-			Assert.That (args.Annotations.Count, Is.EqualTo (0));
+			Assert.That (args.Annotations, Is.Empty);
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq.HasValue, Is.False);
 			Assert.That (args.Index, Is.EqualTo (0));
@@ -113,63 +113,63 @@ namespace UnitTests {
 			ulong modseq = 724;
 
 			args = new MessageFlagsChangedEventArgs (0);
-			Assert.That (args.Keywords.Count, Is.EqualTo (0));
+			Assert.That (args.Keywords, Is.Empty);
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.None));
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq.HasValue, Is.False);
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered);
-			Assert.That (args.Keywords.Count, Is.EqualTo (0));
+			Assert.That (args.Keywords, Is.Empty);
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.Answered));
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq.HasValue, Is.False);
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, modseq);
-			Assert.That (args.Keywords.Count, Is.EqualTo (0));
+			Assert.That (args.Keywords, Is.Empty);
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.Answered));
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, keywords);
-			Assert.That (args.Keywords.Count, Is.EqualTo (keywords.Count));
+			Assert.That (args.Keywords, Has.Count.EqualTo (keywords.Count));
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.Answered));
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq.HasValue, Is.False);
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageFlagsChangedEventArgs (0, MessageFlags.Answered, keywords, modseq);
-			Assert.That (args.Keywords.Count, Is.EqualTo (keywords.Count));
+			Assert.That (args.Keywords, Has.Count.EqualTo (keywords.Count));
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.Answered));
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered);
-			Assert.That (args.Keywords.Count, Is.EqualTo (0));
+			Assert.That (args.Keywords, Is.Empty);
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.Answered));
 			Assert.That (args.UniqueId, Is.EqualTo (uid));
 			Assert.That (args.ModSeq.HasValue, Is.False);
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, modseq);
-			Assert.That (args.Keywords.Count, Is.EqualTo (0));
+			Assert.That (args.Keywords, Is.Empty);
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.Answered));
 			Assert.That (args.UniqueId, Is.EqualTo (uid));
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, keywords);
-			Assert.That (args.Keywords.Count, Is.EqualTo (keywords.Count));
+			Assert.That (args.Keywords, Has.Count.EqualTo (keywords.Count));
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.Answered));
 			Assert.That (args.UniqueId, Is.EqualTo (uid));
 			Assert.That (args.ModSeq.HasValue, Is.False);
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageFlagsChangedEventArgs (0, uid, MessageFlags.Answered, keywords, modseq);
-			Assert.That (args.Keywords.Count, Is.EqualTo (keywords.Count));
+			Assert.That (args.Keywords, Has.Count.EqualTo (keywords.Count));
 			Assert.That (args.Flags, Is.EqualTo (MessageFlags.Answered));
 			Assert.That (args.UniqueId, Is.EqualTo (uid));
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
@@ -206,25 +206,25 @@ namespace UnitTests {
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageLabelsChangedEventArgs (0, labels);
-			Assert.That (args.Labels.Count, Is.EqualTo (labels.Length));
+			Assert.That (args.Labels, Has.Count.EqualTo (labels.Length));
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq.HasValue, Is.False);
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageLabelsChangedEventArgs (0, labels, modseq);
-			Assert.That (args.Labels.Count, Is.EqualTo (labels.Length));
+			Assert.That (args.Labels, Has.Count.EqualTo (labels.Length));
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageLabelsChangedEventArgs (0, uid, labels);
-			Assert.That (args.Labels.Count, Is.EqualTo (labels.Length));
+			Assert.That (args.Labels, Has.Count.EqualTo (labels.Length));
 			Assert.That (args.UniqueId, Is.EqualTo (uid));
 			Assert.That (args.ModSeq.HasValue, Is.False);
 			Assert.That (args.Index, Is.EqualTo (0));
 
 			args = new MessageLabelsChangedEventArgs (0, uid, labels, modseq);
-			Assert.That (args.Labels.Count, Is.EqualTo (labels.Length));
+			Assert.That (args.Labels, Has.Count.EqualTo (labels.Length));
 			Assert.That (args.UniqueId, Is.EqualTo (uid));
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
 			Assert.That (args.Index, Is.EqualTo (0));

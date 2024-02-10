@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -113,7 +113,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -430,7 +430,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				// disable all features
 				client.Capabilities = ImapCapabilities.None;
@@ -522,22 +522,22 @@ namespace UnitTests.Net.Imap {
 				var request = new FetchRequest (MessageSummaryItems.Flags);
 
 				var messages = inbox.Fetch (Array.Empty<UniqueId> (), request);
-				Assert.That (messages.Count, Is.EqualTo (0), "UID FETCH (0 uids)");
+				Assert.That (messages, Is.Empty, "UID FETCH (0 uids)");
 
 				messages = inbox.Fetch (Array.Empty<int> (), request);
-				Assert.That (messages.Count, Is.EqualTo (0), "FETCH (0 indexes)");
+				Assert.That (messages, Is.Empty, "FETCH (0 indexes)");
 
 				// Now make the FetchRequest empty
 				request = new FetchRequest (MessageSummaryItems.None);
 
 				messages = inbox.Fetch (UniqueIdRange.All, request);
-				Assert.That (messages.Count, Is.EqualTo (0), "UID FETCH (None)");
+				Assert.That (messages, Is.Empty, "UID FETCH (None)");
 
 				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, request);
-				Assert.That (messages.Count, Is.EqualTo (0), "FETCH (None)");
+				Assert.That (messages, Is.Empty, "FETCH (None)");
 
 				messages = inbox.Fetch (0, -1, request);
-				Assert.That (messages.Count, Is.EqualTo (0), "FETCH min:max (None)");
+				Assert.That (messages, Is.Empty, "FETCH min:max (None)");
 
 				client.Disconnect (false);
 			}
@@ -581,22 +581,22 @@ namespace UnitTests.Net.Imap {
 				var request = new FetchRequest (MessageSummaryItems.Flags);
 
 				var messages = await inbox.FetchAsync (Array.Empty<UniqueId> (), request);
-				Assert.That (messages.Count, Is.EqualTo (0), "UID FETCH (0 uids)");
+				Assert.That (messages, Is.Empty, "UID FETCH (0 uids)");
 
 				messages = await inbox.FetchAsync (Array.Empty<int> (), request);
-				Assert.That (messages.Count, Is.EqualTo (0), "FETCH (0 indexes)");
+				Assert.That (messages, Is.Empty, "FETCH (0 indexes)");
 
 				// Now make the FetchRequest empty
 				request = new FetchRequest (MessageSummaryItems.None);
 
 				messages = await inbox.FetchAsync (UniqueIdRange.All, request);
-				Assert.That (messages.Count, Is.EqualTo (0), "UID FETCH (None)");
+				Assert.That (messages, Is.Empty, "UID FETCH (None)");
 
 				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, request);
-				Assert.That (messages.Count, Is.EqualTo (0), "FETCH (None)");
+				Assert.That (messages, Is.Empty, "FETCH (None)");
 
 				messages = await inbox.FetchAsync (0, -1, request);
-				Assert.That (messages.Count, Is.EqualTo (0), "FETCH min:max (None)");
+				Assert.That (messages, Is.Empty, "FETCH min:max (None)");
 
 				await client.DisconnectAsync (false);
 			}
@@ -658,17 +658,17 @@ namespace UnitTests.Net.Imap {
 				};
 
 				var messages = inbox.Fetch (UniqueIdRange.All, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "UID FETCH");
+				Assert.That (messages, Has.Count.EqualTo (6), "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "UID FETCH fields");
 
 				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "FETCH");
+				Assert.That (messages, Has.Count.EqualTo (6), "FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH fields");
 
 				messages = inbox.Fetch (0, -1, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "FETCH min:max");
+				Assert.That (messages, Has.Count.EqualTo (6), "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH min:max fields");
 
@@ -715,17 +715,17 @@ namespace UnitTests.Net.Imap {
 				};
 
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "UID FETCH");
+				Assert.That (messages, Has.Count.EqualTo (6), "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "UID FETCH fields");
 
 				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "FETCH");
+				Assert.That (messages, Has.Count.EqualTo (6), "FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH fields");
 
 				messages = await inbox.FetchAsync (0, -1, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "FETCH min:max");
+				Assert.That (messages, Has.Count.EqualTo (6), "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH min:max fields");
 
@@ -789,17 +789,17 @@ namespace UnitTests.Net.Imap {
 				};
 
 				var messages = inbox.Fetch (UniqueIdRange.All, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "UID FETCH");
+				Assert.That (messages, Has.Count.EqualTo (6), "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "UID FETCH fields");
 
 				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "FETCH");
+				Assert.That (messages, Has.Count.EqualTo (6), "FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH fields");
 
 				messages = inbox.Fetch (0, -1, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "FETCH min:max");
+				Assert.That (messages, Has.Count.EqualTo (6), "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH min:max fields");
 
@@ -846,17 +846,17 @@ namespace UnitTests.Net.Imap {
 				};
 
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "UID FETCH");
+				Assert.That (messages, Has.Count.EqualTo (6), "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "UID FETCH fields");
 
 				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "FETCH");
+				Assert.That (messages, Has.Count.EqualTo (6), "FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH fields");
 
 				messages = await inbox.FetchAsync (0, -1, request);
-				Assert.That (messages.Count, Is.EqualTo (6), "FETCH min:max");
+				Assert.That (messages, Has.Count.EqualTo (6), "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Fields, Is.EqualTo (request.Items | MessageSummaryItems.Headers | MessageSummaryItems.References), "FETCH min:max fields");
 
@@ -925,17 +925,17 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadOnly);
 
 				var messages = inbox.Fetch (UniqueIdRange.All, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "UID FETCH");
+				Assert.That (messages, Has.Count.EqualTo (PreviewTextValues.Length), "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = inbox.Fetch (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "FETCH");
+				Assert.That (messages, Has.Count.EqualTo (PreviewTextValues.Length), "FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = inbox.Fetch (0, -1, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "FETCH min:max");
+				Assert.That (messages, Has.Count.EqualTo (PreviewTextValues.Length), "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
@@ -978,17 +978,17 @@ namespace UnitTests.Net.Imap {
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
 
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "UID FETCH");
+				Assert.That (messages, Has.Count.EqualTo (PreviewTextValues.Length), "UID FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = await inbox.FetchAsync (new int[] { 0, 1, 2, 3, 4, 5 }, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "FETCH");
+				Assert.That (messages, Has.Count.EqualTo (PreviewTextValues.Length), "FETCH");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
 				messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.All | MessageSummaryItems.PreviewText);
-				Assert.That (messages.Count, Is.EqualTo (PreviewTextValues.Length), "FETCH min:max");
+				Assert.That (messages, Has.Count.EqualTo (PreviewTextValues.Length), "FETCH min:max");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].PreviewText, Is.EqualTo (PreviewTextValues[i]));
 
@@ -1523,7 +1523,7 @@ namespace UnitTests.Net.Imap {
 				var range = new UniqueIdRange (0, 1, 6);
 				var messages = inbox.Fetch (range, MessageSummaryItems.UniqueId | MessageSummaryItems.InternalDate | MessageSummaryItems.Envelope);
 
-				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages, Has.Count.EqualTo (4), "Count");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Index, Is.EqualTo (i), $"Index #{i}");
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo ((uint) 1), "UniqueId #0");
@@ -1572,7 +1572,7 @@ namespace UnitTests.Net.Imap {
 				var range = new UniqueIdRange (0, 1, 6);
 				var messages = await inbox.FetchAsync (range, MessageSummaryItems.UniqueId | MessageSummaryItems.InternalDate | MessageSummaryItems.Envelope);
 
-				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages, Has.Count.EqualTo (4), "Count");
 				for (int i = 0; i < messages.Count; i++)
 					Assert.That (messages[i].Index, Is.EqualTo (i), $"Index #{i}");
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo ((uint) 1), "UniqueId #0");
@@ -1774,7 +1774,7 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadOnly);
 
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.EmailId | MessageSummaryItems.ThreadId);
-				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages, Has.Count.EqualTo (4), "Count");
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
 				Assert.That (messages[0].EmailId, Is.EqualTo ("M6d99ac3275bb4e"), "EmailId");
 				Assert.That (messages[0].ThreadId, Is.EqualTo ("T64b478a75b7ea9"), "ThreadId");
@@ -1816,7 +1816,7 @@ namespace UnitTests.Net.Imap {
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
 
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.EmailId | MessageSummaryItems.ThreadId);
-				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages, Has.Count.EqualTo (4), "Count");
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
 				Assert.That (messages[0].EmailId, Is.EqualTo ("M6d99ac3275bb4e"), "EmailId");
 				Assert.That (messages[0].ThreadId, Is.EqualTo ("T64b478a75b7ea9"), "ThreadId");
@@ -1875,7 +1875,7 @@ namespace UnitTests.Net.Imap {
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.SaveDate);
 				var dto = new DateTimeOffset (2023, 9, 12, 13, 39, 01, new TimeSpan (-4, 0, 0));
 
-				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages, Has.Count.EqualTo (4), "Count");
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
 				Assert.That (messages[0].SaveDate, Is.EqualTo (dto), "SaveDate");
 				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
@@ -1915,7 +1915,7 @@ namespace UnitTests.Net.Imap {
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.SaveDate);
 				var dto = new DateTimeOffset (2023, 9, 12, 13, 39, 01, new TimeSpan (-4, 0, 0));
 
-				Assert.That (messages.Count, Is.EqualTo (4), "Count");
+				Assert.That (messages, Has.Count.EqualTo (4), "Count");
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
 				Assert.That (messages[0].SaveDate, Is.EqualTo (dto), "SaveDate");
 				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
@@ -1974,35 +1974,35 @@ namespace UnitTests.Net.Imap {
 				//Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Annotations);
-				Assert.That (messages.Count, Is.EqualTo (3), "Count");
+				Assert.That (messages, Has.Count.EqualTo (3), "Count");
 
 				IReadOnlyList<Annotation> annotations;
 
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
 				annotations = messages[0].Annotations;
-				Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+				Assert.That (annotations, Has.Count.EqualTo (1), "Count");
 				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "Entry");
-				Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "Properties.Count");
+				Assert.That (annotations[0].Properties, Has.Count.EqualTo (2), "Properties.Count");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "value.priv");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "value.shared");
 
 				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
 				annotations = messages[1].Annotations;
-				Assert.That (annotations.Count, Is.EqualTo (2), "Count");
+				Assert.That (annotations, Has.Count.EqualTo (2), "Count");
 				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
-				Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "annotations[0].Properties.Count");
+				Assert.That (annotations[0].Properties, Has.Count.EqualTo (2), "annotations[0].Properties.Count");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
 				Assert.That (annotations[1].Entry, Is.EqualTo (AnnotationEntry.AltSubject), "annotations[1].Entry");
-				Assert.That (annotations[1].Properties.Count, Is.EqualTo (2), "annotations[1].Properties.Count");
+				Assert.That (annotations[1].Properties, Has.Count.EqualTo (2), "annotations[1].Properties.Count");
 				Assert.That (annotations[1].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My subject"), "annotations[1] value.priv");
 				Assert.That (annotations[1].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[1] value.shared");
 
 				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (3), "UniqueId");
 				annotations = messages[2].Annotations;
-				Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+				Assert.That (annotations, Has.Count.EqualTo (1), "Count");
 				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
-				Assert.That (annotations[0].Properties.Count, Is.EqualTo (4), "annotations[0].Properties.Count");
+				Assert.That (annotations[0].Properties, Has.Count.EqualTo (4), "annotations[0].Properties.Count");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateSize], Is.EqualTo ("10"), "annotations[0] size.priv");
@@ -2016,7 +2016,7 @@ namespace UnitTests.Net.Imap {
 
 				client.NoOp ();
 
-				Assert.That (annotationsChanged.Count, Is.EqualTo (3), "# AnnotationsChanged events");
+				Assert.That (annotationsChanged, Has.Count.EqualTo (3), "# AnnotationsChanged events");
 
 				client.Disconnect (false);
 			}
@@ -2053,35 +2053,35 @@ namespace UnitTests.Net.Imap {
 				//Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (20480), "MaxAnnotationSize");
 
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Annotations);
-				Assert.That (messages.Count, Is.EqualTo (3), "Count");
+				Assert.That (messages, Has.Count.EqualTo (3), "Count");
 
 				IReadOnlyList<Annotation> annotations;
 
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId");
 				annotations = messages[0].Annotations;
-				Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+				Assert.That (annotations, Has.Count.EqualTo (1), "Count");
 				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "Entry");
-				Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "Properties.Count");
+				Assert.That (annotations[0].Properties, Has.Count.EqualTo (2), "Properties.Count");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "value.priv");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "value.shared");
 
 				Assert.That (messages[1].UniqueId.Id, Is.EqualTo (2), "UniqueId");
 				annotations = messages[1].Annotations;
-				Assert.That (annotations.Count, Is.EqualTo (2), "Count");
+				Assert.That (annotations, Has.Count.EqualTo (2), "Count");
 				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
-				Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "annotations[0].Properties.Count");
+				Assert.That (annotations[0].Properties, Has.Count.EqualTo (2), "annotations[0].Properties.Count");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
 				Assert.That (annotations[1].Entry, Is.EqualTo (AnnotationEntry.AltSubject), "annotations[1].Entry");
-				Assert.That (annotations[1].Properties.Count, Is.EqualTo (2), "annotations[1].Properties.Count");
+				Assert.That (annotations[1].Properties, Has.Count.EqualTo (2), "annotations[1].Properties.Count");
 				Assert.That (annotations[1].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My subject"), "annotations[1] value.priv");
 				Assert.That (annotations[1].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[1] value.shared");
 
 				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (3), "UniqueId");
 				annotations = messages[2].Annotations;
-				Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+				Assert.That (annotations, Has.Count.EqualTo (1), "Count");
 				Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
-				Assert.That (annotations[0].Properties.Count, Is.EqualTo (4), "annotations[0].Properties.Count");
+				Assert.That (annotations[0].Properties, Has.Count.EqualTo (4), "annotations[0].Properties.Count");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
 				Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateSize], Is.EqualTo ("10"), "annotations[0] size.priv");
@@ -2095,7 +2095,7 @@ namespace UnitTests.Net.Imap {
 
 				await client.NoOpAsync ();
 
-				Assert.That (annotationsChanged.Count, Is.EqualTo (3), "# AnnotationsChanged events");
+				Assert.That (annotationsChanged, Has.Count.EqualTo (3), "# AnnotationsChanged events");
 
 				client.Disconnect (false);
 			}
@@ -2136,15 +2136,15 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.PersonalNamespaces.Count, Is.EqualTo (1), "Personal Count");
+				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "Personal Count");
 				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (""), "Personal Path");
 				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Personal DirectorySeparator");
 
-				Assert.That (client.OtherNamespaces.Count, Is.EqualTo (1), "Other Count");
+				Assert.That (client.OtherNamespaces, Has.Count.EqualTo (1), "Other Count");
 				Assert.That (client.OtherNamespaces[0].Path, Is.EqualTo ("Other"), "Other Path");
 				Assert.That (client.OtherNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Other DirectorySeparator");
 
-				Assert.That (client.SharedNamespaces.Count, Is.EqualTo (1), "Shared Count");
+				Assert.That (client.SharedNamespaces, Has.Count.EqualTo (1), "Shared Count");
 				Assert.That (client.SharedNamespaces[0].Path, Is.EqualTo ("Shared"), "Shared Path");
 				Assert.That (client.SharedNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Shared DirectorySeparator");
 
@@ -2152,7 +2152,7 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadWrite);
 
 				var messages = inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure);
-				Assert.That (messages.Count, Is.EqualTo (29), "Count");
+				Assert.That (messages, Has.Count.EqualTo (29), "Count");
 
 				for (int i = 0; i < 29; i++) {
 					Assert.That (messages[i].Index, Is.EqualTo (i), "MessageSummaryItems are out of order!");
@@ -2183,15 +2183,15 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.PersonalNamespaces.Count, Is.EqualTo (1), "Personal Count");
+				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "Personal Count");
 				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (""), "Personal Path");
 				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Personal DirectorySeparator");
 
-				Assert.That (client.OtherNamespaces.Count, Is.EqualTo (1), "Other Count");
+				Assert.That (client.OtherNamespaces, Has.Count.EqualTo (1), "Other Count");
 				Assert.That (client.OtherNamespaces[0].Path, Is.EqualTo ("Other"), "Other Path");
 				Assert.That (client.OtherNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Other DirectorySeparator");
 
-				Assert.That (client.SharedNamespaces.Count, Is.EqualTo (1), "Shared Count");
+				Assert.That (client.SharedNamespaces, Has.Count.EqualTo (1), "Shared Count");
 				Assert.That (client.SharedNamespaces[0].Path, Is.EqualTo ("Shared"), "Shared Path");
 				Assert.That (client.SharedNamespaces[0].DirectorySeparator, Is.EqualTo ('\\'), "Shared DirectorySeparator");
 
@@ -2199,7 +2199,7 @@ namespace UnitTests.Net.Imap {
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
 				var messages = await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure);
-				Assert.That (messages.Count, Is.EqualTo (29), "Count");
+				Assert.That (messages, Has.Count.EqualTo (29), "Count");
 
 				for (int i = 0; i < 29; i++) {
 					Assert.That (messages[i].Index, Is.EqualTo (i), "MessageSummaryItems are out of order!");
@@ -2282,10 +2282,10 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (inbox.HighestModSeq, Is.EqualTo (29233), "HIGHESTMODSEQ #2");
 
-				Assert.That (annotationsChanged.Count, Is.EqualTo (3), "AnnotationsChanged");
-				Assert.That (flagsChanged.Count, Is.EqualTo (3), "FlagsChanged");
-				Assert.That (labelsChanged.Count, Is.EqualTo (3), "LabelsChanged");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (3), "ModSeqChanged");
+				Assert.That (annotationsChanged, Has.Count.EqualTo (3), "AnnotationsChanged");
+				Assert.That (flagsChanged, Has.Count.EqualTo (3), "FlagsChanged");
+				Assert.That (labelsChanged, Has.Count.EqualTo (3), "LabelsChanged");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (3), "ModSeqChanged");
 
 				client.Disconnect (false);
 			}
@@ -2348,10 +2348,10 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (inbox.HighestModSeq, Is.EqualTo (29233), "HIGHESTMODSEQ #2");
 
-				Assert.That (annotationsChanged.Count, Is.EqualTo (3), "AnnotationsChanged");
-				Assert.That (flagsChanged.Count, Is.EqualTo (3), "FlagsChanged");
-				Assert.That (labelsChanged.Count, Is.EqualTo (3), "LabelsChanged");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (3), "ModSeqChanged");
+				Assert.That (annotationsChanged, Has.Count.EqualTo (3), "AnnotationsChanged");
+				Assert.That (flagsChanged, Has.Count.EqualTo (3), "FlagsChanged");
+				Assert.That (labelsChanged, Has.Count.EqualTo (3), "LabelsChanged");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (3), "ModSeqChanged");
 
 				client.Disconnect (false);
 			}
@@ -2393,7 +2393,7 @@ namespace UnitTests.Net.Imap {
 				gesendet.Open (FolderAccess.ReadOnly);
 
 				var messages = gesendet.Fetch (0, 73, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
-				Assert.That (messages.Count, Is.EqualTo (74), "Count");
+				Assert.That (messages, Has.Count.EqualTo (74), "Count");
 
 				for (int i = 0; i < 15; i++) {
 					Assert.That (messages[i].ModSeq, Is.EqualTo ((ulong) 0), $"MODSEQ {i}");
@@ -2405,7 +2405,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen | MessageFlags.Recent), $"FLAGS {i}");
 
 					if (i == 35) {
-						Assert.That (messages[i].Keywords.Count, Is.EqualTo (1), $"KEYWORDS {i}");
+						Assert.That (messages[i].Keywords, Has.Count.EqualTo (1), $"KEYWORDS {i}");
 						Assert.That (messages[i].Keywords.Contains ("$FORWARDED"), Is.True, $"KEYWORDS {i}");
 					}
 				}
@@ -2444,7 +2444,7 @@ namespace UnitTests.Net.Imap {
 				await gesendet.OpenAsync (FolderAccess.ReadOnly);
 
 				var messages = await gesendet.FetchAsync (0, 73, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
-				Assert.That (messages.Count, Is.EqualTo (74), "Count");
+				Assert.That (messages, Has.Count.EqualTo (74), "Count");
 
 				for (int i = 0; i < 15; i++) {
 					Assert.That (messages[i].ModSeq, Is.EqualTo ((ulong) 0), $"MODSEQ {i}");
@@ -2456,7 +2456,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (messages[i].Flags, Is.EqualTo (MessageFlags.Seen | MessageFlags.Recent), $"FLAGS {i}");
 
 					if (i == 35) {
-						Assert.That (messages[i].Keywords.Count, Is.EqualTo (1), $"KEYWORDS {i}");
+						Assert.That (messages[i].Keywords, Has.Count.EqualTo (1), $"KEYWORDS {i}");
 						Assert.That (messages[i].Keywords.Contains ("$FORWARDED"), Is.True, $"KEYWORDS {i}");
 					}
 				}

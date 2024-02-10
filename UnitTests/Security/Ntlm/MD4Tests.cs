@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -70,7 +70,7 @@ namespace UnitTests.Security.Ntlm {
 				Assert.That (md4.TransformBlock (text, 0, 16, output, 0), Is.EqualTo (16), "TransformBlock");
 				output = md4.TransformFinalBlock (text, 16, text.Length - 16);
 				Assert.That (output, Is.Not.Null, "TransformFinalBlock");
-				Assert.That (output.Length, Is.EqualTo (text.Length - 16), "TransformFinalBlock");
+				Assert.That (output, Has.Length.EqualTo (text.Length - 16), "TransformFinalBlock");
 				hash = md4.Hash;
 				Assert.That (hash, Is.Not.Null, "Hash");
 				for (int i = 0; i < hash.Length; i++)

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,7 @@ namespace UnitTests {
 			Assert.That (summary.TextBody, Is.Null, "TextBody");
 			Assert.That (summary.UniqueId, Is.EqualTo (UniqueId.Invalid), "UniqueId");
 			Assert.That (summary.Keywords, Is.Not.Null, "Keywords");
-			Assert.That (summary.Keywords.Count, Is.EqualTo (0), "Keywords");
+			Assert.That (summary.Keywords, Is.Empty, "Keywords");
 		}
 
 		[Test]
@@ -79,7 +79,7 @@ namespace UnitTests {
 				GMailThreadId = thrid
 			};
 
-			Assert.That (summary.GMailLabels.Count, Is.EqualTo (0), "GMailLabels");
+			Assert.That (summary.GMailLabels, Is.Empty, "GMailLabels");
 			Assert.That (summary.GMailMessageId, Is.EqualTo (msgid), "GMailMessageId");
 			Assert.That (summary.GMailThreadId, Is.EqualTo (thrid), "GMailThreadId");
 		}

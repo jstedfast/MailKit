@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -179,8 +179,7 @@ namespace UnitTests.Net.Pop3 {
 
 			Assert.That (command, Is.EqualTo (commands[index].Command), "Commands did not match.");
 
-			if (stream != null)
-				stream.Dispose ();
+			stream?.Dispose ();
 
 			stream = GetResourceStream (commands[index].Resource);
 			state = Pop3ReplayState.SendResponse;
@@ -228,8 +227,7 @@ namespace UnitTests.Net.Pop3 {
 
 		protected override void Dispose (bool disposing)
 		{
-			if (stream != null)
-				stream.Dispose ();
+			stream?.Dispose ();
 
 			base.Dispose (disposing);
 			disposed = true;

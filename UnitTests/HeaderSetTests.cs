@@ -74,21 +74,21 @@ namespace UnitTests {
 			Assert.That (headers.Add ("FROM"), Is.False, "Adding From duplicate #2");
 			Assert.That (headers.Add ("fRoM"), Is.False, "Adding From duplicate #3");
 			Assert.That (headers.Add (HeaderId.From), Is.False, "Adding From duplicate #4");
-			Assert.That (headers.Count, Is.EqualTo (1), "Count #1");
+			Assert.That (headers, Has.Count.EqualTo (1), "Count #1");
 
 			Assert.That (headers.Remove (HeaderId.From), Is.True, "Removing From");
 			Assert.That (headers.Remove ("From"), Is.False, "Removing From duplicate #1");
 			Assert.That (headers.Remove (HeaderId.From), Is.False, "Removing From duplicate #2");
-			Assert.That (headers.Count, Is.EqualTo (0), "Count #2");
+			Assert.That (headers, Is.Empty, "Count #2");
 
 			headers.AddRange (new HeaderId[] { HeaderId.Sender, HeaderId.From, HeaderId.ReplyTo });
-			Assert.That (headers.Count, Is.EqualTo (3), "Count #3");
+			Assert.That (headers, Has.Count.EqualTo (3), "Count #3");
 
 			headers.AddRange (new string[] { "to", "cc", "bcc" });
-			Assert.That (headers.Count, Is.EqualTo (6), "Count #4");
+			Assert.That (headers, Has.Count.EqualTo (6), "Count #4");
 
 			Assert.That (headers.Contains (HeaderId.To), Is.True, "Contains #1");
-			Assert.That (headers.Contains ("reply-to"), Is.True, "Contains #2");
+			Assert.That (headers, Does.Contain ("reply-to"), "Contains #2");
 
 			var results = new string[headers.Count];
 			headers.CopyTo (results, 0);
@@ -101,13 +101,13 @@ namespace UnitTests {
 			Assert.That (results[5], Is.EqualTo ("TO"));
 
 			foreach (var header in headers)
-				Assert.That (results.Contains (header), Is.True);
+				Assert.That (results, Does.Contain (header));
 
 			foreach (string header in ((IEnumerable) headers))
-				Assert.That (results.Contains (header), Is.True);
+				Assert.That (results, Does.Contain (header));
 
 			headers.Clear ();
-			Assert.That (headers.Count, Is.EqualTo (0), "Count after Clear");
+			Assert.That (headers, Is.Empty, "Count after Clear");
 		}
 	}
 }

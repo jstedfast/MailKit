@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -146,7 +146,7 @@ namespace UnitTests.Net.Imap {
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				var credentials = new NetworkCredential ("username", "password");
 
-				Assert.IsInstanceOf<ImapEngine> (client.SyncRoot, "SyncRoot");
+				Assert.That (client.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
@@ -228,9 +228,9 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.GetFoldersAsync (null));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.GetFoldersAsync (null, false));
 
-				Assert.That (client.PersonalNamespaces.Count, Is.EqualTo (1), "Personal");
-				Assert.That (client.SharedNamespaces.Count, Is.EqualTo (0), "Shared");
-				Assert.That (client.OtherNamespaces.Count, Is.EqualTo (0), "Other");
+				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "Personal");
+				Assert.That (client.SharedNamespaces, Is.Empty, "Shared");
+				Assert.That (client.OtherNamespaces, Is.Empty, "Other");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 
@@ -258,7 +258,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (client.Capabilities, Is.EqualTo (IMAP4rev2CoreCapabilities | ImapCapabilities.StartTLS | ImapCapabilities.LoginDisabled), "Capabilities");
-				Assert.That (client.AuthenticationMechanisms.Contains ("SCRAM-SHA-256"), Is.True, "AUTH=SCRAM-SHA-256");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("SCRAM-SHA-256"), "AUTH=SCRAM-SHA-256");
 			}
 		}
 
@@ -275,7 +275,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (client.Capabilities, Is.EqualTo (IMAP4rev2CoreCapabilities | ImapCapabilities.StartTLS | ImapCapabilities.LoginDisabled), "Capabilities");
-				Assert.That (client.AuthenticationMechanisms.Contains ("SCRAM-SHA-256"), Is.True, "AUTH=SCRAM-SHA-256");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("SCRAM-SHA-256"), "AUTH=SCRAM-SHA-256");
 			}
 		}
 
@@ -1033,8 +1033,8 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GreetingCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (1));
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (1));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 			}
 		}
 
@@ -1055,8 +1055,8 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GreetingCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (1));
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (1));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 			}
 		}
 
@@ -2196,12 +2196,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2244,12 +2244,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2304,12 +2304,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2352,12 +2352,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2409,12 +2409,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities | ImapCapabilities.LoginDisabled));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -2453,12 +2453,12 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities | ImapCapabilities.LoginDisabled));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -2510,9 +2510,9 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Capabilities, Is.EqualTo (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.SaslIR | ImapCapabilities.UidPlus | ImapCapabilities.Id |
 					ImapCapabilities.Unselect | ImapCapabilities.Children | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.LiteralPlus |
 					ImapCapabilities.Status));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 
 				client.AuthenticationMechanisms.Clear ();
 
@@ -2545,9 +2545,9 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Capabilities, Is.EqualTo (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.SaslIR | ImapCapabilities.UidPlus | ImapCapabilities.Id |
 					ImapCapabilities.Unselect | ImapCapabilities.Children | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.LiteralPlus |
 					ImapCapabilities.Status));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (2));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 
 				client.AuthenticationMechanisms.Clear ();
 
@@ -2598,13 +2598,13 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (6));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2672,13 +2672,13 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (6));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2854,13 +2854,13 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (6));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2903,13 +2903,13 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (6));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2964,12 +2964,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -3012,12 +3012,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -3121,12 +3121,12 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 					Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 					client.Timeout *= 2;
@@ -3173,12 +3173,12 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 					Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 					client.Timeout *= 2;
@@ -3236,12 +3236,12 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -3277,12 +3277,12 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -3333,13 +3333,13 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (6));
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 					Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 					client.Timeout *= 2;
@@ -3386,13 +3386,13 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-					Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (6));
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Expected SASL LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Expected SASL LOGIN auth mechanism");
 
 					Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 					client.Timeout *= 2;
@@ -3451,12 +3451,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				try {
 					client.Authenticate (new NetworkCredential ("username", "password"));
@@ -3492,12 +3492,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
@@ -3542,11 +3542,11 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (client.Capabilities, Is.EqualTo (DovecotInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), Is.True, "Expected SASL DIGEST-MD5 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("CRAM-MD5"), Is.True, "Expected SASL CRAM-MD5 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("CRAM-MD5"), "Expected SASL CRAM-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
 
 				// Note: we do not want to use SASL at all...
 				client.AuthenticationMechanisms.Clear ();
@@ -3559,8 +3559,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.Capabilities, Is.EqualTo (DovecotAuthenticatedCapabilities));
 				Assert.That (client.InternationalizationLevel, Is.EqualTo (1), "Expected I18NLEVEL=1");
-				Assert.That (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), Is.True, "Expected THREAD=ORDEREDSUBJECT");
-				Assert.That (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Expected THREAD=REFERENCES");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
 				client.EnableQuickResync ();
 
@@ -3584,11 +3584,11 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (client.Capabilities, Is.EqualTo (DovecotInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), Is.True, "Expected SASL DIGEST-MD5 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("CRAM-MD5"), Is.True, "Expected SASL CRAM-MD5 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("CRAM-MD5"), "Expected SASL CRAM-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
 
 				// Note: we do not want to use SASL at all...
 				client.AuthenticationMechanisms.Clear ();
@@ -3601,8 +3601,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.Capabilities, Is.EqualTo (DovecotAuthenticatedCapabilities));
 				Assert.That (client.InternationalizationLevel, Is.EqualTo (1), "Expected I18NLEVEL=1");
-				Assert.That (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), Is.True, "Expected THREAD=ORDEREDSUBJECT");
-				Assert.That (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Expected THREAD=REFERENCES");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
 				await client.EnableQuickResyncAsync ();
 
@@ -3622,7 +3622,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (folder.Attributes, Is.EqualTo (attributes), "Attributes");
 			Assert.That (folder.IsSubscribed, Is.EqualTo (subscribed), "IsSubscribed");
 			Assert.That (folder.HighestModSeq, Is.EqualTo (highestmodseq), "HighestModSeq");
-			Assert.That (folder.Count, Is.EqualTo (count), "Count");
+			Assert.That (folder, Has.Count.EqualTo (count), "Count");
 			Assert.That (folder.Recent, Is.EqualTo (recent), "Recent");
 			Assert.That (folder.Unread, Is.EqualTo (unread), "Unread");
 			Assert.That (folder.UidNext.HasValue ? folder.UidNext.Value.Id : (uint) 0, Is.EqualTo (uidnext), "UidNext");
@@ -3678,12 +3678,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -3698,7 +3698,7 @@ namespace UnitTests.Net.Imap {
 
 				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread | StatusItems.Size | StatusItems.MailboxId;
 				var folders = client.GetFolders (client.PersonalNamespaces[0], all, true);
-				Assert.That (folders.Count, Is.EqualTo (9), "Unexpected folder count.");
+				Assert.That (folders, Has.Count.EqualTo (9), "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
@@ -3722,7 +3722,7 @@ namespace UnitTests.Net.Imap {
 				// Now make the same query but disable LIST-STATUS
 				client.Capabilities &= ~ImapCapabilities.ListStatus;
 				folders = client.GetFolders (client.PersonalNamespaces[0], all, false);
-				Assert.That (folders.Count, Is.EqualTo (9), "Unexpected folder count.");
+				Assert.That (folders, Has.Count.EqualTo (9), "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
@@ -3746,7 +3746,7 @@ namespace UnitTests.Net.Imap {
 				// Now make the same query but disable LIST-EXTENDED
 				client.Capabilities &= ~ImapCapabilities.ListExtended;
 				folders = client.GetFolders (client.PersonalNamespaces[0], all, true);
-				Assert.That (folders.Count, Is.EqualTo (9), "Unexpected folder count.");
+				Assert.That (folders, Has.Count.EqualTo (9), "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
@@ -3786,12 +3786,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -3806,7 +3806,7 @@ namespace UnitTests.Net.Imap {
 
 				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread | StatusItems.Size | StatusItems.MailboxId;
 				var folders = await client.GetFoldersAsync (client.PersonalNamespaces[0], all, true);
-				Assert.That (folders.Count, Is.EqualTo (9), "Unexpected folder count.");
+				Assert.That (folders, Has.Count.EqualTo (9), "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
@@ -3830,7 +3830,7 @@ namespace UnitTests.Net.Imap {
 				// Now make the same query but disable LIST-STATUS
 				client.Capabilities &= ~ImapCapabilities.ListStatus;
 				folders = await client.GetFoldersAsync (client.PersonalNamespaces[0], all, false);
-				Assert.That (folders.Count, Is.EqualTo (9), "Unexpected folder count.");
+				Assert.That (folders, Has.Count.EqualTo (9), "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
@@ -3854,7 +3854,7 @@ namespace UnitTests.Net.Imap {
 				// Now make the same query but disable LIST-STATUS
 				client.Capabilities &= ~ImapCapabilities.ListExtended;
 				folders = await client.GetFoldersAsync (client.PersonalNamespaces[0], all, true);
-				Assert.That (folders.Count, Is.EqualTo (9), "Unexpected folder count.");
+				Assert.That (folders, Has.Count.EqualTo (9), "Unexpected folder count.");
 
 				AssertFolder (folders[0], "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (folders[1], "[Gmail]", null, FolderAttributes.HasChildren | FolderAttributes.NonExistent, true, 0, 0, 0, 0, 0, 0, 0);
@@ -3908,12 +3908,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -3959,12 +3959,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -4157,11 +4157,11 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (DovecotInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), Is.True, "Expected SASL DIGEST-MD5 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("CRAM-MD5"), Is.True, "Expected SASL CRAM-MD5 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("CRAM-MD5"), "Expected SASL CRAM-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
 
 				// Note: we do not want to use SASL at all...
 				client.AuthenticationMechanisms.Clear ();
@@ -4174,8 +4174,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.Capabilities, Is.EqualTo (DovecotAuthenticatedCapabilities));
 				Assert.That (client.InternationalizationLevel, Is.EqualTo (1), "Expected I18NLEVEL=1");
-				Assert.That (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), Is.True, "Expected THREAD=ORDEREDSUBJECT");
-				Assert.That (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Expected THREAD=REFERENCES");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 				// TODO: verify CONTEXT=SEARCH
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
@@ -4236,7 +4236,7 @@ namespace UnitTests.Net.Imap {
 				var statusItems = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread;
 
 				var folders = personal.GetSubfolders (statusItems, false).ToArray ();
-				Assert.That (folders.Length, Is.EqualTo (7), "Expected 7 folders");
+				Assert.That (folders, Has.Length.EqualTo (7), "Expected 7 folders");
 
 				var expectedFolderNames = new [] { "Archives", "Drafts", "Junk", "Sent Messages", "Trash", "INBOX", "NIL" };
 				var expectedUidValidities = new [] { 1436832059, 1436832060, 1436832061, 1436832062, 1436832063, 1436832057, 1436832057 };
@@ -4251,7 +4251,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (folders[i].Name, Is.EqualTo (expectedFolderNames[i]), "Name did not match");
 					Assert.That (folders[i].UidValidity, Is.EqualTo (expectedUidValidities[i]), "UidValidity did not match");
 					Assert.That (folders[i].HighestModSeq, Is.EqualTo (expectedHighestModSeq[i]), "HighestModSeq did not match");
-					Assert.That (folders[i].Count, Is.EqualTo (expectedMessages[i]), "Count did not match");
+					Assert.That (folders[i], Has.Count.EqualTo (expectedMessages[i]), "Count did not match");
 					Assert.That (folders[i].Recent, Is.EqualTo (expectedRecent[i]), "Recent did not match");
 					Assert.That (folders[i].Unread, Is.EqualTo (expectedUnseen[i]), "Unread did not match");
 				}
@@ -4265,7 +4265,7 @@ namespace UnitTests.Net.Imap {
 
 				// Use MULTIAPPEND to append some test messages
 				var appended = folder.Append (messages, flags, internalDates);
-				Assert.That (appended.Count, Is.EqualTo (8), "Unexpected number of messages appended");
+				Assert.That (appended, Has.Count.EqualTo (8), "Unexpected number of messages appended");
 				foreach (var message in messages)
 					message.Dispose ();
 
@@ -4274,7 +4274,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (folder.Supports (FolderFeature.ModSequences), Is.True);
 				Assert.That (folder.PermanentFlags, Is.EqualTo (expectedPermanentFlags), "UnitTests.Messages PERMANENTFLAGS");
 				Assert.That (folder.AcceptedFlags, Is.EqualTo (expectedFlags), "UnitTests.Messages FLAGS");
-				Assert.That (folder.Count, Is.EqualTo (8), "UnitTests.Messages EXISTS");
+				Assert.That (folder, Has.Count.EqualTo (8), "UnitTests.Messages EXISTS");
 				Assert.That (folder.Recent, Is.EqualTo (8), "UnitTests.Messages RECENT");
 				Assert.That (folder.FirstUnread, Is.EqualTo (0), "UnitTests.Messages UNSEEN");
 				Assert.That (folder.UidValidity, Is.EqualTo (1436832084U), "UnitTests.Messages UIDVALIDITY");
@@ -4310,8 +4310,8 @@ namespace UnitTests.Net.Imap {
 
 				// Make some FLAGS changes to our messages so we can test QRESYNC
 				folder.AddFlags (appended, MessageFlags.Seen, true);
-				Assert.That (flagsChanged.Count, Is.EqualTo (0), "Unexpected number of FlagsChanged events");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (8), "Unexpected number of ModSeqChanged events");
+				Assert.That (flagsChanged, Is.Empty, "Unexpected number of FlagsChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (8), "Unexpected number of ModSeqChanged events");
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.That (modSeqChanged[i].Index, Is.EqualTo (i), $"Unexpected modSeqChanged[{i}].Index");
 					Assert.That (modSeqChanged[i].UniqueId.Value.Id, Is.EqualTo (i + 1), $"Unexpected modSeqChanged[{i}].UniqueId");
@@ -4327,8 +4327,8 @@ namespace UnitTests.Net.Imap {
 					appended[2] // C
 				};
 				folder.AddFlags (answered, MessageFlags.Answered, true);
-				Assert.That (flagsChanged.Count, Is.EqualTo (0), "Unexpected number of FlagsChanged events");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (3), "Unexpected number of ModSeqChanged events");
+				Assert.That (flagsChanged, Is.Empty, "Unexpected number of FlagsChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (3), "Unexpected number of ModSeqChanged events");
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.That (modSeqChanged[i].Index, Is.EqualTo (i), $"Unexpected modSeqChanged[{i}].Index");
 					Assert.That (modSeqChanged[i].UniqueId.Value.Id, Is.EqualTo (i + 1), $"Unexpected modSeqChanged[{i}].UniqueId");
@@ -4343,8 +4343,8 @@ namespace UnitTests.Net.Imap {
 				var deleted = new UniqueIdSet (SortOrder.Ascending);
 				deleted.Add (appended[7]); // H
 				folder.AddFlags (deleted, MessageFlags.Deleted, true);
-				Assert.That (flagsChanged.Count, Is.EqualTo (0), "Unexpected number of FlagsChanged events");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (1), "Unexpected number of ModSeqChanged events");
+				Assert.That (flagsChanged, Is.Empty, "Unexpected number of FlagsChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (1), "Unexpected number of ModSeqChanged events");
 				Assert.That (modSeqChanged[0].Index, Is.EqualTo (7), $"Unexpected modSeqChanged[{0}].Index");
 				Assert.That (modSeqChanged[0].UniqueId.Value.Id, Is.EqualTo (8), $"Unexpected modSeqChanged[{0}].UniqueId");
 				Assert.That (modSeqChanged[0].ModSeq, Is.EqualTo (5), $"Unexpected modSeqChanged[{0}].ModSeq");
@@ -4353,8 +4353,8 @@ namespace UnitTests.Net.Imap {
 				flagsChanged.Clear ();
 
 				folder.Expunge (deleted);
-				Assert.That (vanished.Count, Is.EqualTo (1), "Expected MessagesVanished event");
-				Assert.That (vanished[0].UniqueIds.Count, Is.EqualTo (1), "Unexpected number of messages vanished");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Expected MessagesVanished event");
+				Assert.That (vanished[0].UniqueIds, Has.Count.EqualTo (1), "Unexpected number of messages vanished");
 				Assert.That (vanished[0].UniqueIds[0].Id, Is.EqualTo (8), "Unexpected UID for vanished message");
 				Assert.That (vanished[0].Earlier, Is.False, "Expected EARLIER to be false");
 				Assert.That (recentChanged, Is.True, "Expected RecentChanged event");
@@ -4362,15 +4362,15 @@ namespace UnitTests.Net.Imap {
 				vanished.Clear ();
 
 				Assert.That (folder.Supports (FolderFeature.Threading), Is.True, "Supports threading");
-				Assert.That (folder.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Supports threading by References");
-				Assert.That (folder.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), Is.True, "Supports threading by OrderedSubject");
+				Assert.That (folder.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Supports threading by References");
+				Assert.That (folder.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Supports threading by OrderedSubject");
 
 				// Verify that THREAD works correctly
 				var threaded = folder.Thread (ThreadingAlgorithm.References, SearchQuery.All);
-				Assert.That (threaded.Count, Is.EqualTo (2), "Unexpected number of root nodes in threaded results");
+				Assert.That (threaded, Has.Count.EqualTo (2), "Unexpected number of root nodes in threaded results");
 
 				threaded = folder.Thread (UniqueIdRange.All, ThreadingAlgorithm.OrderedSubject, SearchQuery.All);
-				Assert.That (threaded.Count, Is.EqualTo (7), "Unexpected number of root nodes in threaded results");
+				Assert.That (threaded, Has.Count.EqualTo (7), "Unexpected number of root nodes in threaded results");
 
 				// UNSELECT the folder so we can re-open it using QRESYNC
 				folder.Close ();
@@ -4379,8 +4379,8 @@ namespace UnitTests.Net.Imap {
 				Assert.That (folder.Supports (FolderFeature.QuickResync), Is.True, "Supports QRESYNC");
 				access = folder.Open (FolderAccess.ReadWrite, uidValidity, highestModSeq, appended);
 				Assert.That (access, Is.EqualTo (FolderAccess.ReadWrite), "Expected UnitTests.Messages to be opened in READ-WRITE mode");
-				Assert.That (flagsChanged.Count, Is.EqualTo (7), "Unexpected number of MessageFlagsChanged events");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (7), "Unexpected number of ModSeqChanged events");
+				Assert.That (flagsChanged, Has.Count.EqualTo (7), "Unexpected number of MessageFlagsChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (7), "Unexpected number of ModSeqChanged events");
 				for (int i = 0; i < flagsChanged.Count; i++) {
 					var messageFlags = MessageFlags.Seen | MessageFlags.Draft;
 
@@ -4400,9 +4400,9 @@ namespace UnitTests.Net.Imap {
 				modSeqChanged.Clear ();
 				flagsChanged.Clear ();
 
-				Assert.That (vanished.Count, Is.EqualTo (1), "Unexpected number of MessagesVanished events");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Unexpected number of MessagesVanished events");
 				Assert.That (vanished[0].Earlier, Is.True, "Expected VANISHED EARLIER");
-				Assert.That (vanished[0].UniqueIds.Count, Is.EqualTo (1), "Unexpected number of messages vanished");
+				Assert.That (vanished[0].UniqueIds, Has.Count.EqualTo (1), "Unexpected number of messages vanished");
 				Assert.That (vanished[0].UniqueIds[0].Id, Is.EqualTo (8), "Unexpected UID for vanished message");
 				vanished.Clear ();
 
@@ -4421,8 +4421,8 @@ namespace UnitTests.Net.Imap {
 				// Use SEARCH and FETCH to get the same info
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var changed = folder.Search (searchOptions, SearchQuery.ChangedSince (highestModSeq));
-				Assert.That (changed.UniqueIds.Count, Is.EqualTo (7), "Unexpected number of UIDs");
-				Assert.That (changed.Relevancy.Count, Is.EqualTo (changed.Count), "Unexpected number of relevancy scores");
+				Assert.That (changed.UniqueIds, Has.Count.EqualTo (7), "Unexpected number of UIDs");
+				Assert.That (changed.Relevancy, Has.Count.EqualTo (changed.Count), "Unexpected number of relevancy scores");
 				Assert.That (changed.ModSeq.HasValue, Is.True, "Expected the ModSeq property to be set");
 				Assert.That (changed.ModSeq.Value, Is.EqualTo (4), "Unexpected ModSeq value");
 				Assert.That (changed.Min.Value.Id, Is.EqualTo (1), "Unexpected Min");
@@ -4430,7 +4430,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (changed.Count, Is.EqualTo (7), "Unexpected Count");
 
 				var fetched = folder.Fetch (changed.UniqueIds, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
-				Assert.That (fetched.Count, Is.EqualTo (7), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (7), "Unexpected number of messages fetched");
 				for (int i = 0; i < fetched.Count; i++) {
 					Assert.That (fetched[i].Index, Is.EqualTo (i), "Unexpected Index");
 					Assert.That (fetched[i].UniqueId.Id, Is.EqualTo (i + 1), "Unexpected UniqueId");
@@ -4442,18 +4442,18 @@ namespace UnitTests.Net.Imap {
 					Assert.That (fetched[i].Index, Is.EqualTo (i), "Unexpected Index");
 					Assert.That (fetched[i].UniqueId.Id, Is.EqualTo (i + 1), "Unexpected UniqueId");
 				}
-				Assert.That (fetched.Count, Is.EqualTo (7), "Unexpected number of messages fetched");
-				Assert.That (vanished.Count, Is.EqualTo (1), "Unexpected number of MessagesVanished events");
+				Assert.That (fetched, Has.Count.EqualTo (7), "Unexpected number of messages fetched");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Unexpected number of MessagesVanished events");
 				Assert.That (vanished[0].Earlier, Is.True, "Expected VANISHED EARLIER");
-				Assert.That (vanished[0].UniqueIds.Count, Is.EqualTo (1), "Unexpected number of messages vanished");
+				Assert.That (vanished[0].UniqueIds, Has.Count.EqualTo (1), "Unexpected number of messages vanished");
 				Assert.That (vanished[0].UniqueIds[0].Id, Is.EqualTo (8), "Unexpected UID for vanished message");
 				vanished.Clear ();
 
 				// Use SORT to order by reverse arrival order
 				var orderBy = new OrderBy[] { new OrderBy (OrderByType.Arrival, SortOrder.Descending) };
 				var sorted = folder.Sort (searchOptions, SearchQuery.All, orderBy);
-				Assert.That (sorted.UniqueIds.Count, Is.EqualTo (7), "Unexpected number of UIDs");
-				Assert.That (sorted.Relevancy.Count, Is.EqualTo (sorted.Count), "Unexpected number of relevancy scores");
+				Assert.That (sorted.UniqueIds, Has.Count.EqualTo (7), "Unexpected number of UIDs");
+				Assert.That (sorted.Relevancy, Has.Count.EqualTo (sorted.Count), "Unexpected number of relevancy scores");
 				for (int i = 0; i < sorted.UniqueIds.Count; i++)
 					Assert.That (sorted.UniqueIds[i].Id, Is.EqualTo (7 - i), $"Unexpected value for UniqueId[{i}]");
 				Assert.That (sorted.ModSeq.HasValue, Is.False, "Expected the ModSeq property to be null");
@@ -4463,7 +4463,7 @@ namespace UnitTests.Net.Imap {
 
 				// Verify that optimizing NOT queries works correctly
 				var uids = folder.Search (SearchQuery.Not (SearchQuery.Deleted).And (SearchQuery.Not (SearchQuery.NotSeen)));
-				Assert.That (uids.Count, Is.EqualTo (7), "Unexpected number of UIDs");
+				Assert.That (uids, Has.Count.EqualTo (7), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
@@ -4473,14 +4473,14 @@ namespace UnitTests.Net.Imap {
 
 				// COPY messages to the Destination folder
 				var copied = folder.CopyTo (uids, destination);
-				Assert.That (copied.Source.Count, Is.EqualTo (uids.Count), "Unexpetced Source.Count");
-				Assert.That (copied.Destination.Count, Is.EqualTo (uids.Count), "Unexpetced Destination.Count");
+				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpetced Source.Count");
+				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpetced Destination.Count");
 
 				// MOVE messages to the Destination folder
 				var moved = folder.MoveTo (uids, destination);
-				Assert.That (copied.Source.Count, Is.EqualTo (uids.Count), "Unexpetced Source.Count");
-				Assert.That (copied.Destination.Count, Is.EqualTo (uids.Count), "Unexpetced Destination.Count");
-				Assert.That (vanished.Count, Is.EqualTo (1), "Expected VANISHED event");
+				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpetced Source.Count");
+				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpetced Destination.Count");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Expected VANISHED event");
 				vanished.Clear ();
 
 				destination.Status (statusItems);
@@ -4516,53 +4516,53 @@ namespace UnitTests.Net.Imap {
 				fetched = destination.Fetch (UniqueIdRange.All, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = destination.Fetch (0, -1, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = destination.Fetch (indexes, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = destination.Fetch (0, -1, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = destination.Fetch (indexes, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				// Fetch
 				fetched = destination.Fetch (UniqueIdRange.All, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = destination.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = destination.Fetch (indexes, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = destination.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = destination.Fetch (indexes, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                             MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                             MessageSummaryItems.References);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				uids = new UniqueIdSet (SortOrder.Ascending);
 
@@ -4574,16 +4574,16 @@ namespace UnitTests.Net.Imap {
 				}
 
 				using (var entity = destination.GetBodyPart (fetched[0].UniqueId, fetched[0].TextBody))
-					Assert.IsInstanceOf<TextPart> (entity);
+					Assert.That (entity, Is.InstanceOf<TextPart> ());
 
 				using (var entity = destination.GetBodyPart (fetched[0].Index, fetched[0].TextBody))
-					Assert.IsInstanceOf<TextPart> (entity);
+					Assert.That (entity, Is.InstanceOf<TextPart> ());
 
 				using (var entity = destination.GetBodyPart (fetched[1].UniqueId, fetched[1].TextBody))
-					Assert.IsInstanceOf<TextPart> (entity);
+					Assert.That (entity, Is.InstanceOf<TextPart> ());
 
 				using (var entity = destination.GetBodyPart (fetched[1].Index, fetched[1].TextBody))
-					Assert.IsInstanceOf<TextPart> (entity);
+					Assert.That (entity, Is.InstanceOf<TextPart> ());
 
 				var headers =  destination.GetHeaders (fetched[0].UniqueId);
 				Assert.That (headers[HeaderId.From], Is.EqualTo ("Unit Tests <unit-tests@mimekit.net>"), "GetHeaders(UniqueId) failed to match From header");
@@ -4690,55 +4690,55 @@ namespace UnitTests.Net.Imap {
 				var custom = new HashSet<string> { "$MailKit" };
 
 				var unchanged1 = destination.AddFlags (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
-				Assert.That (modSeqChanged.Count, Is.EqualTo (14), "Unexpected number of ModSeqChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (14), "Unexpected number of ModSeqChanged events");
 				Assert.That (destination.HighestModSeq, Is.EqualTo (5));
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.That (modSeqChanged[i].Index, Is.EqualTo (i), $"Unexpected value for modSeqChanged[{i}].Index");
 					Assert.That (modSeqChanged[i].ModSeq, Is.EqualTo (5), $"Unexpected value for modSeqChanged[{i}].ModSeq");
 				}
-				Assert.That (unchanged1.Count, Is.EqualTo (2), "[MODIFIED uid-set]");
+				Assert.That (unchanged1, Has.Count.EqualTo (2), "[MODIFIED uid-set]");
 				Assert.That (unchanged1[0].Id, Is.EqualTo (7), "unchanged uids[0]");
 				Assert.That (unchanged1[1].Id, Is.EqualTo (9), "unchanged uids[1]");
 				modSeqChanged.Clear ();
 
 				var unchanged2 = destination.SetFlags (new int[] { 0, 1, 2, 3, 4, 5, 6 }, destination.HighestModSeq, MessageFlags.Seen | MessageFlags.Deleted, custom, true);
-				Assert.That (modSeqChanged.Count, Is.EqualTo (7), "Unexpected number of ModSeqChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (7), "Unexpected number of ModSeqChanged events");
 				Assert.That (destination.HighestModSeq, Is.EqualTo (6));
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.That (modSeqChanged[i].Index, Is.EqualTo (i), $"Unexpected value for modSeqChanged[{i}].Index");
 					Assert.That (modSeqChanged[i].ModSeq, Is.EqualTo (6), $"Unexpected value for modSeqChanged[{i}].ModSeq");
 				}
-				Assert.That (unchanged2.Count, Is.EqualTo (2), "[MODIFIED seq-set]");
+				Assert.That (unchanged2, Has.Count.EqualTo (2), "[MODIFIED seq-set]");
 				Assert.That (unchanged2[0], Is.EqualTo (6), "unchanged indexes[0]");
 				Assert.That (unchanged2[1], Is.EqualTo (8), "unchanged indexes[1]");
 				modSeqChanged.Clear ();
 
 				var results = destination.Search (uids, SearchQuery.New.Or (SearchQuery.Old.Or (SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasKeyword ("$MailKit").Or (SearchQuery.NotKeyword ("$MailKit")))))))))))))));
-				Assert.That (results.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (results, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				var matches = destination.Search (searchOptions, uids, SearchQuery.LargerThan (256).And (SearchQuery.SmallerThan (512)));
 				var expectedMatchedUids = new uint[] { 2, 3, 4, 5, 6, 9, 10, 11, 12, 13 };
 				Assert.That (matches.Count, Is.EqualTo (10), "Unexpected COUNT");
 				Assert.That (matches.Max.Value.Id, Is.EqualTo (13), "Unexpected MAX");
 				Assert.That (matches.Min.Value.Id, Is.EqualTo (2), "Unexpected MIN");
-				Assert.That (matches.UniqueIds.Count, Is.EqualTo (10), "Unexpected number of UIDs");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (10), "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (expectedMatchedUids[i]));
-				Assert.That (matches.Relevancy.Count, Is.EqualTo (matches.Count), "Unexpected number of relevancy scores");
+				Assert.That (matches.Relevancy, Has.Count.EqualTo (matches.Count), "Unexpected number of relevancy scores");
 
 				orderBy = new OrderBy[] { OrderBy.ReverseDate, OrderBy.Subject, OrderBy.DisplayFrom, OrderBy.Size };
 				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentSince (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
 				var deliveredDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.DeliveredBefore (new DateTime (2016, 10, 12)), SearchQuery.DeliveredAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.DeliveredOn (new DateTime (2016, 10, 11))));
 				results = destination.Sort (sentDateQuery.Or (deliveredDateQuery), orderBy);
 				var expectedSortByDateResults = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
-				Assert.That (results.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (results, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < results.Count; i++)
 					Assert.That (results[i].Id, Is.EqualTo (expectedSortByDateResults[i]));
 
 				var stringQuery = SearchQuery.BccContains ("xyz").Or (SearchQuery.CcContains ("xyz").Or (SearchQuery.FromContains ("xyz").Or (SearchQuery.ToContains ("xyz").Or (SearchQuery.SubjectContains ("xyz").Or (SearchQuery.HeaderContains ("Message-Id", "mimekit.net").Or (SearchQuery.BodyContains ("This is the message body.").Or (SearchQuery.MessageContains ("message"))))))));
 				orderBy = new OrderBy[] { OrderBy.From, OrderBy.To, OrderBy.Cc };
 				results = destination.Sort (uids, stringQuery, orderBy);
-				Assert.That (results.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (results, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < results.Count; i++)
 					Assert.That (results[i].Id, Is.EqualTo (i + 1));
 
@@ -4747,10 +4747,10 @@ namespace UnitTests.Net.Imap {
 				Assert.That (matches.Count, Is.EqualTo (14), "Unexpected COUNT");
 				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Unexpected MAX");
 				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Unexpected MIN");
-				Assert.That (matches.UniqueIds.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
-				Assert.That (matches.Relevancy.Count, Is.EqualTo (matches.Count), "Unexpected number of relevancy scores");
+				Assert.That (matches.Relevancy, Has.Count.EqualTo (matches.Count), "Unexpected number of relevancy scores");
 
 				client.Capabilities &= ~ImapCapabilities.ESearch;
 				matches = ((ImapFolder) destination).Search ("ALL");
@@ -4759,7 +4759,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (matches.Min.HasValue, Is.True, "MIN should always be set");
 				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Unexpected MIN value");
 				Assert.That (matches.Count, Is.EqualTo (14), "COUNT should always be set");
-				Assert.That (matches.UniqueIds.Count, Is.EqualTo (14));
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (14));
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
 
@@ -4770,7 +4770,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (matches.Min.HasValue, Is.True, "MIN should always be set");
 				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Unexpected MIN value");
 				Assert.That (matches.Count, Is.EqualTo (14), "COUNT should always be set");
-				Assert.That (matches.UniqueIds.Count, Is.EqualTo (14));
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (14));
 				var expectedSortByReverseArrivalResults = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (expectedSortByReverseArrivalResults[i]));
@@ -4781,8 +4781,8 @@ namespace UnitTests.Net.Imap {
 
 				destination.Expunge ();
 				Assert.That (destination.HighestModSeq, Is.EqualTo (7));
-				Assert.That (vanished.Count, Is.EqualTo (1), "Unexpected number of Vanished events");
-				Assert.That (vanished[0].UniqueIds.Count, Is.EqualTo (14), "Unexpected number of UIDs in Vanished event");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Unexpected number of Vanished events");
+				Assert.That (vanished[0].UniqueIds, Has.Count.EqualTo (14), "Unexpected number of UIDs in Vanished event");
 				for (int i = 0; i < vanished[0].UniqueIds.Count; i++)
 					Assert.That (vanished[0].UniqueIds[i].Id, Is.EqualTo (i + 1));
 				Assert.That (vanished[0].Earlier, Is.False, "Unexpected value for Earlier");
@@ -4819,11 +4819,11 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (DovecotInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), Is.True, "Expected SASL DIGEST-MD5 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("CRAM-MD5"), Is.True, "Expected SASL CRAM-MD5 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("NTLM"), Is.True, "Expected SASL NTLM auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("CRAM-MD5"), "Expected SASL CRAM-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
 
 				// Note: we do not want to use SASL at all...
 				client.AuthenticationMechanisms.Clear ();
@@ -4836,8 +4836,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.Capabilities, Is.EqualTo (DovecotAuthenticatedCapabilities));
 				Assert.That (client.InternationalizationLevel, Is.EqualTo (1), "Expected I18NLEVEL=1");
-				Assert.That (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject), Is.True, "Expected THREAD=ORDEREDSUBJECT");
-				Assert.That (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References), Is.True, "Expected THREAD=REFERENCES");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 				// TODO: verify CONTEXT=SEARCH
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
@@ -4886,7 +4886,7 @@ namespace UnitTests.Net.Imap {
 				var statusItems = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread;
 
 				var folders = (await personal.GetSubfoldersAsync (statusItems, false)).ToArray ();
-				Assert.That (folders.Length, Is.EqualTo (7), "Expected 7 folders");
+				Assert.That (folders, Has.Length.EqualTo (7), "Expected 7 folders");
 
 				var expectedFolderNames = new [] { "Archives", "Drafts", "Junk", "Sent Messages", "Trash", "INBOX", "NIL" };
 				var expectedUidValidities = new [] { 1436832059, 1436832060, 1436832061, 1436832062, 1436832063, 1436832057, 1436832057 };
@@ -4901,7 +4901,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (folders[i].Name, Is.EqualTo (expectedFolderNames[i]), "Name did not match");
 					Assert.That (folders[i].UidValidity, Is.EqualTo (expectedUidValidities[i]), "UidValidity did not match");
 					Assert.That (folders[i].HighestModSeq, Is.EqualTo (expectedHighestModSeq[i]), "HighestModSeq did not match");
-					Assert.That (folders[i].Count, Is.EqualTo (expectedMessages[i]), "Count did not match");
+					Assert.That (folders[i], Has.Count.EqualTo (expectedMessages[i]), "Count did not match");
 					Assert.That (folders[i].Recent, Is.EqualTo (expectedRecent[i]), "Recent did not match");
 					Assert.That (folders[i].Unread, Is.EqualTo (expectedUnseen[i]), "Unread did not match");
 				}
@@ -4915,7 +4915,7 @@ namespace UnitTests.Net.Imap {
 
 				// Use MULTIAPPEND to append some test messages
 				var appended = await folder.AppendAsync (messages, flags, internalDates);
-				Assert.That (appended.Count, Is.EqualTo (8), "Unexpected number of messages appended");
+				Assert.That (appended, Has.Count.EqualTo (8), "Unexpected number of messages appended");
 				foreach (var message in messages)
 					message.Dispose ();
 
@@ -4923,7 +4923,7 @@ namespace UnitTests.Net.Imap {
 				var access = await folder.OpenAsync (FolderAccess.ReadWrite);
 				Assert.That (folder.PermanentFlags, Is.EqualTo (expectedPermanentFlags), "UnitTests.Messages PERMANENTFLAGS");
 				Assert.That (folder.AcceptedFlags, Is.EqualTo (expectedFlags), "UnitTests.Messages FLAGS");
-				Assert.That (folder.Count, Is.EqualTo (8), "UnitTests.Messages EXISTS");
+				Assert.That (folder, Has.Count.EqualTo (8), "UnitTests.Messages EXISTS");
 				Assert.That (folder.Recent, Is.EqualTo (8), "UnitTests.Messages RECENT");
 				Assert.That (folder.FirstUnread, Is.EqualTo (0), "UnitTests.Messages UNSEEN");
 				Assert.That (folder.UidValidity, Is.EqualTo (1436832084U), "UnitTests.Messages UIDVALIDITY");
@@ -4959,8 +4959,8 @@ namespace UnitTests.Net.Imap {
 
 				// Make some FLAGS changes to our messages so we can test QRESYNC
 				await folder.AddFlagsAsync (appended, MessageFlags.Seen, true);
-				Assert.That (flagsChanged.Count, Is.EqualTo (0), "Unexpected number of FlagsChanged events");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (8), "Unexpected number of ModSeqChanged events");
+				Assert.That (flagsChanged, Is.Empty, "Unexpected number of FlagsChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (8), "Unexpected number of ModSeqChanged events");
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.That (modSeqChanged[i].Index, Is.EqualTo (i), $"Unexpected modSeqChanged[{i}].Index");
 					Assert.That (modSeqChanged[i].UniqueId.Value.Id, Is.EqualTo (i + 1), $"Unexpected modSeqChanged[{i}].UniqueId");
@@ -4976,8 +4976,8 @@ namespace UnitTests.Net.Imap {
 					appended[2] // C
 				};
 				await folder.AddFlagsAsync (answered, MessageFlags.Answered, true);
-				Assert.That (flagsChanged.Count, Is.EqualTo (0), "Unexpected number of FlagsChanged events");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (3), "Unexpected number of ModSeqChanged events");
+				Assert.That (flagsChanged, Is.Empty, "Unexpected number of FlagsChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (3), "Unexpected number of ModSeqChanged events");
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.That (modSeqChanged[i].Index, Is.EqualTo (i), $"Unexpected modSeqChanged[{i}].Index");
 					Assert.That (modSeqChanged[i].UniqueId.Value.Id, Is.EqualTo (i + 1), $"Unexpected modSeqChanged[{i}].UniqueId");
@@ -4992,8 +4992,8 @@ namespace UnitTests.Net.Imap {
 				var deleted = new UniqueIdSet (SortOrder.Ascending);
 				deleted.Add (appended[7]); // H
 				await folder.AddFlagsAsync (deleted, MessageFlags.Deleted, true);
-				Assert.That (flagsChanged.Count, Is.EqualTo (0), "Unexpected number of FlagsChanged events");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (1), "Unexpected number of ModSeqChanged events");
+				Assert.That (flagsChanged, Is.Empty, "Unexpected number of FlagsChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (1), "Unexpected number of ModSeqChanged events");
 				Assert.That (modSeqChanged[0].Index, Is.EqualTo (7), $"Unexpected modSeqChanged[{0}].Index");
 				Assert.That (modSeqChanged[0].UniqueId.Value.Id, Is.EqualTo (8), $"Unexpected modSeqChanged[{0}].UniqueId");
 				Assert.That (modSeqChanged[0].ModSeq, Is.EqualTo (5), $"Unexpected modSeqChanged[{0}].ModSeq");
@@ -5002,8 +5002,8 @@ namespace UnitTests.Net.Imap {
 				flagsChanged.Clear ();
 
 				await folder.ExpungeAsync (deleted);
-				Assert.That (vanished.Count, Is.EqualTo (1), "Expected MessagesVanished event");
-				Assert.That (vanished[0].UniqueIds.Count, Is.EqualTo (1), "Unexpected number of messages vanished");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Expected MessagesVanished event");
+				Assert.That (vanished[0].UniqueIds, Has.Count.EqualTo (1), "Unexpected number of messages vanished");
 				Assert.That (vanished[0].UniqueIds[0].Id, Is.EqualTo (8), "Unexpected UID for vanished message");
 				Assert.That (vanished[0].Earlier, Is.False, "Expected EARLIER to be false");
 				Assert.That (recentChanged, Is.True, "Expected RecentChanged event");
@@ -5012,10 +5012,10 @@ namespace UnitTests.Net.Imap {
 
 				// Verify that THREAD works correctly
 				var threaded = await folder.ThreadAsync (ThreadingAlgorithm.References, SearchQuery.All);
-				Assert.That (threaded.Count, Is.EqualTo (2), "Unexpected number of root nodes in threaded results");
+				Assert.That (threaded, Has.Count.EqualTo (2), "Unexpected number of root nodes in threaded results");
 
 				threaded = await folder.ThreadAsync (UniqueIdRange.All, ThreadingAlgorithm.OrderedSubject, SearchQuery.All);
-				Assert.That (threaded.Count, Is.EqualTo (7), "Unexpected number of root nodes in threaded results");
+				Assert.That (threaded, Has.Count.EqualTo (7), "Unexpected number of root nodes in threaded results");
 
 				// UNSELECT the folder so we can re-open it using QRESYNC
 				await folder.CloseAsync ();
@@ -5023,8 +5023,8 @@ namespace UnitTests.Net.Imap {
 				// Use QRESYNC to get the changes since last time we opened the folder
 				access = await folder.OpenAsync (FolderAccess.ReadWrite, uidValidity, highestModSeq, appended);
 				Assert.That (access, Is.EqualTo (FolderAccess.ReadWrite), "Expected UnitTests.Messages to be opened in READ-WRITE mode");
-				Assert.That (flagsChanged.Count, Is.EqualTo (7), "Unexpected number of MessageFlagsChanged events");
-				Assert.That (modSeqChanged.Count, Is.EqualTo (7), "Unexpected number of ModSeqChanged events");
+				Assert.That (flagsChanged, Has.Count.EqualTo (7), "Unexpected number of MessageFlagsChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (7), "Unexpected number of ModSeqChanged events");
 				for (int i = 0; i < flagsChanged.Count; i++) {
 					var messageFlags = MessageFlags.Seen | MessageFlags.Draft;
 
@@ -5044,9 +5044,9 @@ namespace UnitTests.Net.Imap {
 				modSeqChanged.Clear ();
 				flagsChanged.Clear ();
 
-				Assert.That (vanished.Count, Is.EqualTo (1), "Unexpected number of MessagesVanished events");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Unexpected number of MessagesVanished events");
 				Assert.That (vanished[0].Earlier, Is.True, "Expected VANISHED EARLIER");
-				Assert.That (vanished[0].UniqueIds.Count, Is.EqualTo (1), "Unexpected number of messages vanished");
+				Assert.That (vanished[0].UniqueIds, Has.Count.EqualTo (1), "Unexpected number of messages vanished");
 				Assert.That (vanished[0].UniqueIds[0].Id, Is.EqualTo (8), "Unexpected UID for vanished message");
 				vanished.Clear ();
 
@@ -5065,8 +5065,8 @@ namespace UnitTests.Net.Imap {
 				// Use SEARCH and FETCH to get the same info
 				var searchOptions = SearchOptions.All | SearchOptions.Count | SearchOptions.Min | SearchOptions.Max | SearchOptions.Relevancy;
 				var changed = await folder.SearchAsync (searchOptions, SearchQuery.ChangedSince (highestModSeq));
-				Assert.That (changed.UniqueIds.Count, Is.EqualTo (7), "Unexpected number of UIDs");
-				Assert.That (changed.Relevancy.Count, Is.EqualTo (changed.Count), "Unexpected number of relevancy scores");
+				Assert.That (changed.UniqueIds, Has.Count.EqualTo (7), "Unexpected number of UIDs");
+				Assert.That (changed.Relevancy, Has.Count.EqualTo (changed.Count), "Unexpected number of relevancy scores");
 				Assert.That (changed.ModSeq.HasValue, Is.True, "Expected the ModSeq property to be set");
 				Assert.That (changed.ModSeq.Value, Is.EqualTo (4), "Unexpected ModSeq value");
 				Assert.That (changed.Min.Value.Id, Is.EqualTo (1), "Unexpected Min");
@@ -5074,7 +5074,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (changed.Count, Is.EqualTo (7), "Unexpected Count");
 
 				var fetched = await folder.FetchAsync (changed.UniqueIds, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
-				Assert.That (fetched.Count, Is.EqualTo (7), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (7), "Unexpected number of messages fetched");
 				for (int i = 0; i < fetched.Count; i++) {
 					Assert.That (fetched[i].Index, Is.EqualTo (i), "Unexpected Index");
 					Assert.That (fetched[i].UniqueId.Id, Is.EqualTo (i + 1), "Unexpected UniqueId");
@@ -5086,20 +5086,20 @@ namespace UnitTests.Net.Imap {
 					Assert.That (fetched[i].Index, Is.EqualTo (i), "Unexpected Index");
 					Assert.That (fetched[i].UniqueId.Id, Is.EqualTo (i + 1), "Unexpected UniqueId");
 				}
-				Assert.That (fetched.Count, Is.EqualTo (7), "Unexpected number of messages fetched");
-				Assert.That (vanished.Count, Is.EqualTo (1), "Unexpected number of MessagesVanished events");
+				Assert.That (fetched, Has.Count.EqualTo (7), "Unexpected number of messages fetched");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Unexpected number of MessagesVanished events");
 				Assert.That (vanished[0].Earlier, Is.True, "Expected VANISHED EARLIER");
-				Assert.That (vanished[0].UniqueIds.Count, Is.EqualTo (1), "Unexpected number of messages vanished");
+				Assert.That (vanished[0].UniqueIds, Has.Count.EqualTo (1), "Unexpected number of messages vanished");
 				Assert.That (vanished[0].UniqueIds[0].Id, Is.EqualTo (8), "Unexpected UID for vanished message");
 				vanished.Clear ();
 
 				// Use SORT to order by reverse arrival order
 				var orderBy = new OrderBy[] { new OrderBy (OrderByType.Arrival, SortOrder.Descending) };
 				var sorted = await folder.SortAsync (searchOptions, SearchQuery.All, orderBy);
-				Assert.That (sorted.UniqueIds.Count, Is.EqualTo (7), "Unexpected number of UIDs");
+				Assert.That (sorted.UniqueIds, Has.Count.EqualTo (7), "Unexpected number of UIDs");
 				for (int i = 0; i < sorted.UniqueIds.Count; i++)
 					Assert.That (sorted.UniqueIds[i].Id, Is.EqualTo (7 - i), $"Unexpected value for UniqueId[{i}]");
-				Assert.That (sorted.Relevancy.Count, Is.EqualTo (sorted.Count), "Unexpected number of relevancy scores");
+				Assert.That (sorted.Relevancy, Has.Count.EqualTo (sorted.Count), "Unexpected number of relevancy scores");
 				Assert.That (sorted.ModSeq.HasValue, Is.False, "Expected the ModSeq property to be null");
 				Assert.That (sorted.Min.Value.Id, Is.EqualTo (7), "Unexpected Min");
 				Assert.That (sorted.Max.Value.Id, Is.EqualTo (1), "Unexpected Max");
@@ -5107,7 +5107,7 @@ namespace UnitTests.Net.Imap {
 
 				// Verify that optimizing NOT queries works correctly
 				var uids = await folder.SearchAsync (SearchQuery.Not (SearchQuery.Deleted).And (SearchQuery.Not (SearchQuery.NotSeen)));
-				Assert.That (uids.Count, Is.EqualTo (7), "Unexpected number of UIDs");
+				Assert.That (uids, Has.Count.EqualTo (7), "Unexpected number of UIDs");
 				for (int i = 0; i < uids.Count; i++)
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
@@ -5117,14 +5117,14 @@ namespace UnitTests.Net.Imap {
 
 				// COPY messages to the Destination folder
 				var copied = await folder.CopyToAsync (uids, destination);
-				Assert.That (copied.Source.Count, Is.EqualTo (uids.Count), "Unexpetced Source.Count");
-				Assert.That (copied.Destination.Count, Is.EqualTo (uids.Count), "Unexpetced Destination.Count");
+				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpetced Source.Count");
+				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpetced Destination.Count");
 
 				// MOVE messages to the Destination folder
 				var moved = await folder.MoveToAsync (uids, destination);
-				Assert.That (copied.Source.Count, Is.EqualTo (uids.Count), "Unexpetced Source.Count");
-				Assert.That (copied.Destination.Count, Is.EqualTo (uids.Count), "Unexpetced Destination.Count");
-				Assert.That (vanished.Count, Is.EqualTo (1), "Expected VANISHED event");
+				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpetced Source.Count");
+				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpetced Destination.Count");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Expected VANISHED event");
 				vanished.Clear ();
 
 				await destination.StatusAsync (statusItems);
@@ -5160,53 +5160,53 @@ namespace UnitTests.Net.Imap {
 				fetched = await destination.FetchAsync (UniqueIdRange.All, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = await destination.FetchAsync (0, -1, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = await destination.FetchAsync (indexes, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = await destination.FetchAsync (0, -1, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = await destination.FetchAsync (indexes, 1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				// Fetch
 				fetched = await destination.FetchAsync (UniqueIdRange.All, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = await destination.FetchAsync (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = await destination.FetchAsync (indexes, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References, fetchHeaders);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = await destination.FetchAsync (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				fetched = await destination.FetchAsync (indexes, MessageSummaryItems.Full | MessageSummaryItems.UniqueId | 
 				                                        MessageSummaryItems.BodyStructure | MessageSummaryItems.ModSeq | 
 				                                        MessageSummaryItems.References);
-				Assert.That (fetched.Count, Is.EqualTo (14), "Unexpected number of messages fetched");
+				Assert.That (fetched, Has.Count.EqualTo (14), "Unexpected number of messages fetched");
 
 				uids = new UniqueIdSet (SortOrder.Ascending);
 
@@ -5218,16 +5218,16 @@ namespace UnitTests.Net.Imap {
 				}
 
 				using (var entity = await destination.GetBodyPartAsync (fetched[0].UniqueId, fetched[0].TextBody))
-					Assert.IsInstanceOf<TextPart> (entity);
+					Assert.That (entity, Is.InstanceOf<TextPart> ());
 
 				using (var entity = await destination.GetBodyPartAsync (fetched[0].Index, fetched[0].TextBody))
-					Assert.IsInstanceOf<TextPart> (entity);
+					Assert.That (entity, Is.InstanceOf<TextPart> ());
 
 				using (var entity = await destination.GetBodyPartAsync (fetched[1].UniqueId, fetched[1].TextBody))
-					Assert.IsInstanceOf<TextPart> (entity);
+					Assert.That (entity, Is.InstanceOf<TextPart> ());
 
 				using (var entity = await destination.GetBodyPartAsync (fetched[1].Index, fetched[1].TextBody))
-					Assert.IsInstanceOf<TextPart> (entity);
+					Assert.That (entity, Is.InstanceOf<TextPart> ());
 
 				var headers = await destination.GetHeadersAsync (fetched[0].UniqueId);
 				Assert.That (headers[HeaderId.From], Is.EqualTo ("Unit Tests <unit-tests@mimekit.net>"), "GetHeaders(UniqueId) failed to match From header");
@@ -5336,55 +5336,55 @@ namespace UnitTests.Net.Imap {
 				};
 
 				var unchanged1 = await destination.AddFlagsAsync (uids, destination.HighestModSeq, MessageFlags.Deleted, custom, true);
-				Assert.That (modSeqChanged.Count, Is.EqualTo (14), "Unexpected number of ModSeqChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (14), "Unexpected number of ModSeqChanged events");
 				Assert.That (destination.HighestModSeq, Is.EqualTo (5));
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.That (modSeqChanged[i].Index, Is.EqualTo (i), $"Unexpected value for modSeqChanged[{i}].Index");
 					Assert.That (modSeqChanged[i].ModSeq, Is.EqualTo (5), $"Unexpected value for modSeqChanged[{i}].ModSeq");
 				}
-				Assert.That (unchanged1.Count, Is.EqualTo (2), "[MODIFIED uid-set]");
+				Assert.That (unchanged1, Has.Count.EqualTo (2), "[MODIFIED uid-set]");
 				Assert.That (unchanged1[0].Id, Is.EqualTo (7), "unchanged uids[0]");
 				Assert.That (unchanged1[1].Id, Is.EqualTo (9), "unchanged uids[1]");
 				modSeqChanged.Clear ();
 
 				var unchanged2 = await destination.SetFlagsAsync (new int[] { 0, 1, 2, 3, 4, 5, 6 }, destination.HighestModSeq, MessageFlags.Seen | MessageFlags.Deleted, custom, true);
-				Assert.That (modSeqChanged.Count, Is.EqualTo (7), "Unexpected number of ModSeqChanged events");
+				Assert.That (modSeqChanged, Has.Count.EqualTo (7), "Unexpected number of ModSeqChanged events");
 				Assert.That (destination.HighestModSeq, Is.EqualTo (6));
 				for (int i = 0; i < modSeqChanged.Count; i++) {
 					Assert.That (modSeqChanged[i].Index, Is.EqualTo (i), $"Unexpected value for modSeqChanged[{i}].Index");
 					Assert.That (modSeqChanged[i].ModSeq, Is.EqualTo (6), $"Unexpected value for modSeqChanged[{i}].ModSeq");
 				}
-				Assert.That (unchanged2.Count, Is.EqualTo (2), "[MODIFIED seq-set]");
+				Assert.That (unchanged2, Has.Count.EqualTo (2), "[MODIFIED seq-set]");
 				Assert.That (unchanged2[0], Is.EqualTo (6), "unchanged indexes[0]");
 				Assert.That (unchanged2[1], Is.EqualTo (8), "unchanged indexes[1]");
 				modSeqChanged.Clear ();
 
 				var results = await destination.SearchAsync (uids, SearchQuery.New.Or (SearchQuery.Old.Or (SearchQuery.Answered.Or (SearchQuery.Deleted.Or (SearchQuery.Draft.Or (SearchQuery.Flagged.Or (SearchQuery.Recent.Or (SearchQuery.NotAnswered.Or (SearchQuery.NotDeleted.Or (SearchQuery.NotDraft.Or (SearchQuery.NotFlagged.Or (SearchQuery.NotSeen.Or (SearchQuery.HasKeyword ("$MailKit").Or (SearchQuery.NotKeyword ("$MailKit")))))))))))))));
-				Assert.That (results.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (results, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				var matches = await destination.SearchAsync (searchOptions, uids, SearchQuery.LargerThan (256).And (SearchQuery.SmallerThan (512)));
 				var expectedMatchedUids = new uint[] { 2, 3, 4, 5, 6, 9, 10, 11, 12, 13 };
 				Assert.That (matches.Count, Is.EqualTo (10), "Unexpected COUNT");
 				Assert.That (matches.Max.Value.Id, Is.EqualTo (13), "Unexpected MAX");
 				Assert.That (matches.Min.Value.Id, Is.EqualTo (2), "Unexpected MIN");
-				Assert.That (matches.UniqueIds.Count, Is.EqualTo (10), "Unexpected number of UIDs");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (10), "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (expectedMatchedUids[i]));
-				Assert.That (matches.Relevancy.Count, Is.EqualTo (matches.Count), "Unexpected number of relevancy scores");
+				Assert.That (matches.Relevancy, Has.Count.EqualTo (matches.Count), "Unexpected number of relevancy scores");
 
 				orderBy = new OrderBy[] { OrderBy.ReverseDate, OrderBy.Subject, OrderBy.DisplayFrom, OrderBy.Size };
 				var sentDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.SentBefore (new DateTime (2016, 10, 12)), SearchQuery.SentSince (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.SentOn (new DateTime (2016, 10, 11))));
 				var deliveredDateQuery = SearchQuery.Or (SearchQuery.And (SearchQuery.DeliveredBefore (new DateTime (2016, 10, 12)), SearchQuery.DeliveredAfter (new DateTime (2016, 10, 10))), SearchQuery.Not (SearchQuery.DeliveredOn (new DateTime (2016, 10, 11))));
 				results = await destination.SortAsync (sentDateQuery.Or (deliveredDateQuery), orderBy);
 				var expectedSortByDateResults = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
-				Assert.That (results.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (results, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < results.Count; i++)
 					Assert.That (results[i].Id, Is.EqualTo (expectedSortByDateResults[i]));
 
 				var stringQuery = SearchQuery.BccContains ("xyz").Or (SearchQuery.CcContains ("xyz").Or (SearchQuery.FromContains ("xyz").Or (SearchQuery.ToContains ("xyz").Or (SearchQuery.SubjectContains ("xyz").Or (SearchQuery.HeaderContains ("Message-Id", "mimekit.net").Or (SearchQuery.BodyContains ("This is the message body.").Or (SearchQuery.MessageContains ("message"))))))));
 				orderBy = new OrderBy[] { OrderBy.From, OrderBy.To, OrderBy.Cc };
 				results = await destination.SortAsync (uids, stringQuery, orderBy);
-				Assert.That (results.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (results, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < results.Count; i++)
 					Assert.That (results[i].Id, Is.EqualTo (i + 1));
 
@@ -5393,10 +5393,10 @@ namespace UnitTests.Net.Imap {
 				Assert.That (matches.Count, Is.EqualTo (14), "Unexpected COUNT");
 				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Unexpected MAX");
 				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Unexpected MIN");
-				Assert.That (matches.UniqueIds.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
-				Assert.That (matches.Relevancy.Count, Is.EqualTo (matches.Count), "Unexpected number of relevancy scores");
+				Assert.That (matches.Relevancy, Has.Count.EqualTo (matches.Count), "Unexpected number of relevancy scores");
 
 				client.Capabilities &= ~ImapCapabilities.ESearch;
 				matches = await ((ImapFolder) destination).SearchAsync ("ALL");
@@ -5405,7 +5405,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (matches.Min.HasValue, Is.True, "MIN should always be set");
 				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Unexpected MIN value");
 				Assert.That (matches.Count, Is.EqualTo (14), "COUNT should always be set");
-				Assert.That (matches.UniqueIds.Count, Is.EqualTo (14));
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (14));
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
 
@@ -5416,7 +5416,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (matches.Min.HasValue, Is.True, "MIN should always be set");
 				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Unexpected MIN value");
 				Assert.That (matches.Count, Is.EqualTo (14), "COUNT should always be set");
-				Assert.That (matches.UniqueIds.Count, Is.EqualTo (14));
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (14));
 				var expectedSortByReverseArrivalResults = new uint[] { 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8 };
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (expectedSortByReverseArrivalResults[i]));
@@ -5427,8 +5427,8 @@ namespace UnitTests.Net.Imap {
 
 				await destination.ExpungeAsync ();
 				Assert.That (destination.HighestModSeq, Is.EqualTo (7));
-				Assert.That (vanished.Count, Is.EqualTo (1), "Unexpected number of Vanished events");
-				Assert.That (vanished[0].UniqueIds.Count, Is.EqualTo (14), "Unexpected number of UIDs in Vanished event");
+				Assert.That (vanished, Has.Count.EqualTo (1), "Unexpected number of Vanished events");
+				Assert.That (vanished[0].UniqueIds, Has.Count.EqualTo (14), "Unexpected number of UIDs in Vanished event");
 				for (int i = 0; i < vanished[0].UniqueIds.Count; i++)
 					Assert.That (vanished[0].UniqueIds[i].Id, Is.EqualTo (i + 1));
 				Assert.That (vanished[0].Earlier, Is.False, "Unexpected value for Earlier");
@@ -5565,12 +5565,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -5642,7 +5642,7 @@ namespace UnitTests.Net.Imap {
 
 				var query = SearchQuery.GMailMessageId (1).Or (SearchQuery.GMailThreadId (5).Or (SearchQuery.HasGMailLabel ("Custom Label").Or (SearchQuery.GMailRawSearch ("has:attachment in:unread"))));
 				var matches = created.Search (query);
-				Assert.That (matches.Count, Is.EqualTo (21));
+				Assert.That (matches, Has.Count.EqualTo (21));
 
 				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId | MessageSummaryItems.GMailLabels | MessageSummaryItems.GMailMessageId | MessageSummaryItems.GMailThreadId;
 				var summaries = created.Fetch (matches, items);
@@ -5651,7 +5651,7 @@ namespace UnitTests.Net.Imap {
 				foreach (var summary in summaries) {
 					Assert.That (summary.GMailMessageId.Value, Is.EqualTo (1592225494819146100 + summary.UniqueId.Id), "GMailMessageId");
 					Assert.That (summary.GMailThreadId.Value, Is.EqualTo (1592225494819146100 + summary.UniqueId.Id), "GMailThreadId");
-					Assert.That (summary.GMailLabels.Count, Is.EqualTo (2), "GMailLabels.Count");
+					Assert.That (summary.GMailLabels, Has.Count.EqualTo (2), "GMailLabels.Count");
 					Assert.That (summary.GMailLabels[0], Is.EqualTo ("Test Messages"));
 					Assert.That (summary.GMailLabels[1], Is.EqualTo ("\\Important"));
 					Assert.That (summary.UniqueId.IsValid, Is.True, "UniqueId.IsValid");
@@ -5764,12 +5764,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -5841,7 +5841,7 @@ namespace UnitTests.Net.Imap {
 
 				var query = SearchQuery.GMailMessageId (1).Or (SearchQuery.GMailThreadId (5).Or (SearchQuery.HasGMailLabel ("Custom Label").Or (SearchQuery.GMailRawSearch ("has:attachment in:unread"))));
 				var matches = await created.SearchAsync (query);
-				Assert.That (matches.Count, Is.EqualTo (21));
+				Assert.That (matches, Has.Count.EqualTo (21));
 
 				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId | MessageSummaryItems.GMailLabels | MessageSummaryItems.GMailMessageId | MessageSummaryItems.GMailThreadId;
 				var summaries = await created.FetchAsync (matches, items);
@@ -5850,7 +5850,7 @@ namespace UnitTests.Net.Imap {
 				foreach (var summary in summaries) {
 					Assert.That (summary.GMailMessageId.Value, Is.EqualTo (1592225494819146100 + summary.UniqueId.Id), "GMailMessageId");
 					Assert.That (summary.GMailThreadId.Value, Is.EqualTo (1592225494819146100 + summary.UniqueId.Id), "GMailThreadId");
-					Assert.That (summary.GMailLabels.Count, Is.EqualTo (2), "GMailLabels.Count");
+					Assert.That (summary.GMailLabels, Has.Count.EqualTo (2), "GMailLabels.Count");
 					Assert.That (summary.GMailLabels[0], Is.EqualTo ("Test Messages"));
 					Assert.That (summary.GMailLabels[1], Is.EqualTo ("\\Important"));
 					Assert.That (summary.UniqueId.IsValid, Is.True, "UniqueId.IsValid");
@@ -6091,12 +6091,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				try {
 					client.Authenticate (new NetworkCredential ("username", "password"));
@@ -6170,12 +6170,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (5));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"), Is.True, "Expected SASL OAUTHBEARER auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("OAUTHBEARER"), "Expected SASL OAUTHBEARER auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
@@ -6302,7 +6302,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (expunged, Is.EqualTo (21), "Unexpected number of Expunged events");
 					Assert.That (count, Is.EqualTo (2), "Unexpected number of CountChanged events");
 					Assert.That (flags, Is.EqualTo (21), "Unexpected number of FlagsChanged events");
-					Assert.That (inbox.Count, Is.EqualTo (1), "Count");
+					Assert.That (inbox, Has.Count.EqualTo (1), "Count");
 				}
 
 				client.Disconnect (true);
@@ -6364,7 +6364,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (expunged, Is.EqualTo (21), "Unexpected number of Expunged events");
 					Assert.That (count, Is.EqualTo (2), "Unexpected number of CountChanged events");
 					Assert.That (flags, Is.EqualTo (21), "Unexpected number of FlagsChanged events");
-					Assert.That (inbox.Count, Is.EqualTo (1), "Count");
+					Assert.That (inbox, Has.Count.EqualTo (1), "Count");
 				}
 
 				await client.DisconnectAsync (true);
@@ -6519,7 +6519,7 @@ namespace UnitTests.Net.Imap {
 				});
 
 				// Passing true to notify will update Count
-				Assert.That (inbox.Count, Is.EqualTo (1), "Messages in INBOX");
+				Assert.That (inbox, Has.Count.EqualTo (1), "Messages in INBOX");
 				Assert.That (folder.Count, Is.EqualTo (0), "Messages in Folder");
 
 				IMessageSummary fetched = null;
@@ -6601,7 +6601,7 @@ namespace UnitTests.Net.Imap {
 					client.Idle (done.Token);
 				}
 
-				Assert.That (inbox.Count, Is.EqualTo (3), "Inbox.Count");
+				Assert.That (inbox, Has.Count.EqualTo (3), "Inbox.Count");
 				Assert.That (inbox.Unread, Is.EqualTo (3), "Inbox.Unread");
 				Assert.That (inbox.UidNext.Value.Id, Is.EqualTo (4), "Inbox.UidNext");
 				Assert.That (inbox.HighestModSeq, Is.EqualTo (3), "Inbox.HighestModSeq");
@@ -6617,7 +6617,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (unsubscribed, Is.EqualTo (1), "unsubscribeMe.Renamed");
 				Assert.That (metadataChanged, Is.EqualTo (1), "metadataChanged");
 
-				Assert.That (folder.Count, Is.EqualTo (1), "Folder.Count");
+				Assert.That (folder, Has.Count.EqualTo (1), "Folder.Count");
 				Assert.That (folderCountChanged, Is.EqualTo (1), "Folder.CountChanged");
 				Assert.That (folderFlagsChanged, Is.EqualTo (1), "Folder.MessageFlagsChanged");
 				Assert.That (folderMessageSummaryFetched, Is.EqualTo (1), "Folder.MessageSummaryFetched");
@@ -6698,7 +6698,7 @@ namespace UnitTests.Net.Imap {
 				});
 
 				// Passing true to notify will update Count
-				Assert.That (inbox.Count, Is.EqualTo (1), "Messages in INBOX");
+				Assert.That (inbox, Has.Count.EqualTo (1), "Messages in INBOX");
 				Assert.That (folder.Count, Is.EqualTo (0), "Messages in Folder");
 
 				IMessageSummary fetched = null;
@@ -6780,7 +6780,7 @@ namespace UnitTests.Net.Imap {
 					await client.IdleAsync (done.Token);
 				}
 
-				Assert.That (inbox.Count, Is.EqualTo (3), "Inbox.Count");
+				Assert.That (inbox, Has.Count.EqualTo (3), "Inbox.Count");
 				Assert.That (inbox.Unread, Is.EqualTo (3), "Inbox.Unread");
 				Assert.That (inbox.UidNext.Value.Id, Is.EqualTo (4), "Inbox.UidNext");
 				Assert.That (inbox.HighestModSeq, Is.EqualTo (3), "Inbox.HighestModSeq");
@@ -6796,7 +6796,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (unsubscribed, Is.EqualTo (1), "unsubscribeMe.Renamed");
 				Assert.That (metadataChanged, Is.EqualTo (1), "metadataChanged");
 
-				Assert.That (folder.Count, Is.EqualTo (1), "Folder.Count");
+				Assert.That (folder, Has.Count.EqualTo (1), "Folder.Count");
 				Assert.That (folderCountChanged, Is.EqualTo (1), "Folder.CountChanged");
 				Assert.That (folderFlagsChanged, Is.EqualTo (1), "Folder.MessageFlagsChanged");
 				Assert.That (folderMessageSummaryFetched, Is.EqualTo (1), "Folder.MessageSummaryFetched");
@@ -6891,7 +6891,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (expunged, Is.EqualTo (3), "Unexpected number of Expunged events");
 				Assert.That (changed, Is.EqualTo (1), "Unexpected number of CountChanged events");
-				Assert.That (inbox.Count, Is.EqualTo (18), "Count");
+				Assert.That (inbox, Has.Count.EqualTo (18), "Count");
 
 				client.Disconnect (true);
 			}
@@ -6937,7 +6937,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (expunged, Is.EqualTo (3), "Unexpected number of Expunged events");
 				Assert.That (changed, Is.EqualTo (1), "Unexpected number of CountChanged events");
-				Assert.That (inbox.Count, Is.EqualTo (18), "Count");
+				Assert.That (inbox, Has.Count.EqualTo (18), "Count");
 
 				await client.DisconnectAsync (true);
 			}
@@ -6977,11 +6977,11 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (AclInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 				Assert.That (client.Rights.ToString (), Is.EqualTo ("texk"), "Rights");
 
 				// Note: Do not try XOAUTH2
@@ -7014,7 +7014,7 @@ namespace UnitTests.Net.Imap {
 
 				// GETACL INBOX
 				var acl = client.Inbox.GetAccessControlList ();
-				Assert.That (acl.Count, Is.EqualTo (2), "The number of access controls does not match.");
+				Assert.That (acl, Has.Count.EqualTo (2), "The number of access controls does not match.");
 				Assert.That (acl[0].Name, Is.EqualTo ("Fred"), "The identifier for the first access control does not match.");
 				Assert.That (acl[0].Rights.ToString (), Is.EqualTo ("rwipslxetad"), "The access rights for the first access control does not match.");
 				Assert.That (acl[1].Name, Is.EqualTo ("Chris"), "The identifier for the second access control does not match.");
@@ -7076,11 +7076,11 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (AclInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 				Assert.That (client.Rights.ToString (), Is.EqualTo ("texk"), "Rights");
 
 				// Note: Do not try XOAUTH2
@@ -7113,7 +7113,7 @@ namespace UnitTests.Net.Imap {
 
 				// GETACL INBOX
 				var acl = await client.Inbox.GetAccessControlListAsync ();
-				Assert.That (acl.Count, Is.EqualTo (2), "The number of access controls does not match.");
+				Assert.That (acl, Has.Count.EqualTo (2), "The number of access controls does not match.");
 				Assert.That (acl[0].Name, Is.EqualTo ("Fred"), "The identifier for the first access control does not match.");
 				Assert.That (acl[0].Rights.ToString (), Is.EqualTo ("rwipslxetad"), "The access rights for the first access control does not match.");
 				Assert.That (acl[1].Name, Is.EqualTo ("Chris"), "The identifier for the second access control does not match.");
@@ -7204,11 +7204,11 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (MetadataInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -7243,13 +7243,13 @@ namespace UnitTests.Net.Imap {
 
 				options = new MetadataOptions { Depth = int.MaxValue, MaxSize = 1024 };
 				metadata = client.GetMetadata (options, new [] { new MetadataTag ("/private") });
-				Assert.That (metadata.Count, Is.EqualTo (1), "Expected 1 metadata value.");
+				Assert.That (metadata, Has.Count.EqualTo (1), "Expected 1 metadata value.");
 				Assert.That (metadata[0].Tag.Id, Is.EqualTo (MetadataTag.PrivateComment.Id), "Metadata tag did not match.");
 				Assert.That (metadata[0].Value, Is.EqualTo ("this is a private comment"), "Metadata value did not match.");
 				Assert.That (options.LongEntries, Is.EqualTo (2199), "LongEntries does not match.");
 
 				metadata = client.GetMetadata (new [] { MetadataTag.PrivateComment, MetadataTag.SharedComment });
-				Assert.That (metadata.Count, Is.EqualTo (2), "Expected 2 metadata values.");
+				Assert.That (metadata, Has.Count.EqualTo (2), "Expected 2 metadata values.");
 				Assert.That (metadata[0].Tag.Id, Is.EqualTo (MetadataTag.PrivateComment.Id), "First metadata tag did not match.");
 				Assert.That (metadata[1].Tag.Id, Is.EqualTo (MetadataTag.SharedComment.Id), "Second metadata tag did not match.");
 				Assert.That (metadata[0].Value, Is.EqualTo ("this is a private comment"), "First metadata value did not match.");
@@ -7279,13 +7279,13 @@ namespace UnitTests.Net.Imap {
 
 				options = new MetadataOptions { Depth = int.MaxValue, MaxSize = 1024 };
 				metadata = inbox.GetMetadata (options, new [] { new MetadataTag ("/private") });
-				Assert.That (metadata.Count, Is.EqualTo (1), "Expected 1 metadata value.");
+				Assert.That (metadata, Has.Count.EqualTo (1), "Expected 1 metadata value.");
 				Assert.That (metadata[0].Tag.Id, Is.EqualTo (MetadataTag.PrivateComment.Id), "Metadata tag did not match.");
 				Assert.That (metadata[0].Value, Is.EqualTo ("this is a private comment"), "Metadata value did not match.");
 				Assert.That (options.LongEntries, Is.EqualTo (2199), "LongEntries does not match.");
 
 				metadata = inbox.GetMetadata (new [] { MetadataTag.PrivateComment, MetadataTag.SharedComment });
-				Assert.That (metadata.Count, Is.EqualTo (2), "Expected 2 metadata values.");
+				Assert.That (metadata, Has.Count.EqualTo (2), "Expected 2 metadata values.");
 				Assert.That (metadata[0].Tag.Id, Is.EqualTo (MetadataTag.PrivateComment.Id), "First metadata tag did not match.");
 				Assert.That (metadata[1].Tag.Id, Is.EqualTo (MetadataTag.SharedComment.Id), "Second metadata tag did not match.");
 				Assert.That (metadata[0].Value, Is.EqualTo ("this is a private comment"), "First metadata value did not match.");
@@ -7293,7 +7293,7 @@ namespace UnitTests.Net.Imap {
 
 				// This will shortcut and return an empty collection
 				metadata = client.GetMetadata (Array.Empty<MetadataTag> ());
-				Assert.That (metadata.Count, Is.EqualTo (0), "Expected 0 metadata values.");
+				Assert.That (metadata, Is.Empty, "Expected 0 metadata values.");
 
 				// SETMETADATA folder
 				Assert.Throws<ImapCommandException> (() => inbox.SetMetadata (new MetadataCollection (new [] {
@@ -7332,11 +7332,11 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities, Is.EqualTo (MetadataInitialCapabilities));
-				Assert.That (client.AuthenticationMechanisms.Count, Is.EqualTo (4));
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH"), Is.True, "Expected SASL XOAUTH auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("XOAUTH2"), Is.True, "Expected SASL XOAUTH2 auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Expected SASL PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), Is.True, "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
@@ -7371,13 +7371,13 @@ namespace UnitTests.Net.Imap {
 
 				options = new MetadataOptions { Depth = int.MaxValue, MaxSize = 1024 };
 				metadata = await client.GetMetadataAsync (options, new [] { new MetadataTag ("/private") });
-				Assert.That (metadata.Count, Is.EqualTo (1), "Expected 1 metadata value.");
+				Assert.That (metadata, Has.Count.EqualTo (1), "Expected 1 metadata value.");
 				Assert.That (metadata[0].Tag.Id, Is.EqualTo (MetadataTag.PrivateComment.Id), "Metadata tag did not match.");
 				Assert.That (metadata[0].Value, Is.EqualTo ("this is a private comment"), "Metadata value did not match.");
 				Assert.That (options.LongEntries, Is.EqualTo (2199), "LongEntries does not match.");
 
 				metadata = await client.GetMetadataAsync (new [] { MetadataTag.PrivateComment, MetadataTag.SharedComment });
-				Assert.That (metadata.Count, Is.EqualTo (2), "Expected 2 metadata values.");
+				Assert.That (metadata, Has.Count.EqualTo (2), "Expected 2 metadata values.");
 				Assert.That (metadata[0].Tag.Id, Is.EqualTo (MetadataTag.PrivateComment.Id), "First metadata tag did not match.");
 				Assert.That (metadata[1].Tag.Id, Is.EqualTo (MetadataTag.SharedComment.Id), "Second metadata tag did not match.");
 				Assert.That (metadata[0].Value, Is.EqualTo ("this is a private comment"), "First metadata value did not match.");
@@ -7385,7 +7385,7 @@ namespace UnitTests.Net.Imap {
 
 				// This will shortcut and return an empty collection
 				metadata = await client.GetMetadataAsync (Array.Empty<MetadataTag> ());
-				Assert.That (metadata.Count, Is.EqualTo (0), "Expected 0 metadata values.");
+				Assert.That (metadata, Is.Empty, "Expected 0 metadata values.");
 
 				// SETMETADATA
 				Assert.ThrowsAsync<ImapCommandException> (async () => await client.SetMetadataAsync (new MetadataCollection (new [] {
@@ -7411,13 +7411,13 @@ namespace UnitTests.Net.Imap {
 
 				options = new MetadataOptions { Depth = int.MaxValue, MaxSize = 1024 };
 				metadata = await inbox.GetMetadataAsync (options, new [] { new MetadataTag ("/private") });
-				Assert.That (metadata.Count, Is.EqualTo (1), "Expected 1 metadata value.");
+				Assert.That (metadata, Has.Count.EqualTo (1), "Expected 1 metadata value.");
 				Assert.That (metadata[0].Tag.Id, Is.EqualTo (MetadataTag.PrivateComment.Id), "Metadata tag did not match.");
 				Assert.That (metadata[0].Value, Is.EqualTo ("this is a private comment"), "Metadata value did not match.");
 				Assert.That (options.LongEntries, Is.EqualTo (2199), "LongEntries does not match.");
 
 				metadata = await inbox.GetMetadataAsync (new [] { MetadataTag.PrivateComment, MetadataTag.SharedComment });
-				Assert.That (metadata.Count, Is.EqualTo (2), "Expected 2 metadata values.");
+				Assert.That (metadata, Has.Count.EqualTo (2), "Expected 2 metadata values.");
 				Assert.That (metadata[0].Tag.Id, Is.EqualTo (MetadataTag.PrivateComment.Id), "First metadata tag did not match.");
 				Assert.That (metadata[1].Tag.Id, Is.EqualTo (MetadataTag.SharedComment.Id), "Second metadata tag did not match.");
 				Assert.That (metadata[0].Value, Is.EqualTo ("this is a private comment"), "First metadata value did not match.");
@@ -7475,15 +7475,15 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.PersonalNamespaces.Count, Is.EqualTo (1), "PersonalNamespaces.Count");
+				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "PersonalNamespaces.Count");
 				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (string.Empty), "PersonalNamespaces[0].Path");
 				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('/'), "PersonalNamespaces[0].DirectorySeparator");
 
-				Assert.That (client.OtherNamespaces.Count, Is.EqualTo (1), "OtherNamespaces.Count");
+				Assert.That (client.OtherNamespaces, Has.Count.EqualTo (1), "OtherNamespaces.Count");
 				Assert.That (client.OtherNamespaces[0].Path, Is.EqualTo ("Other Users"), "OtherNamespaces[0].Path");
 				Assert.That (client.OtherNamespaces[0].DirectorySeparator, Is.EqualTo ('/'), "OtherNamespaces[0].DirectorySeparator");
 
-				Assert.That (client.SharedNamespaces.Count, Is.EqualTo (1), "SharedNamespaces.Count");
+				Assert.That (client.SharedNamespaces, Has.Count.EqualTo (1), "SharedNamespaces.Count");
 				Assert.That (client.SharedNamespaces[0].Path, Is.EqualTo ("Public Folders"), "SharedNamespaces[0].Path");
 				Assert.That (client.SharedNamespaces[0].DirectorySeparator, Is.EqualTo ('/'), "SharedNamespaces[0].DirectorySeparator");
 
@@ -7511,15 +7511,15 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.PersonalNamespaces.Count, Is.EqualTo (1), "PersonalNamespaces.Count");
+				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "PersonalNamespaces.Count");
 				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (string.Empty), "PersonalNamespaces[0].Path");
 				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('/'), "PersonalNamespaces[0].DirectorySeparator");
 
-				Assert.That (client.OtherNamespaces.Count, Is.EqualTo (1), "OtherNamespaces.Count");
+				Assert.That (client.OtherNamespaces, Has.Count.EqualTo (1), "OtherNamespaces.Count");
 				Assert.That (client.OtherNamespaces[0].Path, Is.EqualTo ("Other Users"), "OtherNamespaces[0].Path");
 				Assert.That (client.OtherNamespaces[0].DirectorySeparator, Is.EqualTo ('/'), "OtherNamespaces[0].DirectorySeparator");
 
-				Assert.That (client.SharedNamespaces.Count, Is.EqualTo (1), "SharedNamespaces.Count");
+				Assert.That (client.SharedNamespaces, Has.Count.EqualTo (1), "SharedNamespaces.Count");
 				Assert.That (client.SharedNamespaces[0].Path, Is.EqualTo ("Public Folders"), "SharedNamespaces[0].Path");
 				Assert.That (client.SharedNamespaces[0].DirectorySeparator, Is.EqualTo ('/'), "SharedNamespaces[0].DirectorySeparator");
 
@@ -7554,11 +7554,11 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.PersonalNamespaces.Count, Is.EqualTo (1), "PersonalNamespaces.Count");
+				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "PersonalNamespaces.Count");
 				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (string.Empty), "PersonalNamespaces[0].Path");
 				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('/'), "PersonalNamespaces[0].DirectorySeparator");
-				Assert.That (client.OtherNamespaces.Count, Is.EqualTo (0), "OtherNamespaces.Count");
-				Assert.That (client.SharedNamespaces.Count, Is.EqualTo (0), "SharedNamespaces.Count");
+				Assert.That (client.OtherNamespaces, Is.Empty, "OtherNamespaces.Count");
+				Assert.That (client.SharedNamespaces, Is.Empty, "SharedNamespaces.Count");
 
 				Assert.That (client.Inbox, Is.Not.Null, "Inbox");
 			}

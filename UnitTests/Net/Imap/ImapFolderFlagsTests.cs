@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -298,7 +298,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				// disable all features
 				client.Capabilities = ImapCapabilities.None;
@@ -401,7 +401,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -414,47 +414,47 @@ namespace UnitTests.Net.Imap {
 
 				// AddFlags
 				unmodifiedIndexes = inbox.AddFlags (indexes, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = inbox.AddFlags (uids, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				// RemoveFlags
 				unmodifiedIndexes = inbox.RemoveFlags (indexes, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = inbox.RemoveFlags (uids, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				// SetFlags
 				unmodifiedIndexes = inbox.SetFlags (indexes, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = inbox.SetFlags (uids, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				var labels = new string[] { "Label1", "Label2" };
 
 				// AddLabels
 				unmodifiedIndexes = inbox.AddLabels (indexes, modseq, labels, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = inbox.AddLabels (uids, modseq, labels, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				// RemoveLabels
 				unmodifiedIndexes = inbox.RemoveLabels (indexes, modseq, labels, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = inbox.RemoveLabels (uids, modseq, labels, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				// SetLabels
 				unmodifiedIndexes = inbox.SetLabels (indexes, modseq, labels, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = inbox.SetLabels (uids, modseq, labels, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				client.Disconnect (false);
 			}
@@ -483,7 +483,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -496,47 +496,47 @@ namespace UnitTests.Net.Imap {
 
 				// AddFlags
 				unmodifiedIndexes = await inbox.AddFlagsAsync (indexes, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = await inbox.AddFlagsAsync (uids, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				// RemoveFlags
 				unmodifiedIndexes = await inbox.RemoveFlagsAsync (indexes, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = await inbox.RemoveFlagsAsync (uids, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				// SetFlags
 				unmodifiedIndexes = await inbox.SetFlagsAsync (indexes, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = await inbox.SetFlagsAsync (uids, modseq, MessageFlags.Seen, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				var labels = new string[] { "Label1", "Label2" };
 
 				// AddLabels
 				unmodifiedIndexes = await inbox.AddLabelsAsync (indexes, modseq, labels, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = await inbox.AddLabelsAsync (uids, modseq, labels, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				// RemoveLabels
 				unmodifiedIndexes = await inbox.RemoveLabelsAsync (indexes, modseq, labels, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = await inbox.RemoveLabelsAsync (uids, modseq, labels, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				// SetLabels
 				unmodifiedIndexes = await inbox.SetLabelsAsync (indexes, modseq, labels, true);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = await inbox.SetLabelsAsync (uids, modseq, labels, true);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				await client.DisconnectAsync (false);
 			}

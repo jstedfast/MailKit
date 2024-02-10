@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -79,7 +79,7 @@ namespace UnitTests.Security.Ntlm {
 			Assert.That (targetInfo.Flags, Is.EqualTo (2), "Flags");
 			Assert.That (targetInfo.Timestamp, Is.EqualTo (timestamp.ToFileTimeUtc ()), "Timestamp");
 			//Assert.That (targetInfo.SingleHost, Is.EqualTo ("SingleHost"), "SingleHost");
-			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (16), "ChannelBinding");
+			Assert.That (targetInfo.ChannelBinding, Has.Length.EqualTo (16), "ChannelBinding");
 
 			for (int i = 0; i < channelBinding.Length; i++)
 				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (channelBinding[i]), $"ChannelBinding[{i}]");
@@ -87,7 +87,7 @@ namespace UnitTests.Security.Ntlm {
 			// Verify that re-encoding the target info results in an exact replica of the input.
 			var encoded = targetInfo.Encode (unicode);
 
-			Assert.That (encoded.Length, Is.EqualTo (buffer.Length), "Re-encoded lengths do not match");
+			Assert.That (encoded, Has.Length.EqualTo (buffer.Length), "Re-encoded lengths do not match");
 
 			for (int i = 0; i < buffer.Length; i++)
 				Assert.That (encoded[i], Is.EqualTo (buffer[i]), $"encoded[{i}]");
@@ -222,7 +222,7 @@ namespace UnitTests.Security.Ntlm {
 			AssertSingleHost (singleHost, targetInfo.SingleHost, "SingleHost");
 			Assert.That (targetInfo.Flags, Is.EqualTo (2), "Flags");
 			Assert.That (targetInfo.Timestamp, Is.EqualTo (timestamp.ToFileTimeUtc ()), "Timestamp");
-			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (16), "ChannelBinding");
+			Assert.That (targetInfo.ChannelBinding, Has.Length.EqualTo (16), "ChannelBinding");
 
 			for (int i = 0; i < channelBinding.Length; i++)
 				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (channelBinding[i]), $"ChannelBinding[{i}]");
@@ -274,7 +274,7 @@ namespace UnitTests.Security.Ntlm {
 			AssertSingleHost (singleHost, targetInfo.SingleHost, "SingleHost");
 			Assert.That (targetInfo.Flags, Is.EqualTo (2), "Flags");
 			Assert.That (targetInfo.Timestamp, Is.EqualTo (timestamp.ToFileTimeUtc ()), "Timestamp");
-			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (16), "ChannelBinding");
+			Assert.That (targetInfo.ChannelBinding, Has.Length.EqualTo (16), "ChannelBinding");
 
 			for (int i = 0; i < channelBinding.Length; i++)
 				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (channelBinding[i]), $"ChannelBinding[{i}]");
@@ -292,7 +292,7 @@ namespace UnitTests.Security.Ntlm {
 			Assert.That (targetInfo.Timestamp, Is.EqualTo (123456789), "Updated Timestamp");
 
 			targetInfo.ChannelBinding = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
-			Assert.That (targetInfo.ChannelBinding.Length, Is.EqualTo (20), "Updated ChannelBinding");
+			Assert.That (targetInfo.ChannelBinding, Has.Length.EqualTo (20), "Updated ChannelBinding");
 
 			for (int i = 0; i < channelBinding.Length; i++)
 				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (i), $"Updated ChannelBinding[{i}]");

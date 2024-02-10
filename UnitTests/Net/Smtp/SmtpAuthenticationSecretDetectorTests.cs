@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ namespace UnitTests.Net.Smtp {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
+			Assert.That (secrets, Is.Empty, "# of secrets");
 		}
 
 		[Test]
@@ -55,7 +55,7 @@ namespace UnitTests.Net.Smtp {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
+			Assert.That (secrets, Is.Empty, "# of secrets");
 		}
 
 		[Test]
@@ -66,7 +66,7 @@ namespace UnitTests.Net.Smtp {
 			var buffer = Encoding.ASCII.GetBytes (command);
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.That (secrets.Count, Is.EqualTo (0), "# of secrets");
+			Assert.That (secrets, Is.Empty, "# of secrets");
 		}
 
 		[Test]
@@ -79,7 +79,7 @@ namespace UnitTests.Net.Smtp {
 			detector.IsAuthenticating = true;
 
 			var secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets, Has.Count.EqualTo (1), "# of secrets");
 			Assert.That (secrets[0].StartIndex, Is.EqualTo (11), "StartIndex");
 			Assert.That (secrets[0].Length, Is.EqualTo (24), "Length");
 		}
@@ -99,11 +99,11 @@ namespace UnitTests.Net.Smtp {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if (index >= secretIndex && command[index] != '\r' && command[index] != '\n') {
-					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets, Has.Count.EqualTo (1), $"# of secrets @ index {index}");
 					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
 					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
+					Assert.That (secrets, Is.Empty, $"# of secrets @ index {index}");
 				}
 				index++;
 			}
@@ -120,17 +120,17 @@ namespace UnitTests.Net.Smtp {
 
 			buffer = Encoding.ASCII.GetBytes ("AUTH LOGIN\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.That (secrets.Count, Is.EqualTo (0), "initial # of secrets");
+			Assert.That (secrets, Is.Empty, "initial # of secrets");
 
 			buffer = Encoding.ASCII.GetBytes ("dXNlcm5hbWU=\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets, Has.Count.EqualTo (1), "# of secrets");
 			Assert.That (secrets[0].StartIndex, Is.EqualTo (0), "StartIndex");
 			Assert.That (secrets[0].Length, Is.EqualTo (12), "Length");
 
 			buffer = Encoding.ASCII.GetBytes ("cGFzc3dvcmQ=\r\n");
 			secrets = detector.DetectSecrets (buffer, 0, buffer.Length);
-			Assert.That (secrets.Count, Is.EqualTo (1), "# of secrets");
+			Assert.That (secrets, Has.Count.EqualTo (1), "# of secrets");
 			Assert.That (secrets[0].StartIndex, Is.EqualTo (0), "StartIndex");
 			Assert.That (secrets[0].Length, Is.EqualTo (12), "Length");
 		}
@@ -150,11 +150,11 @@ namespace UnitTests.Net.Smtp {
 			while (index < command.Length) {
 				secrets = detector.DetectSecrets (buffer, index, 1);
 				if (index >= secretIndex && command[index] != '\r' && command[index] != '\n') {
-					Assert.That (secrets.Count, Is.EqualTo (1), $"# of secrets @ index {index}");
+					Assert.That (secrets, Has.Count.EqualTo (1), $"# of secrets @ index {index}");
 					Assert.That (secrets[0].StartIndex, Is.EqualTo (index), "StartIndex");
 					Assert.That (secrets[0].Length, Is.EqualTo (1), "Length");
 				} else {
-					Assert.That (secrets.Count, Is.EqualTo (0), $"# of secrets @ index {index}");
+					Assert.That (secrets, Is.Empty, $"# of secrets @ index {index}");
 				}
 				index++;
 			}

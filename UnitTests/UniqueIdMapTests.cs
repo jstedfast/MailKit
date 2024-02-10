@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@ namespace UnitTests {
 			int i = 0;
 			uint u;
 
-			Assert.That (map.Count, Is.EqualTo (7), "Count");
+			Assert.That (map, Has.Count.EqualTo (7), "Count");
 
 			for (u = 1; u < 8; u++)
 				Assert.That (map.ContainsKey (new UniqueId (1436832101, u)), Is.True, $"ContainsKey {u}");

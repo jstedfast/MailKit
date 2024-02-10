@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -1286,8 +1286,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				try {
 					client.Authenticate (new SaslMechanismPlain ("username", "password"));
@@ -1328,8 +1328,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password"));
@@ -1379,8 +1379,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -1428,8 +1428,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -1527,8 +1527,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					client.AuthenticationMechanisms.Remove ("PLAIN");
 
@@ -1570,8 +1570,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					client.AuthenticationMechanisms.Remove ("PLAIN");
 
@@ -1623,8 +1623,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					try {
 						client.Authenticate (new SaslMechanismPlain ("username", "password"));
@@ -1664,8 +1664,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					try {
 						await client.AuthenticateAsync (new SaslMechanismPlain ("username", "password"));
@@ -1717,8 +1717,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					try {
 						client.Authenticate (new SaslMechanismLogin ("username", "password"));
@@ -1758,8 +1758,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					try {
 						await client.AuthenticateAsync (new SaslMechanismLogin ("username", "password"));
@@ -1803,8 +1803,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2012,8 +2012,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2059,7 +2059,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				Assert.That (expn, Is.Not.Null, "EXPN result");
-				Assert.That (expn.Count, Is.EqualTo (6), "EXPN count");
+				Assert.That (expn, Has.Count.EqualTo (6), "EXPN count");
 				Assert.That (expn[0].Name, Is.EqualTo ("Jon Postel"), "expn[0].Name");
 				Assert.That (((MailboxAddress) expn[0]).Address, Is.EqualTo ("Postel@USC-ISIF.ARPA"), "expn[0].Address");
 				Assert.That (expn[1].Name, Is.EqualTo ("Fred Fonebone"), "expn[1].Name");
@@ -2149,8 +2149,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2196,7 +2196,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				Assert.That (expn, Is.Not.Null, "EXPN result");
-				Assert.That (expn.Count, Is.EqualTo (6), "EXPN count");
+				Assert.That (expn, Has.Count.EqualTo (6), "EXPN count");
 				Assert.That (expn[0].Name, Is.EqualTo ("Jon Postel"), "expn[0].Name");
 				Assert.That (((MailboxAddress) expn[0]).Address, Is.EqualTo ("Postel@USC-ISIF.ARPA"), "expn[0].Address");
 				Assert.That (expn[1].Name, Is.EqualTo ("Fred Fonebone"), "expn[1].Name");
@@ -2295,8 +2295,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2339,8 +2339,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2408,8 +2408,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2493,8 +2493,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2589,8 +2589,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2650,8 +2650,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2723,8 +2723,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2777,8 +2777,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2841,8 +2841,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2899,8 +2899,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -2970,8 +2970,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -3021,8 +3021,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -3084,9 +3084,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), Is.True, "Failed to detect the DIGEST-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Failed to detect the DIGEST-MD5 auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -3146,9 +3146,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("DIGEST-MD5"), Is.True, "Failed to detect the DIGEST-MD5 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Failed to detect the DIGEST-MD5 auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -3219,8 +3219,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -3266,8 +3266,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -3334,8 +3334,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.UTF8), Is.True, "Failed to detect SMTPUTF8 extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
@@ -3392,8 +3392,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.UTF8), Is.True, "Failed to detect SMTPUTF8 extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
@@ -3491,8 +3491,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -3577,8 +3577,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -3649,8 +3649,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
@@ -3707,8 +3707,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
@@ -3776,8 +3776,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -3828,8 +3828,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -3893,8 +3893,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -3945,8 +3945,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4027,8 +4027,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4083,8 +4083,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4151,8 +4151,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4207,8 +4207,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4274,8 +4274,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4320,8 +4320,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4376,8 +4376,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4422,8 +4422,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4516,8 +4516,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
@@ -4574,8 +4574,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-					Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-					Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
 					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
@@ -4643,8 +4643,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
@@ -4704,8 +4704,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
@@ -4783,8 +4783,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4840,8 +4840,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
@@ -4925,8 +4925,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
@@ -4988,8 +4988,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
-				Assert.That (client.AuthenticationMechanisms.Contains ("LOGIN"), Is.True, "Failed to detect the LOGIN auth mechanism");
-				Assert.That (client.AuthenticationMechanisms.Contains ("PLAIN"), Is.True, "Failed to detect the PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
 				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 

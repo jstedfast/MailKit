@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -51,21 +51,21 @@ namespace UnitTests {
 			Assert.Throws<ArgumentOutOfRangeException> (() => ns = namespaces[-1]);
 			Assert.Throws<ArgumentOutOfRangeException> (() => namespaces[-1] = new FolderNamespace ('.', ""));
 
-			Assert.That (namespaces.Count, Is.EqualTo (0));
+			Assert.That (namespaces, Is.Empty);
 
 			ns = new FolderNamespace ('.', "");
 			namespaces.Add (ns);
-			Assert.That (namespaces.Count, Is.EqualTo (1));
+			Assert.That (namespaces, Has.Count.EqualTo (1));
 			Assert.That (namespaces.Contains (ns), Is.True);
 			Assert.Throws<ArgumentNullException> (() => namespaces[0] = null);
 
 			ns = new FolderNamespace ('\\', "");
 			namespaces[0] = ns;
-			Assert.That (namespaces.Count, Is.EqualTo (1));
+			Assert.That (namespaces, Has.Count.EqualTo (1));
 			Assert.That (namespaces.Contains (ns), Is.True);
 
 			Assert.That (namespaces.Remove (ns), Is.True);
-			Assert.That (namespaces.Count, Is.EqualTo (0));
+			Assert.That (namespaces, Is.Empty);
 			Assert.That (namespaces.Contains (ns), Is.False);
 
 			namespaces.Add (new FolderNamespace ('.', ""));

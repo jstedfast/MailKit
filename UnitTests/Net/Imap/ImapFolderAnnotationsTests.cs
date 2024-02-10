@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -75,7 +75,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -153,7 +153,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -228,7 +228,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -249,10 +249,10 @@ namespace UnitTests.Net.Imap {
 				IList<int> unmodifiedIndexes;
 
 				unmodifiedIndexes = inbox.Store (indexes, modseq, annotations);
-				Assert.That (unmodifiedIndexes.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedIndexes, Is.Empty);
 
 				unmodifiedUids = inbox.Store (uids, modseq, annotations);
-				Assert.That (unmodifiedUids.Count, Is.EqualTo (0));
+				Assert.That (unmodifiedUids, Is.Empty);
 
 				client.Disconnect (false);
 			}
@@ -526,7 +526,7 @@ namespace UnitTests.Net.Imap {
 
 				// Use MULTIAPPEND to append some test messages
 				uids = client.Inbox.Append (requests);
-				Assert.That (uids.Count, Is.EqualTo (8), "Unexpected number of messages appended");
+				Assert.That (uids, Has.Count.EqualTo (8), "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
@@ -535,7 +535,7 @@ namespace UnitTests.Net.Imap {
 				client.Capabilities &= ~ImapCapabilities.MultiAppend;
 				uids = client.Inbox.Append (requests);
 
-				Assert.That (uids.Count, Is.EqualTo (8), "Unexpected number of messages appended");
+				Assert.That (uids, Has.Count.EqualTo (8), "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
@@ -575,7 +575,7 @@ namespace UnitTests.Net.Imap {
 
 				// Use MULTIAPPEND to append some test messages
 				uids = await client.Inbox.AppendAsync (requests);
-				Assert.That (uids.Count, Is.EqualTo (8), "Unexpected number of messages appended");
+				Assert.That (uids, Has.Count.EqualTo (8), "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
@@ -584,7 +584,7 @@ namespace UnitTests.Net.Imap {
 				client.Capabilities &= ~ImapCapabilities.MultiAppend;
 				uids = await client.Inbox.AppendAsync (requests);
 
-				Assert.That (uids.Count, Is.EqualTo (8), "Unexpected number of messages appended");
+				Assert.That (uids, Has.Count.EqualTo (8), "Unexpected number of messages appended");
 
 				for (int i = 0; i < uids.Count; i++)
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
@@ -828,7 +828,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -864,7 +864,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -915,7 +915,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -927,7 +927,7 @@ namespace UnitTests.Net.Imap {
 				var query = SearchQuery.AnnotationsContain (AnnotationEntry.Comment, AnnotationAttribute.Value, "a comment");
 				var uids = inbox.Search (query);
 
-				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
@@ -961,7 +961,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -973,7 +973,7 @@ namespace UnitTests.Net.Imap {
 				var query = SearchQuery.AnnotationsContain (AnnotationEntry.Comment, AnnotationAttribute.Value, "a comment");
 				var uids = await inbox.SearchAsync (query);
 
-				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
@@ -1021,7 +1021,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -1033,12 +1033,12 @@ namespace UnitTests.Net.Imap {
 				var orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending);
 				var uids = inbox.Sort (SearchQuery.All, new OrderBy[] { orderBy });
 
-				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Descending);
 				uids = inbox.Sort (SearchQuery.All, new OrderBy[] { orderBy });
 
-				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
@@ -1072,7 +1072,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -1084,12 +1084,12 @@ namespace UnitTests.Net.Imap {
 				var orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending);
 				var uids = await inbox.SortAsync (SearchQuery.All, new OrderBy[] { orderBy });
 
-				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Descending);
 				uids = await inbox.SortAsync (SearchQuery.All, new OrderBy[] { orderBy });
 
-				Assert.That (uids.Count, Is.EqualTo (14), "Unexpected number of UIDs");
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
 				client.Capabilities &= ~ImapCapabilities.Annotate;
@@ -1143,7 +1143,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -1203,7 +1203,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.IsInstanceOf<ImapEngine> (client.Inbox.SyncRoot, "SyncRoot");
+				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);

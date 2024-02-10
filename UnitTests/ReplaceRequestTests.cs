@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -76,15 +76,15 @@ namespace UnitTests {
 			request = new ReplaceRequest (message, flags, keywords);
 			Assert.That (request.Message, Is.EqualTo (message), "Message #3");
 			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #3");
-			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #3");
-			Assert.That (request.Keywords.Count, Is.EqualTo (keywords.Length), "Keywords #3");
+			Assert.That (request.Keywords, Is.InstanceOf<HashSet<string>> (), "Keywords Type #3");
+			Assert.That (request.Keywords, Has.Count.EqualTo (keywords.Length), "Keywords #3");
 			Assert.That (request.InternalDate, Is.Null, "InternalDate #3");
 			Assert.That (request.Annotations, Is.Null, "Annotations #3");
 
 			request = new ReplaceRequest (message, flags, keywordSet);
 			Assert.That (request.Message, Is.EqualTo (message), "Message #4");
 			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #4");
-			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #4");
+			Assert.That (request.Keywords, Is.InstanceOf<HashSet<string>> (), "Keywords Type #4");
 			Assert.That (request.Keywords, Is.EqualTo (keywordSet), "Keywords #4");
 			Assert.That (request.InternalDate, Is.Null, "InternalDate #4");
 			Assert.That (request.Annotations, Is.Null, "Annotations #4");
@@ -99,15 +99,15 @@ namespace UnitTests {
 			request = new ReplaceRequest (message, flags, keywords, internalDate);
 			Assert.That (request.Message, Is.EqualTo (message), "Message #6");
 			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #6");
-			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #6");
-			Assert.That (request.Keywords.Count, Is.EqualTo (keywords.Length), "Keywords #6");
+			Assert.That (request.Keywords, Is.InstanceOf<HashSet<string>> (), "Keywords Type #6");
+			Assert.That (request.Keywords, Has.Count.EqualTo (keywords.Length), "Keywords #6");
 			Assert.That (request.InternalDate.Value, Is.EqualTo (internalDate), "InternalDate #6");
 			Assert.That (request.Annotations, Is.Null, "Annotations #6");
 
 			request = new ReplaceRequest (message, flags, keywordSet, internalDate);
 			Assert.That (request.Message, Is.EqualTo (message), "Message #7");
 			Assert.That (request.Flags, Is.EqualTo (flags), "Flags #7");
-			Assert.IsInstanceOf<HashSet<string>> (request.Keywords, "Keywords Type #7");
+			Assert.That (request.Keywords, Is.InstanceOf<HashSet<string>> (), "Keywords Type #7");
 			Assert.That (request.Keywords, Is.EqualTo (keywordSet), "Keywords #7");
 			Assert.That (request.InternalDate.Value, Is.EqualTo (internalDate), "InternalDate #7");
 			Assert.That (request.Annotations, Is.Null, "Annotations #7");

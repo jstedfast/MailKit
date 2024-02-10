@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ namespace UnitTests.Net.Imap {
 		public void Dispose ()
 		{
 			engine.Dispose ();
+			GC.SuppressFinalize (this);
 		}
 
 		[Test]
@@ -57,7 +58,7 @@ namespace UnitTests.Net.Imap {
 
 			Assert.Throws<ArgumentNullException> (() => ImapUtils.FormatIndexSet (null, new int[1]));
 			Assert.Throws<ArgumentNullException> (() => ImapUtils.FormatIndexSet (engine, null));
-			Assert.Throws<ArgumentException> (() => ImapUtils.FormatIndexSet (engine, new int[0]));
+			Assert.Throws<ArgumentException> (() => ImapUtils.FormatIndexSet (engine, Array.Empty<int> ()));
 
 			Assert.Throws<ArgumentNullException> (() => ImapUtils.FormatIndexSet (engine, null, new int[1]));
 
@@ -262,7 +263,7 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartText> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartText> (), "Body types did not match.");
 						basic = (BodyPartText) body;
 
 						Assert.That (body.ContentType.IsMimeType ("text", "plain"), Is.True, "Content-Type did not match.");
@@ -300,7 +301,7 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartText> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartText> (), "Body types did not match.");
 						basic = (BodyPartText) body;
 
 						Assert.That (body.ContentType.IsMimeType ("text", "plain"), Is.True, "Content-Type did not match.");
@@ -341,22 +342,22 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Wed, 17 Jul 1996 02:23:25 -0700"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("IMAP4rev1 WG mtg summary and minutes"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("imap@cac.washington.edu"), "To does not match.");
 
-						Assert.That (envelope.Cc.Count, Is.EqualTo (2), "Cc counts do not match.");
+						Assert.That (envelope.Cc, Has.Count.EqualTo (2), "Cc counts do not match.");
 						Assert.That (envelope.Cc.ToString (), Is.EqualTo ("minutes@CNRI.Reston.VA.US, \"John Klensin\" <KLENSIN@MIT.EDU>"), "Cc does not match.");
 
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -392,22 +393,22 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Wed, 17 Jul 1996 02:23:25 -0700"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("IMAP4rev1 WG mtg summary and minutes"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("imap@cac.washington.edu"), "To does not match.");
 
-						Assert.That (envelope.Cc.Count, Is.EqualTo (2), "Cc counts do not match.");
+						Assert.That (envelope.Cc, Has.Count.EqualTo (2), "Cc counts do not match.");
 						Assert.That (envelope.Cc.ToString (), Is.EqualTo ("minutes@CNRI.Reston.VA.US, \"John Klensin\" <KLENSIN@MIT.EDU>"), "Cc does not match.");
 
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -443,22 +444,22 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Wed, 17 Jul 1996 02:23:25 -0700"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("IMAP4rev1 WG mtg summary and minutes"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("imap@cac.washington.edu"), "To does not match.");
 
-						Assert.That (envelope.Cc.Count, Is.EqualTo (2), "Cc counts do not match.");
+						Assert.That (envelope.Cc, Has.Count.EqualTo (2), "Cc counts do not match.");
 						Assert.That (envelope.Cc.ToString (), Is.EqualTo ("minutes@CNRI.Reston.VA.US, \"John Klensin\" <KLENSIN@MIT.EDU>"), "Cc does not match.");
 
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -494,22 +495,22 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Wed, 17 Jul 1996 02:23:25 -0700"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("IMAP4rev1 WG mtg summary and minutes"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("imap@cac.washington.edu"), "To does not match.");
 
-						Assert.That (envelope.Cc.Count, Is.EqualTo (2), "Cc counts do not match.");
+						Assert.That (envelope.Cc, Has.Count.EqualTo (2), "Cc counts do not match.");
 						Assert.That (envelope.Cc.ToString (), Is.EqualTo ("minutes@CNRI.Reston.VA.US, \"John Klensin\" <KLENSIN@MIT.EDU>"), "Cc does not match.");
 
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -547,17 +548,17 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Thu, 29 Apr 2021 10:57:07 +0000"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("Паркинг на Данаил Дечев"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Рецепция Офис сграда \\\"Данаил Дечев\\\" №6\" <facility@xxxxxxxxxxx.com>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (0), "Sender counts do not match.");
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (0), "Reply-To counts do not match.");
+						Assert.That (envelope.Sender, Is.Empty, "Sender counts do not match.");
+						Assert.That (envelope.ReplyTo, Is.Empty, "Reply-To counts do not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("\"Team\" <team@xxxxxxxxxxx.com>"), "To does not match.");
 
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -595,17 +596,17 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Thu, 29 Apr 2021 10:57:07 +0000"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("Паркинг на Данаил Дечев"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Рецепция Офис сграда \\\"Данаил Дечев\\\" №6\" <facility@xxxxxxxxxxx.com>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (0), "Sender counts do not match.");
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (0), "Reply-To counts do not match.");
+						Assert.That (envelope.Sender, Is.Empty, "Sender counts do not match.");
+						Assert.That (envelope.ReplyTo, Is.Empty, "Reply-To counts do not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("\"Team\" <team@xxxxxxxxxxx.com>"), "To does not match.");
 
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -642,18 +643,18 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Tue, 24 Sep 2019 09:48:05 +0800"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("subject"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"From Name\" <from@example.com>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Sender Name\" <sender@example.com>"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Reply-To Name\" <reply-to@example.com>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (0), "To counts do not match.");
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.To, Is.Empty, "To counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.EqualTo ("in-reply-to@example.com"), "In-Reply-To does not match.");
 
@@ -690,18 +691,18 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Tue, 24 Sep 2019 09:48:05 +0800"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("subject"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"From Name\" <from@example.com>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Sender Name\" <sender@example.com>"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Reply-To Name\" <reply-to@example.com>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (0), "To counts do not match.");
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.To, Is.Empty, "To counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.EqualTo ("in-reply-to@example.com"), "In-Reply-To does not match.");
 
@@ -738,18 +739,18 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Tue, 24 Sep 2019 09:48:05 +0800"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("北京战区日报表"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (0), "To counts do not match.");
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.To, Is.Empty, "To counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 						Assert.That (envelope.MessageId, Is.Null, "Message-Id is not null.");
@@ -785,18 +786,18 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Tue, 24 Sep 2019 09:48:05 +0800"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("北京战区日报表"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (0), "To counts do not match.");
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.To, Is.Empty, "To counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 						Assert.That (envelope.MessageId, Is.Null, "Message-Id is not null.");
@@ -828,20 +829,20 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Mon, 10 Apr 2017 06:04:00 -0700"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("Session 2: Building the meditation habit"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Headspace\" <members@headspace.com>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("members=headspace.com@members.headspace.com"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Headspace\" <members@headspace.com>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("user@gmail.com"), "To does not match.");
 
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -874,20 +875,20 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Mon, 10 Apr 2017 06:04:00 -0700"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("Session 2: Building the meditation habit"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Headspace\" <members@headspace.com>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("members=headspace.com@members.headspace.com"), "Sender does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Headspace\" <members@headspace.com>"), "Reply-To does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("user@gmail.com"), "To does not match.");
 
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -923,18 +924,18 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Mon, 10 Apr 2017 06:04:00 -0700"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("This is the subject"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"From_DisplayName\" <from@domain.com>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Dummyía Paández Algo\" <sender@domain.com>"), "Sender does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("\"To_DisplayName\" <to@domain.com>"), "To does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (0), "Reply-To counts do not match.");
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.ReplyTo, Is.Empty, "Reply-To counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -970,18 +971,18 @@ namespace UnitTests.Net.Imap {
 						Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Mon, 10 Apr 2017 06:04:00 -0700"), "Date does not match.");
 						Assert.That (envelope.Subject, Is.EqualTo ("This is the subject"), "Subject does not match.");
 
-						Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"From_DisplayName\" <from@domain.com>"), "From does not match.");
 
-						Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Dummyía Paández Algo\" <sender@domain.com>"), "Sender does not match.");
 
-						Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+						Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 						Assert.That (envelope.To.ToString (), Is.EqualTo ("\"To_DisplayName\" <to@domain.com>"), "To does not match.");
 
-						Assert.That (envelope.ReplyTo.Count, Is.EqualTo (0), "Reply-To counts do not match.");
-						Assert.That (envelope.Cc.Count, Is.EqualTo (0), "Cc counts do not match.");
-						Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+						Assert.That (envelope.ReplyTo, Is.Empty, "Reply-To counts do not match.");
+						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
+						Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 						Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -1241,15 +1242,15 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("----=_NextPart_000_0077_01CBB179.57530990"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
-						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
-						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[1], "The type of the second child does not match.");
-						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "The type of the third child does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartMessage> (), "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartMessage> (), "The type of the third child does not match.");
 
 						// FIXME: assert more stuff?
 					}
@@ -1280,15 +1281,15 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("----=_NextPart_000_0077_01CBB179.57530990"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
-						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
-						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[1], "The type of the second child does not match.");
-						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "The type of the third child does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartMessage> (), "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartMessage> (), "The type of the third child does not match.");
 
 						// FIXME: assert more stuff?
 					}
@@ -1318,16 +1319,16 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("----=--_DRYORTABLE@@@_@@@8957836_03253840099.78526606923635"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[2], "The type of the third child did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartText> (), "The type of the third child did not match.");
 
 						var related = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (related.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
@@ -1361,16 +1362,16 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("----=--_DRYORTABLE@@@_@@@8957836_03253840099.78526606923635"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[2], "The type of the third child did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartText> (), "The type of the third child did not match.");
 
 						var related = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (related.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
@@ -1404,17 +1405,17 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "report"), Is.True, "multipart/report Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("==IFJRGLKFGIR60132UHRUHIHD"), "boundary param did not match.");
 						Assert.That (multipart.ContentType.Parameters["report-type"], Is.EqualTo ("delivery-status"), "report-type param did not match.");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child did not match.");
-						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "The type of the third child did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartMessage> (), "The type of the third child did not match.");
 
 						var plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
@@ -1432,12 +1433,12 @@ namespace UnitTests.Net.Imap {
 						Assert.That (rfc822.ContentType.IsMimeType ("message", "rfc822"), Is.True, "message/rfc822 Content-Type did not match.");
 						Assert.That (rfc822.ContentId, Is.Null, "message/rfc822 Content-Id should be NIL.");
 						Assert.That (rfc822.ContentDescription, Is.Null, "message/rfc822 Content-Description should be NIL.");
-						Assert.That (rfc822.Envelope.Sender.Count, Is.EqualTo (0), "message/rfc822 Envlope.Sender should be null.");
-						Assert.That (rfc822.Envelope.From.Count, Is.EqualTo (0), "message/rfc822 Envlope.From should be null.");
-						Assert.That (rfc822.Envelope.ReplyTo.Count, Is.EqualTo (0), "message/rfc822 Envlope.ReplyTo should be null.");
-						Assert.That (rfc822.Envelope.To.Count, Is.EqualTo (0), "message/rfc822 Envlope.To should be null.");
-						Assert.That (rfc822.Envelope.Cc.Count, Is.EqualTo (0), "message/rfc822 Envlope.Cc should be null.");
-						Assert.That (rfc822.Envelope.Bcc.Count, Is.EqualTo (0), "message/rfc822 Envlope.Bcc should be null.");
+						Assert.That (rfc822.Envelope.Sender, Is.Empty, "message/rfc822 Envlope.Sender should be null.");
+						Assert.That (rfc822.Envelope.From, Is.Empty, "message/rfc822 Envlope.From should be null.");
+						Assert.That (rfc822.Envelope.ReplyTo, Is.Empty, "message/rfc822 Envlope.ReplyTo should be null.");
+						Assert.That (rfc822.Envelope.To, Is.Empty, "message/rfc822 Envlope.To should be null.");
+						Assert.That (rfc822.Envelope.Cc, Is.Empty, "message/rfc822 Envlope.Cc should be null.");
+						Assert.That (rfc822.Envelope.Bcc, Is.Empty, "message/rfc822 Envlope.Bcc should be null.");
 						Assert.That (rfc822.Envelope.Subject, Is.Null, "message/rfc822 Envlope.Subject should be null.");
 						Assert.That (rfc822.Envelope.MessageId, Is.Null, "message/rfc822 Envlope.MessageId should be null.");
 						Assert.That (rfc822.Envelope.InReplyTo, Is.Null, "message/rfc822 Envlope.InReplyTo should be null.");
@@ -1473,17 +1474,17 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "report"), Is.True, "multipart/report Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("==IFJRGLKFGIR60132UHRUHIHD"), "boundary param did not match.");
 						Assert.That (multipart.ContentType.Parameters["report-type"], Is.EqualTo ("delivery-status"), "report-type param did not match.");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child did not match.");
-						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "The type of the third child did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartMessage> (), "The type of the third child did not match.");
 
 						var plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
@@ -1501,12 +1502,12 @@ namespace UnitTests.Net.Imap {
 						Assert.That (rfc822.ContentType.IsMimeType ("message", "rfc822"), Is.True, "message/rfc822 Content-Type did not match.");
 						Assert.That (rfc822.ContentId, Is.Null, "message/rfc822 Content-Id should be NIL.");
 						Assert.That (rfc822.ContentDescription, Is.Null, "message/rfc822 Content-Description should be NIL.");
-						Assert.That (rfc822.Envelope.Sender.Count, Is.EqualTo (0), "message/rfc822 Envlope.Sender should be null.");
-						Assert.That (rfc822.Envelope.From.Count, Is.EqualTo (0), "message/rfc822 Envlope.From should be null.");
-						Assert.That (rfc822.Envelope.ReplyTo.Count, Is.EqualTo (0), "message/rfc822 Envlope.ReplyTo should be null.");
-						Assert.That (rfc822.Envelope.To.Count, Is.EqualTo (0), "message/rfc822 Envlope.To should be null.");
-						Assert.That (rfc822.Envelope.Cc.Count, Is.EqualTo (0), "message/rfc822 Envlope.Cc should be null.");
-						Assert.That (rfc822.Envelope.Bcc.Count, Is.EqualTo (0), "message/rfc822 Envlope.Bcc should be null.");
+						Assert.That (rfc822.Envelope.Sender, Is.Empty, "message/rfc822 Envlope.Sender should be null.");
+						Assert.That (rfc822.Envelope.From, Is.Empty, "message/rfc822 Envlope.From should be null.");
+						Assert.That (rfc822.Envelope.ReplyTo, Is.Empty, "message/rfc822 Envlope.ReplyTo should be null.");
+						Assert.That (rfc822.Envelope.To, Is.Empty, "message/rfc822 Envlope.To should be null.");
+						Assert.That (rfc822.Envelope.Cc, Is.Empty, "message/rfc822 Envlope.Cc should be null.");
+						Assert.That (rfc822.Envelope.Bcc, Is.Empty, "message/rfc822 Envlope.Bcc should be null.");
 						Assert.That (rfc822.Envelope.Subject, Is.Null, "message/rfc822 Envlope.Subject should be null.");
 						Assert.That (rfc822.Envelope.MessageId, Is.Null, "message/rfc822 Envlope.MessageId should be null.");
 						Assert.That (rfc822.Envelope.InReplyTo, Is.Null, "message/rfc822 Envlope.InReplyTo should be null.");
@@ -1541,7 +1542,7 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "multipart/alternative Content-Type did not match.");
@@ -1549,13 +1550,13 @@ namespace UnitTests.Net.Imap {
 						Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"), "multipart/alternative disposition did not match");
 						Assert.That (multipart.ContentDisposition.FileName, Is.EqualTo ("alternative.txt"), "multipart/alternative filename did not match");
 						Assert.That (multipart.ContentLanguage, Is.Not.Null, "multipart/alternative Content-Language should not be null");
-						Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "multipart/alternative Content-Language count did not match");
+						Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "multipart/alternative Content-Language count did not match");
 						Assert.That (multipart.ContentLanguage[0], Is.EqualTo ("en"), "multipart/alternative Content-Language value did not match");
 						Assert.That (multipart.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/alternative.txt"), "multipart/alternative location did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child did not match.");
 
 						var plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
@@ -1564,7 +1565,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.ContentDisposition.FileName, Is.EqualTo ("body.txt"), "text/plain filename did not match");
 						Assert.That (plain.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (plain.ContentLanguage, Is.Not.Null, "text/plain Content-Language should not be null");
-						Assert.That (plain.ContentLanguage.Length, Is.EqualTo (1), "text/plain Content-Language count did not match");
+						Assert.That (plain.ContentLanguage, Has.Length.EqualTo (1), "text/plain Content-Language count did not match");
 						Assert.That (plain.ContentLanguage [0], Is.EqualTo ("en"), "text/plain Content-Language value did not match");
 						Assert.That (plain.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.txt"), "text/plain location did not match");
 						Assert.That (plain.Octets, Is.EqualTo (28), "text/plain octets did not match");
@@ -1577,7 +1578,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (html.ContentDisposition.FileName, Is.EqualTo ("body.html"), "text/html filename did not match");
 						Assert.That (html.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (html.ContentLanguage, Is.Not.Null, "text/html Content-Language should not be null");
-						Assert.That (html.ContentLanguage.Length, Is.EqualTo (1), "text/html Content-Language count did not match");
+						Assert.That (html.ContentLanguage, Has.Length.EqualTo (1), "text/html Content-Language count did not match");
 						Assert.That (html.ContentLanguage [0], Is.EqualTo ("en"), "text/html Content-Language value did not match");
 						Assert.That (html.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.html"), "text/html location did not match");
 						Assert.That (html.Octets, Is.EqualTo (1707), "text/html octets did not match");
@@ -1608,7 +1609,7 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "multipart/alternative Content-Type did not match.");
@@ -1616,13 +1617,13 @@ namespace UnitTests.Net.Imap {
 						Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"), "multipart/alternative disposition did not match");
 						Assert.That (multipart.ContentDisposition.FileName, Is.EqualTo ("alternative.txt"), "multipart/alternative filename did not match");
 						Assert.That (multipart.ContentLanguage, Is.Not.Null, "multipart/alternative Content-Language should not be null");
-						Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "multipart/alternative Content-Language count did not match");
+						Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "multipart/alternative Content-Language count did not match");
 						Assert.That (multipart.ContentLanguage[0], Is.EqualTo ("en"), "multipart/alternative Content-Language value did not match");
 						Assert.That (multipart.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/alternative.txt"), "multipart/alternative location did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child did not match.");
 
 						var plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
@@ -1631,7 +1632,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.ContentDisposition.FileName, Is.EqualTo ("body.txt"), "text/plain filename did not match");
 						Assert.That (plain.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (plain.ContentLanguage, Is.Not.Null, "text/plain Content-Language should not be null");
-						Assert.That (plain.ContentLanguage.Length, Is.EqualTo (1), "text/plain Content-Language count did not match");
+						Assert.That (plain.ContentLanguage, Has.Length.EqualTo (1), "text/plain Content-Language count did not match");
 						Assert.That (plain.ContentLanguage[0], Is.EqualTo ("en"), "text/plain Content-Language value did not match");
 						Assert.That (plain.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.txt"), "text/plain location did not match");
 						Assert.That (plain.Octets, Is.EqualTo (28), "text/plain octets did not match");
@@ -1644,7 +1645,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (html.ContentDisposition.FileName, Is.EqualTo ("body.html"), "text/html filename did not match");
 						Assert.That (html.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (html.ContentLanguage, Is.Not.Null, "text/html Content-Language should not be null");
-						Assert.That (html.ContentLanguage.Length, Is.EqualTo (1), "text/html Content-Language count did not match");
+						Assert.That (html.ContentLanguage, Has.Length.EqualTo (1), "text/html Content-Language count did not match");
 						Assert.That (html.ContentLanguage[0], Is.EqualTo ("en"), "text/html Content-Language value did not match");
 						Assert.That (html.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.html"), "text/html location did not match");
 						Assert.That (html.Octets, Is.EqualTo (1707), "text/html octets did not match");
@@ -1675,7 +1676,7 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart)body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "multipart/alternative Content-Type did not match.");
@@ -1683,13 +1684,13 @@ namespace UnitTests.Net.Imap {
 						Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"), "multipart/alternative disposition did not match");
 						Assert.That (multipart.ContentDisposition.FileName, Is.EqualTo ("alternative.txt"), "multipart/alternative filename did not match");
 						Assert.That (multipart.ContentLanguage, Is.Not.Null, "multipart/alternative Content-Language should not be null");
-						Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "multipart/alternative Content-Language count did not match");
+						Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "multipart/alternative Content-Language count did not match");
 						Assert.That (multipart.ContentLanguage [0], Is.EqualTo ("en"), "multipart/alternative Content-Language value did not match");
 						Assert.That (multipart.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/alternative.txt"), "multipart/alternative location did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts [0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts [1], "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts [0], Is.InstanceOf<BodyPartText> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts [1], Is.InstanceOf<BodyPartText> (), "The type of the second child did not match.");
 
 						var plain = (BodyPartText)multipart.BodyParts [0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
@@ -1698,7 +1699,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.ContentDisposition.FileName, Is.EqualTo ("body.txt"), "text/plain filename did not match");
 						Assert.That (plain.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (plain.ContentLanguage, Is.Not.Null, "text/plain Content-Language should not be null");
-						Assert.That (plain.ContentLanguage.Length, Is.EqualTo (1), "text/plain Content-Language count did not match");
+						Assert.That (plain.ContentLanguage, Has.Length.EqualTo (1), "text/plain Content-Language count did not match");
 						Assert.That (plain.ContentLanguage [0], Is.EqualTo ("en"), "text/plain Content-Language value did not match");
 						Assert.That (plain.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.txt"), "text/plain location did not match");
 						Assert.That (plain.Octets, Is.EqualTo (28), "text/plain octets did not match");
@@ -1711,7 +1712,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (html.ContentDisposition.FileName, Is.EqualTo ("body.html"), "text/html filename did not match");
 						Assert.That (html.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (html.ContentLanguage, Is.Not.Null, "text/html Content-Language should not be null");
-						Assert.That (html.ContentLanguage.Length, Is.EqualTo (1), "text/html Content-Language count did not match");
+						Assert.That (html.ContentLanguage, Has.Length.EqualTo (1), "text/html Content-Language count did not match");
 						Assert.That (html.ContentLanguage [0], Is.EqualTo ("en"), "text/html Content-Language value did not match");
 						Assert.That (html.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.html"), "text/html location did not match");
 						Assert.That (html.Octets, Is.EqualTo (1707), "text/html octets did not match");
@@ -1742,7 +1743,7 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "multipart/alternative Content-Type did not match.");
@@ -1750,13 +1751,13 @@ namespace UnitTests.Net.Imap {
 						Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"), "multipart/alternative disposition did not match");
 						Assert.That (multipart.ContentDisposition.FileName, Is.EqualTo ("alternative.txt"), "multipart/alternative filename did not match");
 						Assert.That (multipart.ContentLanguage, Is.Not.Null, "multipart/alternative Content-Language should not be null");
-						Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "multipart/alternative Content-Language count did not match");
+						Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "multipart/alternative Content-Language count did not match");
 						Assert.That (multipart.ContentLanguage[0], Is.EqualTo ("en"), "multipart/alternative Content-Language value did not match");
 						Assert.That (multipart.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/alternative.txt"), "multipart/alternative location did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child did not match.");
 
 						var plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
@@ -1765,7 +1766,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.ContentDisposition.FileName, Is.EqualTo ("body.txt"), "text/plain filename did not match");
 						Assert.That (plain.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (plain.ContentLanguage, Is.Not.Null, "text/plain Content-Language should not be null");
-						Assert.That (plain.ContentLanguage.Length, Is.EqualTo (1), "text/plain Content-Language count did not match");
+						Assert.That (plain.ContentLanguage, Has.Length.EqualTo (1), "text/plain Content-Language count did not match");
 						Assert.That (plain.ContentLanguage[0], Is.EqualTo ("en"), "text/plain Content-Language value did not match");
 						Assert.That (plain.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.txt"), "text/plain location did not match");
 						Assert.That (plain.Octets, Is.EqualTo (28), "text/plain octets did not match");
@@ -1778,7 +1779,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (html.ContentDisposition.FileName, Is.EqualTo ("body.html"), "text/html filename did not match");
 						Assert.That (html.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (html.ContentLanguage, Is.Not.Null, "text/html Content-Language should not be null");
-						Assert.That (html.ContentLanguage.Length, Is.EqualTo (1), "text/html Content-Language count did not match");
+						Assert.That (html.ContentLanguage, Has.Length.EqualTo (1), "text/html Content-Language count did not match");
 						Assert.That (html.ContentLanguage[0], Is.EqualTo ("en"), "text/html Content-Language value did not match");
 						Assert.That (html.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.html"), "text/html location did not match");
 						Assert.That (html.Octets, Is.EqualTo (1707), "text/html octets did not match");
@@ -1809,7 +1810,7 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart)body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "multipart/alternative Content-Type did not match.");
@@ -1817,13 +1818,13 @@ namespace UnitTests.Net.Imap {
 						Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"), "multipart/alternative disposition did not match");
 						Assert.That (multipart.ContentDisposition.FileName, Is.EqualTo ("alternative.txt"), "multipart/alternative filename did not match");
 						Assert.That (multipart.ContentLanguage, Is.Not.Null, "multipart/alternative Content-Language should not be null");
-						Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "multipart/alternative Content-Language count did not match");
+						Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "multipart/alternative Content-Language count did not match");
 						Assert.That (multipart.ContentLanguage [0], Is.EqualTo ("en"), "multipart/alternative Content-Language value did not match");
 						Assert.That (multipart.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/alternative.txt"), "multipart/alternative location did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts [0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts [1], "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts [0], Is.InstanceOf<BodyPartText> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts [1], Is.InstanceOf<BodyPartText> (), "The type of the second child did not match.");
 
 						var plain = (BodyPartText)multipart.BodyParts [0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
@@ -1832,7 +1833,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.ContentDisposition.FileName, Is.EqualTo ("body.txt"), "text/plain filename did not match");
 						Assert.That (plain.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (plain.ContentLanguage, Is.Not.Null, "text/plain Content-Language should not be null");
-						Assert.That (plain.ContentLanguage.Length, Is.EqualTo (1), "text/plain Content-Language count did not match");
+						Assert.That (plain.ContentLanguage, Has.Length.EqualTo (1), "text/plain Content-Language count did not match");
 						Assert.That (plain.ContentLanguage [0], Is.EqualTo ("en"), "text/plain Content-Language value did not match");
 						Assert.That (plain.ContentLocation.ToString (), Is.EqualTo ("body.txt"), "text/plain location did not match");
 						Assert.That (plain.Octets, Is.EqualTo (28), "text/plain octets did not match");
@@ -1845,7 +1846,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (html.ContentDisposition.FileName, Is.EqualTo ("body.html"), "text/html filename did not match");
 						Assert.That (html.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (html.ContentLanguage, Is.Not.Null, "text/html Content-Language should not be null");
-						Assert.That (html.ContentLanguage.Length, Is.EqualTo (1), "text/html Content-Language count did not match");
+						Assert.That (html.ContentLanguage, Has.Length.EqualTo (1), "text/html Content-Language count did not match");
 						Assert.That (html.ContentLanguage [0], Is.EqualTo ("en"), "text/html Content-Language value did not match");
 						Assert.That (html.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.html"), "text/html location did not match");
 						Assert.That (html.Octets, Is.EqualTo (1707), "text/html octets did not match");
@@ -1876,7 +1877,7 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "multipart/alternative Content-Type did not match.");
@@ -1884,13 +1885,13 @@ namespace UnitTests.Net.Imap {
 						Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"), "multipart/alternative disposition did not match");
 						Assert.That (multipart.ContentDisposition.FileName, Is.EqualTo ("alternative.txt"), "multipart/alternative filename did not match");
 						Assert.That (multipart.ContentLanguage, Is.Not.Null, "multipart/alternative Content-Language should not be null");
-						Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "multipart/alternative Content-Language count did not match");
+						Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "multipart/alternative Content-Language count did not match");
 						Assert.That (multipart.ContentLanguage[0], Is.EqualTo ("en"), "multipart/alternative Content-Language value did not match");
 						Assert.That (multipart.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/alternative.txt"), "multipart/alternative location did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count did not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child did not match.");
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child did not match.");
 
 						var plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
@@ -1899,7 +1900,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.ContentDisposition.FileName, Is.EqualTo ("body.txt"), "text/plain filename did not match");
 						Assert.That (plain.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (plain.ContentLanguage, Is.Not.Null, "text/plain Content-Language should not be null");
-						Assert.That (plain.ContentLanguage.Length, Is.EqualTo (1), "text/plain Content-Language count did not match");
+						Assert.That (plain.ContentLanguage, Has.Length.EqualTo (1), "text/plain Content-Language count did not match");
 						Assert.That (plain.ContentLanguage[0], Is.EqualTo ("en"), "text/plain Content-Language value did not match");
 						Assert.That (plain.ContentLocation.ToString (), Is.EqualTo ("body.txt"), "text/plain location did not match");
 						Assert.That (plain.Octets, Is.EqualTo (28), "text/plain octets did not match");
@@ -1912,7 +1913,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (html.ContentDisposition.FileName, Is.EqualTo ("body.html"), "text/html filename did not match");
 						Assert.That (html.ContentMd5, Is.EqualTo ("md5sum"), "text/html Content-Md5 did not match");
 						Assert.That (html.ContentLanguage, Is.Not.Null, "text/html Content-Language should not be null");
-						Assert.That (html.ContentLanguage.Length, Is.EqualTo (1), "text/html Content-Language count did not match");
+						Assert.That (html.ContentLanguage, Has.Length.EqualTo (1), "text/html Content-Language count did not match");
 						Assert.That (html.ContentLanguage[0], Is.EqualTo ("en"), "text/html Content-Language value did not match");
 						Assert.That (html.ContentLocation.ToString (), Is.EqualTo ("http://www.google.com/body.html"), "text/html location did not match");
 						Assert.That (html.Octets, Is.EqualTo (1707), "text/html octets did not match");
@@ -1948,20 +1949,20 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "outer multipart/alternative Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("==alternative_xad5934455aeex"), "outer multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "The type of the first child does not match.");
 						broken = (BodyPartMultipart) multipart.BodyParts[0];
 						Assert.That (broken.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "inner multipart/alternative Content-Type did not match.");
 						Assert.That (broken.ContentType.Parameters["boundary"], Is.EqualTo ("==alternative_xad5934455aeex"), "inner multipart/alternative boundary param did not match");
-						Assert.That (broken.BodyParts.Count, Is.EqualTo (0), "inner multipart/alternative BodyParts count does not match.");
+						Assert.That (broken.BodyParts, Is.Empty, "inner multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						html = (BodyPartText) multipart.BodyParts[1];
 						Assert.That (html.ContentType.IsMimeType ("text", "html"), Is.True, "text/html Content-Type did not match.");
 						Assert.That (html.ContentType.Charset, Is.EqualTo ("iso-8859-1"), "text/html charset parameter did not match");
@@ -1997,20 +1998,20 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "outer multipart/alternative Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("==alternative_xad5934455aeex"), "outer multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "The type of the first child does not match.");
 						broken = (BodyPartMultipart) multipart.BodyParts[0];
 						Assert.That (broken.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "inner multipart/alternative Content-Type did not match.");
 						Assert.That (broken.ContentType.Parameters["boundary"], Is.EqualTo ("==alternative_xad5934455aeex"), "inner multipart/alternative boundary param did not match");
-						Assert.That (broken.BodyParts.Count, Is.EqualTo (0), "inner multipart/alternative BodyParts count does not match.");
+						Assert.That (broken.BodyParts, Is.Empty, "inner multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						html = (BodyPartText) multipart.BodyParts[1];
 						Assert.That (html.ContentType.IsMimeType ("text", "html"), Is.True, "text/html Content-Type did not match.");
 						Assert.That (html.ContentType.Charset, Is.EqualTo ("iso-8859-1"), "text/html charset parameter did not match");
@@ -2044,20 +2045,20 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var mixed = (BodyPartMultipart) body;
 
 						Assert.That (mixed.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (mixed.ContentType.Parameters["boundary"], Is.EqualTo ("94eb2c1cd0507723e6054c1ce6cd"), "multipart/mixed boundary param did not match");
-						Assert.That (mixed.BodyParts.Count, Is.EqualTo (5), "multipart/mixed BodyParts count does not match.");
+						Assert.That (mixed.BodyParts, Has.Count.EqualTo (5), "multipart/mixed BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (mixed.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "The type of the first child does not match.");
 						var alternative = (BodyPartMultipart) mixed.BodyParts[0];
 						Assert.That (alternative.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "multipart/alternative Content-Type did not match.");
 						Assert.That (alternative.ContentType.Parameters["boundary"], Is.EqualTo ("94eb2c1cd0507723d5054c1ce6cb"), "multipart/alternative boundary param did not match");
-						Assert.That (alternative.BodyParts.Count, Is.EqualTo (2), "multipart/alternative BodyParts count does not match.");
+						Assert.That (alternative.BodyParts, Has.Count.EqualTo (2), "multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[0], "The type of the second child does not match.");
+						Assert.That (alternative.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						var plain = (BodyPartText) alternative.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("UTF-8"), "text/plain charset parameter did not match");
@@ -2067,7 +2068,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.Octets, Is.EqualTo (10418), "text/plain Octets do not match");
 						Assert.That (plain.Lines, Is.EqualTo (133), "text/plain Lines don't match");
 
-						Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (alternative.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						var html = (BodyPartText) alternative.BodyParts[1];
 						Assert.That (html.ContentType.IsMimeType ("text", "html"), Is.True, "text/html Content-Type did not match.");
 						Assert.That (html.ContentType.Charset, Is.EqualTo ("UTF-8"), "text/html charset parameter did not match");
@@ -2075,25 +2076,25 @@ namespace UnitTests.Net.Imap {
 						Assert.That (html.Octets, Is.EqualTo (34544), "text/html Octets do not match");
 						Assert.That (html.Lines, Is.EqualTo (442), "text/html Lines don't match");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (mixed.BodyParts[1], Is.InstanceOf<BodyPartMultipart> (), "The type of the second child does not match.");
 						var broken1 = (BodyPartMultipart) mixed.BodyParts[1];
 						Assert.That (broken1.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
-						Assert.That (broken1.BodyParts.Count, Is.EqualTo (0), "multipart/related BodyParts count does not match.");
+						Assert.That (broken1.BodyParts, Is.Empty, "multipart/related BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[2], "The type of the third child does not match.");
+						Assert.That (mixed.BodyParts[2], Is.InstanceOf<BodyPartMultipart> (), "The type of the third child does not match.");
 						var broken2 = (BodyPartMultipart) mixed.BodyParts[2];
 						Assert.That (broken2.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
-						Assert.That (broken2.BodyParts.Count, Is.EqualTo (0), "multipart/related BodyParts count does not match.");
+						Assert.That (broken2.BodyParts, Is.Empty, "multipart/related BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[3], "The type of the fourth child does not match.");
+						Assert.That (mixed.BodyParts[3], Is.InstanceOf<BodyPartMultipart> (), "The type of the fourth child does not match.");
 						var broken3 = (BodyPartMultipart) mixed.BodyParts[3];
 						Assert.That (broken3.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
-						Assert.That (broken3.BodyParts.Count, Is.EqualTo (0), "multipart/related BodyParts count does not match.");
+						Assert.That (broken3.BodyParts, Is.Empty, "multipart/related BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[4], "The type of the fifth child does not match.");
+						Assert.That (mixed.BodyParts[4], Is.InstanceOf<BodyPartMultipart> (), "The type of the fifth child does not match.");
 						var broken4 = (BodyPartMultipart) mixed.BodyParts[4];
 						Assert.That (broken4.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
-						Assert.That (broken4.BodyParts.Count, Is.EqualTo (0), "multipart/related BodyParts count does not match.");
+						Assert.That (broken4.BodyParts, Is.Empty, "multipart/related BodyParts count does not match.");
 					}
 				}
 			}
@@ -2123,20 +2124,20 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var mixed = (BodyPartMultipart) body;
 
 						Assert.That (mixed.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (mixed.ContentType.Parameters["boundary"], Is.EqualTo ("94eb2c1cd0507723e6054c1ce6cd"), "multipart/mixed boundary param did not match");
-						Assert.That (mixed.BodyParts.Count, Is.EqualTo (5), "multipart/mixed BodyParts count does not match.");
+						Assert.That (mixed.BodyParts, Has.Count.EqualTo (5), "multipart/mixed BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (mixed.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "The type of the first child does not match.");
 						var alternative = (BodyPartMultipart) mixed.BodyParts[0];
 						Assert.That (alternative.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "multipart/alternative Content-Type did not match.");
 						Assert.That (alternative.ContentType.Parameters["boundary"], Is.EqualTo ("94eb2c1cd0507723d5054c1ce6cb"), "multipart/alternative boundary param did not match");
-						Assert.That (alternative.BodyParts.Count, Is.EqualTo (2), "multipart/alternative BodyParts count does not match.");
+						Assert.That (alternative.BodyParts, Has.Count.EqualTo (2), "multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[0], "The type of the second child does not match.");
+						Assert.That (alternative.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						var plain = (BodyPartText) alternative.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("UTF-8"), "text/plain charset parameter did not match");
@@ -2146,7 +2147,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.Octets, Is.EqualTo (10418), "text/plain Octets do not match");
 						Assert.That (plain.Lines, Is.EqualTo (133), "text/plain Lines don't match");
 
-						Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (alternative.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						var html = (BodyPartText) alternative.BodyParts[1];
 						Assert.That (html.ContentType.IsMimeType ("text", "html"), Is.True, "text/html Content-Type did not match.");
 						Assert.That (html.ContentType.Charset, Is.EqualTo ("UTF-8"), "text/html charset parameter did not match");
@@ -2154,25 +2155,25 @@ namespace UnitTests.Net.Imap {
 						Assert.That (html.Octets, Is.EqualTo (34544), "text/html Octets do not match");
 						Assert.That (html.Lines, Is.EqualTo (442), "text/html Lines don't match");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (mixed.BodyParts[1], Is.InstanceOf<BodyPartMultipart> (), "The type of the second child does not match.");
 						var broken1 = (BodyPartMultipart) mixed.BodyParts[1];
 						Assert.That (broken1.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
-						Assert.That (broken1.BodyParts.Count, Is.EqualTo (0), "multipart/related BodyParts count does not match.");
+						Assert.That (broken1.BodyParts, Is.Empty, "multipart/related BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[2], "The type of the third child does not match.");
+						Assert.That (mixed.BodyParts[2], Is.InstanceOf<BodyPartMultipart> (), "The type of the third child does not match.");
 						var broken2 = (BodyPartMultipart) mixed.BodyParts[2];
 						Assert.That (broken2.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
-						Assert.That (broken2.BodyParts.Count, Is.EqualTo (0), "multipart/related BodyParts count does not match.");
+						Assert.That (broken2.BodyParts, Is.Empty, "multipart/related BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[3], "The type of the fourth child does not match.");
+						Assert.That (mixed.BodyParts[3], Is.InstanceOf<BodyPartMultipart> (), "The type of the fourth child does not match.");
 						var broken3 = (BodyPartMultipart) mixed.BodyParts[3];
 						Assert.That (broken3.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
-						Assert.That (broken3.BodyParts.Count, Is.EqualTo (0), "multipart/related BodyParts count does not match.");
+						Assert.That (broken3.BodyParts, Is.Empty, "multipart/related BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (mixed.BodyParts[4], "The type of the fifth child does not match.");
+						Assert.That (mixed.BodyParts[4], Is.InstanceOf<BodyPartMultipart> (), "The type of the fifth child does not match.");
 						var broken4 = (BodyPartMultipart) mixed.BodyParts[4];
 						Assert.That (broken4.ContentType.IsMimeType ("multipart", "related"), Is.True, "multipart/related Content-Type did not match.");
-						Assert.That (broken4.BodyParts.Count, Is.EqualTo (0), "multipart/related BodyParts count does not match.");
+						Assert.That (broken4.BodyParts, Is.Empty, "multipart/related BodyParts count does not match.");
 					}
 				}
 			}
@@ -2204,21 +2205,21 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("windows-1251"), "text/plain charset parameter did not match");
 						Assert.That (plain.Octets, Is.EqualTo (356), "text/plain octets did not match");
 						Assert.That (plain.Lines, Is.EqualTo (5), "text/plain lines did not match");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						xzip = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (xzip.ContentType.IsMimeType ("application", "x-zip"), Is.True, "x-zip Content-Type did not match.");
 						Assert.That (xzip.ContentType.Parameters["boundary"], Is.EqualTo (""), "x-zip boundary parameter did not match");
@@ -2254,21 +2255,21 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("windows-1251"), "text/plain charset parameter did not match");
 						Assert.That (plain.Octets, Is.EqualTo (356), "text/plain octets did not match");
 						Assert.That (plain.Lines, Is.EqualTo (5), "text/plain lines did not match");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						xzip = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (xzip.ContentType.IsMimeType ("application", "x-zip"), Is.True, "x-zip Content-Type did not match.");
 						Assert.That (xzip.ContentType.Parameters["boundary"], Is.EqualTo (""), "x-zip boundary parameter did not match");
@@ -2302,14 +2303,14 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.IsMimeType ("application", "octet-stream"), Is.True, "application/octet-stream Content-Type did not match.");
 						Assert.That (basic.Octets, Is.EqualTo (356), "application/octet-stream octets did not match");
@@ -2342,14 +2343,14 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.IsMimeType ("application", "octet-stream"), Is.True, "application/octet-stream Content-Type did not match.");
 						Assert.That (basic.Octets, Is.EqualTo (356), "application/octet-stream octets did not match");
@@ -2382,14 +2383,14 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.IsMimeType ("application", "audio"), Is.True, "application/audio Content-Type did not match.");
 						Assert.That (basic.Octets, Is.EqualTo (356), "application/audio octets did not match");
@@ -2422,14 +2423,14 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.IsMimeType ("application", "audio"), Is.True, "application/audio Content-Type did not match.");
 						Assert.That (basic.Octets, Is.EqualTo (356), "application/audio octets did not match");
@@ -2462,14 +2463,14 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.IsMimeType ("application", "message"), Is.True, "application/message Content-Type did not match.");
 						Assert.That (basic.Octets, Is.EqualTo (356), "application/message octets did not match");
@@ -2502,14 +2503,14 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.IsMimeType ("application", "message"), Is.True, "application/message Content-Type did not match.");
 						Assert.That (basic.Octets, Is.EqualTo (356), "application/message octets did not match");
@@ -2542,14 +2543,14 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("windows-1251"), "text/plain charset parameter did not match");
@@ -2584,14 +2585,14 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "multipart/mixed Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("--cd49a2f5ed4ed0cbb6f9f1c7f125541f"), "multipart/alternative boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (1), "outer multipart/alternative BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "text/plain Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("windows-1251"), "text/plain charset parameter did not match");
@@ -2627,18 +2628,18 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters ["boundary"], Is.EqualTo ("----=_NextPart_000_730AD4A547.730AD4A547F40"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("MOUNDARY=\"_006_5DBB50A5A54730AD4A54730AD4A54730AD4A54730AD42KOS_\""), "ContentType.MediaType does not match for first child.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("MOUNDARY=\"_006_5DBB50A5D3ABEC4E85A03EAD527CA5474B3D0AF9E6EXMBXSVR02KOS_\""), "ContentType.MediaType does not match for second child.");
 					}
@@ -2671,18 +2672,18 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("----=_NextPart_000_730AD4A547.730AD4A547F40"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("MOUNDARY=\"_006_5DBB50A5A54730AD4A54730AD4A54730AD4A54730AD42KOS_\""), "ContentType.MediaType does not match for first child.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("MOUNDARY=\"_006_5DBB50A5D3ABEC4E85A03EAD527CA5474B3D0AF9E6EXMBXSVR02KOS_\""), "ContentType.MediaType does not match for second child.");
 					}
@@ -2713,21 +2714,21 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("c52bbfc0dd5365efa39b9f80eac3"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "The type of the first child does not match.");
 						alternative = (BodyPartMultipart) multipart.BodyParts[0];
 						Assert.That (alternative.ContentType.MediaSubtype, Is.EqualTo ("alternative"), "Content-Type did not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartMultipart> (), "The type of the second child does not match.");
 						xzip = (BodyPartMultipart) multipart.BodyParts[1];
 						Assert.That (xzip.ContentType.MediaSubtype, Is.EqualTo ("x-zip"), "Content-Type did not match.");
-						Assert.That (xzip.ContentType.Parameters.Count, Is.EqualTo (0), "Content-Type should not have params.");
+						Assert.That (xzip.ContentType.Parameters, Is.Empty, "Content-Type should not have params.");
 					}
 				}
 			}
@@ -2756,21 +2757,21 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("c52bbfc0dd5365efa39b9f80eac3"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "The type of the first child does not match.");
 						alternative = (BodyPartMultipart) multipart.BodyParts[0];
 						Assert.That (alternative.ContentType.MediaSubtype, Is.EqualTo ("alternative"), "Content-Type did not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartMultipart> (), "The type of the second child does not match.");
 						xzip = (BodyPartMultipart) multipart.BodyParts[1];
 						Assert.That (xzip.ContentType.MediaSubtype, Is.EqualTo ("x-zip"), "Content-Type did not match.");
-						Assert.That (xzip.ContentType.Parameters.Count, Is.EqualTo (0), "Content-Type should not have params.");
+						Assert.That (xzip.ContentType.Parameters, Is.Empty, "Content-Type should not have params.");
 					}
 				}
 			}
@@ -2801,24 +2802,24 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters ["boundary"], Is.EqualTo ("6624CFB2_17170C36_Synapse_boundary"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.MediaSubtype, Is.EqualTo ("plain"), "Content-Type did not match.");
 						Assert.That (basic.ContentDescription, Is.EqualTo ("Message text"), "Content-Description does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (basic.ContentType.MediaSubtype, Is.EqualTo ("xml"), "Content-Type did not match.");
 						Assert.That (basic.ContentDescription, Is.EqualTo ("4441004299066.xml"), "Content-Description does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[2], "The type of the third child does not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartBasic> (), "The type of the third child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[2];
 						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("application"), "Content-Type did not match.");
 						Assert.That (basic.ContentType.MediaSubtype, Is.EqualTo ("pdf"), "Content-Type did not match.");
@@ -2853,24 +2854,24 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("6624CFB2_17170C36_Synapse_boundary"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
 						Assert.That (basic.ContentType.MediaSubtype, Is.EqualTo ("plain"), "Content-Type did not match.");
 						Assert.That (basic.ContentDescription, Is.EqualTo ("Message text"), "Content-Description does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (basic.ContentType.MediaSubtype, Is.EqualTo ("xml"), "Content-Type did not match.");
 						Assert.That (basic.ContentDescription, Is.EqualTo ("4441004299066.xml"), "Content-Description does not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[2], "The type of the third child does not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartBasic> (), "The type of the third child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[2];
 						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("application"), "Content-Type did not match.");
 						Assert.That (basic.ContentType.MediaSubtype, Is.EqualTo ("pdf"), "Content-Type did not match.");
@@ -2905,14 +2906,14 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("----=_Part_45280395_786508794.1562673197246"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.MimeType, Is.EqualTo ("text/plain"), "Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("ISO-8859-1"), "Content-Type charset parameter did not match.");
@@ -2921,7 +2922,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.Lines, Is.EqualTo (31), "Lines did not match.");
 						Assert.That (plain.ContentDisposition.Disposition, Is.EqualTo ("inline"), "Content-Disposition did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						html = (BodyPartText) multipart.BodyParts[1];
 						Assert.That (html.ContentType.MimeType, Is.EqualTo ("text/html"), "Content-Type did not match.");
 						Assert.That (html.ContentType.Charset, Is.EqualTo ("ISO-8859-1"), "Content-Type charset parameter did not match.");
@@ -2959,14 +2960,14 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("----=_Part_45280395_786508794.1562673197246"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.MimeType, Is.EqualTo ("text/plain"), "Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("ISO-8859-1"), "Content-Type charset parameter did not match.");
@@ -2975,7 +2976,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.Lines, Is.EqualTo (31), "Lines did not match.");
 						Assert.That (plain.ContentDisposition.Disposition, Is.EqualTo ("inline"), "Content-Disposition did not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> (), "The type of the second child does not match.");
 						html = (BodyPartText) multipart.BodyParts[1];
 						Assert.That (html.ContentType.MimeType, Is.EqualTo ("text/html"), "Content-Type did not match.");
 						Assert.That (html.ContentType.Charset, Is.EqualTo ("ISO-8859-1"), "Content-Type charset parameter did not match.");
@@ -3014,14 +3015,14 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("===============1176586998=="), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.MimeType, Is.EqualTo ("text/plain"), "Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("iso-8859-1"), "Content-Type charset parameter did not match.");
@@ -3031,14 +3032,14 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.Lines, Is.EqualTo (34), "Lines did not match.");
 						Assert.That (plain.ContentDisposition, Is.Null, "Content-Disposition did not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						msword = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (msword.ContentType.MimeType, Is.EqualTo ("application/msword"), "Content-Type did not match.");
 						Assert.That (msword.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encoding did not match.");
 						Assert.That (msword.Octets, Is.EqualTo (50446), "Octets did not match.");
 						Assert.That (msword.ContentDisposition, Is.Null, "Content-Disposition did not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[2], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						msword = (BodyPartBasic) multipart.BodyParts[2];
 						Assert.That (msword.ContentType.MimeType, Is.EqualTo ("application/msword"), "Content-Type did not match.");
 						Assert.That (msword.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encoding did not match.");
@@ -3076,14 +3077,14 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (body.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 						Assert.That (body.ContentType.Parameters["boundary"], Is.EqualTo ("===============1176586998=="), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count does not match.");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "The type of the first child does not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "The type of the first child does not match.");
 						plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentType.MimeType, Is.EqualTo ("text/plain"), "Content-Type did not match.");
 						Assert.That (plain.ContentType.Charset, Is.EqualTo ("iso-8859-1"), "Content-Type charset parameter did not match.");
@@ -3093,14 +3094,14 @@ namespace UnitTests.Net.Imap {
 						Assert.That (plain.Lines, Is.EqualTo (34), "Lines did not match.");
 						Assert.That (plain.ContentDisposition, Is.Null, "Content-Disposition did not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						msword = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (msword.ContentType.MimeType, Is.EqualTo ("application/msword"), "Content-Type did not match.");
 						Assert.That (msword.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encoding did not match.");
 						Assert.That (msword.Octets, Is.EqualTo (50446), "Octets did not match.");
 						Assert.That (msword.ContentDisposition, Is.Null, "Content-Disposition did not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[2], "The type of the second child does not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						msword = (BodyPartBasic) multipart.BodyParts[2];
 						Assert.That (msword.ContentType.MimeType, Is.EqualTo ("application/msword"), "Content-Type did not match.");
 						Assert.That (msword.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encoding did not match.");
@@ -3135,13 +3136,13 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "related"), Is.True, "Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("b1_f0dcbd2fdb06033cba91309b09af1cd8"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
-						Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "Content-Language lengths do not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count does not match.");
+						Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "Content-Language lengths do not match.");
 						Assert.That (multipart.ContentLanguage[0], Is.EqualTo ("inline"), "Content-Language does not match.");
 					}
 				}
@@ -3171,13 +3172,13 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "related"), Is.True, "Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["boundary"], Is.EqualTo ("b1_f0dcbd2fdb06033cba91309b09af1cd8"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "BodyParts count does not match.");
-						Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "Content-Language lengths do not match.");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "BodyParts count does not match.");
+						Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "Content-Language lengths do not match.");
 						Assert.That (multipart.ContentLanguage[0], Is.EqualTo ("inline"), "Content-Language does not match.");
 					}
 				}
@@ -3208,7 +3209,7 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartBasic> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartBasic> (), "Body types did not match.");
 						basic = (BodyPartBasic) body;
 
 						Assert.That (basic.ContentType.IsMimeType ("multipart", "digest"), Is.True, "Content-Type did not match.");
@@ -3245,7 +3246,7 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartBasic> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartBasic> (), "Body types did not match.");
 						basic = (BodyPartBasic) body;
 
 						Assert.That (basic.ContentType.IsMimeType ("multipart", "digest"), Is.True, "Content-Type did not match.");
@@ -3280,38 +3281,38 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "report"), Is.True, "Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["report-type"], Is.EqualTo ("delivery-status"), "report-type param did not match");
 						Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("_e0d7475d888f9882b71de053e5efb221_idea"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "multipart children did not match");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "multipart children did not match");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "First multipart subpart types did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "First multipart subpart types did not match.");
 						var plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentTransferEncoding, Is.EqualTo ("7bit"), "Content-Transfer-Encoding did not match.");
 						Assert.That (plain.Octets, Is.EqualTo (727), "Octets did not match.");
 						Assert.That (plain.Lines, Is.EqualTo (16), "Lines did not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "Second multipart subpart types did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "Second multipart subpart types did not match.");
 						var deliveryStatus = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (deliveryStatus.ContentType.Name, Is.EqualTo ("Delivery status"), "name param did not match");
 						Assert.That (deliveryStatus.ContentTransferEncoding, Is.EqualTo ("7bit"), "Content-Transfer-Encoding did not match.");
 						Assert.That (deliveryStatus.Octets, Is.EqualTo (416), "Octets did not match.");
 
-						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "Third multipart subpart types did not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartMessage> (), "Third multipart subpart types did not match.");
 						var rfc822 = (BodyPartMessage) multipart.BodyParts[2];
 						Assert.That (rfc822.ContentType.Name, Is.EqualTo ("Message headers"), "name param did not match");
 						Assert.That (rfc822.ContentTransferEncoding, Is.EqualTo ("7bit"), "Content-Transfer-Encoding did not match.");
 						Assert.That (rfc822.Octets, Is.EqualTo (903), "Octets did not match.");
 						Assert.That (rfc822.Lines, Is.EqualTo (17), "Lines did not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (rfc822.Body, "rfc822 body types did not match.");
+						Assert.That (rfc822.Body, Is.InstanceOf<BodyPartMultipart> (), "rfc822 body types did not match.");
 						var alternative = (BodyPartMultipart) rfc822.Body;
 						Assert.That (alternative.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "Content-Type did not match.");
 						Assert.That (alternative.ContentType.Boundary, Is.EqualTo ("Apple-Mail=_352FCEEC-EB15-428F-9D8B-D3B4259DD646"), "boundary param did not match");
-						Assert.That (alternative.BodyParts.Count, Is.EqualTo (0), "alternative bodyparts count did not match.");
+						Assert.That (alternative.BodyParts, Is.Empty, "alternative bodyparts count did not match.");
 					}
 				}
 			}
@@ -3339,38 +3340,38 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+						Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 						var multipart = (BodyPartMultipart) body;
 
 						Assert.That (multipart.ContentType.IsMimeType ("multipart", "report"), Is.True, "Content-Type did not match.");
 						Assert.That (multipart.ContentType.Parameters["report-type"], Is.EqualTo ("delivery-status"), "report-type param did not match");
 						Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("_e0d7475d888f9882b71de053e5efb221_idea"), "boundary param did not match");
-						Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "multipart children did not match");
+						Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "multipart children did not match");
 
-						Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "First multipart subpart types did not match.");
+						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "First multipart subpart types did not match.");
 						var plain = (BodyPartText) multipart.BodyParts[0];
 						Assert.That (plain.ContentTransferEncoding, Is.EqualTo ("7bit"), "Content-Transfer-Encoding did not match.");
 						Assert.That (plain.Octets, Is.EqualTo (727), "Octets did not match.");
 						Assert.That (plain.Lines, Is.EqualTo (16), "Lines did not match.");
 
-						Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "Second multipart subpart types did not match.");
+						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "Second multipart subpart types did not match.");
 						var deliveryStatus = (BodyPartBasic) multipart.BodyParts[1];
 						Assert.That (deliveryStatus.ContentType.Name, Is.EqualTo ("Delivery status"), "name param did not match");
 						Assert.That (deliveryStatus.ContentTransferEncoding, Is.EqualTo ("7bit"), "Content-Transfer-Encoding did not match.");
 						Assert.That (deliveryStatus.Octets, Is.EqualTo (416), "Octets did not match.");
 
-						Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[2], "Third multipart subpart types did not match.");
+						Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartMessage> (), "Third multipart subpart types did not match.");
 						var rfc822 = (BodyPartMessage) multipart.BodyParts[2];
 						Assert.That (rfc822.ContentType.Name, Is.EqualTo ("Message headers"), "name param did not match");
 						Assert.That (rfc822.ContentTransferEncoding, Is.EqualTo ("7bit"), "Content-Transfer-Encoding did not match.");
 						Assert.That (rfc822.Octets, Is.EqualTo (903), "Octets did not match.");
 						Assert.That (rfc822.Lines, Is.EqualTo (17), "Lines did not match.");
 
-						Assert.IsInstanceOf<BodyPartMultipart> (rfc822.Body, "rfc822 body types did not match.");
+						Assert.That (rfc822.Body, Is.InstanceOf<BodyPartMultipart> (), "rfc822 body types did not match.");
 						var alternative = (BodyPartMultipart) rfc822.Body;
 						Assert.That (alternative.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "Content-Type did not match.");
 						Assert.That (alternative.ContentType.Boundary, Is.EqualTo ("Apple-Mail=_352FCEEC-EB15-428F-9D8B-D3B4259DD646"), "boundary param did not match");
-						Assert.That (alternative.BodyParts.Count, Is.EqualTo (0), "alternative bodyparts count did not match.");
+						Assert.That (alternative.BodyParts, Is.Empty, "alternative bodyparts count did not match.");
 					}
 				}
 			}
@@ -3378,27 +3379,27 @@ namespace UnitTests.Net.Imap {
 
 		static void AssertParseBadlyFormedBodyStructureWithCompletelyNilBodyParts1 (BodyPart body)
 		{
-			Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+			Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 			var multipart = (BodyPartMultipart) body;
 
 			Assert.That (multipart.ContentType.IsMimeType ("multipart", "mixed"), Is.True, "Content-Type did not match.");
 			Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("008_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP"), "boundary param did not match");
-			Assert.That (multipart.BodyParts.Count, Is.EqualTo (2), "multipart children did not match");
+			Assert.That (multipart.BodyParts, Has.Count.EqualTo (2), "multipart children did not match");
 
-			Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "First multipart/mixed subpart types did not match.");
+			Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "First multipart/mixed subpart types did not match.");
 			var related = (BodyPartMultipart) multipart.BodyParts[0];
 			Assert.That (related.ContentType.IsMimeType ("multipart", "related"), Is.True, "Content-Type did not match.");
 			Assert.That (related.ContentType.Parameters["type"], Is.EqualTo ("multipart/alternative"), "type param did not match");
 			Assert.That (related.ContentType.Boundary, Is.EqualTo ("007_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP"), "boundary param did not match");
-			Assert.That (related.BodyParts.Count, Is.EqualTo (4), "multipart children did not match");
+			Assert.That (related.BodyParts, Has.Count.EqualTo (4), "multipart children did not match");
 
-			Assert.IsInstanceOf<BodyPartMultipart> (related.BodyParts[0], "First multipart/related subpart types did not match.");
+			Assert.That (related.BodyParts[0], Is.InstanceOf<BodyPartMultipart> (), "First multipart/related subpart types did not match.");
 			var alternative = (BodyPartMultipart) related.BodyParts[0];
 			Assert.That (alternative.ContentType.IsMimeType ("multipart", "alternative"), Is.True, "Content-Type did not match.");
 			Assert.That (alternative.ContentType.Boundary, Is.EqualTo ("000_BN0P221MB04483769DDD81948BC7C387DC8889BN0P221MB0448NAMP"), "boundary param did not match");
-			Assert.That (alternative.BodyParts.Count, Is.EqualTo (2), "multipart children did not match");
+			Assert.That (alternative.BodyParts, Has.Count.EqualTo (2), "multipart children did not match");
 
-			Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[0], "First multipart/alternative subpart types did not match.");
+			Assert.That (alternative.BodyParts[0], Is.InstanceOf<BodyPartText> (), "First multipart/alternative subpart types did not match.");
 			var plain = (BodyPartText) alternative.BodyParts[0];
 			Assert.That (plain.ContentType.IsMimeType ("text", "plain"), Is.True, "Content-Type did not match.");
 			Assert.That (plain.ContentType.Charset, Is.EqualTo ("us-ascii"), "Charset parameter did not match");
@@ -3406,14 +3407,14 @@ namespace UnitTests.Net.Imap {
 			Assert.That (plain.Octets, Is.EqualTo (44619), "Octets did not match.");
 			Assert.That (plain.Lines, Is.EqualTo (793), "Lines did not match.");
 
-			Assert.IsInstanceOf<BodyPartText> (alternative.BodyParts[1], "Second multipart/alternative subpart types did not match.");
+			Assert.That (alternative.BodyParts[1], Is.InstanceOf<BodyPartText> (), "Second multipart/alternative subpart types did not match.");
 			var html = (BodyPartText) alternative.BodyParts[1];
 			Assert.That (html.ContentType.IsMimeType ("text", "html"), Is.True, "Content-Type did not match.");
 			Assert.That (html.ContentTransferEncoding, Is.EqualTo ("quoted-printable"), "Content-Transfer-Encoding did not match.");
 			Assert.That (html.Octets, Is.EqualTo (143984), "Octets did not match.");
 			Assert.That (html.Lines, Is.EqualTo (2321), "Lines did not match.");
 
-			Assert.IsInstanceOf<BodyPartBasic> (related.BodyParts[1], "Second multipart/related subpart types did not match.");
+			Assert.That (related.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "Second multipart/related subpart types did not match.");
 			var jpeg = (BodyPartBasic) related.BodyParts[1];
 			Assert.That (jpeg.ContentType.IsMimeType ("image", "jpeg"), Is.True, "Content-Type did not match.");
 			Assert.That (jpeg.ContentType.Name, Is.EqualTo ("~WRD0000.jpg"), "Name parameter did not match");
@@ -3422,7 +3423,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (jpeg.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encoding did not match.");
 			Assert.That (jpeg.Octets, Is.EqualTo (1130), "Octets did not match.");
 
-			Assert.IsInstanceOf<BodyPartBasic> (related.BodyParts[2], "Third multipart/related subpart types did not match.");
+			Assert.That (related.BodyParts[2], Is.InstanceOf<BodyPartBasic> (), "Third multipart/related subpart types did not match.");
 			var png = (BodyPartBasic) related.BodyParts[2];
 			Assert.That (png.ContentType.IsMimeType ("image", "png"), Is.True, "Content-Type did not match.");
 			Assert.That (png.ContentType.Name, Is.EqualTo ("image001.png"), "Name parameter did not match");
@@ -3431,7 +3432,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (png.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encoding did not match.");
 			Assert.That (png.Octets, Is.EqualTo (8174), "Octets did not match.");
 
-			Assert.IsInstanceOf<BodyPartBasic> (related.BodyParts[3], "Fourth multipart/related subpart types did not match.");
+			Assert.That (related.BodyParts[3], Is.InstanceOf<BodyPartBasic> (), "Fourth multipart/related subpart types did not match.");
 			png = (BodyPartBasic) related.BodyParts[3];
 			Assert.That (png.ContentType.IsMimeType ("image", "png"), Is.True, "Content-Type did not match.");
 			Assert.That (png.ContentType.Name, Is.EqualTo ("image002.png"), "Name parameter did not match");
@@ -3440,7 +3441,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (png.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encoding did not match.");
 			Assert.That (png.Octets, Is.EqualTo (3524), "Octets did not match.");
 
-			Assert.IsInstanceOf<BodyPartMessage> (multipart.BodyParts[1], "Second multipart/mixed subpart types did not match.");
+			Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartMessage> (), "Second multipart/mixed subpart types did not match.");
 			var rfc822 = (BodyPartMessage) multipart.BodyParts[1];
 			Assert.That (rfc822.ContentType.Name, Is.EqualTo (null), "name param did not match");
 			Assert.That (rfc822.ContentTransferEncoding, Is.EqualTo ("7BIT"), "Content-Transfer-Encoding did not match.");
@@ -3450,7 +3451,7 @@ namespace UnitTests.Net.Imap {
 			// Okay, lets skip ahead to the juicy bits...
 			multipart = (BodyPartMultipart) rfc822.Body;
 			Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("010_18f52bea798548b88470c3df62d666bcScrubbed"), "boundary param did not match");
-			Assert.That (multipart.BodyParts.Count, Is.EqualTo (4), "multipart children did not match");
+			Assert.That (multipart.BodyParts, Has.Count.EqualTo (4), "multipart children did not match");
 
 			rfc822 = (BodyPartMessage) multipart.BodyParts[2];
 			multipart = (BodyPartMultipart) rfc822.Body;
@@ -3529,14 +3530,14 @@ namespace UnitTests.Net.Imap {
 
 		static void AssertParseBadlyFormedBodyStructureWithCompletelyNilBodyParts2 (BodyPart body)
 		{
-			Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+			Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 			var multipart = (BodyPartMultipart) body;
 
 			Assert.That (multipart.ContentType.IsMimeType ("multipart", "report"), Is.True, "Content-Type did not match.");
 			Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("272F16D4031920.1659452466/hermes.gatewaynet.com"), "boundary param did not match");
-			Assert.That (multipart.BodyParts.Count, Is.EqualTo (3), "multipart children did not match");
+			Assert.That (multipart.BodyParts, Has.Count.EqualTo (3), "multipart children did not match");
 
-			Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[0], "First multipart/report subpart types did not match.");
+			Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "First multipart/report subpart types did not match.");
 			var nils = (BodyPartBasic) multipart.BodyParts[0];
 			Assert.That (nils.ContentType.IsMimeType ("application", "octet-stream"), Is.True, "Content-Type did not match.");
 			Assert.That (nils.ContentDescription, Is.Null, "Content-Description should be null");
@@ -3607,18 +3608,18 @@ namespace UnitTests.Net.Imap {
 
 		static void AssertParseBadlyFormedBodyStructureWithEmptyParensInsteadOfContentLocation (BodyPart body)
 		{
-			Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
+			Assert.That (body, Is.InstanceOf<BodyPartMultipart> (), "Body types did not match.");
 			var multipart = (BodyPartMultipart) body;
 
 			Assert.That (multipart.ContentType.IsMimeType ("multipart", "related"), Is.True, "Content-Type did not match.");
 			Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("_004_7D3F5AE184118942976793FC500B8F4A402D17DB3PRD0702MB097eu_"), "boundary param did not match");
 			Assert.That (multipart.ContentDisposition, Is.Null, "Content-Disposition should be null");
-			Assert.That (multipart.ContentLanguage.Length, Is.EqualTo (1), "Content-Language should not be null");
+			Assert.That (multipart.ContentLanguage, Has.Length.EqualTo (1), "Content-Language should not be null");
 			Assert.That (multipart.ContentLanguage[0], Is.EqualTo ("de-DE"), "Content-Language did not match");
 			Assert.That (multipart.ContentLocation, Is.Null, "Content-Location should be null");
-			Assert.That (multipart.BodyParts.Count, Is.EqualTo (4), "multipart children did not match");
+			Assert.That (multipart.BodyParts, Has.Count.EqualTo (4), "multipart children did not match");
 
-			Assert.IsInstanceOf<BodyPartText> (multipart.BodyParts[0], "First multipart/related subpart types did not match.");
+			Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartText> (), "First multipart/related subpart types did not match.");
 			var text = (BodyPartText) multipart.BodyParts[0];
 			Assert.That (text.ContentType.IsMimeType ("text", "html"), Is.True, "Content-Type did not match.");
 			Assert.That (text.ContentType.Charset, Is.EqualTo ("utf-8"), "Charset param did not match");
@@ -3632,7 +3633,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (text.Octets, Is.EqualTo (38706), "Octets did not match");
 			Assert.That (text.Lines, Is.EqualTo (497), "Lines did not match");
 
-			Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[1], "Second multipart/related subpart types did not match.");
+			Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "Second multipart/related subpart types did not match.");
 			var image1 = (BodyPartBasic) multipart.BodyParts[1];
 			Assert.That (image1.ContentType.IsMimeType ("image", "jpeg"), Is.True, "Content-Type did not match.");
 			Assert.That (image1.ContentType.Name, Is.EqualTo ("image003.jpg"), "Name parameter did not match");
@@ -3646,7 +3647,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (image1.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encodings did not match");
 			Assert.That (image1.Octets, Is.EqualTo (3446), "Octets did not match");
 
-			Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[2], "Third multipart/related subpart types did not match.");
+			Assert.That (multipart.BodyParts[2], Is.InstanceOf<BodyPartBasic> (), "Third multipart/related subpart types did not match.");
 			var image2 = (BodyPartBasic) multipart.BodyParts[2];
 			Assert.That (image2.ContentType.IsMimeType ("image", "jpeg"), Is.True, "Content-Type did not match.");
 			Assert.That (image2.ContentType.Name, Is.EqualTo ("image004.jpg"), "Name parameter did not match");
@@ -3660,7 +3661,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (image2.ContentTransferEncoding, Is.EqualTo ("base64"), "Content-Transfer-Encodings did not match");
 			Assert.That (image2.Octets, Is.EqualTo (3446), "Octets did not match");
 
-			Assert.IsInstanceOf<BodyPartBasic> (multipart.BodyParts[3], "Fourth multipart/related subpart types did not match.");
+			Assert.That (multipart.BodyParts[3], Is.InstanceOf<BodyPartBasic> (), "Fourth multipart/related subpart types did not match.");
 			var image3 = (BodyPartBasic) multipart.BodyParts[3];
 			Assert.That (image3.ContentType.IsMimeType ("image", "jpeg"), Is.True, "Content-Type did not match.");
 			Assert.That (image3.ContentType.Name, Is.EqualTo ("image005.jpg"), "Name parameter did not match");
@@ -3753,34 +3754,34 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (threads.Count, Is.EqualTo (2), "Expected 2 threads.");
+						Assert.That (threads, Has.Count.EqualTo (2), "Expected 2 threads.");
 
 						Assert.That (threads[0].UniqueId.Value.Id, Is.EqualTo ((uint) 2));
 						Assert.That (threads[1].UniqueId.Value.Id, Is.EqualTo ((uint) 3));
 
 						var branches = threads[1].Children.ToArray ();
-						Assert.That (branches.Length, Is.EqualTo (1), "Expected 1 child.");
+						Assert.That (branches, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (branches[0].UniqueId.Value.Id, Is.EqualTo ((uint) 6));
 
 						branches = branches[0].Children.ToArray ();
-						Assert.That (branches.Length, Is.EqualTo (2), "Expected 2 branches.");
+						Assert.That (branches, Has.Length.EqualTo (2), "Expected 2 branches.");
 
 						Assert.That (branches[0].UniqueId.Value.Id, Is.EqualTo ((uint) 4));
 						Assert.That (branches[1].UniqueId.Value.Id, Is.EqualTo ((uint) 44));
 
 						var children = branches[0].Children.ToArray ();
-						Assert.That (children.Length, Is.EqualTo (1), "Expected 1 child.");
+						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 23));
-						Assert.That (children[0].Children.Count (), Is.EqualTo (0), "Expected no children.");
+						Assert.That (children[0].Children.Count, Is.EqualTo (0), "Expected no children.");
 
 						children = branches[1].Children.ToArray ();
-						Assert.That (children.Length, Is.EqualTo (1), "Expected 1 child.");
+						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 7));
 
 						children = children[0].Children.ToArray ();
-						Assert.That (children.Length, Is.EqualTo (1), "Expected 1 child.");
+						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 96));
-						Assert.That (children[0].Children.Count (), Is.EqualTo (0), "Expected no children.");
+						Assert.That (children[0].Children.Count, Is.EqualTo (0), "Expected no children.");
 					}
 				}
 			}
@@ -3808,34 +3809,34 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (threads.Count, Is.EqualTo (2), "Expected 2 threads.");
+						Assert.That (threads, Has.Count.EqualTo (2), "Expected 2 threads.");
 
 						Assert.That (threads[0].UniqueId.Value.Id, Is.EqualTo ((uint) 2));
 						Assert.That (threads[1].UniqueId.Value.Id, Is.EqualTo ((uint) 3));
 
 						var branches = threads[1].Children.ToArray ();
-						Assert.That (branches.Length, Is.EqualTo (1), "Expected 1 child.");
+						Assert.That (branches, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (branches[0].UniqueId.Value.Id, Is.EqualTo ((uint) 6));
 
 						branches = branches[0].Children.ToArray ();
-						Assert.That (branches.Length, Is.EqualTo (2), "Expected 2 branches.");
+						Assert.That (branches, Has.Length.EqualTo (2), "Expected 2 branches.");
 
 						Assert.That (branches[0].UniqueId.Value.Id, Is.EqualTo ((uint) 4));
 						Assert.That (branches[1].UniqueId.Value.Id, Is.EqualTo ((uint) 44));
 
 						var children = branches[0].Children.ToArray ();
-						Assert.That (children.Length, Is.EqualTo (1), "Expected 1 child.");
+						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 23));
-						Assert.That (children[0].Children.Count (), Is.EqualTo (0), "Expected no children.");
+						Assert.That (children[0].Children.Count, Is.EqualTo (0), "Expected no children.");
 
 						children = branches[1].Children.ToArray ();
-						Assert.That (children.Length, Is.EqualTo (1), "Expected 1 child.");
+						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 7));
 
 						children = children[0].Children.ToArray ();
-						Assert.That (children.Length, Is.EqualTo (1), "Expected 1 child.");
+						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 96));
-						Assert.That (children[0].Children.Count (), Is.EqualTo (0), "Expected no children.");
+						Assert.That (children[0].Children.Count, Is.EqualTo (0), "Expected no children.");
 					}
 				}
 			}
@@ -3863,7 +3864,7 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (threads.Count, Is.EqualTo (40), "Expected 40 threads.");
+						Assert.That (threads, Has.Count.EqualTo (40), "Expected 40 threads.");
 
 						Assert.That (threads[0].UniqueId.Value.Id, Is.EqualTo ((uint) 3));
 						Assert.That (threads[1].UniqueId.Value.Id, Is.EqualTo ((uint) 1));
@@ -3871,7 +3872,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (threads[2].UniqueId.HasValue, Is.False);
 
 						var branches = threads[2].Children.ToArray ();
-						Assert.That (branches.Length, Is.EqualTo (3), "Expected 3 children.");
+						Assert.That (branches, Has.Length.EqualTo (3), "Expected 3 children.");
 					}
 				}
 			}
@@ -3899,7 +3900,7 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (threads.Count, Is.EqualTo (40), "Expected 40 threads.");
+						Assert.That (threads, Has.Count.EqualTo (40), "Expected 40 threads.");
 
 						Assert.That (threads[0].UniqueId.Value.Id, Is.EqualTo ((uint) 3));
 						Assert.That (threads[1].UniqueId.Value.Id, Is.EqualTo ((uint) 1));
@@ -3907,7 +3908,7 @@ namespace UnitTests.Net.Imap {
 						Assert.That (threads[2].UniqueId.HasValue, Is.False);
 
 						var branches = threads[2].Children.ToArray ();
-						Assert.That (branches.Length, Is.EqualTo (3), "Expected 3 children.");
+						Assert.That (branches, Has.Length.EqualTo (3), "Expected 3 children.");
 					}
 				}
 			}
@@ -3935,13 +3936,13 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (threads.Count, Is.EqualTo (1), "Expected 1 thread.");
+						Assert.That (threads, Has.Count.EqualTo (1), "Expected 1 thread.");
 
 						//Assert.That (threads[0].UniqueId.Value.Id, Is.EqualTo ((uint) 0));
 						Assert.That (threads[0].UniqueId.HasValue, Is.False);
 
 						var children = threads[0].Children;
-						Assert.That (children.Count, Is.EqualTo (2), "Expected 2 children.");
+						Assert.That (children, Has.Count.EqualTo (2), "Expected 2 children.");
 
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 352));
 						Assert.That (children[1].UniqueId.Value.Id, Is.EqualTo ((uint) 381));
@@ -3972,13 +3973,13 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (threads.Count, Is.EqualTo (1), "Expected 1 thread.");
+						Assert.That (threads, Has.Count.EqualTo (1), "Expected 1 thread.");
 
 						//Assert.That (threads[0].UniqueId.Value.Id, Is.EqualTo ((uint) 0));
 						Assert.That (threads[0].UniqueId.HasValue, Is.False);
 
 						var children = threads[0].Children;
-						Assert.That (children.Count, Is.EqualTo (2), "Expected 2 children.");
+						Assert.That (children, Has.Count.EqualTo (2), "Expected 2 children.");
 
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 352));
 						Assert.That (children[1].UniqueId.Value.Id, Is.EqualTo ((uint) 381));
@@ -4008,7 +4009,7 @@ namespace UnitTests.Net.Imap {
 			annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "This is an alternate subject.");
 			ImapUtils.FormatAnnotations (command, annotations, args, true);
 			Assert.That (command.ToString (), Is.EqualTo ("STORE ANNOTATION (/altsubject (value.shared %S))"));
-			Assert.That (args.Count, Is.EqualTo (1), "args");
+			Assert.That (args, Has.Count.EqualTo (1), "args");
 			Assert.That (args[0], Is.EqualTo ("This is an alternate subject."), "args[0]");
 		}
 
@@ -4034,9 +4035,9 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+						Assert.That (annotations, Has.Count.EqualTo (1), "Count");
 						Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "Entry");
-						Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "Properties.Count");
+						Assert.That (annotations[0].Properties, Has.Count.EqualTo (2), "Properties.Count");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "value.priv");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "value.shared");
 					}
@@ -4066,9 +4067,9 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+						Assert.That (annotations, Has.Count.EqualTo (1), "Count");
 						Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "Entry");
-						Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "Properties.Count");
+						Assert.That (annotations[0].Properties, Has.Count.EqualTo (2), "Properties.Count");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "value.priv");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "value.shared");
 					}
@@ -4098,13 +4099,13 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (annotations.Count, Is.EqualTo (2), "Count");
+						Assert.That (annotations, Has.Count.EqualTo (2), "Count");
 						Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
-						Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "annotations[0].Properties.Count");
+						Assert.That (annotations[0].Properties, Has.Count.EqualTo (2), "annotations[0].Properties.Count");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
 						Assert.That (annotations[1].Entry, Is.EqualTo (AnnotationEntry.AltSubject), "annotations[1].Entry");
-						Assert.That (annotations[1].Properties.Count, Is.EqualTo (2), "annotations[1].Properties.Count");
+						Assert.That (annotations[1].Properties, Has.Count.EqualTo (2), "annotations[1].Properties.Count");
 						Assert.That (annotations[1].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My subject"), "annotations[1] value.priv");
 						Assert.That (annotations[1].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[1] value.shared");
 					}
@@ -4134,13 +4135,13 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (annotations.Count, Is.EqualTo (2), "Count");
+						Assert.That (annotations, Has.Count.EqualTo (2), "Count");
 						Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
-						Assert.That (annotations[0].Properties.Count, Is.EqualTo (2), "annotations[0].Properties.Count");
+						Assert.That (annotations[0].Properties, Has.Count.EqualTo (2), "annotations[0].Properties.Count");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
 						Assert.That (annotations[1].Entry, Is.EqualTo (AnnotationEntry.AltSubject), "annotations[1].Entry");
-						Assert.That (annotations[1].Properties.Count, Is.EqualTo (2), "annotations[1].Properties.Count");
+						Assert.That (annotations[1].Properties, Has.Count.EqualTo (2), "annotations[1].Properties.Count");
 						Assert.That (annotations[1].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My subject"), "annotations[1] value.priv");
 						Assert.That (annotations[1].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[1] value.shared");
 					}
@@ -4170,9 +4171,9 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+						Assert.That (annotations, Has.Count.EqualTo (1), "Count");
 						Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
-						Assert.That (annotations[0].Properties.Count, Is.EqualTo (4), "annotations[0].Properties.Count");
+						Assert.That (annotations[0].Properties, Has.Count.EqualTo (4), "annotations[0].Properties.Count");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateSize], Is.EqualTo ("10"), "annotations[0] size.priv");
@@ -4204,9 +4205,9 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (annotations.Count, Is.EqualTo (1), "Count");
+						Assert.That (annotations, Has.Count.EqualTo (1), "Count");
 						Assert.That (annotations[0].Entry, Is.EqualTo (AnnotationEntry.Comment), "annotations[0].Entry");
-						Assert.That (annotations[0].Properties.Count, Is.EqualTo (4), "annotations[0].Properties.Count");
+						Assert.That (annotations[0].Properties, Has.Count.EqualTo (4), "annotations[0].Properties.Count");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateValue], Is.EqualTo ("My comment"), "annotations[0] value.priv");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.SharedValue], Is.EqualTo (null), "annotations[0] value.shared");
 						Assert.That (annotations[0].Properties[AnnotationAttribute.PrivateSize], Is.EqualTo ("10"), "annotations[0] size.priv");
@@ -4245,7 +4246,7 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (list.Count, Is.EqualTo (1), "Count");
+						Assert.That (list, Has.Count.EqualTo (1), "Count");
 						Assert.That (list[0].Name, Is.EqualTo ("Da\tOggetto\tRicevuto\tDimensione\tCategorie\t"), "Name");
 					}
 				}
@@ -4275,7 +4276,7 @@ namespace UnitTests.Net.Imap {
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
-						Assert.That (list.Count, Is.EqualTo (1), "Count");
+						Assert.That (list, Has.Count.EqualTo (1), "Count");
 						Assert.That (list[0].Name, Is.EqualTo ("Da\tOggetto\tRicevuto\tDimensione\tCategorie\t"), "Name");
 					}
 				}

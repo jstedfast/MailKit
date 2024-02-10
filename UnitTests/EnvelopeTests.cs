@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
-// Copyright (c) 2013-2023 .NET Foundation and Contributors
+// Copyright (c) 2013-2024 .NET Foundation and Contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -103,22 +103,22 @@ namespace UnitTests {
 			Assert.That (DateUtils.FormatDate (envelope.Date.Value), Is.EqualTo ("Wed, 17 Jul 1996 02:23:25 -0700"), "Date does not match.");
 			Assert.That (envelope.Subject, Is.EqualTo ("IMAP4rev1 WG mtg summary and minutes"), "Subject does not match.");
 
-			Assert.That (envelope.From.Count, Is.EqualTo (1), "From counts do not match.");
+			Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
 			Assert.That (envelope.From.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "From does not match.");
 
-			Assert.That (envelope.Sender.Count, Is.EqualTo (1), "Sender counts do not match.");
+			Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
 			Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Sender does not match.");
 
-			Assert.That (envelope.ReplyTo.Count, Is.EqualTo (1), "Reply-To counts do not match.");
+			Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
 			Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"Terry Gray\" <gray@cac.washington.edu>"), "Reply-To does not match.");
 
-			Assert.That (envelope.To.Count, Is.EqualTo (1), "To counts do not match.");
+			Assert.That (envelope.To, Has.Count.EqualTo (1), "To counts do not match.");
 			Assert.That (envelope.To.ToString (), Is.EqualTo ("imap@cac.washington.edu"), "To does not match.");
 
-			Assert.That (envelope.Cc.Count, Is.EqualTo (2), "Cc counts do not match.");
+			Assert.That (envelope.Cc, Has.Count.EqualTo (2), "Cc counts do not match.");
 			Assert.That (envelope.Cc.ToString (), Is.EqualTo ("minutes@CNRI.Reston.VA.US, \"John Klensin\" <KLENSIN@MIT.EDU>"), "Cc does not match.");
 
-			Assert.That (envelope.Bcc.Count, Is.EqualTo (0), "Bcc counts do not match.");
+			Assert.That (envelope.Bcc, Is.Empty, "Bcc counts do not match.");
 
 			Assert.That (envelope.InReplyTo, Is.Null, "In-Reply-To is not null.");
 
@@ -148,7 +148,7 @@ namespace UnitTests {
 			Assert.That (envelope.ToString (), Is.EqualTo (expected));
 			Assert.That (Envelope.TryParse (expected, out envelope), Is.True);
 			Assert.That (envelope.ToString (), Is.EqualTo (expected));
-			Assert.That (envelope.To.Count, Is.EqualTo (1));
+			Assert.That (envelope.To, Has.Count.EqualTo (1));
 			Assert.That (envelope.To[0].ToString (), Is.EqualTo (group.ToString ()));
 		}
 
@@ -164,7 +164,7 @@ namespace UnitTests {
 			Assert.That (envelope.ToString (), Is.EqualTo (expected));
 			Assert.That (Envelope.TryParse (expected, out envelope), Is.True);
 			Assert.That (envelope.ToString (), Is.EqualTo (expected));
-			Assert.That (envelope.To.Count, Is.EqualTo (1));
+			Assert.That (envelope.To, Has.Count.EqualTo (1));
 			Assert.That (envelope.To[0].ToString (), Is.EqualTo (group.ToString ()));
 		}
 	}
