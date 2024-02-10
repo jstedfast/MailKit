@@ -33,7 +33,7 @@ motivate me to continue working on the project.
   * [CRAM-MD5](https://tools.ietf.org/html/rfc2195)
   * [DIGEST-MD5](https://tools.ietf.org/html/rfc2831)
   * [LOGIN](https://tools.ietf.org/html/draft-murchison-sasl-login-00)
-  * [NTLM](http://davenport.sourceforge.net/ntlm.html)
+  * [NTLM](https://davenport.sourceforge.net/ntlm.html)
   * [PLAIN](https://tools.ietf.org/html/rfc2595)
   * [SCRAM-SHA-1[-PLUS]](https://tools.ietf.org/html/rfc5802)
   * [SCRAM-SHA-256[-PLUS]](https://tools.ietf.org/html/rfc5802)
@@ -41,7 +41,7 @@ motivate me to continue working on the project.
   * [OAUTHBEARER](https://tools.ietf.org/html/rfc7628) (partial support - you need to fetch the auth tokens yourself)
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
 * Proxy Support
-  * [SOCKS4/4a](http://www.openssh.com/txt/socks4.protocol)
+  * [SOCKS4/4a](https://www.openssh.com/txt/socks4.protocol)
   * [SOCKS5](https://tools.ietf.org/html/rfc1928)
   * [HTTP/S](https://tools.ietf.org/html/rfc2616)
 * SMTP Client
@@ -164,7 +164,7 @@ which should improve performance of sending messages (although might not be very
 
 ## License Information
 
-```
+```text
 MIT License
 
 Copyright (C) 2013-2023 .NET Foundation and Contributors
@@ -192,7 +192,7 @@ THE SOFTWARE.
 
 The easiest way to install MailKit is via [NuGet](https://www.nuget.org/packages/MailKit/).
 
-In Visual Studio's [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console),
+In Visual Studio's [Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console),
 enter the following command:
 
     Install-Package MailKit
@@ -370,9 +370,9 @@ namespace TestClient {
 One of the advantages of IMAP over POP3 is that the IMAP protocol allows clients to retrieve information about
 the messages in a folder without having to first download all of them.
 
-Using the [Fetch](http://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_Fetch.htm) and
-[FetchAsync](http://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_FetchAsync.htm) method overloads
-(or the convenient [extension methods](http://www.mimekit.net/docs/html/Overload_MailKit_IMailFolderExtensions_Fetch.htm)),
+Using the [Fetch](https://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_Fetch.htm) and
+[FetchAsync](https://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_FetchAsync.htm) method overloads
+(or the convenient [extension methods](https://www.mimekit.net/docs/html/Overload_MailKit_IMailFolderExtensions_Fetch.htm)),
 it's possible to obtain any subset of summary information for any range of messages in a given folder.
 
 ```csharp
@@ -380,7 +380,7 @@ foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Envelope)) {
     Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
 ```
 
-It's also possible to use Fetch/FetchAsync APIs that take an [IFetchRequest](http://www.mimekit.net/docs/html/T_MailKit_IFetchRequest.htm)
+It's also possible to use Fetch/FetchAsync APIs that take an [IFetchRequest](https://www.mimekit.net/docs/html/T_MailKit_IFetchRequest.htm)
 argument to get even more control over what to fetch:
 
 ```csharp
@@ -546,7 +546,7 @@ How you handle this is up to you.
 The first thing you'll need to do is fork MailKit to your own GitHub repository. For instructions on how to
 do that, see the section titled **Getting the Source Code**.
 
-If you use [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) or [MonoDevelop](http://monodevelop.com),
+If you use [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) or [MonoDevelop](https://monodevelop.com),
 all of the solution files are configured with the coding style used by MailKit. If you use Visual Studio on Windows
 or some other editor, please try to maintain the existing coding style as best as you can.
 
@@ -577,7 +577,7 @@ string. Please include the `Exception.StackTrace` as well. The `Message`, by its
 
 ## Documentation
 
-API documentation can be found at [http://www.mimekit.net/docs](http://www.mimekit.net/docs).
+API documentation can be found at [https://www.mimekit.net/docs](https://www.mimekit.net/docs).
 
 A copy of the XML-formatted API reference documentation is also included in the NuGet package.
 
@@ -585,6 +585,6 @@ A copy of the XML-formatted API reference documentation is also included in the 
 
 MailKit is a [.NET Foundation](https://www.dotnetfoundation.org/projects) project.
 
-This project has adopted the code of conduct defined by the [Contributor Covenant](http://contributor-covenant.org/) to clarify expected behavior in our community. For more information, see the [.NET Foundation Code of Conduct](http://www.dotnetfoundation.org/code-of-conduct).
+This project has adopted the code of conduct defined by the [Contributor Covenant](https://contributor-covenant.org/) to clarify expected behavior in our community. For more information, see the [.NET Foundation Code of Conduct](https://www.dotnetfoundation.org/code-of-conduct).
 
 General .NET OSS discussions: [.NET Foundation forums](https://forums.dotnetfoundation.org)
