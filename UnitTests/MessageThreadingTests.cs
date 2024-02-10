@@ -42,7 +42,6 @@ namespace UnitTests {
 			var orderBy = new OrderBy[] { OrderBy.Arrival };
 			var messagesMissingInfo = new [] { new MessageSummary (0) };
 			var emptyOrderBy = Array.Empty<OrderBy> ();
-			int depth;
 
 			var summary = new MessageSummary (0);
 			summary.UniqueId = UniqueId.MinValue;
@@ -55,7 +54,7 @@ namespace UnitTests {
 
 			var messages = new MessageSummary[] { summary };
 
-			Assert.Throws<ArgumentNullException> (() => MessageThreader.GetThreadableSubject (null, out depth));
+			Assert.Throws<ArgumentNullException> (() => MessageThreader.GetThreadableSubject (null, out _));
 			Assert.Throws<ArgumentNullException> (() => MessageThreader.Thread ((IEnumerable<MessageSummary>) null, ThreadingAlgorithm.References));
 			Assert.Throws<ArgumentNullException> (() => MessageThreader.Thread ((IEnumerable<MessageSummary>) null, ThreadingAlgorithm.References, orderBy));
 			Assert.Throws<ArgumentException> (() => MessageThreader.Thread (messagesMissingInfo, ThreadingAlgorithm.References));
@@ -112,7 +111,7 @@ namespace UnitTests {
 			return summary;
 		}
 
-		void WriteMessageThread (StringBuilder builder, IList<MessageSummary> messages, MessageThread thread, int depth)
+		static void WriteMessageThread (StringBuilder builder, IList<MessageSummary> messages, MessageThread thread, int depth)
 		{
 			builder.Append (new string (' ', depth * 3));
 

@@ -36,9 +36,7 @@ namespace UnitTests {
 		[Test]
 		public void TestArgumentExceptions ()
 		{
-			Envelope envelope;
-
-			Assert.Throws<ArgumentNullException> (() => Envelope.TryParse (null, out envelope));
+			Assert.Throws<ArgumentNullException> (() => Envelope.TryParse (null, out _));
 		}
 
 		[Test]
@@ -80,9 +78,8 @@ namespace UnitTests {
 			original.Sender.Add (new MailboxAddress ("The Real Sender", string.Empty));
 			original.Subject = "This is the subject";
 			var text = original.ToString ();
-			Envelope envelope;
 
-			Assert.That (Envelope.TryParse (text, out envelope), Is.True);
+			Assert.That (Envelope.TryParse (text, out var envelope), Is.True);
 			Assert.That (envelope.Sender.Mailboxes.First ().LocalPart, Is.EqualTo (string.Empty));
 			Assert.That (envelope.From.Mailboxes.First ().LocalPart, Is.EqualTo ("fejj"));
 			Assert.That (envelope.To.Mailboxes.First ().LocalPart, Is.EqualTo ("notzed"));

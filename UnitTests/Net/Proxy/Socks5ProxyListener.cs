@@ -125,10 +125,9 @@ namespace UnitTests.Net.Proxy {
 
 		byte[] NegotiateAuthMethod ()
 		{
-			Socks5AuthMethod[] methods;
 			Socks5AuthMethod method;
 
-			var result = Parse (request, requestLength, out methods);
+			var result = Parse (request, requestLength, out var methods);
 			if (result == Socks5ParseResult.NotEnoughData)
 				return null;
 
@@ -211,9 +210,7 @@ namespace UnitTests.Net.Proxy {
 
 		byte[] Authenticate ()
 		{
-			string user, passwd;
-
-			var result = Parse (request, requestLength, out user, out passwd);
+			var result = Parse (request, requestLength, out var user, out var passwd);
 			if (result == Socks5ParseResult.NotEnoughData)
 				return null;
 

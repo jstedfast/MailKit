@@ -26,6 +26,7 @@
 
 using System.Net;
 using System.Text;
+using System.Globalization;
 
 using MimeKit;
 
@@ -116,7 +117,7 @@ namespace UnitTests.Net.Imap {
 					dates.Add (DateTimeOffset.Now);
 					flags.Add (MessageFlags.Seen);
 					multiappend.Add (new AppendRequest (messages[i], flags[i], dates[i]));
-					replace = replace ?? new ReplaceRequest (messages[i], flags[i], dates[i]);
+					replace ??= new ReplaceRequest (messages[i], flags[i], dates[i]);
 				}
 
 				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
@@ -814,11 +815,11 @@ namespace UnitTests.Net.Imap {
 					command.AppendFormat ("\"{0}\" ", ImapUtils.FormatInternalDate (message.Date));
 
 				if (length > 4096) {
-					command.Append ('{').Append (length.ToString ()).Append ("}\r\n");
+					command.Append ('{').Append (length.ToString (CultureInfo.InvariantCulture)).Append ("}\r\n");
 					commands.Add (new ImapReplayCommand (command.ToString (), ImapReplayCommandResponse.Plus));
 					commands.Add (new ImapReplayCommand (tag, latin1 + "\r\n", string.Format ("dovecot.append.{0}.txt", i + 1)));
 				} else {
-					command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
+					command.Append ('{').Append (length.ToString (CultureInfo.InvariantCulture)).Append ("+}\r\n").Append (latin1).Append ("\r\n");
 					commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
 				}
 			}
@@ -1275,7 +1276,7 @@ namespace UnitTests.Net.Imap {
 				//	commands.Add (new ImapReplayCommand (command.ToString (), ImapReplayCommandResponse.Plus));
 				//	commands.Add (new ImapReplayCommand (tag, latin1 + "\r\n", string.Format ("dovecot.append.{0}.txt", i + 1)));
 				//} else {
-					command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
+					command.Append ('{').Append (length.ToString (CultureInfo.InvariantCulture)).Append ("+}\r\n").Append (latin1).Append ("\r\n");
 					commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
 				//}
 
@@ -1490,7 +1491,7 @@ namespace UnitTests.Net.Imap {
 				//	commands.Add (new ImapReplayCommand (command.ToString (), ImapReplayCommandResponse.Plus));
 				//	commands.Add (new ImapReplayCommand (tag, latin1 + "\r\n", string.Format ("dovecot.append.{0}.txt", i + 1)));
 				//} else {
-				command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
+				command.Append ('{').Append (length.ToString (CultureInfo.InvariantCulture)).Append ("+}\r\n").Append (latin1).Append ("\r\n");
 				commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
 				//}
 
@@ -2877,7 +2878,7 @@ namespace UnitTests.Net.Imap {
 
 				client.NoOp ();
 
-				Assert.That (client.Inbox.Count, Is.EqualTo (0), "Count");
+				Assert.That (client.Inbox, Has.Count.EqualTo (0), "Count");
 				Assert.That (countChangedEmitted, Is.EqualTo (1), "CountChanged was not emitted the expected number of times");
 				Assert.That (countChangedValue, Is.EqualTo (0), "Count was not correct inside of the CountChanged event handler");
 
@@ -2930,7 +2931,7 @@ namespace UnitTests.Net.Imap {
 
 				await client.NoOpAsync ();
 
-				Assert.That (client.Inbox.Count, Is.EqualTo (0), "Count");
+				Assert.That (client.Inbox, Has.Count.EqualTo (0), "Count");
 				Assert.That (countChangedEmitted, Is.EqualTo (1), "CountChanged was not emitted the expected number of times");
 				Assert.That (countChangedValue, Is.EqualTo (0), "Count was not correct inside of the CountChanged event handler");
 

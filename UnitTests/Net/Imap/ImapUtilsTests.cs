@@ -3772,7 +3772,7 @@ namespace UnitTests.Net.Imap {
 						var children = branches[0].Children.ToArray ();
 						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 23));
-						Assert.That (children[0].Children.Count, Is.EqualTo (0), "Expected no children.");
+						Assert.That (children[0].Children, Is.Empty, "Expected no children.");
 
 						children = branches[1].Children.ToArray ();
 						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
@@ -3781,7 +3781,7 @@ namespace UnitTests.Net.Imap {
 						children = children[0].Children.ToArray ();
 						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 96));
-						Assert.That (children[0].Children.Count, Is.EqualTo (0), "Expected no children.");
+						Assert.That (children[0].Children, Is.Empty, "Expected no children.");
 					}
 				}
 			}
@@ -3827,7 +3827,7 @@ namespace UnitTests.Net.Imap {
 						var children = branches[0].Children.ToArray ();
 						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 23));
-						Assert.That (children[0].Children.Count, Is.EqualTo (0), "Expected no children.");
+						Assert.That (children[0].Children, Is.Empty, "Expected no children.");
 
 						children = branches[1].Children.ToArray ();
 						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
@@ -3836,7 +3836,7 @@ namespace UnitTests.Net.Imap {
 						children = children[0].Children.ToArray ();
 						Assert.That (children, Has.Length.EqualTo (1), "Expected 1 child.");
 						Assert.That (children[0].UniqueId.Value.Id, Is.EqualTo ((uint) 96));
-						Assert.That (children[0].Children.Count, Is.EqualTo (0), "Expected no children.");
+						Assert.That (children[0].Children, Is.Empty, "Expected no children.");
 					}
 				}
 			}

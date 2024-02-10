@@ -135,13 +135,9 @@ namespace UnitTests.Net.Proxy {
 		protected override async Task<Socket> ClientCommandReceived (Stream client, byte[] buffer, int length, CancellationToken cancellationToken)
 		{
 			Socket server = null;
-			Socks4Command cmd;
 			byte[] response;
-			IPAddress ip;
-			string user;
-			int port;
 
-			if (TryParse (buffer, length, out cmd, out port, out ip, out user)) {
+			if (TryParse (buffer, length, out var cmd, out var port, out var ip, out var user)) {
 				var host = ip.ToString ();
 
 				try {

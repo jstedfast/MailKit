@@ -50,6 +50,7 @@ namespace UnitTests.Net.Imap {
 		public void Dispose ()
 		{
 			Engine.Dispose ();
+			GC.SuppressFinalize (this);
 		}
 
 		static ImapFolder CreateImapFolderDelegate (ImapFolderConstructorArgs args)

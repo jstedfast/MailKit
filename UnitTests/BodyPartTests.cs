@@ -258,8 +258,10 @@ namespace UnitTests {
 
 		static BodyPartMessage CreateMessage (string type, string subtype, string partSpecifier, BodyPart body)
 		{
-			var message = new BodyPartMessage { ContentType = CreateContentType (type, subtype, partSpecifier) };
-			message.Body = body;
+			var message = new BodyPartMessage {
+				ContentType = CreateContentType (type, subtype, partSpecifier),
+				Body = body
+			};
 			return message;
 		}
 

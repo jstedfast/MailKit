@@ -26,6 +26,7 @@
 
 using System.Net;
 using System.Text;
+using System.Globalization;
 
 using MimeKit;
 
@@ -314,7 +315,7 @@ namespace UnitTests.Net.Imap {
 
 				command.AppendFormat ("ANNOTATION (/altsubject (value.priv \"Alternate subject {0}\")) ", i);
 
-				command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
+				command.Append ('{').Append (length.ToString (CultureInfo.InvariantCulture)).Append ("+}\r\n").Append (latin1).Append ("\r\n");
 				commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
 			}
 
@@ -504,10 +505,9 @@ namespace UnitTests.Net.Imap {
 		{
 			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
 			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<IAppendRequest> requests;
 			IList<UniqueId> uids;
 
-			var commands = CreateMultiAppendWithAnnotationsCommands (withInternalDates, out requests);
+			var commands = CreateMultiAppendWithAnnotationsCommands (withInternalDates, out var requests);
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
@@ -553,10 +553,9 @@ namespace UnitTests.Net.Imap {
 		{
 			var expectedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft;
 			var expectedPermanentFlags = expectedFlags | MessageFlags.UserDefined;
-			List<IAppendRequest> requests;
 			IList<UniqueId> uids;
 
-			var commands = CreateMultiAppendWithAnnotationsCommands (withInternalDates, out requests);
+			var commands = CreateMultiAppendWithAnnotationsCommands (withInternalDates, out var requests);
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
@@ -644,7 +643,7 @@ namespace UnitTests.Net.Imap {
 				command.AppendFormat ("{0} {1} {2} INBOX (\\Seen) ", tag, byUid ? "UID REPLACE" : "REPLACE", i + 1);
 				command.AppendFormat ("ANNOTATION (/altsubject (value.priv \"Alternate subject {0}\")) ", i);
 
-				command.Append ('{').Append (length.ToString ()).Append ("+}\r\n").Append (latin1).Append ("\r\n");
+				command.Append ('{').Append (length.ToString (CultureInfo.InvariantCulture)).Append ("+}\r\n").Append (latin1).Append ("\r\n");
 				commands.Add (new ImapReplayCommand (command.ToString (), string.Format ("dovecot.append.{0}.txt", i + 1)));
 			}
 

@@ -142,13 +142,15 @@ namespace UnitTests.Net.Proxy {
 								}
 							}
 
-							var checkRead = new ArrayList ();
-							checkRead.Add (socket);
-							checkRead.Add (remote);
+							var checkRead = new ArrayList {
+								socket,
+								remote
+							};
 
-							var checkError = new ArrayList ();
-							checkError.Add (socket);
-							checkError.Add (remote);
+							var checkError = new ArrayList {
+								socket,
+								remote
+							};
 
 							Socket.Select (checkRead, null, checkError, 250000);
 

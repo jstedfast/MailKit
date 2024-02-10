@@ -3627,7 +3627,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (folder.Unread, Is.EqualTo (unread), "Unread");
 			Assert.That (folder.UidNext.HasValue ? folder.UidNext.Value.Id : (uint) 0, Is.EqualTo (uidnext), "UidNext");
 			Assert.That (folder.UidValidity, Is.EqualTo (validity), "UidValidity");
-			Assert.That (folder.Size.HasValue ? folder.Size.Value : (ulong) 0, Is.EqualTo (size), "Size");
+			Assert.That (folder.Size ?? (ulong) 0, Is.EqualTo (size), "Size");
 			Assert.That (folder.Id, Is.EqualTo (id), "MailboxId");
 		}
 
@@ -4340,8 +4340,9 @@ namespace UnitTests.Net.Imap {
 
 				// Delete some messages so we can test that QRESYNC emits some MessageVanished events
 				// both now *and* when we use QRESYNC to re-open the folder
-				var deleted = new UniqueIdSet (SortOrder.Ascending);
-				deleted.Add (appended[7]); // H
+				var deleted = new UniqueIdSet (SortOrder.Ascending) {
+					appended[7] // H
+				};
 				folder.AddFlags (deleted, MessageFlags.Deleted, true);
 				Assert.That (flagsChanged, Is.Empty, "Unexpected number of FlagsChanged events");
 				Assert.That (modSeqChanged, Has.Count.EqualTo (1), "Unexpected number of ModSeqChanged events");
@@ -4989,8 +4990,9 @@ namespace UnitTests.Net.Imap {
 
 				// Delete some messages so we can test that QRESYNC emits some MessageVanished events
 				// both now *and* when we use QRESYNC to re-open the folder
-				var deleted = new UniqueIdSet (SortOrder.Ascending);
-				deleted.Add (appended[7]); // H
+				var deleted = new UniqueIdSet (SortOrder.Ascending) {
+					appended[7] // H
+				};
 				await folder.AddFlagsAsync (deleted, MessageFlags.Deleted, true);
 				Assert.That (flagsChanged, Is.Empty, "Unexpected number of FlagsChanged events");
 				Assert.That (modSeqChanged, Has.Count.EqualTo (1), "Unexpected number of ModSeqChanged events");
@@ -6520,7 +6522,7 @@ namespace UnitTests.Net.Imap {
 
 				// Passing true to notify will update Count
 				Assert.That (inbox, Has.Count.EqualTo (1), "Messages in INBOX");
-				Assert.That (folder.Count, Is.EqualTo (0), "Messages in Folder");
+				Assert.That (folder, Has.Count.EqualTo (0), "Messages in Folder");
 
 				IMessageSummary fetched = null;
 				var folderMessageSummaryFetched = 0;
@@ -6699,7 +6701,7 @@ namespace UnitTests.Net.Imap {
 
 				// Passing true to notify will update Count
 				Assert.That (inbox, Has.Count.EqualTo (1), "Messages in INBOX");
-				Assert.That (folder.Count, Is.EqualTo (0), "Messages in Folder");
+				Assert.That (folder, Has.Count.EqualTo (0), "Messages in Folder");
 
 				IMessageSummary fetched = null;
 				var folderMessageSummaryFetched = 0;
