@@ -123,6 +123,9 @@ namespace MailKit.Net
 				} catch (OperationCanceledException) {
 					throw;
 				} catch {
+					if (!cancellationToken.CanBeCanceled)
+						socket.Dispose ();
+
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}
