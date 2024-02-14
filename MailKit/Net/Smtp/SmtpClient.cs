@@ -31,10 +31,10 @@ using System.Linq;
 using System.Text;
 using System.Buffers;
 using System.Threading;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Security.Authentication;
@@ -84,6 +84,10 @@ namespace MailKit.Net.Smtp {
 		readonly SmtpAuthenticationSecretDetector detector = new SmtpAuthenticationSecretDetector ();
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
 		SslCertificateValidationInfo sslValidationInfo;
+#if NET6_0_OR_GREATER
+		long sessionStartedTimestamp;
+		EndPoint remoteEndPoint;
+#endif
 		SmtpCapabilities capabilities;
 		int timeout = 2 * 60 * 1000;
 		bool authenticated;
@@ -1228,6 +1232,31 @@ namespace MailKit.Net.Smtp {
 #endif
 		}
 
+		void ReportClientConnected (long connectStartedTimestamp, Stream stream)
+		{
+#if NET6_0_OR_GREATER
+			sessionStartedTimestamp = Stopwatch.GetTimestamp ();
+			remoteEndPoint = NetworkStream.Get (stream)?.Socket.RemoteEndPoint;
+			Telemetry.SmtpClient.Metrics?.ReportConnected (connectStartedTimestamp, uri, remoteEndPoint);
+#endif
+		}
+
+		void ReportClientConnectFailed (long connectStartedTimestamp, Exception ex)
+		{
+#if NET6_0_OR_GREATER
+			Telemetry.SmtpClient.Metrics?.ReportConnectFailed (connectStartedTimestamp, uri, ex);
+#endif
+		}
+
+		void ReportClientDisconnected (Exception ex)
+		{
+#if NET6_0_OR_GREATER
+			Telemetry.SmtpClient.Metrics?.ReportDisconnected (sessionStartedTimestamp, uri, remoteEndPoint, ex);
+			sessionStartedTimestamp = 0;
+			remoteEndPoint = null;
+#endif
+		}
+
 		void PostConnect (Stream stream, string host, int port, SecureSocketOptions options, bool starttls, CancellationToken cancellationToken)
 		{
 			try {
@@ -1274,7 +1303,8 @@ namespace MailKit.Net.Smtp {
 				}
 
 				connected = true;
-			} catch {
+			} catch (Exception ex) {
+				ReportClientDisconnected (ex);
 				Stream.Dispose ();
 				secure = false;
 				Stream = null;
@@ -1382,7 +1412,16 @@ namespace MailKit.Net.Smtp {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			var stream = ConnectNetwork (host, port, cancellationToken);
+			long connectStartedTimestamp = Stopwatch.GetTimestamp ();
+			Stream stream;
+
+			try {
+				stream = ConnectNetwork (host, port, cancellationToken);
+			} catch (Exception ex) {
+				ReportClientConnectFailed (connectStartedTimestamp, ex);
+				throw;
+			}
+
 			stream.WriteTimeout = timeout;
 			stream.ReadTimeout = timeout;
 
@@ -1394,6 +1433,8 @@ namespace MailKit.Net.Smtp {
 				} catch (Exception ex) {
 					ssl.Dispose ();
 
+					ReportClientConnectFailed (connectStartedTimestamp, ex);
+
 					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
 				}
 
@@ -1402,6 +1443,8 @@ namespace MailKit.Net.Smtp {
 			} else {
 				secure = false;
 			}
+
+			ReportClientConnected (connectStartedTimestamp, stream);
 
 			PostConnect (stream, host, port, options, starttls, cancellationToken);
 		}
@@ -1566,6 +1609,7 @@ namespace MailKit.Net.Smtp {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
+			long connectStartedTimestamp = Stopwatch.GetTimestamp ();
 			Stream network;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
@@ -1575,6 +1619,8 @@ namespace MailKit.Net.Smtp {
 					SslHandshake (ssl, host, cancellationToken);
 				} catch (Exception ex) {
 					ssl.Dispose ();
+
+					ReportClientConnectFailed (connectStartedTimestamp, ex);
 
 					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
 				}
@@ -1590,6 +1636,8 @@ namespace MailKit.Net.Smtp {
 				network.WriteTimeout = timeout;
 				network.ReadTimeout = timeout;
 			}
+
+			ReportClientConnected (connectStartedTimestamp, network);
 
 			PostConnect (network, host, port, options, starttls, cancellationToken);
 		}
@@ -1666,6 +1714,8 @@ namespace MailKit.Net.Smtp {
 
 		void Disconnect (string host, int port, SecureSocketOptions options, bool requested)
 		{
+			ReportClientDisconnected (null);
+
 			capabilities = SmtpCapabilities.None;
 			authenticated = false;
 			connected = false;
@@ -2310,6 +2360,20 @@ namespace MailKit.Net.Smtp {
 			return (extensions & SmtpExtensions.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & (SmtpCapabilities.BinaryMime | SmtpCapabilities.Chunking)) != 0);
 		}
 
+		void ReportSendCompleted (long sendStartedTimestamp)
+		{
+#if NET6_0_OR_GREATER
+			Telemetry.SmtpClient.Metrics?.ReportSendCompleted (sendStartedTimestamp, uri, remoteEndPoint);
+#endif
+		}
+
+		void ReportSendFailed (long sendStartedTimestamp, Exception ex)
+		{
+#if NET6_0_OR_GREATER
+			Telemetry.SmtpClient.Metrics?.ReportSendFailed (sendStartedTimestamp, uri, remoteEndPoint, ex);
+#endif
+		}
+
 		string Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			var format = Prepare (options, message, sender, recipients, out var extensions);
@@ -2322,6 +2386,8 @@ namespace MailKit.Net.Smtp {
 			} else {
 				size = -1;
 			}
+
+			long sendStartedTimestamp = Stopwatch.GetTimestamp ();
 
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
@@ -2351,23 +2417,37 @@ namespace MailKit.Net.Smtp {
 					throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.TransactionFailed, "No recipients were accepted.");
 				}
 
-				if (bdat)
-					return Bdat (format, message, size, cancellationToken, progress);
+				string result;
 
-				var dataResponse = Stream.SendCommand ("DATA\r\n", cancellationToken);
+				if (bdat) {
+					result = Bdat (format, message, size, cancellationToken, progress);
+				} else {
+					var dataResponse = Stream.SendCommand ("DATA\r\n", cancellationToken);
 
-				ParseDataResponse (dataResponse);
-				dataResponse = null;
+					ParseDataResponse (dataResponse);
+					dataResponse = null;
 
-				return MessageData (format, message, size, cancellationToken, progress);
-			} catch (ServiceNotAuthenticatedException) {
+					result = MessageData (format, message, size, cancellationToken, progress);
+				}
+
+				ReportSendCompleted (sendStartedTimestamp);
+
+				return result;
+			} catch (ServiceNotAuthenticatedException ex) {
+				ReportSendFailed (sendStartedTimestamp, ex);
+
 				// do not disconnect
 				Reset (cancellationToken);
 				throw;
-			} catch (SmtpCommandException) {
+			} catch (SmtpCommandException ex) {
+				ReportSendFailed (sendStartedTimestamp, ex);
+
+				// do not disconnect
 				Reset (cancellationToken);
 				throw;
-			} catch {
+			} catch (Exception ex) {
+				ReportSendFailed (sendStartedTimestamp, ex);
+
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 				throw;
 			}

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
@@ -115,6 +115,7 @@
     <Compile Include="Net\Smtp\SmtpAuthenticationSecretDetector.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
+    <Compile Include="Net\Smtp\SmtpClientMetrics.cs" />
     <Compile Include="Net\Smtp\SmtpCommandException.cs" />
     <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
     <Compile Include="Net\Smtp\SmtpProtocolException.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="Net\Smtp\SmtpStream.cs" />
     <Compile Include="Net\IChannelBindingContext.cs" />
     <Compile Include="Net\NetworkStream.cs" />
+    <Compile Include="Net\SocketMetrics.cs" />
     <Compile Include="Net\SocketUtils.cs" />
     <Compile Include="Net\SslStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -272,6 +274,7 @@
     <Compile Include="StoreAction.cs" />
     <Compile Include="StoreFlagsRequest.cs" />
     <Compile Include="StoreLabelsRequest.cs" />
+    <Compile Include="Telemetry.cs" />
     <Compile Include="TextEncodings.cs" />
     <Compile Include="ThreadingAlgorithm.cs" />
     <Compile Include="UniqueId.cs" />

@@ -29,6 +29,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Net.Sockets;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MailKit.Net
@@ -38,11 +39,20 @@ namespace MailKit.Net
 		class SocketConnectState
 		{
 			readonly TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool> ();
+#if NET6_0_OR_GREATER
+			readonly long connectStartTicks = Stopwatch.GetTimestamp ();
+#endif
 			readonly Socket socket;
+			readonly IPAddress ip;
+			readonly string host;
+			readonly int port;
 
-			public SocketConnectState (Socket socket)
+			public SocketConnectState (Socket socket, IPAddress ip, string host, int port)
 			{
 				this.socket = socket;
+				this.ip = ip;
+				this.host = host;
+				this.port = port;
 			}
 
 			public Task Task { get { return tcs.Task; } }
@@ -57,17 +67,31 @@ namespace MailKit.Net
 				try {
 					socket.EndConnect (ar);
 				} catch (Exception ex) {
-					// The connection failed. Try setting an exception in case the connection hasn't also been canceled.
+					// The connection failed. Try setting an exception in case the connection hasn't also been cancelled.
+#if NET6_0_OR_GREATER
+					bool cancelled = !tcs.TrySetException (ex);
+
+					Telemetry.Socket.Metrics?.ReportConnectFailed (connectStartTicks, ip, host, port, cancelled, ex);
+#else
 					tcs.TrySetException (ex);
+#endif
 					socket.Dispose ();
 					return;
 				}
 
 				// The connection was successful.
-				if (tcs.TrySetResult (true))
+				if (tcs.TrySetResult (true)) {
+#if NET6_0_OR_GREATER
+					Telemetry.Socket.Metrics?.ReportConnected (connectStartTicks, ip, host, port);
+#endif
 					return;
+				}
 
-				// Note: If we get this far, then it means that the connection has been canceled.
+				// Note: If we get this far, then it means that the connection has been cancelled.
+#if NET6_0_OR_GREATER
+				Telemetry.Socket.Metrics?.ReportConnectFailed (connectStartTicks, ip, host, port, true);
+#endif
+
 				try {
 					socket.Disconnect (false);
 					socket.Dispose ();
@@ -107,9 +131,13 @@ namespace MailKit.Net
 					continue;
 				}
 
+#if NET6_0_OR_GREATER
+				long connectStartTicks = Stopwatch.GetTimestamp ();
+#endif
+
 				try {
 					if (cancellationToken.CanBeCanceled) {
-						var state = new SocketConnectState (socket);
+						var state = new SocketConnectState (socket, ipAddresses[i], host, port);
 
 						using (var registration = cancellationToken.Register (state.OnCanceled, false)) {
 							var ar = socket.BeginConnect (ipAddresses[i], port, OnEndConnect, state);
@@ -117,14 +145,23 @@ namespace MailKit.Net
 						}
 					} else {
 						socket.Connect (ipAddresses[i], port);
+
+#if NET6_0_OR_GREATER
+						Telemetry.Socket.Metrics?.ReportConnected (connectStartTicks, ipAddresses[i], host, port);
+#endif
 					}
 
 					return socket;
 				} catch (OperationCanceledException) {
 					throw;
-				} catch {
-					if (!cancellationToken.CanBeCanceled)
+				} catch (Exception ex) {
+					if (!cancellationToken.CanBeCanceled) {
+#if NET6_0_OR_GREATER
+						Telemetry.Socket.Metrics?.ReportConnectFailed (connectStartTicks, ipAddresses[i], host, port, false, ex);
+#endif
+
 						socket.Dispose ();
+					}
 
 					if (i + 1 == ipAddresses.Length)
 						throw;
@@ -162,7 +199,7 @@ namespace MailKit.Net
 				}
 
 				try {
-					var state = new SocketConnectState (socket);
+					var state = new SocketConnectState (socket, ipAddresses[i], host, port);
 
 					using (var registration = cancellationToken.Register (state.OnCanceled, false)) {
 						var ar = socket.BeginConnect (ipAddresses[i], port, OnEndConnect, state);
