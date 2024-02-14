@@ -127,8 +127,11 @@
     <Compile Include="Net\Smtp\SmtpResponse.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
+    <Compile Include="Net\ClientMetrics.cs" />
     <Compile Include="Net\IChannelBindingContext.cs" />
+    <Compile Include="Net\NetworkOperation.cs" />
     <Compile Include="Net\NetworkStream.cs" />
+    <Compile Include="Net\SocketMetrics.cs" />
     <Compile Include="Net\SocketUtils.cs" />
     <Compile Include="Net\SslStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -276,6 +279,7 @@
     <Compile Include="StoreAction.cs" />
     <Compile Include="StoreFlagsRequest.cs" />
     <Compile Include="StoreLabelsRequest.cs" />
+    <Compile Include="Telemetry.cs" />
     <Compile Include="TextEncodings.cs" />
     <Compile Include="ThreadingAlgorithm.cs" />
     <Compile Include="UniqueId.cs" />
