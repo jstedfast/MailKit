@@ -1,0 +1,9 @@
+* 1 FETCH (UID 3016 BODY[2.MIME] {145}
+Content-Disposition: attachment;
+	filename="empty.pdf"
+Content-Transfer-Encoding: base64
+Content-Type: application/pdf;
+	name="empty.pdf"
+
+ BODY[2] )
+A######## OK FETCH Completed.

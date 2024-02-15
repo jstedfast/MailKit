@@ -1,0 +1,1 @@
+* OK Yandex IMAP4rev1 at mail-imap-production-171.sas.yp-c.yandex.net:993 ready to talk with ::ffff:91.77.169.5:50580, 2024-Feb-13 08:17:42, gHfsEJKZ3Gk0

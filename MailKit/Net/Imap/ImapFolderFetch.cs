@@ -2088,6 +2088,14 @@ namespace MailKit.Net.Imap
 						stream = CreateStream (uid, name, offset, 0);
 						length = 0;
 						break;
+					case ImapTokenType.CloseParen:
+						// Note: Yandex IMAP servers sometimes do not include the BODY[<section>] content value in the FETCH response.
+						//
+						// See https://github.com/jstedfast/MailKit/issues/1708 for details.
+						//
+						// Unget the ')' token and pretend we got a NIL token.
+						engine.Stream.UngetToken (token);
+						goto case ImapTokenType.Nil;
 					default:
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					}
@@ -2338,6 +2346,14 @@ namespace MailKit.Net.Imap
 						stream = CreateStream (uid, name, offset, 0);
 						length = 0;
 						break;
+					case ImapTokenType.CloseParen:
+						// Note: Yandex IMAP servers sometimes do not include the BODY[<section>] content value in the FETCH response.
+						//
+						// See https://github.com/jstedfast/MailKit/issues/1708 for details.
+						//
+						// Unget the ')' token and pretend we got a NIL token.
+						engine.Stream.UngetToken (token);
+						goto case ImapTokenType.Nil;
 					default:
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					}

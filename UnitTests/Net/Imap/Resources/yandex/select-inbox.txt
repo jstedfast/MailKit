@@ -1,0 +1,8 @@
+* FLAGS (\Answered \Seen \Draft \Deleted $Forwarded)
+* 49 EXISTS
+* 1 RECENT
+* OK [UNSEEN 8]
+* OK [PERMANENTFLAGS (\Answered \Seen \Draft \Flagged \Deleted $Forwarded \*)] Limited
+* OK [UIDNEXT 3065] Ok
+* OK [UIDVALIDITY 1679853140] Ok
+A######## OK [READ-WRITE] SELECT Completed.

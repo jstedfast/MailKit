@@ -1,0 +1,8 @@
+* XLIST (\HasChildren \Unmarked \Drafts \Drafts) "|" Drafts
+* XLIST (\HasNoChildren \Unmarked \Templates) "|" "Drafts|template"
+* XLIST (\HasNoChildren \Marked \NoInferiors \Inbox) "|" INBOX
+* XLIST (\HasNoChildren \Unmarked) "|" Outbox
+* XLIST (\HasNoChildren \Unmarked \Sent \Sent) "|" Sent
+* XLIST (\HasNoChildren \Unmarked \Junk \Spam) "|" Spam
+* XLIST (\HasNoChildren \Unmarked \Trash \Trash) "|" Trash
+A######## OK XLIST Completed.

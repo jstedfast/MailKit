@@ -1,0 +1,2 @@
+* LIST (\HasNoChildren \Marked \NoInferiors) "|" INBOX
+A######## OK LIST Completed.

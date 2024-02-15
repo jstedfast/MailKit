@@ -2473,6 +2473,123 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static IList<ImapReplayCommand> CreateYandexGetBodyPartMissingContentCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "yandex.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "yandex.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("A00000001", "AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "yandex.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "yandex.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "yandex.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "yandex.xlist.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX\r\n", "yandex.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 UID FETCH 3016 (BODY.PEEK[2.MIME] BODY.PEEK[2])\r\n", "yandex.getbodypart-missing-content.txt")
+			};
+		}
+
+		[Test]
+		public void TestYandexGetBodyPartMissingContent ()
+		{
+			// IMAP4rev1 CHILDREN UNSELECT LITERAL+ NAMESPACE XLIST UIDPLUS ENABLE ID AUTH=PLAIN AUTH=XOAUTH2 IDLE MOVE
+			const ImapCapabilities YandexGreetingCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Children | ImapCapabilities.Unselect |
+				ImapCapabilities.LiteralPlus | ImapCapabilities.Namespace | ImapCapabilities.XList | ImapCapabilities.UidPlus | ImapCapabilities.Enable |
+				ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move | ImapCapabilities.Status;
+			var commands = CreateYandexGetBodyPartMissingContentCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (YandexGreetingCapabilities), "Greeting Capabilities");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (YandexGreetingCapabilities), "Greeting Capabilities");
+
+				client.Inbox.Open (FolderAccess.ReadWrite);
+
+				//var messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+				//Assert.That (messages, Has.Count.EqualTo (74), "Count");
+
+				var bodyPart = new BodyPartBasic {
+					PartSpecifier = "2",
+				};
+
+				var body = client.Inbox.GetBodyPart (new UniqueId (3016), bodyPart);
+				Assert.That (body, Is.Not.Null);
+				Assert.That (body, Is.InstanceOf<MimePart> ());
+				var part = (MimePart) body;
+				Assert.That (part.ContentType.MimeType, Is.EqualTo ("application/pdf"), "Content-Type");
+				Assert.That (part.ContentType.Name, Is.EqualTo ("empty.pdf"), "name");
+				Assert.That (part.ContentDisposition.Disposition, Is.EqualTo (ContentDisposition.Attachment), "Content-Disposition");
+				Assert.That (part.ContentDisposition.FileName, Is.EqualTo ("empty.pdf"), "filename");
+				Assert.That (part.ContentTransferEncoding, Is.EqualTo (ContentEncoding.Base64), "Content-Transfer-Encoding");
+				Assert.That (part.Content, Is.Null);
+			}
+		}
+
+		[Test]
+		public async Task TestYandexGetBodyPartMissingContentAsync ()
+		{
+			// IMAP4rev1 CHILDREN UNSELECT LITERAL+ NAMESPACE XLIST UIDPLUS ENABLE ID AUTH=PLAIN AUTH=XOAUTH2 IDLE MOVE
+			const ImapCapabilities YandexGreetingCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Children | ImapCapabilities.Unselect |
+				ImapCapabilities.LiteralPlus | ImapCapabilities.Namespace | ImapCapabilities.XList | ImapCapabilities.UidPlus | ImapCapabilities.Enable |
+				ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move | ImapCapabilities.Status;
+			var commands = CreateYandexGetBodyPartMissingContentCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (YandexGreetingCapabilities), "Greeting Capabilities");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (YandexGreetingCapabilities), "Greeting Capabilities");
+
+				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				//var messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
+				//Assert.That (messages, Has.Count.EqualTo (74), "Count");
+
+				var bodyPart = new BodyPartBasic {
+					PartSpecifier = "2",
+				};
+
+				var body = await client.Inbox.GetBodyPartAsync (new UniqueId (3016), bodyPart);
+				Assert.That (body, Is.Not.Null);
+				Assert.That (body, Is.InstanceOf<MimePart> ());
+				var part = (MimePart) body;
+				Assert.That (part.ContentType.MimeType, Is.EqualTo ("application/pdf"), "Content-Type");
+				Assert.That (part.ContentType.Name, Is.EqualTo ("empty.pdf"), "name");
+				Assert.That (part.ContentDisposition.Disposition, Is.EqualTo (ContentDisposition.Attachment), "Content-Disposition");
+				Assert.That (part.ContentDisposition.FileName, Is.EqualTo ("empty.pdf"), "filename");
+				Assert.That (part.ContentTransferEncoding, Is.EqualTo (ContentEncoding.Base64), "Content-Transfer-Encoding");
+				Assert.That (part.Content, Is.Null);
+			}
+		}
+
 		[TestCase ("ALL", MessageSummaryItems.All)]
 		[TestCase ("FAST", MessageSummaryItems.Fast)]
 		[TestCase ("FULL", MessageSummaryItems.Full)]
