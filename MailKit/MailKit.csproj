@@ -115,7 +115,6 @@
     <Compile Include="Net\Smtp\SmtpAuthenticationSecretDetector.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
-    <Compile Include="Net\Smtp\SmtpClientMetrics.cs" />
     <Compile Include="Net\Smtp\SmtpCommandException.cs" />
     <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
     <Compile Include="Net\Smtp\SmtpProtocolException.cs" />
@@ -123,6 +122,7 @@
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
     <Compile Include="Net\IChannelBindingContext.cs" />
+    <Compile Include="Net\NetworkOperation.cs" />
     <Compile Include="Net\NetworkStream.cs" />
     <Compile Include="Net\SocketMetrics.cs" />
     <Compile Include="Net\SocketUtils.cs" />
@@ -199,6 +199,7 @@
     <Compile Include="BodyPartText.cs" />
     <Compile Include="BodyPartVisitor.cs" />
     <Compile Include="ByteArrayBuilder.cs" />
+    <Compile Include="ClientMetrics.cs" />
     <Compile Include="CommandException.cs" />
     <Compile Include="CompressedStream.cs" />
     <Compile Include="ConnectedEventArgs.cs" />

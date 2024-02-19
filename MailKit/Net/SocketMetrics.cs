@@ -51,17 +51,16 @@ namespace MailKit.Net {
 				description: "The number of milliseconds taken for a socket to connect to a remote host.");
 		}
 
-		static TagList GetTags (IPAddress ip, string host, int port, string status, Exception ex = null)
+		static TagList GetTags (IPAddress ip, string host, int port, Exception ex = null)
 		{
 			var tags = new TagList {
 				{ "network.peer.address", ip.ToString () },
-				{ "socket.connect.result", status },
 				{ "server.address", host },
 				{ "server.port", port },
 			};
 
 			if (ex is not null) {
-				tags.Add ("error.type", ex.GetType ().FullName);
+				tags.Add ("exception.type", ex.GetType ().FullName);
 
 				if (ex is SocketException se)
 					tags.Add ("socket.error", (int) se.SocketErrorCode);
@@ -70,10 +69,10 @@ namespace MailKit.Net {
 			return tags;
 		}
 
-		public void ReportConnected (long connectStartedTimestamp, IPAddress ip, string host, int port)
+		public void RecordConnected (long connectStartedTimestamp, IPAddress ip, string host, int port)
 		{
 			if (connectCounter.Enabled || connectDuration.Enabled) {
-				var tags = GetTags (ip, host, port, "succeeded");
+				var tags = GetTags (ip, host, port);
 
 				if (connectDuration.Enabled) {
 					var duration = TimeSpan.FromTicks (Stopwatch.GetTimestamp () - connectStartedTimestamp).TotalMilliseconds;
@@ -86,10 +85,10 @@ namespace MailKit.Net {
 			}
 		}
 
-		public void ReportConnectFailed (long connectStartedTimestamp, IPAddress ip, string host, int port, bool cancelled, Exception ex = null)
+		public void RecordConnectFailed (long connectStartedTimestamp, IPAddress ip, string host, int port, bool cancelled, Exception ex = null)
 		{
 			if (connectCounter.Enabled || connectDuration.Enabled) {
-				var tags = GetTags (ip, host, port, cancelled ? "cancelled" : "failed", ex);
+				var tags = GetTags (ip, host, port, ex);
 
 				if (connectDuration.Enabled) {
 					var duration = TimeSpan.FromTicks (Stopwatch.GetTimestamp () - connectStartedTimestamp).TotalMilliseconds;

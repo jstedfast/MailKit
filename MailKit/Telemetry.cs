@@ -27,10 +27,10 @@
 #if NET6_0_OR_GREATER
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
 using MailKit.Net;
-using MailKit.Net.Smtp;
 
 namespace MailKit {
 	/// <summary>
@@ -54,7 +54,7 @@ namespace MailKit {
 			/// <summary>
 			/// The version of the socket-level meter.
 			/// </summary>
-			public const string MeterVersion = "1.0";
+			public const string MeterVersion = "0.1";
 
 			static Meter Meter;
 
@@ -68,8 +68,8 @@ namespace MailKit {
 			/// </remarks>
 			public static void Configure ()
 			{
-				Meter = new Meter (MeterName, MeterVersion);
-				Metrics = new SocketMetrics (Meter);
+				Meter ??= new Meter (MeterName, MeterVersion);
+				Metrics ??= new SocketMetrics (Meter);
 			}
 
 #if NET8_0_OR_GREATER
@@ -88,8 +88,8 @@ namespace MailKit {
 				if (meterFactory is null)
 					throw new ArgumentNullException (nameof (meterFactory));
 
-				Meter = meterFactory.Create (MeterName, MeterVersion);
-				Metrics = new SocketMetrics (Meter);
+				Meter ??= meterFactory.Create (MeterName, MeterVersion);
+				Metrics ??= new SocketMetrics (Meter);
 			}
 #endif
 		}
@@ -103,6 +103,18 @@ namespace MailKit {
 		public static class SmtpClient
 		{
 			/// <summary>
+			/// The name of the SmtpClient activity source used for tracing.
+			/// </summary>
+			public const string ActivitySourceName = "MailKit.Net.SmtpClient";
+
+			/// <summary>
+			/// The version of the SmtpClient activity source used for tracing.
+			/// </summary>
+			public const string ActivitySourceVersion = "0.1";
+
+			internal static readonly ActivitySource ActivitySource = new ActivitySource (ActivitySourceName, ActivitySourceVersion);
+
+			/// <summary>
 			/// The name of the SmtpClient meter.
 			/// </summary>
 			public const string MeterName = "mailkit.net.smtp";
@@ -110,11 +122,16 @@ namespace MailKit {
 			/// <summary>
 			/// The version of the SmtpClient meter.
 			/// </summary>
-			public const string MeterVersion = "1.0";
+			public const string MeterVersion = "0.1";
 
 			static Meter Meter;
 
-			internal static SmtpClientMetrics Metrics { get; private set; }
+			internal static ClientMetrics Metrics { get; private set; }
+
+			internal static ClientMetrics CreateMetrics (Meter meter)
+			{
+				return new ClientMetrics (Meter, MeterName, "an", "SMTP");
+			}
 
 			/// <summary>
 			/// Configure SmtpClient telemetry.
@@ -124,8 +141,8 @@ namespace MailKit {
 			/// </remarks>
 			public static void Configure ()
 			{
-				Meter = new Meter (MeterName, MeterVersion);
-				Metrics = new SmtpClientMetrics (Meter);
+				Meter ??= new Meter (MeterName, MeterVersion);
+				Metrics ??= CreateMetrics (Meter);
 			}
 
 #if NET8_0_OR_GREATER
@@ -145,7 +162,7 @@ namespace MailKit {
 					throw new ArgumentNullException (nameof (meterFactory));
 
 				Meter = meterFactory.Create (MeterName, MeterVersion);
-				Metrics = new SmtpClientMetrics (Meter);
+				Metrics ??= CreateMetrics (Meter);
 			}
 #endif
 		}
@@ -168,7 +185,7 @@ namespace MailKit {
 			/// </summary>
 			public const string MeterVersion = "1.0";
 
-			static Meter Meter;
+			internal static Meter Meter { get; private set; }
 
 			/// <summary>
 			/// Configure Pop3Client telemetry.
@@ -178,7 +195,7 @@ namespace MailKit {
 			/// </remarks>
 			public static void Configure ()
 			{
-				Meter = new Meter (MeterName, MeterVersion);
+				Meter ??= new Meter (MeterName, MeterVersion);
 			}
 
 #if NET8_0_OR_GREATER
@@ -220,7 +237,7 @@ namespace MailKit {
 			/// </summary>
 			public const string MeterVersion = "1.0";
 
-			static Meter Meter;
+			internal static Meter Meter { get; private set; }
 
 			/// <summary>
 			/// Configure ImapClient telemetry.
@@ -230,7 +247,7 @@ namespace MailKit {
 			/// </remarks>
 			public static void Configure ()
 			{
-				Meter = new Meter (MeterName, MeterVersion);
+				Meter ??= new Meter (MeterName, MeterVersion);
 			}
 
 #if NET8_0_OR_GREATER

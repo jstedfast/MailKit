@@ -71,7 +71,7 @@ namespace MailKit.Net
 #if NET6_0_OR_GREATER
 					bool cancelled = !tcs.TrySetException (ex);
 
-					Telemetry.Socket.Metrics?.ReportConnectFailed (connectStartTicks, ip, host, port, cancelled, ex);
+					Telemetry.Socket.Metrics?.RecordConnectFailed (connectStartTicks, ip, host, port, cancelled, ex);
 #else
 					tcs.TrySetException (ex);
 #endif
@@ -82,14 +82,14 @@ namespace MailKit.Net
 				// The connection was successful.
 				if (tcs.TrySetResult (true)) {
 #if NET6_0_OR_GREATER
-					Telemetry.Socket.Metrics?.ReportConnected (connectStartTicks, ip, host, port);
+					Telemetry.Socket.Metrics?.RecordConnected (connectStartTicks, ip, host, port);
 #endif
 					return;
 				}
 
 				// Note: If we get this far, then it means that the connection has been cancelled.
 #if NET6_0_OR_GREATER
-				Telemetry.Socket.Metrics?.ReportConnectFailed (connectStartTicks, ip, host, port, true);
+				Telemetry.Socket.Metrics?.RecordConnectFailed (connectStartTicks, ip, host, port, true);
 #endif
 
 				try {
@@ -147,7 +147,7 @@ namespace MailKit.Net
 						socket.Connect (ipAddresses[i], port);
 
 #if NET6_0_OR_GREATER
-						Telemetry.Socket.Metrics?.ReportConnected (connectStartTicks, ipAddresses[i], host, port);
+						Telemetry.Socket.Metrics?.RecordConnected (connectStartTicks, ipAddresses[i], host, port);
 #endif
 					}
 
@@ -157,7 +157,7 @@ namespace MailKit.Net
 				} catch (Exception ex) {
 					if (!cancellationToken.CanBeCanceled) {
 #if NET6_0_OR_GREATER
-						Telemetry.Socket.Metrics?.ReportConnectFailed (connectStartTicks, ipAddresses[i], host, port, false, ex);
+						Telemetry.Socket.Metrics?.RecordConnectFailed (connectStartTicks, ipAddresses[i], host, port, false, ex);
 #endif
 
 						socket.Dispose ();
