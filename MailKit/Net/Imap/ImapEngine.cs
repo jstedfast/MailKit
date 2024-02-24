@@ -145,11 +145,16 @@ namespace MailKit.Net.Imap {
 
 		static int TagPrefixIndex;
 
+#if NET6_0_OR_GREATER
+		readonly ClientMetrics metrics;
+#endif
+
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
 		readonly CreateImapFolderDelegate createImapFolder;
 		readonly ImapFolderNameComparer cacheComparer;
 		internal ImapQuirksMode QuirksMode;
 		readonly List<ImapCommand> queue;
+		long clientConnectedTimestamp;
 		internal char TagPrefix;
 		ImapCommand current;
 		MimeParser parser;
@@ -158,6 +163,11 @@ namespace MailKit.Net.Imap {
 
 		public ImapEngine (CreateImapFolderDelegate createImapFolderDelegate)
 		{
+#if NET6_0_OR_GREATER
+			// Use the globally configured Pop3Client metrics.
+			metrics = Telemetry.ImapClient.Metrics;
+#endif
+
 			cacheComparer = new ImapFolderNameComparer ('.');
 
 			FolderCache = new Dictionary<string, ImapFolder> (cacheComparer);
@@ -609,8 +619,18 @@ namespace MailKit.Net.Imap {
 			Stream = stream;
 		}
 
+		public NetworkOperation StartNetworkOperation (string name)
+		{
+#if NET6_0_OR_GREATER
+			return NetworkOperation.Start (name, Uri, Telemetry.ImapClient.ActivitySource, metrics);
+#else
+			return NetworkOperation.Start (name, Uri);
+#endif
+		}
+
 		void Initialize (ImapStream stream)
 		{
+			clientConnectedTimestamp = Stopwatch.GetTimestamp ();
 			ProtocolVersion = ImapProtocolVersion.Unknown;
 			Capabilities = ImapCapabilities.None;
 			AuthenticationMechanisms.Clear ();
@@ -736,8 +756,8 @@ namespace MailKit.Net.Imap {
 				DetectQuirksMode (text);
 
 				State = state;
-			} catch {
-				Disconnect ();
+			} catch (Exception ex) {
+				Disconnect (ex);
 				throw;
 			}
 		}
@@ -797,10 +817,18 @@ namespace MailKit.Net.Imap {
 				DetectQuirksMode (text);
 
 				State = state;
-			} catch {
-				Disconnect ();
+			} catch (Exception ex) {
+				Disconnect (ex);
 				throw;
 			}
+		}
+
+		void RecordClientDisconnected (Exception ex)
+		{
+#if NET6_0_OR_GREATER
+			metrics?.RecordClientDisconnected (clientConnectedTimestamp, Uri, ex);
+#endif
+			clientConnectedTimestamp = 0;
 		}
 
 		/// <summary>
@@ -809,8 +837,11 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Disconnects the <see cref="ImapEngine"/>.
 		/// </remarks>
-		public void Disconnect ()
+		/// <param name="ex">The exception that is causing the disconnection.</param>
+		public void Disconnect (Exception ex)
 		{
+			RecordClientDisconnected (ex);
+
 			if (Selected != null) {
 				Selected.Reset ();
 				Selected.OnClosed ();
@@ -3031,11 +3062,11 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void OnImapProtocolException ()
+		void OnImapProtocolException (ImapProtocolException ex)
 		{
 			var ic = current;
 
-			Disconnect ();
+			Disconnect (ex);
 
 			if (ic.Bye) {
 				if (ic.RespCodes.Count > 0) {
@@ -3069,11 +3100,11 @@ namespace MailKit.Net.Imap {
 
 				if (current.Bye && !current.Logout)
 					throw new ImapProtocolException ("Bye.");
-			} catch (ImapProtocolException) {
-				OnImapProtocolException ();
+			} catch (ImapProtocolException ex) {
+				OnImapProtocolException (ex);
 				throw;
-			} catch {
-				Disconnect ();
+			} catch (Exception ex) {
+				Disconnect (ex);
 				throw;
 			} finally {
 				current = null;
@@ -3096,11 +3127,11 @@ namespace MailKit.Net.Imap {
 
 				if (current.Bye && !current.Logout)
 					throw new ImapProtocolException ("Bye.");
-			} catch (ImapProtocolException) {
-				OnImapProtocolException ();
+			} catch (ImapProtocolException ex) {
+				OnImapProtocolException (ex);
 				throw;
-			} catch {
-				Disconnect ();
+			} catch (Exception ex) {
+				Disconnect (ex);
 				throw;
 			} finally {
 				current = null;
@@ -4187,7 +4218,7 @@ namespace MailKit.Net.Imap {
 		public void Dispose ()
 		{
 			disposed = true;
-			Disconnect ();
+			Disconnect (null);
 		}
 	}
 }

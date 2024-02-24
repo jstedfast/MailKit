@@ -209,7 +209,7 @@ namespace MailKit.Net.Smtp
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			using var operation = StartNetworkOperation ("Authenticate");
+			using var operation = StartNetworkOperation (NetworkOperation.Authenticate);
 
 			try {
 				SaslException saslException = null;
@@ -328,7 +328,7 @@ namespace MailKit.Net.Smtp
 		{
 			ValidateArguments (encoding, credentials);
 
-			using var operation = StartNetworkOperation ("Authenticate");
+			using var operation = StartNetworkOperation (NetworkOperation.Authenticate);
 
 			try {
 				var saslUri = new Uri ($"smtp://{uri.Host}");
@@ -568,42 +568,34 @@ namespace MailKit.Net.Smtp
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			using var operation = StartNetworkOperation ("Connect");
-			Stream stream;
+			using var operation = StartNetworkOperation (NetworkOperation.Connect);
 
 			try {
-				stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false);
-			} catch (Exception ex) {
-				operation.SetError (ex);
-				throw;
-			}
+				var stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false);
+				stream.WriteTimeout = timeout;
+				stream.ReadTimeout = timeout;
 
-			stream.WriteTimeout = timeout;
-			stream.ReadTimeout = timeout;
+				if (options == SecureSocketOptions.SslOnConnect) {
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
-			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+					try {
+						await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
+					} catch (Exception ex) {
+						ssl.Dispose ();
 
-				try {
-					await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
-				} catch (Exception ex) {
-					ssl.Dispose ();
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
+					}
 
-					operation.SetError (ex);
-
-					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
+					secure = true;
+					stream = ssl;
+				} else {
+					secure = false;
 				}
 
-				secure = true;
-				stream = ssl;
-			} else {
-				secure = false;
-			}
-
-			try {
 				await PostConnectAsync (stream, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
 			} catch (Exception ex) {
 				operation.SetError (ex);
+				throw;
 			}
 		}
 
@@ -750,38 +742,38 @@ namespace MailKit.Net.Smtp
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			using var operation = StartNetworkOperation ("Connect");
-			Stream network;
-
-			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
-
-				try {
-					await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
-				} catch (Exception ex) {
-					ssl.Dispose ();
-
-					operation.SetError (ex);
-
-					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
-				}
-
-				network = ssl;
-				secure = true;
-			} else {
-				network = stream;
-				secure = false;
-			}
-
-			if (network.CanTimeout) {
-				network.WriteTimeout = timeout;
-				network.ReadTimeout = timeout;
-			}
+			using var operation = StartNetworkOperation (NetworkOperation.Connect);
 
 			try {
+				Stream network;
+
+				if (options == SecureSocketOptions.SslOnConnect) {
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+
+					try {
+						await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
+					} catch (Exception ex) {
+						ssl.Dispose ();
+
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
+					}
+
+					network = ssl;
+					secure = true;
+				} else {
+					network = stream;
+					secure = false;
+				}
+
+				if (network.CanTimeout) {
+					network.WriteTimeout = timeout;
+					network.ReadTimeout = timeout;
+				}
+
 				await PostConnectAsync (network, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
 			} catch (Exception ex) {
 				operation.SetError (ex);
+				throw;
 			}
 		}
 

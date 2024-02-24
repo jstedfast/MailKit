@@ -195,10 +195,12 @@ namespace MailKit.Net.Smtp {
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
 		/// </example>
-		public SmtpClient (IProtocolLogger protocolLogger, IMeterFactory meterFactory) : this (protocolLogger)
+		public SmtpClient (IProtocolLogger protocolLogger, IMeterFactory meterFactory) : base (protocolLogger)
 		{
 			if (meterFactory == null)
 				throw new ArgumentNullException (nameof (meterFactory));
+
+			protocolLogger.AuthenticationSecretDetector = detector;
 
 			var meter = meterFactory.Create (Telemetry.SmtpClient.MeterName, Telemetry.SmtpClient.MeterVersion);
 			metrics = Telemetry.SmtpClient.CreateMetrics (meter);
@@ -1014,7 +1016,7 @@ namespace MailKit.Net.Smtp {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			using var operation = StartNetworkOperation ("Authenticate");
+			using var operation = StartNetworkOperation (NetworkOperation.Authenticate);
 
 			try {
 				SaslException saslException = null;
@@ -1152,7 +1154,7 @@ namespace MailKit.Net.Smtp {
 		{
 			ValidateArguments (encoding, credentials);
 
-			using var operation = StartNetworkOperation ("Authenticate");
+			using var operation = StartNetworkOperation (NetworkOperation.Authenticate);
 
 			try {
 				var saslUri = new Uri ($"smtp://{uri.Host}");
@@ -1459,39 +1461,30 @@ namespace MailKit.Net.Smtp {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			using var operation = StartNetworkOperation ("Connect");
-			Stream stream;
+			using var operation = StartNetworkOperation (NetworkOperation.Connect);
 
 			try {
-				stream = ConnectNetwork (host, port, cancellationToken);
-			} catch (Exception ex) {
-				operation.SetError (ex);
-				throw;
-			}
+				var stream = ConnectNetwork (host, port, cancellationToken);
+				stream.WriteTimeout = timeout;
+				stream.ReadTimeout = timeout;
 
-			stream.WriteTimeout = timeout;
-			stream.ReadTimeout = timeout;
+				if (options == SecureSocketOptions.SslOnConnect) {
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
-			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+					try {
+						SslHandshake (ssl, host, cancellationToken);
+					} catch (Exception ex) {
+						ssl.Dispose ();
 
-				try {
-					SslHandshake (ssl, host, cancellationToken);
-				} catch (Exception ex) {
-					ssl.Dispose ();
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
+					}
 
-					operation.SetError (ex);
-
-					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
+					secure = true;
+					stream = ssl;
+				} else {
+					secure = false;
 				}
 
-				secure = true;
-				stream = ssl;
-			} else {
-				secure = false;
-			}
-
-			try {
 				PostConnect (stream, host, port, options, starttls, cancellationToken);
 			} catch (Exception ex) {
 				operation.SetError (ex);
@@ -1659,35 +1652,34 @@ namespace MailKit.Net.Smtp {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			using var operation = StartNetworkOperation ("Connect");
-			Stream network;
-
-			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
-
-				try {
-					SslHandshake (ssl, host, cancellationToken);
-				} catch (Exception ex) {
-					ssl.Dispose ();
-
-					operation.SetError (ex);
-
-					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
-				}
-
-				network = ssl;
-				secure = true;
-			} else {
-				network = stream;
-				secure = false;
-			}
-
-			if (network.CanTimeout) {
-				network.WriteTimeout = timeout;
-				network.ReadTimeout = timeout;
-			}
+			using var operation = StartNetworkOperation (NetworkOperation.Connect);
 
 			try {
+				Stream network;
+
+				if (options == SecureSocketOptions.SslOnConnect) {
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+
+					try {
+						SslHandshake (ssl, host, cancellationToken);
+					} catch (Exception ex) {
+						ssl.Dispose ();
+
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "SMTP", host, port, 465, 25, 587);
+					}
+
+					network = ssl;
+					secure = true;
+				} else {
+					network = stream;
+					secure = false;
+				}
+
+				if (network.CanTimeout) {
+					network.WriteTimeout = timeout;
+					network.ReadTimeout = timeout;
+				}
+
 				PostConnect (network, host, port, options, starttls, cancellationToken);
 			} catch (Exception ex) {
 				operation.SetError (ex);

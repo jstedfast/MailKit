@@ -141,17 +141,24 @@ namespace MailKit.Net.Pop3
 		{
 			CheckCanAuthenticate (mechanism, cancellationToken);
 
-			var saslUri = new Uri ("pop://" + engine.Uri.Host);
-			var ctx = GetSaslAuthContext (mechanism, saslUri);
+			using var operation = engine.StartNetworkOperation (NetworkOperation.Authenticate);
 
-			var pc = await ctx.AuthenticateAsync (cancellationToken).ConfigureAwait (false);
+			try {
+				var saslUri = new Uri ("pop://" + engine.Uri.Host);
+				var ctx = GetSaslAuthContext (mechanism, saslUri);
 
-			if (pc.Status == Pop3CommandStatus.Error)
-				throw new AuthenticationException ();
+				var pc = await ctx.AuthenticateAsync (cancellationToken).ConfigureAwait (false);
 
-			pc.ThrowIfError ();
+				if (pc.Status == Pop3CommandStatus.Error)
+					throw new AuthenticationException ();
 
-			await OnAuthenticatedAsync (ctx.AuthMessage, cancellationToken).ConfigureAwait (false);
+				pc.ThrowIfError ();
+
+				await OnAuthenticatedAsync (ctx.AuthMessage, cancellationToken).ConfigureAwait (false);
+			} catch (Exception ex) {
+				operation.SetError (ex);
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -216,70 +223,77 @@ namespace MailKit.Net.Pop3
 		{
 			CheckCanAuthenticate (encoding, credentials, cancellationToken);
 
-			var saslUri = new Uri ("pop://" + engine.Uri.Host);
-			string userName, password, message = null;
-			NetworkCredential cred;
+			using var operation = engine.StartNetworkOperation (NetworkOperation.Authenticate);
 
-			if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
-				var apop = GetApopCommand (encoding, credentials, saslUri);
+			try {
+				var saslUri = new Uri ("pop://" + engine.Uri.Host);
+				string userName, password, message = null;
+				NetworkCredential cred;
 
+				if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
+					var apop = GetApopCommand (encoding, credentials, saslUri);
+
+					detector.IsAuthenticating = true;
+
+					try {
+						message = await SendCommandAsync (cancellationToken, encoding, apop).ConfigureAwait (false);
+						engine.State = Pop3EngineState.Transaction;
+					} catch (Pop3CommandException) {
+					} finally {
+						detector.IsAuthenticating = false;
+					}
+
+					if (engine.State == Pop3EngineState.Transaction) {
+						await OnAuthenticatedAsync (message ?? string.Empty, cancellationToken).ConfigureAwait (false);
+						return;
+					}
+				}
+
+				if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
+					foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
+						SaslMechanism sasl;
+
+						cred = credentials.GetCredential (saslUri, authmech);
+
+						if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
+							continue;
+
+						cancellationToken.ThrowIfCancellationRequested ();
+
+						var ctx = GetSaslAuthContext (sasl, saslUri);
+
+						var pc = await ctx.AuthenticateAsync (cancellationToken).ConfigureAwait (false);
+
+						if (pc.Status == Pop3CommandStatus.Error)
+							continue;
+
+						pc.ThrowIfError ();
+
+						await OnAuthenticatedAsync (ctx.AuthMessage, cancellationToken).ConfigureAwait (false);
+						return;
+					}
+				}
+
+				// fall back to the classic USER & PASS commands...
+				cred = credentials.GetCredential (saslUri, "DEFAULT");
+				userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
+				password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
 				detector.IsAuthenticating = true;
 
 				try {
-					message = await SendCommandAsync (cancellationToken, encoding, apop).ConfigureAwait (false);
-					engine.State = Pop3EngineState.Transaction;
+					await SendCommandAsync (cancellationToken, encoding, "USER {0}\r\n", userName).ConfigureAwait (false);
+					message = await SendCommandAsync (cancellationToken, encoding, "PASS {0}\r\n", password).ConfigureAwait (false);
 				} catch (Pop3CommandException) {
+					throw new AuthenticationException ();
 				} finally {
 					detector.IsAuthenticating = false;
 				}
 
-				if (engine.State == Pop3EngineState.Transaction) {
-					await OnAuthenticatedAsync (message ?? string.Empty, cancellationToken).ConfigureAwait (false);
-					return;
-				}
+				await OnAuthenticatedAsync (message, cancellationToken).ConfigureAwait (false);
+			} catch (Exception ex) {
+				operation.SetError (ex);
+				throw;
 			}
-
-			if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
-				foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
-					SaslMechanism sasl;
-
-					cred = credentials.GetCredential (saslUri, authmech);
-
-					if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
-						continue;
-
-					cancellationToken.ThrowIfCancellationRequested ();
-
-					var ctx = GetSaslAuthContext (sasl, saslUri);
-
-					var pc = await ctx.AuthenticateAsync (cancellationToken).ConfigureAwait (false);
-
-					if (pc.Status == Pop3CommandStatus.Error)
-						continue;
-
-					pc.ThrowIfError ();
-
-					await OnAuthenticatedAsync (ctx.AuthMessage, cancellationToken).ConfigureAwait (false);
-					return;
-				}
-			}
-
-			// fall back to the classic USER & PASS commands...
-			cred = credentials.GetCredential (saslUri, "DEFAULT");
-			userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
-			password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
-			detector.IsAuthenticating = true;
-
-			try {
-				await SendCommandAsync (cancellationToken, encoding, "USER {0}\r\n", userName).ConfigureAwait (false);
-				message = await SendCommandAsync (cancellationToken, encoding, "PASS {0}\r\n", password).ConfigureAwait (false);
-			} catch (Pop3CommandException) {
-				throw new AuthenticationException ();
-			} finally {
-				detector.IsAuthenticating = false;
-			}
-
-			await OnAuthenticatedAsync (message, cancellationToken).ConfigureAwait (false);
 		}
 
 		async Task SslHandshakeAsync (SslStream ssl, string host, CancellationToken cancellationToken)
@@ -330,8 +344,8 @@ namespace MailKit.Net.Pop3
 					// re-issue a CAPA command
 					await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
 				}
-			} catch {
-				engine.Disconnect ();
+			} catch (Exception ex) {
+				engine.Disconnect (ex);
 				secure = false;
 				throw;
 			}
@@ -411,30 +425,37 @@ namespace MailKit.Net.Pop3
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			var stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false);
-			stream.WriteTimeout = timeout;
-			stream.ReadTimeout = timeout;
+			using var operation = engine.StartNetworkOperation (NetworkOperation.Connect);
 
-			engine.Uri = uri;
+			try {
+				var stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false);
+				stream.WriteTimeout = timeout;
+				stream.ReadTimeout = timeout;
 
-			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+				engine.Uri = uri;
 
-				try {
-					await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
-				} catch (Exception ex) {
-					ssl.Dispose ();
+				if (options == SecureSocketOptions.SslOnConnect) {
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
-					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "POP3", host, port, 995, 110);
+					try {
+						await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
+					} catch (Exception ex) {
+						ssl.Dispose ();
+
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "POP3", host, port, 995, 110);
+					}
+
+					secure = true;
+					stream = ssl;
+				} else {
+					secure = false;
 				}
 
-				secure = true;
-				stream = ssl;
-			} else {
-				secure = false;
+				await PostConnectAsync (stream, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
+			} catch (Exception ex) {
+				operation.SetError (ex);
+				throw;
 			}
-
-			await PostConnectAsync (stream, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -580,36 +601,39 @@ namespace MailKit.Net.Pop3
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			engine.Uri = uri;
+			using var operation = engine.StartNetworkOperation (NetworkOperation.Connect);
 
-			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+			try {
+				engine.Uri = uri;
 
-				try {
-#if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-					await ssl.AuthenticateAsClientAsync (GetSslClientAuthenticationOptions (host, ValidateRemoteCertificate), cancellationToken).ConfigureAwait (false);
-#else
-					await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, CheckCertificateRevocation).ConfigureAwait (false);
-#endif
-				} catch (Exception ex) {
-					ssl.Dispose ();
+				if (options == SecureSocketOptions.SslOnConnect) {
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
-					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "POP3", host, port, 995, 110);
+					try {
+						await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
+					} catch (Exception ex) {
+						ssl.Dispose ();
+
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "POP3", host, port, 995, 110);
+					}
+
+					network = ssl;
+					secure = true;
+				} else {
+					network = stream;
+					secure = false;
 				}
 
-				network = ssl;
-				secure = true;
-			} else {
-				network = stream;
-				secure = false;
-			}
+				if (network.CanTimeout) {
+					network.WriteTimeout = timeout;
+					network.ReadTimeout = timeout;
+				}
 
-			if (network.CanTimeout) {
-				network.WriteTimeout = timeout;
-				network.ReadTimeout = timeout;
+				await PostConnectAsync (network, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
+			} catch (Exception ex) {
+				operation.SetError (ex);
+				throw;
 			}
-
-			await PostConnectAsync (network, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -645,7 +669,7 @@ namespace MailKit.Net.Pop3
 			}
 
 			disconnecting = true;
-			engine.Disconnect ();
+			engine.Disconnect (null);
 		}
 
 		/// <summary>

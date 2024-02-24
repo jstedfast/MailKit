@@ -312,22 +312,29 @@ namespace MailKit.Net.Imap
 				await imap.Stream.FlushAsync (cmd.CancellationToken).ConfigureAwait (false);
 			};
 
-			detector.IsAuthenticating = true;
+			using var operation = engine.StartNetworkOperation (NetworkOperation.Authenticate);
 
 			try {
-				await engine.RunAsync (ic).ConfigureAwait (false);
-			} finally {
-				detector.IsAuthenticating = false;
+				detector.IsAuthenticating = true;
+
+				try {
+					await engine.RunAsync (ic).ConfigureAwait (false);
+				} finally {
+					detector.IsAuthenticating = false;
+				}
+
+				ProcessAuthenticateResponse (ic, mechanism);
+
+				// Query the CAPABILITIES again if the server did not include an
+				// untagged CAPABILITIES response to the AUTHENTICATE command.
+				if (engine.CapabilitiesVersion == capabilitiesVersion)
+					await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
+
+				await OnAuthenticatedAsync (ic.ResponseText ?? string.Empty, cancellationToken).ConfigureAwait (false);
+			} catch (Exception ex) {
+				operation.SetError (ex);
+				throw;
 			}
-
-			ProcessAuthenticateResponse (ic, mechanism);
-
-			// Query the CAPABILITIES again if the server did not include an
-			// untagged CAPABILITIES response to the AUTHENTICATE command.
-			if (engine.CapabilitiesVersion == capabilitiesVersion)
-				await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
-
-			await OnAuthenticatedAsync (ic.ResponseText ?? string.Empty, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -386,41 +393,84 @@ namespace MailKit.Net.Imap
 		{
 			CheckCanAuthenticate (encoding, credentials);
 
-			int capabilitiesVersion = engine.CapabilitiesVersion;
-			var uri = new Uri ("imap://" + engine.Uri.Host);
-			NetworkCredential cred;
-			ImapCommand ic = null;
-			SaslMechanism sasl;
-			string id;
+			using var operation = engine.StartNetworkOperation (NetworkOperation.Authenticate);
 
-			foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
-				cred = credentials.GetCredential (uri, authmech);
+			try {
+				int capabilitiesVersion = engine.CapabilitiesVersion;
+				var uri = new Uri ("imap://" + engine.Uri.Host);
+				NetworkCredential cred;
+				ImapCommand ic = null;
+				SaslMechanism sasl;
+				string id;
 
-				if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
-					continue;
+				foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
+					cred = credentials.GetCredential (uri, authmech);
 
-				ConfigureSaslMechanism (sasl, uri);
+					if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
+						continue;
 
-				cancellationToken.ThrowIfCancellationRequested ();
+					ConfigureSaslMechanism (sasl, uri);
 
-				var command = string.Format ("AUTHENTICATE {0}", sasl.MechanismName);
+					cancellationToken.ThrowIfCancellationRequested ();
 
-				if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && sasl.SupportsInitialResponse) {
-					string ir = await sasl.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
+					var command = string.Format ("AUTHENTICATE {0}", sasl.MechanismName);
 
-					command += " " + ir + "\r\n";
-				} else {
-					command += "\r\n";
+					if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && sasl.SupportsInitialResponse) {
+						string ir = await sasl.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
+
+						command += " " + ir + "\r\n";
+					} else {
+						command += "\r\n";
+					}
+
+					ic = engine.QueueCommand (cancellationToken, null, command);
+					ic.ContinuationHandler = async (imap, cmd, text, xdoAsync) => {
+						string challenge = await sasl.ChallengeAsync (text, cmd.CancellationToken).ConfigureAwait (false);
+						var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
+
+						await imap.Stream.WriteAsync (buf, 0, buf.Length, cmd.CancellationToken).ConfigureAwait (false);
+						await imap.Stream.FlushAsync (cmd.CancellationToken).ConfigureAwait (false);
+					};
+
+					detector.IsAuthenticating = true;
+
+					try {
+						await engine.RunAsync (ic).ConfigureAwait (false);
+					} finally {
+						detector.IsAuthenticating = false;
+					}
+
+					if (ic.Response != ImapCommandResponse.Ok) {
+						EmitAndThrowOnAlert (ic);
+						if (ic.Bye)
+							throw new ImapProtocolException (ic.ResponseText);
+						continue;
+					}
+
+					engine.State = ImapEngineState.Authenticated;
+
+					cred = credentials.GetCredential (uri, sasl.MechanismName);
+					id = GetSessionIdentifier (cred.UserName);
+					if (id != identifier) {
+						engine.FolderCache.Clear ();
+						identifier = id;
+					}
+
+					// Query the CAPABILITIES again if the server did not include an
+					// untagged CAPABILITIES response to the AUTHENTICATE command.
+					if (engine.CapabilitiesVersion == capabilitiesVersion)
+						await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
+
+					await OnAuthenticatedAsync (ic.ResponseText ?? string.Empty, cancellationToken).ConfigureAwait (false);
+					return;
 				}
 
-				ic = engine.QueueCommand (cancellationToken, null, command);
-				ic.ContinuationHandler = async (imap, cmd, text, xdoAsync) => {
-					string challenge = await sasl.ChallengeAsync (text, cmd.CancellationToken).ConfigureAwait (false);
-					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
+				CheckCanLogin (ic);
 
-					await imap.Stream.WriteAsync (buf, 0, buf.Length, cmd.CancellationToken).ConfigureAwait (false);
-					await imap.Stream.FlushAsync (cmd.CancellationToken).ConfigureAwait (false);
-				};
+				// fall back to the classic LOGIN command...
+				cred = credentials.GetCredential (uri, "DEFAULT");
+
+				ic = engine.QueueCommand (cancellationToken, null, "LOGIN %S %S\r\n", cred.UserName, cred.Password);
 
 				detector.IsAuthenticating = true;
 
@@ -430,16 +480,11 @@ namespace MailKit.Net.Imap
 					detector.IsAuthenticating = false;
 				}
 
-				if (ic.Response != ImapCommandResponse.Ok) {
-					EmitAndThrowOnAlert (ic);
-					if (ic.Bye)
-						throw new ImapProtocolException (ic.ResponseText);
-					continue;
-				}
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw CreateAuthenticationException (ic);
 
 				engine.State = ImapEngineState.Authenticated;
 
-				cred = credentials.GetCredential (uri, sasl.MechanismName);
 				id = GetSessionIdentifier (cred.UserName);
 				if (id != identifier) {
 					engine.FolderCache.Clear ();
@@ -447,46 +492,15 @@ namespace MailKit.Net.Imap
 				}
 
 				// Query the CAPABILITIES again if the server did not include an
-				// untagged CAPABILITIES response to the AUTHENTICATE command.
+				// untagged CAPABILITIES response to the LOGIN command.
 				if (engine.CapabilitiesVersion == capabilitiesVersion)
 					await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
 
 				await OnAuthenticatedAsync (ic.ResponseText ?? string.Empty, cancellationToken).ConfigureAwait (false);
-				return;
+			} catch (Exception ex) {
+				operation.SetError (ex);
+				throw;
 			}
-
-			CheckCanLogin (ic);
-
-			// fall back to the classic LOGIN command...
-			cred = credentials.GetCredential (uri, "DEFAULT");
-
-			ic = engine.QueueCommand (cancellationToken, null, "LOGIN %S %S\r\n", cred.UserName, cred.Password);
-
-			detector.IsAuthenticating = true;
-
-			try {
-				await engine.RunAsync (ic).ConfigureAwait (false);
-			} finally {
-				detector.IsAuthenticating = false;
-			}
-
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw CreateAuthenticationException (ic);
-
-			engine.State = ImapEngineState.Authenticated;
-
-			id = GetSessionIdentifier (cred.UserName);
-			if (id != identifier) {
-				engine.FolderCache.Clear ();
-				identifier = id;
-			}
-
-			// Query the CAPABILITIES again if the server did not include an
-			// untagged CAPABILITIES response to the LOGIN command.
-			if (engine.CapabilitiesVersion == capabilitiesVersion)
-				await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
-
-			await OnAuthenticatedAsync (ic.ResponseText ?? string.Empty, cancellationToken).ConfigureAwait (false);
 		}
 
 		async Task SslHandshakeAsync (SslStream ssl, string host, CancellationToken cancellationToken)
@@ -551,9 +565,9 @@ namespace MailKit.Net.Imap
 						throw ImapCommandException.Create ("STARTTLS", ic);
 					}
 				}
-			} catch {
+			} catch (Exception ex) {
 				secure = false;
-				engine.Disconnect ();
+				engine.Disconnect (ex);
 				throw;
 			} finally {
 				connecting = false;
@@ -639,30 +653,37 @@ namespace MailKit.Net.Imap
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			var stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false);
-			stream.WriteTimeout = timeout;
-			stream.ReadTimeout = timeout;
+			using var operation = engine.StartNetworkOperation (NetworkOperation.Connect);
 
-			engine.Uri = uri;
+			try {
+				var stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false);
+				stream.WriteTimeout = timeout;
+				stream.ReadTimeout = timeout;
 
-			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+				engine.Uri = uri;
 
-				try {
-					await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
-				} catch (Exception ex) {
-					ssl.Dispose ();
+				if (options == SecureSocketOptions.SslOnConnect) {
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
 
-					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "IMAP", host, port, 993, 143);
+					try {
+						await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
+					} catch (Exception ex) {
+						ssl.Dispose ();
+
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "IMAP", host, port, 993, 143);
+					}
+
+					secure = true;
+					stream = ssl;
+				} else {
+					secure = false;
 				}
 
-				secure = true;
-				stream = ssl;
-			} else {
-				secure = false;
+				await PostConnectAsync (stream, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
+			} catch (Exception ex) {
+				operation.SetError (ex);
+				throw;
 			}
-
-			await PostConnectAsync (stream, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -804,36 +825,43 @@ namespace MailKit.Net.Imap
 		{
 			CheckCanConnect (stream, host, port);
 
-			Stream network;
-
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			engine.Uri = uri;
+			using var operation = engine.StartNetworkOperation (NetworkOperation.Connect);
 
-			if (options == SecureSocketOptions.SslOnConnect) {
-				var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+			try {
+				Stream network;
 
-				try {
-					await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
-				} catch (Exception ex) {
-					ssl.Dispose ();
+				engine.Uri = uri;
 
-					throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "IMAP", host, port, 993, 143);
+				if (options == SecureSocketOptions.SslOnConnect) {
+					var ssl = new SslStream (stream, false, ValidateRemoteCertificate);
+
+					try {
+						await SslHandshakeAsync (ssl, host, cancellationToken).ConfigureAwait (false);
+					} catch (Exception ex) {
+						ssl.Dispose ();
+
+						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "IMAP", host, port, 993, 143);
+					}
+
+					network = ssl;
+					secure = true;
+				} else {
+					network = stream;
+					secure = false;
 				}
 
-				network = ssl;
-				secure = true;
-			} else {
-				network = stream;
-				secure = false;
-			}
+				if (network.CanTimeout) {
+					network.WriteTimeout = timeout;
+					network.ReadTimeout = timeout;
+				}
 
-			if (network.CanTimeout) {
-				network.WriteTimeout = timeout;
-				network.ReadTimeout = timeout;
+				await PostConnectAsync (network, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
+			} catch (Exception ex) {
+				operation.SetError (ex);
+				throw;
 			}
-
-			await PostConnectAsync (network, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -871,7 +899,7 @@ namespace MailKit.Net.Imap
 
 			disconnecting = true;
 
-			engine.Disconnect ();
+			engine.Disconnect (null);
 		}
 
 		/// <summary>

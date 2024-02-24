@@ -34,8 +34,8 @@ namespace MailKit {
 	sealed class ClientMetrics
 	{
 		public readonly Histogram<double> ConnectionDuration;
-		public readonly Counter<long> TaskCounter;
-		public readonly Histogram<double> TaskDuration;
+		public readonly Counter<long> OperationCounter;
+		public readonly Histogram<double> OperationDuration;
 		public readonly string MeterName;
 
 		public ClientMetrics (Meter meter, string meterName, string an, string protocol)
@@ -47,15 +47,15 @@ namespace MailKit {
 				unit: "s",
 				description: $"The duration of successfully established connections to {an} {protocol} server.");
 
-			TaskCounter = meter.CreateCounter<long> (
-				name: $"{meterName}.client.task.count",
-				unit: "{command}",
-				description: $"The number of times a client performed a task on {an} {protocol} server.");
+			OperationCounter = meter.CreateCounter<long> (
+				name: $"{meterName}.client.operation.count",
+				unit: "{operation}",
+				description: $"The number of times a client performed an operation on {an} {protocol} server.");
 
-			TaskDuration = meter.CreateHistogram<double> (
-				name: $"{meterName}.client.task.duration",
+			OperationDuration = meter.CreateHistogram<double> (
+				name: $"{meterName}.client.operation.duration",
 				unit: "ms",
-				description: $"The amount of time it takes for the {protocol} server to perform a task.");
+				description: $"The amount of time it takes for the {protocol} server to perform an operation.");
 		}
 
 		public TagList GetTags (Uri uri, Exception ex)

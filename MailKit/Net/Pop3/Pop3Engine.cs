@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -58,7 +59,11 @@ namespace MailKit.Net.Pop3 {
 	/// </summary>
 	class Pop3Engine
 	{
+#if NET6_0_OR_GREATER
+		readonly ClientMetrics metrics;
+#endif
 		readonly List<Pop3Command> queue;
+		long clientConnectedTimestamp;
 		Pop3Stream stream;
 
 		/// <summary>
@@ -69,6 +74,11 @@ namespace MailKit.Net.Pop3 {
 			AuthenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
 			Capabilities = Pop3Capabilities.User;
 			queue = new List<Pop3Command> ();
+
+#if NET6_0_OR_GREATER
+			// Use the globally configured Pop3Client metrics.
+			metrics = Telemetry.Pop3Client.Metrics;
+#endif
 		}
 
 		/// <summary>
@@ -193,6 +203,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			stream?.Dispose ();
 
+			clientConnectedTimestamp = Stopwatch.GetTimestamp ();
 			Capabilities = Pop3Capabilities.User;
 			AuthenticationMechanisms.Clear ();
 			State = Pop3EngineState.Disconnected;
@@ -240,6 +251,15 @@ namespace MailKit.Net.Pop3 {
 			State = Pop3EngineState.Connected;
 		}
 
+		public NetworkOperation StartNetworkOperation (string name)
+		{
+#if NET6_0_OR_GREATER
+			return NetworkOperation.Start (name, Uri, Telemetry.Pop3Client.ActivitySource, metrics);
+#else
+			return NetworkOperation.Start (name, Uri);
+#endif
+		}
+
 		/// <summary>
 		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </summary>
@@ -283,14 +303,25 @@ namespace MailKit.Net.Pop3 {
 			Disconnected?.Invoke (this, EventArgs.Empty);
 		}
 
+		void RecordClientDisconnected (Exception ex)
+		{
+#if NET6_0_OR_GREATER
+			metrics?.RecordClientDisconnected (clientConnectedTimestamp, Uri, ex);
+#endif
+			clientConnectedTimestamp = 0;
+		}
+
 		/// <summary>
 		/// Disconnects the <see cref="Pop3Engine"/>.
 		/// </summary>
 		/// <remarks>
 		/// Disconnects the <see cref="Pop3Engine"/>.
 		/// </remarks>
-		public void Disconnect ()
+		/// <param name="ex">The exception that is causing the disconnection.</param>
+		public void Disconnect (Exception ex)
 		{
+			RecordClientDisconnected (ex);
+
 			if (stream != null) {
 				stream.Dispose ();
 				stream = null;
@@ -314,7 +345,7 @@ namespace MailKit.Net.Pop3 {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
+		/// An I/O pex occurred.
 		/// </exception>
 		public string ReadLine (CancellationToken cancellationToken)
 		{
@@ -346,7 +377,7 @@ namespace MailKit.Net.Pop3 {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
+		/// An I/O pex occurred.
 		/// </exception>
 		public async Task<string> ReadLineAsync (CancellationToken cancellationToken)
 		{
@@ -404,9 +435,9 @@ namespace MailKit.Net.Pop3 {
 
 			try {
 				response = ReadLine (cancellationToken).TrimEnd ();
-			} catch {
+			} catch (Exception ex) {
 				pc.Status = Pop3CommandStatus.ProtocolError;
-				Disconnect ();
+				Disconnect (ex);
 				throw;
 			}
 
@@ -415,16 +446,17 @@ namespace MailKit.Net.Pop3 {
 
 			switch (pc.Status) {
 			case Pop3CommandStatus.ProtocolError:
-				Disconnect ();
-				throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+				var pex = new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+				Disconnect (pex);
+				throw pex;
 			case Pop3CommandStatus.Continue:
 			case Pop3CommandStatus.Ok:
 				if (pc.Handler != null) {
 					try {
 						pc.Handler (this, pc, text, false, cancellationToken);
-					} catch {
+					} catch (Exception ex) {
 						pc.Status = Pop3CommandStatus.ProtocolError;
-						Disconnect ();
+						Disconnect (ex);
 						throw;
 					}
 				}
@@ -438,9 +470,9 @@ namespace MailKit.Net.Pop3 {
 
 			try {
 				response = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
-			} catch {
+			} catch (Exception ex) {
 				pc.Status = Pop3CommandStatus.ProtocolError;
-				Disconnect ();
+				Disconnect (ex);
 				throw;
 			}
 
@@ -449,16 +481,17 @@ namespace MailKit.Net.Pop3 {
 
 			switch (pc.Status) {
 			case Pop3CommandStatus.ProtocolError:
-				Disconnect ();
-				throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+				var pex = new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+				Disconnect (pex);
+				throw pex;
 			case Pop3CommandStatus.Continue:
 			case Pop3CommandStatus.Ok:
 				if (pc.Handler != null) {
 					try {
 						await pc.Handler (this, pc, text, true, cancellationToken).ConfigureAwait (false);
-					} catch {
+					} catch (Exception ex) {
 						pc.Status = Pop3CommandStatus.ProtocolError;
-						Disconnect ();
+						Disconnect (ex);
 						throw;
 					}
 				}

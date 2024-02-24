@@ -30,6 +30,9 @@ using System.Diagnostics;
 namespace MailKit.Net {
 	class NetworkOperation : IDisposable
 	{
+		public const string Authenticate = nameof (Authenticate);
+		public const string Connect = nameof (Connect);
+
 		public enum StatusCode
 		{
 			Ok,
@@ -112,11 +115,11 @@ namespace MailKit.Net {
 				{ "url.scheme", uri.Scheme },
 				{ "server.address", uri.Host },
 				{ "server.port", uri.Port },
-				{ "mailkit.task.status", GetStatusCodeValue (statusCode) }
+				{ "network.operation.status", GetStatusCodeValue (statusCode) }
 			};
 
 			if (!name.Equals ("connect", StringComparison.OrdinalIgnoreCase))
-				tags.Add ("mailkit.task", name.ToLowerInvariant ());
+				tags.Add ("network.operation", name.ToLowerInvariant ());
 
 			if (ex is not null && statusCode != StatusCode.Cancelled)
 				tags.Add ("exception.type", ex.GetType ().FullName);
@@ -128,17 +131,17 @@ namespace MailKit.Net {
 		public void Dispose ()
 		{
 #if NET6_0_OR_GREATER
-			if (metrics.TaskCounter.Enabled || metrics.TaskDuration.Enabled) {
+			if (metrics != null && (metrics.OperationCounter.Enabled || metrics.OperationDuration.Enabled)) {
 				var tags = GetTags ();
 
-				if (metrics.TaskDuration.Enabled) {
+				if (metrics.OperationDuration.Enabled) {
 					var duration = TimeSpan.FromTicks (Stopwatch.GetTimestamp () - startTimestamp).TotalMilliseconds;
 
-					metrics.TaskDuration.Record (duration, tags);
+					metrics.OperationDuration.Record (duration, tags);
 				}
 
-				if (metrics.TaskCounter.Enabled)
-					metrics.TaskCounter.Add (1, tags);
+				if (metrics.OperationCounter.Enabled)
+					metrics.OperationCounter.Add (1, tags);
 			}
 
 			activity?.Dispose ();
@@ -161,4 +164,3 @@ namespace MailKit.Net {
 #endif
 	}
 }
-
