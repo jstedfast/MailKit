@@ -122,7 +122,7 @@ namespace MailKit.Net {
 				tags.Add ("network.operation", name.ToLowerInvariant ());
 
 			if (ex is not null && statusCode != StatusCode.Cancelled)
-				tags.Add ("exception.type", ex.GetType ().FullName);
+				tags.Add ("exception.type", ex.GetType ().Name);
 
 			return tags;
 		}

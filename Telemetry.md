@@ -4,18 +4,17 @@
 
 ### Metric: `mailkit.net.socket.connect.count`
 
-| **Name**                                   | **Instrument Type** | **Unit**        | **Description**                                                            |
-|:-------------------------------------------|:--------------------|:----------------|:---------------------------------------------------------------------------|
-| `mailkit.net.socket.connect.count`         | Counter             | `{attempt}`     | The number of times a socket attempted to connect to a remote host.        |
+| **Name**                                      | **Instrument Type** | **Unit**        | **Description**                                                            |
+|:----------------------------------------------|:--------------------|:----------------|:---------------------------------------------------------------------------|
+| `mailkit.net.socket.connect.count`            | Counter             | `{attempt}`     | The number of times a socket attempted to connect to a remote host.        |
 
-| **Attribute**           | **Type** | **Description**                                 | **Examples**                            | **Presence**          |
-|:------------------------|:---------|:------------------------------------------------|:----------------------------------------|:----------------------|
-| `socket.connect.result` | string   | The connection result.                          | `succeeded`, `failed`, `cancelled`      | Always                |
-| `network.peer.address`  | string   | Peer IP address of the socket connection.       | `142.251.167.109`                       | Always                |
-| `server.address`        | string   | The host name that the socket is connecting to. | `smtp.gmail.com`                        | Always                |
-| `server.port`           | int      | The port that the socket is connecting to.      | `465`                                   | Always                |
-| `error.type`            | string   | The type of exception encountered.              | `System.Net.Sockets.SocketException`    | If an error occurred. |
-| `socket.error`          | int      | The socket error code.                          | `10054`, `10060`, `10061`, ...          | If one was received.  |
+| **Attribute**              | **Type** | **Description**                                  | **Examples**                                    | **Presence**          |
+|:---------------------------|:---------|:-------------------------------------------------|:------------------------------------------------|:----------------------|
+| `network.peer.address`     | string   | Peer IP address of the socket connection.        | `142.251.167.109`                               | Always                |
+| `server.address`           | string   | The host name that the socket is connecting to.  | `smtp.gmail.com`                                | Always                |
+| `server.port`              | int      | The port that the socket is connecting to.       | `465`                                           | Always                |
+| `exception.type`           | string   | The type of exception encountered.               | `SocketException`, `OperationCanceledException` | If an error occurred. |
+| `socket.error`             | int      | The socket error code.                           | `10054`, `10060`, `10061`, ...                  | If SocketException.   |
 
 This metric tracks the number of times a socket attempted to connect to a remote host.
 
@@ -24,18 +23,17 @@ For the list of potential `socket.error` values, see the documentation for the
 
 ### Metric: `mailkit.net.socket.connect.duration`
 
-| **Name**                     | **Instrument Type** | **Unit** | **Description**                                                            |
-|:-----------------------------|:--------------------|:---------|:---------------------------------------------------------------------------|
-| `mailkit.net.socket.connect` | Histogram           | `ms`     | The number of milliseconds taken for a socket to connect to a remote host. |
+| **Name**                                      | **Instrument Type** | **Unit**        | **Description**                                                            |
+|:----------------------------------------------|:--------------------|:----------------|:---------------------------------------------------------------------------|
+| `mailkit.net.socket.connect`                  | Histogram           | `ms`            | The number of milliseconds taken for a socket to connect to a remote host. |
 
-| **Attribute**           | **Type** | **Description**                                 | **Examples**                            | **Presence**          |
-|:------------------------|:---------|:------------------------------------------------|:----------------------------------------|:----------------------|
-| `socket.connect.result` | string   | The connection result.                          | `succeeded`, `failed`, `cancelled`      | Always                |
-| `network.peer.address`  | string   | Peer IP address of the socket connection.       | `142.251.167.109`                       | Always                |
-| `server.address`        | string   | The host name that the socket is connecting to. | `smtp.gmail.com`                        | Always                |
-| `server.port`           | int      | The port that the socket is connecting to.      | `465`                                   | Always                |
-| `error.type`            | string   | The type of exception encountered.              | `System.Net.Sockets.SocketException`    | If an error occurred. |
-| `socket.error`          | int      | The socket error code.                          | `10054`, `10060`, `10061`, ...          | If one was received.  |
+| **Attribute**              | **Type** | **Description**                                  | **Examples**                                    | **Presence**          |
+|:---------------------------|:---------|:-------------------------------------------------|:------------------------------------------------|:----------------------|
+| `network.peer.address`     | string   | Peer IP address of the socket connection.        | `142.251.167.109`                               | Always                |
+| `server.address`           | string   | The host name that the socket is connecting to.  | `smtp.gmail.com`                                | Always                |
+| `server.port`              | int      | The port that the socket is connecting to.       | `465`                                           | Always                |
+| `exception.type`           | string   | The type of exception encountered.               | `SocketException`, `OperationCanceledException` | If an error occurred. |
+| `socket.error`             | int      | The socket error code.                           | `10054`, `10060`, `10061`, ...                  | If SocketException.   |
 
 This metric measures the time it takes to connect a socket to a remote host.
 
@@ -57,7 +55,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `smtp.gmail.com`                                | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `25`, `465`, `587`                              | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `smtp` or `smtps`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Smtp.SmtpCommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `SmtpCommandException`, `SmtpProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, `send`, ...          | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 
@@ -76,7 +74,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `smtp.gmail.com`                                | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `25`, `465`, `587`                              | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `smtp` or `smtps`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Smtp.SmtpCommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `SmtpCommandException`, `SmtpProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, `send`, ...          | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 
@@ -95,7 +93,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `smtp.gmail.com`                                | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `25`, `465`, `587`                              | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `smtp` or `smtps`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Smtp.SmtpCommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `SmtpCommandException`, `SmtpProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, `send`, ...          | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 
@@ -116,7 +114,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `pop.gmail.com`                                 | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `110`, `995`                                    | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `pop3` or `pop3s`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Pop3.Pop3CommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `Pop3CommandException`, `Pop3ProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, ...                  | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 
@@ -135,7 +133,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `pop.gmail.com`                                 | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `110`, `995`                                    | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `pop3` or `pop3s`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Pop3.Pop3CommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `Pop3CommandException`, `Pop3ProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, ...                  | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 
@@ -154,7 +152,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `pop.gmail.com`                                 | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `110`, `995`                                    | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `pop3` or `pop3s`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Pop3.Pop3CommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `Pop3CommandException`, `Pop3ProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, ...                  | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 
@@ -175,7 +173,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `imap.gmail.com`                                | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `143`, `993`                                    | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `imap` or `imaps`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Imap.ImapCommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `ImapCommandException`, `ImapProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, ...                  | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 
@@ -194,7 +192,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `imap.gmail.com`                                | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `143`, `993`                                    | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `imap` or `imaps`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Imap.ImapCommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `ImapCommandException`, `ImapProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, ...                  | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 
@@ -213,7 +211,7 @@ Available starting in: MailKit v4.4.0
 | `server.address`           | string   | The host name that the client is connected to.   | `imap.gmail.com`                                | Always                |
 | `server.port`              | int      | The port that the client is connected to.        | `143`, `993`                                    | Always                |
 | `url.scheme`               | string   | The URL scheme of the protocol used.             | `imap` or `imaps`                               | Always                |
-| `exception.type`           | string   | The type of exception encountered.               | `MailKit.Net.Imap.ImapCommandException`         | If an error occurred. |
+| `exception.type`           | string   | The type of exception encountered.               | `ImapCommandException`, `ImapProtocolException` | If an error occurred. |
 | `network.operation`        | string   | The name of the operation.                       | `connect`, `authenticate`, ...                  | Always                |
 | `network.operation.status` | string   | The status of the operation.                     | `ok`, `cancelled`, or `error`                   | Always                |
 

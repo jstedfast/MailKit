@@ -60,7 +60,7 @@ namespace MailKit.Net {
 			};
 
 			if (ex is not null) {
-				tags.Add ("exception.type", ex.GetType ().FullName);
+				tags.Add ("exception.type", ex.GetType ().Name);
 
 				if (ex is SocketException se)
 					tags.Add ("socket.error", (int) se.SocketErrorCode);

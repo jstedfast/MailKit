@@ -67,7 +67,7 @@ namespace MailKit {
 			};
 
 			if (ex is not null)
-				tags.Add ("exception.type", ex.GetType ().FullName);
+				tags.Add ("exception.type", ex.GetType ().Name);
 
 			return tags;
 		}
