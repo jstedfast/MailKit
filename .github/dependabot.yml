@@ -6,3 +6,6 @@ updates:
     directory: /
     schedule:
       interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: "America/New York"
