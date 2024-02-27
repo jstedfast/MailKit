@@ -51,6 +51,54 @@ namespace MailKit.Net {
 				description: "The number of milliseconds taken for a socket to connect to a remote host.");
 		}
 
+		static SocketException GetSocketException (Exception exception)
+		{
+			Exception ex = exception;
+
+			do {
+				if (ex is SocketException se)
+					return se;
+
+				ex = ex.InnerException;
+			} while (ex is not null);
+
+			return null;
+		}
+
+		internal static bool TryGetErrorType (Exception exception, bool exceptionTypeFallback, out string errorType)
+		{
+			if (exception is OperationCanceledException) {
+				errorType = "cancelled";
+				return true;
+			}
+
+			var socketException = GetSocketException (exception);
+
+			if (socketException is not null) {
+				switch (socketException.SocketErrorCode) {
+				case SocketError.HostNotFound: errorType = "host_not_found"; return true;
+				case SocketError.HostUnreachable: errorType = "host_unreachable"; return true;
+				case SocketError.NetworkUnreachable: errorType = "network_unreachable"; return true;
+
+				case SocketError.ConnectionAborted: errorType = "connection_aborted"; return true;
+				case SocketError.ConnectionRefused: errorType = "connection_refused"; return true;
+				case SocketError.ConnectionReset: errorType = "connection_reset"; return true;
+
+				case SocketError.TimedOut: errorType = "timed_out"; return true;
+				case SocketError.TooManyOpenSockets: errorType = "too_many_open_sockets"; return true;
+				}
+			}
+
+			if (exceptionTypeFallback) {
+				errorType = exception.GetType ().FullName;
+				return true;
+			}
+
+			errorType = null;
+
+			return false;
+		}
+
 		static TagList GetTags (IPAddress ip, string host, int port, Exception ex = null)
 		{
 			var tags = new TagList {
@@ -59,12 +107,8 @@ namespace MailKit.Net {
 				{ "server.port", port },
 			};
 
-			if (ex is not null) {
-				tags.Add ("exception.type", ex.GetType ().Name);
-
-				if (ex is SocketException se)
-					tags.Add ("socket.error", (int) se.SocketErrorCode);
-			}
+			if (ex is not null && TryGetErrorType (ex, true, out var errorType))
+				tags.Add ("error.type", errorType);
 
 			return tags;
 		}

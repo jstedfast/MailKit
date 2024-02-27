@@ -28,9 +28,13 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Diagnostics.Metrics;
 
-namespace MailKit {
+using MailKit.Net.Smtp;
+using MailKit.Security;
+
+namespace MailKit.Net {
 	sealed class ClientMetrics
 	{
 		public readonly Histogram<double> ConnectionDuration;
@@ -43,7 +47,7 @@ namespace MailKit {
 			MeterName = meterName;
 
 			ConnectionDuration = meter.CreateHistogram<double> (
-				name: $"{meterName}.client.connection_duration",
+				name: $"{meterName}.client.connection.duration",
 				unit: "s",
 				description: $"The duration of successfully established connections to {an} {protocol} server.");
 
@@ -58,7 +62,46 @@ namespace MailKit {
 				description: $"The amount of time it takes for the {protocol} server to perform an operation.");
 		}
 
-		public TagList GetTags (Uri uri, Exception ex)
+		static bool TryGetErrorType (Exception exception, out string errorType)
+		{
+			if (SocketMetrics.TryGetErrorType (exception, false, out errorType))
+				return true;
+
+			if (exception is SslHandshakeException) {
+				// Note: The string "secure_connection_error" is used by HttpClient for SSL/TLS handshake errors.
+				errorType = "secure_connection_error";
+				return true;
+			}
+
+			if (exception is ProtocolException) {
+				// TODO: ProtocolExceptions tend to be either "Unexpectedly disconnected" or "Parse error".
+				// If we add a property to ProtocolException to tell us this, we could report it better here.
+				//
+				// To mimic HttpClient error.type values, we could use "response_ended" and "invalid_response", respectively.
+				//
+				// Alternatively, HttpClient also uses "http_protocol_error" so we could use "smtp/pop3/imap_protocol_error".
+				errorType = "protocol_error";
+				return true;
+			}
+
+			if (exception is SmtpCommandException smtp) {
+				errorType = ((int) smtp.StatusCode).ToString (CultureInfo.InvariantCulture);
+				return true;
+			}
+
+			if (exception is CommandException) {
+				// FIXME: We need to add a property to CommandException to tell us the error type.
+				errorType = "command_error";
+				return true;
+			}
+
+			// Fall back to using the exception type name.
+			errorType = exception.GetType ().FullName;
+
+			return true;
+		}
+
+		internal static TagList GetTags (Uri uri, Exception ex)
 		{
 			var tags = new TagList {
 				{ "url.scheme", uri.Scheme },
@@ -66,8 +109,8 @@ namespace MailKit {
 				{ "server.port", uri.Port }
 			};
 
-			if (ex is not null)
-				tags.Add ("exception.type", ex.GetType ().Name);
+			if (ex is not null && TryGetErrorType (ex, out var errorType))
+				tags.Add ("error.type", errorType);
 
 			return tags;
 		}

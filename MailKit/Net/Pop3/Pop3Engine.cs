@@ -345,7 +345,7 @@ namespace MailKit.Net.Pop3 {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
-		/// An I/O pex occurred.
+		/// An I/O error occurred.
 		/// </exception>
 		public string ReadLine (CancellationToken cancellationToken)
 		{
@@ -377,7 +377,7 @@ namespace MailKit.Net.Pop3 {
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
-		/// An I/O pex occurred.
+		/// An I/O error occurred.
 		/// </exception>
 		public async Task<string> ReadLineAsync (CancellationToken cancellationToken)
 		{

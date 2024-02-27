@@ -126,6 +126,7 @@
     <Compile Include="Net\Smtp\SmtpResponse.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
+    <Compile Include="Net\ClientMetrics.cs" />
     <Compile Include="Net\IChannelBindingContext.cs" />
     <Compile Include="Net\NetworkOperation.cs" />
     <Compile Include="Net\NetworkStream.cs" />
@@ -204,7 +205,6 @@
     <Compile Include="BodyPartText.cs" />
     <Compile Include="BodyPartVisitor.cs" />
     <Compile Include="ByteArrayBuilder.cs" />
-    <Compile Include="ClientMetrics.cs" />
     <Compile Include="CommandException.cs" />
     <Compile Include="ConnectedEventArgs.cs" />
     <Compile Include="DeliveryStatusNotification.cs" />

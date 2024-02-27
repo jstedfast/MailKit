@@ -33,21 +33,12 @@ namespace MailKit.Net {
 		public const string Authenticate = nameof (Authenticate);
 		public const string Connect = nameof (Connect);
 
-		public enum StatusCode
-		{
-			Ok,
-			Error,
-			Cancelled,
-		}
-
 #if NET6_0_OR_GREATER
 		readonly ClientMetrics metrics;
 		readonly Activity activity;
 		readonly long startTimestamp;
 		readonly string name;
 		readonly Uri uri;
-
-		StatusCode statusCode;
 		Exception ex;
 
 		NetworkOperation (string name, Uri uri, Activity activity, ClientMetrics metrics)
@@ -66,63 +57,25 @@ namespace MailKit.Net {
 			startTimestamp = Stopwatch.GetTimestamp ();
 		}
 #else
+		Exception ex;
+
 		NetworkOperation ()
 		{
 		}
 #endif
 
-		public void SetStatusCode (StatusCode statusCode, Exception ex = null)
-		{
-#if NET6_0_OR_GREATER
-			this.statusCode = statusCode;
-			this.ex = ex;
-
-			if (activity is not null) {
-				switch (statusCode) {
-				case StatusCode.Ok:
-					activity.SetStatus (ActivityStatusCode.Ok);
-					break;
-				case StatusCode.Error:
-					activity.SetStatus (ActivityStatusCode.Error);
-					break;
-				case StatusCode.Cancelled:
-					activity.SetStatus (ActivityStatusCode.Error, "Cancelled");
-					break;
-				}
-			}
-#endif
-		}
-
 		public void SetError (Exception ex)
 		{
-			SetStatusCode (ex is OperationCanceledException ? StatusCode.Cancelled : StatusCode.Error, ex);
+			this.ex = ex;
 		}
 
 #if NET6_0_OR_GREATER
-		static string GetStatusCodeValue (StatusCode statusCode)
-		{
-			switch (statusCode) {
-			case StatusCode.Cancelled: return "cancelled";
-			case StatusCode.Error: return "error";
-			default: return "ok";
-			};
-		}
-
 		// TagList is a huge struct, so we avoid storing it in a field to reduce the amount we allocate on the heap.
 		TagList GetTags ()
 		{
-			var tags = new TagList {
-				{ "url.scheme", uri.Scheme },
-				{ "server.address", uri.Host },
-				{ "server.port", uri.Port },
-				{ "network.operation.status", GetStatusCodeValue (statusCode) }
-			};
+			var tags = ClientMetrics.GetTags (uri, ex);
 
-			if (!name.Equals ("connect", StringComparison.OrdinalIgnoreCase))
-				tags.Add ("network.operation", name.ToLowerInvariant ());
-
-			if (ex is not null && statusCode != StatusCode.Cancelled)
-				tags.Add ("exception.type", ex.GetType ().Name);
+			tags.Add ("network.operation", name.ToLowerInvariant ());
 
 			return tags;
 		}
@@ -131,7 +84,7 @@ namespace MailKit.Net {
 		public void Dispose ()
 		{
 #if NET6_0_OR_GREATER
-			if (metrics != null && (metrics.OperationCounter.Enabled || metrics.OperationDuration.Enabled)) {
+			if (metrics is not null && (metrics.OperationCounter.Enabled || metrics.OperationDuration.Enabled)) {
 				var tags = GetTags ();
 
 				if (metrics.OperationDuration.Enabled) {
@@ -144,7 +97,14 @@ namespace MailKit.Net {
 					metrics.OperationCounter.Add (1, tags);
 			}
 
-			activity?.Dispose ();
+			if (activity is not null) {
+				if (ex is not null)
+					activity.SetStatus (ActivityStatusCode.Error);
+				else
+					activity.SetStatus (ActivityStatusCode.Ok);
+
+				activity.Dispose ();
+			}
 #endif
 		}
 
