@@ -2,9 +2,6 @@
 
 * SASL Authentication
   * Include code to fetch an OAuth2 token?
-  * GSSAPI
-* SMTP Client
-  * Throw an exception if the MimeMessage is larger than the SIZE value?
 * IMAP4 Client
   * Consolidate MessageFlagsChanged, MessageLabelsChanged, and ModSeqChanged events into a single event?
   * Extensions:
@@ -20,4 +17,4 @@
   * Modify Append() methods to simply return UniqueId instead of Nullable<UniqueId>?
   * Modify CopyTo/MoveTo() methods to also return UniqueId instead of Nullable<UniqueId>?
 * Maildir
-* Thunderbird mbox folder trees
+* Thunderbird-style mbox folder trees?
