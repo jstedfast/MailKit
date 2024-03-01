@@ -575,8 +575,9 @@ string. Please include the `Exception.StackTrace` as well. The `Message`, by its
 
 ## Documentation
 
-API documentation can be found at [https://www.mimekit.net/docs](https://www.mimekit.net/docs).  
-More elaborate, complete, examples can also be found in this repository at [`Documentation/Examples`](Documentation/Examples). 
+API documentation can be found at [https://www.mimekit.net/docs](https://www.mimekit.net/docs).
+
+Some example snippets can also be found in the [`Documentation/Examples`](https://github.com/jstedfast/MailKit/tree/master/Documentation/Examples) directory.
 
 A copy of the XML-formatted API reference documentation is also included in the NuGet package.
 
