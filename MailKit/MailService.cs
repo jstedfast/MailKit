@@ -555,7 +555,7 @@ namespace MailKit {
 
 				// If the problem is an untrusted root, then compare the certificate to a list of known mail server certificates.
 				if (IsUntrustedRoot (chain) && certificate is X509Certificate2 certificate2) {
-					if (IsKnownMailServerCertificate (certificate2))
+					if (IsKnownMailServerCertificate (certificate2) && DateTime.Now <= certificate2.NotAfter)
 						return true;
 				}
 			}
