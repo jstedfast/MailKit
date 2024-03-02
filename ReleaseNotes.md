@@ -1,5 +1,26 @@
 # Release Notes
 
+## MailKit 4.4.0 (2024-03-02)
+
+* Added net8.0 targets
+* Split more sync/async logic to reduce allocations made by async state machines when
+  calling the synchronous public APIs instead of the async APIs.
+  (issue [#1335](https://github.com/jstedfast/MailKit/issues/1335))
+* Fixed logic for formatting IMAP FETCH HEADER.FIELDS.NOT corner case that was exposed by newly
+  added unit tests.
+* Fixed SmtpClient to disconnect during Authenticate/Async on socket errors.
+* Fixed SmtpClient's re-EHLO logic to disconnect on errors.
+* Added workaround for Zoho IMAP servers returning MODSEQ -1.
+  (issue [#1686](https://github.com/jstedfast/MailKit/issues/1686))
+* Added workaround for some IMAP servers that use () instead of NIL for an unset Content-Location header
+  in the BODYSTRUCTURE response.
+  (issue [#1700](https://github.com/jstedfast/MailKit/issues/1700))
+* Fixed an issue in the Socket.ConnectAsync logic that could result in unhandled exceptions on the
+  async thread if the ConnectAsync was cancelled.
+  (issue [#1703](https://github.com/jstedfast/MailKit/issues/1703))
+* Added work-around for Yandex IMAP GetBodyPart() response not including content.
+  (issue [#1708](https://github.com/jstedfast/MailKit/issues/1708))
+
 ## MailKit 4.3.0 (2023-11-11)
 
 * Fixed an ArgumentOutOfRangeException error in Fetch(int min, int max, ...) where min and max were greater
