@@ -26,9 +26,9 @@
 
 using System;
 using System.Text;
-using System.Collections.Generic;
 using System.Buffers;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace MailKit.Net.Imap
 {
@@ -40,7 +40,7 @@ namespace MailKit.Net.Imap
 		readonly LinkedList<ImapTokenItem> list;
 		readonly ImapTokenKey lookupKey;
 		readonly Decoder[] decoders;
-		readonly char[] chars;
+		char[] charBuffer;
 
 		public ImapTokenCache ()
 		{
@@ -54,13 +54,13 @@ namespace MailKit.Net.Imap
 				TextEncodings.Latin1.GetDecoder ()
 			};
 
-			chars = new char[128];
+			charBuffer = ArrayPool<char>.Shared.Rent (256);
 		}
 
 		public ImapToken AddOrGet (ImapTokenType type, ByteArrayBuilder builder)
 		{
 			// lookupKey is a pre-allocated key used for lookups
-			lookupKey.Init (decoders, chars, type, builder.GetBuffer (), builder.Length, out var decoder, out int charsNeeded);
+			lookupKey.Init (decoders, ref charBuffer, type, builder.GetBuffer (), builder.Length, out int charsNeeded);
 
 			if (cache.TryGetValue (lookupKey, out var node)) {
 				// move the node to the head of the list
@@ -71,26 +71,7 @@ namespace MailKit.Net.Imap
 				return node.Value.Token;
 			}
 
-			string value;
-
-			if (charsNeeded <= chars.Length) {
-				// If the number of needed chars is <= the length of our temp buffer, then it should all be contained.
-				value = new string (chars, 0, charsNeeded);
-			} else {
-				var buffer = ArrayPool<char>.Shared.Rent (charsNeeded);
-				try {
-					// Note: This conversion should go flawlessly, so we'll just Debug.Assert() our expectations.
-					decoder.Convert (builder.GetBuffer (), 0, builder.Length, buffer, 0, buffer.Length, true, out var bytesUsed, out var charsUsed, out var completed);
-					Debug.Assert (bytesUsed == builder.Length);
-					Debug.Assert (charsUsed == charsNeeded);
-					Debug.Assert (completed);
-					value = new string (buffer, 0, charsUsed);
-				} finally {
-					ArrayPool<char>.Shared.Return (buffer);
-					decoder.Reset ();
-				}
-			}
-
+			var value = new string (charBuffer, 0, charsNeeded);
 			var token = new ImapToken (type, value);
 
 			if (cache.Count >= capacity) {
@@ -100,10 +81,10 @@ namespace MailKit.Net.Imap
 				cache.Remove (node.Value.Key);
 
 				// re-use the node, item and key to avoid allocations
-				node.Value.Key.Init (type, (string) token.Value);
+				node.Value.Key.Init (type, value, lookupKey);
 				node.Value.Token = token;
 			} else {
-				var key = new ImapTokenKey (type, (string) token.Value);
+				var key = new ImapTokenKey (type, value, lookupKey);
 				var item = new ImapTokenItem (key, token);
 
 				node = new LinkedListNode<ImapTokenItem> (item);
@@ -118,47 +99,50 @@ namespace MailKit.Net.Imap
 		class ImapTokenKey
 		{
 			ImapTokenType type;
-			byte[] byteArrayKey;
+			char[] charBuffer;
 			string stringKey;
-			int length;
 			int hashCode;
+			int length;
 
 			public ImapTokenKey ()
 			{
 			}
 
-			public ImapTokenKey (ImapTokenType type, string key)
+			public ImapTokenKey (ImapTokenType type, string value, ImapTokenKey key)
 			{
-				Init (type, key);
+				Init (type, value, key);
 			}
 
-			public void Init (Decoder[] decoders, char[] chars, ImapTokenType type, byte[] key, int length, out Decoder correctDecoder, out int charsNeeded)
+			public void Init (Decoder[] decoders, ref char[] charBuffer, ImapTokenType type, byte[] key, int length, out int charsNeeded)
 			{
 				this.type = type;
-				this.byteArrayKey = key;
-				this.stringKey = null;
-				this.length = length;
 
 				var hash = new HashCode ();
 				hash.Add ((int) type);
 
-				correctDecoder = null;
 				charsNeeded = 0;
+
+				// Make sure the char buffer is at least as large as the key.
+				if (charBuffer.Length < length) {
+					ArrayPool<char>.Shared.Return (charBuffer);
+					charBuffer = ArrayPool<char>.Shared.Rent (length);
+				}
 
 				foreach (var decoder in decoders) {
 					bool completed;
 					int index = 0;
 
-					correctDecoder = decoder;
-
 					do {
 						try {
-							decoder.Convert (key, index, length - index, chars, 0, chars.Length, true, out var bytesUsed, out var charsUsed, out completed);
+							decoder.Convert (key, index, length - index, charBuffer, charsNeeded, charBuffer.Length - charsNeeded, true, out var bytesUsed, out var charsUsed, out completed);
 							charsNeeded += charsUsed;
 							index += bytesUsed;
 
 							for (int i = 0; i < charsUsed; i++)
-								hash.Add (chars[i]);
+								hash.Add (charBuffer[i]);
+
+							if (completed)
+								break;
 						} catch (DecoderFallbackException) {
 							// Restart the hash...
 							hash = new HashCode ();
@@ -167,7 +151,13 @@ namespace MailKit.Net.Imap
 							charsNeeded = 0;
 							break;
 						}
-					} while (!completed);
+
+						// The char buffer was not large enough to contain the full token. Resize it and try again.
+						var newBuffer = ArrayPool<char>.Shared.Rent (charBuffer.Length + (length - index));
+						charBuffer.AsSpan (0, charsNeeded).CopyTo (newBuffer);
+						ArrayPool<char>.Shared.Return (charBuffer);
+						charBuffer = newBuffer;
+					} while (true);
 
 					decoder.Reset ();
 
@@ -175,28 +165,25 @@ namespace MailKit.Net.Imap
 						break;
 				}
 
+				this.charBuffer = charBuffer;
+				this.length = charsNeeded;
+
 				this.hashCode = hash.ToHashCode ();
 			}
 
-			public void Init (ImapTokenType type, string key)
+			public void Init (ImapTokenType type, string value, ImapTokenKey key)
 			{
 				this.type = type;
-				this.byteArrayKey = null;
-				this.stringKey = key;
-				this.length = key.Length;
-
-				var hash = new HashCode ();
-				hash.Add ((int) type);
-				for (int i = 0; i < length; i++)
-					hash.Add (key[i]);
-
-				this.hashCode = hash.ToHashCode ();
+				this.charBuffer = null;
+				this.stringKey = value;
+				this.length = value.Length;
+				this.hashCode = key.hashCode;
 			}
 
-			static bool Equals (string str, byte[] bytes)
+			static bool Equals (string str, char[] chars)
 			{
 				for (int i = 0; i < str.Length; i++) {
-					if (str[i] != (char) bytes[i])
+					if (str[i] != chars[i])
 						return false;
 				}
 
@@ -208,22 +195,18 @@ namespace MailKit.Net.Imap
 				if (self.type != other.type || self.length != other.length)
 					return false;
 
+				// Note: At most, only one of the ImapTokenKeys will use a charBuffer and that ImapTokenKey will be the lookup key.
 				if (self.stringKey != null) {
 					if (other.stringKey != null)
 						return self.stringKey.Equals (other.stringKey, StringComparison.Ordinal);
 
-					return Equals (self.stringKey, other.byteArrayKey);
+					return Equals (self.stringKey, other.charBuffer);
+				} else {
+					// Note: 'self' MUST be the lookup key.
+					Debug.Assert (self.charBuffer != null);
+
+					return Equals (other.stringKey, self.charBuffer);
 				}
-
-				if (other.stringKey != null)
-					return Equals (other.stringKey, self.byteArrayKey);
-
-				for (int i = 0; i < self.length; i++) {
-					if (self.byteArrayKey[i] != other.byteArrayKey[i])
-						return false;
-				}
-
-				return true;
 			}
 
 			public override bool Equals (object obj)
@@ -238,7 +221,7 @@ namespace MailKit.Net.Imap
 
 			public override string ToString ()
 			{
-				return string.Format ("{0}: {1}", type, stringKey ?? Encoding.UTF8.GetString (byteArrayKey, 0, length));
+				return string.Format ("{0}: {1}", type, stringKey ?? new string (charBuffer, 0, length));
 			}
 		}
 
