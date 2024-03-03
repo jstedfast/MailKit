@@ -74,7 +74,7 @@ Features include:
         <dependency id="MimeKitLite" version="4.4.0" />
       </group>
       <group targetFramework="net8.0">
-        <dependency id="MimeKit" version="4.3.0" />
+        <dependency id="MimeKitLite" version="4.4.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="8.0.0" />
