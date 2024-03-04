@@ -99,7 +99,7 @@ namespace ImapIdle
 						// Note: IMAP servers are only supposed to drop the connection after 30 minutes, so normally
 						// we'd IDLE for a max of, say, ~29 minutes... but GMail seems to drop idle connections after
 						// about 10 minutes, so we'll only idle for 9 minutes.
-						done = new CancellationTokenSource (new TimeSpan (0, 9, 0));
+						done = new CancellationTokenSource (TimeSpan.FromMinutes (9));
 						try {
 							await client.IdleAsync (done.Token, cancel.Token);
 						} finally {
@@ -109,7 +109,7 @@ namespace ImapIdle
 					} else {
 						// Note: we don't want to spam the IMAP server with NOOP commands, so lets wait a minute
 						// between each NOOP command.
-						await Task.Delay (new TimeSpan (0, 1, 0), cancel.Token);
+						await Task.Delay (TimeSpan.FromMinutes (1), cancel.Token);
 						await client.NoOpAsync (cancel.Token);
 					}
 					break;
