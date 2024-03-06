@@ -44,8 +44,8 @@ namespace MimeKit.Examples
 			message.To.AddRange (to);
 
 			// set the forwarded subject
-			if (!original.Subject.StartsWith ("FW:", StringComparison.OrdinalIgnoreCase))
-				message.Subject = "FW: " + original.Subject;
+			if (!original.Subject?.StartsWith ("FW:", StringComparison.OrdinalIgnoreCase))
+				message.Subject = "FW: " + (original.Subject ?? string.Empty);
 			else
 				message.Subject = original.Subject;
 
@@ -75,8 +75,8 @@ namespace MimeKit.Examples
 			message.To.AddRange (to);
 
 			// set the forwarded subject
-			if (!original.Subject.StartsWith ("FW:", StringComparison.OrdinalIgnoreCase))
-				message.Subject = "FW: " + original.Subject;
+			if (!original.Subject?.StartsWith ("FW:", StringComparison.OrdinalIgnoreCase))
+				message.Subject = "FW: " + (original.Subject ?? string.Empty);
 			else
 				message.Subject = original.Subject;
 
@@ -87,7 +87,7 @@ namespace MimeKit.Examples
 				test.WriteLine ("From: {0}", original.From);
 				text.WriteLine ("Sent: {0}", DateUtils.FormatDate (original.Date));
 				text.WriteLine ("To: {0}", original.To);
-				text.WriteLine ("Subject: {0}", original.Subject);
+				text.WriteLine ("Subject: {0}", original.Subject ?? string.Empty);
 				text.WriteLine ();
 
 				text.Write (original.TextBody);
