@@ -209,7 +209,7 @@ namespace MailKit.Net.Smtp
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			using var operation = StartNetworkOperation (NetworkOperation.Authenticate);
+			using var operation = StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
 				SaslException saslException = null;
@@ -328,7 +328,7 @@ namespace MailKit.Net.Smtp
 		{
 			ValidateArguments (encoding, credentials);
 
-			using var operation = StartNetworkOperation (NetworkOperation.Authenticate);
+			using var operation = StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
 				var saslUri = new Uri ($"smtp://{uri.Host}");
@@ -568,7 +568,7 @@ namespace MailKit.Net.Smtp
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			using var operation = StartNetworkOperation (NetworkOperation.Connect);
+			using var operation = StartNetworkOperation (NetworkOperationKind.Connect);
 
 			try {
 				var stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false);
@@ -742,7 +742,7 @@ namespace MailKit.Net.Smtp
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			using var operation = StartNetworkOperation (NetworkOperation.Connect);
+			using var operation = StartNetworkOperation (NetworkOperationKind.Connect);
 
 			try {
 				Stream network;
@@ -977,7 +977,7 @@ namespace MailKit.Net.Smtp
 				size = -1;
 			}
 
-			using var operation = StartNetworkOperation ("Send");
+			using var operation = StartNetworkOperation (NetworkOperationKind.Send);
 
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will

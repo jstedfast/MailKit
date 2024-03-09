@@ -578,12 +578,12 @@ namespace MailKit.Net.Smtp {
 			get { return authenticated; }
 		}
 
-		NetworkOperation StartNetworkOperation (string name)
+		NetworkOperation StartNetworkOperation (NetworkOperationKind kind)
 		{
 #if NET6_0_OR_GREATER
-			return NetworkOperation.Start (name, uri, Telemetry.SmtpClient.ActivitySource, metrics);
+			return NetworkOperation.Start (kind, uri, Telemetry.SmtpClient.ActivitySource, metrics);
 #else
-			return NetworkOperation.Start (name, uri);
+			return NetworkOperation.Start (kind, uri);
 #endif
 		}
 
@@ -1016,7 +1016,7 @@ namespace MailKit.Net.Smtp {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			using var operation = StartNetworkOperation (NetworkOperation.Authenticate);
+			using var operation = StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
 				SaslException saslException = null;
@@ -1154,7 +1154,7 @@ namespace MailKit.Net.Smtp {
 		{
 			ValidateArguments (encoding, credentials);
 
-			using var operation = StartNetworkOperation (NetworkOperation.Authenticate);
+			using var operation = StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
 				var saslUri = new Uri ($"smtp://{uri.Host}");
@@ -1461,7 +1461,7 @@ namespace MailKit.Net.Smtp {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			using var operation = StartNetworkOperation (NetworkOperation.Connect);
+			using var operation = StartNetworkOperation (NetworkOperationKind.Connect);
 
 			try {
 				var stream = ConnectNetwork (host, port, cancellationToken);
@@ -1652,7 +1652,7 @@ namespace MailKit.Net.Smtp {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out var starttls);
 
-			using var operation = StartNetworkOperation (NetworkOperation.Connect);
+			using var operation = StartNetworkOperation (NetworkOperationKind.Connect);
 
 			try {
 				Stream network;
@@ -2418,7 +2418,7 @@ namespace MailKit.Net.Smtp {
 				size = -1;
 			}
 
-			using var operation = StartNetworkOperation ("Send");
+			using var operation = StartNetworkOperation (NetworkOperationKind.Send);
 
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will

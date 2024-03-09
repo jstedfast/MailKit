@@ -822,7 +822,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckCanAuthenticate (mechanism, cancellationToken);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperation.Authenticate);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
 				var saslUri = new Uri ("pop://" + engine.Uri.Host);
@@ -938,7 +938,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckCanAuthenticate (encoding, credentials, cancellationToken);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperation.Authenticate);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
 				var saslUri = new Uri ("pop://" + engine.Uri.Host);
@@ -1199,7 +1199,7 @@ namespace MailKit.Net.Pop3 {
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperation.Connect);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect);
 
 			try {
 				var stream = ConnectNetwork (host, port, cancellationToken);
@@ -1392,7 +1392,7 @@ namespace MailKit.Net.Pop3 {
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperation.Connect);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect);
 
 			try {
 				engine.Uri = uri;

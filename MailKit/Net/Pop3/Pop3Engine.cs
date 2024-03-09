@@ -251,12 +251,12 @@ namespace MailKit.Net.Pop3 {
 			State = Pop3EngineState.Connected;
 		}
 
-		public NetworkOperation StartNetworkOperation (string name)
+		public NetworkOperation StartNetworkOperation (NetworkOperationKind kind)
 		{
 #if NET6_0_OR_GREATER
-			return NetworkOperation.Start (name, Uri, Telemetry.Pop3Client.ActivitySource, metrics);
+			return NetworkOperation.Start (kind, Uri, Telemetry.Pop3Client.ActivitySource, metrics);
 #else
-			return NetworkOperation.Start (name, Uri);
+			return NetworkOperation.Start (kind, Uri);
 #endif
 		}
 

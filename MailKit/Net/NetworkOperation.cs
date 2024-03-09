@@ -28,22 +28,37 @@ using System;
 using System.Diagnostics;
 
 namespace MailKit.Net {
+	enum NetworkOperationKind
+	{
+		Authenticate,
+		Connect,
+		Send
+	}
+
 	class NetworkOperation : IDisposable
 	{
-		public const string Authenticate = nameof (Authenticate);
-		public const string Connect = nameof (Connect);
-
 #if NET6_0_OR_GREATER
+		static readonly string[] ActivityNames = {
+			"Authenticate",
+			"Connect",
+			"Send"
+		};
+		static readonly string[] OperationValues = {
+			"authenticate",
+			"connect",
+			"send"
+		};
+
+		readonly NetworkOperationKind kind;
 		readonly ClientMetrics metrics;
 		readonly Activity activity;
 		readonly long startTimestamp;
-		readonly string name;
 		readonly Uri uri;
 		Exception ex;
 
-		NetworkOperation (string name, Uri uri, Activity activity, ClientMetrics metrics)
+		NetworkOperation (NetworkOperationKind kind, Uri uri, Activity activity, ClientMetrics metrics)
 		{
-			this.name = name;
+			this.kind = kind;
 			this.uri = uri;
 			this.activity = activity;
 			this.metrics = metrics;
@@ -75,7 +90,7 @@ namespace MailKit.Net {
 		{
 			var tags = ClientMetrics.GetTags (uri, ex);
 
-			tags.Add ("network.operation", name.ToLowerInvariant ());
+			tags.Add ("network.operation", OperationValues[(int) kind]);
 
 			return tags;
 		}
@@ -109,15 +124,15 @@ namespace MailKit.Net {
 		}
 
 #if NET6_0_OR_GREATER
-		public static NetworkOperation Start (string name, Uri uri, ActivitySource source, ClientMetrics metrics)
+		public static NetworkOperation Start (NetworkOperationKind kind, Uri uri, ActivitySource source, ClientMetrics metrics)
 		{
 
-			var activity = source?.StartActivity (name, ActivityKind.Client);
+			var activity = source?.StartActivity (ActivityNames[(int) kind], ActivityKind.Client);
 
-			return new NetworkOperation (name, uri, activity, metrics);
+			return new NetworkOperation (kind, uri, activity, metrics);
 		}
 #else
-		public static NetworkOperation Start (string name, Uri uri)
+		public static NetworkOperation Start (NetworkOperationKind kind, Uri uri)
 		{
 			return new NetworkOperation ();
 		}

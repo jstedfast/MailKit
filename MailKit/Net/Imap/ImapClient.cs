@@ -1137,7 +1137,7 @@ namespace MailKit.Net.Imap {
 				return Task.CompletedTask;
 			};
 
-			using var operation = engine.StartNetworkOperation (NetworkOperation.Authenticate);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
 				detector.IsAuthenticating = true;
@@ -1242,7 +1242,7 @@ namespace MailKit.Net.Imap {
 		{
 			CheckCanAuthenticate (encoding, credentials);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperation.Authenticate);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
 				int capabilitiesVersion = engine.CapabilitiesVersion;
@@ -1561,7 +1561,7 @@ namespace MailKit.Net.Imap {
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperation.Connect);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect);
 
 			try {
 				var stream = ConnectNetwork (host, port, cancellationToken);
@@ -1746,7 +1746,7 @@ namespace MailKit.Net.Imap {
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperation.Connect);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect);
 
 			try {
 				Stream network;

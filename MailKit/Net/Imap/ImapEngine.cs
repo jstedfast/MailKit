@@ -619,12 +619,12 @@ namespace MailKit.Net.Imap {
 			Stream = stream;
 		}
 
-		public NetworkOperation StartNetworkOperation (string name)
+		public NetworkOperation StartNetworkOperation (NetworkOperationKind kind)
 		{
 #if NET6_0_OR_GREATER
-			return NetworkOperation.Start (name, Uri, Telemetry.ImapClient.ActivitySource, metrics);
+			return NetworkOperation.Start (kind, Uri, Telemetry.ImapClient.ActivitySource, metrics);
 #else
-			return NetworkOperation.Start (name, Uri);
+			return NetworkOperation.Start (kind, Uri);
 #endif
 		}
 
