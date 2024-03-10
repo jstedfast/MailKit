@@ -149,6 +149,7 @@ namespace MailKit.Net.Imap {
 		readonly CreateImapFolderDelegate createImapFolder;
 		readonly ImapFolderNameComparer cacheComparer;
 		internal ImapQuirksMode QuirksMode;
+		readonly ByteArrayBuilder builder;
 		readonly List<ImapCommand> queue;
 		internal char TagPrefix;
 		ImapCommand current;
@@ -158,6 +159,8 @@ namespace MailKit.Net.Imap {
 
 		public ImapEngine (CreateImapFolderDelegate createImapFolderDelegate)
 		{
+			// The builder is used as a buffer for line-reading as well as ImapCommand building, so 1K is probably realistic.
+			builder = new ByteArrayBuilder (1024);
 			cacheComparer = new ImapFolderNameComparer ('.');
 
 			FolderCache = new Dictionary<string, ImapFolder> (cacheComparer);
@@ -528,6 +531,13 @@ namespace MailKit.Net.Imap {
 
 		#endregion
 
+		internal ByteArrayBuilder GetCommandBuilder ()
+		{
+			builder.Clear ();
+
+			return builder;
+		}
+
 		internal ImapFolder CreateImapFolder (string encodedName, FolderAttributes attributes, char delim)
 		{
 			var args = new ImapFolderConstructorArgs (this, encodedName, attributes, delim);
@@ -849,18 +859,18 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public string ReadLine (CancellationToken cancellationToken)
 		{
-			using (var builder = new ByteArrayBuilder (64)) {
-				bool complete;
+			builder.Clear ();
 
-				do {
-					complete = Stream.ReadLine (builder, cancellationToken);
-				} while (!complete);
+			bool complete;
 
-				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
-				builder.TrimNewLine ();
+			do {
+				complete = Stream.ReadLine (builder, cancellationToken);
+			} while (!complete);
 
-				return builder.ToString ();
-			}
+			// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
+			builder.TrimNewLine ();
+
+			return builder.ToString ();
 		}
 
 		/// <summary>
@@ -882,18 +892,18 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public async Task<string> ReadLineAsync (CancellationToken cancellationToken)
 		{
-			using (var builder = new ByteArrayBuilder (64)) {
-				bool complete;
+			builder.Clear ();
 
-				do {
-					complete = await Stream.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
-				} while (!complete);
+			bool complete;
 
-				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
-				builder.TrimNewLine ();
+			do {
+				complete = await Stream.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
+			} while (!complete);
 
-				return builder.ToString ();
-			}
+			// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
+			builder.TrimNewLine ();
+
+			return builder.ToString ();
 		}
 
 		/// <summary>
