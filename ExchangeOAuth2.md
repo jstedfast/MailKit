@@ -18,6 +18,7 @@
 
 Go to Microsoft's [Quickstart guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
 for registering an application with the Microsoft identity platform and follow the instructions.
+Don't forget to set [API Permissions](https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth#use-client-credentials-grant-flow-to-authenticate-smtp-imap-and-pop-connections).
 
 ### Authenticating a Desktop or Mobile Application with OAuth2
 
@@ -74,6 +75,7 @@ var authToken = await publicClientApplication.AcquireTokenSilent(scopes, account
 
 Go to Microsoft's [Quickstart guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
 for registering an application with the Microsoft identity platform and follow the instructions.
+Don't forget to set [API Permissions](https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth#use-client-credentials-grant-flow-to-authenticate-smtp-imap-and-pop-connections).
 
 ### Registering Service Principals for Your Web Service
 
