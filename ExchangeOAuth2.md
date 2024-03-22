@@ -2,22 +2,30 @@
 
 ## Quick Index
 
+* [Registering Your Application with Microsoft](#registering-your-application-with-microsoft)
+* [Configuring the Correct API Permissions for Your Application](#configuring-the-correct-api-permissions-for-your-application)
 * Desktop and Mobile Applications
-  * [Registering Your Desktop or Mobile Application with Microsoft](#registering-your-desktop-or-mobile-application-with-microsoft)
   * [Authenticating a Desktop or Mobile Application with OAuth2](#authenticating-a-desktop-or-mobile-application-with-oauth2)
 * Web Services
-  * [Registering Your Web Service with Microsoft](#registering-your-web-service-with-microsoft)
   * [Registering Service Principals for Your Web Service](#registering-service-principals-for-your-web-service)
   * [Granting Permissions for Your Web Service](#granting-permissions-for-your-web-service)
   * [Authenticating a Web Service with OAuth2](#authenticating-a-web-service-with-oauth2)
 * [Additional Resources](#additional-resources)
 
+## Registering Your Application with Microsoft
+
+Whether you are writing a Desktop, Mobile or Web Service application, the first thing you'll need to do is register your
+application with Microsoft's Identity Platform. To do this, go to Microsoft's
+[Quickstart guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+and follow the instructions.
+
+## Configuring the Correct API Permissions for Your Application
+
+There are several different API permissions that you may want to configure depending on which protocols your application intends to use.
+
+Follow the instructions for [adding the POP, IMAP, and/or SMTP permissions to your Entra AD application](https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth#use-client-credentials-grant-flow-to-authenticate-smtp-imap-and-pop-connections).
+
 ## Desktop and Mobile Applications
-
-### Registering Your Desktop or Mobile Application with Microsoft
-
-Go to Microsoft's [Quickstart guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
-for registering an application with the Microsoft identity platform and follow the instructions.
 
 ### Authenticating a Desktop or Mobile Application with OAuth2
 
@@ -69,11 +77,6 @@ var authToken = await publicClientApplication.AcquireTokenSilent(scopes, account
 ```
 
 ## Web Services
-
-### Registering Your Web Service with Microsoft
-
-Go to Microsoft's [Quickstart guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
-for registering an application with the Microsoft identity platform and follow the instructions.
 
 ### Registering Service Principals for Your Web Service
 
@@ -143,7 +146,6 @@ using (var client = new ImapClient ()) {
     await client.DisconnectAsync (true);
 }
 ```
-
 
 ## Additional Resources
 
