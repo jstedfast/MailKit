@@ -268,6 +268,22 @@ namespace MailKit.Net.Smtp {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Get or set whether the client should use the REQUIRETLS extension if it is available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets whether the client should use the REQUIRETLS extension if it is available.</para>
+		/// <para>The REQUIRETLS extension (as defined in rfc8689) is a way to ensure that every SMTP server
+		/// that a message passes through on its way to the recipient is required to use a TLS connection in
+		/// order to transfer the message to the next SMTP server.</para>
+		/// <note type="note">This feature is only available if <see cref="Capabilities"/> contains the
+		/// <see cref="SmtpCapabilities.RequireTLS"/> flag when sending the message.</note>
+		/// </remarks>
+		/// <value><c>true</c> if the REQUIRETLS extension should be used; otherwise, <c>false</c>.</value>
+		public bool RequireTLS {
+			get; set;
+		}
+
 		void CheckDisposed ()
 		{
 			if (disposed)
@@ -1905,7 +1921,7 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
-			if ((Capabilities & SmtpCapabilities.RequireTLS) != 0) {
+			if (RequireTLS && (Capabilities & SmtpCapabilities.RequireTLS) != 0) {
 				// Check to see if the message has a TLS-Required header. If it does, then the only defined value it can have is "No".
 				var index = message.Headers.IndexOf (HeaderId.TLSRequired);
 
