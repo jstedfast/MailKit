@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>4.4.0</version>
+    <version>4.5.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,15 +26,8 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Added net8.0 targets
-* Split more sync/async logic to reduce allocations made by async state machines when calling the synchronous public APIs instead of the async APIs. (issue #1335)
-* Fixed logic for formatting IMAP FETCH HEADER.FIELDS.NOT corner case that was exposed by newly added unit tests.
-* Fixed SmtpClient to disconnect during Authenticate/Async on socket errors.
-* Fixed SmtpClient's re-EHLO logic to disconnect on errors.
-* Added workaround for Zoho IMAP servers returning MODSEQ -1. (issue #1686)
-* Added workaround for some IMAP servers that use () instead of NIL for an unset Content-Location header in the BODYSTRUCTURE response. (issue #1700)
-* Fixed an issue in the Socket.ConnectAsync logic that could result in unhandled exceptions on the async thread if the ConnectAsync was cancelled. (issue #1703)
-* Added work-around for Yandex IMAP GetBodyPart() response not including content. (issue #1708)
+* Added a new SmtpClient.RequireTLS property to fix sending mail via Strato.de. (issue #1737)
+* Fixed SmtpClient to track the most recent response from the SMTP server in order to include it in SmtpProtocolExceptions caused by unexpected server disconnects to provide more context. (issue #1744)
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -62,31 +55,31 @@ Features include:
       <group targetFramework="net462">
         <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="4.4.0" />
+        <dependency id="MimeKit" version="4.5.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="4.4.0" />
+        <dependency id="MimeKit" version="4.5.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="4.4.0" />
+        <dependency id="MimeKit" version="4.5.0" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="MimeKit" version="4.4.0" />
+        <dependency id="MimeKit" version="4.5.0" />
       </group>
       <group targetFramework="net8.0">
-        <dependency id="MimeKit" version="4.4.0" />
+        <dependency id="MimeKit" version="4.5.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="8.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" />
-        <dependency id="MimeKit" version="4.4.0" />
+        <dependency id="MimeKit" version="4.5.0" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="MimeKit" version="4.4.0" />
+        <dependency id="MimeKit" version="4.5.0" />
       </group>
     </dependencies>
   </metadata>

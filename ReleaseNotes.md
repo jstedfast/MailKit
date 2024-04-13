@@ -1,5 +1,13 @@
 # Release Notes
 
+## MailKit 4.5.0 (2024-04-13)
+
+* Added a new SmtpClient.RequireTLS property to fix sending mail via Strato.de.
+  (issue [#1737](https://github.com/jstedfast/MailKit/issues/1737))
+* Fixed SmtpClient to track the most recent response from the SMTP server in order to include
+  it in SmtpProtocolExceptions caused by unexpected server disconnects to provide more context.
+  (issue [#1744](https://github.com/jstedfast/MailKit/issues/1744))
+
 ## MailKit 4.4.0 (2024-03-02)
 
 * Added net8.0 targets
