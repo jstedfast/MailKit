@@ -4799,6 +4799,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
+				client.RequireTLS = true;
+
 				try {
 					using (var message = CreateEightBitMessage ())
 						client.Send (message);
@@ -4855,6 +4857,8 @@ namespace UnitTests.Net.Smtp {
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
+
+				client.RequireTLS = true;
 
 				try {
 					using (var message = CreateEightBitMessage ())
