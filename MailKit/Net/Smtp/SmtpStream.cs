@@ -56,6 +56,7 @@ namespace MailKit.Net.Smtp {
 
 		readonly IProtocolLogger logger;
 		int inputIndex, inputEnd;
+		string lastResponse;
 		bool disposed;
 
 		/// <summary>
@@ -243,6 +244,8 @@ namespace MailKit.Net.Smtp {
 
 					// Optimization hack used by ReadResponse
 					input[inputEnd] = (byte) '\n';
+				} else if (lastResponse is not null) {
+					throw new SmtpProtocolException ($"The SMTP server has unexpectedly disconnected: {lastResponse}");
 				} else {
 					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
 				}
@@ -271,6 +274,8 @@ namespace MailKit.Net.Smtp {
 
 					// Optimization hack used by ReadResponse
 					input[inputEnd] = (byte) '\n';
+				} else if (lastResponse is not null) {
+					throw new SmtpProtocolException ($"The SMTP server has unexpectedly disconnected: {lastResponse}");
 				} else {
 					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
 				}
@@ -563,6 +568,8 @@ namespace MailKit.Net.Smtp {
 
 				var message = builder.ToString ();
 
+				lastResponse = message;
+
 				return new SmtpResponse ((SmtpStatusCode) code, message);
 			}
 		}
@@ -605,6 +612,8 @@ namespace MailKit.Net.Smtp {
 				} while (more || !newLine);
 
 				var message = builder.ToString ();
+
+				lastResponse = message;
 
 				return new SmtpResponse ((SmtpStatusCode) code, message);
 			}
