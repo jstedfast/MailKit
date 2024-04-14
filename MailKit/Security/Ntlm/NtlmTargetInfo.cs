@@ -88,7 +88,7 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		NtlmAttributeValuePair GetAvPair (NtlmAttribute attr)
+		internal NtlmAttributeValuePair GetAvPair (NtlmAttribute attr)
 		{
 			for (int i = 0; i < attributes.Count; i++) {
 				if (attributes[i].Attribute == attr)
@@ -394,99 +394,14 @@ namespace MailKit.Security.Ntlm {
 			} while (index < startIndex + length);
 		}
 
-		int CalculateSize (bool unicode)
+		int CalculateSize (Encoding encoding)
 		{
-			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
 			int length = 4;
 
-			foreach (var attribute in attributes) {
-				switch (attribute.Attribute) {
-				case NtlmAttribute.ServerName:
-				case NtlmAttribute.DomainName:
-				case NtlmAttribute.DnsServerName:
-				case NtlmAttribute.DnsDomainName:
-				case NtlmAttribute.DnsTreeName:
-				case NtlmAttribute.TargetName:
-					var str = (NtlmAttributeStringValuePair) attribute;
-					length += 4 + encoding.GetByteCount (str.Value);
-					break;
-				case NtlmAttribute.Flags:
-					var flags = (NtlmAttributeFlagsValuePair) attribute;
-					length += 4 + flags.Size;
-					break;
-				case NtlmAttribute.Timestamp:
-					var timestamp = (NtlmAttributeTimestampValuePair) attribute;
-					length += 4 + timestamp.Size;
-					break;
-				default:
-					var channelBinding = (NtlmAttributeByteArrayValuePair) attribute;
-					length += 4 + channelBinding.Value.Length;
-					break;
-				}
-			}
+			foreach (var attribute in attributes)
+				length += attribute.GetEncodedLength (encoding);
 
 			return length;
-		}
-
-		static void EncodeInt16 (byte[] buf, ref int index, short value)
-		{
-			buf[index++] = (byte) (value);
-			buf[index++] = (byte) (value >> 8);
-		}
-
-		static void EncodeInt32 (byte[] buf, ref int index, int value)
-		{
-			buf[index++] = (byte) (value);
-			buf[index++] = (byte) (value >> 8);
-			buf[index++] = (byte) (value >> 16);
-			buf[index++] = (byte) (value >> 24);
-		}
-
-		static void EncodeTypeAndLength (byte[] buf, ref int index, NtlmAttribute attr, short length)
-		{
-			EncodeInt16 (buf, ref index, (short) attr);
-			EncodeInt16 (buf, ref index, length);
-		}
-
-		static void EncodeByteArray (byte[] buf, ref int index, NtlmAttribute attr, byte[] value)
-		{
-			EncodeTypeAndLength (buf, ref index, attr, (short) value.Length);
-			Buffer.BlockCopy (value, 0, buf, index, value.Length);
-			index += value.Length;
-		}
-
-		static void EncodeString (byte[] buf, ref int index, NtlmAttribute attr, string value, bool unicode)
-		{
-			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
-			int length = encoding.GetByteCount (value);
-
-			EncodeTypeAndLength (buf, ref index, attr, (short) length);
-			encoding.GetBytes (value, 0, value.Length, buf, index);
-			index += length;
-		}
-
-		static void EncodeTimestamp (byte[] buf, ref int index, NtlmAttribute attr, long value, short size)
-		{
-			EncodeTypeAndLength (buf, ref index, attr, size);
-
-			switch (size) {
-			case 2: EncodeInt16 (buf, ref index, (short) (value & 0xffff)); break;
-			case 4: EncodeInt32 (buf, ref index, (int) (value & 0xffffffff)); break;
-			default:
-				EncodeInt32 (buf, ref index, (int) (value & 0xffffffff));
-				EncodeInt32 (buf, ref index, (int) (value >> 32));
-				break;
-			}
-		}
-
-		static void EncodeFlags (byte[] buf, ref int index, NtlmAttribute attr, int value, short size)
-		{
-			EncodeTypeAndLength (buf, ref index, attr, size);
-
-			switch (size) {
-			case 2: EncodeInt16 (buf, ref index, (short) value); break;
-			default: EncodeInt32 (buf, ref index, value); break;
-			}
 		}
 
 		/// <summary>
@@ -499,34 +414,12 @@ namespace MailKit.Security.Ntlm {
 		/// <returns>The encoded TargetInfo.</returns>
 		public byte[] Encode (bool unicode)
 		{
-			var buf = new byte[CalculateSize (unicode)];
+			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
+			var buf = new byte[CalculateSize (encoding)];
 			int index = 0;
 
-			foreach (var attribute in attributes) {
-				switch (attribute.Attribute) {
-				case NtlmAttribute.ServerName:
-				case NtlmAttribute.DomainName:
-				case NtlmAttribute.DnsServerName:
-				case NtlmAttribute.DnsDomainName:
-				case NtlmAttribute.DnsTreeName:
-				case NtlmAttribute.TargetName:
-					var str = (NtlmAttributeStringValuePair) attribute;
-					EncodeString (buf, ref index, str.Attribute, str.Value, unicode);
-					break;
-				case NtlmAttribute.Flags:
-					var flags = (NtlmAttributeFlagsValuePair) attribute;
-					EncodeFlags (buf, ref index, flags.Attribute, flags.Value, flags.Size);
-					break;
-				case NtlmAttribute.Timestamp:
-					var timestamp = (NtlmAttributeTimestampValuePair) attribute;
-					EncodeTimestamp (buf, ref index, timestamp.Attribute, timestamp.Value, timestamp.Size);
-					break;
-				default:
-					var generic = (NtlmAttributeByteArrayValuePair) attribute;
-					EncodeByteArray (buf, ref index, generic.Attribute, generic.Value);
-					break;
-				}
-			}
+			foreach (var attribute in attributes)
+				attribute.EncodeTo (encoding, buf, ref index);
 
 			return buf;
 		}
