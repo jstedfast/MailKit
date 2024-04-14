@@ -88,6 +88,10 @@ namespace MailKit.Security.Ntlm {
 
 			if (!CheckSignature (message, startIndex))
 				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture, "Invalid Type{0} message.", Type), nameof (message));
+
+			var messageType = BitConverterLE.ToUInt32 (message, 8);
+			if (messageType != Type)
+				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture, "Invalid Type{0} message.", Type), nameof (message));
 		}
 
 		public abstract byte[] Encode ();
