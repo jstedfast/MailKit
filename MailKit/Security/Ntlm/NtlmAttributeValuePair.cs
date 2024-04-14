@@ -28,6 +28,7 @@
 
 using System;
 using System.Text;
+using System.Diagnostics;
 
 namespace MailKit.Security.Ntlm {
 	/// <summary>
@@ -109,6 +110,7 @@ namespace MailKit.Security.Ntlm {
 	/// <remarks>
 	/// An NTLM attribute and value pair consisting of a string value.
 	/// </remarks>
+	[DebuggerDisplay ("{Attribute} = {Value}")]
 	sealed class NtlmAttributeStringValuePair : NtlmAttributeValuePair
 	{
 		/// <summary>
@@ -173,6 +175,7 @@ namespace MailKit.Security.Ntlm {
 	/// <remarks>
 	/// An NTLM attribute and value pair consisting of a flags value.
 	/// </remarks>
+	[DebuggerDisplay ("{Attribute} = {Value}")]
 	sealed class NtlmAttributeFlagsValuePair : NtlmAttributeValuePair
 	{
 		/// <summary>
@@ -262,6 +265,7 @@ namespace MailKit.Security.Ntlm {
 	/// <remarks>
 	/// An NTLM attribute and value pair consisting of a timestamp value.
 	/// </remarks>
+	[DebuggerDisplay ("{Attribute} = {Value}")]
 	sealed class NtlmAttributeTimestampValuePair : NtlmAttributeValuePair
 	{
 		/// <summary>
