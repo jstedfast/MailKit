@@ -163,6 +163,7 @@ namespace MailKit.Security.Ntlm {
 
 			EncodeTypeAndLength (buffer, ref index, Attribute, (short) length);
 			encoding.GetBytes (Value, 0, Value.Length, buffer, index);
+			index += length;
 		}
 	}
 
@@ -407,6 +408,7 @@ namespace MailKit.Security.Ntlm {
 			EncodeTypeAndLength (buffer, ref index, Attribute, (short) Value.Length);
 
 			Buffer.BlockCopy (Value, 0, buffer, index, Value.Length);
+			index += Value.Length;
 		}
 	}
 }
