@@ -221,25 +221,32 @@ namespace MailKit.Security.Ntlm {
 			if (type2.TargetInfo?.Timestamp != null)
 				timestamp = type2.TargetInfo.Timestamp.Value;
 
+			// Set temp to ConcatenationOf(Responserversion, HiResponserversion, Z(6), Time, ClientChallenge, Z(4), ServerName, Z(4))
 			var temp = ConcatenationOf (Responserversion, HiResponserversion, Z6, BitConverterLE.GetBytes (timestamp), clientChallenge, Z4, targetInfo, Z4);
+
+			// Set NTProofStr to HMAC_MD5(ResponseKeyNT, ConcatenationOf(CHALLENGE_MESSAGE.ServerChallenge, temp))
 			var proof = HMACMD5 (responseKey, type2.ServerChallenge, temp);
 
+			// Set SessionBaseKey to HMAC_MD5(ResponseKeyNT, NTProofStr)
 			sessionBaseKey = HMACMD5 (responseKey, proof);
 
+			// Set NtChallengeResponse to ConcatenationOf(NTProofStr, temp)
 			ntChallengeResponse = ConcatenationOf (proof, temp);
 			Array.Clear (proof, 0, proof.Length);
 			Array.Clear (temp, 0, temp.Length);
 
-			var hash = HMACMD5 (responseKey, type2.ServerChallenge, clientChallenge);
-			Array.Clear (responseKey, 0, responseKey.Length);
-
 			// Note: If NTLM v2 authentication is used and the CHALLENGE_MESSAGE TargetInfo field (section 2.2.1.2) has an
 			// MsvAvTimestamp present, the client SHOULD NOT send the LmChallengeResponse and SHOULD send Z(24) instead.
-			if (type2.TargetInfo?.Timestamp == null)
+			if (type2.TargetInfo?.Timestamp == null) {
+				// Set LmChallengeResponse to ConcatenationOf(HMAC_MD5(ResponseKeyLM, ConcatenationOf(CHALLENGE_MESSAGE.ServerChallenge, ClientChallenge)), ClientChallenge)
+				var hash = HMACMD5 (responseKey, type2.ServerChallenge, clientChallenge);
 				lmChallengeResponse = ConcatenationOf (hash, clientChallenge);
-			else
+				Array.Clear (hash, 0, hash.Length);
+			} else {
 				lmChallengeResponse = Z24;
-			Array.Clear (hash, 0, hash.Length);
+			}
+
+			Array.Clear (responseKey, 0, responseKey.Length);
 		}
 	}
 }
