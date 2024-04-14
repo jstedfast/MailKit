@@ -90,11 +90,8 @@ namespace MailKit.Security.Ntlm {
 
 		public static byte[] MD5 (byte[] buffer)
 		{
-			using (var md5 = SSCMD5.Create ()) {
-				var hash = md5.ComputeHash (buffer);
-				Array.Clear (buffer, 0, buffer.Length);
-				return hash;
-			}
+			using (var md5 = SSCMD5.Create ())
+				return md5.ComputeHash (buffer);
 		}
 
 		public static byte[] HMACMD5 (byte[] key, params byte[][] values)
