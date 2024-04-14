@@ -98,7 +98,8 @@ namespace MailKit.Security.Ntlm {
 			Buffer.BlockCopy (message, startIndex + 24, serverChallenge, 0, 8);
 
 			var targetNameLength = BitConverterLE.ToUInt16 (message, startIndex + 12);
-			var targetNameOffset = BitConverterLE.ToUInt16 (message, startIndex + 16);
+			//var targetNameMaxLength = BitConverterLE.ToUInt16 (message, startIndex + 14);
+			var targetNameOffset = BitConverterLE.ToInt32 (message, startIndex + 16);
 
 			if (targetNameLength > 0) {
 				var encoding = (Flags & NtlmFlags.NegotiateUnicode) != 0 ? Encoding.Unicode : Encoding.UTF8;
