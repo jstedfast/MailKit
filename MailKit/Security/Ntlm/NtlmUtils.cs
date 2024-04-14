@@ -74,16 +74,18 @@ namespace MailKit.Security.Ntlm {
 
 		static byte[] MD4 (byte[] buffer)
 		{
-			using (var md4 = new MD4 ()) {
-				var hash = md4.ComputeHash (buffer);
-				Array.Clear (buffer, 0, buffer.Length);
-				return hash;
-			}
+			using (var md4 = new MD4 ())
+				return md4.ComputeHash (buffer);
 		}
 
 		static byte[] MD4 (string password)
 		{
-			return MD4 (Encoding.Unicode.GetBytes (password));
+			var unicode = Encoding.Unicode.GetBytes (password);
+			var hash = MD4 (unicode);
+
+			Array.Clear (unicode, 0, unicode.Length);
+
+			return hash;
 		}
 
 		public static byte[] MD5 (byte[] buffer)
