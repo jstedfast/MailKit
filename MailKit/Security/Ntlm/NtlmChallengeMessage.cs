@@ -32,7 +32,7 @@ using System.Text;
 namespace MailKit.Security.Ntlm {
 	class NtlmChallengeMessage : NtlmMessageBase
 	{
-		static readonly NtlmFlags DefaultFlags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateUnicode /*| NtlmFlags.NegotiateAlwaysSign*/;
+		const NtlmFlags DefaultFlags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateUnicode /*| NtlmFlags.NegotiateAlwaysSign*/;
 		byte[] serverChallenge;
 		byte[] cached;
 

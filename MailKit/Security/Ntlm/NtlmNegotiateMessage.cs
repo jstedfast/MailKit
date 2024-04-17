@@ -24,7 +24,10 @@
 // THE SOFTWARE.
 //
 
-// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4
+// NTLM specification: https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4
+//
+// NTLM registry key documentation: https://learn.microsoft.com/en-us/troubleshoot/windows-client/windows-security/enable-ntlm-2-authentication
+// Note: Ideally, we'd default our flags based on the registry settings of the OS.
 
 using System;
 using System.Text;
@@ -33,7 +36,7 @@ namespace MailKit.Security.Ntlm {
 	class NtlmNegotiateMessage : NtlmMessageBase
 	{
 		// System.Net.Mail seems to default to:           NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.NegotiateVersion | NtlmFlags.Negotiate128
-		internal static readonly NtlmFlags DefaultFlags = NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.Negotiate128;
+		internal const NtlmFlags DefaultFlags = NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.Negotiate128;
 
 		byte[] cached;
 

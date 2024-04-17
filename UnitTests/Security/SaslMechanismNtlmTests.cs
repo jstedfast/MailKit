@@ -638,6 +638,28 @@ namespace UnitTests.Security {
 			return new NtlmTargetInfo (ntChallengeResponse, index, targetInfoLength, true);
 		}
 
+		static byte[] GetNtChallengeResponseClientChallenge (byte[] ntChallengeResponse)
+		{
+			int index = 0;
+
+			// Proof (16-bytes) HMACMD5 of the following data
+			index += 16;
+
+			// 2 bytes of version info
+			index += 2;
+
+			// Z6
+			index += 6;
+
+			// Timestamp
+			index += 8;
+
+			var clientChallenge = new byte[8];
+			Buffer.BlockCopy (ntChallengeResponse, index, clientChallenge, 0, 8);
+
+			return clientChallenge;
+		}
+
 		[Test]
 		public void TestNtlmv2Example ()
 		{
