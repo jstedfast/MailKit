@@ -35,8 +35,8 @@ using System.Text;
 namespace MailKit.Security.Ntlm {
 	class NtlmNegotiateMessage : NtlmMessageBase
 	{
-		// System.Net.Mail seems to default to:           NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.NegotiateVersion | NtlmFlags.Negotiate128
-		internal const NtlmFlags DefaultFlags = NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.Negotiate128;
+		// System.Net.Mail seems to default to: NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.NegotiateVersion | NtlmFlags.Negotiate128
+		internal const NtlmFlags DefaultFlags = NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.Negotiate128 | NtlmFlags.NegotiateSign | NtlmFlags.NegotiateLanManagerKey | NtlmFlags.NegotiateKeyExchange;
 
 		byte[] cached;
 
