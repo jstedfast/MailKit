@@ -66,6 +66,7 @@ namespace UnitTests.Net.Smtp {
 		SendResponse,
 		WaitForCommand,
 		WaitForEndOfData,
+		UnexpectedDisconnect
 	}
 
 	class SmtpReplayStream : Stream
@@ -142,6 +143,9 @@ namespace UnitTests.Net.Smtp {
 			} else {
 				Assert.That (isAsync, Is.False, "Trying to ReadAsync in a non-async unit test.");
 			}
+
+			if (state == SmtpReplayState.UnexpectedDisconnect)
+				return 0;
 
 			Assert.That (state, Is.EqualTo (SmtpReplayState.SendResponse), "Trying to read when no command given.");
 			Assert.That (stream, Is.Not.Null, "Trying to read when no data available.");

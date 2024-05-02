@@ -2222,7 +2222,14 @@ namespace MailKit.Net.Smtp {
 
 		void Reset (CancellationToken cancellationToken)
 		{
-			var response = SendCommandInternal ("RSET\r\n", cancellationToken);
+			SmtpResponse response;
+
+			try {
+				response = SendCommandInternal ("RSET\r\n", cancellationToken);
+			} catch {
+				// Swallow RSET exceptions so that we do not obscure the exception that caused the need for the RSET command in the first place.
+				return;
+			}
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
@@ -2373,11 +2380,9 @@ namespace MailKit.Net.Smtp {
 				var dataResponse = Stream.SendCommand ("DATA\r\n", cancellationToken);
 
 				ParseDataResponse (dataResponse);
-				dataResponse = null;
 
 				return MessageData (format, message, size, cancellationToken, progress);
 			} catch (ServiceNotAuthenticatedException) {
-				// do not disconnect
 				Reset (cancellationToken);
 				throw;
 			} catch (SmtpCommandException) {

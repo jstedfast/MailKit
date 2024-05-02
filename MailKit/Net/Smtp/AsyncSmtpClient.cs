@@ -926,7 +926,14 @@ namespace MailKit.Net.Smtp
 
 		async Task ResetAsync (CancellationToken cancellationToken)
 		{
-			var response = await SendCommandInternalAsync ("RSET\r\n", cancellationToken).ConfigureAwait (false);
+			SmtpResponse response;
+
+			try {
+				response = await SendCommandInternalAsync ("RSET\r\n", cancellationToken).ConfigureAwait (false);
+			} catch {
+				// Swallow RSET exceptions so that we do not obscure the exception that caused the need for the RSET command in the first place.
+				return;
+			}
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
@@ -979,11 +986,9 @@ namespace MailKit.Net.Smtp
 				var dataResponse = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
 
 				ParseDataResponse (dataResponse);
-				dataResponse = null;
 
 				return await MessageDataAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
 			} catch (ServiceNotAuthenticatedException) {
-				// do not disconnect
 				await ResetAsync (cancellationToken).ConfigureAwait (false);
 				throw;
 			} catch (SmtpCommandException) {
