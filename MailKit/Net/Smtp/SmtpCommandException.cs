@@ -172,7 +172,7 @@ namespace MailKit.Net.Smtp {
 #endif
 
 		/// <summary>
-		/// Gets the error code which may provide additional information.
+		/// Get the error code which may provide additional information.
 		/// </summary>
 		/// <remarks>
 		/// The error code can be used to programatically deal with the
@@ -188,7 +188,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Gets the mailbox that the error occurred on.
+		/// Get the mailbox that the error occurred on.
 		/// </summary>
 		/// <remarks>
 		/// This property will only be available when the <see cref="ErrorCode"/>
@@ -205,7 +205,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Gets the status code returned by the SMTP server.
+		/// Get the status code returned by the SMTP server.
 		/// </summary>
 		/// <remarks>
 		/// The raw SMTP status code that resulted in the <see cref="SmtpCommandException"/>
