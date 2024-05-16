@@ -4272,7 +4272,7 @@ namespace UnitTests.Net.Imap {
 							Assert.Fail ($"Parsing LIST response failed: {ex}");
 							return;
 						}
-						
+
 						var token = await engine.ReadTokenAsync (CancellationToken.None);
 						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
 
