@@ -61,10 +61,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="date">The date.</param>
 		public static string FormatInternalDate (DateTimeOffset date)
 		{
-			string offset = $"{((date.Offset >= TimeSpan.Zero) ? "+" : "-")}{date.Offset.ToString("hhmm", CultureInfo.InvariantCulture)}";
-
-			return string.Format (CultureInfo.InvariantCulture, "{0:D2}-{1}-{2:D4} {3:D2}:{4:D2}:{5:D2} {6}",
-				date.Day, Months[date.Month - 1], date.Year, date.Hour, date.Minute, date.Second, offset);
+			return string.Format (CultureInfo.InvariantCulture, "{0:D2}-{1}-{2:D4} {3:D2}:{4:D2}:{5:D2} {6:+00;-00}{7:00}",
+				date.Day, Months[date.Month - 1], date.Year, date.Hour, date.Minute, date.Second,
+				date.Offset.Hours, Math.Abs (date.Offset.Minutes));
 		}
 
 		static bool TryGetInt32 (string text, ref int index, out int value)
