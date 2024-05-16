@@ -63,7 +63,7 @@ namespace MailKit.Net.Imap {
 		{
 			return string.Format (CultureInfo.InvariantCulture, "{0:D2}-{1}-{2:D4} {3:D2}:{4:D2}:{5:D2} {6:+00;-00}{7:00}",
 				date.Day, Months[date.Month - 1], date.Year, date.Hour, date.Minute, date.Second,
-				date.Offset.Hours, date.Offset.Minutes);
+				date.Offset.Hours, Math.Abs (date.Offset.Minutes));
 		}
 
 		static bool TryGetInt32 (string text, ref int index, out int value)

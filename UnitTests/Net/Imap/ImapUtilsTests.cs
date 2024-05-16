@@ -4282,5 +4282,56 @@ namespace UnitTests.Net.Imap {
 				}
 			}
 		}
+
+		[Test]
+		[TestCase (2023, 5, 14, 12, 30, 45, -4, -30, "14-May-2023 12:30:45 -0430")] // Sunday
+		[TestCase (2023, 5, 15, 12, 30, 45, -3, -30, "15-May-2023 12:30:45 -0330")] // Monday
+		[TestCase (2023, 5, 16, 12, 30, 45, -2, 0, "16-May-2023 12:30:45 -0200")]   // Tuesday
+		[TestCase (2023, 5, 17, 12, 30, 45, -1, 0, "17-May-2023 12:30:45 -0100")]   // Wednesday
+		public void TestFormatInternalDateNegativeOffsets (int year, int month, int day, int hour, int minute, int second, int offsetHours, int offsetMinutes, string expected)
+		{
+			var date = new DateTimeOffset (year, month, day, hour, minute, second, new TimeSpan (offsetHours, offsetMinutes, 0));
+
+			string formattedInternalDate = ImapUtils.FormatInternalDate (date);
+
+			Assert.That (formattedInternalDate, Is.EqualTo (expected), $"Expected {expected} but got {formattedInternalDate} for date {date}.");
+		}
+
+		[Test]
+		[TestCase (2023, 5, 18, 12, 30, 45, 1, 0, "18-May-2023 12:30:45 +0100")]   // Thursday
+		[TestCase (2023, 5, 19, 12, 30, 45, 4, 30, "19-May-2023 12:30:45 +0430")]  // Friday
+		[TestCase (2023, 5, 20, 12, 30, 45, 9, 30, "20-May-2023 12:30:45 +0930")]  // Saturday
+		[TestCase (2023, 5, 21, 12, 30, 45, 12, 0, "21-May-2023 12:30:45 +1200")]  // Sunday
+		public void TestFormatInternalDatePositiveOffsets (int year, int month, int day, int hour, int minute, int second, int offsetHours, int offsetMinutes, string expected)
+		{
+			var date = new DateTimeOffset (year, month, day, hour, minute, second, new TimeSpan (offsetHours, offsetMinutes, 0));
+
+			string formattedInternalDate = ImapUtils.FormatInternalDate (date);
+
+			Assert.That (formattedInternalDate, Is.EqualTo (expected), $"Expected {expected} but got {formattedInternalDate} for date {date}.");
+		}
+
+		[Test]
+		[TestCase (2023, 5, 22, 12, 30, 45, 0, 0, "22-May-2023 12:30:45 +0000")]  // Monday
+		public void TestFormatInternalDateZeroOffset (int year, int month, int day, int hour, int minute, int second, int offsetHours, int offsetMinutes, string expected)
+		{
+			var date = new DateTimeOffset (year, month, day, hour, minute, second, new TimeSpan (offsetHours, offsetMinutes, 0));
+
+			string formattedInternalDate = ImapUtils.FormatInternalDate (date);
+
+			Assert.That (formattedInternalDate, Is.EqualTo (expected), $"Expected {expected} but got {formattedInternalDate} for date {date}.");
+		}
+
+		[Test]
+		[TestCase (2023, 5, 23, 23, 59, 59, 2, 30, "23-May-2023 23:59:59 +0230")]  // Tuesday
+		[TestCase (2023, 5, 24, 0, 0, 0, -4, -30, "24-May-2023 00:00:00 -0430")]  // Wednesday
+		public void TestFormatInternalDateEdgeCases (int year, int month, int day, int hour, int minute, int second, int offsetHours, int offsetMinutes, string expected)
+		{
+			var date = new DateTimeOffset (year, month, day, hour, minute, second, new TimeSpan (offsetHours, offsetMinutes, 0));
+
+			string formattedInternalDate = ImapUtils.FormatInternalDate (date);
+
+			Assert.That (formattedInternalDate, Is.EqualTo (expected), $"Expected {expected} but got {formattedInternalDate} for date {date}.");
+		}
 	}
 }
