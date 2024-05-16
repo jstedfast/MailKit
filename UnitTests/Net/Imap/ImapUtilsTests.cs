@@ -4292,7 +4292,7 @@ namespace UnitTests.Net.Imap {
 		{
 			var date = new DateTimeOffset (year, month, day, hour, minute, second, new TimeSpan (offsetHours, offsetMinutes, 0));
 
-			string formattedInternalDate = ImapUtils.FormatInternalDate(date);
+			string formattedInternalDate = ImapUtils.FormatInternalDate (date);
 
 			Assert.That (formattedInternalDate, Is.EqualTo (expected), $"Expected {expected} but got {formattedInternalDate} for date {date}.");
 		}
@@ -4306,7 +4306,7 @@ namespace UnitTests.Net.Imap {
 		{
 			var date = new DateTimeOffset (year, month, day, hour, minute, second, new TimeSpan (offsetHours, offsetMinutes, 0));
 
-			string formattedInternalDate = ImapUtils.FormatInternalDate(date);
+			string formattedInternalDate = ImapUtils.FormatInternalDate (date);
 
 			Assert.That (formattedInternalDate, Is.EqualTo (expected), $"Expected {expected} but got {formattedInternalDate} for date {date}.");
 		}
@@ -4317,7 +4317,7 @@ namespace UnitTests.Net.Imap {
 		{
 			var date = new DateTimeOffset (year, month, day, hour, minute, second, new TimeSpan (offsetHours, offsetMinutes, 0));
 
-			string formattedInternalDate = ImapUtils.FormatInternalDate(date);
+			string formattedInternalDate = ImapUtils.FormatInternalDate (date);
 
 			Assert.That (formattedInternalDate, Is.EqualTo (expected), $"Expected {expected} but got {formattedInternalDate} for date {date}.");
 		}
@@ -4329,7 +4329,7 @@ namespace UnitTests.Net.Imap {
 		{
 			var date = new DateTimeOffset (year, month, day, hour, minute, second, new TimeSpan (offsetHours, offsetMinutes, 0));
 
-			string formattedInternalDate = ImapUtils.FormatInternalDate(date);
+			string formattedInternalDate = ImapUtils.FormatInternalDate (date);
 
 			Assert.That (formattedInternalDate, Is.EqualTo (expected), $"Expected {expected} but got {formattedInternalDate} for date {date}.");
 		}
