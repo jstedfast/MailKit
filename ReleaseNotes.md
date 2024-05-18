@@ -1,5 +1,13 @@
 # Release Notes
 
+## MailKit 4.6.0 (2024-05-17)
+
+* Swallow SMTP RSET exceptions. These obscure other Send/SendAsync exceptions. Fixes a regression
+  introduced in 4.4.0. (issue [#1748](https://github.com/jstedfast/MailKit/issues/1748))
+* Fixed ImapUtils.FormatInternalDate() to properly handle negative timezone offsets with non-zero minutes.
+  (issue [#1743](https://github.com/jstedfast/MailKit/pull/1753))
+* Bumped MimeKit dependency to 4.6.0.
+
 ## MailKit 4.5.0 (2024-04-13)
 
 * Added a new SmtpClient.RequireTLS property to fix sending mail via Strato.de.
@@ -7,6 +15,7 @@
 * Fixed SmtpClient to track the most recent response from the SMTP server in order to include
   it in SmtpProtocolExceptions caused by unexpected server disconnects to provide more context.
   (issue [#1744](https://github.com/jstedfast/MailKit/issues/1744))
+* Bumped MimeKit dependency to 4.5.0.
 
 ## MailKit 4.4.0 (2024-03-02)
 
@@ -28,6 +37,7 @@
   (issue [#1703](https://github.com/jstedfast/MailKit/issues/1703))
 * Added work-around for Yandex IMAP GetBodyPart() response not including content.
   (issue [#1708](https://github.com/jstedfast/MailKit/issues/1708))
+* Bumped MimeKit dependency to 4.4.0.
 
 ## MailKit 4.3.0 (2023-11-11)
 
