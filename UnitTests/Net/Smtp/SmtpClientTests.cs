@@ -336,11 +336,11 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
 					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
-					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
+					SslHandshakeExceptionTests.AssertBadSslUntrustedRootServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						SslHandshakeExceptionTests.AssertRootCertificate (root);
+						SslHandshakeExceptionTests.AssertBadSslUntrustedRootCACertificate (root);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -351,11 +351,11 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
 					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
-					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
+					SslHandshakeExceptionTests.AssertBadSslUntrustedRootServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						SslHandshakeExceptionTests.AssertRootCertificate (root);
+						SslHandshakeExceptionTests.AssertBadSslUntrustedRootCACertificate (root);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -380,11 +380,11 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
 					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
-					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
+					SslHandshakeExceptionTests.AssertBadSslUntrustedRootServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						SslHandshakeExceptionTests.AssertRootCertificate (root);
+						SslHandshakeExceptionTests.AssertBadSslUntrustedRootCACertificate (root);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -395,11 +395,11 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("SSL handshake should have failed with untrusted-root.badssl.com.");
 				} catch (SslHandshakeException ex) {
 					Assert.That (ex.ServerCertificate, Is.Not.Null, "ServerCertificate");
-					SslHandshakeExceptionTests.AssertServerCertificate ((X509Certificate2) ex.ServerCertificate);
+					SslHandshakeExceptionTests.AssertBadSslUntrustedRootServerCertificate ((X509Certificate2) ex.ServerCertificate);
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						SslHandshakeExceptionTests.AssertRootCertificate (root);
+						SslHandshakeExceptionTests.AssertBadSslUntrustedRootCACertificate (root);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
