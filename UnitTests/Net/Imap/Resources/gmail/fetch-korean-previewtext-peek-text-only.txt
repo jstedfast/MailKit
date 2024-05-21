@@ -1,0 +1,6 @@
+* 1 FETCH (UID 1 BODY[TEXT]<0> {278}
+s7sgwdbBprTCIL+pseINCg0KDQq+yLPnx8+8vL/kIL+pt6+60CwNCg0KuPC1ziCxpsL6seK4piC5
+2bb4tM+02S4gwMy5+CDB1ri7v6Egvu62siCw6Mi5wLsgsK6w7SDA1rOqv+Q/DQq02bXpILuhuK4g
+uri9w7HmILnZtvaw1L/kIQ0KDQq/qcfgwLsgsOjIucfPtMIgvsbAzLXwvu6woSDA1r3AtM+02S4g
+s9cgu/2wosC7ILi7x9i6wS4NCg0KtscgusG/5CENCg== )
+A######## OK Success

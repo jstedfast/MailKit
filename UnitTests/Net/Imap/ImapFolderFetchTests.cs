@@ -1259,6 +1259,108 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateFetchSimulatedKoreanPreviewTextCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"),
+				new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"),
+				new ImapReplayCommand ("A00000007 UID FETCH 1 (UID BODYSTRUCTURE)\r\n", "gmail.fetch-korean-previewtext-bodystructure.txt"),
+				new ImapReplayCommand ("A00000008 UID FETCH 1 (BODY.PEEK[TEXT]<0.512>)\r\n", "gmail.fetch-korean-previewtext-peek-text-only.txt"),
+			};
+		}
+
+		[Test]
+		public void TestFetchSimulatedKoreanPreviewText ()
+		{
+			const string koreanPreviewText = "내 주제는 여기 안녕하세요 여러분, 모두 괜찮기를 바랍니다. 이번 주말에 어떤 계획을 갖고 있나요? 다들 빨리 보시길 바랄게요! 여행을 계획하는 아이디어가 있습니다. 네 생각을 말해봐. 또 봐요!";
+			var commands = CreateFetchSimulatedKoreanPreviewTextCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = personal.GetSubfolders ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				inbox.Open (FolderAccess.ReadOnly);
+
+				var messages = inbox.Fetch (new[] { new UniqueId (1) }, MessageSummaryItems.PreviewText);
+				Assert.That (messages.Count, Is.EqualTo (1), "Expected 1 message to be fetched.");
+				Assert.That (messages[0].PreviewText, Is.EqualTo (koreanPreviewText));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchSimulatedKoreanPreviewTextAsync ()
+		{
+			const string koreanPreviewText = "내 주제는 여기 안녕하세요 여러분, 모두 괜찮기를 바랍니다. 이번 주말에 어떤 계획을 갖고 있나요? 다들 빨리 보시길 바랄게요! 여행을 계획하는 아이디어가 있습니다. 네 생각을 말해봐. 또 봐요!";
+			var commands = CreateFetchSimulatedKoreanPreviewTextCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = await personal.GetSubfoldersAsync ();
+				Assert.That (folders[0], Is.EqualTo (client.Inbox), "Expected the first folder to be the Inbox.");
+				Assert.That (folders[1].FullName, Is.EqualTo ("[Gmail]"), "Expected the second folder to be [Gmail].");
+				Assert.That (folders[1].Attributes, Is.EqualTo (FolderAttributes.NoSelect | FolderAttributes.HasChildren), "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				var inbox = client.Inbox;
+
+				await inbox.OpenAsync (FolderAccess.ReadOnly);
+
+				var messages = await inbox.FetchAsync (new[] { new UniqueId (1) }, MessageSummaryItems.PreviewText);
+				Assert.That (messages.Count, Is.EqualTo (1), "Expected 1 message to be fetched.");
+				Assert.That (messages[0].PreviewText, Is.EqualTo (koreanPreviewText));
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateFetchQuotedStringCommands ()
 		{
 			return new List<ImapReplayCommand> {
