@@ -91,7 +91,7 @@ Import-module ExchangeOnlineManagement
 Connect-ExchangeOnline -Organization <tenantId>
 ```
 
-Next, register your the Service Principal for your web service:
+Next, register the Service Principal for your web service:
 
 ```powershell
 New-ServicePrincipal -AppId <APPLICATION_ID> -ObjectId <OBJECT_ID> [-Organization <ORGANIZATION_ID>]
