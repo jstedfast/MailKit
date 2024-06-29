@@ -420,6 +420,7 @@ namespace MailKit {
 
 		const string AppleCertificateIssuer = "C=US, S=California, O=Apple Inc., CN=Apple Public Server RSA CA 12 - G1";
 		const string GMailCertificateIssuer = "CN=GTS CA 1C3, O=Google Trust Services LLC, C=US";
+		const string GMailCertificateIssuer2 = "CN=WR2, O=Google Trust Services, C=US";
 		const string OutlookCertificateIssuer = "CN=DigiCert Cloud Services CA-1, O=DigiCert Inc, C=US";
 		const string YahooCertificateIssuer = "CN=DigiCert SHA2 High Assurance Server CA, OU=www.digicert.com, O=DigiCert Inc, C=US";
 		const string GmxDotComCertificateIssuer = "CN=GeoTrust TLS RSA CA G1, OU=www.digicert.com, O=DigiCert Inc, C=US";
@@ -437,27 +438,30 @@ namespace MailKit {
 			case "imap.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "00A8D46BE7D3928D5C12246B1D137087DF" && fingerprint == "89873FBDB771C59E0ED28201616E41022214443B") // Expires 5/27/2024 3:14:31 AM
-						|| (serial == "009B1896CD6596D56A108AD5C7C6A2A8DA" && fingerprint == "422BA368A5B5B53B0BDCF340D3A62F3B2A7DAB2F") // Expires 7/9/2024 12:13:46 AM
+					return (serial == "009B1896CD6596D56A108AD5C7C6A2A8DA" && fingerprint == "422BA368A5B5B53B0BDCF340D3A62F3B2A7DAB2F") // Expires 7/9/2024 12:13:46 AM
 						|| (serial == "2C569E2F5C7ECB31090CD2F9F03A9C68" && fingerprint == "C23F11238A1FCB211404C2B81FAC20C29231CC58"); // Expires 7/29/2024 10:38:02 AM
+				case GMailCertificateIssuer2:
+					return (serial == "4D8A5F329EEC61280980D4C195B2C4BF" && fingerprint == "089B27BE05BDE333D90D9D07628D03EDBB0EE98B"); // Expires 9/5/2024 12:28:55 PM
 				default:
 					return false;
 				}
 			case "pop.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "331D54A3B002B7AA0ADE7A2D7BB12E90" && fingerprint == "42AB0CE0F70F203795524AF833BDC8B9E1BDB480") // Expires 5/27/2024 3:14:31 AM
-						|| (serial == "16436DE71D630A1D0AC398830029F670" && fingerprint == "45A1D3F00740A27A75FF083F1F5F37F02E92D8E6") // Expires 7/9/2024 12:13:46 AM
+					return (serial == "16436DE71D630A1D0AC398830029F670" && fingerprint == "45A1D3F00740A27A75FF083F1F5F37F02E92D8E6") // Expires 7/9/2024 12:13:46 AM
 						|| (serial == "00EA57D60F047D268F092D91CCF7192A63" && fingerprint == "78E97297F0B5B90C505C18063A77D313A00FFA1E"); // Expires 7/29/2024 10:38:02 AM
+				case GMailCertificateIssuer2:
+					return (serial == "00FA32D95AF3422569092D78466AFEE4D5" && fingerprint == "C7229786F10328D450F2FDC3611C78BCE1347869"); // Expires 9/5/2024 12:28:48 PM
 				default:
 					return false;
 				}
 			case "smtp.gmail.com":
 				switch (issuer) {
 				case GMailCertificateIssuer:
-					return (serial == "2A39D95474EDDAFE092DA55B2A0BEA71" && fingerprint == "4D731F58FF0FD7E77D135C5B043099C2D8B98C90") // Expires 5/27/2024 3:14:51 AM
-						|| (serial == "00F4FE497C8E249B940A5D4D747AC112C7" && fingerprint == "E521B0F66137A054E67799996313AD1362561C06") // Expires 7/9/2024 12:13:46 AM
+					return (serial == "00F4FE497C8E249B940A5D4D747AC112C7" && fingerprint == "E521B0F66137A054E67799996313AD1362561C06") // Expires 7/9/2024 12:13:46 AM
 						|| (serial == "00A89A72CA09ECCE5B09BABD7EE4942F21" && fingerprint == "AD9C10F2341E001E9C8FF9306B90E4B92807DD6E"); // Expires 7/29/2024 10:38:02 AM
+				case GMailCertificateIssuer2:
+					return (serial == "00F94833B0DBBC6DD0094FF1B65826D822" && fingerprint == "AFA2FF1AF73A65FA90F539B3F79A9983FEB49353"); // Expires 9/5/2024 12:29:37 PM
 				default:
 					return false;
 				}
@@ -507,9 +511,9 @@ namespace MailKit {
 					return false;
 				}
 			case "mout.gmx.com":
-				return issuer == GmxDotComCertificateIssuer && serial == "012F047AF3FE3C9C32754106BE4BB141" && fingerprint == "DF5EF04433AB912925D7DCB561A09275900A2AC5"; // Expires 6/9/2024 7:59:59 PM
+				return issuer == GmxDotComCertificateIssuer && serial == "0DE2F5DFAF303D80801FE17D64EAFEF5" && fingerprint == "690A5590690ADE3C164BD2D4DA9BE69E6608FFFB"; // Expires 6/14/2025 7:59:59 PM
 			case "mail.gmx.com":
-				return issuer == GmxDotComCertificateIssuer && serial == "0B3FDCE37971097D1AC4BB2C3594BE11" && fingerprint == "A0CF84A0EF9EB1998C2E07D1D0168FF19E347431"; // Expires 6/9/2024 7:59:59 PM
+				return issuer == GmxDotComCertificateIssuer && serial == "01840046B1B8C0DCF17EBFB93860BDF8" && fingerprint == "CBDF309BF6FCD4199B448FA403B4E2C718DFFE63"; // Expires 6/14/2025 7:59:59 PM
 			case "mail.gmx.net":
 				return issuer == GmxDotNetCertificateIssuer && serial == "397A70341E4CCCA54DC53FDE71B9E1FA" && fingerprint == "51472ACB1E62C133845BF34A2BA17457A54A2880"; // Expires 2/23/2025 6:59:59 PM
 			default:
