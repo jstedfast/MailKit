@@ -1278,7 +1278,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestFetchSimulatedKoreanPreviewText ()
 		{
-			const string koreanPreviewText = "내 주제는 여기 안녕하세요 여러분, 모두 괜찮기를 바랍니다. 이번 주말에 어떤 계획을 갖고 있나요? 다들 빨리 보시길 바랄게요! 여행을 계획하는 아이디어가 있습니다. 네 생각을 말해봐. 또 봐요!";
+			const string koreanPreviewText = "서기 250년경 고분 시대가 시작되면서 고분이라고 불리는 거대한 무덤이 건설된 것은 보다 집약적인 농업과 철기 기술의 도입에 힘입어 강력한 전사 엘리트의 출현을 나타냅니다. 일본은 철과 기타 물품의 공급을 확보하기 위해 남한의 연안 지배 집단과 집중적인 접촉을 벌이면서 중국에 사신을 파견하면서 대륙 본토와의 접촉이 증가했습니다(238, 243, 247). 4세기 동안 지속된 한반도의 한국 세력과";
 			var commands = CreateFetchSimulatedKoreanPreviewTextCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -1321,7 +1321,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestFetchSimulatedKoreanPreviewTextAsync ()
 		{
-			const string koreanPreviewText = "내 주제는 여기 안녕하세요 여러분, 모두 괜찮기를 바랍니다. 이번 주말에 어떤 계획을 갖고 있나요? 다들 빨리 보시길 바랄게요! 여행을 계획하는 아이디어가 있습니다. 네 생각을 말해봐. 또 봐요!";
+			const string koreanPreviewText = "서기 250년경 고분 시대가 시작되면서 고분이라고 불리는 거대한 무덤이 건설된 것은 보다 집약적인 농업과 철기 기술의 도입에 힘입어 강력한 전사 엘리트의 출현을 나타냅니다. 일본은 철과 기타 물품의 공급을 확보하기 위해 남한의 연안 지배 집단과 집중적인 접촉을 벌이면서 중국에 사신을 파견하면서 대륙 본토와의 접촉이 증가했습니다(238, 243, 247). 4세기 동안 지속된 한반도의 한국 세력과";
 			var commands = CreateFetchSimulatedKoreanPreviewTextCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
