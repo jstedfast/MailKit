@@ -1199,7 +1199,7 @@ namespace MailKit.Net.Pop3 {
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect, uri);
 
 			try {
 				var stream = ConnectNetwork (host, port, cancellationToken);
@@ -1392,7 +1392,7 @@ namespace MailKit.Net.Pop3 {
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect, uri);
 
 			try {
 				engine.Uri = uri;

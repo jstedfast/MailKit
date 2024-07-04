@@ -653,7 +653,7 @@ namespace MailKit.Net.Imap
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect, uri);
 
 			try {
 				var stream = await ConnectNetworkAsync (host, port, cancellationToken).ConfigureAwait (false);
@@ -827,7 +827,7 @@ namespace MailKit.Net.Imap
 
 			ComputeDefaultValues (host, ref port, ref options, out var uri, out var starttls);
 
-			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect);
+			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Connect, uri);
 
 			try {
 				Stream network;
