@@ -1,5 +1,11 @@
 # Release Notes
 
+## MailKit 4.7.0 (2024-06-29)
+
+* Added Activity/Metrics for Imap/Pop3/SmtpClient.
+  (issue [#1499](https://github.com/jstedfast/MailKit/issues/1499))
+* Bumped MimeKit dependency to 4.7.0.
+
 ## MailKit 4.6.0 (2024-05-17)
 
 * Swallow SMTP RSET exceptions. These obscure other Send/SendAsync exceptions. Fixes a regression
