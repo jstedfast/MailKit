@@ -1,5 +1,12 @@
 # Release Notes
 
+## MailKit 4.7.1 (2024-07-12)
+
+* Fixed ImapClient and Pop3Client.Connect/Async() when OTEL is enabled.
+  (issue [#1765](https://github.com/jstedfast/MailKit/issues/1765))
+* Bumped MimeKit dependency to 4.7.1 to fix a denial of service security issue in the System.Formats.Asn1
+  dependency.
+
 ## MailKit 4.7.0 (2024-06-29)
 
 * Added Activity/Metrics for Imap/Pop3/SmtpClient.
