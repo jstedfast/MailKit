@@ -46,14 +46,14 @@ namespace ImapClientDemo
 		{
 			base.OnCreate (bundle);
 
-			SetContentView (Resource.Layout.LoginLayout);
+			SetContentView (ImapClientDemo.Android.Resource.Layout.LoginLayout);
 
-			textServer = FindViewById<TextView> (Resource.Id.textServer);
-			textPort = FindViewById<TextView> (Resource.Id.textPort);
-			textLogin = FindViewById<TextView> (Resource.Id.textLogin);
-			textPassword = FindViewById<TextView> (Resource.Id.textPassword);
-			checkSsl = FindViewById<CheckBox> (Resource.Id.checkSsl);
-			buttonLogin = FindViewById<Button> (Resource.Id.buttonLogin);
+			textServer = FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textServer);
+			textPort = FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textPort);
+			textLogin = FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textLogin);
+			textPassword = FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textPassword);
+			checkSsl = FindViewById<CheckBox> (ImapClientDemo.Android.Resource.Id.checkSsl);
+			buttonLogin = FindViewById<Button> (ImapClientDemo.Android.Resource.Id.buttonLogin);
 
 			buttonLogin.Click += buttonLogin_Click;
 		}

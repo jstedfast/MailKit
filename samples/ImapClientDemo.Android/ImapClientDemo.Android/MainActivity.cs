@@ -29,7 +29,7 @@ using Android.OS;
 
 namespace ImapClientDemo
 {
-	[Activity (Label = "ImapClientDemo.Android", MainLauncher = true, Icon = "@drawable/icon")]
+	[Activity (Label = "ImapClientDemo.Android", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
 		protected override void OnCreate (Bundle bundle)
