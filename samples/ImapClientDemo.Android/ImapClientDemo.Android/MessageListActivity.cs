@@ -33,7 +33,6 @@ using Android.App;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-
 using MailKit;
 
 namespace ImapClientDemo
@@ -51,9 +50,9 @@ namespace ImapClientDemo
 
 			Title = Mail.CurrentFolder.FullName;
 
-			SetContentView (Resource.Layout.MessagesLayout);
+			SetContentView (ImapClientDemo.Android.Resource.Layout.MessagesLayout);
 
-			listView = FindViewById<ListView> (Resource.Id.listView);
+			listView = FindViewById<ListView> (ImapClientDemo.Android.Resource.Id.listView);
 
 			adapter = new MessageListAdapter (this);
 			listView.Adapter = adapter;
@@ -110,12 +109,12 @@ namespace ImapClientDemo
 
 			public override View GetView (int position, View convertView, ViewGroup parent)
 			{
-				var view = convertView ?? LayoutInflater.FromContext (Parent).Inflate (Resource.Layout.MessageListItemLayout, parent, false);
+				var view = convertView ?? LayoutInflater.FromContext (Parent).Inflate (ImapClientDemo.Android.Resource.Layout.MessageListItemLayout, parent, false);
 				var msg = Messages [position];
 
-				view.FindViewById<TextView> (Resource.Id.textSubject).Text = msg.Envelope.Subject;
-				view.FindViewById<TextView> (Resource.Id.textFrom).Text = msg.Envelope.From.ToString ();
-				view.FindViewById<TextView> (Resource.Id.textDate).Text = msg.Envelope.Date.Value.LocalDateTime.ToString ();
+				view.FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textSubject).Text = msg.Envelope.Subject;
+				view.FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textFrom).Text = msg.Envelope.From.ToString ();
+				view.FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textDate).Text = msg.Envelope.Date.Value.LocalDateTime.ToString ();
 
 				return view;
 			}

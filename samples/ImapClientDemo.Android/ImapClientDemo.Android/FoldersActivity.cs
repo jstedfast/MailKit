@@ -49,9 +49,9 @@ namespace ImapClientDemo
 
 			Console.WriteLine ("FoldersCreated!");
 
-			SetContentView (Resource.Layout.FoldersLayout);
+			SetContentView (ImapClientDemo.Android.Resource.Layout.FoldersLayout);
 
-			listView = FindViewById<ListView> (Resource.Id.listView);
+			listView = FindViewById<ListView> (ImapClientDemo.Android.Resource.Id.listView);
 
 			adapter = new FoldersAdapter (this);
 
@@ -120,11 +120,11 @@ namespace ImapClientDemo
 
 			public override View GetView (int position, View convertView, ViewGroup parent)
 			{
-				var view = convertView ?? LayoutInflater.FromContext (Parent).Inflate (Android.Resource.Layout.SimpleListItem1, parent, false);
+				var view = convertView ?? LayoutInflater.FromContext (Parent).Inflate (global::Android.Resource.Layout.SimpleListItem1, parent, false);
 
 				var folder = Folders[position];
 
-				view.FindViewById<TextView> (Android.Resource.Id.Text1).Text = folder.FullName;
+				view.FindViewById<TextView> (global::Android.Resource.Id.Text1).Text = folder.FullName;
 
 				return view;
 			}

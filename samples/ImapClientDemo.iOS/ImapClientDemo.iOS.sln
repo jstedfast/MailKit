@@ -1,31 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29926.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImapClientDemo.iOS", "ImapClientDemo.iOS\ImapClientDemo.iOS.csproj", "{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImapClientDemo.iOS", "ImapClientDemo.iOS\ImapClientDemo.iOS.csproj", "{764BD6BF-F53D-43E6-9D25-AD0B506BAFC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|iPhone = Debug|iPhone
-		Debug|iPhoneSimulator = Debug|iPhoneSimulator
-		Release|iPhone = Release|iPhone
-		Release|iPhoneSimulator = Release|iPhoneSimulator
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Debug|iPhone.Build.0 = Debug|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Release|iPhone.ActiveCfg = Release|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Release|iPhone.Build.0 = Release|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {74F4CE45-3292-4B06-817F-9DEC2ADDE4E2}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{764BD6BF-F53D-43E6-9D25-AD0B506BAFC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764BD6BF-F53D-43E6-9D25-AD0B506BAFC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764BD6BF-F53D-43E6-9D25-AD0B506BAFC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764BD6BF-F53D-43E6-9D25-AD0B506BAFC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

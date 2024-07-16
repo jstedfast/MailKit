@@ -42,12 +42,12 @@ namespace ImapClientDemo
 		{
 			base.OnCreate (bundle);
 
-			SetContentView (Resource.Layout.ViewMessageLayout);
+			SetContentView (ImapClientDemo.Android.Resource.Layout.ViewMessageLayout);
 
-			textSubject = FindViewById<TextView> (Resource.Id.textSubject);
-			textFrom = FindViewById<TextView> (Resource.Id.textFrom);
-			textDate = FindViewById<TextView> (Resource.Id.textDate);
-			textBody = FindViewById<TextView> (Resource.Id.textBody);
+			textSubject = FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textSubject);
+			textFrom = FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textFrom);
+			textDate = FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textDate);
+			textBody = FindViewById<TextView> (ImapClientDemo.Android.Resource.Id.textBody);
 
 			var msg = Mail.CurrentMessage;
 
