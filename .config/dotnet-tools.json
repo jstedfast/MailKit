@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "altcover.global": {
-      "version": "8.8.53",
+      "version": "8.8.173",
       "commands": [
         "altcover"
       ]
