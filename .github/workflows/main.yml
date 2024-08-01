@@ -110,6 +110,7 @@ jobs:
       - if: steps.configure.outputs.is_github_release == 'true' && steps.semantic_version.outputs.version_tag != steps.get_latest_tag.outputs.tag
         name: Add new tag to repo
         id: add_new_tag_to_repo
+        continue-on-error: true
         shell: pwsh
         run: |
           git config --global user.name $env:GIT_USER_NAME
