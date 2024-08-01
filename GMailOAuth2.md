@@ -85,7 +85,7 @@ var authCode = new AuthorizationCodeInstalledApp (codeFlow, codeReceiver);
 
 var credential = await authCode.AuthorizeAsync (GMailAccount, CancellationToken.None);
 
-if (credential.Token.IsExpired (SystemClock.Default))
+if (credential.Token.IsStale)
 	await credential.RefreshTokenAsync (CancellationToken.None);
 
 var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
@@ -137,7 +137,7 @@ Ensure that you are using Authorization and HttpsRedirection in your **Program.c
 ```csharp
 app.UseHttpsRedirection ();
 app.UseStaticFiles ();
-	
+
 app.UseRouting ();
 
 app.UseAuthentication ();
@@ -150,7 +150,7 @@ Now, using the **GoogleScopedAuthorizeAttribute**, you can request scopes saved 
 [GoogleScopedAuthorize(DriveService.ScopeConstants.DriveReadonly)]
 public async Task AuthenticateAsync ([FromServices] IGoogleAuthProvider auth)
 {
-    GoogleCredential? googleCred = await _auth.GetCredentialAsync ();
+    GoogleCredential? googleCred = await auth.GetCredentialAsync ();
     string token = await googleCred.UnderlyingCredential.GetAccessTokenForRequestAsync ();
     
     var oauth2 = new SaslMechanismOAuth2 ("UserEmail", token);
