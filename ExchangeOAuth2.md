@@ -64,18 +64,13 @@ AuthenticationResult? result;
 
 try {
     // First, check the cache for an auth token.
-    result = await publicClientApplication
-        .AcquireTokenSilent (scopes, EmailAddress)
-        .ExecuteAsync ();
+    result = await publicClientApplication.AcquireTokenSilent (scopes, EmailAddress).ExecuteAsync ();
 } catch (MsalUiRequiredException) {
     // If that fails, then try getting an auth token interactively.
-    result = await publicClientApplication
-        .AcquireTokenInteractive (scopes)
-        .WithLoginHint (EmailAddress)
-        .ExecuteAsync ();
+    result = await publicClientApplication.AcquireTokenInteractive (scopes).WithLoginHint (EmailAddress).ExecuteAsync ();
 }
 
-// Note: We always use authToken.Account.Username instead of `Username` because the user may have selected an alternative account.
+// Note: We always use result.Account.Username instead of `Username` because the user may have selected an alternative account.
 var oauth2 = new SaslMechanismOAuth2 (result.Account.Username, result.AccessToken);
 
 using (var client = new ImapClient ()) {
@@ -86,11 +81,11 @@ using (var client = new ImapClient ()) {
 ```
 
 Note: Once you've acquired an auth token using the interactive method above, you can avoid prompting the user
-if you cache the `authToken.Account` information and then silently reacquire auth tokens in the future using
+if you cache the `result.Account` information and then silently reacquire auth tokens in the future using
 the following code:
 
 ```csharp
-var authToken = await publicClientApplication.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
+var result = await publicClientApplication.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
 ```
 
 ## Web Services

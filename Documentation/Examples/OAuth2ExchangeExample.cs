@@ -43,17 +43,24 @@ namespace OAuth2ExchangeExample {
                 //"https://outlook.office.com/SMTP.AccessAsUser.All", // Only needed for SMTP
             };
 
-            var authToken = await publicClientApplication.AcquireTokenInteractive (scopes).WithLoginHint (ExchangeAccount).ExecuteAsync (cancellationToken);
-            await publicClientApplication.AcquireTokenSilent (scopes, authToken.Account).ExecuteAsync (cancellationToken);
+            AuthenticationResult? result;
 
-            // Note: We use authToken.Account.Username here instead of ExchangeAccount because the user *may* have chosen a
+            try {
+                // First, check the cache for an auth token.
+                result = await publicClientApplication.AcquireTokenSilent (scopes, username).ExecuteAsync ();
+            } catch (MsalUiRequiredException) {
+                // If that fails, then try getting an auth token interactively.
+                result = await publicClientApplication.AcquireTokenInteractive (scopes).WithLoginHint (username).ExecuteAsync ();
+            }
+
+            // Note: We use result.Account.Username here instead of ExchangeAccount because the user *may* have chosen a
             // different Microsoft Exchange account when presented with the browser window during the authentication process.
             SaslMechanism oauth2;
 
             if (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"))
-                oauth2 = new SaslMechanismOAuthBearer (authToken.Account.Username, authToken.AccessToken);
+                oauth2 = new SaslMechanismOAuthBearer (result.Account.Username, result.AccessToken);
             else
-                oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
+                oauth2 = new SaslMechanismOAuth2 (result.Account.Username, result.AccessToken);
 
             await client.AuthenticateAsync (oauth2);
         }

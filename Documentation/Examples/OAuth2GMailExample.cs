@@ -21,12 +21,12 @@ namespace OAuth2GMailExample {
             using (var client = new ImapClient ()) {
                 client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
                 if (client.AuthenticationMechanisms.Contains ("OAUTHBEARER") || client.AuthenticationMechanisms.Contains ("XOAUTH2"))
-                    OAuthAsync (client).GetAwaiter ().GetResult ();
+                    AuthenticateAsync (client).GetAwaiter ().GetResult ();
                 client.Disconnect (true);
             }
         }
 
-        static async Task OAuthAsync (ImapClient client)
+        static async Task AuthenticateAsync (ImapClient client)
         {
             var clientSecrets = new ClientSecrets {
                 ClientId = "XXX.apps.googleusercontent.com",
@@ -45,7 +45,7 @@ namespace OAuth2GMailExample {
 
             var credential = await authCode.AuthorizeAsync (GMailAccount, CancellationToken.None);
 
-            if (credential.Token.IsExpired (SystemClock.Default))
+            if (credential.Token.IsStale)
                 await credential.RefreshTokenAsync (CancellationToken.None);
 
             // Note: We use credential.UserId here instead of GMailAccount because the user *may* have chosen a
