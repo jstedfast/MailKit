@@ -88,6 +88,9 @@ the following code:
 var result = await publicClientApplication.AcquireTokenSilent(scopes, account).ExecuteAsync(cancellationToken);
 ```
 
+Note: for information on caching tokens, see Microsoft's documentation about how to implement a
+[cross-platform token cache](https://github.com/AzureAD/microsoft-authentication-extensions-for-dotnet/wiki/Cross-platform-Token-Cache).
+
 ## Web Services
 
 ### Registering Service Principals for Your Web Service
