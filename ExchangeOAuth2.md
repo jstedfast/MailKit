@@ -37,6 +37,8 @@ nuget package for obtaining the access token which will be needed by MailKit to 
 server.
 
 ```csharp
+const string EmailAddress = "username@outlook.com";
+
 var options = new PublicClientApplicationOptions {
     ClientId = "Application (client) ID",
     TenantId = "Directory (tenant) ID",
@@ -58,8 +60,23 @@ var scopes = new string[] {
     //"https://outlook.office.com/SMTP.Send", // Only needed for SMTP
 };
 
-var authToken = await publicClientApplication.AcquireTokenInteractive (scopes).ExecuteAsync ();
-var oauth2 = new SaslMechanismOAuth2 (authToken.Account.Username, authToken.AccessToken);
+AuthenticationResult? result;
+
+try {
+    // First, check the cache for an auth token.
+    result = await publicClientApplication
+        .AcquireTokenSilent (scopes, EmailAddress)
+        .ExecuteAsync ();
+} catch (MsalUiRequiredException) {
+    // If that fails, then try getting an auth token interactively.
+    result = await publicClientApplication
+        .AcquireTokenInteractive (scopes)
+        .WithLoginHint (EmailAddress)
+        .ExecuteAsync ();
+}
+
+// Note: We always use authToken.Account.Username instead of `Username` because the user may have selected an alternative account.
+var oauth2 = new SaslMechanismOAuth2 (result.Account.Username, result.AccessToken);
 
 using (var client = new ImapClient ()) {
     await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);

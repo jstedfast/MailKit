@@ -69,14 +69,15 @@ server.
 const string GMailAccount = "username@gmail.com";
 
 var clientSecrets = new ClientSecrets {
-	ClientId = "XXX.apps.googleusercontent.com",
-	ClientSecret = "XXX"
+    ClientId = "XXX.apps.googleusercontent.com",
+    ClientSecret = "XXX"
 };
 
 var codeFlow = new GoogleAuthorizationCodeFlow (new GoogleAuthorizationCodeFlow.Initializer {
-	DataStore = new FileDataStore ("CredentialCacheFolder", false),
-	Scopes = new [] { "https://mail.google.com/" },
-	ClientSecrets = clientSecrets
+    DataStore = new FileDataStore ("CredentialCacheFolder", false),
+    Scopes = new [] { "https://mail.google.com/" },
+    ClientSecrets = clientSecrets,
+    LoginHint = GMailAccount
 });
 
 // Note: For a web app, you'll want to use AuthorizationCodeWebApp instead.
@@ -86,14 +87,14 @@ var authCode = new AuthorizationCodeInstalledApp (codeFlow, codeReceiver);
 var credential = await authCode.AuthorizeAsync (GMailAccount, CancellationToken.None);
 
 if (credential.Token.IsStale)
-	await credential.RefreshTokenAsync (CancellationToken.None);
+    await credential.RefreshTokenAsync (CancellationToken.None);
 
 var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
 
 using (var client = new ImapClient ()) {
-	await client.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-	await client.AuthenticateAsync (oauth2);
-	await client.DisconnectAsync (true);
+    await client.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+    await client.AuthenticateAsync (oauth2);
+    await client.DisconnectAsync (true);
 }
 ```
 
