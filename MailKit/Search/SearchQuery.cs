@@ -73,7 +73,8 @@ namespace MailKit.Search {
 		/// Match all messages in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Matches all messages in the folder.
+		/// <para>Matches all messages in the folder.</para>
+		/// <note type="note">This is equivalent to the <c>ALL</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery All = new SearchQuery (SearchTerm.All);
 
@@ -126,7 +127,10 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages with the specified annotation.</para>
-		/// <note type="warning">This feature is not supported by all IMAP servers.</note>
+		/// <note type="note">This is equivalent to the <c>ANNOTATION</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc5257#section-4.8">rfc5257</a>
+		/// and is therefor only available for use with IMAP servers that support the <c>ANNOTATE</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Annotate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <param name="entry">The annotation entry.</param>
 		/// <param name="attribute">The annotation attribute.</param>
@@ -149,7 +153,8 @@ namespace MailKit.Search {
 		/// Match messages with the <see cref="MessageFlags.Answered"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages with the <see cref="MessageFlags.Answered"/> flag set.
+		/// <para>Matches messages with the <see cref="MessageFlags.Answered"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>ANSWERED</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery Answered = new SearchQuery (SearchTerm.Answered);
 
@@ -157,7 +162,8 @@ namespace MailKit.Search {
 		/// Match messages where the Bcc header contains the specified text.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages where the Bcc header contains the specified text.
+		/// <para>Matches messages where the Bcc header contains the specified text.</para>
+		/// <note type="note">This is equivalent to the <c>BCC</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
@@ -176,7 +182,8 @@ namespace MailKit.Search {
 		/// Match messages where the message body contains the specified text.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages where the message body contains the specified text.
+		/// <para>Matches messages where the message body contains the specified text.</para>
+		/// <note type="note">This is equivalent to the <c>BODY</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
@@ -195,7 +202,8 @@ namespace MailKit.Search {
 		/// Match messages where the Cc header contains the specified text.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages where the Cc header contains the specified text.
+		/// <para>Matches messages where the Cc header contains the specified text.</para>
+		/// <note type="note">This is equivalent to the <c>CC</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
@@ -214,7 +222,11 @@ namespace MailKit.Search {
 		/// Match messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
+		/// <para>Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.</para>
+		/// <note type="note">This is equivalent to the <c>MODSEQ</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc4551#section-3.4">rfc4551</a>
+		/// and is therefor only available for use with IMAP servers that support the <c>CONDSTORE</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.CondStore"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -227,7 +239,8 @@ namespace MailKit.Search {
 		/// Match messages with the <see cref="MessageFlags.Deleted"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages with the <see cref="MessageFlags.Deleted"/> flag set.
+		/// <para>Matches messages with the <see cref="MessageFlags.Deleted"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>DELETED</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery Deleted = new SearchQuery (SearchTerm.Deleted);
 
@@ -237,6 +250,7 @@ namespace MailKit.Search {
 		/// <remarks>
 		/// <para>Matches messages that were delivered after the specified date.</para>
 		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>SINCE</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -251,6 +265,7 @@ namespace MailKit.Search {
 		/// <remarks>
 		/// <para>Matches messages that were delivered before the specified date.</para>
 		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>BEFORE</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -265,6 +280,7 @@ namespace MailKit.Search {
 		/// <remarks>
 		/// <para>Matches messages that were delivered on the specified date.</para>
 		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>ON</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -277,7 +293,8 @@ namespace MailKit.Search {
 		/// Match messages with the <see cref="MessageFlags.Draft"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages with the <see cref="MessageFlags.Draft"/> flag set.
+		/// <para>Matches messages with the <see cref="MessageFlags.Draft"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>DRAFT</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery Draft = new SearchQuery (SearchTerm.Draft);
 
@@ -285,7 +302,11 @@ namespace MailKit.Search {
 		/// Match messages using a saved search filter.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages using a saved search filter.
+		/// <para>Matches messages using a saved search filter.</para>
+		/// <note type="note">This is equivalent to the <c>FILTER</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc5466">rfc5466</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>FILTERS</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Filters"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="FilterSearchQuery"/>.</returns>
 		/// <param name="name">The name of the saved search.</param>
@@ -298,7 +319,11 @@ namespace MailKit.Search {
 		/// Match messages using a saved search filter.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages using a saved search filter.
+		/// <para>Matches messages using a saved search filter.</para>
+		/// <note type="note">This is equivalent to the <c>FILTER</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc5466">rfc5466</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>FILTERS</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Filters"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="FilterSearchQuery"/>.</returns>
 		/// <param name="filter">The name of the saved search.</param>
@@ -311,7 +336,8 @@ namespace MailKit.Search {
 		/// Match messages with the <see cref="MessageFlags.Flagged"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages with the <see cref="MessageFlags.Flagged"/> flag set.
+		/// <para>Matches messages with the <see cref="MessageFlags.Flagged"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>FLAGGED</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery Flagged = new SearchQuery (SearchTerm.Flagged);
 
@@ -319,7 +345,8 @@ namespace MailKit.Search {
 		/// Match messages where the From header contains the specified text.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages where the From header contains the specified text.
+		/// <para>Matches messages where the From header contains the specified text.</para>
+		/// <note type="note">This is equivalent to the <c>FROM</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
@@ -339,7 +366,10 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Applies a fuzzy matching algorithm to the specified expression.</para>
-		/// <note type="warning">This feature is not supported by all IMAP servers.</note>
+		/// <note type="note">This is equivalent to the <c>OLDER</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc6203">rfc6203</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>SEARCH=FUZZY</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.FuzzySearch"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="UnarySearchQuery"/>.</returns>
 		/// <param name="expr">The expression</param>
@@ -358,7 +388,9 @@ namespace MailKit.Search {
 		/// Match messages that have the specified flags set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that have the specified flags set.
+		/// <para>Matches messages that have the specified flag(s) set.</para>
+		/// <note type="note">Maps each flag to the corresponding search key (<c>ANSWERED</c>, <c>DELETED</c>, <c>DRAFT</c>, <c>FLAGGED</c>,
+		/// <c>RECENT</c> or <c>SEEN</c>) as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The message flags.</param>
@@ -396,7 +428,9 @@ namespace MailKit.Search {
 		/// Match messages that do not have any of the specified flags set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have any of the specified flags set.
+		/// <para>Matches messages that do not have any of the specified flags set.</para>
+		/// <note type="note">Maps each flag to the corresponding search key (<c>UNANSWERED</c>, <c>UNDELETED</c>, <c>UNDRAFT</c>, <c>UNFLAGGED</c>,
+		/// <c>OLD</c> or <c>UNSEEN</c>) as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The message flags.</param>
@@ -435,7 +469,8 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that have the specified keyword set.</para>
-		/// <note type="info">A keyword is a user-defined message flag.</note>
+		/// <para>A keyword is a user-defined message flag that can be set (or unset) on a message.</para>
+		/// <note type="note">This is equivalent to the <c>KEYWORD</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="keyword">The keyword.</param>
@@ -461,7 +496,8 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that have all of the specified keywords set.</para>
-		/// <note type="info">A keyword is a user-defined message flag.</note>
+		/// <para>A keyword is a user-defined message flag that can be set (or unset) on a message.</para>
+		/// <note type="note">This is equivalent to AND-ing multiple <c>KEYWORD</c> search keys as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="keywords">The keywords.</param>
@@ -502,7 +538,8 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that do not have the specified keyword set.</para>
-		/// <note type="info">A keyword is a user-defined message flag.</note>
+		/// <para>A keyword is a user-defined message flag that can be set (or unset) on a message.</para>
+		/// <note type="note">This is equivalent to the <c>UNKEYWORD</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="keyword">The keyword.</param>
@@ -528,7 +565,8 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that do not have any of the specified keywords set.</para>
-		/// <note type="info">A keyword is a user-defined message flag.</note>
+		/// <para>A keyword is a user-defined message flag that can be set (or unset) on a message.</para>
+		/// <note type="note">This is equivalent to AND-ing multiple <c>UNKEYWORD</c> search keys as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="keywords">The keywords.</param>
@@ -568,7 +606,8 @@ namespace MailKit.Search {
 		/// Match messages where the specified header contains the specified text.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages where the specified header contains the specified text.
+		/// <para>Matches messages where the specified header contains the specified text.</para>
+		/// <note type="note">This is equivalent to the <c>HEADER</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="HeaderSearchQuery"/>.</returns>
 		/// <param name="field">The header field to match against.</param>
@@ -599,7 +638,8 @@ namespace MailKit.Search {
 		/// Match messages that are larger than the specified number of octets.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that are larger than the specified number of octets.
+		/// <para>Matches messages that are larger than the specified number of octets.</para>
+		/// <note type="note">This is equivalent to the <c>LARGER</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
 		/// <param name="octets">The number of octets.</param>
@@ -615,10 +655,11 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Match messages where the raw message contains the specified text.
+		/// Match messages that contain the specified text in either the header or the body.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages where the raw message contains the specified text.
+		/// <para>Matches messages that contain the specified text in either the header or the body.</para>
+		/// <note type="note">This is equivalent to the <c>TEXT</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
@@ -637,7 +678,8 @@ namespace MailKit.Search {
 		/// Match messages with the <see cref="MessageFlags.Recent"/> flag set but not the <see cref="MessageFlags.Seen"/>.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set but not the <see cref="MessageFlags.Seen"/>.
+		/// <para>Matches messages with the <see cref="MessageFlags.Recent"/> flag set but not the <see cref="MessageFlags.Seen"/>.</para>
+		/// <note type="note">This is equivalent to the <c>NEW</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery New = new SearchQuery (SearchTerm.New);
 
@@ -645,7 +687,8 @@ namespace MailKit.Search {
 		/// Create a logical negation of the specified expression.
 		/// </summary>
 		/// <remarks>
-		/// Creates a logical negation of the specified expression.
+		/// <para>Creates a logical negation of the specified expression.</para>
+		/// <note type="note">This is equivalent to the <c>NOT</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="UnarySearchQuery"/>.</returns>
 		/// <param name="expr">The expression</param>
@@ -664,7 +707,8 @@ namespace MailKit.Search {
 		/// Match messages that do not have the <see cref="MessageFlags.Answered"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the <see cref="MessageFlags.Answered"/> flag set.
+		/// <para>Matches messages that do not have the <see cref="MessageFlags.Answered"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>UNANSWERED</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery NotAnswered = new SearchQuery (SearchTerm.NotAnswered);
 
@@ -672,7 +716,8 @@ namespace MailKit.Search {
 		/// Match messages that do not have the <see cref="MessageFlags.Deleted"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the <see cref="MessageFlags.Deleted"/> flag set.
+		/// <para>Matches messages that do not have the <see cref="MessageFlags.Deleted"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>UNDELETED</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery NotDeleted = new SearchQuery (SearchTerm.NotDeleted);
 
@@ -680,7 +725,8 @@ namespace MailKit.Search {
 		/// Match messages that do not have the <see cref="MessageFlags.Draft"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the <see cref="MessageFlags.Draft"/> flag set.
+		/// <para>Matches messages that do not have the <see cref="MessageFlags.Draft"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>UNDRAFT</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery NotDraft = new SearchQuery (SearchTerm.NotDraft);
 
@@ -688,7 +734,8 @@ namespace MailKit.Search {
 		/// Match messages that do not have the <see cref="MessageFlags.Flagged"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the <see cref="MessageFlags.Flagged"/> flag set.
+		/// <para>Matches messages that do not have the <see cref="MessageFlags.Flagged"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>UNFLAGGED</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery NotFlagged = new SearchQuery (SearchTerm.NotFlagged);
 
@@ -696,7 +743,8 @@ namespace MailKit.Search {
 		/// Match messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
+		/// <para>Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>OLD</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery NotRecent = new SearchQuery (SearchTerm.NotRecent);
 
@@ -704,7 +752,8 @@ namespace MailKit.Search {
 		/// Match messages that do not have the <see cref="MessageFlags.Seen"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the <see cref="MessageFlags.Seen"/> flag set.
+		/// <para>Matches messages that do not have the <see cref="MessageFlags.Seen"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>UNSEEN</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery NotSeen = new SearchQuery (SearchTerm.NotSeen);
 
@@ -712,7 +761,8 @@ namespace MailKit.Search {
 		/// Match messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
+		/// <para>Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>OLD</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery Old = new SearchQuery (SearchTerm.NotRecent);
 
@@ -720,7 +770,11 @@ namespace MailKit.Search {
 		/// Match messages older than the specified number of seconds.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages older than the specified number of seconds.
+		/// <para>Matches messages older than the specified number of seconds.</para>
+		/// <note type="note">This is equivalent to the <c>OLDER</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc5032">rfc5032</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>WITHIN</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Within"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
 		/// <param name="seconds">The number of seconds.</param>
@@ -739,7 +793,8 @@ namespace MailKit.Search {
 		/// Create a conditional OR operation.
 		/// </summary>
 		/// <remarks>
-		/// A conditional OR operation only evaluates the second operand if the first operand evaluates to false.
+		/// <para>A conditional OR operation only evaluates the second operand if the first operand evaluates to false.</para>
+		/// <note type="note">This is equivalent to the <c>OR</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="BinarySearchQuery"/> representing the conditional OR operation.</returns>
 		/// <param name="left">The first operand.</param>
@@ -764,7 +819,8 @@ namespace MailKit.Search {
 		/// Create a conditional OR operation.
 		/// </summary>
 		/// <remarks>
-		/// A conditional OR operation only evaluates the second operand if the first operand evaluates to true.
+		/// <para>A conditional OR operation only evaluates the second operand if the first operand evaluates to true.</para>
+		/// <note type="note">This is equivalent to the <c>OR</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="BinarySearchQuery"/> representing the conditional AND operation.</returns>
 		/// <param name="expr">An additional query to execute.</param>
@@ -783,7 +839,8 @@ namespace MailKit.Search {
 		/// Match messages with the <see cref="MessageFlags.Recent"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set.
+		/// <para>Matches messages with the <see cref="MessageFlags.Recent"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>RECENT</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery Recent = new SearchQuery (SearchTerm.Recent);
 
@@ -792,9 +849,13 @@ namespace MailKit.Search {
 		/// the save date attribute.
 		/// </summary>
 		/// <remarks>
-		/// Matches all messages in the mailbox when the underlying storage of that mailbox supports
+		/// <para>Matches all messages in the mailbox when the underlying storage of that mailbox supports
 		/// the save date attribute. Conversely, it matches no messages in the mailbox when the save
-		/// date attribute is not supported.
+		/// date attribute is not supported.</para>
+		/// <note type="note">This is equivalent to the <c>SAVEDATESUPPORTED</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc8514">rfc8514, section 4.3</a>
+		/// and is therefor only available for use with IMAP servers that support the <c>SAVEDATE</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.SaveDate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		public static readonly SearchQuery SaveDateSupported = new SearchQuery (SearchTerm.SaveDateSupported);
 
@@ -803,7 +864,11 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were saved to the mailbox before the specified date.</para>
-		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>SAVEDBEFORE</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc8514">rfc8514, section 4.3</a>
+		/// and is therefor only available for use with IMAP servers that support the <c>SAVEDATE</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.SaveDate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -817,7 +882,11 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were saved to the mailbox on the specified date.</para>
-		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>SAVEDON</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc8514">rfc8514, section 4.3</a>
+		/// and is therefor only available for use with IMAP servers that support the <c>SAVEDATE</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.SaveDate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -831,7 +900,11 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were saved to the mailbox since the specified date.</para>
-		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>SAVEDSINCE</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc8514">rfc8514, section 4.3</a>
+		/// and is therefor only available for use with IMAP servers that support the <c>SAVEDATE</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.SaveDate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -844,7 +917,8 @@ namespace MailKit.Search {
 		/// Match messages with the <see cref="MessageFlags.Seen"/> flag set.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages with the <see cref="MessageFlags.Seen"/> flag set.
+		/// <para>Matches messages with the <see cref="MessageFlags.Seen"/> flag set.</para>
+		/// <note type="note">This is equivalent to the <c>SEEN</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		public static readonly SearchQuery Seen = new SearchQuery (SearchTerm.Seen);
 
@@ -853,7 +927,8 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were sent before the specified date.</para>
-		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>SENTBEFORE</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -867,7 +942,8 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were sent on the specified date.</para>
-		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>SENTON</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -881,7 +957,8 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Matches messages that were sent since the specified date.</para>
-		/// <note type="note">The resolution of this search query does not include the time.</note>
+		/// <para>The resolution of this search query does not include the time.</para>
+		/// <note type="note">This is equivalent to the <c>SENTSINCE</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
@@ -894,7 +971,8 @@ namespace MailKit.Search {
 		/// Match messages that are smaller than the specified number of octets.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages that are smaller than the specified number of octets.
+		/// <para>Matches messages that are smaller than the specified number of octets.</para>
+		/// <note type="note">This is equivalent to the <c>SMALLER</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
 		/// <param name="octets">The number of octets.</param>
@@ -913,7 +991,8 @@ namespace MailKit.Search {
 		/// Match messages where the Subject header contains the specified text.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages where the Subject header contains the specified text.
+		/// <para>Matches messages where the Subject header contains the specified text.</para>
+		/// <note type="note">This is equivalent to the <c>SUBJECT</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
@@ -932,7 +1011,8 @@ namespace MailKit.Search {
 		/// Match messages where the To header contains the specified text.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages where the To header contains the specified text.
+		/// <para>Matches messages where the To header contains the specified text.</para>
+		/// <note type="note">This is equivalent to the <c>TO</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
@@ -951,7 +1031,8 @@ namespace MailKit.Search {
 		/// Limit the search query to messages with the specified unique identifiers.
 		/// </summary>
 		/// <remarks>
-		/// Limits the search query to messages with the specified unique identifiers.
+		/// <para>Limits the search query to messages with the specified unique identifiers.</para>
+		/// <note type="note">This is equivalent to the <c>UID</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc3501#section-6.4.4">rfc3501</a>.</note>
 		/// </remarks>
 		/// <returns>A <see cref="UidSearchQuery"/>.</returns>
 		/// <param name="uids">The unique identifiers.</param>
@@ -970,7 +1051,11 @@ namespace MailKit.Search {
 		/// Match messages younger than the specified number of seconds.
 		/// </summary>
 		/// <remarks>
-		/// Matches messages younger than the specified number of seconds.
+		/// <para>Matches messages younger than the specified number of seconds.</para>
+		/// <note type="note">This is equivalent to the <c>YOUNGER</c> search key as defined in <a href="https://www.rfc-editor.org/rfc/rfc5032">rfc5032</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>WITHIN</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Within"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
 		/// <param name="seconds">The number of seconds.</param>
@@ -991,7 +1076,11 @@ namespace MailKit.Search {
 		/// Match messages that have the specified GMail message identifier.
 		/// </summary>
 		/// <remarks>
-		/// This search term can only be used with GMail.
+		/// <para>Matches messages that have the specified GMail message identifier.</para>
+		/// <note type="note">This is equivalent to the <c>X-GM-MSGID</c> search key as defined in <a href="https://developers.google.com/gmail/imap_extensions">Google's IMAP extensions</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>X-GM-EXT1</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.GMailExt1"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
 		/// <param name="id">The GMail message identifier.</param>
@@ -1004,7 +1093,11 @@ namespace MailKit.Search {
 		/// Match messages belonging to the specified GMail thread.
 		/// </summary>
 		/// <remarks>
-		/// This search term can only be used with GMail.
+		/// <para>Matches messages belonging to the specified GMail thread.</para>
+		/// <note type="note">This is equivalent to the <c>X-GM-THRID</c> search key as defined in <a href="https://developers.google.com/gmail/imap_extensions">Google's IMAP extensions</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>X-GM-EXT1</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.GMailExt1"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
 		/// <param name="thread">The GMail thread.</param>
@@ -1017,7 +1110,11 @@ namespace MailKit.Search {
 		/// Match messages that have the specified GMail label.
 		/// </summary>
 		/// <remarks>
-		/// This search term can only be used with GMail.
+		/// <para>Matches messages that have the specified GMail label.</para>
+		/// <note type="note">This is equivalent to the <c>X-GM-LABELS</c> search key as defined in <a href="https://developers.google.com/gmail/imap_extensions">Google's IMAP extensions</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>X-GM-EXT1</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.GMailExt1"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="label">The GMail label.</param>
@@ -1042,7 +1139,11 @@ namespace MailKit.Search {
 		/// Match messages using the GMail search expression.
 		/// </summary>
 		/// <remarks>
-		/// This search term can only be used with GMail.
+		/// <para>Matches messages using Google's custom message search syntax.</para>
+		/// <note type="note">This is equivalent to the <c>X-GM-RAW</c> search key as defined in <a href="https://developers.google.com/gmail/imap_extensions">Google's IMAP extensions</a> and is therefor only available
+		/// for use with IMAP servers that support the <c>X-GM-EXT1</c> extension.</note>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.GMailExt1"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="expression">The raw GMail search text.</param>
