@@ -907,7 +907,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="name"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="name"/> is empty.
+		/// <paramref name="name"/> is empty or invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -954,7 +954,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="name"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="name"/> is empty.
+		/// <paramref name="name"/> is empty or invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1061,7 +1061,7 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="specialUses"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="name"/> is empty.
+		/// <paramref name="name"/> is empty or invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1113,7 +1113,7 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="specialUses"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="name"/> is empty.
+		/// <paramref name="name"/> is empty or invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
