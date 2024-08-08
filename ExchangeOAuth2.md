@@ -78,6 +78,14 @@ using (var client = new ImapClient ()) {
     await client.AuthenticateAsync (oauth2);
     await client.DisconnectAsync (true);
 }
+
+/* In case of SMTP
+using (var client = new SmtpClient ()) {
+    await client.ConnectAsync ("smtp.office365.com", 587, SecureSocketOptions.StartTls);
+    await client.AuthenticateAsync (oauth2);
+    await client.DisconnectAsync (true);
+}
+*/
 ```
 
 Note: Once you've acquired an auth token using the interactive method above, you can avoid prompting the user
@@ -160,6 +168,14 @@ using (var client = new ImapClient ()) {
     await client.AuthenticateAsync (oauth2);
     await client.DisconnectAsync (true);
 }
+
+/* In case of SMTP
+using (var client = new SmtpClient ()) {
+    await client.ConnectAsync ("smtp.office365.com", 587, SecureSocketOptions.StartTls);
+    await client.AuthenticateAsync (oauth2);
+    await client.DisconnectAsync (true);
+}
+*/
 ```
 
 ## Additional Resources
