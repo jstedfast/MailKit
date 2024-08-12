@@ -35,6 +35,16 @@ namespace MailKit {
 	public abstract class BodyPartVisitor
 	{
 		/// <summary>
+		/// Initialize a new instance of the <see cref="BodyPartVisitor"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartVisitor"/>.
+		/// </remarks>
+		protected BodyPartVisitor ()
+		{
+		}
+
+		/// <summary>
 		/// Dispatches the entity to one of the more specialized visit methods in this class.
 		/// </summary>
 		/// <remarks>
