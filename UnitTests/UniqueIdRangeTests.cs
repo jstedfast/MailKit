@@ -25,6 +25,7 @@
 //
 
 using MailKit;
+using MailKit.Search;
 
 namespace UnitTests {
 	public class UniqueIdRangeTests
@@ -55,6 +56,7 @@ namespace UnitTests {
 			UniqueIdRange uids;
 
 			Assert.That (UniqueIdRange.TryParse (example, 20160117, out uids), Is.True, "Failed to parse uids.");
+			Assert.That (uids.SortOrder, Is.EqualTo (SortOrder.Ascending), "SortOrder");
 			Assert.That (uids.Validity, Is.EqualTo (20160117), "Validity");
 			Assert.That (uids.IsReadOnly, Is.True, "IsReadOnly");
 			Assert.That (uids.Start.Id, Is.EqualTo (1), "Start");
@@ -98,6 +100,7 @@ namespace UnitTests {
 			UniqueIdRange uids;
 
 			Assert.That (UniqueIdRange.TryParse (example, 20160117, out uids), Is.True, "Failed to parse uids.");
+			Assert.That (uids.SortOrder, Is.EqualTo (SortOrder.Descending), "SortOrder");
 			Assert.That (uids.Validity, Is.EqualTo (20160117), "Validity");
 			Assert.That (uids.IsReadOnly, Is.True, "IsReadOnly");
 			Assert.That (uids.Start.Id, Is.EqualTo (20), "Start");
@@ -155,6 +158,7 @@ namespace UnitTests {
 			Assert.That (UniqueIdRange.TryParse ("1:1x", out _), Is.False);
 
 			Assert.That (UniqueIdRange.TryParse ("1:*", out var range), Is.True);
+			Assert.That (range.SortOrder, Is.EqualTo (SortOrder.Ascending), "SortOrder");
 			Assert.That (range.Min, Is.EqualTo (UniqueId.MinValue));
 			Assert.That (range.Max, Is.EqualTo (UniqueId.MaxValue));
 		}

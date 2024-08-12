@@ -29,6 +29,8 @@ using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
 
+using MailKit.Search;
+
 namespace MailKit {
 	/// <summary>
 	/// A range of <see cref="UniqueId"/> items.
@@ -111,6 +113,17 @@ namespace MailKit {
 			this.validity = start.Validity;
 			this.start = start.Id;
 			this.end = end.Id;
+		}
+
+		/// <summary>
+		/// Gets the sort order of the unique identifiers.
+		/// </summary>
+		/// <remarks>
+		/// Gets the sort order of the unique identifiers.
+		/// </remarks>
+		/// <value>The sort order.</value>
+		public SortOrder SortOrder {
+			get { return start <= end ? SortOrder.Ascending : SortOrder.Descending; }
 		}
 
 		/// <summary>
