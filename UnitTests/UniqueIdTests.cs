@@ -57,13 +57,16 @@ namespace UnitTests {
 		[Test]
 		public void TestComparisons ()
 		{
-			Assert.That (new UniqueId (5), Is.LessThanOrEqualTo (new UniqueId (5)), "5 <= 5");
-			Assert.That (new UniqueId (1), Is.LessThanOrEqualTo (new UniqueId (5)), "1 <= 5");
-			Assert.That (new UniqueId (1), Is.LessThan (new UniqueId (5)), "1 < 5");
+			var five = new UniqueId (5);
+			var one = new UniqueId (1);
 
-			Assert.That (new UniqueId (5), Is.GreaterThanOrEqualTo (new UniqueId (5)), "5 >= 5");
-			Assert.That (new UniqueId (5), Is.GreaterThanOrEqualTo (new UniqueId (1)), "5 >= 1");
-			Assert.That (new UniqueId (5), Is.GreaterThan (new UniqueId (1)), "5 > 1");
+			Assert.That (new UniqueId (5), Is.LessThanOrEqualTo (five), "5 <= 5");
+			Assert.That (new UniqueId (1), Is.LessThanOrEqualTo (five), "1 <= 5");
+			Assert.That (new UniqueId (1), Is.LessThan (five), "1 < 5");
+
+			Assert.That (new UniqueId (5), Is.GreaterThanOrEqualTo (five), "5 >= 5");
+			Assert.That (new UniqueId (5), Is.GreaterThanOrEqualTo (one), "5 >= 1");
+			Assert.That (new UniqueId (5), Is.GreaterThan (one), "5 > 1");
 
 			Assert.That (new UniqueId (1).CompareTo (new UniqueId (5)), Is.EqualTo (-1), "1.CompareTo (5)");
 			Assert.That (new UniqueId (5).CompareTo (new UniqueId (1)), Is.EqualTo (1), "5.CompareTo (1)");
