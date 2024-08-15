@@ -32,7 +32,25 @@ namespace MailKit {
 	/// A unique identifier.
 	/// </summary>
 	/// <remarks>
-	/// Represents a unique identifier for messages in a <see cref="IMailFolder"/>.
+	/// <para>Represents a unique identifier for messages in a <see cref="IMailFolder"/>.</para>
+	/// <para>A 32-bit value assigned to each message, which when used with the
+	/// unique identifier validity value (see below) forms a 64-bit value
+	/// that MUST NOT refer to any other message in the mailbox or any
+	/// subsequent mailbox with the same name forever.Unique identifiers
+	/// are assigned in a strictly ascending fashion in the mailbox; as each
+	/// message is added to the mailbox it is assigned a higher UID than the
+	/// message(s) which were added previously. Unlike message sequence
+	/// numbers, unique identifiers are not necessarily contiguous.</para>
+	/// <para>The unique identifier of a message MUST NOT change during the
+	/// session, and SHOULD NOT change between sessions. Any change of
+	/// unique identifiers between sessions MUST be detectable using the
+	/// UIDVALIDITY mechanism discussed below. Persistent unique identifiers
+	/// are required for a client to resynchronize its state from a previous
+	/// session with the server (e.g., disconnected or offline access
+	/// clients); this is discussed further in
+	/// [<a href="https://datatracker.ietf.org/doc/html/rfc3501#ref-IMAP-DISC">IMAP-DISC</a>].</para>
+	/// <note type="note">For more information about unique identifiers, see
+	/// <a href="https://datatracker.ietf.org/doc/html/rfc3501#section-2.3.1.1">RFC 3501, section 2.3.1.1</a>.</note>
 	/// </remarks>
 	public readonly struct UniqueId : IComparable<UniqueId>, IEquatable<UniqueId>
 	{
@@ -119,7 +137,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the UidValidity of the containing folder.
 		/// </remarks>
-		/// <value>The UidValidity of the containing folder.</value>
+		/// <value>The UidValidity of the containing folder or <c>0</c> if not known.</value>
 		public uint Validity {
 			get { return validity; }
 		}
@@ -141,7 +159,8 @@ namespace MailKit {
 		/// Compares two <see cref="UniqueId"/> objects.
 		/// </summary>
 		/// <remarks>
-		/// Compares two <see cref="UniqueId"/> objects.
+		/// <para>Compares two <see cref="UniqueId"/> objects.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <returns>
 		/// A value less than <c>0</c> if this <see cref="UniqueId"/> is less than <paramref name="other"/>,
@@ -162,7 +181,8 @@ namespace MailKit {
 		/// Determines whether the specified <see cref="MailKit.UniqueId"/> is equal to the current <see cref="MailKit.UniqueId"/>.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether the specified <see cref="MailKit.UniqueId"/> is equal to the current <see cref="MailKit.UniqueId"/>.
+		/// <para>Determines whether the specified <see cref="MailKit.UniqueId"/> is equal to the current <see cref="MailKit.UniqueId"/>.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <param name="other">The <see cref="MailKit.UniqueId"/> to compare with the current <see cref="MailKit.UniqueId"/>.</param>
 		/// <returns><c>true</c> if the specified <see cref="MailKit.UniqueId"/> is equal to the current
@@ -178,7 +198,8 @@ namespace MailKit {
 		/// Determines whether two unique identifiers are equal.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether two unique identifiers are equal.
+		/// <para>Determines whether two unique identifiers are equal.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> and <paramref name="uid2"/> are equal; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
@@ -192,7 +213,8 @@ namespace MailKit {
 		/// Determines whether one unique identifier is greater than another unique identifier.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether one unique identifier is greater than another unique identifier.
+		/// <para>Determines whether one unique identifier is greater than another unique identifier.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> is greater than <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
@@ -206,7 +228,8 @@ namespace MailKit {
 		/// Determines whether one unique identifier is greater than or equal to another unique identifier.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether one unique identifier is greater than or equal to another unique identifier.
+		/// <para>Determines whether one unique identifier is greater than or equal to another unique identifier.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> is greater than or equal to <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
@@ -220,7 +243,8 @@ namespace MailKit {
 		/// Determines whether two unique identifiers are not equal.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether two unique identifiers are not equal.
+		/// <para>Determines whether two unique identifiers are not equal.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> and <paramref name="uid2"/> are not equal; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
@@ -234,7 +258,8 @@ namespace MailKit {
 		/// Determines whether one unique identifier is less than another unique identifier.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether one unique identifier is less than another unique identifier.
+		/// <para>Determines whether one unique identifier is less than another unique identifier.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> is less than <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
@@ -248,7 +273,8 @@ namespace MailKit {
 		/// Determines whether one unique identifier is less than or equal to another unique identifier.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether one unique identifier is less than or equal to another unique identifier.
+		/// <para>Determines whether one unique identifier is less than or equal to another unique identifier.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> is less than or equal to <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
@@ -262,7 +288,8 @@ namespace MailKit {
 		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>.
+		/// <para>Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>.</para>
+		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.UniqueId"/>.</param>
 		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>;
