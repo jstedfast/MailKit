@@ -68,6 +68,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Caching\BinaryMessageSummaryIndex.cs" />
+    <Compile Include="Caching\DbConnectionExtensions.cs" />
+    <Compile Include="Caching\DbDataReaderExensions.cs" />
+    <Compile Include="Caching\IMessageSummaryIndex.cs" />
+    <Compile Include="Caching\SqlMessageSummaryIndex.cs" />
     <Compile Include="Net\Imap\AsyncImapClient.cs" />
     <Compile Include="Net\Imap\IImapClient.cs" />
     <Compile Include="Net\Imap\IImapFolder.cs" />
