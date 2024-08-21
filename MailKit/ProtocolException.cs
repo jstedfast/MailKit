@@ -72,7 +72,7 @@ namespace MailKit {
 		/// <param name="innerException">An inner exception.</param>
 		protected ProtocolException (string message, Exception innerException) : base (message, innerException)
 		{
-			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
+			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#q-how-can-i-get-a-protocol-log-for-imap-pop3-or-smtp-to-see-what-is-going-wrong";
 		}
 
 		/// <summary>
@@ -84,7 +84,7 @@ namespace MailKit {
 		/// <param name="message">The error message.</param>
 		protected ProtocolException (string message) : base (message)
 		{
-			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
+			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#q-how-can-i-get-a-protocol-log-for-imap-pop3-or-smtp-to-see-what-is-going-wrong";
 		}
 
 		/// <summary>
@@ -95,7 +95,7 @@ namespace MailKit {
 		/// </remarks>
 		protected ProtocolException ()
 		{
-			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
+			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#q-how-can-i-get-a-protocol-log-for-imap-pop3-or-smtp-to-see-what-is-going-wrong";
 		}
 	}
 }
