@@ -37,44 +37,78 @@ nuget package for obtaining the access token which will be needed by MailKit to 
 server.
 
 ```csharp
-const string EmailAddress = "username@outlook.com";
+static async Task<AuthenticationResult> GetPublicClientOAuth2CredentialsAsync (string protocol, string emailAddress, CancellationToken cancellationToken = default)
+{
+    var options = new PublicClientApplicationOptions {
+        ClientId = "Application (client) ID",
+        TenantId = "Directory (tenant) ID",
 
-var options = new PublicClientApplicationOptions {
-    ClientId = "Application (client) ID",
-    TenantId = "Directory (tenant) ID",
-
-    // Use "https://login.microsoftonline.com/common/oauth2/nativeclient" for apps using
-    // embedded browsers or "http://localhost" for apps that use system browsers.
-    RedirectUri = "https://login.microsoftonline.com/common/oauth2/nativeclient"
-};
+        // Use "https://login.microsoftonline.com/common/oauth2/nativeclient" for apps using
+        // embedded browsers or "http://localhost" for apps that use system browsers.
+        RedirectUri = "https://login.microsoftonline.com/common/oauth2/nativeclient"
+    };
  
-var publicClientApplication = PublicClientApplicationBuilder
-    .CreateWithApplicationOptions (options)
-    .Build ();
+    var publicClientApplication = PublicClientApplicationBuilder
+        .CreateWithApplicationOptions (options)
+        .Build ();
+
+    string[] scopes;
  
-var scopes = new string[] {
-    "email",
-    "offline_access",
-    "https://outlook.office.com/IMAP.AccessAsUser.All", // Only needed for IMAP
-    //"https://outlook.office.com/POP.AccessAsUser.All",  // Only needed for POP
-    //"https://outlook.office.com/SMTP.Send", // Only needed for SMTP
-};
+    if (protocol.Equals ("IMAP", StringComparison.OrdinalIgnoreCase)) {
+        scopes = new string[] {
+            "email",
+            "offline_access",
+            "https://outlook.office.com/IMAP.AccessAsUser.All"
+        };
+    } else if (protocol.Equals ("POP", StringComparison.OrdinalIgnoreCase)) {
+        scopes = new string[] {
+            "email",
+            "offline_access",
+            "https://outlook.office.com/POP.AccessAsUser.All"
+        };
+    } else {
+        scopes = new string[] {
+            "email",
+            "offline_access",
+            "https://outlook.office.com/SMTP.Send"
+        };
+    }
 
-AuthenticationResult? result;
-
-try {
-    // First, check the cache for an auth token.
-    result = await publicClientApplication.AcquireTokenSilent (scopes, EmailAddress).ExecuteAsync ();
-} catch (MsalUiRequiredException) {
-    // If that fails, then try getting an auth token interactively.
-    result = await publicClientApplication.AcquireTokenInteractive (scopes).WithLoginHint (EmailAddress).ExecuteAsync ();
+    try {
+        // First, check the cache for an auth token.
+        return await publicClientApplication.AcquireTokenSilent (scopes, emailAddress).ExecuteAsync (cancellationToken);
+    } catch (MsalUiRequiredException) {
+        // If that fails, then try getting an auth token interactively.
+        return await publicClientApplication.AcquireTokenInteractive (scopes).WithLoginHint (emailAddress).ExecuteAsync (cancellationToken);
+    }
 }
+```
+
+#### IMAP (using PublicClientApplication)
+
+```csharp
+var result = await GetPublicClientOAuth2CredentialsAsync ("IMAP", "username@outlook.com");
 
 // Note: We always use result.Account.Username instead of `Username` because the user may have selected an alternative account.
 var oauth2 = new SaslMechanismOAuth2 (result.Account.Username, result.AccessToken);
 
 using (var client = new ImapClient ()) {
     await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
+    await client.AuthenticateAsync (oauth2);
+    await client.DisconnectAsync (true);
+}
+```
+
+#### SMTP (using PublicClientApplication)
+
+```csharp
+var result = await GetPublicClientOAuth2CredentialsAsync ("SMTP", "username@outlook.com");
+
+// Note: We always use result.Account.Username instead of `Username` because the user may have selected an alternative account.
+var oauth2 = new SaslMechanismOAuth2 (result.Account.Username, result.AccessToken);
+
+using (var client = new SmtpClient ()) {
+    await client.ConnectAsync ("smtp.office365.com", 587, SecureSocketOptions.StartTls);
     await client.AuthenticateAsync (oauth2);
     await client.DisconnectAsync (true);
 }
@@ -139,24 +173,52 @@ nuget package for obtaining the access token which will be needed by MailKit to 
 server.
 
 ```csharp
-var confidentialClientApplication = ConfidentialClientApplicationBuilder.Create (clientId)
-    .WithAuthority ($"https://login.microsoftonline.com/{tenantId}/v2.0")
-    .WithCertificate (certificate) // or .WithClientSecret (clientSecret)
-    .Build ();
- 
-var scopes = new string[] {
-    // For IMAP and POP3, use the following scope
-    "https://ps.outlook.com/.default"
+static async Task<AuthenticationResult> GetConfidentialClientOAuth2CredentialsAsync (string protocol, CancellationToken cancellationToken = default)
+{
+    var confidentialClientApplication = ConfidentialClientApplicationBuilder.Create (clientId)
+        .WithAuthority ($"https://login.microsoftonline.com/{tenantId}/v2.0")
+        .WithCertificate (certificate) // or .WithClientSecret (clientSecret)
+        .Build ();
 
-    // For SMTP, use the following scope
-    // "https://outlook.office365.com/.default"
-};
+    string[] scopes;
 
-var authToken = await confidentialClientApplication.AcquireTokenForClient (scopes).ExecuteAsync ();
-var oauth2 = new SaslMechanismOAuth2 (accountEmailAddress, authToken.AccessToken);
+    if (protocol.Equals ("SMTP", StringComparison.OrdinalIgnoreCase)) {
+        scopes = new string[] {
+            // For SMTP, use the following scope
+            "https://outlook.office365.com/.default"
+        };
+    } else {
+        scopes = new string[] {
+            // For IMAP and POP3, use the following scope
+            "https://ps.outlook.com/.default"
+        };
+    }
+
+    return await confidentialClientApplication.AcquireTokenForClient (scopes).ExecuteAsync (cancellationToken);
+}
+```
+
+#### IMAP (using ConfidentialClientApplication)
+
+```csharp
+var result = await GetConfidentialClientOAuth2CredentialsAsync ("IMAP");
+var oauth2 = new SaslMechanismOAuth2 ("username@outlook.com", result.AccessToken);
 
 using (var client = new ImapClient ()) {
     await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
+    await client.AuthenticateAsync (oauth2);
+    await client.DisconnectAsync (true);
+}
+```
+
+#### SMTP (using ConfidentialClientApplication)
+
+```csharp
+var result = await GetConfidentialClientOAuth2CredentialsAsync ("SMTP");
+var oauth2 = new SaslMechanismOAuth2 ("username@outlook.com", result.AccessToken);
+
+using (var client = new SmtpClient ()) {
+    await client.ConnectAsync ("smtp.office365.com", 587, SecureSocketOptions.StartTls);
     await client.AuthenticateAsync (oauth2);
     await client.DisconnectAsync (true);
 }
