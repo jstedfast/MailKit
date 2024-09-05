@@ -37,6 +37,7 @@
 * [Why doesn't ImapFolder.MoveTo() move the message out of the source folder?](#imap-move-does-not-move)
 * [How can I mark messages as read using IMAP?](#imap-mark-as-read)
 * [How can I re-synchronize the cache for an IMAP folder?](#imap-folder-resync)
+* [How can I login using a shared mailbox in Office365?](#office365-shared-mailboxes)
 
 ### SmtpClient
 
@@ -1730,6 +1731,31 @@ static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref 
     // Tada! Now we are resynchronized with the server!
 }
 ```
+
+### <a href="office365-shared-mailboxes">Q: How can I login using a shared mailbox in Office365?</a>
+
+```csharp
+var result = await GetPublicClientOAuth2CredentialsAsync ("IMAP", "sharedMailboxName@custom-domain.com");
+
+// Note: We always use result.Account.Username instead of `Username` because the user may have selected an alternative account.
+var oauth2 = new SaslMechanismOAuth2 (result.Account.Username, result.AccessToken);
+
+using (var client = new ImapClient ()) {
+    await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
+    await client.AuthenticateAsync (oauth2);
+
+    // ...
+
+    await client.DisconnectAsync (true);
+}
+```
+
+Notes:
+
+1. The `GetPublicClientOAuth2CredentialsAsync()` method used in this example code snippet can be found in the
+[ExchangeOAuth2.md](ExchangeOAuth2.md#desktop-and-mobile-applications) documentation.
+2. Some users have reported that they need to use `"username@custom-domain.com\\sharedMailboxName"` as their
+username instead of `"sharedMailboxName@custom-domain.com"`.
 
 ## SmtpClient
 
