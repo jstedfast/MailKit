@@ -6,6 +6,7 @@
 
 * [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#completely-free)
 * [Why do I get `NotSupportedException: No data is available for encoding ######. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method.`?](#register-provider)
+* [Why do I get a `TypeLoadException` when I try to create a new MimeMessage?](#type-load-exception)
 * [Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?](#ssl-handshake-exception)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#protocol-log)
 * [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#gmail-hidden-messages)
@@ -66,6 +67,34 @@ the following line of code to your program initialization (e.g. the beginning of
 System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Instance);
 ```
 
+### <a name="type-load-exception">Q: Why do I get a `TypeLoadException` when I try to create a new MimeMessage?</a>
+
+This only seems to happen in cases where the application is built for .NET Framework (v4.x) and seems to be most
+common for ASP.NET web applications that were built using Visual Studio 2019 (it is unclear whether this happens
+with Visual Studio 2022 as well).
+
+The issue is that some (older?) versions of MSBuild do not correctly generate `\*.dll.config`, `app.config`
+and/or `web.config` files with proper assembly version binding redirects.
+
+If this problem is happening to you, make sure to use MimeKit and MailKit >= v4.0 which include `MimeKit.dll.config`
+and `MailKit.dll.config`.
+
+The next step is to manually edit your application's `app.config` (or `web.config`) to add a binding redirect
+for `System.Runtime.CompilerServices.Unsafe`:
+
+```xml
+<configuration>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+</configuration>
+```
+
 ### <a id="ssl-handshake-exception">Q: Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?</a>
 
 When you get an exception with that error message, it usually means that you are encountering
@@ -115,7 +144,7 @@ by a known and trusted Certificate Authority, the above error will occur.
 If you are on a Linux system or are running a web service in a Linux container, it might be possible to use the following command to install
 the standard set of Certificate Authority root certificates using the following command:
 
-```
+```text
 apt update && apt install -y ca-certificates
 ```
 
