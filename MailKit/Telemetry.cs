@@ -151,7 +151,7 @@ namespace MailKit {
 
 			internal static ClientMetrics CreateMetrics (Meter meter)
 			{
-				return new ClientMetrics (Meter, MeterName, "an", "SMTP");
+				return new ClientMetrics (meter, MeterName, "an", "SMTP");
 			}
 
 			/// <summary>
@@ -236,7 +236,7 @@ namespace MailKit {
 
 			internal static ClientMetrics CreateMetrics (Meter meter)
 			{
-				return new ClientMetrics (Meter, MeterName, "a", "POP3");
+				return new ClientMetrics (meter, MeterName, "a", "POP3");
 			}
 
 			/// <summary>
@@ -321,7 +321,7 @@ namespace MailKit {
 
 			internal static ClientMetrics CreateMetrics (Meter meter)
 			{
-				return new ClientMetrics (Meter, MeterName, "an", "IMAP");
+				return new ClientMetrics (meter, MeterName, "an", "IMAP");
 			}
 
 			/// <summary>

@@ -1775,7 +1775,9 @@ namespace MailKit.Net.Smtp {
 
 		void Disconnect (string host, int port, SecureSocketOptions options, bool requested)
 		{
-			RecordClientDisconnected (null);
+			// Note: if the uri is null, then the user manually disconnected already.
+			if (uri != null)
+				RecordClientDisconnected (null);
 
 			capabilities = SmtpCapabilities.None;
 			authenticated = false;
