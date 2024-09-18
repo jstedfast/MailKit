@@ -160,7 +160,7 @@ jobs:
       - name: Upload unit test results
         id: upload_test_results
         continue-on-error: true
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}-${{ matrix.os }}-${{ matrix.build-configuration }}-TestResults.xml
           path: TestResult.xml
@@ -205,7 +205,7 @@ jobs:
       - if: steps.configure.outputs.is_github_release == 'true'
         name: Upload NuGet package as artifact
         id: upload_nuget_package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
           path: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
