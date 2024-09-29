@@ -88,8 +88,8 @@ namespace MailKit.Net.Proxy
 		/// Connects to the target host and port through the proxy server.
 		/// </remarks>
 		/// <returns>The connected network stream.</returns>
-		/// <param name="host">The host name of the proxy server.</param>
-		/// <param name="port">The proxy server port.</param>
+		/// <param name="host">The host name of the target server.</param>
+		/// <param name="port">The target server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="host"/> is <c>null</c>.
@@ -118,8 +118,8 @@ namespace MailKit.Net.Proxy
 		/// Asynchronously connects to the target host and port through the proxy server.
 		/// </remarks>
 		/// <returns>The connected network stream.</returns>
-		/// <param name="host">The host name of the proxy server.</param>
-		/// <param name="port">The proxy server port.</param>
+		/// <param name="host">The host name of the target server.</param>
+		/// <param name="port">The target server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="host"/> is <c>null</c>.
@@ -148,8 +148,8 @@ namespace MailKit.Net.Proxy
 		/// Connects to the target host and port through the proxy server.
 		/// </remarks>
 		/// <returns>The connected network stream.</returns>
-		/// <param name="host">The host name of the proxy server.</param>
-		/// <param name="port">The proxy server port.</param>
+		/// <param name="host">The host name of the target server.</param>
+		/// <param name="port">The target server port.</param>
 		/// <param name="timeout">The timeout, in milliseconds.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -182,8 +182,8 @@ namespace MailKit.Net.Proxy
 		/// Asynchronously connects to the target host and port through the proxy server.
 		/// </remarks>
 		/// <returns>The connected network stream.</returns>
-		/// <param name="host">The host name of the proxy server.</param>
-		/// <param name="port">The proxy server port.</param>
+		/// <param name="host">The host name of the target server.</param>
+		/// <param name="port">The target server port.</param>
 		/// <param name="timeout">The timeout, in milliseconds.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
