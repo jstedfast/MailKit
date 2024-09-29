@@ -31,6 +31,10 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
+#if NET6_0_OR_GREATER
+using System.Net.Http;
+#endif
+
 namespace MailKit.Net.Proxy
 {
 	/// <summary>
@@ -45,6 +49,25 @@ namespace MailKit.Net.Proxy
 	/// </example>
 	public abstract class ProxyClient : IProxyClient
 	{
+#if NET6_0_OR_GREATER
+		static IProxyClient systemProxy;
+
+		/// <summary>
+		/// Get a client for the default system proxy.
+		/// </summary>
+		/// <remarks>
+		/// Gets a client for the default system proxy.
+		/// </remarks>
+		/// <value>A client for the default system proxy.</value>
+		public static IProxyClient SystemProxy {
+			get {
+				systemProxy ??= new WebProxyClient (HttpClient.DefaultProxy);
+
+				return systemProxy;
+			}
+		}
+#endif
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MailKit.Net.Proxy.ProxyClient"/> class.
 		/// </summary>

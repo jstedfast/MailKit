@@ -114,6 +114,7 @@
     <Compile Include="Net\Proxy\Socks4Client.cs" />
     <Compile Include="Net\Proxy\Socks5Client.cs" />
     <Compile Include="Net\Proxy\SocksClient.cs" />
+    <Compile Include="Net\Proxy\WebProxyClient.cs" />
     <Compile Include="Net\Smtp\AsyncSmtpClient.cs" />
     <Compile Include="Net\Smtp\ISmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpAuthenticationSecretDetector.cs" />
