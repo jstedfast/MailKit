@@ -1,5 +1,15 @@
 # Release Notes
 
+## MailKit 4.8.0 (2024-09-29)
+
+* Added a UniqueIdRange.SortOrder property.
+* Updated the protocol log help link for ProtocolExceptions.
+  (issue [#1800](https://github.com/jstedfast/MailKit/issues/1800))
+* Fix SmtpClient.Dispose() when telemetry is configured.
+  (issue [#1816](https://github.com/jstedfast/MailKit/issues/1816))
+* Added ProxyClient.SystemProxy as a convenience property that wraps
+  the default system proxy (aka HttpClient.DefaultProxy) on net6.0+.
+
 ## MailKit 4.7.1 (2024-07-12)
 
 * Fixed ImapClient and Pop3Client.Connect/Async() when OTEL is enabled.
