@@ -1124,6 +1124,8 @@ the same way you'd create any other message. There are only a few slight differe
 3. You will want to copy the original message's `References` header into the reply message's
    `References` header and then append the original message's `Message-Id` header.
 4. You will probably want to "quote" the original message's text in the reply.
+5. In case you are doing an automatic reply, you should additionally follow [RFC3834](https://www.rfc-editor.org/rfc/rfc3834)
+   and set the `Auto-Submitted` value to `auto-replied`.
 
 If this logic were to be expressed in code, it might look something like this:
 
@@ -1162,6 +1164,9 @@ public static MimeMessage Reply (MimeMessage message, MailboxAddress from, bool 
             reply.References.Add (id);
         reply.References.Add (message.MessageId);
     }
+
+    // in case of an automatic reply clarify this for the receiver systems e.g. to avoid (infinite) mail loops
+    reply.Headers.Add(HeaderId.AutoSubmitted, "auto-replied");
 
     // quote the original message text
     using (var quoted = new StringWriter ()) {
