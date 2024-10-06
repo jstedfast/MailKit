@@ -286,7 +286,7 @@ namespace MailKit.Net.Smtp {
 		/// <para>Gets whether or not the <c>BDAT</c> command is preferred over the standard <c>DATA</c>
 		/// command.</para>
 		/// <para>The <c>BDAT</c> command is normally only used when the message being sent contains binary data
-		/// (e.g. one mor more MIME parts contains a <c>Content-Transfer-Encoding: binary</c> header). This
+		/// (e.g. one or more MIME parts contains a <c>Content-Transfer-Encoding: binary</c> header). This
 		/// option provides a way to override this behavior, forcing the <see cref="SmtpClient"/> to send
 		/// messages using the <c>BDAT</c> command instead of the <c>DATA</c> command even when it is not
 		/// necessary to do so.</para>

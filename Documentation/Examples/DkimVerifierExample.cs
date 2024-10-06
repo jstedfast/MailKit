@@ -69,7 +69,7 @@ namespace DkimVerifierExample
                     return DnsLookup (domain, selector, cancellationToken);
             }
 
-            throw new NotSupportedException (string.Format ("{0} does not include any suported lookup methods.", methods));
+            throw new NotSupportedException (string.Format ("{0} does not include any supported lookup methods.", methods));
         }
 
         public Task<AsymmetricKeyParameter> LocatePublicKeyAsync (string methods, string domain, string selector, CancellationToken cancellationToken = default (CancellationToken))

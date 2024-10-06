@@ -116,12 +116,12 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Removes the first occurance of the specified namespace.
+		/// Removes the first occurrence of the specified namespace.
 		/// </summary>
 		/// <remarks>
-		/// Removes the first occurance of the specified namespace.
+		/// Removes the first occurrence of the specified namespace.
 		/// </remarks>
-		/// <returns><value>true</value> if the frst occurance of the specified
+		/// <returns><value>true</value> if the first occurrence of the specified
 		/// namespace was removed; otherwise <value>false</value>.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <exception cref="System.ArgumentNullException">

@@ -195,7 +195,7 @@ namespace MailKit.Net.Imap {
 		/// Get the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried durring the
+		/// The authentication mechanisms are queried during the
 		/// <see cref="Connect"/> or <see cref="ConnectAsync"/> methods.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
@@ -702,7 +702,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Takes posession of the <see cref="ImapStream"/> and reads the greeting.
+		/// Takes possession of the <see cref="ImapStream"/> and reads the greeting.
 		/// </summary>
 		/// <param name="stream">The IMAP stream.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -763,7 +763,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Takes posession of the <see cref="ImapStream"/> and reads the greeting.
+		/// Takes possession of the <see cref="ImapStream"/> and reads the greeting.
 		/// </summary>
 		/// <param name="stream">The IMAP stream.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -3320,7 +3320,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the cached folder.
 		/// </summary>
-		/// <returns><c>true</c> if the folder was retreived from the cache; otherwise, <c>false</c>.</returns>
+		/// <returns><c>true</c> if the folder was retrieved from the cache; otherwise, <c>false</c>.</returns>
 		/// <param name="encodedName">The encoded folder name.</param>
 		/// <param name="folder">The cached folder.</param>
 		public bool TryGetCachedFolder (string encodedName, out ImapFolder folder)
@@ -3632,7 +3632,7 @@ namespace MailKit.Net.Imap {
 			// Note: Some IMAP servers like ProtonMail respond to SPECIAL-USE LIST queries with BAD, so fall
 			// back to just issuing a standard LIST command and hope we get back some SPECIAL-USE attributes.
 			//
-			// See https://github.com/jstedfast/MailKit/issues/674 for dertails.
+			// See https://github.com/jstedfast/MailKit/issues/674 for details.
 			if (QuirksMode != ImapQuirksMode.ProtonMail)
 				command.Append ("(SPECIAL-USE) \"\" \"*\"");
 			else
@@ -4079,7 +4079,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns><c>true</c> if the mailbox name is valid; otherwise, <c>false</c>.</returns>
 		/// <param name="mailboxName">The mailbox name.</param>
-		/// <param name="delim">The path delimeter.</param>
+		/// <param name="delim">The path delimiter.</param>
 		public static bool IsValidMailboxName (string mailboxName, char delim)
 		{
 			// From rfc6855:

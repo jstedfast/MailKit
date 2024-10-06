@@ -5557,7 +5557,7 @@ namespace MailKit.Net.Imap {
 		/// <see cref="Expunge(IList&lt;UniqueId&gt;,CancellationToken)"/> for more information about how a
 		/// subset of messages are expunged). Since the server could disconnect at any point between those 3
 		/// (or more) commands, it is advisable for clients to implement their own logic for moving messages when
-		/// the IMAP server does not support the MOVE command in order to better handle spontanious server
+		/// the IMAP server does not support the MOVE command in order to better handle spontaneous server
 		/// disconnects and other error conditions.</para>
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
@@ -5652,7 +5652,7 @@ namespace MailKit.Net.Imap {
 		/// <see cref="Expunge(IList&lt;UniqueId&gt;,CancellationToken)"/> for more information about how a
 		/// subset of messages are expunged). Since the server could disconnect at any point between those 3
 		/// (or more) commands, it is advisable for clients to implement their own logic for moving messages when
-		/// the IMAP server does not support the MOVE command in order to better handle spontanious server
+		/// the IMAP server does not support the MOVE command in order to better handle spontaneous server
 		/// disconnects and other error conditions.</para>
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
@@ -5922,7 +5922,7 @@ namespace MailKit.Net.Imap {
 		/// the messages will first be copied to the destination folder and then marked as \Deleted in the
 		/// originating folder. Since the server could disconnect at any point between those 2 operations, it
 		/// may be advisable to implement your own logic for moving messages in this case in order to better
-		/// handle spontanious server disconnects and other error conditions.</para>
+		/// handle spontaneous server disconnects and other error conditions.</para>
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
@@ -5990,7 +5990,7 @@ namespace MailKit.Net.Imap {
 		/// the messages will first be copied to the destination folder and then marked as \Deleted in the
 		/// originating folder. Since the server could disconnect at any point between those 2 operations, it
 		/// may be advisable to implement your own logic for moving messages in this case in order to better
-		/// handle spontanious server disconnects and other error conditions.</para>
+		/// handle spontaneous server disconnects and other error conditions.</para>
 		/// </remarks>
 		/// <returns>An awaitable task.</returns>
 		/// <param name="indexes">The indexes of the messages to move.</param>

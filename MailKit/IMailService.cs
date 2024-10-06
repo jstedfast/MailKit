@@ -166,7 +166,7 @@ namespace MailKit {
 		/// Get the authentication mechanisms supported by the message service.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried durring the
+		/// The authentication mechanisms are queried during the
 		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> method.
 		/// </remarks>
 		/// <value>The supported authentication mechanisms.</value>

@@ -245,7 +245,7 @@ namespace MailKit.Net.Imap {
 		/// <note type="note">This method's purpose is to allow subclassing <see cref="ImapFolder"/>.</note>
 		/// </remarks>
 		/// <returns>The IMAP folder instance.</returns>
-		/// <param name="args">The constructior arguments.</param>
+		/// <param name="args">The constructor arguments.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="args"/> is <c>null</c>.
 		/// </exception>

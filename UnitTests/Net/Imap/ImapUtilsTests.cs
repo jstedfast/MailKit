@@ -716,7 +716,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestParseEnvelopeWithMissingInReplyTo ()
 		{
-			const string text = "(\"Tue, 24 Sep 2019 09:48:05 +0800\" \"=?GBK?B?sbG+qdW9x/jI1bGose0=?=\" ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) NIL NIL NIL)\r\n";
+			const string text = "(\"Tue, 24 Sep 2019 09:48:05 +0800\" \"=?GBK?B?sbG+qdW9x/jI1bGose0=?=\" ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unknown-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unknown-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unknown-name\" \"unknown-domain\")) NIL NIL NIL)\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
@@ -763,7 +763,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestParseEnvelopeWithMissingInReplyToAsync ()
 		{
-			const string text = "(\"Tue, 24 Sep 2019 09:48:05 +0800\" \"=?GBK?B?sbG+qdW9x/jI1bGose0=?=\" ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unkonwn-name\" \"unknown-domain\")) NIL NIL NIL)\r\n";
+			const string text = "(\"Tue, 24 Sep 2019 09:48:05 +0800\" \"=?GBK?B?sbG+qdW9x/jI1bGose0=?=\" ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unknown-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unknown-name\" \"unknown-domain\")) ((\"=?GBK?B?yv2+3bfWzvbQodfp?=\" NIL \"unknown-name\" \"unknown-domain\")) NIL NIL NIL)\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
@@ -1433,16 +1433,16 @@ namespace UnitTests.Net.Imap {
 						Assert.That (rfc822.ContentType.IsMimeType ("message", "rfc822"), Is.True, "message/rfc822 Content-Type did not match.");
 						Assert.That (rfc822.ContentId, Is.Null, "message/rfc822 Content-Id should be NIL.");
 						Assert.That (rfc822.ContentDescription, Is.Null, "message/rfc822 Content-Description should be NIL.");
-						Assert.That (rfc822.Envelope.Sender, Is.Empty, "message/rfc822 Envlope.Sender should be null.");
-						Assert.That (rfc822.Envelope.From, Is.Empty, "message/rfc822 Envlope.From should be null.");
-						Assert.That (rfc822.Envelope.ReplyTo, Is.Empty, "message/rfc822 Envlope.ReplyTo should be null.");
-						Assert.That (rfc822.Envelope.To, Is.Empty, "message/rfc822 Envlope.To should be null.");
-						Assert.That (rfc822.Envelope.Cc, Is.Empty, "message/rfc822 Envlope.Cc should be null.");
-						Assert.That (rfc822.Envelope.Bcc, Is.Empty, "message/rfc822 Envlope.Bcc should be null.");
-						Assert.That (rfc822.Envelope.Subject, Is.Null, "message/rfc822 Envlope.Subject should be null.");
-						Assert.That (rfc822.Envelope.MessageId, Is.Null, "message/rfc822 Envlope.MessageId should be null.");
-						Assert.That (rfc822.Envelope.InReplyTo, Is.Null, "message/rfc822 Envlope.InReplyTo should be null.");
-						Assert.That (rfc822.Envelope.Date, Is.Null, "message/rfc822 Envlope.Date should be null.");
+						Assert.That (rfc822.Envelope.Sender, Is.Empty, "message/rfc822 Envelope.Sender should be null.");
+						Assert.That (rfc822.Envelope.From, Is.Empty, "message/rfc822 Envelope.From should be null.");
+						Assert.That (rfc822.Envelope.ReplyTo, Is.Empty, "message/rfc822 Envelope.ReplyTo should be null.");
+						Assert.That (rfc822.Envelope.To, Is.Empty, "message/rfc822 Envelope.To should be null.");
+						Assert.That (rfc822.Envelope.Cc, Is.Empty, "message/rfc822 Envelope.Cc should be null.");
+						Assert.That (rfc822.Envelope.Bcc, Is.Empty, "message/rfc822 Envelope.Bcc should be null.");
+						Assert.That (rfc822.Envelope.Subject, Is.Null, "message/rfc822 Envelope.Subject should be null.");
+						Assert.That (rfc822.Envelope.MessageId, Is.Null, "message/rfc822 Envelope.MessageId should be null.");
+						Assert.That (rfc822.Envelope.InReplyTo, Is.Null, "message/rfc822 Envelope.InReplyTo should be null.");
+						Assert.That (rfc822.Envelope.Date, Is.Null, "message/rfc822 Envelope.Date should be null.");
 						Assert.That (rfc822.ContentTransferEncoding, Is.EqualTo ("7BIT"), "message/rfc822 encoding did not match.");
 						Assert.That (rfc822.Octets, Is.EqualTo (787), "message/rfc822 octets did not match.");
 						Assert.That (rfc822.Body, Is.Null, "message/rfc822 body should be null.");
@@ -1502,16 +1502,16 @@ namespace UnitTests.Net.Imap {
 						Assert.That (rfc822.ContentType.IsMimeType ("message", "rfc822"), Is.True, "message/rfc822 Content-Type did not match.");
 						Assert.That (rfc822.ContentId, Is.Null, "message/rfc822 Content-Id should be NIL.");
 						Assert.That (rfc822.ContentDescription, Is.Null, "message/rfc822 Content-Description should be NIL.");
-						Assert.That (rfc822.Envelope.Sender, Is.Empty, "message/rfc822 Envlope.Sender should be null.");
-						Assert.That (rfc822.Envelope.From, Is.Empty, "message/rfc822 Envlope.From should be null.");
-						Assert.That (rfc822.Envelope.ReplyTo, Is.Empty, "message/rfc822 Envlope.ReplyTo should be null.");
-						Assert.That (rfc822.Envelope.To, Is.Empty, "message/rfc822 Envlope.To should be null.");
-						Assert.That (rfc822.Envelope.Cc, Is.Empty, "message/rfc822 Envlope.Cc should be null.");
-						Assert.That (rfc822.Envelope.Bcc, Is.Empty, "message/rfc822 Envlope.Bcc should be null.");
-						Assert.That (rfc822.Envelope.Subject, Is.Null, "message/rfc822 Envlope.Subject should be null.");
-						Assert.That (rfc822.Envelope.MessageId, Is.Null, "message/rfc822 Envlope.MessageId should be null.");
-						Assert.That (rfc822.Envelope.InReplyTo, Is.Null, "message/rfc822 Envlope.InReplyTo should be null.");
-						Assert.That (rfc822.Envelope.Date, Is.Null, "message/rfc822 Envlope.Date should be null.");
+						Assert.That (rfc822.Envelope.Sender, Is.Empty, "message/rfc822 Envelope.Sender should be null.");
+						Assert.That (rfc822.Envelope.From, Is.Empty, "message/rfc822 Envelope.From should be null.");
+						Assert.That (rfc822.Envelope.ReplyTo, Is.Empty, "message/rfc822 Envelope.ReplyTo should be null.");
+						Assert.That (rfc822.Envelope.To, Is.Empty, "message/rfc822 Envelope.To should be null.");
+						Assert.That (rfc822.Envelope.Cc, Is.Empty, "message/rfc822 Envelope.Cc should be null.");
+						Assert.That (rfc822.Envelope.Bcc, Is.Empty, "message/rfc822 Envelope.Bcc should be null.");
+						Assert.That (rfc822.Envelope.Subject, Is.Null, "message/rfc822 Envelope.Subject should be null.");
+						Assert.That (rfc822.Envelope.MessageId, Is.Null, "message/rfc822 Envelope.MessageId should be null.");
+						Assert.That (rfc822.Envelope.InReplyTo, Is.Null, "message/rfc822 Envelope.InReplyTo should be null.");
+						Assert.That (rfc822.Envelope.Date, Is.Null, "message/rfc822 Envelope.Date should be null.");
 						Assert.That (rfc822.ContentTransferEncoding, Is.EqualTo ("7BIT"), "message/rfc822 encoding did not match.");
 						Assert.That (rfc822.Octets, Is.EqualTo (787), "message/rfc822 octets did not match.");
 						Assert.That (rfc822.Body, Is.Null, "message/rfc822 body should be null.");

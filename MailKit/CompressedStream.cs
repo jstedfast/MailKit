@@ -94,9 +94,9 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets or sets a value, in miliseconds, that determines how long the stream will attempt to read before timing out.
+		/// Gets or sets a value, in milliseconds, that determines how long the stream will attempt to read before timing out.
 		/// </summary>
-		/// <returns>A value, in miliseconds, that determines how long the stream will attempt to read before timing out.</returns>
+		/// <returns>A value, in milliseconds, that determines how long the stream will attempt to read before timing out.</returns>
 		/// <value>The read timeout.</value>
 		public override int ReadTimeout {
 			get { return InnerStream.ReadTimeout; }
@@ -104,9 +104,9 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets or sets a value, in miliseconds, that determines how long the stream will attempt to write before timing out.
+		/// Gets or sets a value, in milliseconds, that determines how long the stream will attempt to write before timing out.
 		/// </summary>
-		/// <returns>A value, in miliseconds, that determines how long the stream will attempt to write before timing out.</returns>
+		/// <returns>A value, in milliseconds, that determines how long the stream will attempt to write before timing out.</returns>
 		/// <value>The write timeout.</value>
 		public override int WriteTimeout {
 			get { return InnerStream.WriteTimeout; }
@@ -171,7 +171,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
@@ -232,7 +232,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
@@ -292,7 +292,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
@@ -343,7 +343,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">

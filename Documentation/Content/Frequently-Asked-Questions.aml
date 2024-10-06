@@ -184,7 +184,7 @@
             </code>
             <para>
               The downside of the above example is that it requires hard-coding known values for "trusted" mail server
-              certificates which can quickly become unweildy to deal with if your program is meant to be used with
+              certificates which can quickly become unwieldy to deal with if your program is meant to be used with
               a wide range of mail servers.
             </para>
             <para>
@@ -823,7 +823,7 @@ message.WriteTo (options, stream);
           The method variant that has a
           <codeEntityReference>T:MimeKit.Cryptography.DigitalSignatureCollection</codeEntityReference>
           output parameter is useful in cases where the encrypted PGP blurb is also digitally signed,
-          allowing you to get your hands on the list of digitial signatures in order for you to verify
+          allowing you to get your hands on the list of digital signatures in order for you to verify
           each of them.
         </para>
         <para>

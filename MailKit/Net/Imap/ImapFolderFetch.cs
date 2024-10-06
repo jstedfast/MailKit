@@ -971,7 +971,7 @@ namespace MailKit.Net.Imap
 			// e.g. "UID CONVERT {0} (\"text/plain\" (\"charset\" \"utf-8\")) BINARY[{1}]<0.{2}>\r\n"
 			//
 			// This would allow us to more accurately fetch X number of characters because we wouldn't
-			// need to guestimate accounting for base64/quoted-printable decoding.
+			// need to guesstimate accounting for base64/quoted-printable decoding.
 
 			var command = string.Format (CultureInfo.InvariantCulture, "UID FETCH {0} (BODY.PEEK[{1}]<0.{2}>)\r\n", uids, specifier, octets);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);

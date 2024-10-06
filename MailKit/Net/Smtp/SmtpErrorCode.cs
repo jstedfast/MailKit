@@ -54,7 +54,7 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// A recipient's mailbox address was not accepted. Check the
 		/// <see cref="SmtpCommandException.Mailbox"/> property for the
-		/// particular recipient mailbox that was not acccepted.
+		/// particular recipient mailbox that was not accepted.
 		/// </summary>
 		RecipientNotAccepted,
 

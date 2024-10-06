@@ -38,7 +38,7 @@ namespace MailKit {
 		None,
 
 		/// <summary>
-		/// The preview text should only be fetched if the server has it intstantly available (cached).
+		/// The preview text should only be fetched if the server has it instantly available (cached).
 		/// </summary>
 		Lazy
 	}

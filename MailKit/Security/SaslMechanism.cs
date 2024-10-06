@@ -680,7 +680,7 @@ namespace MailKit.Security {
 			var builder = new StringBuilder (s.Length);
 			for (int i = 0; i < s.Length; i++) {
 				if (IsNonAsciiSpace (s[i])) {
-					// non-ASII space characters [StringPrep, C.1.2] that can be
+					// non-ASCII space characters [StringPrep, C.1.2] that can be
 					// mapped to SPACE (U+0020).
 					builder.Append (' ');
 				} else if (IsCommonlyMappedToNothing (s[i])) {

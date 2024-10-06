@@ -2055,7 +2055,7 @@ namespace UnitTests.Net.Imap {
 
 				try {
 					gmail.Create ("MyImportant", new[] { SpecialFolder.Important });
-					Assert.Fail ("Creating the MyImportamnt folder should have thrown an ImapCommandException");
+					Assert.Fail ("Creating the MyImportant folder should have thrown an ImapCommandException");
 				} catch (ImapCommandException ex) {
 					Assert.That (ex.Response, Is.EqualTo (ImapCommandResponse.No));
 					Assert.That (ex.ResponseText, Is.EqualTo ("An \\Important mailbox already exists"));
@@ -3050,7 +3050,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async Task TestGetSuboldersWithStatusItemsAsync ()
+		public async Task TestGetSubfoldersWithStatusItemsAsync ()
 		{
 			var commands = CreateGetSubfoldersWithStatusItemsCommands ();
 

@@ -524,7 +524,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>These notifications are sent if an affected mailbox name was created, deleted, or renamed.</para>
-		/// <para>As these notifications are received by the client, the apropriate will be emitted:
+		/// <para>As these notifications are received by the client, the appropriate will be emitted:
 		/// <see cref="MailStore.FolderCreated"/>, <see cref="IMailFolder.Deleted"/>, or
 		/// <see cref="IMailFolder.Renamed"/>, respectively.</para>
 		/// <note type="info">If the server supports <see cref="ImapCapabilities.Acl"/>, granting or revocation of the

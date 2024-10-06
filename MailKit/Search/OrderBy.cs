@@ -88,10 +88,10 @@ namespace MailKit.Search {
 		public static readonly OrderBy Arrival = new OrderBy (OrderByType.Arrival, SortOrder.Ascending);
 
 		/// <summary>
-		/// Sort results by arrival date in desending order.
+		/// Sort results by arrival date in descending order.
 		/// </summary>
 		/// <remarks>
-		/// Sort results by arrival date in desending order.
+		/// Sort results by arrival date in descending order.
 		/// </remarks>
 		public static readonly OrderBy ReverseArrival = new OrderBy (OrderByType.Arrival, SortOrder.Descending);
 

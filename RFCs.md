@@ -9,7 +9,7 @@ The following IETF specifications define the IMAP, POP3 and SMTP protocols:
 * [1123](https://tools.ietf.org/html/rfc1123): Requirements for Internet Hosts -- Application and Support
 * [1225](https://tools.ietf.org/html/rfc1225): Post Office Protocol - Version 3 (Obsoletes rfc1081)
 * [1425](https://tools.ietf.org/html/rfc1425): SMTP Service Extensions
-* [1426](https://tools.ietf.org/html/rfc1426): SMTP Service Extension for 8bit-MIMEtransport
+* [1426](https://tools.ietf.org/html/rfc1426): SMTP Service Extension for 8bit-MIME transport
 * [1460](https://tools.ietf.org/html/rfc1460): Post Office Protocol - Version 3 (Obsoletes rfc1225)
 * [1651](https://tools.ietf.org/html/rfc1651): SMTP Service Extensions (Obsoletes rfc1425)
 * [1652](https://tools.ietf.org/html/rfc1652): SMTP Service Extension for 8bit-MIME transport (Obsoletes rfc1426)

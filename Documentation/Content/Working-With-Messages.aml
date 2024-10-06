@@ -11,7 +11,7 @@
     -->
 
     <introduction>
-      <para>MimeKit provies a number of ways to get the data you want from a message.</para>
+      <para>MimeKit provides a number of ways to get the data you want from a message.</para>
       <autoOutline />
     </introduction>
 
