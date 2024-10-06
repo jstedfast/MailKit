@@ -33,7 +33,7 @@ namespace MailKit {
 	/// <remarks>
 	/// A set of flags that may be bitwise-or'd together to specify
 	/// when a delivery status notification should be sent for a
-	/// particlar recipient.
+	/// particular recipient.
 	/// </remarks>
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>

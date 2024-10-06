@@ -91,7 +91,7 @@ namespace UnitTests {
 
 				var ex = (FolderNotOpenException) formatter.Deserialize (stream);
 				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
-				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAcess.");
+				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAccess.");
 			}
 
 			expected = new FolderNotOpenException ("Inbox", FolderAccess.ReadWrite, "This is the error message.");
@@ -103,7 +103,7 @@ namespace UnitTests {
 
 				var ex = (FolderNotOpenException) formatter.Deserialize (stream);
 				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
-				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAcess.");
+				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAccess.");
 			}
 
 			expected = new FolderNotOpenException ("Inbox", FolderAccess.ReadWrite, "This is the error message.", new IOException ("Inner Exception"));
@@ -115,7 +115,7 @@ namespace UnitTests {
 
 				var ex = (FolderNotOpenException) formatter.Deserialize (stream);
 				Assert.That (ex.FolderName, Is.EqualTo (expected.FolderName), "Unexpected FolderName.");
-				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAcess.");
+				Assert.That (ex.FolderAccess, Is.EqualTo (expected.FolderAccess), "Unexpected FolderAccess.");
 			}
 
 			Assert.Throws<ArgumentNullException> (() => new FolderNotOpenException (null, FolderAccess.ReadOnly));

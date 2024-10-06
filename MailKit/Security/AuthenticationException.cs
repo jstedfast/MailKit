@@ -46,7 +46,7 @@ namespace MailKit.Security {
 		/// Initializes a new instance of the <see cref="AuthenticationException"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="AuthenticationException"/> from the seriaized data.
+		/// Creates a new <see cref="AuthenticationException"/> from the serialized data.
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>

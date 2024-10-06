@@ -22,7 +22,7 @@
           database to use for certificate storage.
         </para>
         <para>
-          If you are targetting any of the <application>Xamarin</application> platforms
+          If you are targeting any of the <application>Xamarin</application> platforms
           (or Linux), you won't need to do anything (although you certainly can if you want to)
           because, by default, MimeKit will automatically use the
           <application>Mono.Data.Sqlite</application> binding to
@@ -124,7 +124,7 @@
         </para>
         <code language="c#" source="Examples\SMimeExamples.cs" region="MultipartSignWithKey"/>
         <para>
-          You can also choose to digitially sign a
+          You can also choose to digitally sign a
           <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference> using the
           <literal>application/pkcs7-mime</literal> format using
           <codeEntityReference autoUpgrade="true" qualifyHint="true">

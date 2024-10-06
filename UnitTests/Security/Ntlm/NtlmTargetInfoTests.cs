@@ -150,7 +150,7 @@ namespace UnitTests.Security.Ntlm {
 		};
 
 		[Test]
-		public void TestDecodeUnorederedOem ()
+		public void TestDecodeUnorderedOem ()
 		{
 			AssertDecode (NtlmTargetInfoUnorderedOem, false);
 		}
@@ -174,7 +174,7 @@ namespace UnitTests.Security.Ntlm {
 		};
 
 		[Test]
-		public void TestDecodeUnorderedUnocode ()
+		public void TestDecodeUnorderedUnicode ()
 		{
 			AssertDecode (NtlmTargetInfoUnorderedUnicode, true);
 		}
@@ -228,9 +228,9 @@ namespace UnitTests.Security.Ntlm {
 				Assert.That (targetInfo.ChannelBinding[i], Is.EqualTo (channelBinding[i]), $"ChannelBinding[{i}]");
 
 			targetInfo.ServerName = null;
-			Assert.That (targetInfo.ServerName, Is.Null, "SserverName remove attempt #1");
+			Assert.That (targetInfo.ServerName, Is.Null, "ServerName remove attempt #1");
 			targetInfo.ServerName = null;
-			Assert.That (targetInfo.ServerName, Is.Null, "ServerNamet remove attempt #2");
+			Assert.That (targetInfo.ServerName, Is.Null, "ServerName remove attempt #2");
 
 			targetInfo.SingleHost = null;
 			Assert.That (targetInfo.SingleHost, Is.Null, "SingleHost remove attempt #1");

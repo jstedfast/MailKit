@@ -24,7 +24,7 @@
 * [How can I save attachments?](#save-attachments)
 * [How can I get the email addresses in the From, To, and Cc headers?](#address-headers)
 * [Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?](#untitled-attachments)
-* [How can I decrypt PGP messages that are embedded in the main message text?](#decyrpt-inline-pgp)
+* [How can I decrypt PGP messages that are embedded in the main message text?](#decrypt-inline-pgp)
 * [How can I reply to a message?](#reply-message)
 * [How can I forward a message?](#forward-message)
 * [Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5 app?](#garbled-text)
@@ -59,7 +59,7 @@ Yes. MimeKit and MailKit are both completely free and open source. They are both
 In .NET Core, Microsoft decided to split out the non-Unicode text encodings into a separate NuGet package called
 [System.Text.Encoding.CodePages](https://www.nuget.org/packages/System.Text.Encoding.CodePages).
 
-MimeKit already pulls in a reference to this NuGet package, so you shsouldn't need to add a reference to it in
+MimeKit already pulls in a reference to this NuGet package, so you shouldn't need to add a reference to it in
 your project. That said, you will still need to register the encoding provider. It is recommended that you add
 the following line of code to your program initialization (e.g. the beginning of your program's Main() method):
 
@@ -193,7 +193,7 @@ bool MyServerCertificateValidationCallback (object sender, X509Certificate certi
 ```
 
 The downside of the above example is that it requires hard-coding known values for "trusted" mail server
-certificates which can quickly become unweildy to deal with if your program is meant to be used with
+certificates which can quickly become unwieldy to deal with if your program is meant to be used with
 a wide range of mail servers.
 
 The best approach would be to prompt the user with a dialog explaining that the certificate is
@@ -1031,7 +1031,7 @@ foreach (var param in attachment.ContentDisposition.Parameters) {
 }
 ```
 
-### <a id="decyrpt-inline-pgp">Q: How can I decrypt PGP messages that are embedded in the main message text?</a>
+### <a id="decrypt-inline-pgp">Q: How can I decrypt PGP messages that are embedded in the main message text?</a>
 
 Some PGP-enabled mail clients, such as Thunderbird, embed encrypted PGP blurbs within the `text/plain` body
 of the message rather than using the PGP/MIME format that MimeKit prefers.
@@ -1088,7 +1088,7 @@ public Stream GetDecryptedStream (Stream encryptedData)
 ```
 
 The first variant is useful in cases where the encrypted PGP blurb is also digitally signed, allowing you to get
-your hands on the list of digitial signatures in order for you to verify each of them.
+your hands on the list of digital signatures in order for you to verify each of them.
 
 To decrypt the content of the message, you'll want to locate the `TextPart` (in this case, it'll just be
 `message.Body`) and then do this:
@@ -1671,7 +1671,7 @@ folder.RemoveFlags (uids, MessageFlags.Seen, true);
 
 ### <a id="imap-folder-resync">Q: How can I re-synchronize the cache for an IMAP folder?</a>
 
-Assuming your IMAP server does not support the `QRESYNC` extension (which simplifies this proceedure a ton),
+Assuming your IMAP server does not support the `QRESYNC` extension (which simplifies this procedure a ton),
 here is some simple code to illustrate how to go about re-synchronizing your cache with the remote IMAP
 server.
 

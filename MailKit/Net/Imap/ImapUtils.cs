@@ -669,7 +669,7 @@ namespace MailKit.Net.Imap {
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
 
-			// parse the path delimeter
+			// parse the path delimiter
 			token = engine.ReadToken (cancellationToken);
 
 			delim = ParseFolderSeparator (token, format);
@@ -755,7 +755,7 @@ namespace MailKit.Net.Imap {
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, format, token);
 
-			// parse the path delimeter
+			// parse the path delimiter
 			token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 			delim = ParseFolderSeparator (token, format);
@@ -1719,7 +1719,7 @@ namespace MailKit.Net.Imap {
 						return true;
 					}
 
-					// Fall through and treat things nomrally.
+					// Fall through and treat things normally.
 				}
 
 				// We've got a string which normally means it's the first token of a mime-type.

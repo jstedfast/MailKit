@@ -33,10 +33,10 @@ using MimeKit;
 
 namespace MailKit {
 	/// <summary>
-	/// Extension methods for <see cref="IMailFolder"/> that provide backwards API compatability.
+	/// Extension methods for <see cref="IMailFolder"/> that provide backwards API compatibility.
 	/// </summary>
 	/// <remarks>
-	/// Extension methods for <see cref="IMailFolder"/> that provide backwards API compatability.
+	/// Extension methods for <see cref="IMailFolder"/> that provide backwards API compatibility.
 	/// </remarks>
 	public static partial class IMailFolderExtensions
 	{

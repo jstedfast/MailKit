@@ -96,7 +96,7 @@ namespace MailKit.Net.Pop3 {
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried durring the
+		/// The authentication mechanisms are queried during the
 		/// <see cref="ConnectAsync(Pop3Stream,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
@@ -261,10 +261,10 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// Takes possession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </summary>
 		/// <remarks>
-		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// Takes possession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </remarks>
 		/// <param name="pop3">The pop3 stream.</param>
 		/// <param name="cancellationToken">The cancellation token</param>
@@ -279,10 +279,10 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// Takes possession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </summary>
 		/// <remarks>
-		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// Takes possession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </remarks>
 		/// <param name="pop3">The pop3 stream.</param>
 		/// <param name="cancellationToken">The cancellation token</param>

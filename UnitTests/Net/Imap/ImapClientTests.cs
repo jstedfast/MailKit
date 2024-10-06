@@ -3879,7 +3879,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		static List<ImapReplayCommand> CreateGetQuotaNonexistantQuotaRootCommands ()
+		static List<ImapReplayCommand> CreateGetQuotaNonexistentQuotaRootCommands ()
 		{
 			return new List<ImapReplayCommand> {
 				new ImapReplayCommand ("", "gmail.greeting.txt"),
@@ -3894,9 +3894,9 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestGetQuotaNonexistantQuotaRoot ()
+		public void TestGetQuotaNonexistentQuotaRoot ()
 		{
-			var commands = CreateGetQuotaNonexistantQuotaRootCommands ();
+			var commands = CreateGetQuotaNonexistentQuotaRootCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
@@ -3945,9 +3945,9 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public async Task TestGetQuotaNonexistantQuotaRootAsync ()
+		public async Task TestGetQuotaNonexistentQuotaRootAsync ()
 		{
-			var commands = CreateGetQuotaNonexistantQuotaRootCommands ();
+			var commands = CreateGetQuotaNonexistentQuotaRootCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
 				try {
@@ -4474,13 +4474,13 @@ namespace UnitTests.Net.Imap {
 
 				// COPY messages to the Destination folder
 				var copied = folder.CopyTo (uids, destination);
-				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpetced Source.Count");
-				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpetced Destination.Count");
+				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpected Source.Count");
+				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpected Destination.Count");
 
 				// MOVE messages to the Destination folder
 				var moved = folder.MoveTo (uids, destination);
-				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpetced Source.Count");
-				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpetced Destination.Count");
+				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpected Source.Count");
+				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpected Destination.Count");
 				Assert.That (vanished, Has.Count.EqualTo (1), "Expected VANISHED event");
 				vanished.Clear ();
 
@@ -5119,13 +5119,13 @@ namespace UnitTests.Net.Imap {
 
 				// COPY messages to the Destination folder
 				var copied = await folder.CopyToAsync (uids, destination);
-				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpetced Source.Count");
-				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpetced Destination.Count");
+				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpected Source.Count");
+				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpected Destination.Count");
 
 				// MOVE messages to the Destination folder
 				var moved = await folder.MoveToAsync (uids, destination);
-				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpetced Source.Count");
-				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpetced Destination.Count");
+				Assert.That (copied.Source, Has.Count.EqualTo (uids.Count), "Unexpected Source.Count");
+				Assert.That (copied.Destination, Has.Count.EqualTo (uids.Count), "Unexpected Destination.Count");
 				Assert.That (vanished, Has.Count.EqualTo (1), "Expected VANISHED event");
 				vanished.Clear ();
 
@@ -6788,7 +6788,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (inbox.HighestModSeq, Is.EqualTo (3), "Inbox.HighestModSeq");
 
 				Assert.That (inboxHighestModSeqChanged, Is.EqualTo (1), "Inbox.HighestModSeqChanged");
-				Assert.That (inboxMetadataChanged, Is.EqualTo (1), "Inbbox.MetadataChanged");
+				Assert.That (inboxMetadataChanged, Is.EqualTo (1), "Inbox.MetadataChanged");
 				Assert.That (inboxCountChanged, Is.EqualTo (1), "Inbox.CountChanged");
 
 				Assert.That (created, Is.EqualTo (1), "FolderCreated");

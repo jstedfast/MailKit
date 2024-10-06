@@ -226,7 +226,7 @@ foreach (var folder in personal.GetSubfolders (false))
 	Console.WriteLine ("[folder] {0}", folder.Name);
 ```
 
-If the IMAP server supports the SPECIAL-USE or the XLIST (GMail) extension, you can get ahold of
+If the IMAP server supports the SPECIAL-USE or the XLIST (GMail) extension, you can get a hold of
 the pre-defined All, Drafts, Flagged (aka Important), Junk, Sent, Trash, etc folders like this:
 
 ```csharp

@@ -46,7 +46,7 @@ namespace MailKit {
 	/// <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a> methods
 	/// return lists of <see cref="IMessageSummary"/> items.</para>
 	/// <para>The properties of the <see cref="MessageSummary"/> that will be available
-	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.</para>
+	/// depend on the <see cref="MessageSummaryItems"/> passed to the aforementioned method.</para>
 	/// </remarks>
 	public class MessageSummary : IMessageSummary
 	{
@@ -226,7 +226,7 @@ namespace MailKit {
 					text = multipart.BodyParts[i] as BodyPartText;
 
 					// Look for the first non-attachment text part (realistically, the body text will
-					// preceed any attachments, but I'm not sure we can rely on that assumption).
+					// precede any attachments, but I'm not sure we can rely on that assumption).
 					if (text != null && !text.IsAttachment) {
 						if (html ? text.IsHtml : text.IsPlain) {
 							body = text;

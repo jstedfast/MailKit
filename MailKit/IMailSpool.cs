@@ -33,10 +33,10 @@ using MimeKit;
 
 namespace MailKit {
 	/// <summary>
-	/// An interface for retreiving messages from a spool.
+	/// An interface for retrieving messages from a spool.
 	/// </summary>
 	/// <remarks>
-	/// <para>An interface for retreiving messages from a spool.</para>
+	/// <para>An interface for retrieving messages from a spool.</para>
 	/// <para>Implemented by <see cref="MailKit.Net.Pop3.Pop3Client"/>.</para>
 	/// </remarks>
 	public interface IMailSpool : IMailService, IEnumerable<MimeMessage>

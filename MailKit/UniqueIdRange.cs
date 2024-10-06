@@ -43,7 +43,7 @@ namespace MailKit {
 	public class UniqueIdRange : IList<UniqueId>
 	{
 		/// <summary>
-		/// A <see cref="UniqueIdRange"/> that encompases all messages in the folder.
+		/// A <see cref="UniqueIdRange"/> that encompasses all messages in the folder.
 		/// </summary>
 		/// <remarks>
 		/// Represents the range of messages from <see cref="UniqueId.MinValue"/> to

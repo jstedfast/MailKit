@@ -8523,7 +8523,7 @@ namespace MailKit {
 		/// Search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// Searches the fsubset of UIDs in the folder for messages matching the specified query,
+		/// Searches the subset of UIDs in the folder for messages matching the specified query,
 		/// returning only the specified search results.
 		/// </remarks>
 		/// <returns>The search results.</returns>
@@ -8584,7 +8584,7 @@ namespace MailKit {
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously searches the fsubset of UIDs in the folder for messages matching the specified query,
+		/// Asynchronously searches the subset of UIDs in the folder for messages matching the specified query,
 		/// returning only the specified search results.
 		/// </remarks>
 		/// <returns>The search results.</returns>

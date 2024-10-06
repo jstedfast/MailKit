@@ -831,7 +831,7 @@ namespace MailKit {
 		void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Asynchronously set the access rights for the sepcified identity.
+		/// Asynchronously set the access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously sets the access rights for the specified identity.
@@ -2603,7 +2603,7 @@ namespace MailKit {
 		/// Search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// Searches the fsubset of UIDs in the folder for messages matching the specified query,
+		/// Searches the subset of UIDs in the folder for messages matching the specified query,
 		/// returning only the specified search results.
 		/// </remarks>
 		/// <returns>The search results.</returns>
@@ -2617,7 +2617,7 @@ namespace MailKit {
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously searches the fsubset of UIDs in the folder for messages matching the specified query,
+		/// Asynchronously searches the subset of UIDs in the folder for messages matching the specified query,
 		/// returning only the specified search results.
 		/// </remarks>
 		/// <returns>The search results.</returns>
@@ -2899,8 +2899,8 @@ namespace MailKit {
 		/// <note type="note">The <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
 		/// methods will return a list of all message summaries that any information was
 		/// retrieved for, regardless of whether or not all of the requested items were fetched,
-		/// therefore there may be a discrepency between the number of times this event is
-		/// emitetd and the number of summary items returned from the Fetch method.</note>
+		/// therefore there may be a discrepancy between the number of times this event is
+		/// emitted and the number of summary items returned from the Fetch method.</note>
 		/// </remarks>
 		event EventHandler<MessageSummaryFetchedEventArgs> MessageSummaryFetched;
 

@@ -148,7 +148,7 @@ namespace MailKit.Examples {
 				// list the folders under the first personal namespace
 				var subfolders = personal.GetSubfolders ();
 
-				Console.WriteLine ("The list of folders that are direct children of the first personmal namespace:");
+				Console.WriteLine ("The list of folders that are direct children of the first personal namespace:");
 				foreach (var folder in subfolders)
 					Console.WriteLine ($"* {folder.Name}");
 

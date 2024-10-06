@@ -3620,7 +3620,7 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		static List<SmtpReplayCommand> CreatetPipeliningCommands ()
+		static List<SmtpReplayCommand> CreatePipeliningCommands ()
 		{
 			return new List<SmtpReplayCommand> {
 				new SmtpReplayCommand ("", "comcast-greeting.txt"),
@@ -3637,7 +3637,7 @@ namespace UnitTests.Net.Smtp {
 		[TestCase (true, TestName = "TestPipeliningWithProgress")]
 		public void TestPipelining (bool showProgress)
 		{
-			var commands = CreatetPipeliningCommands ();
+			var commands = CreatePipeliningCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {
@@ -3695,7 +3695,7 @@ namespace UnitTests.Net.Smtp {
 		[TestCase (true, TestName = "TestPipeliningAsyncWithProgress")]
 		public async Task TestPipeliningAsync (bool showProgress)
 		{
-			var commands = CreatetPipeliningCommands ();
+			var commands = CreatePipeliningCommands ();
 
 			using (var client = new SmtpClient ()) {
 				try {

@@ -138,7 +138,7 @@ namespace MailKit.Net.Pop3 {
 		/// Get whether or not the end of the raw data has been reached in <see cref="Pop3StreamMode.Data"/> mode.
 		/// </summary>
 		/// <remarks>
-		/// When reading the resonse to a command such as RETR, the end of the data is marked by line matching ".\r\n".
+		/// When reading the response to a command such as RETR, the end of the data is marked by line matching ".\r\n".
 		/// </remarks>
 		/// <value><c>true</c> if the end of the data has been reached; otherwise, <c>false</c>.</value>
 		public bool IsEndOfData {
@@ -446,7 +446,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
@@ -513,7 +513,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
@@ -550,7 +550,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
@@ -805,7 +805,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
@@ -886,7 +886,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
@@ -922,7 +922,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
 		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes starting
 		/// at the specified <paramref name="offset"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">

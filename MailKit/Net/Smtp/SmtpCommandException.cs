@@ -175,7 +175,7 @@ namespace MailKit.Net.Smtp {
 		/// Get the error code which may provide additional information.
 		/// </summary>
 		/// <remarks>
-		/// The error code can be used to programatically deal with the
+		/// The error code can be used to programmatically deal with the
 		/// exception without necessarily needing to display the raw
 		/// exception message to the user.
 		/// </remarks>
