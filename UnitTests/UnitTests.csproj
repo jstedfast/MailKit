@@ -37,7 +37,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
-    <PackageReference Include="Stub.System.Data.SQLite.Core.NetFramework" Version="1.0.118" GeneratePathProperty="true" Condition=" $(TargetFramework.StartsWith('net4')) ">
+    <PackageReference Include="Stub.System.Data.SQLite.Core.NetFramework" Version="1.0.119" GeneratePathProperty="true" Condition=" $(TargetFramework.StartsWith('net4')) ">
       <IncludeAssets>all</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Stub.System.Data.SQLite.Core.NetStandard" Version="1.0.119" GeneratePathProperty="true" Condition=" !$(TargetFramework.StartsWith('net4')) ">
