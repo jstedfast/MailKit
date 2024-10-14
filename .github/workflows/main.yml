@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Setup/Install the .NET 8 SDK
         id: install-netsdk
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
