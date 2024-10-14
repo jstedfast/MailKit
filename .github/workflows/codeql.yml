@@ -30,7 +30,7 @@ jobs:
 
     steps:
     - name: Setup/Install the .NET 8 SDK
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
           dotnet-version: 8.0.x
     
@@ -40,11 +40,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           submodules: recursive
           fetch-depth: 0
-
-    - name: Run NuGet restore
-      shell: pwsh
-      run: |
-          nuget restore MailKit.sln
 
     - name: Run .NET restore
       shell: pwsh
