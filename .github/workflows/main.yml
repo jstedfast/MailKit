@@ -122,12 +122,6 @@ jobs:
           GIT_USER_EMAIL: ${{ github.event.head_commit.author.email }}
           NEW_VERSION_NUM: ${{ steps.semantic_version.outputs.version_num }}
 
-      - name: Run NuGet restore
-        id: run_nuget_restore
-        shell: pwsh
-        run: |
-          nuget restore $env:SOLUTION_PATH
-
       - name: Run .NET restore
         shell: pwsh
         run: |
