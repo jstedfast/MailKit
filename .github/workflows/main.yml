@@ -47,12 +47,8 @@ jobs:
           $xml = [xml](gc MailKit/MailKit.csproj)
           $SEMANTIC_VERSION_NUMBER = $xml.Project.PropertyGroup.VersionPrefix
           $VERSION_NUM = $SEMANTIC_VERSION_NUMBER[0].Trim()
-
           Write-Host "version_num=${VERSION_NUM}"
-          Write-Host "version_tag=v${VERSION_NUM}"
-
           [IO.File]::AppendAllText($env:GITHUB_OUTPUT, "version_num=${VERSION_NUM}$([Environment]::NewLine)")
-          [IO.File]::AppendAllText($env:GITHUB_OUTPUT, "version_tag=v${VERSION_NUM}$([Environment]::NewLine)")
 
       - if: ${{ env.PUBLISH == 'true' }}
         name: Get latest tag
@@ -60,14 +56,12 @@ jobs:
         shell: pwsh
         run: |
           $LATEST_TAG = git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$env:GIT_URL.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3
-
           Write-Host "tag=$LATEST_TAG"
-
           [IO.File]::AppendAllText($env:GITHUB_OUTPUT, "tag=${LATEST_TAG}$([Environment]::NewLine)")
         env:
           GIT_URL: ${{ github.repository }}
 
-      - if: ${{ env.PUBLISH == 'true' && steps.semantic_version.outputs.version_tag != steps.get_latest_tag.outputs.tag }}
+      - if: ${{ env.PUBLISH == 'true' && steps.semantic_version.outputs.version_num != steps.get_latest_tag.outputs.tag }}
         name: Add new tag to repo
         id: add_new_tag_to_repo
         continue-on-error: true
