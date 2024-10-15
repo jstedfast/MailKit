@@ -4,7 +4,7 @@ param (
     [string]
     $Configuration = "Debug",
     [string]
-    $GenerateCodeCoverage = "no"
+    $GenerateCodeCoverage = "false"
 )
 
 Write-Output "Configuration:        $Configuration"
@@ -26,7 +26,7 @@ $targetFramework = $project.SelectSingleNode("/Project/PropertyGroup/TargetFrame
 $OutputDir = Join-Path "UnitTests" "bin" $Configuration $targetFramework.InnerText
 $UnitTestsAssembly = Join-Path $OutputDir "UnitTests.dll"
 
-if ($GenerateCodeCoverage -eq 'yes') {
+if ($GenerateCodeCoverage -eq 'true') {
     Write-Output "Instrumenting code..."
 
     & dotnet AltCover -i="$OutputDir" --inplace -s="System.*" -s="Microsoft.*" -s="Newtonsoft.*" -s="BouncyCastle.*" -s="MimeKit" -s="NUnit*" -s="AltCover.*" -s="testhost" -s="UnitTests"
