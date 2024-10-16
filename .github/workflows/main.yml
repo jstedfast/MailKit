@@ -128,8 +128,7 @@ jobs:
         id: create_nuget_package
         shell: pwsh
         run: |
-          nuget pack nuget/MailKit.nuspec `
-          -Version "$env:LATEST_VERSION.$env:GITHUB_RUN_NUMBER"
+          nuget pack nuget/MailKit.nuspec -Version "$env:LATEST_VERSION.$env:GITHUB_RUN_NUMBER"
         env:
           LATEST_VERSION: ${{ steps.semantic_version.outputs.version_num }}
 
@@ -138,9 +137,7 @@ jobs:
         id: push_nuget_package
         shell: pwsh
         run: |
-          nuget push $env:NUGET_PKG_PATH `
-          -ApiKey $env:MYGET_API_KEY `
-          -Source https://www.myget.org/F/mimekit/api/v3/index.json
+          nuget push $env:NUGET_PKG_PATH -ApiKey $env:MYGET_API_KEY -Source https://www.myget.org/F/mimekit/api/v3/index.json
         env:
           NUGET_PKG_PATH: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}.nupkg
           MYGET_API_KEY: ${{ secrets.MYGET_API_KEY }}
