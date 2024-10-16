@@ -6,13 +6,22 @@
       "version": "8.8.173",
       "commands": [
         "altcover"
-      ]
+      ],
+      "rollForward": false
     },
     "coveralls.net": {
       "version": "4.0.1",
       "commands": [
         "csmacnz.Coveralls"
-      ]
+      ],
+      "rollForward": false
+    },
+    "nunit.consolerunner.netcore": {
+      "version": "3.18.3",
+      "commands": [
+        "nunit"
+      ],
+      "rollForward": false
     }
   }
 }
