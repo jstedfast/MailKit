@@ -740,13 +740,13 @@ namespace UnitTests.Net.Imap {
 						Assert.That (envelope.Subject, Is.EqualTo ("北京战区日报表"), "Subject does not match.");
 
 						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
-						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "From does not match.");
+						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"数据分析小组\" <unknown-name@unknown-domain>"), "From does not match.");
 
 						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
-						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "Sender does not match.");
+						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"数据分析小组\" <unknown-name@unknown-domain>"), "Sender does not match.");
 
 						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
-						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "Reply-To does not match.");
+						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"数据分析小组\" <unknown-name@unknown-domain>"), "Reply-To does not match.");
 
 						Assert.That (envelope.To, Is.Empty, "To counts do not match.");
 						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
@@ -787,13 +787,13 @@ namespace UnitTests.Net.Imap {
 						Assert.That (envelope.Subject, Is.EqualTo ("北京战区日报表"), "Subject does not match.");
 
 						Assert.That (envelope.From, Has.Count.EqualTo (1), "From counts do not match.");
-						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "From does not match.");
+						Assert.That (envelope.From.ToString (), Is.EqualTo ("\"数据分析小组\" <unknown-name@unknown-domain>"), "From does not match.");
 
 						Assert.That (envelope.Sender, Has.Count.EqualTo (1), "Sender counts do not match.");
-						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "Sender does not match.");
+						Assert.That (envelope.Sender.ToString (), Is.EqualTo ("\"数据分析小组\" <unknown-name@unknown-domain>"), "Sender does not match.");
 
 						Assert.That (envelope.ReplyTo, Has.Count.EqualTo (1), "Reply-To counts do not match.");
-						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"数据分析小组\" <unkonwn-name@unknown-domain>"), "Reply-To does not match.");
+						Assert.That (envelope.ReplyTo.ToString (), Is.EqualTo ("\"数据分析小组\" <unknown-name@unknown-domain>"), "Reply-To does not match.");
 
 						Assert.That (envelope.To, Is.Empty, "To counts do not match.");
 						Assert.That (envelope.Cc, Is.Empty, "Cc counts do not match.");
