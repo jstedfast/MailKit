@@ -13,14 +13,6 @@ Write-Output ""
 
 [xml]$project = Get-Content UnitTests\UnitTests.csproj
 
-$nugetPackagesDir = Join-Path $Home ".nuget" "packages"
-
-# Get the NUnit.ConsoleRunner executable path
-$packageReference = $project.SelectSingleNode("/Project/ItemGroup/PackageReference[@Include='NUnit.ConsoleRunner']")
-$consoleRunnerVersion = $packageReference.GetAttribute("Version")
-
-$NUnitConsoleRunner = Join-Path $nugetPackagesDir "nunit.consolerunner" $consoleRunnerVersion "tools" "nunit3-console.exe"
-
 # Get the OutputPath
 $targetFramework = $project.SelectSingleNode("/Project/PropertyGroup/TargetFramework")
 $OutputDir = Join-Path "UnitTests" "bin" $Configuration $targetFramework.InnerText
@@ -35,4 +27,4 @@ if ($GenerateCodeCoverage -eq 'true') {
 
 Write-Output "Running the UnitTests"
 
-& $NUnitConsoleRunner --domain:single $UnitTestsAssembly
+& dotnet nunit $UnitTestsAssembly
