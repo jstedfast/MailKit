@@ -30,7 +30,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Setup MSBuild
         id: setup_msbuild
-        uses: microsoft/setup-msbuild@v1.3.1
+        uses: microsoft/setup-msbuild@v2
 
       - name: Checkout repository
         id: checkout_repo
