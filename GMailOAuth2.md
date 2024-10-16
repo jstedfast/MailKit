@@ -74,6 +74,7 @@ var clientSecrets = new ClientSecrets {
 };
 
 var codeFlow = new GoogleAuthorizationCodeFlow (new GoogleAuthorizationCodeFlow.Initializer {
+    // Cache tokens in ~/.local/share/google-filedatastore/CredentialCacheFolder on Linux/Mac
     DataStore = new FileDataStore ("CredentialCacheFolder", false),
     Scopes = new [] { "https://mail.google.com/" },
     ClientSecrets = clientSecrets,
@@ -89,7 +90,7 @@ var credential = await authCode.AuthorizeAsync (GMailAccount, CancellationToken.
 if (credential.Token.IsStale)
     await credential.RefreshTokenAsync (CancellationToken.None);
 
-var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
+var oauth2 = new SaslMechanismOAuthBearer (credential.UserId, credential.Token.AccessToken);
 
 using (var client = new ImapClient ()) {
     await client.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
@@ -154,7 +155,7 @@ public async Task AuthenticateAsync ([FromServices] IGoogleAuthProvider auth)
     GoogleCredential? googleCred = await auth.GetCredentialAsync ();
     string token = await googleCred.UnderlyingCredential.GetAccessTokenForRequestAsync ();
     
-    var oauth2 = new SaslMechanismOAuth2 ("UserEmail", token);
+    var oauth2 = new SaslMechanismOAuthBearer ("UserEmail", token);
     
     using var emailClient = new ImapClient ();
     await emailClient.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);

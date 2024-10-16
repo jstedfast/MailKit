@@ -291,7 +291,7 @@ GMail Settings page and set your options to look like this:
 
 ### <a id="gmail-access">Q: How can I access GMail using MailKit?</a>
 
-As of the end of May, 2022, Google no longer allows enabling "Less secure apps".
+As of September 30th, 2024, authentication using only a username and password is [no longer supported by Google](https://support.google.com/accounts/answer/6010255?hl=en).
 
 There are now only 2 options to choose from:
 
@@ -342,17 +342,20 @@ var codeFlow = new GoogleAuthorizationCodeFlow (new GoogleAuthorizationCodeFlow.
     // Cache tokens in ~/.local/share/google-filedatastore/CredentialCacheFolder on Linux/Mac
     DataStore = new FileDataStore ("CredentialCacheFolder", false),
     Scopes = new [] { "https://mail.google.com/" },
-    ClientSecrets = clientSecrets
+    ClientSecrets = clientSecrets,
+    LoginHint = GMailAccount
 });
 
+// Note: For a web app, you'll want to use AuthorizationCodeWebApp instead.
 var codeReceiver = new LocalServerCodeReceiver ();
 var authCode = new AuthorizationCodeInstalledApp (codeFlow, codeReceiver);
+
 var credential = await authCode.AuthorizeAsync (GMailAccount, CancellationToken.None);
 
-if (credential.Token.IsExpired (SystemClock.Default))
+if (credential.Token.IsStale)
     await credential.RefreshTokenAsync (CancellationToken.None);
 
-var oauth2 = new SaslMechanismOAuth2 (credential.UserId, credential.Token.AccessToken);
+var oauth2 = new SaslMechanismOAuthBearer (credential.UserId, credential.Token.AccessToken);
 
 using (var client = new ImapClient ()) {
     await client.ConnectAsync ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
