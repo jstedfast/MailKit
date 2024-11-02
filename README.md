@@ -2,8 +2,8 @@
 
 |  Package  |Latest Release|Latest Build|
 |:----------|:------------:|:----------:|
-|**MimeKit**|[![NuGet Badge MimeKit](https://buildstats.info/nuget/MimeKit)](https://www.nuget.org/packages/MimeKit)|[![MyGet Badge MimeKit](https://buildstats.info/myget/mimekit/MimeKit)](https://www.myget.org/feed/mimekit/package/nuget/MimeKit)|
-|**MailKit**|[![NuGet Badge MailKit](https://buildstats.info/nuget/MailKit)](https://www.nuget.org/packages/MailKit)|[![MyGet Badge MailKit](https://buildstats.info/myget/mimekit/MailKit)](https://www.myget.org/feed/mimekit/package/nuget/MailKit)|
+|**MimeKit**|[![MimeKit NuGet](https://img.shields.io/nuget/v/MimeKit.svg?style=flat-square)](https://www.nuget.org/packages/MimeKit)![MimeKit NuGet Downloads](https://img.shields.io/nuget/dt/MimeKit.svg?style=flat-square)|[![MimeKit MyGet](https://img.shields.io/myget/mimekit/v/MimeKit.svg?style=flat-square&label=myget)](https://www.myget.org/feed/mimekit/package/nuget/MimeKit)|
+|**MailKit**|[![MailKit NuGet](https://img.shields.io/nuget/v/MailKit.svg?style=flat-square)](https://www.nuget.org/packages/MailKit)![MailKit NuGet Downloads](https://img.shields.io/nuget/dt/MailKit.svg?style=flat-square)|[![MailKit MyGet](https://img.shields.io/myget/mimekit/v/MailKit.svg?style=flat-square&label=myget)](https://www.myget.org/feed/mimekit/package/nuget/MailKit)|
 
 |  Platform   |Build Status|Code Coverage|Static Analysis|
 |:------------|:----------:|:-----------:|:-------------:|
