@@ -37,6 +37,8 @@ using System.Collections.ObjectModel;
 using MimeKit;
 using MimeKit.Utils;
 
+using Org.BouncyCastle.Asn1.Tsp;
+
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// IMAP utility functions.
@@ -991,10 +993,11 @@ namespace MailKit.Net.Imap {
 			if (token.Type == ImapTokenType.Atom) {
 				var atom = (string) token.Value;
 
-				if (atom.Length > 0 && atom[0] == '-') {
-					if (!int.TryParse (atom, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out _))
+				if (atom.Length > 0 && (atom[0] == '-' || atom.Contains ("e", StringComparison.InvariantCultureIgnoreCase))) {
+					if (!int.TryParse (atom, NumberStyles.AllowLeadingSign | NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out _))
 						throw ImapEngine.UnexpectedToken (format, token);
 
+					// Note: for parse 9.3736e+06
 					// Note: since Octets & Lines are the only 2 values this method is responsible for parsing,
 					// it seems the only sane value to return would be 0.
 					return 0;
