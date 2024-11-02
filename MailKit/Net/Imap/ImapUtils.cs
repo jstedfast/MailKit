@@ -37,8 +37,6 @@ using System.Collections.ObjectModel;
 using MimeKit;
 using MimeKit.Utils;
 
-using Org.BouncyCastle.Asn1.Tsp;
-
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// IMAP utility functions.
