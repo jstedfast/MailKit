@@ -579,7 +579,9 @@ namespace MailKit.Net.Imap {
 		{
 			AssertToken (token, ImapTokenType.Atom, format, args);
 
-			if (!uint.TryParse ((string) token.Value, NumberStyles.None, CultureInfo.InvariantCulture, out var value) || (nonZero && value == 0))
+			// Note: Broken IMAP servers such as mail.ru sometimes incorrectly format integers as numbers with decimals and exponents. (e.g. 9.3736e+06)
+			// See https://github.com/jstedfast/MailKit/issues/1838 and https://github.com/jstedfast/MailKit/issues/1840 for details.
+			if (!uint.TryParse ((string) token.Value, NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out var value) || (nonZero && value == 0))
 				throw UnexpectedToken (format, args);
 
 			return value;
